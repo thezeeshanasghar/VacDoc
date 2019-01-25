@@ -10,7 +10,12 @@ const routes: Routes = [
   {
     path: 'home',
     loadChildren: './home/home.module#HomePageModule'
-  }
+  },
+  { path: 'message', loadChildren: './message/message.module#MessagePageModule' },
+  { path: 'clinic', loadChildren: './clinic/clinic.module#ClinicPageModule' },
+  { path: 'alert', loadChildren: './alert/alert.module#AlertPageModule' },
+  { path: 'child', loadChildren: './child/child.module#ChildPageModule' },
+  { path: 'vaccine', loadChildren: './child/vaccine/vaccine.module#VaccinePageModule' }
 ];
 
 @NgModule({
