@@ -1,9 +1,16 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>clinic</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title>Please Choose Your Online Clinic</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
+
+  <ion-item  *ngFor="let clinic of clinics">
+    <ion-button color="light" (click)="movehomepage(clinic.ID)">
+      <ion-label slot="start">{{clinic.Name}}</ion-label>
+      <ion-label slot="end">{{clinic.childrenCount}}</ion-label>
+    </ion-button>
+  </ion-item>
 
 </ion-content>

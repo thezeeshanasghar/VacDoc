@@ -31,12 +31,12 @@ export class LoginPage implements OnInit {
   }
 
   async login() {
-    console.log(this.fg.value)
     await this.api.checkAuth(this.fg.value)
       .subscribe(res => {
         if (res.IsSuccess) {
-          this.storage.set('DoctorID', res.ResponseData.ID);
-          this.router.navigate(['/home']);
+          this.storage.set('ID', res.ResponseData.ID);
+          this.storage.set('DoctorID', res.ResponseData.DoctorID);
+          this.router.navigate(['/clinic']);
         }
         else {
           this.toast.create(res.Message);
