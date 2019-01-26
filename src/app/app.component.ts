@@ -19,7 +19,12 @@ export class AppComponent {
       title: 'message',
       url: '/message',
       icon: 'mail'
-    }
+    },
+    {
+      title: 'Child Record',
+      url: '/child',
+      icon: 'man'
+    },
   ];
 
   constructor(
