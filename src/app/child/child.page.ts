@@ -12,7 +12,7 @@ import { Storage } from '@ionic/storage';
 })
 export class ChildPage implements OnInit {
 
-  Childs:any;
+  Childs: any;
   constructor(
     public loadingController: LoadingController,
     private api: ChildService,
