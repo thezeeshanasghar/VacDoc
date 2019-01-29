@@ -18,18 +18,17 @@ export class ChildPage implements OnInit {
     private api: ChildService,
     private toast: ToastService,
     private storage: Storage
-  ) { }
+  ) { 
+  }
 
   ngOnInit() {
     this.storage.get("ID").then((val) => {
       this.getchild(val);
-      console.log(val);
     });
 
   }
 
   async getchild(id) {
-    console.log(id)
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
