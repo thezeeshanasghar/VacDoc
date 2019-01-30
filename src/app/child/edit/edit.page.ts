@@ -52,8 +52,8 @@ export class EditPage implements OnInit {
 
     await this.api.getChildById(this.route.snapshot.paramMap.get('id')).subscribe(
       res => {
+        if (res.IsSuccess) {
         this.child = res.ResponseData;
-        console.log(this.child)
         loading.dismiss();
         this.fg.controls['ID'].setValue(this.child.ID);
         this.fg.controls['ClinicID'].setValue(this.child.ClinicID);
@@ -69,9 +69,13 @@ export class EditPage implements OnInit {
         this.fg.controls['PreferredSchedule'].setValue(this.child.PreferredSchedule);
         this.fg.controls['IsEPIDone'].setValue(this.child.IsEPIDone );
         this.fg.controls['IsVerified'].setValue(this.child.IsVerified);
+        }
+        else{
+          loading.dismiss();
+          this.toast.create(res.Message)
+        }
       },
       err => {
-        console.log(err);
         loading.dismiss();
         this.toast.create(err);
       }
@@ -88,8 +92,11 @@ export class EditPage implements OnInit {
           this.toast.create(res.Message);
         }
       }, (err) => {
-        console.log(err);
+        this.toast.create(err)
       });
   }
 
+  mcqAnswer(value){
+    console.log(value)
+  }
 }

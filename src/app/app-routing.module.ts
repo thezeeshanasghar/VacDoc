@@ -15,7 +15,7 @@ const routes: Routes = [
   { path: 'clinic', loadChildren: './clinic/clinic.module#ClinicPageModule' },
   { path: 'alert', loadChildren: './alert/alert.module#AlertPageModule' },
   { path: 'child', loadChildren: './child/child.module#ChildPageModule' },
-  { path: 'vaccine', loadChildren: './child/vaccine/vaccine.module#VaccinePageModule' },
+  { path: 'child/:id/vaccine', loadChildren: './child/vaccine/vaccine.module#VaccinePageModule' },
   { path: 'login', loadChildren: './login/login.module#LoginPageModule' },
   { path: 'child/:id/edit', loadChildren: './child/edit/edit.module#EditPageModule' }
 

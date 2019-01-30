@@ -49,31 +49,31 @@
       </ion-select>
     </ion-item>
 
-    <!-- <ion-radio-group>
+     <!-- <ion-radio-group>
       <ion-list-header>
         Gender
       </ion-list-header>
 
-      <ion-grid (ionChange)="mcqAnswer($event)">
+      <ion-grid>
         <ion-row>
 
           <ion-col>
             <ion-item>
               <ion-label color="primary">Boy</ion-label>
-              <ion-radio slot="start" value="Boy" (ionSelect)="mcqAnswer('Boy')" ></ion-radio>
+              <ion-radio slot="start" value="Boy" formControlName="Gender" (ionSelect)="mcqAnswer('Boy')" ></ion-radio>
             </ion-item>
           </ion-col>
 
           <ion-col>
             <ion-item>
               <ion-label color="primary">Girl</ion-label>
-              <ion-radio slot="start" value="Girl" (ionSelect)="mcqAnswer('Boy')"></ion-radio>
+              <ion-radio slot="start" value="Girl" formControlName="Gender" (ionSelect)="mcqAnswer('Girl')"></ion-radio>
             </ion-item>
           </ion-col>
         </ion-row>
       </ion-grid>
 
-    </ion-radio-group> -->
+    </ion-radio-group>  -->
 
     <ion-item>
       <ion-label color="primary" position="floating">Select a City</ion-label>

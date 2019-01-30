@@ -9,11 +9,28 @@ import { environment } from 'src/environments/environment';
 })
 export class VaccineService extends BaseService {
 
-  private readonly API_VACCINE = `${environment.BASE_URL}vaccine`
+  private readonly API_VACCINE = `${environment.BASE_URL}`
 
   constructor(
     protected http: HttpClient
   ) { super(http); }
+
+
+  getVaccinesById(id: string) : Observable<any> {
+    const url = `${this.API_VACCINE}child/${id}/schedule`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData), 
+      catchError(this.handleError)
+    );
+  }
+
+
+
+
+
+
+
+
 
   addVaccine(data): Observable<any> {
     return this.http.post(this.API_VACCINE, data, this.httpOptions)
@@ -36,21 +53,6 @@ export class VaccineService extends BaseService {
       .pipe(
         catchError(this.handleError)
       );
-  }
-
-  getVaccines() : Observable<any> {
-    return this.http.get(this.API_VACCINE, this.httpOptions).pipe(
-      map(this.extractData), 
-      catchError(this.handleError)
-    );
-  }
-
-  getVaccineById(id: String) : Observable<any> {
-    const url = `${this.API_VACCINE}/${id}`;
-    return this.http.get(url, this.httpOptions).pipe(
-      map(this.extractData),
-      catchError(this.handleError)
-    );
   }
   
   getDosesByVaccineId(vaccineId: String) : Observable<any> {
