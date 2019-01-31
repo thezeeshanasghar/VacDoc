@@ -25,6 +25,11 @@ export class AppComponent {
       url: '/child',
       icon: 'man'
     },
+    {
+      title: 'Clinic Info',
+      url: '/clinic-info',
+      icon: 'locate'
+    },
   ];
 
   constructor(

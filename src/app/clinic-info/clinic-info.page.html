@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>clinic-info</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+
+  <ion-card *ngFor="let clinic of clinics">
+
+    <ion-item>
+      <ion-label>{{clinic.Name}}</ion-label>
+      <ion-item slot="end">
+        <ion-icon routerLink="/vaccine/{{clinic.ID}}/edit" color="primary" name="create"></ion-icon>
+        <ion-icon (click)="promptForDeleteVaccine(clinic.ID)" color="primary" name="trash"></ion-icon>
+      </ion-item>
+    </ion-item>
+
+    <ion-card-content>
+      <p>Consultation Fee : {{clinic.ConsultationFee}}</p>
+      <p> Off Days : {{clinic.OffDays}}</p>
+      <p>Timming : {{clinic.StartTime}} - {{clinic.EndTime}} </p>
+      <ion-button routerLink="/vaccine/{{clinic.ID}}/dose">Kids/Patients</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

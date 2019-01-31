@@ -1,31 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { ClinicService } from '../services/clinic.service';
-import { Storage } from '@ionic/storage';
 import { LoadingController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { ClinicService } from '../services/clinic.service';
 import { ToastService } from '../shared/toast.service';
+import { Storage } from '@ionic/storage';
 
 @Component({
-  selector: 'app-clinic',
-  templateUrl: './clinic.page.html',
-  styleUrls: ['./clinic.page.scss'],
+  selector: 'app-clinic-info',
+  templateUrl: './clinic-info.page.html',
+  styleUrls: ['./clinic-info.page.scss'],
 })
-export class ClinicPage implements OnInit {
+export class ClinicInfoPage implements OnInit {
 
-  clinics: any;
+  clinics:any
   constructor(
-    private api: ClinicService,
+    public loadingController: LoadingController,
+    private api : ClinicService,
+    private toast: ToastService,
     private storage: Storage,
-    private loadingController: LoadingController,
-    private router: Router,
-    private toast: ToastService
   ) { }
 
   ngOnInit() {
     this.storage.get("DoctorID").then((val) => {
       this.getClin(val);
     });
-
   }
 
   async getClin(id) {
@@ -37,13 +34,14 @@ export class ClinicPage implements OnInit {
 
     await this.api.getClinic(id).subscribe(
       res => {
-        if (res.IsSuccess) {
+        if (res.IsSuccess){
           this.clinics = res.ResponseData;
+          console.log(this.clinics)
           loading.dismiss();
         }
-        else {
+        else{
           loading.dismiss();
-          this.toast.create(res.Message)
+          this.toast.create(res.Message);
         }
       },
       err => {
@@ -51,10 +49,5 @@ export class ClinicPage implements OnInit {
         this.toast.create(err);
       }
     );
-  }
-
-  movehomepage(id) {
-    this.storage.set('ClinicID', id);
-    this.router.navigate(['/home']);
   }
 }

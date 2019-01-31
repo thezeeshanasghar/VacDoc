@@ -18,7 +18,7 @@ export class ChildPage implements OnInit {
     private api: ChildService,
     private toast: ToastService,
     private storage: Storage
-  ) { 
+  ) {
   }
 
   ngOnInit() {
@@ -37,11 +37,17 @@ export class ChildPage implements OnInit {
 
     await this.api.getChild(id).subscribe(
       res => {
-        this.Childs = res.ResponseData;
-        loading.dismiss();
+        if (res.IsSuccess) {
+          this.Childs = res.ResponseData;
+          loading.dismiss();
+        }
+        else {
+          loading.dismiss();
+          this.toast.create(res.Message)
+        }
+
       },
       err => {
-        console.log(err);
         loading.dismiss();
         this.toast.create(err);
       }

@@ -32,12 +32,18 @@
     <ion-row *ngFor="let v of vaccine">
       <ion-col col-4 ion-text text-center color="primary">{{v.Dose.Name}} </ion-col>
       <ion-col col-4 ion-text text-center class="bgcolum">{{v.Date}}</ion-col>
+
       <ion-col col-4 *ngIf="v.IsDone==false">
+        <ion-item [formGroup]="fg">
+            <ion-icon name="calendar" size="large"></ion-icon>
+            <ion-datetime displayFormat="DD-MM-YYYY" formControlName="Date" (click)=updateDate()></ion-datetime>
+          </ion-item>     
         <ion-img width="10px" src="../../assets/injectionEmpty.png"></ion-img>
       </ion-col>
+      
       <ion-col col-4 *ngIf="v.IsDone==true">
-          <ion-img width="10px" src="../../assets/injectionFilled.png"></ion-img>
-      </ion-col> 
+        <ion-img width="10px" src="../../assets/injectionFilled.png"></ion-img>
+      </ion-col>
     </ion-row>
 
   </ion-grid>
