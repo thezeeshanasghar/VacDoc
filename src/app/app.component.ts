@@ -30,6 +30,11 @@ export class AppComponent {
       url: '/clinic-info',
       icon: 'locate'
     },
+    {
+      title: 'Change Online Clinic',
+      url: '/clinic',
+      icon: 'hand'
+    },
   ];
 
   constructor(

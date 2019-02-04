@@ -13,6 +13,9 @@ import { ToastService } from '../shared/toast.service';
 export class ClinicPage implements OnInit {
 
   clinics: any;
+  DoctorID:any;
+  ID
+  IsOnline
   constructor(
     private api: ClinicService,
     private storage: Storage,
@@ -23,12 +26,13 @@ export class ClinicPage implements OnInit {
 
   ngOnInit() {
     this.storage.get("DoctorID").then((val) => {
-      this.getClin(val);
+      this.getClinics(val);
+      this.DoctorID = val;
     });
 
   }
 
-  async getClin(id) {
+  async getClinics(id) {
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
@@ -54,7 +58,26 @@ export class ClinicPage implements OnInit {
   }
 
   movehomepage(id) {
+    this.setOnlineClinic(id);
     this.storage.set('ClinicID', id);
-    this.router.navigate(['/home']);
+    this.router.navigate(['home']);
+  }
+
+  async setOnlineClinic(id){
+    
+    let data = {'DoctorID':this.DoctorID, 'ID':id, 'IsOnline':'true'}
+    await this.api.changeOnlineClinic(data)
+    .subscribe(res => {
+      if (res.IsSuccess) {
+        this.getClinics(this.DoctorID);
+      }
+      else {
+        this.toast.create(res.Message)
+      }
+
+
+      }, (err) => {
+        this.toast.create(err);
+      });
   }
 }

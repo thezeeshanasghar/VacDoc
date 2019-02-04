@@ -43,7 +43,7 @@ export class VaccinePage implements OnInit {
         if (res.IsSuccess) {
           this.vaccine = res.ResponseData;
           loading.dismiss();
-          this.fg.controls['Date'].setValue(this.vaccine.Date + '');
+          this.fg.controls['Date'].setValue('2012-12-12');
           console.log(this.vaccine);
         }
         else {

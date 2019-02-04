@@ -36,10 +36,15 @@
       <ion-col col-4 *ngIf="v.IsDone==false">
         <ion-item [formGroup]="fg">
             <ion-icon name="calendar" size="large"></ion-icon>
-            <ion-datetime displayFormat="DD-MM-YYYY" formControlName="Date" (click)=updateDate()></ion-datetime>
+            <ion-datetime displayFormat="DD-MM-YYYY" picker-format="DD-MM-YYYY" formControlName="Date"
+            (click)=updateDate()></ion-datetime>
+
+            <!-- <ion-datetime displayFormat="DD-MM-YYYY"  picker-format="DD-MM-YYYY"
+             value="2012-12-15T13:47:20.789"></ion-datetime> -->
+
           </ion-item>     
         <ion-img width="10px" src="../../assets/injectionEmpty.png"></ion-img>
-      </ion-col>
+      </ion-col>  
       
       <ion-col col-4 *ngIf="v.IsDone==true">
         <ion-img width="10px" src="../../assets/injectionFilled.png"></ion-img>

@@ -6,11 +6,21 @@
 
 <ion-content padding>
 
-  <ion-item  *ngFor="let clinic of clinics">
-    <ion-button color="light" (click)="movehomepage(clinic.ID)">
-      <ion-label slot="start">{{clinic.Name}}</ion-label>
-      <ion-label slot="end">{{clinic.childrenCount}}</ion-label>
-    </ion-button>
-  </ion-item>
+  <div *ngFor="let clinic of clinics">
+
+    <div *ngIf="clinic.IsOnline==true">
+      <ion-item (click)="movehomepage(clinic.ID)" color="success">
+        {{clinic.Name}}
+        <ion-badge slot="end">{{clinic.childrenCount}}</ion-badge>
+      </ion-item>
+    </div>
+
+    <div *ngIf="clinic.IsOnline==false">
+        <ion-item (click)="movehomepage(clinic.ID)" color="light">
+          {{clinic.Name}}
+          <ion-badge slot="end">{{clinic.childrenCount}}</ion-badge>
+        </ion-item>
+      </div>
+  </div>
 
 </ion-content>
