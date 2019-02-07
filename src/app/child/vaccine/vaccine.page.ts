@@ -4,6 +4,7 @@ import { VaccineService } from 'src/app/services/vaccine.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-vaccine',
@@ -28,10 +29,10 @@ export class VaccinePage implements OnInit {
     this.fg = this.formBuilder.group({
       'Date': [null],
     });
-    this.getVaccine();
+    this.getVaccination();
   }
 
-  async getVaccine() {
+  async getVaccination() {
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
@@ -43,7 +44,9 @@ export class VaccinePage implements OnInit {
         if (res.IsSuccess) {
           this.vaccine = res.ResponseData;
           loading.dismiss();
-          this.fg.controls['Date'].setValue('2012-12-12');
+          this.vaccine.forEach(doc => {
+            doc.Date = moment(doc.Date, "DD-MM-YYYY").format('YYYY-MM-DD');
+          });
           console.log(this.vaccine);
         }
         else {
@@ -58,8 +61,23 @@ export class VaccinePage implements OnInit {
     );
   }
 
-  updateDate(){
-    console.log(this.fg.value)
+  async updateDate($event, vacId) {
+    let newDate = $event.detail.value;
+    newDate = moment(newDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
+    let data = { 'Date': newDate, 'ID': vacId }
+    await this.api.updateVaccinationDate(data).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          this.getVaccination();
+        }
+        else {
+          this.toast.create(res.Message);
+        }
+      },
+      err => {
+        this.toast.create(err);
+      }
+    );
   }
 
 }
