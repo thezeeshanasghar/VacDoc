@@ -10,13 +10,22 @@ import { catchError } from 'rxjs/operators';
 })
 export class LoginService extends BaseService {
 
-  private readonly API_LOGIN = `${environment.BASE_URL}user/login`
+  private readonly API_LOGIN = `${environment.BASE_URL}user/`
   constructor(
     protected http: HttpClient
   ) { super(http); }
 
   checkAuth(data): Observable<any> {
-    return this.http.post(this.API_LOGIN, data, this.httpOptions)
+    const url = `${this.API_LOGIN}login`;
+    return this.http.post(url, data, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  forgotPassword(data): Observable<any> {
+    const url = `${this.API_LOGIN}forgot-password`;
+    return this.http.post(url, data, this.httpOptions)
       .pipe(
         catchError(this.handleError)
       );

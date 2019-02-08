@@ -10,13 +10,14 @@ export class ToastService {
 
   constructor(public toastCtrl: ToastController) { }
 
-  async create(message: string, ok = false, duration = 3000) {
+  async create(message: string, color = "success", ok = false, duration = 3000) {
     if (this.toast) {
       this.toast.dismiss();
     }
 
     this.toast = await this.toastCtrl.create({
       message,
+      color: color,
       duration: ok ? null : duration,
       position: 'bottom',
       showCloseButton: ok,
@@ -24,4 +25,5 @@ export class ToastService {
     });
     this.toast.present();
   }
+
 }

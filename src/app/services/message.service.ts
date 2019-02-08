@@ -15,13 +15,18 @@ export class MessageService extends BaseService {
   constructor(
     protected http: HttpClient
   ) { super(http); }
-
-
     
-  getMessages(id: string) : Observable<any> {
-    return this.http.get(this.API_MESSAGE +'/'+id+'/doctor', this.httpOptions).pipe(
+  getMessages() : Observable<any> {
+    return this.http.get(this.API_MESSAGE +'/?mobileNumber=&fromDate=&toDate=', this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
     );
+  }
+
+  sendMsg(data): Observable<any> {
+    return this.http.post(this.API_MESSAGE, data, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
   }
 }
