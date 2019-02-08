@@ -20,12 +20,13 @@ export class LoginPage implements OnInit {
     public router: Router,
     public alertController: AlertController,
     private formBuilder: FormBuilder,
-    private api: LoginService,
+    private loginservice: LoginService,
     private toastService: ToastService,
     private storage: Storage
   ) { }
 
   ngOnInit() {
+    this.loginservice.changeState(false);
     this.fg = this.formBuilder.group({
       'MobileNumber': [null, Validators.required],
       'Password': [null, Validators.required],
@@ -35,10 +36,11 @@ export class LoginPage implements OnInit {
   }
 
   async login() {
-    await this.api.checkAuth(this.fg.value)
+    await this.loginservice.checkAuth(this.fg.value)
       .subscribe(res => {
         if (res.IsSuccess) {
           this.storage.set(environment.DOCTOR_ID, res.ResponseData.DoctorID);
+          this.loginservice.changeState(true);
           this.router.navigate(['/members/']);
         }
         else {
