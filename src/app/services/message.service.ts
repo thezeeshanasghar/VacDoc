@@ -16,8 +16,8 @@ export class MessageService extends BaseService {
     protected http: HttpClient
   ) { super(http); }
     
-  getMessages() : Observable<any> {
-    return this.http.get(this.API_MESSAGE +'/?mobileNumber=&fromDate=&toDate=', this.httpOptions).pipe(
+  getMessages(id: string) : Observable<any> {
+    return this.http.get(this.API_MESSAGE +'/'+id+'/doctor', this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
     );

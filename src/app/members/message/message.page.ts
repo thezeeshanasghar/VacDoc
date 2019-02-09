@@ -1,4 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { LoadingController } from '@ionic/angular';
+import { MessageService } from 'src/app/services/message.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { Storage } from '@ionic/storage';
+import { environment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-message',
@@ -7,9 +12,41 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MessagePage implements OnInit {
 
-  constructor() { }
+  message: any;
+  constructor(
+    public loadingController: LoadingController,
+    private messageService: MessageService,
+    private toastsService: ToastService,
+    private storage: Storage
+  ) { }
 
   ngOnInit() {
+    this.storage.get(environment.DOCTOR_ID).then((val) => {
+      this.getMsg(val);
+    });
   }
 
+  async getMsg(id) {
+    const loading = await this.loadingController.create({
+      message: 'Loading'
+    });
+    await loading.present();
+    await this.messageService.getMessages(id).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          this.message = res.ResponseData;
+          loading.dismiss();
+        }
+        else {
+          loading.dismiss();
+          this.toastsService.create(res.Message, 'danger')
+        }
+
+      },
+      err => {
+        loading.dismiss();
+        this.toastsService.create(err, 'danger');
+      }
+    );
+  }
 }
