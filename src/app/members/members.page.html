@@ -19,7 +19,7 @@
     </ion-content>
     <ion-footer>
 
-      <ion-menu-toggle>
+      <ion-menu-toggle (click)="clearStorage()">
         <ion-item color="light" routerLink="/login">
           <ion-icon color="primary" slot="start" name="power"></ion-icon>
           <ion-label>Logout</ion-label>

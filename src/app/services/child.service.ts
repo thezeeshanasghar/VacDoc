@@ -10,14 +10,14 @@ import { catchError, map } from 'rxjs/operators'
 })
 export class ChildService extends BaseService {
 
-  private readonly API_CHILD = `${environment.BASE_URL}child`
+  private readonly API_CHILD = `${environment.BASE_URL}`
 
   constructor(
     protected http: HttpClient
   ) { super(http); }
 
-  searchChild(name: String, city: String, dob: String): Observable<any> {
-    const url = `${this.API_CHILD}/search?name=${name}&city=${city}&dob=${dob}`;
+  getChild(Id: String): Observable<any> {
+    const url = `${this.API_CHILD}doctor/${Id}/20/0/childs?searchKeyword=`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
