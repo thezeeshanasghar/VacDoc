@@ -47,8 +47,7 @@ export class LoginPage implements OnInit {
           this.toastService.create(res.Message, 'danger');
         }
       }, (err) => {
-        console.log(err);
-        this.toastService.create(err);
+        this.toastService.create(err, 'danger');
       });
   }
 
