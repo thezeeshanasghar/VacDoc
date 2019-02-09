@@ -16,7 +16,7 @@ export class MessagePage implements OnInit {
   constructor(
     public loadingController: LoadingController,
     private messageService: MessageService,
-    private toastsService: ToastService,
+    private toastService: ToastService,
     private storage: Storage
   ) { }
 
@@ -39,13 +39,13 @@ export class MessagePage implements OnInit {
         }
         else {
           loading.dismiss();
-          this.toastsService.create(res.Message, 'danger')
+          this.toastService.create(res.Message, 'danger')
         }
 
       },
       err => {
         loading.dismiss();
-        this.toastsService.create(err, 'danger');
+        this.toastService.create(err, 'danger');
       }
     );
   }

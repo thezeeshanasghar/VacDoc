@@ -1,9 +1,42 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>profile</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Doctor1</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
 
+  <form [formGroup]="fg">
+    <ion-item>
+      <ion-label color="primary" position="floating">First Name</ion-label>
+      <ion-input type="text" formControlName="FirstName" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label color="primary" position="floating">Last Name</ion-label>
+      <ion-input type="text" formControlName="LastName" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label color="primary" position="floating">Display Name</ion-label>
+      <ion-input type="text" formControlName="DisplayName" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label color="primary" position="floating">Email</ion-label>
+      <ion-input type="text" formControlName="Email" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label color="primary" position="floating">Mobile Number</ion-label>
+      <ion-input type="text" formControlName="MobileNumber" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label color="primary" position="floating">PhoneNo</ion-label>
+      <ion-input type="text" formControlName="PhoneNo" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label color="primary" position="floating">PMDC</ion-label>
+      <ion-input type="text" formControlName="PMDC" required></ion-input>
+    </ion-item>
+  </form>
 </ion-content>
