@@ -24,10 +24,9 @@ export class DoctorService extends BaseService {
     );
   }
 
-  changeValidity(newDate: String, docID: number): any {
-    let data = JSON.stringify({ ID: docID, ValidUpto: newDate })
-    const url = `${this.API_DOCTOR}/${docID}/validUpto`;
-    return this.http.put(url, data, this.httpOptions)
+  updateDoctorProfile(docId: number, newDate: String): any {
+    const url = `${this.API_DOCTOR}/${docId}`;
+    return this.http.put(url, newDate, this.httpOptions)
       .pipe(
         catchError(this.handleError)
       );
