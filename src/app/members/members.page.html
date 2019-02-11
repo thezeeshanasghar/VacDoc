@@ -5,8 +5,10 @@
         <ion-title>Menu</ion-title>
       </ion-toolbar>
     </ion-header>
+
     <ion-content color="light">
       <ion-list>
+
         <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
           <ion-item color="light" [routerDirection]="'root'" [routerLink]="[p.url]">
             <ion-icon color="primary" slot="start" [name]="p.icon"></ion-icon>
@@ -15,18 +17,44 @@
             </ion-label>
           </ion-item>
         </ion-menu-toggle>
-      </ion-list>
-    </ion-content>
-    <ion-footer>
 
-      <ion-menu-toggle (click)="clearStorage()">
-        <ion-item color="light" routerLink="/login">
+        <ion-item-divider color="light">
+          <ion-label color="primary">
+            Doctor
+          </ion-label>
+        </ion-item-divider>
+        <ion-menu-toggle auto-hide="false" *ngFor="let p of doctorPages">
+          <ion-item color="light" [routerDirection]="'root'" [routerLink]="[p.url]">
+            <ion-icon color="primary" slot="start" [name]="p.icon"></ion-icon>
+            <ion-label>
+              {{p.title}}
+            </ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
+        <ion-item-divider color="light">
+          <ion-label color="primary">
+            Child
+          </ion-label>
+        </ion-item-divider>
+        <ion-menu-toggle auto-hide="false" *ngFor="let p of childPages">
+          <ion-item color="light" [routerDirection]="'root'" [routerLink]="[p.url]">
+            <ion-icon color="primary" slot="start" [name]="p.icon"></ion-icon>
+            <ion-label>
+              {{p.title}}
+            </ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+
+        <ion-item color="light" routerLink="/login" (click)="clearStorage()">
           <ion-icon color="primary" slot="start" name="power"></ion-icon>
           <ion-label>Logout</ion-label>
         </ion-item>
-      </ion-menu-toggle>
 
-    </ion-footer>
+        <ion-menu-toggle></ion-menu-toggle>
+      </ion-list>
+
+    </ion-content>
   </ion-menu>
   <ion-router-outlet main></ion-router-outlet>
 </ion-split-pane>

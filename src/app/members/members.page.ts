@@ -20,21 +20,48 @@ export class MembersPage implements OnInit {
       icon: 'alert'
     },
     {
-      title: 'Doctors',
-      url: '/members/doctor',
-      icon: 'medkit'
+      title: 'Messages',
+      url: '/members/message',
+      icon: 'mail'
     },
+
+  ];
+
+  public doctorPages = [
+    {
+      title: 'Clinic',
+      url: '/members/doctor/clinic',
+      icon: 'moon'
+    },
+    {
+      title: 'Edit Profile',
+      url: '/members/doctor/profile',
+      icon: 'create'
+    },
+    {
+      title: 'Schedule',
+      url: '/members/doctor/schedule',
+      icon: 'recording'
+    },
+    {
+      title: 'Vacation',
+      url: '/members/doctor/vacation',
+      icon: 'locate'
+    }
+  ];
+
+  public childPages = [
     {
       title: 'Patients',
       url: '/members/child',
       icon: 'man'
     },
     {
-      title: 'Messages',
-      url: '/members/message',
-      icon: 'mail'
-    }
-  ];
+      title: 'Add',
+      url: '/members/child/add',
+      icon: 'person-add'
+    },
+  ]
 
   constructor(
     private storage: Storage,
@@ -42,7 +69,7 @@ export class MembersPage implements OnInit {
 
   ngOnInit() {
   }
-  clearStorage(){
+  clearStorage() {
     this.storage.clear();
   }
 }
