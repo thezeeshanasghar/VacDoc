@@ -27,8 +27,9 @@ export class ProfilePage implements OnInit {
   ngOnInit() {
     this.storage.get(environment.DOCTOR_ID).then((val)=>{
       this.docotrID = val;
-      this.getProfile(val);
-    })
+      
+    });
+    this.getProfile();
     this.fg = this.formBuilder.group({
       'ID': [null],
       'FirstName': [null],
@@ -43,12 +44,13 @@ export class ProfilePage implements OnInit {
     });
   }
 
-  async getProfile(id) {
+  async getProfile() {
+    console.log();
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
     await loading.present();
-    await this.doctorService.getDoctorProfile(id).subscribe(
+    await this.doctorService.getDoctorProfile(this.docotrID).subscribe(
       res => {
         if (res.IsSuccess) {
           this.doctorData = res.ResponseData;
