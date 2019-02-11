@@ -14,20 +14,20 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 export class ProfilePage implements OnInit {
 
   fg: FormGroup;
-  doctorData:any;
-  docotrID:any;
+  doctorData: any;
+  docotrID: any;
   constructor(
     public loadingController: LoadingController,
     private doctorService: DoctorService,
     private toastService: ToastService,
     private storage: Storage,
     private formBuilder: FormBuilder
-  ) {}
+  ) { }
 
   ngOnInit() {
-    this.storage.get(environment.DOCTOR_ID).then((val)=>{
+    this.storage.get(environment.DOCTOR_ID).then((val) => {
       this.docotrID = val;
-      
+
     });
     this.getProfile();
     this.fg = this.formBuilder.group({
@@ -79,14 +79,14 @@ export class ProfilePage implements OnInit {
     );
   }
 
-  async updateProfile(){
+  async updateProfile() {
     console.log(this.fg.value);
-    await this.doctorService.updateDoctorProfile(this.docotrID,this.fg.value)
+    await this.doctorService.updateDoctorProfile(this.docotrID, this.fg.value)
       .subscribe(res => {
-        if(res.IsSuccess){
+        if (res.IsSuccess) {
           this.toastService.create('Successfuly update')
         }
-        else{
+        else {
           this.toastService.create(res.Message, 'danger');
         }
       }, (err) => {

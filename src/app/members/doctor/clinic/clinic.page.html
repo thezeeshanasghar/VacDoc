@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/members/dashboard"></ion-back-button>
+      <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Clinics</ion-title>
   </ion-toolbar>
@@ -25,7 +25,8 @@
       <ion-button size="small" fill="outline" color="tertiary" routerLink="/vaccine/{{clinic.ID}}/dose">
         Patients &nbsp;<ion-badge size="small" color="primary">{{clinic.childrenCount}}</ion-badge>
       </ion-button>
-      <ion-button *ngIf="!clinic.IsOnline" size="small" fill="outline" color="tertiary" (click)="setOnlineClinic(clinic.ID)">
+      <ion-button *ngIf="!clinic.IsOnline" size="small" fill="outline" color="tertiary"
+        (click)="setOnlineClinic(clinic.ID)">
         Set as Online
       </ion-button>
       <ion-button *ngIf="clinic.IsOnline" size="small" color="success" enabled="false">
