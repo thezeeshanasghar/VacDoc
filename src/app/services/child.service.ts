@@ -24,4 +24,11 @@ export class ChildService extends BaseService {
     );
   }
 
+  addChild(data): Observable<any> {
+    const url = `${this.API_CHILD}child`;
+    return this.http.post(url, data, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
 }
