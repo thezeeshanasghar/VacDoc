@@ -6,6 +6,8 @@ import { VaccineService } from 'src/app/services/vaccine.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { ChildService } from 'src/app/services/child.service';
 import { Router } from '@angular/router';
+import { Storage } from '@ionic/storage';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-add',
@@ -25,13 +27,14 @@ export class AddPage implements OnInit {
     private vaccineService: VaccineService,
     private childService: ChildService,
     private toastService: ToastService,
-    private router: Router
+    private router: Router,
+    private storage: Storage
   ) { }
 
   ngOnInit() {
     this.getVaccine();
     this.fg1 = this.formBuilder.group({
-      'ClinicID': ['1'],
+      'ClinicID': [''],
       'Name': [null],
       'FatherName': [null],
       'Email': [null],
@@ -48,6 +51,10 @@ export class AddPage implements OnInit {
       'Password': [null],
       'ChildVaccines': [null],
     });
+    this.storage.get(environment.CLINIC_ID).then((val) => {
+      this.fg1.controls['ClinicID'].setValue(val);
+      console.log(this.fg1.value.ClinicID);
+    })
   }
 
   moveNextStep() {

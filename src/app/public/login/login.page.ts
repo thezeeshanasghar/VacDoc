@@ -41,7 +41,7 @@ export class LoginPage implements OnInit {
         if (res.IsSuccess) {
           this.storage.set(environment.DOCTOR_ID, res.ResponseData.DoctorID);
           this.loginservice.changeState(true);
-          this.router.navigate(['/members/']);
+          this.router.navigate(['/members/doctor/clinic']);
         }
         else {
           this.toastService.create(res.Message, 'danger');

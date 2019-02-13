@@ -4,13 +4,14 @@ import { ClinicService } from 'src/app/services/clinic.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-clinic',
   templateUrl: './clinic.page.html',
   styleUrls: ['./clinic.page.scss'],
 })
-export class ClinicPage implements OnInit {
+export class ClinicPage {
 
   clinics: any;
   doctorID: number;
@@ -20,9 +21,10 @@ export class ClinicPage implements OnInit {
     private api: ClinicService,
     private toast: ToastService,
     private storage: Storage,
+    private router: Router
   ) { }
 
-  ngOnInit() {
+  ionViewWillEnter() {
     this.storage.get(environment.DOCTOR_ID).then((docId) => {
       this.doctorID = docId;
       this.getClinics();
@@ -37,7 +39,6 @@ export class ClinicPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.clinics = res.ResponseData;
-          console.log(this.clinics)
           loading.dismiss();
         }
         else {
@@ -56,17 +57,17 @@ export class ClinicPage implements OnInit {
     const loading = await this.loadingController.create({ message: 'Loading' });
     await loading.present();
 
+    this.storage.set(environment.CLINIC_ID, clinicID)
     let data = { 'DoctorID': this.doctorID, 'ID': clinicID, 'IsOnline': 'true' }
     await this.api.changeOnlineClinic(data)
       .subscribe(res => {
         if (res.IsSuccess) {
           loading.dismiss();
-          this.getClinics();
+          this.router.navigate(['/members/dashboard']);
         }
         else {
           this.toast.create(res.Message)
         }
-
 
       }, (err) => {
         this.toast.create(err);
