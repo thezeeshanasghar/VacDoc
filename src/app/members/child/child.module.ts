@@ -13,7 +13,7 @@ const routes: Routes = [
     component: ChildPage
   },
   { path: 'add', loadChildren: './add/add.module#AddPageModule' },
-  { path: 'vaccine', loadChildren: './vaccine/vaccine.module#VaccinePageModule' },
+  { path: 'vaccine/:id', loadChildren: './vaccine/vaccine.module#VaccinePageModule' },
   { path: 'followup', loadChildren: './followup/followup.module#FollowupPageModule' },
   { path: 'growth', loadChildren: './growth/growth.module#GrowthPageModule' },
 ];

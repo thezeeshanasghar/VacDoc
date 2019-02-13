@@ -33,7 +33,7 @@
     </ion-item>
     <ion-item>
       <ion-label color="primary" position="floating">Preferred Day of week</ion-label>
-      <ion-select formControlName="PreferredDayOfWeek" required>
+      <ion-select formControlName="PreferredDayOfWeek" value="Any">
         <ion-select-option value="Any">Any</ion-select-option>
         <ion-select-option value="Monday">Monday</ion-select-option>
         <ion-select-option value="Tuesday">Tuesday</ion-select-option>
@@ -380,7 +380,7 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">Preferred Day of Reminder</ion-label>
-      <ion-select formControlName="PreferredDayOfReminder" required value='0'>
+      <ion-select formControlName="PreferredDayOfReminder" value='On Due Day'>
         <ion-select-option value="On Due Day">On Due Day</ion-select-option>
         <ion-select-option value="Due day + 1 Day before">Due day + 1 Day before</ion-select-option>
         <ion-select-option value="Due day + 2 Day before">Due day + 2 Day before</ion-select-option>
@@ -394,20 +394,20 @@
         <ion-col>
           <ion-item>
             <ion-label color="primary">Is EPI Done</ion-label>
-            <ion-checkbox slot="start" formControlName="IsEPIDone" required></ion-checkbox>
+            <ion-checkbox slot="start" formControlName="IsEPIDone"></ion-checkbox>
           </ion-item>
         </ion-col>
 
         <ion-col>
           <ion-item>
             <ion-label color="primary">Verified</ion-label>
-            <ion-checkbox slot="start" formControlName="IsVerified" required></ion-checkbox>
+            <ion-checkbox slot="start" formControlName="IsVerified"></ion-checkbox>
           </ion-item>
         </ion-col>
 
       </ion-row>
     </ion-grid>
-    <ion-button (click)="moveNextStep()">Submit</ion-button>
+    <ion-button [disabled]="!fg1.valid" (click)="moveNextStep()">Submit</ion-button>
   </form>
 
   <!-- 2nd step of Add Child -->

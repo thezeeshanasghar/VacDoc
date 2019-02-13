@@ -23,7 +23,7 @@ export class ChildPage implements OnInit {
 
   ngOnInit() {
     this.storage.get(environment.DOCTOR_ID).then((val) => {
-      this.getAllChlid(val);
+      this.getAllChlid(1137);
       console.log(val);
     });
   }

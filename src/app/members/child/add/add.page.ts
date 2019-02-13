@@ -5,6 +5,7 @@ import { LoadingController } from '@ionic/angular';
 import { VaccineService } from 'src/app/services/vaccine.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { ChildService } from 'src/app/services/child.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add',
@@ -23,7 +24,8 @@ export class AddPage implements OnInit {
     private formBuilder: FormBuilder,
     private vaccineService: VaccineService,
     private childService: ChildService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -53,16 +55,23 @@ export class AddPage implements OnInit {
     this.formcontroll = true;
   }
   updateGender(gender) {
-    this.fg1.value.DOB = gender;
+    this.fg1.value.Gender = gender;
   }
 
   getChildVaccinefromUser() {
     this.fg2.value.ChildVaccines = this.fg2.value.ChildVaccines
       .map((v, i) => v ? this.vaccines[i].ID : null)
       .filter(v => v !== null);
-    this.fg1.value.ChildVaccines = this.fg2.value.ChildVaccines;
-    console.log(this.fg1.value);
-    this.addNewChild();
+
+    this.fg2.value.ChildVaccines = this.fg2.value.ChildVaccines;
+    let vaccine = this.fg1.value;
+    vaccine.ChildVaccines = [];
+    for (let i = 0; i < this.fg2.value.ChildVaccines.length; i++) {
+      vaccine.ChildVaccines.push({ ID: this.fg2.value.ChildVaccines[i] });
+    }
+    // vaccine.ch2= JSON.stringify(vaccine.ch2);
+    console.log(vaccine)
+    this.addNewChild(vaccine);
   }
 
   PasswordGenerator() {
@@ -88,14 +97,11 @@ export class AddPage implements OnInit {
           this.vaccines = res.ResponseData;
           this.PasswordGenerator();
 
-          const controls = this.vaccines.map(c => new FormControl(false));
-          controls[0].setValue(true);
-          controls[1].setValue(true);
-          controls[2].setValue(true);
+          const controls = this.vaccines.map(c => new FormControl(true));
           this.fg2 = this.formBuilder.group({
             ChildVaccines: new FormArray(controls),
           });
-          
+
           loading.dismiss();
         }
         else {
@@ -110,16 +116,19 @@ export class AddPage implements OnInit {
     )
   }
 
-  async addNewChild() {
-    await this.childService.addChild(this.fg1.value)
+  async addNewChild(data) {
+    await this.childService.addChild(data)
       .subscribe(res => {
         if (res.IsSuccess) {
-          this.toastService.create('successfully added')
+          this.toastService.create('successfully added');
+          this.router.navigate(['/members/child']);
         }
         else {
+          this.formcontroll = false;
           this.toastService.create(res.Message);
         }
       }, (err) => {
+        this.formcontroll = false;
         this.toastService.create(err)
       });
   }
