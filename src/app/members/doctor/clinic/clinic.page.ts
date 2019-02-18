@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { ToastService } from 'src/app/shared/toast.service';
@@ -37,9 +37,15 @@ export class ClinicPage {
 
     await this.api.getClinics(this.doctorID).subscribe(
       res => {
+
+        this.clinics = res.ResponseData;
+        loading.dismiss();
         if (res.IsSuccess) {
-          this.clinics = res.ResponseData;
-          loading.dismiss();
+          for (let i = 0; i < this.clinics.length; i++) {
+            if (this.clinics[i].IsOnline == true) {
+              this.storage.set(environment.CLINIC_ID, this.clinics[i].ID)
+            }
+          }
         }
         else {
           loading.dismiss();

@@ -26,7 +26,7 @@
         (click)="setOnlineClinic(clinic.ID)">
         Set as Online
       </ion-button>
-      <ion-button *ngIf="clinic.IsOnline" size="small" color="success" enabled="false">
+      <ion-button *ngIf="clinic.IsOnline" size="small" color="success" enabled="false" routerLink="/members/dashboard">
         <ion-icon slot="start" name="checkmark"></ion-icon>
         Online
       </ion-button>

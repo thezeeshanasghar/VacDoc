@@ -79,35 +79,6 @@ export class MembersPage implements OnInit {
   ngOnInit() {
   }
   clearStorage() {
-    this.setOnlineClinic();
     this.storage.clear();
-  }
-  async setOnlineClinic() {
-    this.storage.get(environment.DOCTOR_ID).then((val) => {
-      this.doctorID = val;
-    });
-
-    this.storage.get(environment.CLINIC_ID).then((res) => {
-      this.clinicID = res;
-    });
-    const loading = await this.loadingController.create({ message: 'Loading' });
-    await loading.present();
-
-    let data = { 'DoctorID': this.doctorID, 'ID': this.clinicID, 'IsOnline': 'false' }
-    await this.clinicService.changeOnlineClinic(data)
-      .subscribe(res => {
-        if (res.IsSuccess) {
-          loading.dismiss();
-        }
-        else {
-          loading.dismiss();
-          this.toastService.create(res.Message)
-        }
-
-
-      }, (err) => {
-        loading.dismiss();
-        this.toastService.create(err);
-      });
   }
 }
