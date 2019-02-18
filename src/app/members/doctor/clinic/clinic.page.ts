@@ -43,12 +43,12 @@ export class ClinicPage {
         }
         else {
           loading.dismiss();
-          this.toast.create(res.Message);
+          this.toast.create(res.Message, 'danger');
         }
       },
       err => {
         loading.dismiss();
-        this.toast.create(err);
+        this.toast.create(err, 'danger');
       }
     );
   }
