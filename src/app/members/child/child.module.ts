@@ -16,6 +16,7 @@ const routes: Routes = [
   { path: 'vaccine/:id', loadChildren: './vaccine/vaccine.module#VaccinePageModule' },
   { path: 'followup', loadChildren: './followup/followup.module#FollowupPageModule' },
   { path: 'growth', loadChildren: './growth/growth.module#GrowthPageModule' },
+  { path: 'edit/:id', loadChildren: './edit/edit.module#EditPageModule' },
 ];
 
 @NgModule({

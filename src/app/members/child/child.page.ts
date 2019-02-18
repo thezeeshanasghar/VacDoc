@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment.prod';
   templateUrl: './child.page.html',
   styleUrls: ['./child.page.scss'],
 })
-export class ChildPage implements OnInit {
+export class ChildPage {
 
 
   childs: any;
@@ -21,10 +21,9 @@ export class ChildPage implements OnInit {
     private storage: Storage
   ) { }
 
-  ngOnInit() {
+  ionViewWillEnter() {
     this.storage.get(environment.DOCTOR_ID).then((val) => {
       this.getAllChlid(1137);
-      console.log(val);
     });
   }
 
@@ -37,7 +36,6 @@ export class ChildPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.childs = res.ResponseData
-          console.log(this.childs);
           loading.dismiss();
         }
         else {
