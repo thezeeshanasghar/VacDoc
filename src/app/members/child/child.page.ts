@@ -4,6 +4,7 @@ import { ChildService } from 'src/app/services/child.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment.prod';
+import { AlertService } from 'src/app/shared/alert.service';
 
 @Component({
   selector: 'app-child',
@@ -18,16 +19,18 @@ export class ChildPage {
     public loadingController: LoadingController,
     private childService: ChildService,
     private toastService: ToastService,
-    private storage: Storage
+    private storage: Storage,
+    private alertService: AlertService
   ) { }
 
   ionViewWillEnter() {
     this.storage.get(environment.DOCTOR_ID).then((val) => {
-      this.getAllChlid(1137);
+      this.getAllChlid(2);
     });
   }
 
   async getAllChlid(id) {
+
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
@@ -48,6 +51,42 @@ export class ChildPage {
         this.toastService.create(err, 'danger');
       }
     )
+  }
+
+  // Alert Msg Show for deletion of Child
+  alertDeletevaccine(id) {
+    this.alertService.confirmAlert('Are you sure you want to delete this ?', null)
+      .then((yes) => {
+        if (yes) {
+          console.log(id)
+          this.Deletevacc(id);
+        }
+      });
+
+  }
+
+  // Call api to delete a Child 
+  async Deletevacc(id) {
+    const loading = await this.loadingController.create({
+      message: "Loading"
+    });
+    await loading.present();
+    await this.childService.deleteChild(id).subscribe(
+      res => {
+        if (res.IsSuccess == true) {
+          this.toastService.create(res.Message);
+          loading.dismiss();
+        }
+        else {
+          loading.dismiss();
+          this.toastService.create(res.Message);
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err)
+      }
+    );
   }
 
 }

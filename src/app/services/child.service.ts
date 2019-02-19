@@ -47,4 +47,12 @@ export class ChildService extends BaseService {
         catchError(this.handleError)
       );
   }
+
+  deleteChild(id: string): Observable<any> {
+    const url = `${this.API_CHILD}child/${id}`;
+    return this.http.delete(url, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
 }
