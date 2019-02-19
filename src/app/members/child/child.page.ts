@@ -59,14 +59,14 @@ export class ChildPage {
       .then((yes) => {
         if (yes) {
           console.log(id)
-          this.Deletevacc(id);
+          this.Deletechild(id);
         }
       });
 
   }
 
   // Call api to delete a Child 
-  async Deletevacc(id) {
+  async Deletechild(id) {
     const loading = await this.loadingController.create({
       message: "Loading"
     });
