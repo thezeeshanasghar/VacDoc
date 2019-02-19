@@ -22,4 +22,20 @@ export class VaccineService extends BaseService {
       catchError(this.handleError)
     );
   }
+
+  getVaccinationById(id: string) : Observable<any> {
+    const url = `${this.API_VACCINE}child/${id}/schedule`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData), 
+      catchError(this.handleError)
+    );
+  }
+
+  updateVaccinationDate(data): Observable<any>{
+    const url = `${this.API_VACCINE}schedule/Reschedule?ignoreMaxAgeRule=false&ignoreMinAgeFromDOB=false&ignoreMinGapFromPreviousDose=false`;
+    return this.http.put(url, data, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
 }

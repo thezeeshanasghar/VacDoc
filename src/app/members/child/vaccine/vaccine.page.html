@@ -1,9 +1,53 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>vaccine</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Vaccinations</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
 
+  <ion-grid>
+    <ion-row>
+      <ion-col col-4 class="bgheader1">
+        <ion-text color="light">
+          <h2 text-center>Name</h2>
+        </ion-text>
+
+      </ion-col>
+      <ion-col col-4 class="bgheader2">
+        <ion-text color="light">
+          <h2 ion-text text-center color="light">Date</h2>
+        </ion-text>
+      </ion-col>
+      <ion-col col-4 class="bgheader1">
+        <ion-text color="light">
+          <h2 ion-text text-center color="white">Vaccine</h2>
+        </ion-text>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngFor="let v of vaccine">
+      <ion-col col-4 ion-text text-center color="primary">{{v.Dose.Name}} </ion-col>
+
+      <ion-col col-4>
+        <ion-item [formGroup]="fg">
+          <ion-icon name="calendar" size="large"></ion-icon>
+          <ion-datetime displayFormat="DD-MM-YYYY" picker-format="DD-MM-YYYY" value="{{v.Date}}" formControlName="Date"
+            (ionChange)="updateDate($event, v.ID)">
+          </ion-datetime>
+        </ion-item>
+      </ion-col>
+
+      <ion-col col-4 *ngIf="v.IsDone==false">
+        <ion-img width="10px" src="../../assets/injectionEmpty.png"></ion-img>
+      </ion-col>
+      <ion-col col-4 *ngIf="v.IsDone==true">
+        <ion-img width="10px" src="../../assets/injectionFilled.png"></ion-img>
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
 </ion-content>

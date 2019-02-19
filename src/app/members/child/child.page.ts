@@ -79,12 +79,12 @@ export class ChildPage {
         }
         else {
           loading.dismiss();
-          this.toastService.create(res.Message);
+          this.toastService.create(res.Message, 'danger');
         }
       },
       err => {
         loading.dismiss();
-        this.toastService.create(err)
+        this.toastService.create(err, 'danger')
       }
     );
   }
