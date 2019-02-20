@@ -9,4 +9,16 @@
 
 <ion-content padding>
 
+  <form>
+    <ion-grid>
+      <ion-row *ngFor="let b of brandInventory">
+        <ion-col>{{b.VaccineName}}</ion-col>
+        <ion-col>{{b.Brand.Name}}</ion-col>
+        <ion-col>
+          <ion-input [value]="b.Count"></ion-input>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <ion-button (click)="setOnlineClinic(clinic.ID)">Update Inventory</ion-button>
+  </form>
 </ion-content>
