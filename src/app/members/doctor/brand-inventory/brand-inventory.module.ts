@@ -5,16 +5,22 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { MembersPage } from './members.page';
-import { MembersRoutingModule } from './members-routing.module';
+import { BrandInventoryPage } from './brand-inventory.page';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: BrandInventoryPage
+  }
+];
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    MembersRoutingModule
+    RouterModule.forChild(routes)
   ],
-  declarations: [MembersPage]
+  declarations: [BrandInventoryPage]
 })
-export class MembersPageModule { }
+export class BrandInventoryPageModule {}

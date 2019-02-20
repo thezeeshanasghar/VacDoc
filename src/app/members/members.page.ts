@@ -53,6 +53,16 @@ export class MembersPage implements OnInit {
       title: 'Vacation',
       url: '/members/doctor/vacation',
       icon: 'locate'
+    },
+    {
+      title: 'Brand Inventory',
+      url: '/members/doctor/brand-inventory',
+      icon: 'locate'
+    },
+    {
+      title: 'Brand Amount',
+      url: '/members/doctor/brand-amount',
+      icon: 'locate'
     }
   ];
 
