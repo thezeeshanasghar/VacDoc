@@ -16,8 +16,8 @@ const routes: Routes = [
   { path: 'profile', loadChildren: './profile/profile.module#ProfilePageModule' },
   { path: 'vacation', loadChildren: './vacation/vacation.module#VacationPageModule' },
   { path: 'schedule', loadChildren: './schedule/schedule.module#SchedulePageModule' },
-  { path: 'brand-inventory', loadChildren: './doctor/brand-inventory/brand-inventory.module#BrandInventoryPageModule' },
-  { path: 'brand-amount', loadChildren: './doctor/brand-amount/brand-amount.module#BrandAmountPageModule' },
+  { path: 'brand-inventory', loadChildren: './brand-inventory/brand-inventory.module#BrandInventoryPageModule' },
+  { path: 'brand-amount', loadChildren: './brand-amount/brand-amount.module#BrandAmountPageModule' },
 
 ];
 

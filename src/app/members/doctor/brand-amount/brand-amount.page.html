@@ -1,9 +1,24 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>brand_amount</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Brand Amount</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
+
+  <form [formGroup]="fg">
+    <ion-grid>
+      <ion-row *ngFor="let b of brandAmount">
+        <ion-col>{{b.VaccineName}}</ion-col>
+        <ion-col>{{b.Brand.Name}}</ion-col>
+        <ion-col>
+          <ion-input [value]="b.Amount"></ion-input>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
 
 </ion-content>

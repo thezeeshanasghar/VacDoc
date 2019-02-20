@@ -7,7 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BrandInventoryPage implements OnInit {
 
-  constructor() { }
+  constructor(
+  ) { }
 
   ngOnInit() {
   }
