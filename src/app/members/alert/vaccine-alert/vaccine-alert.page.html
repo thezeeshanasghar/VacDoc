@@ -1,9 +1,42 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>vaccine_alert</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content padding>
 
+  <ion-icon size="large" color="primary" name="mail" (click)="alertDeletevaccine()"></ion-icon>
+
+  <div *ngFor="let c of todayAlert">
+    <ion-grid>
+
+      <ion-row *ngIf="c.Child.Gender=='Boy'">
+
+        <ion-col size="1">
+          <ion-avatar><img src="../../assets/male.png" style="padding:10px;"></ion-avatar>
+        </ion-col>
+
+        <ion-col>
+          <ion-item>
+            <ion-label>{{c.Child.Name}}</ion-label>
+            <ion-icon slot="end" color="primary" name="call" routerLink="/members/child/edit/"></ion-icon>
+            <ion-icon slot="end" color="primary" name="mail" (click)="sendIndividualMsgtoChild(c.ChildId)"></ion-icon>
+          </ion-item>
+        </ion-col>
+
+      </ion-row>
+
+      <ion-row *ngIf="c.Child.Gender=='Girl'">
+
+        <ion-col size="1">
+          <ion-avatar><img src="../../assets/female.png" style="padding:10px;"></ion-avatar>
+        </ion-col>
+
+        <ion-col>
+          <ion-item>
+            <ion-label>{{c.Child.Name}}</ion-label>
+            <ion-icon slot="end" color="primary" name="call" routerLink="/members/child/edit/"></ion-icon>
+            <ion-icon slot="end" color="primary" name="mail" (click)="sendIndividualMsgtoChild(c.ChildId)"></ion-icon>
+          </ion-item>
+        </ion-col>
+
+      </ion-row>
+    </ion-grid>
+
+  </div>
 </ion-content>

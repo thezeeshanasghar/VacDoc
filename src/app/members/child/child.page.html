@@ -43,10 +43,8 @@
 
       <ion-item>
         <ion-label>{{child.Name}}</ion-label>
-        <ion-item slot="end">
-          <ion-icon color="primary" name="create" routerLink="/members/child/edit/{{child.ID}}"></ion-icon>
-          <ion-icon color="primary" name="trash" (click)="alertDeletevaccine(child.ID)"></ion-icon>
-        </ion-item>
+        <ion-icon slot="end" color="primary" name="create" routerLink="/members/child/edit/{{child.ID}}"></ion-icon>
+        <ion-icon slot="end" color="primary" name="trash" (click)="alertDeletevaccine(child.ID)"></ion-icon>
       </ion-item>
 
       <ion-card-content>
