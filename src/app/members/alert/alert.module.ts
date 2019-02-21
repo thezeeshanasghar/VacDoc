@@ -10,7 +10,13 @@ import { AlertPage } from './alert.page';
 const routes: Routes = [
   {
     path: '',
-    component: AlertPage
+    component: AlertPage,
+    children: [
+      { path: '', redirectTo: 'vaccine-alert', pathMatch: 'full' },
+      { path: 'follow-up', loadChildren: './follow-up/follow-up.module#FollowUpPageModule' },
+      { path: 'vaccine-alert', loadChildren: './vaccine-alert/vaccine-alert.module#VaccineAlertPageModule' },
+
+    ]
   }
 ];
 
@@ -23,4 +29,4 @@ const routes: Routes = [
   ],
   declarations: [AlertPage]
 })
-export class AlertPageModule {}
+export class AlertPageModule { }
