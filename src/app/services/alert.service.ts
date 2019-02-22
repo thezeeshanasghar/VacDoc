@@ -16,8 +16,24 @@ export class AlertService extends BaseService {
     protected http: HttpClient
   ) { super(http); }
 
+  getLast5DaysChild(Id: String): Observable<any> {
+    const url = `${this.API_ALERT}schedule/alert/-5/${Id}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
   getTodayChild(Id: String): Observable<any> {
     const url = `${this.API_ALERT}schedule/alert/0/${Id}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
+  getNext5DaysChild(Id: String): Observable<any> {
+    const url = `${this.API_ALERT}schedule/alert/5/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
