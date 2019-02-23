@@ -1,4 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { FollowupService } from 'src/app/services/followup.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { Storage } from '@ionic/storage';
+import { environment } from 'src/environments/environment';
+import { ActivatedRoute } from '@angular/router';
+import { LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-followup',
@@ -7,9 +13,43 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FollowupPage implements OnInit {
 
-  constructor() { }
+  childData: any;
+  doctorID: any;
+  constructor(
+    public route: ActivatedRoute,
+    public loadingController: LoadingController,
+    private followupService: FollowupService,
+    private toastService: ToastService,
+    private storage: Storage
+  ) { }
 
   ngOnInit() {
+    this.storage.get(environment.DOCTOR_ID).then((val) => {
+      this.doctorID = val;
+    });
+    this.getfollowupchild();
+  }
+
+  async getfollowupchild() {
+    let data = { 'ChildID': this.route.snapshot.paramMap.get('id'), 'DoctorID': this.doctorID }
+    const loading = await this.loadingController.create({
+      message: 'Loading'
+    });
+    await loading.present();
+    await this.followupService.getFollowupByChild(data)
+      .subscribe(res => {
+        if (res.IsSuccess) {
+          this.childData = res.ResponseData;
+          loading.dismiss();
+        }
+        else {
+          loading.dismiss();
+          this.toastService.create(res.Message);
+        }
+      }, (err) => {
+        loading.dismiss();
+        this.toastService.create(err)
+      });
   }
 
 }

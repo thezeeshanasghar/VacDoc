@@ -13,10 +13,10 @@ const routes: Routes = [
     component: ChildPage
   },
   { path: 'add', loadChildren: './add/add.module#AddPageModule' },
-  { path: 'vaccine/:id', loadChildren: './vaccine/vaccine.module#VaccinePageModule' },
-  { path: 'followup', loadChildren: './followup/followup.module#FollowupPageModule' },
-  { path: 'growth', loadChildren: './growth/growth.module#GrowthPageModule' },
   { path: 'edit/:id', loadChildren: './edit/edit.module#EditPageModule' },
+  { path: 'vaccine/:id', loadChildren: './vaccine/vaccine.module#VaccinePageModule' },
+  { path: 'followup/:id', loadChildren: './followup/followup.module#FollowupPageModule' },
+  { path: 'growth', loadChildren: './growth/growth.module#GrowthPageModule' },
 ];
 
 @NgModule({
@@ -28,4 +28,4 @@ const routes: Routes = [
   ],
   declarations: [ChildPage]
 })
-export class ChildPageModule {}
+export class ChildPageModule { }

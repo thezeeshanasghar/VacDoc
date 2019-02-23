@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
-import { AlertService } from 'src/app/services/alert.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 import { Storage } from '@ionic/storage';
+import { FollowupService } from 'src/app/services/followup.service';
 
 @Component({
   selector: 'app-follow-up',
@@ -21,7 +21,7 @@ export class FollowUpPage implements OnInit {
   next5Days: boolean = false;
   constructor(
     public loadingController: LoadingController,
-    private alertService: AlertService,
+    private followupService: FollowupService,
     private toastService: ToastService,
     private storage: Storage
   ) { }
@@ -42,7 +42,7 @@ export class FollowUpPage implements OnInit {
       message: 'Loading'
     });
     await loading.present();
-    await this.alertService.getLast5DaysFollowupChild(this.doctorID).subscribe(
+    await this.followupService.getLast5DaysFollowupChild(this.doctorID).subscribe(
       res => {
         if (res.IsSuccess) {
           this.last5DaysfollowUp = res.ResponseData
@@ -69,7 +69,7 @@ export class FollowUpPage implements OnInit {
       message: 'Loading'
     });
     await loading.present();
-    await this.alertService.getTodayFollowupChild(this.doctorID).subscribe(
+    await this.followupService.getTodayFollowupChild(this.doctorID).subscribe(
       res => {
         if (res.IsSuccess) {
           this.todayfollowUp = res.ResponseData
@@ -96,7 +96,7 @@ export class FollowUpPage implements OnInit {
       message: 'Loading'
     });
     await loading.present();
-    await this.alertService.getNext5DaysFollowupChild(this.doctorID).subscribe(
+    await this.followupService.getNext5DaysFollowupChild(this.doctorID).subscribe(
       res => {
         if (res.IsSuccess) {
           this.Next5DaysfollowUp = res.ResponseData
@@ -121,7 +121,7 @@ export class FollowUpPage implements OnInit {
       message: 'Loading'
     });
     await loading.present();
-    await this.alertService.sendFollowupAlertMsgIndividual(id).subscribe(
+    await this.followupService.sendFollowupAlertMsgIndividual(id).subscribe(
       res => {
         if (res.IsSuccess) {
           loading.dismiss();

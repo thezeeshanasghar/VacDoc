@@ -40,30 +40,6 @@ export class AlertService extends BaseService {
     );
   }
 
-  getLast5DaysFollowupChild(Id: String): Observable<any> {
-    const url = `${this.API_ALERT}followup/alert/-5/${Id}`;
-    return this.http.get(url, this.httpOptions).pipe(
-      map(this.extractData),
-      catchError(this.handleError)
-    );
-  }
-
-  getTodayFollowupChild(Id: String): Observable<any> {
-    const url = `${this.API_ALERT}followup/alert/0/${Id}`;
-    return this.http.get(url, this.httpOptions).pipe(
-      map(this.extractData),
-      catchError(this.handleError)
-    );
-  }
-
-  getNext5DaysFollowupChild(Id: String): Observable<any> {
-    const url = `${this.API_ALERT}followup/alert/5/${Id}`;
-    return this.http.get(url, this.httpOptions).pipe(
-      map(this.extractData),
-      catchError(this.handleError)
-    );
-  }
-
   sendIndividualAlertMsg_Last5Days_Child(Id: String): Observable<any> {
     const url = `${this.API_ALERT}schedule/individual-sms-alert/-5/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
@@ -82,14 +58,6 @@ export class AlertService extends BaseService {
 
   sendIndividualAlertMsg_Next5Days_Child(Id: String): Observable<any> {
     const url = `${this.API_ALERT}schedule/individual-sms-alert/5/${Id}`;
-    return this.http.get(url, this.httpOptions).pipe(
-      map(this.extractData),
-      catchError(this.handleError)
-    );
-  }
-
-  sendFollowupAlertMsgIndividual(Id: String): Observable<any> {
-    const url = `${this.API_ALERT}followup/sms-alert/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
