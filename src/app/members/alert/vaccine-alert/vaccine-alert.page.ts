@@ -12,11 +12,10 @@ import { environment } from 'src/environments/environment';
 })
 export class VaccineAlertPage implements OnInit {
 
+  doctorID: any;
   last5DaysAlert: any;
   todayAlert: any;
   Next5DaysAlert: any;
-  doctorID: any;
-  whichTypeChildShow: any;
   last5Days: boolean = false;
   today: boolean = false;
   next5Days: boolean = false;
@@ -48,7 +47,6 @@ export class VaccineAlertPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.last5DaysAlert = res.ResponseData
-          console.log(this.last5DaysAlert);
           loading.dismiss();
         }
         else {
@@ -76,7 +74,6 @@ export class VaccineAlertPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.todayAlert = res.ResponseData
-          console.log(this.todayAlert);
           loading.dismiss();
         }
         else {
@@ -104,7 +101,6 @@ export class VaccineAlertPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.Next5DaysAlert = res.ResponseData
-          console.log(this.Next5DaysAlert);
           loading.dismiss();
         }
         else {
@@ -119,16 +115,68 @@ export class VaccineAlertPage implements OnInit {
     )
   }
 
-  async sendIndividualMsgtoChild(id) {
+  // send Alert Msg Last 5 days individual childs
+  async sendIndividualAlertMsg_Last5Days_Child(id) {
 
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
     await loading.present();
-    await this.alertService.getIndividualMsgtoChild(id).subscribe(
+    await this.alertService.sendIndividualAlertMsg_Last5Days_Child(id).subscribe(
       res => {
         if (res.IsSuccess) {
           loading.dismiss();
+          this.toastService.create('Alerts has been sent successfully');
+        }
+        else {
+          loading.dismiss();
+          this.toastService.create(res.Message, 'danger');
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, 'danger');
+      }
+    )
+  }
+
+  // send Alert Msg Today individual childs
+  async sendIndividualAlertMsg_Today_Child(id) {
+
+    const loading = await this.loadingController.create({
+      message: 'Loading'
+    });
+    await loading.present();
+    await this.alertService.sendIndividualAlertMsg_Today_Child(id).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          loading.dismiss();
+          this.toastService.create('Alerts has been sent successfully');
+        }
+        else {
+          loading.dismiss();
+          this.toastService.create(res.Message, 'danger');
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, 'danger');
+      }
+    )
+  }
+
+  // send Alert Msg Next 5 days individual childs
+  async sendIndividualAlertMsg_Next5Days_Child(id) {
+
+    const loading = await this.loadingController.create({
+      message: 'Loading'
+    });
+    await loading.present();
+    await this.alertService.sendIndividualAlertMsg_Next5Days_Child(id).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          loading.dismiss();
+          this.toastService.create('Alerts has been sent successfully');
         }
         else {
           loading.dismiss();

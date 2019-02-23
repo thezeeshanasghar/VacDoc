@@ -1,9 +1,138 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>follow_up</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content padding>
 
+  <div style="margin-left:25%;">
+    <ion-button fill="outline" (click)="getlast5DaystChlid()">last 5 days</ion-button>
+    <ion-button fill="outline" (click)="getTodayChlid()">Today</ion-button>
+    <ion-button fill="outline" (click)="getNext5daysChlid()">Next 5 days</ion-button>
+  </div>
+  <ion-icon size="large" color="primary" name="mail" (click)="alertDeletevaccine()"></ion-icon>
+
+  <!-- last 5 days childs -->
+  <div *ngIf="last5Days==true">
+    <p>last 5 days childs</p>
+    <h1 *ngIf="last5DaysfollowUp == 0" style="color: red;">No alert for today.</h1>
+    <ion-grid *ngFor="let child of last5DaysfollowUp">
+
+      <ion-row *ngIf="child.Child.Gender=='Boy'">
+
+        <ion-col size="1">
+          <ion-avatar><img src="../../assets/male.png" style="padding:10px;"></ion-avatar>
+        </ion-col>
+
+        <ion-col>
+          <ion-item>
+            <ion-label>{{child.Child.Name}}</ion-label>
+            <ion-icon slot="end" color="primary" name="call" routerLink="/members/child/edit/"></ion-icon>
+            <ion-icon slot="end" color="primary" name="mail" (click)="sendAlertMsg(child.ChildID)">
+            </ion-icon>
+          </ion-item>
+        </ion-col>
+
+      </ion-row>
+
+      <ion-row *ngIf="child.Child.Gender=='Girl'">
+
+        <ion-col size="1">
+          <ion-avatar><img src="../../assets/female.png" style="padding:10px;"></ion-avatar>
+        </ion-col>
+
+        <ion-col>
+          <ion-item>
+            <ion-label>{{child.Child.Name}}</ion-label>
+            <ion-icon slot="end" color="primary" name="call" routerLink="/members/child/edit/"></ion-icon>
+            <ion-icon slot="end" color="primary" name="mail" (click)="sendAlertMsg(child.ChildID)">
+            </ion-icon>
+          </ion-item>
+        </ion-col>
+
+      </ion-row>
+    </ion-grid>
+
+  </div>
+
+  <!-- Today childs -->
+  <div *ngIf="today==true">
+    <p>Today</p>
+    <h1 *ngIf="todayfollowUp == 0" style="color: red;">No alert for today.</h1>
+    <ion-grid *ngFor="let child of todayfollowUp">
+
+      <ion-row *ngIf="child.Child.Gender=='Boy'">
+
+        <ion-col size="1">
+          <ion-avatar><img src="../../assets/male.png" style="padding:10px;"></ion-avatar>
+        </ion-col>
+
+        <ion-col>
+          <ion-item>
+            <ion-label>{{child.Child.Name}}</ion-label>
+            <ion-icon slot="end" color="primary" name="call" routerLink="/members/child/edit/"></ion-icon>
+            <ion-icon slot="end" color="primary" name="mail" (click)="sendAlertMsg(child.ChildID)">
+            </ion-icon>
+          </ion-item>
+        </ion-col>
+
+      </ion-row>
+
+      <ion-row *ngIf="child.Child.Gender=='Girl'">
+
+        <ion-col size="1">
+          <ion-avatar><img src="../../assets/female.png" style="padding:10px;"></ion-avatar>
+        </ion-col>
+
+        <ion-col>
+          <ion-item>
+            <ion-label>{{child.Child.Name}}</ion-label>
+            <ion-icon slot="end" color="primary" name="call" routerLink="/members/child/edit/"></ion-icon>
+            <ion-icon slot="end" color="primary" name="mail" (click)="sendAlertMsg(child.ChildID)">
+            </ion-icon>
+          </ion-item>
+        </ion-col>
+
+      </ion-row>
+    </ion-grid>
+
+  </div>
+
+  <!-- Next 5 days childs -->
+  <div *ngIf="next5Days==true">
+    <p>Next 5 Days Alert</p>
+    <h1 *ngIf="Next5DaysfollowUp == 0" style="color: red;">No alert for today.</h1>
+    <ion-grid *ngFor="let child of Next5DaysfollowUp">
+
+      <ion-row *ngIf="child.Child.Gender=='Boy'">
+
+        <ion-col size="1">
+          <ion-avatar><img src="../../assets/male.png" style="padding:10px;"></ion-avatar>
+        </ion-col>
+
+        <ion-col>
+          <ion-item>
+            <ion-label>{{child.Child.Name}}</ion-label>
+            <ion-icon slot="end" color="primary" name="call" routerLink="/members/child/edit/"></ion-icon>
+            <ion-icon slot="end" color="primary" name="mail" (click)="sendAlertMsg(child.ChildID)">
+            </ion-icon>
+          </ion-item>
+        </ion-col>
+
+      </ion-row>
+
+      <ion-row *ngIf="child.Child.Gender=='Girl'">
+
+        <ion-col size="1">
+          <ion-avatar><img src="../../assets/female.png" style="padding:10px;"></ion-avatar>
+        </ion-col>
+
+        <ion-col>
+          <ion-item>
+            <ion-label>{{child.Child.Name}}</ion-label>
+            <ion-icon slot="end" color="primary" name="call" routerLink="/members/child/edit/"></ion-icon>
+            <ion-icon slot="end" color="primary" name="mail" (click)="sendAlertMsg(child.ChildID)">
+            </ion-icon>
+          </ion-item>
+        </ion-col>
+
+      </ion-row>
+    </ion-grid>
+
+  </div>
 </ion-content>

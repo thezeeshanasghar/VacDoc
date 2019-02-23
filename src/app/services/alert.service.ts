@@ -40,7 +40,15 @@ export class AlertService extends BaseService {
     );
   }
 
-  getFollowupChild(Id: String): Observable<any> {
+  getLast5DaysFollowupChild(Id: String): Observable<any> {
+    const url = `${this.API_ALERT}followup/alert/-5/${Id}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
+  getTodayFollowupChild(Id: String): Observable<any> {
     const url = `${this.API_ALERT}followup/alert/0/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
@@ -48,8 +56,40 @@ export class AlertService extends BaseService {
     );
   }
 
-  getIndividualMsgtoChild(Id: String): Observable<any> {
+  getNext5DaysFollowupChild(Id: String): Observable<any> {
+    const url = `${this.API_ALERT}followup/alert/5/${Id}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
+  sendIndividualAlertMsg_Last5Days_Child(Id: String): Observable<any> {
+    const url = `${this.API_ALERT}schedule/individual-sms-alert/-5/${Id}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
+  sendIndividualAlertMsg_Today_Child(Id: String): Observable<any> {
+    const url = `${this.API_ALERT}schedule/individual-sms-alert/0/${Id}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
+  sendIndividualAlertMsg_Next5Days_Child(Id: String): Observable<any> {
     const url = `${this.API_ALERT}schedule/individual-sms-alert/5/${Id}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
+  sendFollowupAlertMsgIndividual(Id: String): Observable<any> {
+    const url = `${this.API_ALERT}followup/sms-alert/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
