@@ -5,45 +5,26 @@
       <ion-back-button defaultHref="/members/dashboard"></ion-back-button>
     </ion-buttons>
     <ion-title>Follow up</ion-title>
-    <ion-icon slot="end" size="large" name="add" color="light" routerLink="/members/child/followup/:id/add"></ion-icon>
+    <ion-icon slot="end" size="large" name="add" color="light"
+      routerLink="/members/child/followup/{{childID}}/addfollowup"></ion-icon>
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
-  <ion-grid *ngFor="let child of childData">
 
-    <ion-row *ngIf="child.Child.Gender=='Boy'">
+  <div *ngFor="let child of childData">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{child.Child.Name}}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Date: {{child.CurrentVisitDate}}</p>
+        <p>Disease: {{child.Disease}}</p>
+        <p>Weight: {{child.Weight}}</p>
+        <p>Height:{{child.Height}}</p>
+        <p>OFC:{{child.OFC}}</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
 
-      <ion-col size="1">
-        <ion-avatar><img src="../../assets/male.png" style="padding:10px;"></ion-avatar>
-      </ion-col>
-
-      <ion-col>
-        <ion-item>
-          <ion-label>{{child.Child.Name}}</ion-label>
-          <ion-icon slot="end" color="primary" name="call" routerLink="/members/child/edit/"></ion-icon>
-          <ion-icon slot="end" color="primary" name="mail" (click)="sendAlertMsg(child.ChildID)">
-          </ion-icon>
-        </ion-item>
-      </ion-col>
-
-    </ion-row>
-
-    <ion-row *ngIf="child.Child.Gender=='Girl'">
-
-      <ion-col size="1">
-        <ion-avatar><img src="../../assets/female.png" style="padding:10px;"></ion-avatar>
-      </ion-col>
-
-      <ion-col>
-        <ion-item>
-          <ion-label>{{child.Child.Name}}</ion-label>
-          <ion-icon slot="end" color="primary" name="call" routerLink="/members/child/edit/"></ion-icon>
-          <ion-icon slot="end" color="primary" name="mail" (click)="sendAlertMsg(child.ChildID)">
-          </ion-icon>
-        </ion-item>
-      </ion-col>
-
-    </ion-row>
-  </ion-grid>
 </ion-content>

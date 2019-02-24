@@ -24,6 +24,14 @@ export class FollowupService extends BaseService {
       );
   }
 
+  addFollowupByChild(data): Observable<any> {
+    const url = `${this.API_ALERT}followup`;
+    return this.http.post(url, data, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   getLast5DaysFollowupChild(Id: String): Observable<any> {
     const url = `${this.API_ALERT}followup/alert/-5/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(

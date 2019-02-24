@@ -1,6 +1,6 @@
 <ion-content padding>
 
-  <div style="margin-left:25%;">
+  <div>
     <ion-button fill="outline" (click)="getLast5daysChlid()">last 5 days</ion-button>
     <ion-button fill="outline" (click)="getTodayChlid()">Today</ion-button>
     <ion-button fill="outline" (click)="getNext5DaysChlid()">Next 5 days</ion-button>
@@ -10,12 +10,13 @@
   <!-- last 5 days childs -->
   <div *ngIf="last5Days==true">
     <p>last 5 days childs</p>
+    <h1 *ngIf="last5DaysAlert == 0" style="color: red;">No alert for today.</h1>
     <ion-grid *ngFor="let child of last5DaysAlert">
 
       <ion-row *ngIf="child.Child.Gender=='Boy'">
 
-        <ion-col size="1">
-          <ion-avatar><img src="../../assets/male.png" style="padding:10px;"></ion-avatar>
+        <ion-col size="2">
+          <ion-avatar><img src="../../assets/male.png"></ion-avatar>
         </ion-col>
 
         <ion-col>
@@ -32,8 +33,8 @@
 
       <ion-row *ngIf="child.Child.Gender=='Girl'">
 
-        <ion-col size="1">
-          <ion-avatar><img src="../../assets/female.png" style="padding:10px;"></ion-avatar>
+        <ion-col size="2">
+          <ion-avatar><img src="../../assets/female.png"></ion-avatar>
         </ion-col>
 
         <ion-col>
@@ -54,12 +55,13 @@
   <!-- Today childs -->
   <div *ngIf="today==true">
     <p>Today</p>
+    <h1 *ngIf="todayAlert == 0" style="color: red;">No alert for today.</h1>
     <ion-grid *ngFor="let child of todayAlert">
 
       <ion-row *ngIf="child.Child.Gender=='Boy'">
 
-        <ion-col size="1">
-          <ion-avatar><img src="../../assets/male.png" style="padding:10px;"></ion-avatar>
+        <ion-col size="2">
+          <ion-avatar><img src="../../assets/male.png"></ion-avatar>
         </ion-col>
 
         <ion-col>
@@ -76,8 +78,8 @@
 
       <ion-row *ngIf="child.Child.Gender=='Girl'">
 
-        <ion-col size="1">
-          <ion-avatar><img src="../../assets/female.png" style="padding:10px;"></ion-avatar>
+        <ion-col size="2">
+          <ion-avatar><img src="../../assets/female.png"></ion-avatar>
         </ion-col>
 
         <ion-col>
@@ -98,12 +100,13 @@
   <!-- Next 5 days childs -->
   <div *ngIf="next5Days==true">
     <p>Next 5 Days Alert</p>
+    <h1 *ngIf="Next5DaysAlert == 0" style="color: red;">No alert for today.</h1>
     <ion-grid *ngFor="let child of Next5DaysAlert">
 
       <ion-row *ngIf="child.Child.Gender=='Boy'">
 
-        <ion-col size="1">
-          <ion-avatar><img src="../../assets/male.png" style="padding:10px;"></ion-avatar>
+        <ion-col size="2">
+          <ion-avatar><img src="../../assets/male.png"></ion-avatar>
         </ion-col>
 
         <ion-col>
@@ -120,8 +123,8 @@
 
       <ion-row *ngIf="child.Child.Gender=='Girl'">
 
-        <ion-col size="1">
-          <ion-avatar><img src="../../assets/female.png" style="padding:10px;"></ion-avatar>
+        <ion-col size="2">
+          <ion-avatar><img src="../../assets/female.png"></ion-avatar>
         </ion-col>
 
         <ion-col>

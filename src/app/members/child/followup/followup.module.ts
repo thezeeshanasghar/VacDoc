@@ -12,7 +12,7 @@ const routes: Routes = [
     path: '',
     component: FollowupPage
   },
-  { path: 'Add', loadChildren: './add/add.module#AddPageModule' },
+  { path: 'addfollowup', loadChildren: './addfollowup/addfollowup.module#AddfollowupPageModule' },
 ];
 
 @NgModule({

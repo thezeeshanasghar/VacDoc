@@ -5,6 +5,7 @@ import { ToastService } from 'src/app/shared/toast.service';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment.prod';
 import { AlertService } from 'src/app/shared/alert.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-child',
@@ -16,6 +17,7 @@ export class ChildPage {
 
   childs: any;
   constructor(
+    public router: Router,
     public loadingController: LoadingController,
     private childService: ChildService,
     private toastService: ToastService,
@@ -75,6 +77,7 @@ export class ChildPage {
       res => {
         if (res.IsSuccess == true) {
           this.toastService.create(res.Message);
+          this.getAllChlid(2);
           loading.dismiss();
         }
         else {

@@ -93,7 +93,6 @@ export class EditPage implements OnInit {
     });
 
     await loading.present();
-    console.log(this.fg.value);
 
     await this.childService.editChild(this.fg.value)
       .subscribe(res => {

@@ -15,6 +15,7 @@ export class FollowupPage implements OnInit {
 
   childData: any;
   doctorID: any;
+  childID: any;
   constructor(
     public route: ActivatedRoute,
     public loadingController: LoadingController,
@@ -27,11 +28,12 @@ export class FollowupPage implements OnInit {
     this.storage.get(environment.DOCTOR_ID).then((val) => {
       this.doctorID = val;
     });
+    this.childID = this.route.snapshot.paramMap.get('id');
     this.getfollowupchild();
   }
 
   async getfollowupchild() {
-    let data = { 'ChildID': this.route.snapshot.paramMap.get('id'), 'DoctorID': this.doctorID }
+    let data = { 'ChildID': this.childID, 'DoctorID': this.doctorID }
     const loading = await this.loadingController.create({
       message: 'Loading'
     });

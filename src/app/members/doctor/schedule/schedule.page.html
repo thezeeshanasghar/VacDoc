@@ -9,10 +9,10 @@
 
 <ion-content padding>
 
-  <form [formGroup]="fg">
+  <form>
     <ion-item *ngFor="let d of schedule">
       <ion-label color="primary" position="floating">{{d.Dose.Name}}</ion-label>
-      <ion-select value="0" ng-model="fff" [formControlName]="value">
+      <ion-select value="0">
         <ion-select-option value="0">At Birth</ion-select-option>
         <ion-select-option value="42">6 Weeks</ion-select-option>
         <ion-select-option value="49">7 Weeks</ion-select-option>
@@ -102,7 +102,7 @@
       </ion-select>
     </ion-item>
 
-    <ion-button (click)="getChildVaccinefromUser()">Submit</ion-button>
+    <ion-button disabled="true" (click)="getChildVaccinefromUser()">Submit</ion-button>
   </form>
 
 </ion-content>
