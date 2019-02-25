@@ -11,7 +11,7 @@
 
     <ion-item>
       <ion-label>{{clinic.Name}}</ion-label>
-      <ion-icon slot="end" routerLink="/vaccine/{{clinic.ID}}/edit" color="primary" name="create"></ion-icon>
+      <ion-icon slot="end" routerLink="/members/doctor/clinic/edit/{{clinic.ID}}" color="primary" name="create"></ion-icon>
       <ion-icon slot="end" (click)="promptForDeleteVaccine(clinic.ID)" color="primary" name="trash"></ion-icon>
     </ion-item>
 

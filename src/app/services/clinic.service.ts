@@ -10,8 +10,8 @@ import { map, catchError } from 'rxjs/operators';
 })
 export class ClinicService extends BaseService {
 
-  private readonly API_DOC = `${environment.BASE_URL}/doctor/`
-  private readonly API_CLINIC = `${environment.BASE_URL}/clinic/`
+  private readonly API_DOC = `${environment.BASE_URL}doctor/`
+  private readonly API_CLINIC = `${environment.BASE_URL}clinic/`
 
   constructor(
     protected http: HttpClient
@@ -19,6 +19,13 @@ export class ClinicService extends BaseService {
 
   getClinics(id: number): Observable<any> {
     const url = `${this.API_DOC}${id}/clinics`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+  getClinicById(id: string): Observable<any> {
+    const url = `${this.API_CLINIC}${id}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)

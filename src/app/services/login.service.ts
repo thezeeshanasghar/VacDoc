@@ -39,4 +39,13 @@ export class LoginService extends BaseService {
         catchError(this.handleError)
       );
   }
+
+  ChangePassword(data): Observable<any> {
+    const url = `${this.API_LOGIN}change-password`;
+    return this.http.post(url, data, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
 }

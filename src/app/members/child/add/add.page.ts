@@ -132,11 +132,11 @@ export class AddPage implements OnInit {
         }
         else {
           this.formcontroll = false;
-          this.toastService.create(res.Message);
+          this.toastService.create(res.Message, 'danger');
         }
       }, (err) => {
         this.formcontroll = false;
-        this.toastService.create(err)
+        this.toastService.create(err, 'danger')
       });
   }
 }
