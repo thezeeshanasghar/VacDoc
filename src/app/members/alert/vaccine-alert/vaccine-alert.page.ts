@@ -30,7 +30,7 @@ export class VaccineAlertPage implements OnInit {
     this.storage.get(environment.DOCTOR_ID).then((val) => {
       this.doctorID = val;
     });
-
+    console.log(this.doctorID);
     this.getTodayChlid();
   }
 

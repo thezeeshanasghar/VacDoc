@@ -1,28 +1,28 @@
 <ion-header>
-    <ion-toolbar color="primary">
-      <ion-buttons slot="start">
-        <ion-menu-button></ion-menu-button>
-      </ion-buttons>
-      <ion-title>Alert</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Alert</ion-title>
+  </ion-toolbar>
+</ion-header>
 
-  <ion-content padding>
+<ion-content padding>
 
-    <ion-tabs>
-        <ion-tab-bar slot="bottom">
-          <ion-tab-button tab="vaccine-alert">
-            <ion-icon name="checkbox-outline"></ion-icon>
-            <ion-label>Vaccine ALert</ion-label>
-            <!-- <ion-badge *ngIf="approvedCount">{{approvedCount}}</ion-badge> -->
-          </ion-tab-button>
-    
-          <ion-tab-button tab="follow-up">
-           <ion-icon name="close-circle-outline"></ion-icon>
-           <ion-label>Follow Up Alert</ion-label>
-           <!-- <ion-badge *ngIf="unapprovedCount">{{unapprovedCount}}</ion-badge> -->
-          </ion-tab-button>
-        </ion-tab-bar>
-      </ion-tabs>
-    
+  <ion-tabs>
+    <ion-tab-bar slot="bottom">
+      <ion-tab-button tab="vaccine-alert">
+        <ion-icon name="color-filter"></ion-icon>
+        <ion-label>Vaccine ALert</ion-label>
+        <!-- <ion-badge *ngIf="approvedCount">{{approvedCount}}</ion-badge> -->
+      </ion-tab-button>
+
+      <ion-tab-button tab="follow-up">
+        <ion-icon name="color-wand"></ion-icon>
+        <ion-label>Follow Up Alert</ion-label>
+        <!-- <ion-badge *ngIf="unapprovedCount">{{unapprovedCount}}</ion-badge> -->
+      </ion-tab-button>
+    </ion-tab-bar>
+  </ion-tabs>
+
 </ion-content>

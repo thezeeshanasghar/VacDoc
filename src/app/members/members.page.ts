@@ -55,6 +55,11 @@ export class MembersPage implements OnInit {
       icon: 'locate'
     },
     {
+      title: 'Change Password',
+      url: '/members/doctor/password',
+      icon: 'moon'
+    },
+    {
       title: 'Brand Inventory',
       url: '/members/doctor/brand-inventory',
       icon: 'locate'
@@ -63,7 +68,8 @@ export class MembersPage implements OnInit {
       title: 'Brand Amount',
       url: '/members/doctor/brand-amount',
       icon: 'locate'
-    }
+    },
+    
   ];
 
   public childPages = [
