@@ -1,12 +1,47 @@
 <ion-header>
-    <ion-toolbar color="primary">
-      <ion-buttons slot="start">
-        <ion-back-button></ion-back-button>
-      </ion-buttons>
-      <ion-title>Edit Clinic</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Edit Clinic</ion-title>
+  </ion-toolbar>
+</ion-header>
 
 <ion-content padding>
+  <form [formGroup]="fg">
+    <ion-item>
+      <ion-label color="primary" position="floating">Name</ion-label>
+      <ion-input type="text" formControlName="Name" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label color="primary" position="floating">Phone Number</ion-label>
+      <ion-input type="text" formControlName="PhoneNumber" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label color="primary" position="floating">Address</ion-label>
+      <ion-input type="text" formControlName="Address" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label color="primary" position="floating">Consultation Fee</ion-label>
+      <ion-input type="text" formControlName="ConsultationFee" required></ion-input>
+    </ion-item>
+    <ion-toggle color="primary"></ion-toggle>
+  </form>
+
+  <div>
+      <form [formGroup]="fg2">
+        <ion-list>
+          <ion-row>
+            <ion-col>
+              <ion-item formArrayName="ChildVaccines" *ngFor="let order of fg2.controls.ChildVaccines.controls; let i = index">
+                <ion-label color="primary"> {{vaccines[i].Name}}</ion-label>
+                <!-- <ion-checkbox slot="start" required [formControlName]="i"></ion-checkbox> -->
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-list>
+        <ion-button (click)="getChildVaccinefromUser()">Save</ion-button>
+      </form>
+    </div>
 
 </ion-content>
