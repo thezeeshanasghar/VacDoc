@@ -13,12 +13,7 @@ import { FollowupService } from 'src/app/services/followup.service';
 export class FollowUpPage implements OnInit {
 
   doctorID: any;
-  last5DaysfollowUp: any;
-  todayfollowUp: any;
-  Next5DaysfollowUp: any;
-  last5Days: boolean = false;
-  today: boolean = false;
-  next5Days: boolean = false;
+  followUpChild: any;
   constructor(
     public loadingController: LoadingController,
     private followupService: FollowupService,
@@ -30,76 +25,19 @@ export class FollowUpPage implements OnInit {
     this.storage.get(environment.DOCTOR_ID).then((val) => {
       this.doctorID = val;
     });
-    this.getTodayChlid();
+    this.getFollowupChild(0);
   }
 
-  // Last 5 days childs get from server
-  async getlast5DaystChlid() {
-    this.last5Days = true;
-    this.today = false;
-    this.next5Days = false;
+  // get childs from server
+  async getFollowupChild(followId) {
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
     await loading.present();
-    await this.followupService.getLast5DaysFollowupChild(this.doctorID).subscribe(
+    await this.followupService.getFollowupChild(followId, this.doctorID).subscribe(
       res => {
         if (res.IsSuccess) {
-          this.last5DaysfollowUp = res.ResponseData
-          loading.dismiss();
-        }
-        else {
-          loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
-        }
-      },
-      err => {
-        loading.dismiss();
-        this.toastService.create(err, 'danger');
-      }
-    )
-  }
-
-  // Todays childs get from server
-  async getTodayChlid() {
-    this.last5Days = false;
-    this.today = true;
-    this.next5Days = false;
-    const loading = await this.loadingController.create({
-      message: 'Loading'
-    });
-    await loading.present();
-    await this.followupService.getTodayFollowupChild(this.doctorID).subscribe(
-      res => {
-        if (res.IsSuccess) {
-          this.todayfollowUp = res.ResponseData
-          loading.dismiss();
-        }
-        else {
-          loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
-        }
-      },
-      err => {
-        loading.dismiss();
-        this.toastService.create(err, 'danger');
-      }
-    )
-  }
-
-  // Next 5 days childs get from server
-  async getNext5daysChlid() {
-    this.last5Days = false;
-    this.today = false;
-    this.next5Days = true;
-    const loading = await this.loadingController.create({
-      message: 'Loading'
-    });
-    await loading.present();
-    await this.followupService.getNext5DaysFollowupChild(this.doctorID).subscribe(
-      res => {
-        if (res.IsSuccess) {
-          this.Next5DaysfollowUp = res.ResponseData
+          this.followUpChild = res.ResponseData
           loading.dismiss();
         }
         else {

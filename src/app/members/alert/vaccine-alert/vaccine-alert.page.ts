@@ -13,12 +13,8 @@ import { environment } from 'src/environments/environment';
 export class VaccineAlertPage implements OnInit {
 
   doctorID: any;
-  last5DaysAlert: any;
-  todayAlert: any;
-  Next5DaysAlert: any;
-  last5Days: boolean = false;
-  today: boolean = false;
-  next5Days: boolean = false;
+  Childs: any;
+  alertID: any;
   constructor(
     public loadingController: LoadingController,
     private alertService: AlertService,
@@ -31,22 +27,20 @@ export class VaccineAlertPage implements OnInit {
       this.doctorID = val;
     });
     console.log(this.doctorID);
-    this.getTodayChlid();
+    this.getChlid(0);
   }
 
-  // last 5 days childs get from server
-  async getLast5daysChlid() {
-    this.last5Days = true;
-    this.today = false;
-    this.next5Days = false;
+  // Get childs get from server
+  async getChlid(msgID) {
+    this.alertID = msgID;
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
     await loading.present();
-    await this.alertService.getLast5DaysChild(this.doctorID).subscribe(
+    await this.alertService.getChild(this.alertID, this.doctorID).subscribe(
       res => {
         if (res.IsSuccess) {
-          this.last5DaysAlert = res.ResponseData
+          this.Childs = res.ResponseData
           loading.dismiss();
         }
         else {
@@ -61,68 +55,14 @@ export class VaccineAlertPage implements OnInit {
     )
   }
 
-  // Today childs get from server
-  async getTodayChlid() {
-    this.last5Days = false;
-    this.today = true;
-    this.next5Days = false;
-    const loading = await this.loadingController.create({
-      message: 'Loading'
-    });
-    await loading.present();
-    await this.alertService.getTodayChild(this.doctorID).subscribe(
-      res => {
-        if (res.IsSuccess) {
-          this.todayAlert = res.ResponseData
-          loading.dismiss();
-        }
-        else {
-          loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
-        }
-      },
-      err => {
-        loading.dismiss();
-        this.toastService.create(err, 'danger');
-      }
-    )
-  }
-
-  // Next 5 days childs get from server
-  async getNext5DaysChlid() {
-    this.last5Days = false;
-    this.today = false;
-    this.next5Days = true;
-    const loading = await this.loadingController.create({
-      message: 'Loading'
-    });
-    await loading.present();
-    await this.alertService.getNext5DaysChild(this.doctorID).subscribe(
-      res => {
-        if (res.IsSuccess) {
-          this.Next5DaysAlert = res.ResponseData
-          loading.dismiss();
-        }
-        else {
-          loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
-        }
-      },
-      err => {
-        loading.dismiss();
-        this.toastService.create(err, 'danger');
-      }
-    )
-  }
-
-  // send Alert Msg Last 5 days individual childs
-  async sendIndividualAlertMsg_Last5Days_Child(id) {
+  // send Alert Msg individual childs
+  async sendIndividualAlertMsg(id) {
 
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
     await loading.present();
-    await this.alertService.sendIndividualAlertMsg_Last5Days_Child(id).subscribe(
+    await this.alertService.sendIndividualAlertMsg(this.alertID, id).subscribe(
       res => {
         if (res.IsSuccess) {
           loading.dismiss();
@@ -140,53 +80,4 @@ export class VaccineAlertPage implements OnInit {
     )
   }
 
-  // send Alert Msg Today individual childs
-  async sendIndividualAlertMsg_Today_Child(id) {
-
-    const loading = await this.loadingController.create({
-      message: 'Loading'
-    });
-    await loading.present();
-    await this.alertService.sendIndividualAlertMsg_Today_Child(id).subscribe(
-      res => {
-        if (res.IsSuccess) {
-          loading.dismiss();
-          this.toastService.create('Alerts has been sent successfully');
-        }
-        else {
-          loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
-        }
-      },
-      err => {
-        loading.dismiss();
-        this.toastService.create(err, 'danger');
-      }
-    )
-  }
-
-  // send Alert Msg Next 5 days individual childs
-  async sendIndividualAlertMsg_Next5Days_Child(id) {
-
-    const loading = await this.loadingController.create({
-      message: 'Loading'
-    });
-    await loading.present();
-    await this.alertService.sendIndividualAlertMsg_Next5Days_Child(id).subscribe(
-      res => {
-        if (res.IsSuccess) {
-          loading.dismiss();
-          this.toastService.create('Alerts has been sent successfully');
-        }
-        else {
-          loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
-        }
-      },
-      err => {
-        loading.dismiss();
-        this.toastService.create(err, 'danger');
-      }
-    )
-  }
 }

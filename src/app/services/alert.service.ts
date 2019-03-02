@@ -16,48 +16,16 @@ export class AlertService extends BaseService {
     protected http: HttpClient
   ) { super(http); }
 
-  getLast5DaysChild(Id: String): Observable<any> {
-    const url = `${this.API_ALERT}schedule/alert/-5/${Id}`;
+  getChild(msgID: String, Id: String, ): Observable<any> {
+    const url = `${this.API_ALERT}schedule/alert/${msgID}/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
     );
   }
 
-  getTodayChild(Id: String): Observable<any> {
-    const url = `${this.API_ALERT}schedule/alert/0/${Id}`;
-    return this.http.get(url, this.httpOptions).pipe(
-      map(this.extractData),
-      catchError(this.handleError)
-    );
-  }
-
-  getNext5DaysChild(Id: String): Observable<any> {
-    const url = `${this.API_ALERT}schedule/alert/5/${Id}`;
-    return this.http.get(url, this.httpOptions).pipe(
-      map(this.extractData),
-      catchError(this.handleError)
-    );
-  }
-
-  sendIndividualAlertMsg_Last5Days_Child(Id: String): Observable<any> {
-    const url = `${this.API_ALERT}schedule/individual-sms-alert/-5/${Id}`;
-    return this.http.get(url, this.httpOptions).pipe(
-      map(this.extractData),
-      catchError(this.handleError)
-    );
-  }
-
-  sendIndividualAlertMsg_Today_Child(Id: String): Observable<any> {
-    const url = `${this.API_ALERT}schedule/individual-sms-alert/0/${Id}`;
-    return this.http.get(url, this.httpOptions).pipe(
-      map(this.extractData),
-      catchError(this.handleError)
-    );
-  }
-
-  sendIndividualAlertMsg_Next5Days_Child(Id: String): Observable<any> {
-    const url = `${this.API_ALERT}schedule/individual-sms-alert/5/${Id}`;
+  sendIndividualAlertMsg(msgId: String, Id: String): Observable<any> {
+    const url = `${this.API_ALERT}schedule/individual-sms-alert/${msgId}/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)

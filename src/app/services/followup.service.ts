@@ -32,24 +32,8 @@ export class FollowupService extends BaseService {
       );
   }
 
-  getLast5DaysFollowupChild(Id: String): Observable<any> {
-    const url = `${this.API_ALERT}followup/alert/-5/${Id}`;
-    return this.http.get(url, this.httpOptions).pipe(
-      map(this.extractData),
-      catchError(this.handleError)
-    );
-  }
-
-  getTodayFollowupChild(Id: String): Observable<any> {
-    const url = `${this.API_ALERT}followup/alert/0/${Id}`;
-    return this.http.get(url, this.httpOptions).pipe(
-      map(this.extractData),
-      catchError(this.handleError)
-    );
-  }
-
-  getNext5DaysFollowupChild(Id: String): Observable<any> {
-    const url = `${this.API_ALERT}followup/alert/5/${Id}`;
+  getFollowupChild(followupId: String, Id: String): Observable<any> {
+    const url = `${this.API_ALERT}followup/alert/${followupId}/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
