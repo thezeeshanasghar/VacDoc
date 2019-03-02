@@ -56,16 +56,19 @@ export class ChildPage {
   }
 
   // Alert Msg Show for deletion of Child
-  alertDeletevaccine(id) {
-    this.alertService.confirmAlert('Are you sure you want to delete this ?', null)
-      .then((yes) => {
-        if (yes) {
-          console.log(id)
-          this.Deletechild(id);
-        }
-      });
-
+  async alertDeletevaccine() {
+    
   }
+  // alertDeletevaccine(id) {
+  //   this.alertService.confirmAlert('Are you sure you want to delete this ?', null)
+  //     .then((yes) => {
+  //       if (yes) {
+  //         console.log(id)
+  //         this.Deletechild(id);
+  //       }
+  //     });
+
+  // }
 
   // Call api to delete a Child 
   async Deletechild(id) {

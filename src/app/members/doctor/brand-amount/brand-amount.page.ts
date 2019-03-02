@@ -57,4 +57,8 @@ export class BrandAmountPage implements OnInit {
       }
     )
   }
+
+  async getvalue() {
+    
+  }
 }

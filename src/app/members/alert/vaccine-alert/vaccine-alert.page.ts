@@ -80,4 +80,60 @@ export class VaccineAlertPage implements OnInit {
     )
   }
 
+<<<<<<< HEAD
+=======
+  // send Alert Msg Today individual childs
+  async sendIndividualAlertMsg_Today_Child(id) {
+
+    const loading = await this.loadingController.create({
+      message: 'Loading'
+    });
+    await loading.present();
+    await this.alertService.sendIndividualAlertMsg_Today_Child(id).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          loading.dismiss();
+          this.toastService.create('Alerts has been sent successfully');
+        }
+        else {
+          loading.dismiss();
+          this.toastService.create(res.Message, 'danger');
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, 'danger');
+      }
+    )
+  }
+
+  // send Alert Msg Next 5 days individual childs
+  async sendIndividualAlertMsg_Next5Days_Child(id) {
+
+    const loading = await this.loadingController.create({
+      message: 'Loading'
+    });
+    await loading.present();
+    await this.alertService.sendIndividualAlertMsg_Next5Days_Child(id).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          loading.dismiss();
+          this.toastService.create('Alerts has been sent successfully');
+        }
+        else {
+          loading.dismiss();
+          this.toastService.create(res.Message, 'danger');
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, 'danger');
+      }
+    )
+  }
+
+  async alertDeletevaccine() {
+
+  }
+>>>>>>> d85ac1045bc6cdc33f9336e2b7a9b151df7cba61
 }

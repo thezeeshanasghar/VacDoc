@@ -51,5 +51,7 @@ export class LoginPage implements OnInit {
       });
   }
 
-
+  async forgotPasswordAlert() {
+    
+  }
 }
