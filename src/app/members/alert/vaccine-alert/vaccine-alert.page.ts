@@ -189,4 +189,8 @@ export class VaccineAlertPage implements OnInit {
       }
     )
   }
+
+  async alertDeletevaccine() {
+
+  }
 }

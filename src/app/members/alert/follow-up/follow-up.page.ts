@@ -138,4 +138,8 @@ export class FollowUpPage implements OnInit {
       }
     )
   }
+
+  async alertDeletevaccine() {
+    
+  }
 }
