@@ -26,6 +26,7 @@ export class LoginPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.skipLoginIfAlreadyLoggedIn();
     this.loginservice.changeState(false);
     this.fg = this.formBuilder.group({
       'MobileNumber': [null, Validators.required],
@@ -35,12 +36,21 @@ export class LoginPage implements OnInit {
     });
   }
 
+  skipLoginIfAlreadyLoggedIn() {
+    this.storage.get(environment.DOCTOR_ID).then(value => {
+      if (value) {
+        this.loginservice.changeState(true);
+        this.router.navigate(['members/dashboard']);
+      }
+    });
+  }
+
   async login() {
     await this.loginservice.checkAuth(this.fg.value)
       .subscribe(res => {
         if (res.IsSuccess) {
-          this.storage.set(environment.DOCTOR_ID, res.ResponseData.DoctorID);
           this.loginservice.changeState(true);
+          this.storage.set(environment.DOCTOR_ID, res.ResponseData.DoctorID);
           this.router.navigate(['/members/doctor/clinic']);
         }
         else {
@@ -52,6 +62,6 @@ export class LoginPage implements OnInit {
   }
 
   async forgotPasswordAlert() {
-    
+
   }
 }

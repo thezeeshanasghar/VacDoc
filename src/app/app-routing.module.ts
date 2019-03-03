@@ -7,7 +7,7 @@ const routes: Routes = [
   { path: 'login', loadChildren: './public/login/login.module#LoginPageModule' },
   { 
     path: 'members',
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     loadChildren: './members/members.module#MembersPageModule' },
 ];
 
