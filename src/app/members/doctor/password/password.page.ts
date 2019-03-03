@@ -24,7 +24,8 @@ export class PasswordPage implements OnInit {
       'ConfirmPassword': [null],
     });
   }
-  async addNewChild() {
+  async changePassword() {
+    console.log(this.fg.value);
     await this.loginService.ChangePassword(this.fg.value)
       .subscribe(res => {
         if (res.IsSuccess) {

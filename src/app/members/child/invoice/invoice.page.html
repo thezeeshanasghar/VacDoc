@@ -9,18 +9,22 @@
 
 <ion-content padding>
 
-  <ion-item>
-    <ion-label color="primary">Add Brand</ion-label>
-    <ion-checkbox slot="start"></ion-checkbox>
-  </ion-item>
+  <form [formGroup]='fg'>
+    <ion-item>
+      <ion-label color="primary">Add Brand</ion-label>
+      <ion-checkbox slot="start" formControlName="IsBrand"></ion-checkbox>
+    </ion-item>
 
-  <ion-item>
-    <ion-label color="primary">Add Fee</ion-label>
-    <ion-checkbox slot="start"></ion-checkbox>
-  </ion-item>
+    <ion-item>
+      <ion-label color="primary">Add Fee</ion-label>
+      <ion-checkbox slot="start" formControlName="IsConsultationFee"></ion-checkbox>
+    </ion-item>
 
-  <ion-item>
-    <ion-label color="primary" position="floating">Invoice Date</ion-label>
-    <ion-datetime displayFormat="DD-MM-YYYY" picker-format="DD-MM-YYYY"></ion-datetime>
-  </ion-item>
+    <ion-item>
+      <ion-label color="primary" position="floating">Invoice Date</ion-label>
+      <ion-datetime displayFormat="DD-MM-YYYY" picker-format="DD-MM-YYYY" formControlName="InvoiceDate"></ion-datetime>
+    </ion-item>
+
+    <ion-button (click)="sendRequestForInvoice()">genarate Invoice</ion-button>
+  </form>
 </ion-content>
