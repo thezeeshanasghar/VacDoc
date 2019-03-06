@@ -5,6 +5,7 @@ import { Storage } from '@ionic/storage';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
+import { VacationService } from 'src/app/services/vacation.service';
 
 @Component({
   selector: 'app-vacation',
@@ -17,19 +18,23 @@ export class VacationPage implements OnInit {
   clinics: any = [];
 
   doctorID: any;
-  vaccines: any;
+  clinicID: any = [];
 
   constructor(
     public loadingController: LoadingController,
     public formBuilder: FormBuilder,
     private storage: Storage,
     private clinicService: ClinicService,
-    private toastService: ToastService
+    private vacationService: VacationService,
+    private toastService: ToastService,
+
   ) {
     this.fg2 = this.formBuilder.group({
-      clinics: new FormArray([])
+      clinics: new FormArray([]),
+      'formDate': [null],
+      'ToDate': [null]
     });
-   }
+  }
 
   ngOnInit() {
     this.storage.get(environment.DOCTOR_ID).then((val) => {
@@ -40,14 +45,13 @@ export class VacationPage implements OnInit {
   }
 
   getChildVaccinefromUser() {
-    // this.fg2.value.clinics = this.fg2.value.clinics
-    //   .map((v, i) => v ? this.vaccines[i].ID : null)
-    //   .filter(v => v !== null);
-    // this.fg2.value.clinics = this.fg2.value.clinics;
-
-    
-    console.log(this.fg2.value)
-
+    for (let i = 0; i <= this.clinics.length; i++) {
+      if (this.fg2.value.clinics[i] == true) {
+        this.clinicID.push(this.clinics[i].ID);
+      }
+    }
+    let data = { 'Clinics': this.clinicID, 'FromDate': this.fg2.value.formDate, 'ToDate': this.fg2.value.ToDate }
+    this.addVacation(data)
   }
 
   async getClinics() {
@@ -58,10 +62,11 @@ export class VacationPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.clinics = res.ResponseData;
-          console.log(this.clinics);
           const controls = this.clinics.map(c => new FormControl(false));
           this.fg2 = this.formBuilder.group({
-            clinics: new FormArray(controls)
+            clinics: new FormArray(controls),
+            'formDate': [null],
+            'ToDate': [null]
           });
           loading.dismiss();
         }
@@ -75,5 +80,25 @@ export class VacationPage implements OnInit {
         this.toastService.create(err, 'danger');
       }
     );
+  }
+  async addVacation(data) {
+    const loading = await this.loadingController.create({ message: 'Loading' });
+    await loading.present();
+
+    await this.vacationService.addVaction(data)
+      .subscribe(res => {
+        if (res.IsSuccess) {
+          loading.dismiss();
+          this.toastService.create('successfully added');
+          // this.router.navigate(['/members/child']);
+        }
+        else {
+          loading.dismiss();
+          this.toastService.create(res.Message, 'danger');
+        }
+      }, (err) => {
+        loading.dismiss();
+        this.toastService.create(err, 'danger')
+      });
   }
 }
