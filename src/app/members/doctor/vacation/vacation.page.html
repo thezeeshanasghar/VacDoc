@@ -9,17 +9,17 @@
 
 <ion-content padding>
   <form [formGroup]="fg2">
-    <ion-item>
+    <!-- <ion-item>
       <ion-label color="primary" position="floating">From Date</ion-label>
       <ion-datetime displayFormat="DD-MM-YYYY" formControlName="formDate"></ion-datetime>
     </ion-item>
     <ion-item>
       <ion-label color="primary" position="floating">To Date</ion-label>
       <ion-datetime displayFormat="DD-MM-YYYY" formControlName="ToDate"></ion-datetime>
-    </ion-item>
+    </ion-item> -->
     <h1>Clinics</h1>
-    <ion-item formArrayName="clinics" *ngFor="let order of fg2.controls.clinics.controls; let i = index">
-      <ion-label color="primary"> {{clinics[i].Name}}</ion-label>
+    <ion-item formArrayName="clinics" *ngFor="let a of fg2.controls.clinics.controls; let i = index">
+      <ion-label color="primary"> {{clinics.Name}}</ion-label>
       <ion-checkbox slot="start" required [formControlName]="i"></ion-checkbox>
     </ion-item>
 

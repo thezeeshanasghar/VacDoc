@@ -14,16 +14,22 @@ import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
 export class VacationPage implements OnInit {
 
   fg2: FormGroup;
+  clinics: any = [];
+
   doctorID: any;
-  clinics: any;
   vaccines: any;
+
   constructor(
     public loadingController: LoadingController,
     public formBuilder: FormBuilder,
     private storage: Storage,
     private clinicService: ClinicService,
     private toastService: ToastService
-  ) { }
+  ) {
+    this.fg2 = this.formBuilder.group({
+      clinics: new FormArray([])
+    });
+   }
 
   ngOnInit() {
     this.storage.get(environment.DOCTOR_ID).then((val) => {
@@ -34,10 +40,12 @@ export class VacationPage implements OnInit {
   }
 
   getChildVaccinefromUser() {
-    this.fg2.value.clinics = this.fg2.value.clinics
-      .map((v, i) => v ? this.vaccines[i].ID : null)
-      .filter(v => v !== null);
-    this.fg2.value.clinics = this.fg2.value.clinics;
+    // this.fg2.value.clinics = this.fg2.value.clinics
+    //   .map((v, i) => v ? this.vaccines[i].ID : null)
+    //   .filter(v => v !== null);
+    // this.fg2.value.clinics = this.fg2.value.clinics;
+
+    
     console.log(this.fg2.value)
 
   }
@@ -53,9 +61,7 @@ export class VacationPage implements OnInit {
           console.log(this.clinics);
           const controls = this.clinics.map(c => new FormControl(false));
           this.fg2 = this.formBuilder.group({
-            clinics: new FormArray(controls),
-            'formDate': [null],
-            'ToDate': [null]
+            clinics: new FormArray(controls)
           });
           loading.dismiss();
         }
