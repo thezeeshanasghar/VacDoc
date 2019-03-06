@@ -30,7 +30,8 @@ export class AppComponent {
       // read local storage and set authentication variable's
       this.storage.get(environment.DOCTOR_ID).then(value =>{
         if(value) {
-          this.loginService.changeState(true);
+          let state= true;
+          this.loginService.changeState(state);
         }
       });
       

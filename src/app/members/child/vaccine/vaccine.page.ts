@@ -14,6 +14,7 @@ import * as moment from 'moment';
 export class VaccinePage implements OnInit {
 
   vaccine: any;
+  datemerging: any;
   fg: FormGroup
   constructor(
     public loadingController: LoadingController,
@@ -43,6 +44,13 @@ export class VaccinePage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.vaccine = res.ResponseData;
+          console.log(this.vaccine);
+
+          for (let i = 0; i <= this.vaccine.length; i++) {
+            this.datemerging.push(this.vaccine[i].Date);
+            //this.datemerging = this.vaccine;
+            console.log(this.datemerging[i]);
+          }
           loading.dismiss();
           this.vaccine.forEach(doc => {
             doc.Date = moment(doc.Date, "DD-MM-YYYY").format('YYYY-MM-DD');
