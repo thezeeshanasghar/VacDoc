@@ -10,6 +10,7 @@ export const environment = {
 
   DOCTOR_ID:"DoctorID",
   CLINIC_ID:"ClinicID",
+  USER_ID:"UserID"
 };
 /*
  * For easier debugging in development mode, you can import the following file

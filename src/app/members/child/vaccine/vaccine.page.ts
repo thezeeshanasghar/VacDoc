@@ -15,6 +15,7 @@ export class VaccinePage implements OnInit {
 
   vaccine: any;
   datemerging: any;
+  newData: any = []
   fg: FormGroup
   constructor(
     public loadingController: LoadingController,
@@ -45,12 +46,27 @@ export class VaccinePage implements OnInit {
         if (res.IsSuccess) {
           this.vaccine = res.ResponseData;
           console.log(this.vaccine);
+          
+          
+        
 
-          for (let i = 0; i <= this.vaccine.length; i++) {
-            this.datemerging.push(this.vaccine[i].Date);
-            //this.datemerging = this.vaccine;
-            console.log(this.datemerging[i]);
+          this.newData = this.vaccine[0];
+          for (let i = 1; i <= this.vaccine.length; i++) {
+            console.log("looop1");
+            for (let j = 0; j <= this.newData.length; j++) {
+              console.log("looop2");
+              if (this.newData[j].Date == this.vaccine[i].Date) {
+                this.newData[j].push(this.vaccine[i])
+              }
+              else {
+                this.newData.push(this.vaccine[i]);
+              }
+            }
+
           }
+          console.log(this.newData);
+
+
           loading.dismiss();
           this.vaccine.forEach(doc => {
             doc.Date = moment(doc.Date, "DD-MM-YYYY").format('YYYY-MM-DD');

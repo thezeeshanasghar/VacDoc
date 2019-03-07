@@ -51,7 +51,9 @@ export class LoginPage implements OnInit {
       .subscribe(res => {
         if (res.IsSuccess) {
           this.storage.set(environment.DOCTOR_ID, res.ResponseData.DoctorID);
-          this.router.navigate(['/members/doctor/clinic']);
+          this.storage.set(environment.USER_ID, res.ResponseData.ID);
+          this.router.navigate(['/members']);
+          console.log(res.ResponseData);
         }
         else {
           this.toastService.create(res.Message, 'danger');

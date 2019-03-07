@@ -5,6 +5,7 @@ export const environment = {
   BASE_URL: "http://vac-api.afz-sol.com/api/",
   // BASE_URL: "http://localhost:4309/api/"
 
-  DOCTOR_ID:"DoctorID",
-  CLINIC_ID:"ClinicID",
+  DOCTOR_ID: "DoctorID",
+  CLINIC_ID: "ClinicID",
+  USER_ID: "UserID"
 };
