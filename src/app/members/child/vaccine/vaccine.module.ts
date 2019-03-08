@@ -11,7 +11,8 @@ const routes: Routes = [
   {
     path: '',
     component: VaccinePage
-  }
+  },
+  { path: 'fill/:id', loadChildren: './fill/fill.module#FillPageModule' },
 ];
 
 @NgModule({

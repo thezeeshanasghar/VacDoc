@@ -16,7 +16,6 @@
 
   <!-- childs -->
   <div>
-    <p>last 5 days childs</p>
     <h1 *ngIf="Childs == 0" style="color: red;">No alert for today.</h1>
     <ion-grid *ngFor="let child of Childs">
 
@@ -47,8 +46,7 @@
           <ion-item>
             <ion-label>{{child.Child.Name}}</ion-label>
             <ion-icon slot="end" color="primary" name="call" routerLink="/members/child/edit/"></ion-icon>
-            <ion-icon slot="end" color="primary" name="mail"
-              (click)="sendIndividualAlertMsg(child.ChildId)">
+            <ion-icon slot="end" color="primary" name="mail" (click)="sendIndividualAlertMsg(child.ChildId)">
             </ion-icon>
           </ion-item>
         </ion-col>

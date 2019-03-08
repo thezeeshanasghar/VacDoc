@@ -38,4 +38,12 @@ export class VaccineService extends BaseService {
         catchError(this.handleError)
       );
   }
+
+  getVaccineByVaccineId(id:string): Observable<any>{
+    const url = `${this.API_VACCINE}schedule/${id}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData), 
+      catchError(this.handleError)
+    );
+  }
 }

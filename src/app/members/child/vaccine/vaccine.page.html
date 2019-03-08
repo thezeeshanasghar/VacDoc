@@ -9,45 +9,24 @@
 
 <ion-content padding>
 
-  <ion-grid>
-    <ion-row>
-      <ion-col col-4 class="bgheader1">
-        <ion-text color="light">
-          <h2 text-center>Name</h2>
-        </ion-text>
-
-      </ion-col>
-      <ion-col col-4 class="bgheader2">
-        <ion-text color="light">
-          <h2 ion-text text-center color="light">Date</h2>
-        </ion-text>
-      </ion-col>
-      <ion-col col-4 class="bgheader1">
-        <ion-text color="light">
-          <h2 ion-text text-center color="white">Vaccine</h2>
-        </ion-text>
-      </ion-col>
-    </ion-row>
-
-    <ion-row *ngFor="let v of vaccine">
-      <ion-col col-4 ion-text text-center color="primary">{{v.Dose.Name}} </ion-col>
-
-      <ion-col col-4>
-        <ion-item [formGroup]="fg">
-          <ion-icon name="calendar" size="large"></ion-icon>
-          <ion-datetime displayFormat="DD-MM-YYYY" picker-format="DD-MM-YYYY" value="{{v.Date}}" formControlName="Date"
+  <form [formGroup]="fg">
+    <ion-card *ngFor="let v of vaccine">
+      <ion-item>
+        <ion-label>{{v.Dose.Name}}</ion-label>
+        <ion-icon color="primary" name="calendar" (click)="picker.open()">
+          <ion-datetime #picker picker-format="DD-MM-YYYY" value="{{v.Date}}" formControlName="Date"
             (ionChange)="updateDate($event, v.ID)">
           </ion-datetime>
-        </ion-item>
-      </ion-col>
+        </ion-icon>
+        <ion-img *ngIf="v.IsDone==false" style="height: 45px;" src="../../assets/injectionEmpty.png" routerLink="/members/child/vaccine/{{childID}}/fill/{{v.ID}}"></ion-img>
+        <ion-img *ngIf="v.IsDone==true" style="height: 45px;" src="../../assets/injectionFilled.png"></ion-img>
+      </ion-item>
 
-      <ion-col col-4 *ngIf="v.IsDone==false">
-        <ion-img width="10px" src="../../assets/injectionEmpty.png"></ion-img>
-      </ion-col>
-      <ion-col col-4 *ngIf="v.IsDone==true">
-        <ion-img width="10px" src="../../assets/injectionFilled.png"></ion-img>
-      </ion-col>
-    </ion-row>
-
-  </ion-grid>
+      <ion-card-content>
+        <ion-datetime displayFormat="DD-MM-YYYY" picker-format="DD-MM-YYYY" value="{{v.Date}}" formControlName="Date"
+          (ionChange)="updateDate($event, v.ID)">
+        </ion-datetime>
+      </ion-card-content>
+    </ion-card>
+  </form>
 </ion-content>

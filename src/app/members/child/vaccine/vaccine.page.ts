@@ -5,6 +5,7 @@ import { ToastService } from 'src/app/shared/toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import * as moment from 'moment';
+import { groupBy } from 'rxjs/operators';
 
 @Component({
   selector: 'app-vaccine',
@@ -13,9 +14,10 @@ import * as moment from 'moment';
 })
 export class VaccinePage implements OnInit {
 
-  vaccine: any;
+  vaccine: any[] = [];
   datemerging: any;
-  newData: any = []
+  newData: any[] = [];
+  childID:any;
   fg: FormGroup
   constructor(
     public loadingController: LoadingController,
@@ -28,11 +30,47 @@ export class VaccinePage implements OnInit {
   ) { }
 
   ngOnInit() {
+
     this.fg = this.formBuilder.group({
       'Date': [null],
     });
+    this.childID = this.route.snapshot.paramMap.get('id');
     this.getVaccination();
+    //   const pets = [
+    //     {type:"Dog", name:"Spot"},
+    //     {type:"Cat", name:"Tiger"},
+    //     {type:"Dog", name:"Rover"}, 
+    //     {type:"Cat", name:"Leo"}
+    // ];
+
+    // const grouped = this.groupBy(pets, pet => pet.type);
+    // console.log(grouped)
   }
+  // groupBy(list, keyGetter) {
+  //   const map = new Map();
+  //   list.forEach((item) => {
+  //     const key = keyGetter(item);
+  //     const collection = map.get(key);
+  //     if (!collection) {
+  //       map.set(key, [item]);
+  //     } else {
+  //       collection.push(item);
+  //     }
+  //   });
+  //   return map;
+  // }
+
+  // groupBy(objectArray, property) {
+  //   return objectArray.reduce(function (acc, obj) {
+  //     var key = obj[property];
+  //     if (!acc[key]) {
+  //       acc[key] = [];
+  //     }
+  //     acc[key].push(obj);
+  //     return acc;
+  //   }, {});
+  // }
+
 
   async getVaccination() {
     const loading = await this.loadingController.create({
@@ -40,33 +78,19 @@ export class VaccinePage implements OnInit {
     });
 
     await loading.present();
-
-    await this.vaccineService.getVaccinationById(this.route.snapshot.paramMap.get('id')).subscribe(
+    let _self = this;
+    await _self.vaccineService.getVaccinationById(this.route.snapshot.paramMap.get('id')).subscribe(
       res => {
         if (res.IsSuccess) {
-          this.vaccine = res.ResponseData;
+          _self.vaccine = res.ResponseData;
           console.log(this.vaccine);
-          
-          
-        
+          // const groupedPeople = this.groupBy(_self.vaccine, 'Date');
+          // console.log(groupedPeople);
 
-          this.newData = this.vaccine[0];
-          for (let i = 1; i <= this.vaccine.length; i++) {
-            console.log("looop1");
-            for (let j = 0; j <= this.newData.length; j++) {
-              console.log("looop2");
-              if (this.newData[j].Date == this.vaccine[i].Date) {
-                this.newData[j].push(this.vaccine[i])
-              }
-              else {
-                this.newData.push(this.vaccine[i]);
-              }
-            }
-
-          }
-          console.log(this.newData);
-
-
+          // let obj = {
+          //   Date: String, //10-09-2019
+          //   Values: [] //[v1,v2,v3,v4]
+          // }
           loading.dismiss();
           this.vaccine.forEach(doc => {
             doc.Date = moment(doc.Date, "DD-MM-YYYY").format('YYYY-MM-DD');
@@ -91,8 +115,8 @@ export class VaccinePage implements OnInit {
     await this.vaccineService.updateVaccinationDate(data).subscribe(
       res => {
         if (res.IsSuccess) {
-          this.toastService.create(res.Message)
           this.getVaccination();
+          this.toastService.create(res.Message)
         }
         else {
           this.toastService.create(res.Message, 'danger');
@@ -105,3 +129,5 @@ export class VaccinePage implements OnInit {
   }
 
 }
+
+// https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-a-array-of-objects
