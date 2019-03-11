@@ -3,9 +3,7 @@ import { LoadingController } from '@ionic/angular';
 import { VaccineService } from 'src/app/services/vaccine.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormGroup, FormBuilder } from '@angular/forms';
 import * as moment from 'moment';
-import { groupBy } from 'rxjs/operators';
 
 @Component({
   selector: 'app-vaccine',
@@ -15,14 +13,11 @@ import { groupBy } from 'rxjs/operators';
 export class VaccinePage implements OnInit {
 
   vaccine: any[] = [];
-  datemerging: any;
-  newData: any[] = [];
-  childID:any;
-  fg: FormGroup
+  dataGrouping: any[] = [];
+  childID: any;
   constructor(
     public loadingController: LoadingController,
     public route: ActivatedRoute,
-    public formBuilder: FormBuilder,
     public router: Router,
     private vaccineService: VaccineService,
     private toastService: ToastService
@@ -30,47 +25,9 @@ export class VaccinePage implements OnInit {
   ) { }
 
   ngOnInit() {
-
-    this.fg = this.formBuilder.group({
-      'Date': [null],
-    });
     this.childID = this.route.snapshot.paramMap.get('id');
     this.getVaccination();
-    //   const pets = [
-    //     {type:"Dog", name:"Spot"},
-    //     {type:"Cat", name:"Tiger"},
-    //     {type:"Dog", name:"Rover"}, 
-    //     {type:"Cat", name:"Leo"}
-    // ];
-
-    // const grouped = this.groupBy(pets, pet => pet.type);
-    // console.log(grouped)
   }
-  // groupBy(list, keyGetter) {
-  //   const map = new Map();
-  //   list.forEach((item) => {
-  //     const key = keyGetter(item);
-  //     const collection = map.get(key);
-  //     if (!collection) {
-  //       map.set(key, [item]);
-  //     } else {
-  //       collection.push(item);
-  //     }
-  //   });
-  //   return map;
-  // }
-
-  // groupBy(objectArray, property) {
-  //   return objectArray.reduce(function (acc, obj) {
-  //     var key = obj[property];
-  //     if (!acc[key]) {
-  //       acc[key] = [];
-  //     }
-  //     acc[key].push(obj);
-  //     return acc;
-  //   }, {});
-  // }
-
 
   async getVaccination() {
     const loading = await this.loadingController.create({
@@ -78,19 +35,12 @@ export class VaccinePage implements OnInit {
     });
 
     await loading.present();
-    let _self = this;
-    await _self.vaccineService.getVaccinationById(this.route.snapshot.paramMap.get('id')).subscribe(
+    await this.vaccineService.getVaccinationById(this.route.snapshot.paramMap.get('id')).subscribe(
       res => {
         if (res.IsSuccess) {
-          _self.vaccine = res.ResponseData;
-          console.log(this.vaccine);
-          // const groupedPeople = this.groupBy(_self.vaccine, 'Date');
-          // console.log(groupedPeople);
-
-          // let obj = {
-          //   Date: String, //10-09-2019
-          //   Values: [] //[v1,v2,v3,v4]
-          // }
+          this.vaccine = res.ResponseData;
+          this.dataGrouping = this.groupBy(this.vaccine, 'Date');
+          console.log(this.dataGrouping);
           loading.dismiss();
           this.vaccine.forEach(doc => {
             doc.Date = moment(doc.Date, "DD-MM-YYYY").format('YYYY-MM-DD');
@@ -106,6 +56,17 @@ export class VaccinePage implements OnInit {
         this.toastService.create(err, 'danger');
       }
     );
+  }
+
+  groupBy(objectArray, property) {
+    return objectArray.reduce(function (acc, obj) {
+      var key = obj[property];
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(obj);
+      return acc;
+    }, {});
   }
 
   async updateDate($event, vacId) {

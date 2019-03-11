@@ -3,10 +3,15 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
-import { LoadingController } from '@ionic/angular';
+import { LoadingController, Platform } from '@ionic/angular';
 import { InvoiceService } from 'src/app/services/invoice.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import * as moment from 'moment';
+
+import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
 
 @Component({
   selector: 'app-invoice',
@@ -16,14 +21,21 @@ import * as moment from 'moment';
 export class InvoicePage implements OnInit {
 
   fg: FormGroup
-  doctorId:any;
+  doctorId: any;
   constructor(
     public loadingController: LoadingController,
     public formBuilder: FormBuilder,
     public route: ActivatedRoute,
     private storage: Storage,
     private invoiceService: InvoiceService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private platform: Platform,
+    private file: File,
+    private ft: FileTransfer,
+    private fileOpener: FileOpener,
+    private document: DocumentViewer,
+
+
   ) { }
 
   ngOnInit() {
@@ -56,12 +68,29 @@ export class InvoicePage implements OnInit {
         }
         else {
           loading.dismiss();
-          this.toastService.create(res.Message);
+          this.toastService.create('hello', 'danger');
         }
       }, (err) => {
         loading.dismiss();
-        this.toastService.create(err)
+        this.toastService.create('err')
       });
+  }
+
+  download() {
+    let downloadUrl = 'https://devdactic.com/html/5-simple-hacks-LBT.pdf';
+    let path = this.file.dataDirectory;
+    const transfer = this.ft.create();
+
+    transfer.download(downloadUrl, `${path}myfile.pdf`).then(entry => {
+      let url = entry.toURL();
+
+      if (this.platform.is('ios')) {
+        this.document.viewDocument(url, 'application/pdf', {});
+      }
+      else {
+        this.fileOpener.open(url, 'application/pdf');
+      }
+    });
   }
 
 }

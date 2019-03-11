@@ -8,50 +8,32 @@
 </ion-header>
 
 <ion-content padding>
-  <form>
+
+  <form [formGroup]="fg">
     <ion-item>
       <ion-label color="primary" position="floating">weight</ion-label>
-      <ion-select formControlName="Weight" value="Any">
-        <ion-select-option value="1">1</ion-select-option>
-        <ion-select-option value="2">2</ion-select-option>
-        <ion-select-option value="3">3</ion-select-option>
-        <ion-select-option value="4">4</ion-select-option>
-        <ion-select-option value="5">5</ion-select-option>
-        <ion-select-option value="6">6</ion-select-option>
-        <ion-select-option value="7">7</ion-select-option>
-        <ion-select-option value="8">8</ion-select-option>
-        <ion-select-option value="8">9</ion-select-option>
-      </ion-select>
+      <ion-input type="number" placeholder="Weight" formControlName="Weight"></ion-input>
     </ion-item>
-
     <ion-item>
       <ion-label color="primary" position="floating">Height</ion-label>
-      <ion-select formControlName="Weight" value="Any">
-        <ion-select-option value="1">1</ion-select-option>
-        <ion-select-option value="2">2</ion-select-option>
-        <ion-select-option value="3">3</ion-select-option>
-        <ion-select-option value="4">4</ion-select-option>
-        <ion-select-option value="5">5</ion-select-option>
-        <ion-select-option value="6">6</ion-select-option>
-        <ion-select-option value="7">7</ion-select-option>
-        <ion-select-option value="8">8</ion-select-option>
-        <ion-select-option value="8">9</ion-select-option>
+      <ion-input type="number" placeholder="Height" formControlName="Height"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label color="primary" position="floating">OFC</ion-label>
+      <ion-input type="number" placeholder="OFC" formControlName="Circle"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Brands</ion-label>
+      <ion-select formControlName="BrandId">
+        <ion-select-option *ngFor="let user of brandName" [value]="user.ID">{{user.Name}}</ion-select-option>
       </ion-select>
     </ion-item>
 
     <ion-item>
-      <ion-label color="primary" position="floating">OFC</ion-label>
-      <ion-select formControlName="Weight" value="Any">
-        <ion-select-option value="1">1</ion-select-option>
-        <ion-select-option value="2">2</ion-select-option>
-        <ion-select-option value="3">3</ion-select-option>
-        <ion-select-option value="4">4</ion-select-option>
-        <ion-select-option value="5">5</ion-select-option>
-        <ion-select-option value="6">6</ion-select-option>
-        <ion-select-option value="7">7</ion-select-option>
-        <ion-select-option value="8">8</ion-select-option>
-        <ion-select-option value="8">9</ion-select-option>
-      </ion-select>
+      <ion-datetime picker-format="DD-MM-YYYY" value="{{Date}}" formControlName="GivenDate"></ion-datetime>
     </ion-item>
+
+    <ion-button (click)="fillVaccine()">Submit</ion-button>
   </form>
 </ion-content>

@@ -8,25 +8,26 @@
 </ion-header>
 
 <ion-content padding>
+  <div *ngFor="let item of dataGrouping | keyvalue:mySortingFunction">
+    <p style="text-align: center;">{{item.key}}</p>
 
-  <form [formGroup]="fg">
-    <ion-card *ngFor="let v of vaccine">
-      <ion-item>
-        <ion-label>{{v.Dose.Name}}</ion-label>
-        <ion-icon color="primary" name="calendar" (click)="picker.open()">
-          <ion-datetime #picker picker-format="DD-MM-YYYY" value="{{v.Date}}" formControlName="Date"
-            (ionChange)="updateDate($event, v.ID)">
-          </ion-datetime>
-        </ion-icon>
-        <ion-img *ngIf="v.IsDone==false" style="height: 45px;" src="../../assets/injectionEmpty.png" routerLink="/members/child/vaccine/{{childID}}/fill/{{v.ID}}"></ion-img>
-        <ion-img *ngIf="v.IsDone==true" style="height: 45px;" src="../../assets/injectionFilled.png"></ion-img>
-      </ion-item>
-
-      <ion-card-content>
-        <ion-datetime displayFormat="DD-MM-YYYY" picker-format="DD-MM-YYYY" value="{{v.Date}}" formControlName="Date"
-          (ionChange)="updateDate($event, v.ID)">
-        </ion-datetime>
+    <ion-card>
+      <ion-card-content *ngFor="let v of item.value">
+        <ion-item lines="none">
+          <ion-label>{{v.Dose.Name}}</ion-label>
+          <p *ngIf="v.IsDone==true" style="background-color:rgb(55, 231, 10);">{{v.Date}}</p>
+          <ion-icon *ngIf="v.IsDone==false" color="primary" name="calendar" (click)="picker.open()">
+            <ion-datetime #picker picker-format="DD-MM-YYYY" value="{{v.Date}}" (ionChange)="updateDate($event, v.ID)">
+            </ion-datetime>
+          </ion-icon>
+          <ion-img *ngIf="v.IsDone==false" style="height: 30px;" src="../../assets/injectionEmpty.png"
+            routerLink="/members/child/vaccine/{{childID}}/fill/{{v.ID}}"></ion-img>
+          <ion-img *ngIf="v.IsDone==true" style="height: 30px;" src="../../assets/injectionFilled.png">
+          </ion-img>
+        </ion-item>
       </ion-card-content>
     </ion-card>
-  </form>
+
+  </div>
+
 </ion-content>

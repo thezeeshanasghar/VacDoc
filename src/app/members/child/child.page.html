@@ -9,7 +9,7 @@
 
 <ion-content padding>
 
-  <ion-grid style="border: rgb(245, 12, 167) 2px solid">
+  <!-- <ion-grid style="border: rgb(245, 12, 167) 2px solid">
     <ion-row>
       <ion-col align-self-center size="2">
         <ion-avatar><img src="../../assets/female.png"></ion-avatar>
@@ -47,14 +47,14 @@
         </ion-card>
       </ion-col>
     </ion-row>
-  </ion-grid>
+  </ion-grid> -->
 
 
 
   <div *ngFor="let child of childs">
 
 
-    <ion-card *ngIf="child.Gender=='Girl'">
+    <ion-card *ngIf="child.Gender=='Girl'" style="border: rgb(245, 12, 167) 2px solid">
       <ion-avatar><img src="../../assets/female.png"></ion-avatar>
 
       <ion-item>
@@ -87,7 +87,7 @@
 
     </ion-card>
 
-    <ion-card *ngIf="child.Gender=='Boy'">
+    <ion-card *ngIf="child.Gender=='Boy'" style="border: rgb(8, 28, 206) 2px solid">
       <ion-avatar><img src="../../assets/male.png"></ion-avatar>
 
       <ion-item>
