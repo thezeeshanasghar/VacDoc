@@ -52,29 +52,29 @@ export class InvoicePage implements OnInit {
     });
   }
 
-  async sendRequestForInvoice() {
-    this.fg.value.DoctorID = this.doctorId;
-    this.fg.value.InvoiceDate = moment(this.fg.value.InvoiceDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
-    console.log(this.fg.value);
-    const loading = await this.loadingController.create({
-      message: 'Loading'
-    });
-    await loading.present();
-    await this.invoiceService.getInvoice(this.fg.value)
-      .subscribe(res => {
-        if (res.IsSuccess) {
+  // async sendRequestForInvoice() {
+  //   this.fg.value.DoctorID = this.doctorId;
+  //   this.fg.value.InvoiceDate = moment(this.fg.value.InvoiceDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
+  //   console.log(this.fg.value);
+  //   const loading = await this.loadingController.create({
+  //     message: 'Loading'
+  //   });
+  //   await loading.present();
+  //   await this.invoiceService.getInvoice()
+  //     .subscribe(res => {
+  //       if (res.IsSuccess) {
 
-          loading.dismiss();
-        }
-        else {
-          loading.dismiss();
-          this.toastService.create('hello', 'danger');
-        }
-      }, (err) => {
-        loading.dismiss();
-        this.toastService.create('err')
-      });
-  }
+  //         loading.dismiss();
+  //       }
+  //       else {
+  //         loading.dismiss();
+  //         this.toastService.create('hello', 'danger');
+  //       }
+  //     }, (err) => {
+  //       loading.dismiss();
+  //       this.toastService.create('err')
+  //     });
+  // }
 
   download() {
     let downloadUrl = 'https://devdactic.com/html/5-simple-hacks-LBT.pdf';

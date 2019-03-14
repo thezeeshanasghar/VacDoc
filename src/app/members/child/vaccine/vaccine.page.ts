@@ -89,6 +89,9 @@ export class VaccinePage implements OnInit {
     );
   }
 
+  printdata(){
+    //this.vaccineService.printVaccineSchedule(this.childID);
+  }
 }
 
 // https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-a-array-of-objects

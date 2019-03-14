@@ -19,7 +19,14 @@ import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule, SharedModule, IonicStorageModule.forRoot()],
+  imports: [
+    BrowserModule,
+    IonicModule.forRoot(),
+    AppRoutingModule,
+    HttpClientModule,
+    SharedModule,
+    IonicStorageModule.forRoot(),
+  ],
   providers: [
     StatusBar,
     SplashScreen,
@@ -31,4 +38,4 @@ import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

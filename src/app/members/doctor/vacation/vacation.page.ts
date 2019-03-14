@@ -6,6 +6,8 @@ import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
 import { VacationService } from 'src/app/services/vacation.service';
+import { Router } from '@angular/router';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-vacation',
@@ -19,9 +21,11 @@ export class VacationPage implements OnInit {
 
   doctorID: any;
   clinicID: any = [];
+  todaydate;
 
   constructor(
     public loadingController: LoadingController,
+    private router: Router,
     public formBuilder: FormBuilder,
     private storage: Storage,
     private clinicService: ClinicService,
@@ -29,6 +33,8 @@ export class VacationPage implements OnInit {
     private toastService: ToastService,
 
   ) {
+    this.todaydate = new Date();
+    this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format('YYYY-MM-DD');
     this.fg2 = this.formBuilder.group({
       clinics: new FormArray([]),
       'formDate': [null],
@@ -42,6 +48,12 @@ export class VacationPage implements OnInit {
     });
     this.getClinics();
 
+  }
+  pickFromDate($event) {
+    this.fg2.value.formDate = $event.detail.value;
+  }
+  pickTodayDate($event) {
+    this.fg2.value.ToDate = $event.detail.value;
   }
 
   getChildVaccinefromUser() {
@@ -85,12 +97,12 @@ export class VacationPage implements OnInit {
     const loading = await this.loadingController.create({ message: 'Loading' });
     await loading.present();
 
-    await this.vacationService.addVaction(data)
+    await this.vacationService.addVaccation(data)
       .subscribe(res => {
         if (res.IsSuccess) {
           loading.dismiss();
           this.toastService.create('successfully added');
-          // this.router.navigate(['/members/child']);
+          this.router.navigate(['/members/']);
         }
         else {
           loading.dismiss();

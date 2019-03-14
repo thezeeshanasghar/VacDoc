@@ -16,7 +16,7 @@ export class VacationService extends BaseService {
     protected http: HttpClient
   ) { super(http); }
 
-  addVaction(data): Observable<any> {
+  addVaccation(data): Observable<any> {
     const url = `${this.API_VACATION}`;
     return this.http.post(url, data, this.httpOptions)
       .pipe(

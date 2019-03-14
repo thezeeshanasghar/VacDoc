@@ -8,14 +8,18 @@
 </ion-header>
 
 <ion-content padding>
+
   <form [formGroup]="fg2">
     <ion-item>
-      <ion-label color="primary" position="floating">From Date</ion-label>
-      <ion-datetime displayFormat="DD-MM-YYYY" picker-format="DD-MM-YYYY" formControlName="formDate"></ion-datetime>
+      <ion-label color="primary" position="floating" (click)="picker.open()">From Date</ion-label>
+      <ion-datetime picker-format="DD-MM-YYYY" value="{{todaydate}}" (ionChange)="pickFromDate($event)">
+      </ion-datetime>
     </ion-item>
     <ion-item>
-      <ion-label color="primary" position="floating">To Date</ion-label>
-      <ion-datetime displayFormat="DD-MM-YYYY" picker-format="DD-MM-YYYY" formControlName="ToDate"></ion-datetime>
+      <ion-label color="primary" position="floating" (click)="picker1.open()">To Date</ion-label>
+      <ion-datetime picker-format="DD-MM-YYYY" value="{{todaydate}}"
+        (ionChange)="pickTodayDate($event)"></ion-datetime>
+
     </ion-item>
     <h1>Clinics</h1>
     <ion-item formArrayName="clinics" *ngFor="let a of fg2.controls.clinics.controls; let i = index">

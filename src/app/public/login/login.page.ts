@@ -52,6 +52,8 @@ export class LoginPage implements OnInit {
         if (res.IsSuccess) {
           this.storage.set(environment.DOCTOR_ID, res.ResponseData.DoctorID);
           this.storage.set(environment.USER_ID, res.ResponseData.ID);
+          let state= true;
+          this.loginservice.changeState(state);
           this.router.navigate(['/members']);
           console.log(res.ResponseData);
         }
