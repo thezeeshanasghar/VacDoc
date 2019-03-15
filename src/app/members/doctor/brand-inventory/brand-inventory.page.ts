@@ -13,6 +13,8 @@ import { environment } from 'src/environments/environment';
 export class BrandInventoryPage implements OnInit {
 
   brandInventory:any
+  brandInventoryCount: Array<string> = [];
+
   constructor(
     public loadingController: LoadingController,
     private storage: Storage,
@@ -50,5 +52,11 @@ export class BrandInventoryPage implements OnInit {
         this.toastService.create(err, 'danger');
       }
     )
+  }
+
+  //https://stackoverflow.com/questions/45614987/get-input-value-of-ngfor-generated-input-in-ionic-2
+  getValues() {
+    console.log(this.brandInventoryCount);
+    
   }
 }
