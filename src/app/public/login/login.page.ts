@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { LoginService } from 'src/app/services/login.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { Storage } from '@ionic/storage';
@@ -22,7 +22,8 @@ export class LoginPage implements OnInit {
     private formBuilder: FormBuilder,
     private loginservice: LoginService,
     private toastService: ToastService,
-    private storage: Storage
+    private storage: Storage,
+    private loadingController: LoadingController,
   ) { }
 
   ngOnInit() {
@@ -39,7 +40,7 @@ export class LoginPage implements OnInit {
   skipLoginIfAlreadyLoggedIn() {
     this.storage.get(environment.DOCTOR_ID).then(value => {
       if (value) {
-        let state= true;
+        let state = true;
         this.loginservice.changeState(state);
         this.router.navigate(['members/dashboard']);
       }
@@ -47,20 +48,28 @@ export class LoginPage implements OnInit {
   }
 
   async login() {
+
+    const loading = await this.loadingController.create({
+      message: 'Loading'
+    });
+    await loading.present();
     await this.loginservice.checkAuth(this.fg.value)
       .subscribe(res => {
         if (res.IsSuccess) {
           this.storage.set(environment.DOCTOR_ID, res.ResponseData.DoctorID);
           this.storage.set(environment.USER_ID, res.ResponseData.ID);
-          let state= true;
+          let state = true;
           this.loginservice.changeState(state);
           this.router.navigate(['/members']);
-          console.log(res.ResponseData);
+          loading.dismiss();
         }
         else {
+          loading.dismiss();
           this.toastService.create(res.Message, 'danger');
+
         }
       }, (err) => {
+        loading.dismiss();
         this.toastService.create(err, 'danger');
       });
   }
