@@ -12,8 +12,7 @@ import { environment } from 'src/environments/environment';
 })
 export class BrandInventoryPage implements OnInit {
 
-  brandInventory:any
-  brandInventoryCount: Array<string> = [];
+  brandInventory:any;
 
   constructor(
     public loadingController: LoadingController,
@@ -38,14 +37,12 @@ export class BrandInventoryPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.brandInventory = res.ResponseData;
-          // this.fg.controls['Amount'].setValue(this.brandInventory.Amount);
-          console.log(this.brandInventory);
-          loading.dismiss();
         }
         else {
-          loading.dismiss();
           this.toastService.create(res.Message, 'danger');
         }
+
+        loading.dismiss();
       },
       err => {
         loading.dismiss();
@@ -56,7 +53,7 @@ export class BrandInventoryPage implements OnInit {
 
   //https://stackoverflow.com/questions/45614987/get-input-value-of-ngfor-generated-input-in-ionic-2
   getValues() {
-    console.log(this.brandInventoryCount);
+    console.log(this.brandInventory);
     
   }
 }
