@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment';
 })
 export class BrandInventoryPage implements OnInit {
 
-  brandInventory:any;
+  brandInventory: any;
 
   constructor(
     public loadingController: LoadingController,
@@ -51,9 +51,29 @@ export class BrandInventoryPage implements OnInit {
     )
   }
 
-  //https://stackoverflow.com/questions/45614987/get-input-value-of-ngfor-generated-input-in-ionic-2
-  getValues() {
-    console.log(this.brandInventory);
-    
+  async updateBrandInventory() {
+    const loading = await this.loadingController.create({
+      message: 'Loading'
+    });
+
+    await loading.present();
+
+    await this.brandService.putBrandInventory(this.brandInventory)
+      .subscribe(res => {
+        if (res.IsSuccess) {
+          loading.dismiss();
+          this.toastService.create("successfully updated");
+          loading.dismiss();
+        }
+        else {
+          loading.dismiss();
+          this.toastService.create(res.Message, 'danger');
+        }
+      }, (err) => {
+        loading.dismiss();
+        this.toastService.create(err, 'danger')
+      });
   }
+
+  //https://stackoverflow.com/questions/45614987/get-input-value-of-ngfor-generated-input-in-ionic-2
 }

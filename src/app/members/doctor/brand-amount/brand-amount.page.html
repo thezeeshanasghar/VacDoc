@@ -9,17 +9,22 @@
 
 <ion-content padding>
 
-  <form [formGroup]="fg">
+  <form>
     <ion-grid>
+      <ion-row style="background: lightblue;">
+        <ion-col>Vaccine Name</ion-col>
+        <ion-col>Brand Name</ion-col>
+        <ion-col>Price</ion-col>
+      </ion-row>
       <ion-row *ngFor="let b of brandAmount">
         <ion-col>{{b.VaccineName}}</ion-col>
         <ion-col>{{b.Brand.Name}}</ion-col>
         <ion-col>
-          <ion-input [value]="b.Amount"></ion-input>
+          <ion-input [(ngModel)]="b.Amount" [ngModelOptions]="{standalone: true}" type="number"></ion-input>
         </ion-col>
       </ion-row>
     </ion-grid>
-    <ion-button disabled="false" (click)="getvalue()">Update Amount</ion-button>
+    <ion-button disabled="false" (click)="updateBrandAmount()">Update Amount</ion-button>
   </form>
 
 </ion-content>

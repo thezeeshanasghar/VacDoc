@@ -20,15 +20,11 @@ export class BrandAmountPage implements OnInit {
     private storage: Storage,
     private brandService: BrandService,
     private toastService: ToastService,
-    private formBuilder: FormBuilder
   ) { }
 
   ngOnInit() {
     this.storage.get(environment.DOCTOR_ID).then((val) => {
       this.getBrandAmount(val);
-    });
-    this.fg = this.formBuilder.group({
-      'Amount': [null],
     });
   }
 
@@ -42,8 +38,6 @@ export class BrandAmountPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.brandAmount = res.ResponseData;
-          this.fg.controls['Amount'].setValue(this.brandAmount.Amount);
-          console.log(this.brandAmount);
           loading.dismiss();
         }
         else {
@@ -58,7 +52,26 @@ export class BrandAmountPage implements OnInit {
     )
   }
 
-  async getvalue() {
-    
+  async updateBrandAmount() {
+    const loading = await this.loadingController.create({
+      message: 'Loading'
+    });
+
+    await loading.present();
+
+    await this.brandService.putBrandAmount(this.brandAmount)
+      .subscribe(res => {
+        if (res.IsSuccess) {
+          loading.dismiss();
+          this.toastService.create("successfully updated");
+        }
+        else {
+          loading.dismiss();
+          this.toastService.create(res.Message, 'danger');
+        }
+      }, (err) => {
+        loading.dismiss();
+        this.toastService.create(err, 'danger')
+      });
   }
 }

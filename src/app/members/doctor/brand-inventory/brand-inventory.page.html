@@ -11,6 +11,11 @@
 
   <form>
     <ion-grid>
+      <ion-row style="background: lightblue;">
+        <ion-col>Vaccine Name</ion-col>
+        <ion-col>Brand Name</ion-col>
+        <ion-col>Inventory</ion-col>
+      </ion-row>
       <ion-row *ngFor="let b of brandInventory; let i = index">
         <ion-col>{{b.VaccineName}}</ion-col>
         <ion-col>{{b.Brand.Name}}</ion-col>
@@ -20,6 +25,6 @@
       </ion-row>
     </ion-grid>
     <!-- <ion-button disabled="true" (click)="setOnlineClinic(b.ID)">Update Inventory</ion-button> -->
-    <ion-button (click)="getValues()">Update Inventory</ion-button>
+    <ion-button (click)="updateBrandInventory()">Update Inventory</ion-button>
   </form>
 </ion-content>
