@@ -8,6 +8,7 @@ import { ChildService } from 'src/app/services/child.service';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
+import { ClinicService } from 'src/app/services/clinic.service';
 
 @Component({
   selector: 'app-add',
@@ -20,6 +21,8 @@ export class AddPage implements OnInit {
   fg2: FormGroup;
   formcontroll: boolean = false;
   vaccines: any;
+  doctorID: any;
+  clinics: any;
 
   constructor(
     public loadingController: LoadingController,
@@ -28,7 +31,8 @@ export class AddPage implements OnInit {
     private childService: ChildService,
     private toastService: ToastService,
     private router: Router,
-    private storage: Storage
+    private storage: Storage,
+    private clinicService: ClinicService
   ) { }
 
   ngOnInit() {
@@ -51,10 +55,16 @@ export class AddPage implements OnInit {
       'Password': [null],
       'ChildVaccines': [null],
     });
+    this.storage.get(environment.DOCTOR_ID).then((val) => {
+      this.doctorID = val;
+    });
+    this.getClinics();
+
     this.storage.get(environment.CLINIC_ID).then((val) => {
       this.fg1.controls['ClinicID'].setValue(val);
       console.log(this.fg1.value.ClinicID);
-    })
+    });
+
   }
 
   moveNextStep() {
@@ -79,6 +89,38 @@ export class AddPage implements OnInit {
     // vaccine.ch2= JSON.stringify(vaccine.ch2);
     console.log(vaccine)
     this.addNewChild(vaccine);
+  }
+
+  getClinicforCheckOnline() {
+
+  }
+
+  async getClinics() {
+    const loading = await this.loadingController.create({ message: 'Loading' });
+    await loading.present();
+
+    await this.clinicService.getClinics(this.doctorID).subscribe(
+      res => {
+
+        this.clinics = res.ResponseData;
+        loading.dismiss();
+        if (res.IsSuccess) {
+          for (let i = 0; i < this.clinics.length; i++) {
+            if (this.clinics[i].IsOnline == true) {
+              this.storage.set(environment.CLINIC_ID, this.clinics[i].ID)
+            }
+          }
+        }
+        else {
+          loading.dismiss();
+          this.toastService.create(res.Message, 'danger');
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, 'danger');
+      }
+    );
   }
 
   PasswordGenerator() {
