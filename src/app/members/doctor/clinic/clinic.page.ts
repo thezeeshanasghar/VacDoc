@@ -5,6 +5,7 @@ import { ToastService } from 'src/app/shared/toast.service';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
+import { AlertService } from 'src/app/shared/alert.service';
 
 @Component({
   selector: 'app-clinic',
@@ -18,10 +19,11 @@ export class ClinicPage {
 
   constructor(
     public loadingController: LoadingController,
-    private api: ClinicService,
-    private toast: ToastService,
+    private clinicService: ClinicService,
+    private toastService: ToastService,
     private storage: Storage,
-    private router: Router
+    private router: Router,
+    private alertService: AlertService,
   ) { }
 
   ionViewWillEnter() {
@@ -35,7 +37,7 @@ export class ClinicPage {
     const loading = await this.loadingController.create({ message: 'Loading' });
     await loading.present();
 
-    await this.api.getClinics(this.doctorID).subscribe(
+    await this.clinicService.getClinics(this.doctorID).subscribe(
       res => {
 
         this.clinics = res.ResponseData;
@@ -49,12 +51,12 @@ export class ClinicPage {
         }
         else {
           loading.dismiss();
-          this.toast.create(res.Message, 'danger');
+          this.toastService.create(res.Message, 'danger');
         }
       },
       err => {
         loading.dismiss();
-        this.toast.create(err, 'danger');
+        this.toastService.create(err, 'danger');
       }
     );
   }
@@ -65,18 +67,50 @@ export class ClinicPage {
 
     this.storage.set(environment.CLINIC_ID, clinicID)
     let data = { 'DoctorID': this.doctorID, 'ID': clinicID, 'IsOnline': 'true' }
-    await this.api.changeOnlineClinic(data)
+    await this.clinicService.changeOnlineClinic(data)
       .subscribe(res => {
         if (res.IsSuccess) {
           loading.dismiss();
           this.router.navigate(['/members/dashboard']);
         }
         else {
-          this.toast.create(res.Message)
+          this.toastService.create(res.Message)
         }
 
       }, (err) => {
-        this.toast.create(err);
+        this.toastService.create(err);
       });
+  }
+
+  alertDeleteClinic(id) {
+    this.alertService.confirmAlert('Are you sure you want to delete this ?')
+      .then((yes) => {
+        if (yes) {
+          this.deleteClinic(id);
+        }
+      });
+  }
+
+  async deleteClinic(id) {
+    const loading = await this.loadingController.create({
+      message: "Loading"
+    });
+    await loading.present();
+    await this.clinicService.deleteClinic(id).subscribe(
+      res => {
+        if (res.IsSuccess == true) {
+          this.router.navigate(['/members/doctor/clinic']);
+          loading.dismiss();
+        }
+        else {
+          loading.dismiss();
+          this.toastService.create(res.Message, 'danger');
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, 'danger')
+      }
+    );
   }
 }

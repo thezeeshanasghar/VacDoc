@@ -32,6 +32,22 @@ export class ClinicService extends BaseService {
     );
   }
 
+  addClinic(data): Observable<any> {
+    const url = `${this.API_CLINIC}`;
+    return this.http.post(url, data, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  deleteClinic(id: string): Observable<any> {
+    const url = `${this.API_CLINIC}${id}`;
+    return this.http.delete(url, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   changeOnlineClinic(data: any): Observable<any> {
     const url = `${this.API_CLINIC}editClinic`;
     return this.http.put(url, data, this.httpOptions)

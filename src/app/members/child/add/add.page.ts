@@ -23,6 +23,8 @@ export class AddPage implements OnInit {
   vaccines: any;
   doctorID: any;
   clinics: any;
+  todaydate: any;
+  gender: any;
 
   constructor(
     public loadingController: LoadingController,
@@ -36,13 +38,16 @@ export class AddPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.todaydate = new Date();
+    this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format('YYYY-MM-DD');
+
     this.getVaccine();
     this.fg1 = this.formBuilder.group({
       'ClinicID': [''],
       'Name': [null],
       'FatherName': [null],
       'Email': [null],
-      'DOB': [null],
+      'DOB': [this.todaydate],
       'CountryCode': [null],
       'MobileNumber': [null],
       'PreferredDayOfWeek': [null],
@@ -62,7 +67,6 @@ export class AddPage implements OnInit {
 
     this.storage.get(environment.CLINIC_ID).then((val) => {
       this.fg1.controls['ClinicID'].setValue(val);
-      console.log(this.fg1.value.ClinicID);
     });
 
   }
@@ -70,9 +74,11 @@ export class AddPage implements OnInit {
   moveNextStep() {
     this.fg1.value.DOB = moment(this.fg1.value.DOB, 'YYYY-MM-DD').format('DD-MM-YYYY');
     this.formcontroll = true;
+    this.fg1.value.Gender = this.gender;
+    console.log(this.fg1.value);
   }
-  updateGender(gender) {
-    this.fg1.value.Gender = gender;
+  updateGender(g) {
+    this.gender = g;
   }
 
   getChildVaccinefromUser() {
@@ -86,7 +92,6 @@ export class AddPage implements OnInit {
     for (let i = 0; i < this.fg2.value.ChildVaccines.length; i++) {
       vaccine.ChildVaccines.push({ ID: this.fg2.value.ChildVaccines[i] });
     }
-    // vaccine.ch2= JSON.stringify(vaccine.ch2);
     console.log(vaccine)
     this.addNewChild(vaccine);
   }
