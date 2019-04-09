@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { LoginService } from 'src/app/services/login.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
+import { PasswordValidator } from './password_validators';
 
 @Component({
   selector: 'app-password',
@@ -14,6 +15,7 @@ import { environment } from 'src/environments/environment';
 export class PasswordPage implements OnInit {
 
   fg: FormGroup;
+  matching_passwords_group: FormGroup;
   userID: any;
   constructor(
     private formBuilder: FormBuilder,
@@ -26,15 +28,28 @@ export class PasswordPage implements OnInit {
   ngOnInit() {
     this.storage.get(environment.USER_ID).then((val) => {
       this.userID = val;
-    })
+    });
+
+    this.matching_passwords_group = new FormGroup({
+      password: new FormControl('', Validators.compose([
+        Validators.minLength(4),
+        Validators.required,
+      ])),
+      confirm_password: new FormControl('', Validators.required)
+    }, (formGroup: FormGroup) => {
+      return PasswordValidator.areEqual(formGroup);
+    });
+
     this.fg = this.formBuilder.group({
-      'OldPassword': [null],
-      'NewPassword': [null],
       'UserID': [null],
+      'OldPassword': new FormControl('', Validators.required),
+      'NewPassword': [null],
+      matching_passwords: this.matching_passwords_group,
     });
   }
   async changePassword() {
     this.fg.value.UserID = this.userID;
+    this.fg.value.NewPassword = this.matching_passwords_group.value.password;
     console.log(this.fg.value);
     const loading = await this.loadingController.create({ message: 'Loading' });
     await loading.present();
@@ -55,4 +70,19 @@ export class PasswordPage implements OnInit {
         this.toastService.create(err, 'danger')
       });
   }
+  validation_messages = {
+    'old_password': [
+      { type: 'required', message: 'Old password is required.' }
+    ],
+    'password': [
+      { type: 'required', message: 'Password is required.' },
+      { type: 'minlength', message: 'Password must be at least 4 characters long.' },
+    ],
+    'confirm_password': [
+      { type: 'required', message: 'Confirm password is required.' }
+    ],
+    'matching_passwords': [
+      { type: 'areEqual', message: 'Password mismatch.' }
+    ],
+  };
 }
