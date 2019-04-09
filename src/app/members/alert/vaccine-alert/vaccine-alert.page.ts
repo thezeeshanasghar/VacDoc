@@ -14,7 +14,9 @@ export class VaccineAlertPage implements OnInit {
 
   doctorID: any;
   Childs: any;
-  alertID: any;
+  
+  numOfDays: number = 0; // 0 means get alert for today, 5 means get alert for next five days, same as for -5
+
   constructor(
     public loadingController: LoadingController,
     private alertService: AlertService,
@@ -26,18 +28,17 @@ export class VaccineAlertPage implements OnInit {
     this.storage.get(environment.DOCTOR_ID).then((val) => {
       this.doctorID = val;
     });
-    console.log(this.doctorID);
-    this.getChlid(0);
+    this.getChlid(this.numOfDays);
   }
 
   // Get childs get from server
-  async getChlid(msgID) {
-    this.alertID = msgID;
+  async getChlid(numOfDays: number) {
+    this.numOfDays = numOfDays;
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
     await loading.present();
-    await this.alertService.getChild(this.alertID, this.doctorID).subscribe(
+    await this.alertService.getChild(this.numOfDays, this.doctorID).subscribe(
       res => {
         if (res.IsSuccess) {
           this.Childs = res.ResponseData
@@ -62,7 +63,7 @@ export class VaccineAlertPage implements OnInit {
       message: 'Loading'
     });
     await loading.present();
-    await this.alertService.sendIndividualAlertMsg(this.alertID, id).subscribe(
+    await this.alertService.sendIndividualAlertMsg(this.numOfDays, id).subscribe(
       res => {
         if (res.IsSuccess) {
           loading.dismiss();

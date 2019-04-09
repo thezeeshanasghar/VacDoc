@@ -16,16 +16,16 @@ export class AlertService extends BaseService {
     protected http: HttpClient
   ) { super(http); }
 
-  getChild(msgID: String, Id: String, ): Observable<any> {
-    const url = `${this.API_ALERT}schedule/alert/${msgID}/${Id}`;
+  getChild(numOfDays: number, Id: String, ): Observable<any> {
+    const url = `${this.API_ALERT}schedule/alert/${numOfDays}/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
     );
   }
 
-  sendIndividualAlertMsg(msgId: String, Id: String): Observable<any> {
-    const url = `${this.API_ALERT}schedule/individual-sms-alert/${msgId}/${Id}`;
+  sendIndividualAlertMsg(numOfDays: number, Id: String): Observable<any> {
+    const url = `${this.API_ALERT}schedule/individual-sms-alert/${numOfDays}/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
