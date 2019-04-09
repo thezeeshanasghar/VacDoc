@@ -8,6 +8,15 @@
 </ion-header>
 
 <ion-content padding>
+  <!-- <ion-searchbar type="tel"></ion-searchbar> -->
+
+  <form [formGroup]="fg">
+    <ion-item>
+      <ion-input type="text" placeholder="search" formControlName="Name" required></ion-input>
+      <ion-button (click)="getChlidbyUser()">search</ion-button>
+    </ion-item>
+
+  </form>
 
   <ion-card *ngFor="let child of childs" [ngClass]="child.Gender=='Girl' ? 'girl' : 'boy'">
     <ion-item>

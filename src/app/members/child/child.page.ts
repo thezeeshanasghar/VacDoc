@@ -6,6 +6,7 @@ import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment.prod';
 import { AlertService } from 'src/app/shared/alert.service';
 import { Router } from '@angular/router';
+import { FormGroup, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-child',
@@ -14,16 +15,21 @@ import { Router } from '@angular/router';
 })
 export class ChildPage {
 
-
+  fg: FormGroup;
   childs: any;
   constructor(
     public router: Router,
     public loadingController: LoadingController,
     private childService: ChildService,
+    private formBuilder: FormBuilder,
     private toastService: ToastService,
     private storage: Storage,
     private alertService: AlertService
-  ) { }
+  ) {
+    this.fg = this.formBuilder.group({
+      Name: [null],
+    });
+  }
 
   ionViewWillEnter() {
     this.storage.get(environment.DOCTOR_ID).then((val) => {
@@ -57,7 +63,7 @@ export class ChildPage {
 
   // Alert Msg Show for deletion of Child
   async alertDeletevaccine() {
-    
+
   }
   // alertDeletevaccine(id) {
   //   this.alertService.confirmAlert('Are you sure you want to delete this ?', null)
@@ -93,6 +99,29 @@ export class ChildPage {
         this.toastService.create(err, 'danger')
       }
     );
+  }
+
+  async getChlidbyUser() {
+    const loading = await this.loadingController.create({
+      message: 'Loading'
+    });
+    await loading.present();
+    await this.childService.getChildByUserSearch(this.fg.value.Name).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          this.childs = res.ResponseData
+          loading.dismiss();
+        }
+        else {
+          loading.dismiss();
+          this.toastService.create(res.Message, 'danger');
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, 'danger');
+      }
+    )
   }
 
 }

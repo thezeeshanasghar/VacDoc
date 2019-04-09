@@ -55,4 +55,12 @@ export class ChildService extends BaseService {
         catchError(this.handleError)
       );
   }
+
+  getChildByUserSearch(value): Observable<any> {
+    const url = `${this.API_CHILD}doctor/2/20/0/childs?searchKeyword=${value}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
 }
