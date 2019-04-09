@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, FormArray, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { LoadingController } from '@ionic/angular';
 import { VaccineService } from 'src/app/services/vaccine.service';
@@ -40,26 +40,33 @@ export class AddPage implements OnInit {
   ngOnInit() {
     this.todaydate = new Date();
     this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format('YYYY-MM-DD');
-
     this.getVaccine();
+
     this.fg1 = this.formBuilder.group({
-      'ClinicID': [''],
-      'Name': [null],
-      'FatherName': [null],
-      'Email': [null],
-      'DOB': [this.todaydate],
-      'CountryCode': [null],
-      'MobileNumber': [null],
-      'PreferredDayOfWeek': [null],
-      'Gender': [null],
-      'City': [null],
-      'PreferredDayOfReminder': [null],
-      'PreferredSchedule': [null],
-      'IsEPIDone': [null],
-      'IsVerified': [null],
-      'Password': [null],
-      'ChildVaccines': [null],
+      ClinicID: [''],
+      Name: new FormControl('', Validators.required),
+      FatherName: new FormControl('', Validators.required),
+      Email: new FormControl('', Validators.compose([
+        Validators.required,
+        Validators.pattern('^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$')
+      ])),
+      DOB: new FormControl(this.todaydate, Validators.required),
+      CountryCode: [null],
+      MobileNumber: new FormControl('', Validators.compose([
+        Validators.required,
+        Validators.pattern('[0-9]{10}$')
+      ])),
+      PreferredDayOfWeek: [null],
+      Gender: [null],
+      City: [null],
+      PreferredDayOfReminder: [null],
+      PreferredSchedule: [null],
+      IsEPIDone: [null],
+      IsVerified: [null],
+      Password: [null],
+      ChildVaccines: [null],
     });
+
     this.storage.get(environment.DOCTOR_ID).then((val) => {
       this.doctorID = val;
     });
@@ -75,7 +82,6 @@ export class AddPage implements OnInit {
     this.fg1.value.DOB = moment(this.fg1.value.DOB, 'YYYY-MM-DD').format('DD-MM-YYYY');
     this.formcontroll = true;
     this.fg1.value.Gender = this.gender;
-    console.log(this.fg1.value);
   }
   updateGender(g) {
     this.gender = g;
@@ -92,12 +98,7 @@ export class AddPage implements OnInit {
     for (let i = 0; i < this.fg2.value.ChildVaccines.length; i++) {
       vaccine.ChildVaccines.push({ ID: this.fg2.value.ChildVaccines[i] });
     }
-    console.log(vaccine)
     this.addNewChild(vaccine);
-  }
-
-  getClinicforCheckOnline() {
-
   }
 
   async getClinics() {
@@ -137,8 +138,6 @@ export class AddPage implements OnInit {
     }
     this.fg1.value.Password = retVal;
   }
-
-
 
   async getVaccine() {
     const loading = await this.loadingController.create({
@@ -186,4 +185,27 @@ export class AddPage implements OnInit {
         this.toastService.create(err, 'danger')
       });
   }
+
+  validation_messages = {
+    'name': [
+      { type: 'required', message: 'Name is required.' }
+    ],
+    'fatherName': [
+      { type: 'required', message: 'Father name is required.' }
+    ],
+    'email': [
+      { type: 'required', message: 'Email is required.' },
+      { type: 'pattern', message: 'Please enter a valid email.' }
+    ],
+    'DOB': [
+      { type: 'required', message: 'Date of Birth is required.' },
+    ],
+    'mobileNumber': [
+      { type: 'required', message: 'Mobile number is required like 3331231231' },
+      { type: 'pattern', message: 'Mobile number is required like 3331231231' }
+    ],
+    'gender': [
+      { type: 'required', message: 'Gender is required.' }
+    ],
+  };
 }
