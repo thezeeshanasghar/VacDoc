@@ -17,6 +17,7 @@ export class ChildPage {
 
   fg: FormGroup;
   childs: any;
+  userID: any;
   forMoreChild: string = '0';
   constructor(
     public router: Router,
@@ -33,18 +34,18 @@ export class ChildPage {
   }
 
   ionViewWillEnter() {
-    this.storage.get(environment.DOCTOR_ID).then((val) => {
-      this.getAllChlid();
+    this.storage.get(environment.USER_ID).then((val) => {
+      this.userID = val;
     });
+    this.getAllChlid();
   }
 
   async getAllChlid() {
-    let id = '2';
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
     await loading.present();
-    await this.childService.getChild(id, this.forMoreChild).subscribe(
+    await this.childService.getChild(this.userID, this.forMoreChild).subscribe(
       res => {
         if (res.IsSuccess) {
           if (this.forMoreChild == '0') {
@@ -76,19 +77,14 @@ export class ChildPage {
   }
 
   // Alert Msg Show for deletion of Child
-  async alertDeletevaccine() {
-
+  async alertforDeleteChild(id) {
+    this.alertService.confirmAlert('Are you sure you want to delete this ?', null)
+      .then((yes) => {
+        if (yes) {
+          this.Deletechild(id);
+        }
+      });
   }
-  // alertDeletevaccine(id) {
-  //   this.alertService.confirmAlert('Are you sure you want to delete this ?', null)
-  //     .then((yes) => {
-  //       if (yes) {
-  //         console.log(id)
-  //         this.Deletechild(id);
-  //       }
-  //     });
-
-  // }
 
   // Call api to delete a Child 
   async Deletechild(id) {
@@ -100,7 +96,7 @@ export class ChildPage {
       res => {
         if (res.IsSuccess == true) {
           this.toastService.create(res.Message);
-          this.getAllChlid(2);
+          this.getAllChlid();
           loading.dismiss();
         }
         else {
