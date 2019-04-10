@@ -17,6 +17,7 @@ export class ChildPage {
 
   fg: FormGroup;
   childs: any;
+  forMoreChild: string = '0';
   constructor(
     public router: Router,
     public loadingController: LoadingController,
@@ -33,21 +34,29 @@ export class ChildPage {
 
   ionViewWillEnter() {
     this.storage.get(environment.DOCTOR_ID).then((val) => {
-      this.getAllChlid(2);
+      this.getAllChlid();
     });
   }
 
-  async getAllChlid(id) {
-
+  async getAllChlid() {
+    let id = '2';
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
     await loading.present();
-    await this.childService.getChild(id).subscribe(
+    await this.childService.getChild(id, this.forMoreChild).subscribe(
       res => {
         if (res.IsSuccess) {
-          this.childs = res.ResponseData
-          loading.dismiss();
+          if (this.forMoreChild == '0') {
+            this.childs = res.ResponseData
+            loading.dismiss();
+          }
+          else {
+            for (let i = 0; i < res.ResponseData.length; i++) {
+              this.childs.push(res.ResponseData[i]);
+            }
+            loading.dismiss();
+          }
         }
         else {
           loading.dismiss();
@@ -59,6 +68,11 @@ export class ChildPage {
         this.toastService.create(err, 'danger');
       }
     )
+  }
+
+  loadMore() {
+    this.forMoreChild = this.forMoreChild + 1;
+    this.getAllChlid();
   }
 
   // Alert Msg Show for deletion of Child
