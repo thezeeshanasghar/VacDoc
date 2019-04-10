@@ -82,6 +82,7 @@ export class AddPage implements OnInit {
     this.fg1.value.DOB = moment(this.fg1.value.DOB, 'YYYY-MM-DD').format('DD-MM-YYYY');
     this.formcontroll = true;
     this.fg1.value.Gender = this.gender;
+    this.PasswordGenerator();
   }
   updateGender(g) {
     this.gender = g;
