@@ -37,7 +37,6 @@ export class ChildPage {
     this.storage.get(environment.USER_ID).then((val) => {
       this.userID = val;
     });
-    this.getAllChlid();
   }
 
   async getAllChlid() {
