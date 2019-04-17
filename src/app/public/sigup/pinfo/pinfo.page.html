@@ -8,5 +8,174 @@
 </ion-header>
 
 <ion-content padding>
-<ion-button routerLink="/cinfo">Next step</ion-button>
+
+  <ion-radio-group [(ngModel)]="doctortype">
+
+    <ion-grid>
+      <ion-row>
+
+        <ion-col>
+          <ion-item>
+            <ion-label color="primary">Child Specialist</ion-label>
+            <ion-radio slot="start" value="Child Specialist" name='doctortype'></ion-radio>
+          </ion-item>
+        </ion-col>
+
+        <ion-col>
+          <ion-item>
+            <ion-label color="primary">Doctor</ion-label>
+            <ion-radio slot="start" value="Doctor" name='doctortype'></ion-radio>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-radio-group>
+  <ion-item>
+    <ion-label>select other Specialist</ion-label>
+    <ion-select value="Any" multiple="true" [(ngModel)]='docSpeciality'>
+      <ion-select-option value="Cardialogist">Cardialogist</ion-select-option>
+      <ion-select-option value="Pulmonologist">Pulmonologist</ion-select-option>
+      <ion-select-option value="Gastroenterologist">Gastroenterologist</ion-select-option>
+      <ion-select-option value="Rheumatologist">Rheumatologist</ion-select-option>
+      <ion-select-option value="Nephrologist">Nephrologist</ion-select-option>
+      <ion-select-option value="Medical Specialist,">Medical Specialist</ion-select-option>
+      <ion-select-option value="Sexologist">Sexologist</ion-select-option>
+      <ion-select-option value="General Surgeon">General Surgeon</ion-select-option>
+      <ion-select-option value="Plastic Surgeon">Plastic Surgeon</ion-select-option>
+      <ion-select-option value="Dermatologist">Dermatologist</ion-select-option>
+      <ion-select-option value="Dental Surgeon">Dental Surgeon</ion-select-option>
+      <ion-select-option value="Orthodontist">Orthodontist</ion-select-option>
+      <ion-select-option value="Diabetologist">Diabetologist</ion-select-option>
+      <ion-select-option value="Neurologist">Neurologist</ion-select-option>
+      <ion-select-option value="Neuro Surgeon">Neuro Surgeon</ion-select-option>
+      <ion-select-option value="Urologist">Urologist</ion-select-option>
+      <ion-select-option value="Infectious Disease Specialist">Infectious Disease Specialist</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <form [formGroup]="fg">
+
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Qulification</ion-label>
+      <ion-input type="text" formControlName="Qualification" required></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.qualification">
+        <div class="error-message"
+          *ngIf="fg.get('Qualification').hasError(validation.type) && (fg.get('Qualification').dirty || fg.get('Qualification').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Additional Information</ion-label>
+      <ion-input type="text" formControlName="AdditionalInfo"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">First Name</ion-label>
+      <ion-input type="text" formControlName="FirstName" required></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.FirstName">
+        <div class="error-message"
+          *ngIf="fg.get('FirstName').hasError(validation.type) && (fg.get('FirstName').dirty || fg.get('FirstName').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Last Name</ion-label>
+      <ion-input type="text" formControlName="LastName" required></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.lastName">
+        <div class="error-message"
+          *ngIf="fg.get('LastName').hasError(validation.type) && (fg.get('LastName').dirty || fg.get('LastName').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Display Name</ion-label>
+      <ion-input type="text" formControlName="DisplayName" required></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.displayName">
+        <div class="error-message"
+          *ngIf="fg.get('DisplayName').hasError(validation.type) && (fg.get('DisplayName').dirty || fg.get('DisplayName').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Email</ion-label>
+      <ion-input type="text" formControlName="Email" required></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.email">
+        <div class="error-message"
+          *ngIf="fg.get('Email').hasError(validation.type) && (fg.get('Email').dirty || fg.get('Email').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Enter Number</ion-label>
+      <ion-input type="text" formControlName="MobileNumber" required></ion-input>
+
+      <ion-item slot="end" lines="none">
+        <ion-radio value="Child Specialist" formControlName="ShowMobile" checked="true"></ion-radio>
+        <ion-label color="primary">Display</ion-label>
+      </ion-item>
+
+    </ion-item>
+
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.mobileNumber">
+        <div class="error-message"
+          *ngIf="fg.get('MobileNumber').hasError(validation.type) && (fg.get('MobileNumber').dirty || fg.get('MobileNumber').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Phone Number</ion-label>
+      <ion-input type="text" formControlName="PhoneNo" required></ion-input>
+      <ion-item slot="end" lines="none">
+        <ion-radio value="Child Specialist" formControlName="ShowPhone" checked="true"></ion-radio>
+        <ion-label color="primary">Display</ion-label>
+      </ion-item>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.phoneNo">
+        <div class="error-message"
+          *ngIf="fg.get('PhoneNo').hasError(validation.type) && (fg.get('PhoneNo').dirty || fg.get('PhoneNo').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">PMDC Number</ion-label>
+      <ion-input type="text" formControlName="PMDC" required></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.PMDC">
+        <div class="error-message"
+          *ngIf="fg.get('PMDC').hasError(validation.type) && (fg.get('PMDC').dirty || fg.get('PMDC').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+  </form>
+
+  <ion-button (click)=nextpage()>Next step</ion-button>
 </ion-content>
