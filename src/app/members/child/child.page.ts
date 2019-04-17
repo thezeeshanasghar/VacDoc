@@ -18,7 +18,6 @@ export class ChildPage {
   fg: FormGroup;
   childs: any;
   userID: any;
-  forMoreChild: string = '0';
   constructor(
     public router: Router,
     public loadingController: LoadingController,
@@ -37,42 +36,6 @@ export class ChildPage {
     this.storage.get(environment.USER_ID).then((val) => {
       this.userID = val;
     });
-  }
-
-  async getAllChlid() {
-    const loading = await this.loadingController.create({
-      message: 'Loading'
-    });
-    await loading.present();
-    await this.childService.getChild(this.userID, this.forMoreChild).subscribe(
-      res => {
-        if (res.IsSuccess) {
-          if (this.forMoreChild == '0') {
-            this.childs = res.ResponseData
-            loading.dismiss();
-          }
-          else {
-            for (let i = 0; i < res.ResponseData.length; i++) {
-              this.childs.push(res.ResponseData[i]);
-            }
-            loading.dismiss();
-          }
-        }
-        else {
-          loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
-        }
-      },
-      err => {
-        loading.dismiss();
-        this.toastService.create(err, 'danger');
-      }
-    )
-  }
-
-  loadMore() {
-    this.forMoreChild = this.forMoreChild + 1;
-    this.getAllChlid();
   }
 
   // Alert Msg Show for deletion of Child
@@ -95,7 +58,6 @@ export class ChildPage {
       res => {
         if (res.IsSuccess == true) {
           this.toastService.create(res.Message);
-          this.getAllChlid();
           loading.dismiss();
         }
         else {
