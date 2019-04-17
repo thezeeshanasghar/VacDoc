@@ -9,4 +9,34 @@
 
 <ion-content padding>
 
+  <form [formGroup]="fg">
+    <ion-item>
+      <ion-label position="floating" color="primary">Enter Number</ion-label>
+      <ion-input formControlName="MobileNumber"></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.mobileNumber">
+        <div class="error-message"
+          *ngIf="fg.get('MobileNumber').hasError(validation.type) && (fg.get('MobileNumber').dirty || fg.get('MobileNumber').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-label position="floating" color="primary">Enter Msg</ion-label>
+      <ion-textarea formControlName="SMS"></ion-textarea>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.Msg">
+        <div class="error-message"
+          *ngIf="fg.get('SMS').hasError(validation.type) && (fg.get('SMS').dirty || fg.get('SMS').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-button [disabled]="!fg.valid" (click)="sendMsg()">Send Msg</ion-button>
+  </form>
+
 </ion-content>
