@@ -18,7 +18,7 @@ const routes: Routes = [
   { path: 'followup/:id', loadChildren: './followup/followup.module#FollowupPageModule' },
   { path: 'growth', loadChildren: './growth/growth.module#GrowthPageModule' },
   { path: 'invoice/:id', loadChildren: './invoice/invoice.module#InvoicePageModule' },
-
+  { path: 'cmsg/:id', loadChildren: './cmsg/cmsg.module#CMsgPageModule' },
 ];
 
 @NgModule({

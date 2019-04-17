@@ -26,6 +26,8 @@
       <ion-label>{{child.Name}}</ion-label>
       <ion-icon slot="end" color="primary" name="create" routerLink="/members/child/edit/{{child.ID}}"></ion-icon>
       <ion-icon slot="end" color="primary" name="trash" (click)="alertforDeleteChild(child.ID)"></ion-icon>
+      <ion-icon slot="end" color="primary" name="mail" routerLink="/members/child/cmsg/{{child.ID}}"></ion-icon>
+      <ion-icon slot="end" color="primary" name="call" (click)="alertforDeleteChild(child.ID)"></ion-icon>
     </ion-item>
 
     <ion-card-content>
