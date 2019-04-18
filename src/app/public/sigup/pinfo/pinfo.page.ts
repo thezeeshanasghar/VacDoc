@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pinfo',
@@ -13,7 +14,8 @@ export class PinfoPage implements OnInit {
   doctorsp: [];
   docSpeciality: any;
   constructor(
-    private frombuilder: FormBuilder
+    private frombuilder: FormBuilder,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -37,7 +39,10 @@ export class PinfoPage implements OnInit {
       ShowMobile: [],
       PhoneNo: [],
       ShowPhone: [],
-      PMDC: [],
+      PMDC: new FormControl('', Validators.compose([
+        Validators.required,
+        Validators.pattern('^[0-9-\\+]*-[A-Z]$')
+      ])),
       DoctorSp: []
     })
   }
@@ -61,6 +66,7 @@ export class PinfoPage implements OnInit {
     this.fg.value.DoctorSp = this.docSpeciality;
     this.fg.value.DoctorType = this.doctortype;
     console.log(this.fg.value);
+    this.router.navigate(['/sigup/cinfo']);
   }
 
   validation_messages = {
@@ -88,7 +94,8 @@ export class PinfoPage implements OnInit {
       { type: 'required', message: 'PhoneNo is required.' }
     ],
     'PMDC': [
-      { type: 'required', message: 'PMDC is required.' }
+      { type: 'required', message: 'PMDC is required.' },
+      { type: 'pattern', message: 'PMDC is required like 12345-A' }
     ],
   };
 }
