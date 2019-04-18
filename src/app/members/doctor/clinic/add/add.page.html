@@ -29,55 +29,119 @@
       <ion-card>
         <ion-item>
           <ion-card-title>Monday</ion-card-title>
-          <ion-toggle slot="end" color="primary" formControlName="Monday"></ion-toggle>
+          <ion-toggle #Monday id="Monday" name="Monday" slot="end" color="primary" formControlName="Monday">
+          </ion-toggle>
         </ion-item>
-        <ion-card-content>
-          <ion-item>
-            <ion-label color="primary" position="floating">Start Date</ion-label>
-            <ion-datetime formControlName="Mstart" display-format="h:mm a"></ion-datetime>
-          </ion-item>
+        <ion-card-content *ngIf="Monday.checked==true">
+          <ion-label>Session:1 </ion-label>
+          <ion-item lines="none" no-padding>
 
-          <ion-item>
-            <ion-label color="primary" position="floating">End Time</ion-label>
-            <ion-datetime formControlName="Mend" display-format="h:mm a"></ion-datetime>
+            <ion-item lines="none" no-padding>
+              <ion-label color="primary" position="floating">Start Time</ion-label>
+              <ion-datetime formControlName="Mstart" display-format="h:mm a" (ionChange)="setAllDaysValueStrat1()">
+              </ion-datetime>
+            </ion-item>
+
+            <ion-item slot="end" lines="none" no-padding>
+              <ion-label color="primary" position="floating">End Time</ion-label>
+              <ion-datetime formControlName="Mend" display-format="h:mm a" (ionChange)="setAllDaysValueEnd1()">
+              </ion-datetime>
+            </ion-item>
+          </ion-item>
+          <ion-label>Session:2 </ion-label>
+          <ion-item lines="none" no-padding>
+
+            <ion-item lines="none" no-padding>
+              <ion-label color="primary" position="floating">Start Time</ion-label>
+              <ion-datetime formControlName="Mstart2" display-format="h:mm a" (ionChange)="setAllDaysValueStrat2()">
+              </ion-datetime>
+            </ion-item>
+
+            <ion-item slot="end" lines="none" no-padding>
+              <ion-label color="primary" position="floating">End Time</ion-label>
+              <ion-datetime formControlName="Mend2" display-format="h:mm a" (ionChange)="setAllDaysValueEnd2()">
+              </ion-datetime>
+            </ion-item>
           </ion-item>
         </ion-card-content>
       </ion-card>
-
 
       <ion-card>
         <ion-item>
           <ion-card-title>Tuesday</ion-card-title>
-          <ion-toggle slot="end" color="primary" formControlName="Tuesday"></ion-toggle>
+          <ion-toggle #Tuesday id="Tuesday" name="Tuesday" slot="end" color="primary" formControlName="Tuesday">
+          </ion-toggle>
         </ion-item>
-        <ion-card-content>
-          <ion-item>
-            <ion-label color="primary" position="floating">Start Date</ion-label>
-            <ion-datetime formControlName="Tustart" display-format="h:mm a"></ion-datetime>
-          </ion-item>
+        <ion-card-content *ngIf="Tuesday.checked==true">
+          <ion-label>Session:1 </ion-label>
+          <ion-item lines="none" no-padding>
 
-          <ion-item>
-            <ion-label color="primary" position="floating">End Time</ion-label>
-            <ion-datetime formControlName="Tuend" display-format="h:mm a"></ion-datetime>
+            <ion-item lines="none" no-padding>
+              <ion-label color="primary" position="floating">Start Time</ion-label>
+              <ion-datetime formControlName="Tustart" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
+
+            <ion-item slot="end" lines="none" no-padding>
+              <ion-label color="primary" position="floating">End Time</ion-label>
+              <ion-datetime formControlName="Tuend" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
+          </ion-item>
+          <ion-label>Session:2 </ion-label>
+          <ion-item lines="none" no-padding>
+
+            <ion-item lines="none" no-padding>
+              <ion-label color="primary" position="floating">Start Time</ion-label>
+              <ion-datetime formControlName="Tustart2" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
+
+            <ion-item slot="end" lines="none" no-padding>
+              <ion-label color="primary" position="floating">End Time</ion-label>
+              <ion-datetime formControlName="Tuend2" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
           </ion-item>
         </ion-card-content>
       </ion-card>
 
       <ion-card>
         <ion-item>
-          <ion-card-title>Wednesday </ion-card-title>
-          <ion-toggle slot="end" color="primary" formControlName="Wednesday"></ion-toggle>
+          <ion-card-title>Wednesday</ion-card-title>
+          <ion-toggle #Wednesday id="Wednesday" name="Wednesday" slot="end" color="primary" formControlName="Wednesday">
+          </ion-toggle>
         </ion-item>
+        <ion-card-content *ngIf="Wednesday.checked==true">
+          <ion-label>Session:1 </ion-label>
+          <ion-item lines="none" no-padding>
 
-        <ion-card-content>
-          <ion-item>
-            <ion-label color="primary" position="floating">Start Date</ion-label>
-            <ion-datetime formControlName="Wstart" display-format="h:mm a"></ion-datetime>
+            <ion-item lines="none" no-padding>
+              <ion-label color="primary" position="floating">Start Time</ion-label>
+              <ion-datetime formControlName="Wstart" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
+
+            <ion-item slot="end" lines="none" no-padding>
+              <ion-label color="primary" position="floating">End Time</ion-label>
+              <ion-datetime formControlName="Wend" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
           </ion-item>
+          <ion-label>Session:2 </ion-label>
+          <ion-item lines="none" no-padding>
 
-          <ion-item>
-            <ion-label color="primary" position="floating">End Time</ion-label>
-            <ion-datetime formControlName="Wend" display-format="h:mm a"></ion-datetime>
+            <ion-item lines="none" no-padding>
+              <ion-label color="primary" position="floating">Start Time</ion-label>
+              <ion-datetime formControlName="Wstart2" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
+
+            <ion-item slot="end" lines="none" no-padding>
+              <ion-label color="primary" position="floating">End Time</ion-label>
+              <ion-datetime formControlName="Wend2" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
           </ion-item>
         </ion-card-content>
       </ion-card>
@@ -85,17 +149,39 @@
       <ion-card>
         <ion-item>
           <ion-card-title>Thursday</ion-card-title>
-          <ion-toggle slot="end" color="primary" formControlName="Thursday"></ion-toggle>
+          <ion-toggle #Thursday id="Thursday" name="Thursday" slot="end" color="primary" formControlName="Thursday">
+          </ion-toggle>
         </ion-item>
-        <ion-card-content>
-          <ion-item>
-            <ion-label color="primary" position="floating">Start Date</ion-label>
-            <ion-datetime formControlName="Thstart" display-format="h:mm a"></ion-datetime>
-          </ion-item>
+        <ion-card-content *ngIf="Thursday.checked==true">
+          <ion-label>Session:1 </ion-label>
+          <ion-item lines="none" no-padding>
 
-          <ion-item>
-            <ion-label color="primary" position="floating">End Time</ion-label>
-            <ion-datetime formControlName="Thend" display-format="h:mm a"></ion-datetime>
+            <ion-item lines="none" no-padding>
+              <ion-label color="primary" position="floating">Start Time</ion-label>
+              <ion-datetime formControlName="Thstart" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
+
+            <ion-item slot="end" lines="none" no-padding>
+              <ion-label color="primary" position="floating">End Time</ion-label>
+              <ion-datetime formControlName="Thend" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
+          </ion-item>
+          <ion-label>Session:2 </ion-label>
+          <ion-item lines="none" no-padding>
+
+            <ion-item lines="none" no-padding>
+              <ion-label color="primary" position="floating">Start Time</ion-label>
+              <ion-datetime formControlName="Thstart2" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
+
+            <ion-item slot="end" lines="none" no-padding>
+              <ion-label color="primary" position="floating">End Time</ion-label>
+              <ion-datetime formControlName="Thend2" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
           </ion-item>
         </ion-card-content>
       </ion-card>
@@ -103,36 +189,79 @@
       <ion-card>
         <ion-item>
           <ion-card-title>Friday</ion-card-title>
-          <ion-toggle slot="end" color="primary" formControlName="Friday"></ion-toggle>
+          <ion-toggle #Friday id="Friday" name="Friday" slot="end" color="primary" formControlName="Friday">
+          </ion-toggle>
         </ion-item>
+        <ion-card-content *ngIf="Friday.checked==true">
+          <ion-label>Session:1 </ion-label>
+          <ion-item lines="none" no-padding>
 
-        <ion-card-content>
-          <ion-item>
-            <ion-label color="primary" position="floating">Start Date</ion-label>
-            <ion-datetime formControlName="Fstart" display-format="h:mm a"></ion-datetime>
+            <ion-item lines="none" no-padding>
+              <ion-label color="primary" position="floating">Start Time</ion-label>
+              <ion-datetime formControlName="Fstart" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
+
+            <ion-item slot="end" lines="none" no-padding>
+              <ion-label color="primary" position="floating">End Time</ion-label>
+              <ion-datetime formControlName="Fend" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
           </ion-item>
+          <ion-label>Session:2 </ion-label>
+          <ion-item lines="none" no-padding>
 
-          <ion-item>
-            <ion-label color="primary" position="floating">End Time</ion-label>
-            <ion-datetime formControlName="Fend" display-format="h:mm a"></ion-datetime>
+            <ion-item lines="none" no-padding>
+              <ion-label color="primary" position="floating">Start Time</ion-label>
+              <ion-datetime formControlName="Fstart2" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
+
+            <ion-item slot="end" lines="none" no-padding>
+              <ion-label color="primary" position="floating">End Time</ion-label>
+              <ion-datetime formControlName="Fend2" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
           </ion-item>
         </ion-card-content>
       </ion-card>
 
       <ion-card>
         <ion-item>
-          <ion-card-title>Saturday </ion-card-title>
-          <ion-toggle slot="end" color="primary" formControlName="Saturday"></ion-toggle>
+          <ion-card-title>Saturday</ion-card-title>
+          <ion-toggle #Saturday id="Saturday" name="Saturday" slot="end" color="primary" formControlName="Saturday">
+          </ion-toggle>
         </ion-item>
-        <ion-card-content>
-          <ion-item>
-            <ion-label color="primary" position="floating">Start Date</ion-label>
-            <ion-datetime formControlName="Sastart" display-format="h:mm a"></ion-datetime>
-          </ion-item>
+        <ion-card-content *ngIf="Saturday.checked==true">
+          <ion-label>Session:1 </ion-label>
+          <ion-item lines="none" no-padding>
 
-          <ion-item>
-            <ion-label color="primary" position="floating">End Time</ion-label>
-            <ion-datetime formControlName="Saend" display-format="h:mm a"></ion-datetime>
+            <ion-item lines="none" no-padding>
+              <ion-label color="primary" position="floating">Start Time</ion-label>
+              <ion-datetime formControlName="Sastart" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
+
+            <ion-item slot="end" lines="none" no-padding>
+              <ion-label color="primary" position="floating">End Time</ion-label>
+              <ion-datetime formControlName="Saend" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
+          </ion-item>
+          <ion-label>Session:2 </ion-label>
+          <ion-item lines="none" no-padding>
+
+            <ion-item lines="none" no-padding>
+              <ion-label color="primary" position="floating">Start Time</ion-label>
+              <ion-datetime formControlName="Sastart2" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
+
+            <ion-item slot="end" lines="none" no-padding>
+              <ion-label color="primary" position="floating">End Time</ion-label>
+              <ion-datetime formControlName="Saend2" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
           </ion-item>
         </ion-card-content>
       </ion-card>
@@ -140,17 +269,39 @@
       <ion-card>
         <ion-item>
           <ion-card-title>Sunday</ion-card-title>
-          <ion-toggle slot="end" color="primary" formControlName="Sunday"></ion-toggle>
+          <ion-toggle #Sunday id="Sunday" name="Sunday" slot="end" color="primary" formControlName="Sunday">
+          </ion-toggle>
         </ion-item>
-        <ion-card-content>
-          <ion-item>
-            <ion-label color="primary" position="floating">Start Date</ion-label>
-            <ion-datetime formControlName="Sustart" display-format="h:mm a"></ion-datetime>
-          </ion-item>
+        <ion-card-content *ngIf="Sunday.checked==true">
+          <ion-label>Session:1 </ion-label>
+          <ion-item lines="none" no-padding>
 
-          <ion-item>
-            <ion-label color="primary" position="floating">End Time</ion-label>
-            <ion-datetime formControlName="Suend" display-format="h:mm a"></ion-datetime>
+            <ion-item lines="none" no-padding>
+              <ion-label color="primary" position="floating">Start Time</ion-label>
+              <ion-datetime formControlName="Sustart" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
+
+            <ion-item slot="end" lines="none" no-padding>
+              <ion-label color="primary" position="floating">End Time</ion-label>
+              <ion-datetime formControlName="Suend" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
+          </ion-item>
+          <ion-label>Session:2 </ion-label>
+          <ion-item lines="none" no-padding>
+
+            <ion-item lines="none" no-padding>
+              <ion-label color="primary" position="floating">Start Time</ion-label>
+              <ion-datetime formControlName="Sustart2" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
+
+            <ion-item slot="end" lines="none" no-padding>
+              <ion-label color="primary" position="floating">End Time</ion-label>
+              <ion-datetime formControlName="Suend2" display-format="h:mm a">
+              </ion-datetime>
+            </ion-item>
           </ion-item>
         </ion-card-content>
       </ion-card>

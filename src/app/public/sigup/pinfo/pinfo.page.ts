@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { SignupService } from 'src/app/services/signup.service';
 
 @Component({
   selector: 'app-pinfo',
@@ -15,7 +16,8 @@ export class PinfoPage implements OnInit {
   docSpeciality: any;
   constructor(
     private frombuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private signupService: SignupService
   ) { }
 
   ngOnInit() {
@@ -49,7 +51,6 @@ export class PinfoPage implements OnInit {
 
   selectChangeHandler(event: any) {
     this.doctorsp = event.target.value;
-    console.log(this.doctorsp);
   }
   PasswordGenerator() {
     var length = 4,
@@ -65,7 +66,8 @@ export class PinfoPage implements OnInit {
     this.PasswordGenerator();
     this.fg.value.DoctorSp = this.docSpeciality;
     this.fg.value.DoctorType = this.doctortype;
-    console.log(this.fg.value);
+    this.signupService.personalData = this.fg.value;
+    this.signupService.clientData();
     this.router.navigate(['/sigup/cinfo']);
   }
 

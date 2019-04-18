@@ -6,7 +6,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { SigupPage } from './sigup.page';
-import { PinfoPage } from './pinfo/pinfo.page';
 
 const routes: Routes = [
   {
@@ -16,7 +15,7 @@ const routes: Routes = [
   { path: 'sigup', loadChildren: './sigup/sigup.module#SigupPageModule' },
   { path: 'pinfo', loadChildren: './pinfo/pinfo.module#PinfoPageModule' },
   { path: 'cinfo', loadChildren: './cinfo/cinfo.module#CinfoPageModule' },
-  { path: 'vschedule', loadChildren: '.sigup/vschedule/vschedule.module#VschedulePageModule' },
+  { path: 'vschedule', loadChildren: './vschedule/vschedule.module#VschedulePageModule' },
 
 
 ];

@@ -6,6 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { CinfoPage } from './cinfo.page';
+import { AddPage } from 'src/app/members/doctor/clinic/add/add.page';
 
 const routes: Routes = [
   {
@@ -20,8 +21,14 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    ReactiveFormsModule
+    ReactiveFormsModule,
+
   ],
-  declarations: [CinfoPage]
+  providers: [
+
+  ],
+  declarations: [CinfoPage,
+    AddPage
+  ]
 })
-export class CinfoPageModule {}
+export class CinfoPageModule { }
