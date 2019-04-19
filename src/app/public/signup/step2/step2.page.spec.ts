@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VschedulePage } from './vschedule.page';
+import { Step2Page } from './step2.page';
 
-describe('VschedulePage', () => {
-  let component: VschedulePage;
-  let fixture: ComponentFixture<VschedulePage>;
+describe('Step2Page', () => {
+  let component: Step2Page;
+  let fixture: ComponentFixture<Step2Page>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ VschedulePage ],
+      declarations: [ Step2Page ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(VschedulePage);
+    fixture = TestBed.createComponent(Step2Page);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

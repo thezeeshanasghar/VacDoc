@@ -5,13 +5,12 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { CinfoPage } from './cinfo.page';
-import { AddPage } from 'src/app/members/doctor/clinic/add/add.page';
+import { Step3Page } from './step3.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: CinfoPage
+    component: Step3Page
   }
 ];
 
@@ -21,14 +20,8 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    ReactiveFormsModule,
-
+    ReactiveFormsModule
   ],
-  providers: [
-
-  ],
-  declarations: [CinfoPage,
-    AddPage
-  ]
+  declarations: [Step3Page]
 })
-export class CinfoPageModule { }
+export class Step3PageModule {}

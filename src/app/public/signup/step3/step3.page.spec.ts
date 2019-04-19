@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CinfoPage } from './cinfo.page';
+import { Step3Page } from './step3.page';
 
-describe('CinfoPage', () => {
-  let component: CinfoPage;
-  let fixture: ComponentFixture<CinfoPage>;
+describe('Step3Page', () => {
+  let component: Step3Page;
+  let fixture: ComponentFixture<Step3Page>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CinfoPage ],
+      declarations: [ Step3Page ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CinfoPage);
+    fixture = TestBed.createComponent(Step3Page);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

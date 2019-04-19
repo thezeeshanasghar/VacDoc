@@ -4,11 +4,11 @@ import { Router } from '@angular/router';
 import { SignupService } from 'src/app/services/signup.service';
 
 @Component({
-  selector: 'app-pinfo',
-  templateUrl: './pinfo.page.html',
-  styleUrls: ['./pinfo.page.scss'],
+  selector: 'app-step1',
+  templateUrl: './step1.page.html',
+  styleUrls: ['./step1.page.scss'],
 })
-export class PinfoPage implements OnInit {
+export class Step1Page implements OnInit {
 
   fg: FormGroup;
   doctortype = 'Child Specialist';

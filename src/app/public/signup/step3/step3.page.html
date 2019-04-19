@@ -8,12 +8,13 @@
 </ion-header>
 
 <ion-content padding>
-
-  <ion-item *ngFor="let v of doses">
-    <ion-label>{{v.Name}}</ion-label>
-    <!-- <ion-label>{{v.MinAge}}</ion-label> -->
-    <ion-select>
-      <ion-select-option [value]="v.MinAge">At Birth</ion-select-option>
+  
+<form [formGroup]="fg" (ngSubmit)="onSubmit()">
+  
+  <ion-item *ngFor="let control of fg.controls | keyvalue">
+    <ion-label>{{control.key}}</ion-label>
+    <ion-select [formControlName]="control.key" value="{{control.value.value}}">
+      <ion-select-option value="0">At Birth</ion-select-option>
       <ion-select-option value="7">1 Week</ion-select-option>
       <ion-select-option value="14">2 Weeks</ion-select-option>
       <ion-select-option value="21">3 Weeks</ion-select-option>
@@ -107,5 +108,7 @@
     </ion-select>
   </ion-item>
 
-  <ion-button routerLink="/cinfo">Finish</ion-button>
+  <ion-button type="submit">Finish</ion-button>
+
+</form>
 </ion-content>

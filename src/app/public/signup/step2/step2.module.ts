@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { PinfoPage } from './pinfo.page';
+import { Step2Page } from './step2.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: PinfoPage
+    component: Step2Page
   }
 ];
 
@@ -19,9 +19,8 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes),
-    ReactiveFormsModule
+    RouterModule.forChild(routes)
   ],
-  declarations: [PinfoPage]
+  declarations: [Step2Page]
 })
-export class PinfoPageModule {}
+export class Step2PageModule {}
