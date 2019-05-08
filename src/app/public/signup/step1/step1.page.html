@@ -17,41 +17,43 @@
         <ion-col>
           <ion-item>
             <ion-label color="primary">Child Specialist</ion-label>
-            <ion-radio slot="start" value="Child Specialist" name='doctortype'></ion-radio>
+            <ion-radio slot="start" value="Child Specialist" name='doctortype' (click)="closeSelectOption()">
+            </ion-radio>
           </ion-item>
         </ion-col>
 
         <ion-col>
           <ion-item>
-            <ion-label color="primary">Doctor</ion-label>
-            <ion-radio slot="start" value="Doctor" name='doctortype'></ion-radio>
+            <ion-label color="primary" *ngIf="dropDown==false">Other speciality</ion-label>
+            <ion-radio slot="start" value="Doctor" name='doctortype' (click)="openSelectOption()"></ion-radio>
+
+
+            <ion-label *ngIf="dropDown==true">select Specialist</ion-label>
+            <ion-select *ngIf="dropDown==true" value="Any" [(ngModel)]='docSpeciality'>
+              <ion-select-option value="Cardialogist">Cardialogist</ion-select-option>
+              <ion-select-option value="Pulmonologist">Pulmonologist</ion-select-option>
+              <ion-select-option value="Gastroenterologist">Gastroenterologist</ion-select-option>
+              <ion-select-option value="Rheumatologist">Rheumatologist</ion-select-option>
+              <ion-select-option value="Nephrologist">Nephrologist</ion-select-option>
+              <ion-select-option value="Medical Specialist,">Medical Specialist</ion-select-option>
+              <ion-select-option value="Sexologist">Sexologist</ion-select-option>
+              <ion-select-option value="General Surgeon">General Surgeon</ion-select-option>
+              <ion-select-option value="Plastic Surgeon">Plastic Surgeon</ion-select-option>
+              <ion-select-option value="Dermatologist">Dermatologist</ion-select-option>
+              <ion-select-option value="Dental Surgeon">Dental Surgeon</ion-select-option>
+              <ion-select-option value="Orthodontist">Orthodontist</ion-select-option>
+              <ion-select-option value="Diabetologist">Diabetologist</ion-select-option>
+              <ion-select-option value="Neurologist">Neurologist</ion-select-option>
+              <ion-select-option value="Neuro Surgeon">Neuro Surgeon</ion-select-option>
+              <ion-select-option value="Urologist">Urologist</ion-select-option>
+              <ion-select-option value="Infectious Disease Specialist">Infectious Disease Specialist</ion-select-option>
+            </ion-select>
           </ion-item>
         </ion-col>
       </ion-row>
     </ion-grid>
   </ion-radio-group>
-  <ion-item>
-    <ion-label>select other Specialist</ion-label>
-    <ion-select value="Any" multiple="true" [(ngModel)]='docSpeciality'>
-      <ion-select-option value="Cardialogist">Cardialogist</ion-select-option>
-      <ion-select-option value="Pulmonologist">Pulmonologist</ion-select-option>
-      <ion-select-option value="Gastroenterologist">Gastroenterologist</ion-select-option>
-      <ion-select-option value="Rheumatologist">Rheumatologist</ion-select-option>
-      <ion-select-option value="Nephrologist">Nephrologist</ion-select-option>
-      <ion-select-option value="Medical Specialist,">Medical Specialist</ion-select-option>
-      <ion-select-option value="Sexologist">Sexologist</ion-select-option>
-      <ion-select-option value="General Surgeon">General Surgeon</ion-select-option>
-      <ion-select-option value="Plastic Surgeon">Plastic Surgeon</ion-select-option>
-      <ion-select-option value="Dermatologist">Dermatologist</ion-select-option>
-      <ion-select-option value="Dental Surgeon">Dental Surgeon</ion-select-option>
-      <ion-select-option value="Orthodontist">Orthodontist</ion-select-option>
-      <ion-select-option value="Diabetologist">Diabetologist</ion-select-option>
-      <ion-select-option value="Neurologist">Neurologist</ion-select-option>
-      <ion-select-option value="Neuro Surgeon">Neuro Surgeon</ion-select-option>
-      <ion-select-option value="Urologist">Urologist</ion-select-option>
-      <ion-select-option value="Infectious Disease Specialist">Infectious Disease Specialist</ion-select-option>
-    </ion-select>
-  </ion-item>
+
   <form [formGroup]="fg">
 
 
@@ -69,8 +71,8 @@
     </div>
 
     <ion-item>
-      <ion-label color="primary" position="floating">Additional Information</ion-label>
-      <ion-input type="text" formControlName="AdditionalInfo"></ion-input>
+      <ion-label color="primary" position="floating">Design Your letterpad</ion-label>
+      <ion-textarea type="text" formControlName="AdditionalInfo"></ion-textarea>
     </ion-item>
 
     <ion-item>

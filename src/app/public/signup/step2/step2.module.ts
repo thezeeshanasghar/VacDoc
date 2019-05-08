@@ -1,15 +1,16 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { Routes, RouterModule } from "@angular/router";
 
-import { IonicModule } from '@ionic/angular';
+import { IonicModule } from "@ionic/angular";
 
-import { Step2Page } from './step2.page';
+import { Step2Page } from "./step2.page";
+import { AddPageModule } from "src/app/members/doctor/clinic/add/add.module";
 
 const routes: Routes = [
   {
-    path: '',
+    path: "",
     component: Step2Page
   }
 ];
@@ -17,6 +18,7 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule,
+    AddPageModule,
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes)

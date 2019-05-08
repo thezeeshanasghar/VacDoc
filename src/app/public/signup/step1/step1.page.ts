@@ -1,24 +1,29 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { SignupService } from 'src/app/services/signup.service';
+import { Component, OnInit } from "@angular/core";
+import {
+  FormGroup,
+  FormBuilder,
+  FormControl,
+  Validators
+} from "@angular/forms";
+import { Router } from "@angular/router";
+import { SignupService } from "src/app/services/signup.service";
 
 @Component({
-  selector: 'app-step1',
-  templateUrl: './step1.page.html',
-  styleUrls: ['./step1.page.scss'],
+  selector: "app-step1",
+  templateUrl: "./step1.page.html",
+  styleUrls: ["./step1.page.scss"]
 })
 export class Step1Page implements OnInit {
-
   fg: FormGroup;
-  doctortype = 'Child Specialist';
+  doctortype = "Child Specialist";
   doctorsp: [];
   docSpeciality: any;
+  dropDown: boolean = false;
   constructor(
     private frombuilder: FormBuilder,
     private router: Router,
     private signupService: SignupService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.fg = this.frombuilder.group({
@@ -28,25 +33,36 @@ export class Step1Page implements OnInit {
       FirstName: [],
       LastName: [],
       DisplayName: [],
-      Email: new FormControl('', Validators.compose([
-        Validators.required,
-        Validators.pattern('^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$')
-      ])),
+      Email: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.pattern(
+            "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
+          )
+        ])
+      ),
       Password: [],
-      CountryCode: ['092'],
-      MobileNumber: new FormControl('', Validators.compose([
-        Validators.required,
-        Validators.pattern('[0-9]{10}$')
-      ])),
+      CountryCode: ["092"],
+      MobileNumber: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.pattern("[0-9]{10}$")
+        ])
+      ),
       ShowMobile: [],
       PhoneNo: [],
       ShowPhone: [],
-      PMDC: new FormControl('', Validators.compose([
-        Validators.required,
-        Validators.pattern('^[0-9-\\+]*-[A-Z]$')
-      ])),
+      PMDC: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.pattern("^[0-9-\\+]*-[A-Z]$")
+        ])
+      ),
       DoctorSp: []
-    })
+    });
   }
 
   selectChangeHandler(event: any) {
@@ -68,36 +84,34 @@ export class Step1Page implements OnInit {
     this.fg.value.DoctorType = this.doctortype;
     this.signupService.personalData = this.fg.value;
     this.signupService.clientData();
-    this.router.navigate(['/sigup/cinfo']);
+    this.router.navigate(["/signup/step2"]);
   }
 
+  closeSelectOption() {
+    this.dropDown = false;
+  }
+  openSelectOption() {
+    this.dropDown = true;
+  }
   validation_messages = {
-    'qualification': [
-      { type: 'required', message: 'Qualification is required.' }
+    qualification: [
+      { type: "required", message: "Qualification is required." }
     ],
-    'FirstName': [
-      { type: 'required', message: 'FirstName is required.' }
+    FirstName: [{ type: "required", message: "FirstName is required." }],
+    lastName: [{ type: "required", message: "LastName is required." }],
+    displayName: [{ type: "required", message: "DisplayName is required." }],
+    email: [
+      { type: "required", message: "Email is required." },
+      { type: "pattern", message: "Please enter a valid email." }
     ],
-    'lastName': [
-      { type: 'required', message: 'LastName is required.' }
+    mobileNumber: [
+      { type: "required", message: "MobileNumber is required." },
+      { type: "pattern", message: "Mobile number is required like 3331231231" }
     ],
-    'displayName': [
-      { type: 'required', message: 'DisplayName is required.' }
-    ],
-    'email': [
-      { type: 'required', message: 'Email is required.' },
-      { type: 'pattern', message: 'Please enter a valid email.' }
-    ],
-    'mobileNumber': [
-      { type: 'required', message: 'MobileNumber is required.' },
-      { type: 'pattern', message: 'Mobile number is required like 3331231231' }
-    ],
-    'phoneNo': [
-      { type: 'required', message: 'PhoneNo is required.' }
-    ],
-    'PMDC': [
-      { type: 'required', message: 'PMDC is required.' },
-      { type: 'pattern', message: 'PMDC is required like 12345-A' }
-    ],
+    phoneNo: [{ type: "required", message: "PhoneNo is required." }],
+    PMDC: [
+      { type: "required", message: "PMDC is required." },
+      { type: "pattern", message: "PMDC is required like 12345-A" }
+    ]
   };
 }
