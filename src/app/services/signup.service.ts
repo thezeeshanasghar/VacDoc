@@ -9,7 +9,7 @@ import { catchError, map } from "rxjs/operators";
   providedIn: "root"
 })
 export class SignupService extends BaseService {
-  private readonly API_Doctor = `${environment.BASE_URL}`;
+  private readonly API_Doctor = `https://api.vaccs.io/api/doctor`;
 
   personalData: any;
   clinicData: any;
@@ -22,15 +22,14 @@ export class SignupService extends BaseService {
     let var1 = {
       AdditionalInfo: this.personalData.AdditionalInfo,
       ClinicDTO: {
+        Name: this.clinicData.Name,
+        PhoneNumber: this.clinicData.PhoneNumber,
         Address: this.clinicData.Address,
         ConsultationFee: this.clinicData.ConsultationFee,
-        EndTime: this.clinicData.EndTime,
-        Lat: this.clinicData.Lat,
-        Long: this.clinicData.Long,
-        Name: this.clinicData.Name,
         OffDays: this.clinicData.OffDays,
-        PhoneNumber: this.clinicData.PhoneNumber,
-        StartTime: this.clinicData.StartTime
+        ClinicTimings: this.clinicData.ClinicTimings,
+        Lat: this.clinicData.Lat,
+        Long: this.clinicData.Long
       },
       CountryCode: this.personalData.CountryCode,
       DisplayName: this.personalData.DisplayName,
@@ -46,6 +45,7 @@ export class SignupService extends BaseService {
       ShowMobile: this.personalData.ShowMobile,
       ShowPhone: this.personalData.ShowPhone
     };
+    console.log(var1);
     const url = `${this.API_Doctor}`;
     return this.http
       .post(url, var1, this.httpOptions)

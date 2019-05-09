@@ -83,7 +83,7 @@ export class Step1Page implements OnInit {
     this.fg.value.DoctorSp = this.docSpeciality;
     this.fg.value.DoctorType = this.doctortype;
     this.signupService.personalData = this.fg.value;
-    this.signupService.clientData();
+    
     this.router.navigate(["/signup/step2"]);
   }
 

@@ -217,30 +217,30 @@ export class AddPage implements OnInit {
       await loading.present();
 
       console.log(this.mode);
-      if (this.mode && this.mode == "1") {
-        this.signupService.clientData = this.fg1.value;
+      //if (this.mode && this.mode == "1") {
+        this.signupService.clinicData = this.fg1.value;
         //this.signupService.clientData();
         console.log(this.mode);
         loading.dismiss();
-        this.router.navigate(["/sigup/vschedule"]);
-      } else {
-        await this.clinicService.addClinic(data).subscribe(
-          res => {
-            if (res.IsSuccess) {
-              loading.dismiss();
-              this.toastService.create("successfully added");
-              this.router.navigate(["/members/doctor/clinic"]);
-            } else {
-              loading.dismiss();
-              this.toastService.create(res.Message, "danger");
-            }
-          },
-          err => {
-            loading.dismiss();
-            this.toastService.create(err, "danger");
-          }
-        );
-      }
+        this.router.navigate(["/signup/step3"]);
+      // } else {
+      //   await this.clinicService.addClinic(data).subscribe(
+      //     res => {
+      //       if (res.IsSuccess) {
+      //         loading.dismiss();
+      //         this.toastService.create("successfully added");
+      //         this.router.navigate(["/members/doctor/clinic"]);
+      //       } else {
+      //         loading.dismiss();
+      //         this.toastService.create(res.Message, "danger");
+      //       }
+      //     },
+      //     err => {
+      //       loading.dismiss();
+      //       this.toastService.create(err, "danger");
+      //     }
+      //   );
+      // }
     }
   }
 }
