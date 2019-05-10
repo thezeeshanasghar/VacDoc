@@ -7,6 +7,7 @@ import { IonicModule } from "@ionic/angular";
 
 import { Step2Page } from "./step2.page";
 import { AddPageModule } from "src/app/members/doctor/clinic/add/add.module";
+import { AddPage } from 'src/app/members/doctor/clinic/add/add.page';
 
 const routes: Routes = [
   {

@@ -9,11 +9,11 @@ import { LoadingController } from "@ionic/angular";
 import { SignupService } from "src/app/services/signup.service";
 
 @Component({
-  selector: "app-add1",
+  selector: "app-add",
   templateUrl: "./add.page.html"
 })
 export class AddPage implements OnInit {
-  @Input("mode") mode: string = "";
+  @Input() mode: number ;
   fg1: FormGroup;
   fg2: FormGroup;
   doctorID: any;
@@ -29,6 +29,7 @@ export class AddPage implements OnInit {
   ) {}
 
   ngOnInit() {
+    console.log(this.mode);
     this.storage.get(environment.DOCTOR_ID).then(val => {
       this.doctorID = val;
     });
@@ -218,11 +219,11 @@ export class AddPage implements OnInit {
 
       console.log(this.mode);
       //if (this.mode && this.mode == "1") {
-        this.signupService.clinicData = this.fg1.value;
-        //this.signupService.clientData();
-        console.log(this.mode);
-        loading.dismiss();
-        this.router.navigate(["/signup/step3"]);
+      this.signupService.clinicData = this.fg1.value;
+      //this.signupService.clientData();
+      console.log(this.mode);
+      loading.dismiss();
+      this.router.navigate(["/signup/step3"]);
       // } else {
       //   await this.clinicService.addClinic(data).subscribe(
       //     res => {

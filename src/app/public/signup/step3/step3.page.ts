@@ -30,7 +30,6 @@ export class Step3Page implements OnInit {
     private formBuilder: FormBuilder,
     private router: Router
   ) {}
-
   ngOnInit() {
     this.fg = this.formBuilder.group({});
 
@@ -46,7 +45,8 @@ export class Step3Page implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.doses = res.ResponseData;
-
+          console.log(this.doses);
+          this.signupService.vaccineData2 = this.doses;
           this.doses.forEach(dose => {
             let value = dose.MinGap == null ? "" : dose.MinGap;
             this.fg.addControl(
@@ -54,7 +54,7 @@ export class Step3Page implements OnInit {
               new FormControl(value, Validators.required)
             );
           });
-
+          this.signupService.vaccineData = this.fg.value;
           loading.dismiss();
         } else {
           loading.dismiss();
@@ -69,15 +69,37 @@ export class Step3Page implements OnInit {
   }
 
   onSubmit() {
-    this.addNewDoctor();
+    //this.addNewDoctor();
+    let id = 3;
+    this.addDoctorSchedule(id);
   }
 
   async addNewDoctor() {
+    this.signupService.vaccineData = this.fg.value;
+    console.log(this.fg.value);
     await this.signupService.addDoctor().subscribe(
       res => {
         if (res.IsSuccess) {
+          this.addDoctorSchedule(res.ResponseData.ID);
           this.toastService.create("successfully added");
           this.router.navigate(["/login"]);
+        } else {
+          this.toastService.create(res.Message, "danger");
+        }
+      },
+      err => {
+        this.toastService.create(err, "danger");
+      }
+    );
+  }
+
+  async addDoctorSchedule(id) {
+    this.signupService.vaccineData = this.fg.value;
+    await this.signupService.addSchedule(id).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          // this.toastService.create("successfully added");
+          // this.router.navigate(["/login"]);
         } else {
           this.toastService.create(res.Message, "danger");
         }
