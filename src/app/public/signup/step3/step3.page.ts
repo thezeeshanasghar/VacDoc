@@ -48,7 +48,7 @@ export class Step3Page implements OnInit {
           console.log(this.doses);
           this.signupService.vaccineData2 = this.doses;
           this.doses.forEach(dose => {
-            let value = dose.MinGap == null ? "" : dose.MinGap;
+            let value = dose.MinGap == null ? 0 : dose.MinGap;
             this.fg.addControl(
               dose.Name,
               new FormControl(value, Validators.required)

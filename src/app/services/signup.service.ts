@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import { BaseService } from "./base.service";
 import { environment } from "src/environments/environment";
 import { HttpClient } from "@angular/common/http";
@@ -62,24 +62,24 @@ export class SignupService extends BaseService {
     //     userData.push(this.vaccineData[key]);
     //   }
     //}
-    Object.keys(this.vaccineData).forEach(function(key) {
-      userData.push(vaccineData[key]);
-   });
+  //   Object.keys(this.vaccineData).forEach(function(key) {
+  //     userData.push(vaccineData[key]);
+  //  });
     console.log(userData);
 
-    //console.log(this.vaccineData);
+    // console.log(this.vaccineData);
     let var1 = [];
-    //console.log(this.vaccineData.length);
+    console.log(this.vaccineData.length);
 
-    for (let i = 0; i < this.vaccineData.length; i++) {
+    for (let i = 0; i < this.vaccineData2.length; i++) {
       var1.push({
-        //DoseID: this.vaccineData2[i].ID,
-        //MinGap: this.vaccineData[i],
+        DoseID: this.vaccineData2[i].ID,
+        MinGap: this.vaccineData[this.vaccineData2[i].Name],
         DoctorID: id
       });
       //console.log(var1);
     }
-    //console.log(var1);
+    console.log(var1);
 
     const url = `${this.API_Doctor}`;
     return this.http
