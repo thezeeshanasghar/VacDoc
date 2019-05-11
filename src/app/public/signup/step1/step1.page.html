@@ -178,5 +178,5 @@
       </ng-container>
     </div>
   </form>
-  <ion-button (click)=nextpage()>Next step</ion-button>
+  <ion-button (click)=nextpage() [disabled]="!fg.valid">Next step</ion-button>
 </ion-content>

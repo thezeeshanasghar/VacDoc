@@ -13,7 +13,7 @@ import { SignupService } from "src/app/services/signup.service";
   templateUrl: "./add.page.html"
 })
 export class AddPage implements OnInit {
-  @Input() mode: number ;
+  @Input() mode: number;
   fg1: FormGroup;
   fg2: FormGroup;
   doctorID: any;
@@ -217,13 +217,29 @@ export class AddPage implements OnInit {
       });
       await loading.present();
 
-      console.log(this.mode);
       //if (this.mode && this.mode == "1") {
       this.signupService.clinicData = this.fg1.value;
       //this.signupService.clientData();
-      console.log(this.mode);
       loading.dismiss();
-      this.router.navigate(["/signup/step3"]);
+      this.signupService.addDoctor();
+
+      await this.signupService.addDoctor().subscribe(
+        res => {
+          if (res.IsSuccess) {
+            loading.dismiss();
+            this.toastService.create("successfully added");
+            this.router.navigate(["/signup/step3"]);
+          } else {
+            loading.dismiss();
+            this.toastService.create(res.Message, "danger");
+          }
+        },
+        err => {
+          loading.dismiss();
+          this.toastService.create(err, "danger");
+        }
+      );
+
       // } else {
       //   await this.clinicService.addClinic(data).subscribe(
       //     res => {
@@ -244,4 +260,12 @@ export class AddPage implements OnInit {
       // }
     }
   }
+
+  validation_messages = {
+    Name: [{ type: "required", message: "Name is required." }],
+    Address: [{ type: "required", message: "Address is required." }],
+    ConsultationFee: [
+      { type: "required", message: "ConsultationFee is required." }
+    ]
+  };
 }

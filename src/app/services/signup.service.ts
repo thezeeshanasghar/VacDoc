@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import { BaseService } from "./base.service";
 import { environment } from "src/environments/environment";
 import { HttpClient } from "@angular/common/http";
@@ -9,7 +9,7 @@ import { catchError, map } from "rxjs/operators";
   providedIn: "root"
 })
 export class SignupService extends BaseService {
-  private readonly API_Doctor = `https://api.vaccs.io/api/doctor`;
+  private readonly API_Doctor = `${environment.BASE_URL}/doctor`;
 
   personalData: any;
   clinicData: any;
@@ -46,7 +46,6 @@ export class SignupService extends BaseService {
       ShowMobile: this.personalData.ShowMobile,
       ShowPhone: this.personalData.ShowPhone
     };
-    console.log(var1);
     const url = `${this.API_Doctor}`;
     return this.http
       .post(url, var1, this.httpOptions)
@@ -54,34 +53,16 @@ export class SignupService extends BaseService {
   }
 
   addSchedule(id): Observable<any> {
-    let userData = [];
-    console.log(this.vaccineData);
-    // for (var key in this.vaccineData) {
-    //   //proper way to iterate keys using for..in
-    //   if (this.vaccineData.hasOwnProperty(key)) {
-    //     userData.push(this.vaccineData[key]);
-    //   }
-    //}
-  //   Object.keys(this.vaccineData).forEach(function(key) {
-  //     userData.push(vaccineData[key]);
-  //  });
-    console.log(userData);
-
-    // console.log(this.vaccineData);
+    console.log(this.vaccineData2);
     let var1 = [];
-    console.log(this.vaccineData.length);
-
     for (let i = 0; i < this.vaccineData2.length; i++) {
       var1.push({
         DoseID: this.vaccineData2[i].ID,
-        MinGap: this.vaccineData[this.vaccineData2[i].Name],
+        GapInDays: this.vaccineData[this.vaccineData2[i].Name],
         DoctorID: id
       });
-      //console.log(var1);
     }
-    console.log(var1);
-
-    const url = `${this.API_Doctor}`;
+    const url = `${this.API_Doctor}schedule`;
     return this.http
       .post(url, var1, this.httpOptions)
       .pipe(catchError(this.handleError));

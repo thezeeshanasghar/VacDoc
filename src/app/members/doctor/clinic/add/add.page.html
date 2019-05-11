@@ -13,6 +13,15 @@
       <ion-label color="primary" position="floating">Name</ion-label>
       <ion-input type="text" formControlName="Name" required></ion-input>
     </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.Name">
+        <div class="error-message"
+          *ngIf="fg1.get('Name').hasError(validation.type) && (fg1.get('Name').dirty || fg1.get('Name').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
     <ion-item>
       <ion-label color="primary" position="floating">Phone Number</ion-label>
       <ion-input type="text" formControlName="PhoneNumber" required></ion-input>
@@ -21,10 +30,28 @@
       <ion-label color="primary" position="floating">Address</ion-label>
       <ion-input type="text" formControlName="Address" required></ion-input>
     </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.Address">
+        <div class="error-message"
+          *ngIf="fg1.get('Address').hasError(validation.type) && (fg1.get('Address').dirty || fg1.get('Address').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
     <ion-item>
       <ion-label color="primary" position="floating">Consultation Fee</ion-label>
-      <ion-input type="text" formControlName="ConsultationFee" required></ion-input>
+      <ion-input type="number" formControlName="ConsultationFee" required></ion-input>
     </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.ConsultationFee">
+        <div class="error-message"
+          *ngIf="fg1.get('ConsultationFee').hasError(validation.type) && (fg1.get('ConsultationFee').dirty || fg1.get('ConsultationFee').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
     <form [formGroup]="fg2">
       <ion-card>
         <ion-item>
@@ -307,7 +334,7 @@
       </ion-card>
     </form>
 
-    <ion-button (click)="getdata()">submit</ion-button>
+    <ion-button [disabled]="!fg1.valid" (click)="getdata()">submit</ion-button>
   </form>
 
 
