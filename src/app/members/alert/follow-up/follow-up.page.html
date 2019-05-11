@@ -11,7 +11,7 @@
     </ion-segment-button>
   </ion-segment>
 
-  <ion-icon size="large" color="primary" name="mail" (click)="alertDeletevaccine()"></ion-icon>
+  <ion-button (click)="sendAlertMsgToAll()">send sms to all</ion-button>
 
   <div>
     <h1 *ngIf="followUpChild == 0" style="color: red;">No alert for today.</h1>
