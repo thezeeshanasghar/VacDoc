@@ -10,7 +10,8 @@ import { SignupService } from "src/app/services/signup.service";
 
 @Component({
   selector: "app-add",
-  templateUrl: "./add.page.html"
+  templateUrl: "./add.page.html",
+  styleUrls: ['./add.page.scss']
 })
 export class AddPage implements OnInit {
   fg1: FormGroup;
