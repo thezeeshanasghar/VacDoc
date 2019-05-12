@@ -1,13 +1,11 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { Routes, RouterModule } from "@angular/router";
 
 import { IonicModule } from "@ionic/angular";
 
 import { Step2Page } from "./step2.page";
-import { AddPageModule } from "src/app/members/doctor/clinic/add/add.module";
-import { AddPage } from 'src/app/members/doctor/clinic/add/add.page';
 
 const routes: Routes = [
   {
@@ -19,10 +17,10 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule,
-    AddPageModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    ReactiveFormsModule
   ],
   declarations: [Step2Page]
 })

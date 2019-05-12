@@ -65,6 +65,10 @@ export class Step1Page implements OnInit {
     });
   }
 
+  setFilteredItems(plate) {
+    this.fg.value.FirstName = plate.toUpperCase();
+  }
+
   selectChangeHandler(event: any) {
     this.doctorsp = event.target.value;
   }

@@ -13,7 +13,6 @@ import { SignupService } from "src/app/services/signup.service";
   templateUrl: "./add.page.html"
 })
 export class AddPage implements OnInit {
-  @Input() mode: number;
   fg1: FormGroup;
   fg2: FormGroup;
   doctorID: any;
@@ -29,7 +28,6 @@ export class AddPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log(this.mode);
     this.storage.get(environment.DOCTOR_ID).then(val => {
       this.doctorID = val;
     });
@@ -217,18 +215,12 @@ export class AddPage implements OnInit {
       });
       await loading.present();
 
-      //if (this.mode && this.mode == "1") {
-      this.signupService.clinicData = this.fg1.value;
-      //this.signupService.clientData();
-      loading.dismiss();
-      this.signupService.addDoctor();
-
-      await this.signupService.addDoctor().subscribe(
+      await this.clinicService.addClinic(data).subscribe(
         res => {
           if (res.IsSuccess) {
             loading.dismiss();
             this.toastService.create("successfully added");
-            this.router.navigate(["/signup/step3"]);
+            this.router.navigate(["/members/doctor/clinic"]);
           } else {
             loading.dismiss();
             this.toastService.create(res.Message, "danger");
@@ -239,25 +231,6 @@ export class AddPage implements OnInit {
           this.toastService.create(err, "danger");
         }
       );
-
-      // } else {
-      //   await this.clinicService.addClinic(data).subscribe(
-      //     res => {
-      //       if (res.IsSuccess) {
-      //         loading.dismiss();
-      //         this.toastService.create("successfully added");
-      //         this.router.navigate(["/members/doctor/clinic"]);
-      //       } else {
-      //         loading.dismiss();
-      //         this.toastService.create(res.Message, "danger");
-      //       }
-      //     },
-      //     err => {
-      //       loading.dismiss();
-      //       this.toastService.create(err, "danger");
-      //     }
-      //   );
-      // }
     }
   }
 
