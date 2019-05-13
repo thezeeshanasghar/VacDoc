@@ -122,9 +122,9 @@ export class AddPage implements OnInit {
   }
 
   getdata() {
-    this.fg2.controls["Tuend"].setValue(this.fg2.value.Mend);
+    //this.fg2.controls["Tuend"].setValue(this.fg2.value.Mend);
     this.fg1.value.DoctorID = this.doctorID;
-    this.fg1.value.OffDays = "Sunday";
+    //this.fg1.value.OffDays = "Sunday";
     this.fg1.value.Lat = 33.63207;
     this.fg1.value.Long = 72.935488;
     var ct = [];
