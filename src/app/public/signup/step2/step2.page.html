@@ -11,7 +11,7 @@
     <form [formGroup]="fg1">
         <ion-item>
             <ion-label color="primary" position="floating">Name</ion-label>
-            <ion-input type="text" formControlName="Name" required></ion-input>
+            <ion-input type="text" formControlName="Name" text-capitalize required></ion-input>
         </ion-item>
         <div class="validation-errors">
             <ng-container *ngFor="let validation of validation_messages.Name">
@@ -28,7 +28,7 @@
         </ion-item>
         <ion-item>
             <ion-label color="primary" position="floating">Address</ion-label>
-            <ion-input type="text" formControlName="Address" required></ion-input>
+            <ion-input type="text" formControlName="Address" text-capitalize required></ion-input>
         </ion-item>
         <div class="validation-errors">
             <ng-container *ngFor="let validation of validation_messages.Address">

@@ -59,7 +59,7 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">Qulification</ion-label>
-      <ion-input type="text" formControlName="Qualification" required></ion-input>
+      <ion-input type="text" formControlName="Qualification" text-capitalize required></ion-input>
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.qualification">
@@ -77,7 +77,8 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">First Name</ion-label>
-      <ion-input type="text" formControlName="FirstName" required></ion-input>
+      <ion-input autocapitalize="characters" type="text" formControlName="FirstName" text-capitalize required>
+      </ion-input>
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.FirstName">
@@ -90,7 +91,7 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">Last Name</ion-label>
-      <ion-input type="text" formControlName="LastName" required></ion-input>
+      <ion-input type="text" formControlName="LastName" text-capitalize required></ion-input>
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.lastName">
@@ -103,7 +104,7 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">Display Name</ion-label>
-      <ion-input type="text" formControlName="DisplayName" required></ion-input>
+      <ion-input type="text" formControlName="DisplayName" text-capitalize required></ion-input>
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.displayName">
