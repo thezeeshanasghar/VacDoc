@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, ViewChild } from "@angular/core";
 import { FormBuilder, FormGroup } from "@angular/forms";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
@@ -7,6 +7,7 @@ import { ToastService } from "src/app/shared/toast.service";
 import { Router } from "@angular/router";
 import { LoadingController } from "@ionic/angular";
 import { SignupService } from "src/app/services/signup.service";
+declare var google;
 
 @Component({
   selector: "app-step2",
@@ -14,6 +15,9 @@ import { SignupService } from "src/app/services/signup.service";
   styleUrls: ["./step2.page.scss"]
 })
 export class Step2Page implements OnInit {
+  map;
+  myMarker;
+  @ViewChild("mapElement") mapElement;
   fg1: FormGroup;
   fg2: FormGroup;
   doctorID: any;
@@ -29,6 +33,7 @@ export class Step2Page implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.hello();
     this.storage.get(environment.DOCTOR_ID).then(val => {
       this.doctorID = val;
     });
@@ -88,6 +93,33 @@ export class Step2Page implements OnInit {
       Suend2: [null]
     });
   }
+
+  hello(): void {
+    //Called after ngOnInit when the component's or directive's content has been initialized.
+    //Add 'implements AfterContentInit' to the class.
+    this.map = new google.maps.Map(this.mapElement.nativeElement, {
+      center: { lat: 33.632553, lng: 72.934592 },
+      zoom: 15
+    });
+    this.myMarker = new google.maps.Marker({
+      position: { lat: 33.632553, lng: 72.934592 },
+      draggable: true
+    });
+    this.map.setCenter(this.myMarker.position);
+    this.myMarker.setMap(this.map);
+
+    google.maps.event.addListener(this.myMarker, "dragend", function(evt) {
+      //   document.getElementById("current").innerHTML =
+      //     "<p>Marker dropped: Current Lat: " +
+      //     evt.latLng.lat().toFixed(3) +
+      //     " Current Lng: " +
+      //     evt.latLng.lng().toFixed(3) +
+      //     "</p>";
+      console.log(evt.latLng.lat().toFixed(3));
+      console.log(evt.latLng.lng().toFixed(3));
+    });
+  }
+
   setAllDaysValueStrat1() {
     this.fg2.controls["Tustart"].setValue(this.fg2.value.Mstart);
     this.fg2.controls["Wstart"].setValue(this.fg2.value.Mstart);

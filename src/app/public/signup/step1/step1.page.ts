@@ -66,6 +66,7 @@ export class Step1Page implements OnInit {
   }
 
   setFilteredItems(plate) {
+    console.log('fff')
     this.fg.value.FirstName = plate.toUpperCase();
   }
 
