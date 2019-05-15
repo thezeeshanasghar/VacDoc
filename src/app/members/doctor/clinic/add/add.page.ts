@@ -1,5 +1,10 @@
 import { Component, OnInit, Input } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormControl
+} from "@angular/forms";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { ClinicService } from "src/app/services/clinic.service";
@@ -11,7 +16,7 @@ import { SignupService } from "src/app/services/signup.service";
 @Component({
   selector: "app-add",
   templateUrl: "./add.page.html",
-  styleUrls: ['./add.page.scss']
+  styleUrls: ["./add.page.scss"]
 })
 export class AddPage implements OnInit {
   fg1: FormGroup;
@@ -35,9 +40,21 @@ export class AddPage implements OnInit {
     this.fg1 = this.formbuilder.group({
       DoctorID: [null],
       Name: [null],
-      PhoneNumber: [null],
+      PhoneNumber: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.pattern("[0-9]{10}$")
+        ])
+      ),
       Address: [null],
-      ConsultationFee: [null],
+      ConsultationFee: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.pattern("^(0|[1-9][0-9]*)$")
+        ])
+      ),
       OffDays: [null],
       ClinicTimings: [null],
       Lat: [null],
@@ -237,9 +254,19 @@ export class AddPage implements OnInit {
 
   validation_messages = {
     Name: [{ type: "required", message: "Name is required." }],
+    phoneNumber: [
+      {
+        type: "required",
+        message: "Mobile number is required like 0511231231"
+      }
+    ],
     Address: [{ type: "required", message: "Address is required." }],
     ConsultationFee: [
-      { type: "required", message: "ConsultationFee is required." }
+      { type: "required", message: "ConsultationFee is required." },
+      {
+        type: "pattern",
+        message: "Your ConsultationFee must contain positive number"
+      }
     ]
   };
 }
