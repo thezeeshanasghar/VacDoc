@@ -42,6 +42,10 @@
       <ion-label color="primary" position="floating">PMDC</ion-label>
       <ion-input type="text" formControlName="PMDC" required></ion-input>
     </ion-item>
+    <ion-item>
+      <input type="file" accept="image/*" id="file1" name="file1" ng2FileSelect [uploader]="profileUploader" /></ion-item>
+      <ion-item>
+      <input type="file" accept="image/*" id="file2" name="file2" ng2FileSelect [uploader]="signatureUploader" /></ion-item>
 
     <ion-button (click)="updateProfile()">Update</ion-button>
   </form>

@@ -5,6 +5,9 @@ import { ToastService } from "src/app/shared/toast.service";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { FormGroup, FormBuilder } from "@angular/forms";
+import { FileUploader, FileLikeObject } from 'ng2-file-upload';
+import { concat } from 'rxjs';
+import { UploadService } from "src/app/services/UploadService";
 
 @Component({
   selector: "app-profile",
@@ -15,13 +18,18 @@ export class ProfilePage implements OnInit {
   fg: FormGroup;
   doctorData: any;
   docotrID: any;
+
+  public profileUploader: FileUploader = new FileUploader({});
+  public signatureUploader: FileUploader = new FileUploader({});
+
   constructor(
     public loadingController: LoadingController,
     private doctorService: DoctorService,
     private toastService: ToastService,
     private storage: Storage,
-    private formBuilder: FormBuilder
-  ) {}
+    private formBuilder: FormBuilder,
+    private uploadService: UploadService
+  ) { }
 
   ngOnInit() {
     this.storage.get(environment.DOCTOR_ID).then(val => {
@@ -43,7 +51,6 @@ export class ProfilePage implements OnInit {
   }
 
   async getProfile() {
-    console.log();
     const loading = await this.loadingController.create({
       message: "Loading"
     });
@@ -78,13 +85,30 @@ export class ProfilePage implements OnInit {
   }
 
   async updateProfile() {
-    console.log(this.fg.value);
+    const loading = await this.loadingController.create({
+      message: "Loading"
+    });
+    await loading.present();
     await this.doctorService
       .updateDoctorProfile(this.docotrID, this.fg.value)
       .subscribe(
         res => {
           if (res.IsSuccess) {
-            this.toastService.create("Successfuly update");
+            let formData = new FormData();
+            var file1 = this.profileUploader.queue.pop().file;
+            var file2 = this.signatureUploader.queue.pop().file;
+            formData.append('ProfileImage', file1.rawFile, file1.name);
+            formData.append('SignatureImage', file2.rawFile, file2.name);
+            this.uploadService.uploadFormData(this.docotrID, formData).subscribe(
+              (res1) => {
+                this.toastService.create("Profile updated successfully.");
+                loading.dismiss();
+              },
+              (err1) => {
+                console.log(err1);
+              }
+            );
+
           } else {
             this.toastService.create(res.Message, "danger");
           }
@@ -94,4 +118,25 @@ export class ProfilePage implements OnInit {
         }
       );
   }
+
+  // uploadFiles() {
+
+  //   let requests = [];
+  //   let formData = new FormData();
+  //   var file1 = this.profileUploader.queue.pop().file;
+  //   var file2 = this.signatureUploader.queue.pop().file;
+  //   formData.append('ProfileImage', file1.rawFile, file1.name);
+  //   formData.append('SignatureImage', file2.rawFile, file2.name);
+  //   requests.push(this.uploadService.uploadFormData(this.docotrID, formData));
+
+  //   concat(...requests).subscribe(
+  //     (res) => {
+  //       this.toastService.create("Profile updated successfully.");
+  //     },
+  //     (err) => {
+  //       console.log(err);
+  //     }
+  //   );
+  // }
+
 }
