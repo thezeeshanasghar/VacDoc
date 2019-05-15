@@ -21,6 +21,8 @@ export class Step2Page implements OnInit {
   fg1: FormGroup;
   fg2: FormGroup;
   doctorID: any;
+  lat: any;
+  lng: any;
   section: boolean = false;
   constructor(
     private formbuilder: FormBuilder,
@@ -115,8 +117,8 @@ export class Step2Page implements OnInit {
       //     " Current Lng: " +
       //     evt.latLng.lng().toFixed(3) +
       //     "</p>";
-      console.log(evt.latLng.lat().toFixed(3));
-      console.log(evt.latLng.lng().toFixed(3));
+      this.lat = evt.latLng.lat().toFixed(3);
+      this.lng = evt.latLng.lng().toFixed(3);
     });
   }
 
@@ -157,8 +159,8 @@ export class Step2Page implements OnInit {
     this.fg2.controls["Tuend"].setValue(this.fg2.value.Mend);
     this.fg1.value.DoctorID = this.doctorID;
     this.fg1.value.OffDays = "Sunday";
-    this.fg1.value.Lat = 33.63207;
-    this.fg1.value.Long = 72.935488;
+    this.fg1.value.Lat = this.lat;
+    this.fg1.value.Long = this.lng;
     var ct = [];
     if (this.fg2.value.Monday) {
       let obj = {

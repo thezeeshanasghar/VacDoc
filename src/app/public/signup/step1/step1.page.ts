@@ -52,7 +52,14 @@ export class Step1Page implements OnInit {
         ])
       ),
       ShowMobile: [],
-      PhoneNo: [],
+      PhoneNo: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(7),
+          Validators.pattern("^(0|[1-9][0-9]*)$")
+        ])
+      ),
       ShowPhone: [],
       PMDC: new FormControl(
         "",
@@ -66,7 +73,7 @@ export class Step1Page implements OnInit {
   }
 
   setFilteredItems(plate) {
-    console.log('fff')
+    console.log("fff");
     this.fg.value.FirstName = plate.toUpperCase();
   }
 
@@ -113,7 +120,15 @@ export class Step1Page implements OnInit {
       { type: "required", message: "MobileNumber is required." },
       { type: "pattern", message: "Mobile number is required like 3331231231" }
     ],
-    phoneNo: [{ type: "required", message: "PhoneNo is required." }],
+    phoneNumber: [
+      { type: "required", message: "Phone number is required" },
+
+      {
+        type: "minlength",
+        message: "Phone Number must be at least 7 Digits long."
+      },
+      { type: "pattern", message: "Enter Must be Number" }
+    ],
     PMDC: [
       { type: "required", message: "PMDC is required." },
       { type: "pattern", message: "PMDC is required like 12345-A" }

@@ -158,7 +158,7 @@
       </ion-item>
     </ion-item>
     <div class="validation-errors">
-      <ng-container *ngFor="let validation of validation_messages.phoneNo">
+      <ng-container *ngFor="let validation of validation_messages.phoneNumber">
         <div class="error-message"
           *ngIf="fg.get('PhoneNo').hasError(validation.type) && (fg.get('PhoneNo').dirty || fg.get('PhoneNo').touched)">
           <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
