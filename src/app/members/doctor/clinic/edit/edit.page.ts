@@ -3,7 +3,12 @@ import { LoadingController } from "@ionic/angular";
 import { ClinicService } from "src/app/services/clinic.service";
 import { ToastService } from "src/app/shared/toast.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { FormGroup, FormBuilder } from "@angular/forms";
+import {
+  FormGroup,
+  FormBuilder,
+  FormControl,
+  Validators
+} from "@angular/forms";
 import { environment } from "src/environments/environment";
 import { Storage } from "@ionic/storage";
 
@@ -34,10 +39,23 @@ export class EditPage implements OnInit {
       ID: [null],
       DoctorID: [null],
       Name: [null],
-      PhoneNumber: [null],
+      PhoneNumber: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(7),
+          Validators.pattern("^(0|[1-9][0-9]*)$")
+        ])
+      ),
       Address: [null],
-      ConsultationFee: [null],
-      OffDays: ['sunday'],
+      ConsultationFee: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.pattern("^(0|[1-9][0-9]*)$")
+        ])
+      ),
+      OffDays: ["sunday"],
       ClinicTimings: [null],
       Lat: [null],
       Long: [null],
@@ -375,9 +393,21 @@ export class EditPage implements OnInit {
   }
   validation_messages = {
     Name: [{ type: "required", message: "Name is required." }],
+    phoneNumber: [
+      { type: "required", message: "Phone number is required" },
+      {
+        type: "minlength",
+        message: "Phone Number must be at least 7 Digits long."
+      },
+      { type: "pattern", message: "Enter Must be Number" }
+    ],
     Address: [{ type: "required", message: "Address is required." }],
     ConsultationFee: [
-      { type: "required", message: "ConsultationFee is required." }
+      { type: "required", message: "Consultation Fee is required." },
+      {
+        type: "pattern",
+        message: "Your Consultation Fee must contain positive number"
+      }
     ]
   };
 }

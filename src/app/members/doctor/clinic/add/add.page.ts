@@ -44,7 +44,8 @@ export class AddPage implements OnInit {
         "",
         Validators.compose([
           Validators.required,
-          Validators.pattern("[0-9]{10}$")
+          Validators.minLength(7),
+          Validators.pattern("^(0|[1-9][0-9]*)$")
         ])
       ),
       Address: [null],
@@ -255,17 +256,20 @@ export class AddPage implements OnInit {
   validation_messages = {
     Name: [{ type: "required", message: "Name is required." }],
     phoneNumber: [
+      { type: "required", message: "Phone number is required" },
+
       {
-        type: "required",
-        message: "Mobile number is required like 0511231231"
-      }
+        type: "minlength",
+        message: "Phone Number must be at least 7 Digits long."
+      },
+      { type: "pattern", message: "Enter Must be Number" }
     ],
     Address: [{ type: "required", message: "Address is required." }],
     ConsultationFee: [
-      { type: "required", message: "ConsultationFee is required." },
+      { type: "required", message: "Consultation Fee is required." },
       {
         type: "pattern",
-        message: "Your ConsultationFee must contain positive number"
+        message: "Your Consultation Fee must contain positive number"
       }
     ]
   };

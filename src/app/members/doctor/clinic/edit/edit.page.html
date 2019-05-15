@@ -26,6 +26,15 @@
       <ion-label color="primary" position="floating">Phone Number</ion-label>
       <ion-input type="text" formControlName="PhoneNumber" required></ion-input>
     </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.phoneNumber">
+        <div class="error-message"
+          *ngIf="fg1.get('PhoneNumber').hasError(validation.type) && (fg1.get('PhoneNumber').dirty || fg1.get('PhoneNumber').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
     <ion-item>
       <ion-label color="primary" position="floating">Address</ion-label>
       <ion-input type="text" formControlName="Address" required></ion-input>
