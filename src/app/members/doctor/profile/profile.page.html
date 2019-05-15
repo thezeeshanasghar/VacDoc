@@ -14,35 +14,100 @@
       <ion-label color="primary" position="floating">First Name</ion-label>
       <ion-input type="text" formControlName="FirstName" required></ion-input>
     </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.FirstName">
+        <div class="error-message"
+          *ngIf="fg.get('FirstName').hasError(validation.type) && (fg.get('FirstName').dirty || fg.get('FirstName').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
     <ion-item>
       <ion-label color="primary" position="floating">Last Name</ion-label>
       <ion-input type="text" formControlName="LastName" required></ion-input>
     </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.LastName">
+        <div class="error-message"
+          *ngIf="fg.get('LastName').hasError(validation.type) && (fg.get('LastName').dirty || fg.get('LastName').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
     <ion-item>
       <ion-label color="primary" position="floating">Display Name</ion-label>
       <ion-input type="text" formControlName="DisplayName" required></ion-input>
     </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.DisplayName">
+        <div class="error-message"
+          *ngIf="fg.get('DisplayName').hasError(validation.type) && (fg.get('DisplayName').dirty || fg.get('DisplayName').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
     <ion-item>
       <ion-label color="primary" position="floating">Email</ion-label>
       <ion-input type="text" formControlName="Email" required [disabled]="true"></ion-input>
     </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.Email">
+        <div class="error-message"
+          *ngIf="fg.get('Email').hasError(validation.type) && (fg.get('Email').dirty || fg.get('Email').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
     <ion-item>
       <ion-label color="primary" position="floating">Mobile No</ion-label>
       <ion-input type="text" formControlName="MobileNumber" required disabled="true"></ion-input>
+      <div class="validation-errors">
+        <ng-container *ngFor="let validation of validation_messages.MobileNumber">
+          <div class="error-message"
+            *ngIf="fg.get('MobileNumber').hasError(validation.type) && (fg.get('MobileNumber').dirty || fg.get('MobileNumber').touched)">
+            <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+          </div>
+        </ng-container>
+      </div>
+
       <ion-label color="primary">Display</ion-label>
       <ion-checkbox slot="end" formControlName="ShowMobile" required></ion-checkbox>
     </ion-item>
+
     <ion-item>
       <ion-label color="primary" position="floating">Phone No</ion-label>
       <ion-input type="text" formControlName="PhoneNo" required></ion-input>
+      <div class="validation-errors">
+        <ng-container *ngFor="let validation of validation_messages.PhoneNo">
+          <div class="error-message"
+            *ngIf="fg.get('PhoneNo').hasError(validation.type) && (fg.get('PhoneNo').dirty || fg.get('PhoneNo').touched)">
+            <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+          </div>
+        </ng-container>
+      </div>
+
       <ion-label color="primary">Display</ion-label>
       <ion-checkbox slot="end" formControlName="ShowPhone" required></ion-checkbox>
     </ion-item>
+
     <ion-item>
       <ion-label color="primary" position="floating">PMDC</ion-label>
       <ion-input type="text" formControlName="PMDC" required></ion-input>
     </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.PMDC">
+        <div class="error-message"
+          *ngIf="fg.get('PMDC').hasError(validation.type) && (fg.get('PMDC').dirty || fg.get('PMDC').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
 
-    <ion-button (click)="updateProfile()">Update</ion-button>
+
+    <ion-button [disabled]="!fg.valid" (click)="updateProfile()">Update</ion-button>
   </form>
 </ion-content>

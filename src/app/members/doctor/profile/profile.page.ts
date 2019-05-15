@@ -4,7 +4,12 @@ import { DoctorService } from "src/app/services/doctor.service";
 import { ToastService } from "src/app/shared/toast.service";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
-import { FormGroup, FormBuilder } from "@angular/forms";
+import {
+  FormGroup,
+  FormBuilder,
+  FormControl,
+  Validators
+} from "@angular/forms";
 
 @Component({
   selector: "app-profile",
@@ -33,12 +38,39 @@ export class ProfilePage implements OnInit {
       FirstName: [null],
       LastName: [null],
       DisplayName: [null],
-      Email: [null],
-      MobileNumber: [null],
+      Email: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.pattern(
+            "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
+          )
+        ])
+      ),
+      MobileNumber: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.pattern("[0-9]{10}$")
+        ])
+      ),
       ShowMobile: [null],
-      PhoneNo: [null],
+      PhoneNo: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(7),
+          Validators.pattern("^(0|[1-9][0-9]*)$")
+        ])
+      ),
       ShowPhone: [null],
-      PMDC: [null]
+      PMDC: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.pattern("^[0-9-\\+]*-[A-Z]$")
+        ])
+      )
     });
   }
 
@@ -94,4 +126,30 @@ export class ProfilePage implements OnInit {
         }
       );
   }
+
+  validation_messages = {
+    FirstName: [{ type: "required", message: "Name is required." }],
+    LastName: [{ type: "required", message: "Last Name is required." }],
+    DisplayName: [{ type: "required", message: "Last Name is required." }],
+    Email: [
+      { type: "required", message: "Email is required." },
+      { type: "pattern", message: "Please enter a valid email." }
+    ],
+    MobileNumber: [
+      { type: "required", message: "MobileNumber is required." },
+      { type: "pattern", message: "Mobile number is required like 3331231231" }
+    ],
+    PhoneNo: [
+      { type: "required", message: "Phone number is required" },
+      {
+        type: "minlength",
+        message: "Phone Number must be at least 7 Digits long."
+      },
+      { type: "pattern", message: "Enter Must be Number" }
+    ],
+    PMDC: [
+      { type: "required", message: "PMDC is required." },
+      { type: "pattern", message: "PMDC is required like 12345-A" }
+    ]
+  };
 }
