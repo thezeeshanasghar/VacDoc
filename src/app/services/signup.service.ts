@@ -53,7 +53,6 @@ export class SignupService extends BaseService {
   }
 
   addSchedule(id): Observable<any> {
-    console.log(this.vaccineData2);
     let var1 = [];
     for (let i = 0; i < this.vaccineData2.length; i++) {
       var1.push({

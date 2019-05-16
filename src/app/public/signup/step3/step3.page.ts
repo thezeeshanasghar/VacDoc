@@ -54,7 +54,6 @@ export class Step3Page implements OnInit {
               new FormControl(value, Validators.required)
             );
           });
-          this.signupService.vaccineData = this.fg.value;
           loading.dismiss();
         } else {
           loading.dismiss();

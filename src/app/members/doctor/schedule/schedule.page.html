@@ -1,19 +1,25 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>Schedule</ion-title>
+    <ion-title>Vaccine Schedule</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
 
-  <form>
-    <ion-item *ngFor="let d of schedule">
-      <ion-label color="primary" position="floating">{{d.Dose.Name}}</ion-label>
-      <ion-select value="0">
+  <form [formGroup]="fg" (ngSubmit)="onSubmit()">
+
+    <ion-item *ngFor="let control of fg.controls | keyvalue">
+      <ion-label>{{control.key}}</ion-label>
+      <ion-select [formControlName]="control.key" value="{{control.value.value}}">
         <ion-select-option value="0">At Birth</ion-select-option>
+        <ion-select-option value="7">1 Week</ion-select-option>
+        <ion-select-option value="14">2 Weeks</ion-select-option>
+        <ion-select-option value="21">3 Weeks</ion-select-option>
+        <ion-select-option value="28">4 Weeks</ion-select-option>
+        <ion-select-option value="35">5 Weeks</ion-select-option>
         <ion-select-option value="42">6 Weeks</ion-select-option>
         <ion-select-option value="49">7 Weeks</ion-select-option>
         <ion-select-option value="56">8 Weeks</ion-select-option>
@@ -102,7 +108,7 @@
       </ion-select>
     </ion-item>
 
-    <ion-button disabled="true" (click)="getChildVaccinefromUser()">Submit</ion-button>
-  </form>
+    <ion-button type="submit">Finish</ion-button>
 
+  </form>
 </ion-content>

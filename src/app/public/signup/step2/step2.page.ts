@@ -1,5 +1,10 @@
 import { Component, OnInit, Input, ViewChild } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
+import {
+  FormBuilder,
+  FormGroup,
+  FormControl,
+  Validators
+} from "@angular/forms";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { ClinicService } from "src/app/services/clinic.service";
@@ -44,7 +49,13 @@ export class Step2Page implements OnInit {
       Name: [null],
       PhoneNumber: [null],
       Address: [null],
-      ConsultationFee: [null],
+      ConsultationFee: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.pattern("^(0|[1-9][0-9]*)$")
+        ])
+      ),
       OffDays: [null],
       ClinicTimings: [null],
       Lat: [null],
@@ -275,7 +286,11 @@ export class Step2Page implements OnInit {
     Name: [{ type: "required", message: "Name is required." }],
     Address: [{ type: "required", message: "Address is required." }],
     ConsultationFee: [
-      { type: "required", message: "ConsultationFee is required." }
+      { type: "required", message: "ConsultationFee is required." },
+      {
+        type: "pattern",
+        message: "Your Consultation Fee must contain positive number"
+      }
     ]
   };
 }
