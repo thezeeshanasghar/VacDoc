@@ -48,7 +48,14 @@ export class Step2Page implements OnInit {
     this.fg1 = this.formbuilder.group({
       DoctorID: [null],
       Name: [null],
-      PhoneNumber: [null],
+      PhoneNumber: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(7),
+          Validators.pattern("^(0|[1-9][0-9]*)$")
+        ])
+      ),
       Address: [null],
       ConsultationFee: new FormControl(
         "",
@@ -323,6 +330,7 @@ export class Step2Page implements OnInit {
       res => {
         if (res.IsSuccess) {
           loading.dismiss();
+          this.storage.set(environment.DOCTOR_ID, res.ResponseData.ID);
           this.toastService.create("successfully added");
           this.router.navigate(["/signup/step3"]);
         } else {
@@ -340,6 +348,15 @@ export class Step2Page implements OnInit {
   validation_messages = {
     Name: [{ type: "required", message: "Name is required." }],
     Address: [{ type: "required", message: "Address is required." }],
+    phoneNumber: [
+      { type: "required", message: "Phone number is required" },
+
+      {
+        type: "minlength",
+        message: "Phone Number must be at least 7 Digits long."
+      },
+      { type: "pattern", message: "Enter Must be Number" }
+    ],
     ConsultationFee: [
       { type: "required", message: "ConsultationFee is required." },
       {

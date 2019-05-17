@@ -10,6 +10,8 @@ import {
 } from "@angular/forms";
 import { SignupService } from "src/app/services/signup.service";
 import { Router } from "@angular/router";
+import { Storage } from "@ionic/storage";
+import { environment } from 'src/environments/environment';
 
 //https://www.joshmorony.com/dynamic-infinite-input-fields-in-an-ionic-application/
 
@@ -28,7 +30,8 @@ export class Step3Page implements OnInit {
     private signupService: SignupService,
     private toastService: ToastService,
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private storage: Storage
   ) {}
   ngOnInit() {
     this.fg = this.formBuilder.group({});
@@ -68,28 +71,12 @@ export class Step3Page implements OnInit {
   }
 
   onSubmit() {
-    //this.addNewDoctor();
     let id = 3;
-    this.addDoctorSchedule(id);
-  }
+    this.storage.get(environment.DOCTOR_ID).then(value => {
+      id = value;
+    });
 
-  async addNewDoctor() {
-    this.signupService.vaccineData = this.fg.value;
-    console.log(this.fg.value);
-    await this.signupService.addDoctor().subscribe(
-      res => {
-        if (res.IsSuccess) {
-          this.addDoctorSchedule(res.ResponseData.ID);
-          this.toastService.create("successfully added");
-          this.router.navigate(["/login"]);
-        } else {
-          this.toastService.create(res.Message, "danger");
-        }
-      },
-      err => {
-        this.toastService.create(err, "danger");
-      }
-    );
+    this.addDoctorSchedule(id);
   }
 
   async addDoctorSchedule(id) {
@@ -97,8 +84,8 @@ export class Step3Page implements OnInit {
     await this.signupService.addSchedule(id).subscribe(
       res => {
         if (res.IsSuccess) {
-          // this.toastService.create("successfully added");
-          // this.router.navigate(["/login"]);
+          this.toastService.create("successfully added");
+          this.router.navigate(["/login"]);
         } else {
           this.toastService.create(res.Message, "danger");
         }
