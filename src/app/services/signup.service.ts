@@ -27,7 +27,6 @@ export class SignupService extends BaseService {
         PhoneNumber: this.clinicData.PhoneNumber,
         Address: this.clinicData.Address,
         ConsultationFee: this.clinicData.ConsultationFee,
-        OffDays: this.clinicData.OffDays,
         ClinicTimings: this.clinicData.ClinicTimings,
         Lat: this.clinicData.Lat,
         Long: this.clinicData.Long
@@ -44,7 +43,8 @@ export class SignupService extends BaseService {
       PhoneNo: this.personalData.PhoneNo,
       Qualification: this.personalData.Qualification,
       ShowMobile: this.personalData.ShowMobile,
-      ShowPhone: this.personalData.ShowPhone
+      ShowPhone: this.personalData.ShowPhone,
+      Speciality: this.personalData.Speciality
     };
     const url = `${this.API_Doctor}`;
     return this.http

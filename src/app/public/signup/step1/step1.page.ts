@@ -15,26 +15,26 @@ import { SignupService } from "src/app/services/signup.service";
 })
 export class Step1Page implements OnInit {
   fg: FormGroup;
-  doctortype = "Child Specialist";
-  doctorsp: [];
-  docSpeciality: any;
-  dropDown: boolean = false;
+  // doctortype = "Child Specialist";
+  // doctorsp: [];
+  // docSpeciality: any;
+  showSpeciality: boolean = false;
   constructor(
     private frombuilder: FormBuilder,
     private router: Router,
     private signupService: SignupService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.fg = this.frombuilder.group({
-      DoctorType: [],
+      DoctorType:  new FormControl("CS"),
       Qualification: [],
       AdditionalInfo: [],
       FirstName: [],
       LastName: [],
       DisplayName: [],
       Email: new FormControl(
-        "",
+        "thezeeshanasghar@gmail.com",
         Validators.compose([
           Validators.required,
           Validators.pattern(
@@ -42,16 +42,17 @@ export class Step1Page implements OnInit {
           )
         ])
       ),
+      Speciality: [],
       Password: [],
-      CountryCode: ["092"],
+      CountryCode: ["0092"],
       MobileNumber: new FormControl(
-        "",
+        "3465430413",
         Validators.compose([
           Validators.required,
           Validators.pattern("[0-9]{10}$")
         ])
       ),
-      ShowMobile: [],
+      ShowMobile: [true],
       PhoneNo: new FormControl(
         "",
         Validators.compose([
@@ -60,26 +61,17 @@ export class Step1Page implements OnInit {
           Validators.pattern("^(0|[1-9][0-9]*)$")
         ])
       ),
-      ShowPhone: [],
+      ShowPhone: [true],
       PMDC: new FormControl(
-        "",
+        "12345-A",
         Validators.compose([
           Validators.required,
           Validators.pattern("^[0-9-\\+]*-[A-Z]$")
         ])
-      ),
-      DoctorSp: []
+      )
     });
   }
 
-  setFilteredItems(plate) {
-    console.log("fff");
-    this.fg.value.FirstName = plate.toUpperCase();
-  }
-
-  selectChangeHandler(event: any) {
-    this.doctorsp = event.target.value;
-  }
   PasswordGenerator() {
     var length = 4,
       charset = "0123456789",
@@ -87,23 +79,20 @@ export class Step1Page implements OnInit {
     for (var i = 0, n = charset.length; i < length; ++i) {
       retVal += charset.charAt(Math.floor(Math.random() * n));
     }
-    this.fg.value.Password = retVal;
+    return retVal;
   }
 
   nextpage() {
-    this.PasswordGenerator();
-    this.fg.value.DoctorSp = this.docSpeciality;
-    this.fg.value.DoctorType = this.doctortype;
+    this.fg.value.Password = this.PasswordGenerator();
     this.signupService.personalData = this.fg.value;
+    console.log(this.fg.value);
 
     this.router.navigate(["/signup/step2"]);
   }
 
-  closeSelectOption() {
-    this.dropDown = false;
-  }
-  openSelectOption() {
-    this.dropDown = true;
+  setValueAndShowSpeciality(value: String, showSpeciality:boolean) {
+    this.fg.value.DoctorType = value;
+    this.showSpeciality = showSpeciality;
   }
   validation_messages = {
     qualification: [
