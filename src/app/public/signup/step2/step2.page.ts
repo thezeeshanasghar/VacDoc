@@ -12,6 +12,7 @@ import { ToastService } from "src/app/shared/toast.service";
 import { Router } from "@angular/router";
 import { LoadingController } from "@ionic/angular";
 import { SignupService } from "src/app/services/signup.service";
+import * as moment from "moment";
 declare var google;
 
 @Component({
@@ -174,6 +175,14 @@ export class Step2Page implements OnInit {
     this.fg1.value.Long = this.lng;
     var ct = [];
     if (this.fg2.value.Monday) {
+      this.fg2.value.Mstart = moment(
+        this.fg2.value.Mstart,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Mend = moment(
+        this.fg2.value.Mend,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
       let obj = {
         Day: "Monday",
         StartTime: this.fg2.value.Mstart,
@@ -185,6 +194,14 @@ export class Step2Page implements OnInit {
     }
 
     if (this.fg2.value.Tuesday) {
+      this.fg2.value.Tustart = moment(
+        this.fg2.value.Tustart,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Tuend = moment(
+        this.fg2.value.Tuend,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
       let obj = {
         Day: "Tuesday",
         StartTime: this.fg2.value.Tustart,
@@ -196,6 +213,14 @@ export class Step2Page implements OnInit {
     }
 
     if (this.fg2.value.Wednesday) {
+      this.fg2.value.Tuend = moment(
+        this.fg2.value.Wstart,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Tuend = moment(
+        this.fg2.value.Wend,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
       let obj = {
         Day: "Wednesday",
         StartTime: this.fg2.value.Wstart,
@@ -207,6 +232,14 @@ export class Step2Page implements OnInit {
     }
 
     if (this.fg2.value.Thursday) {
+      this.fg2.value.Thstart = moment(
+        this.fg2.value.Thstart,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Thend = moment(
+        this.fg2.value.Thend,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
       let obj = {
         Day: "Thursday",
         StartTime: this.fg2.value.Thstart,
@@ -218,6 +251,14 @@ export class Step2Page implements OnInit {
     }
 
     if (this.fg2.value.Friday) {
+      this.fg2.value.Fstart = moment(
+        this.fg2.value.Fstart,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Fend = moment(
+        this.fg2.value.Fend,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
       let obj = {
         Day: "Friday",
         StartTime: this.fg2.value.Fstart,
@@ -229,6 +270,14 @@ export class Step2Page implements OnInit {
     }
 
     if (this.fg2.value.Saturday) {
+      this.fg2.value.Sastart = moment(
+        this.fg2.value.Sastart,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Saend = moment(
+        this.fg2.value.Saend,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
       let obj = {
         Day: "Saturday",
         StartTime: this.fg2.value.Sastart,
@@ -240,6 +289,14 @@ export class Step2Page implements OnInit {
     }
 
     if (this.fg2.value.Sunday) {
+      this.fg2.value.Sustart = moment(
+        this.fg2.value.Sustart,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Suend = moment(
+        this.fg2.value.Suend,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
       let obj = {
         Day: "Sunday",
         StartTime: this.fg2.value.Sustart,
@@ -255,31 +312,29 @@ export class Step2Page implements OnInit {
   }
 
   async addNewClinic(data) {
-    {
-      const loading = await this.loadingController.create({
-        message: "Loading"
-      });
-      await loading.present();
+    const loading = await this.loadingController.create({
+      message: "Loading"
+    });
+    await loading.present();
 
-      this.signupService.clinicData = this.fg1.value;
+    this.signupService.clinicData = this.fg1.value;
 
-      await this.signupService.addDoctor().subscribe(
-        res => {
-          if (res.IsSuccess) {
-            loading.dismiss();
-            this.toastService.create("successfully added");
-            this.router.navigate(["/signup/step3"]);
-          } else {
-            loading.dismiss();
-            this.toastService.create(res.Message, "danger");
-          }
-        },
-        err => {
+    await this.signupService.addDoctor().subscribe(
+      res => {
+        if (res.IsSuccess) {
           loading.dismiss();
-          this.toastService.create(err, "danger");
+          this.toastService.create("successfully added");
+          this.router.navigate(["/signup/step3"]);
+        } else {
+          loading.dismiss();
+          this.toastService.create(res.Message, "danger");
         }
-      );
-    }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, "danger");
+      }
+    );
   }
 
   validation_messages = {
