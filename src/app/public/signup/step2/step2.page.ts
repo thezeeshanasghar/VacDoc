@@ -330,9 +330,8 @@ export class Step2Page implements OnInit {
       res => {
         if (res.IsSuccess) {
           loading.dismiss();
-          this.storage.set(environment.DOCTOR_ID, res.ResponseData.ID);
           this.toastService.create("successfully added");
-          this.router.navigate(["/signup/step3"]);
+          this.router.navigate(["/signup/step3", { id: res.ResponseData.ID }]);
         } else {
           loading.dismiss();
           this.toastService.create(res.Message, "danger");

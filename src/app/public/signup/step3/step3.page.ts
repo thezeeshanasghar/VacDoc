@@ -9,9 +9,9 @@ import {
   Validators
 } from "@angular/forms";
 import { SignupService } from "src/app/services/signup.service";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { Storage } from "@ionic/storage";
-import { environment } from 'src/environments/environment';
+import { environment } from "src/environments/environment";
 
 //https://www.joshmorony.com/dynamic-infinite-input-fields-in-an-ionic-application/
 
@@ -31,7 +31,8 @@ export class Step3Page implements OnInit {
     private toastService: ToastService,
     private formBuilder: FormBuilder,
     private router: Router,
-    private storage: Storage
+    private storage: Storage,
+    private activatedRoute: ActivatedRoute
   ) {}
   ngOnInit() {
     this.fg = this.formBuilder.group({});
@@ -48,7 +49,6 @@ export class Step3Page implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.doses = res.ResponseData;
-          console.log(this.doses);
           this.signupService.vaccineData2 = this.doses;
           this.doses.forEach(dose => {
             let value = dose.MinGap == null ? 0 : dose.MinGap;
@@ -71,15 +71,12 @@ export class Step3Page implements OnInit {
   }
 
   onSubmit() {
-    let id = 3;
-    this.storage.get(environment.DOCTOR_ID).then(value => {
-      id = value;
-    });
-
-    this.addDoctorSchedule(id);
+    this.addDoctorSchedule();
   }
 
-  async addDoctorSchedule(id) {
+  async addDoctorSchedule() {
+    let id;
+    id = this.activatedRoute.snapshot.paramMap.get("id");
     this.signupService.vaccineData = this.fg.value;
     await this.signupService.addSchedule(id).subscribe(
       res => {
