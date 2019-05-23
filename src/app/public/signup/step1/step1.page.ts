@@ -15,19 +15,16 @@ import { SignupService } from "src/app/services/signup.service";
 })
 export class Step1Page implements OnInit {
   fg: FormGroup;
-  // doctortype = "Child Specialist";
-  // doctorsp: [];
-  // docSpeciality: any;
-  showSpeciality: boolean = false;
+  checkedVal: any;
   constructor(
     private frombuilder: FormBuilder,
     private router: Router,
     private signupService: SignupService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.fg = this.frombuilder.group({
-      DoctorType:  new FormControl("CS"),
+      DoctorType: new FormControl("CS"),
       Qualification: [],
       AdditionalInfo: [],
       FirstName: [],
@@ -44,7 +41,7 @@ export class Step1Page implements OnInit {
       ),
       Speciality: [],
       Password: [],
-      CountryCode: ["0092"],
+      CountryCode: ["92"],
       MobileNumber: new FormControl(
         "3465430413",
         Validators.compose([
@@ -58,6 +55,7 @@ export class Step1Page implements OnInit {
         Validators.compose([
           Validators.required,
           Validators.minLength(7),
+          Validators.maxLength(11),
           Validators.pattern("^(0|[1-9][0-9]*)$")
         ])
       ),
@@ -66,7 +64,7 @@ export class Step1Page implements OnInit {
         "12345-A",
         Validators.compose([
           Validators.required,
-          Validators.pattern("^[0-9-\\+]*-[A-Z]$")
+          Validators.pattern("^[0-9-\\+]*-[a-zA-Z]$")
         ])
       )
     });
@@ -90,9 +88,9 @@ export class Step1Page implements OnInit {
     this.router.navigate(["/signup/step2"]);
   }
 
-  setValueAndShowSpeciality(value: String, showSpeciality:boolean) {
+  setValueAndShowSpeciality(value: String, checkedVal) {
     this.fg.value.DoctorType = value;
-    this.showSpeciality = showSpeciality;
+    this.checkedVal = checkedVal;
   }
   validation_messages = {
     qualification: [
@@ -115,6 +113,10 @@ export class Step1Page implements OnInit {
       {
         type: "minlength",
         message: "Phone Number must be at least 7 Digits long."
+      },
+      {
+        type: "maxlength",
+        message: "Phone Number must be at least 11 Digits long."
       },
       { type: "pattern", message: "Enter Must be Number" }
     ],

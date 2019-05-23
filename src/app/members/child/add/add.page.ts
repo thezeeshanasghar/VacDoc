@@ -27,6 +27,7 @@ export class AddPage implements OnInit {
   formcontroll: boolean = false;
   vaccines: any;
   doctorID: any;
+  clinicID: any;
   clinics: any;
   todaydate: any;
   gender: any;
@@ -61,7 +62,7 @@ export class AddPage implements OnInit {
         ])
       ),
       DOB: new FormControl(this.todaydate, Validators.required),
-      CountryCode: [null],
+      CountryCode: ["92"],
       MobileNumber: new FormControl(
         "",
         Validators.compose([
@@ -86,7 +87,7 @@ export class AddPage implements OnInit {
     this.getClinics();
 
     this.storage.get(environment.CLINIC_ID).then(val => {
-      this.fg1.controls["ClinicID"].setValue(val);
+      this.clinicID = val;
     });
   }
 
@@ -182,6 +183,7 @@ export class AddPage implements OnInit {
   }
 
   async addNewChild(data) {
+    this.fg1.value.ClinicID = this.clinicID;
     await this.childService.addChild(data).subscribe(
       res => {
         if (res.IsSuccess) {

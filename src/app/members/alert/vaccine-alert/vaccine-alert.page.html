@@ -12,7 +12,7 @@
     </ion-segment-button>
   </ion-segment>
 
-  <ion-button (click)="sendAlertMsgToAll()">send sms to all</ion-button>
+  <ion-button (click)="sendSMS(Childs)">send sms to all</ion-button>
   <!-- childs -->
   <h1 *ngIf="Childs == 0" style="color: red;">No alert for today.</h1>
   <ion-grid *ngFor="let child of Childs">
@@ -22,7 +22,7 @@
         <ion-item>
           <ion-label>{{child.Child.Name}}</ion-label>
           <ion-icon slot="end" color="primary" name="call" routerLink="/members/child/edit/"></ion-icon>
-          <ion-icon slot="end" color="primary" name="mail" (click)="sendIndividualAlertMsg(child.ChildId)">
+          <ion-icon slot="end" color="primary" name="mail" (click)="sendSMS([child])">
           </ion-icon>
         </ion-item>
       </ion-col>

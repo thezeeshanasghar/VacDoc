@@ -13,6 +13,7 @@ import { Router } from "@angular/router";
 import { LoadingController } from "@ionic/angular";
 import { SignupService } from "src/app/services/signup.service";
 import * as moment from "moment";
+import { validateConfig } from "@angular/router/src/config";
 declare var google;
 
 @Component({
@@ -27,8 +28,8 @@ export class Step2Page implements OnInit {
   fg1: FormGroup;
   fg2: FormGroup;
   doctorID: any;
-  lat: any;
-  lng: any;
+  latitude: any;
+  longitude: any;
   section: boolean = false;
   constructor(
     private formbuilder: FormBuilder,
@@ -53,6 +54,7 @@ export class Step2Page implements OnInit {
         Validators.compose([
           Validators.required,
           Validators.minLength(7),
+          Validators.maxLength(11),
           Validators.pattern("^(0|[1-9][0-9]*)$")
         ])
       ),
@@ -130,14 +132,8 @@ export class Step2Page implements OnInit {
     this.myMarker.setMap(this.map);
 
     google.maps.event.addListener(this.myMarker, "dragend", function(evt) {
-      //   document.getElementById("current").innerHTML =
-      //     "<p>Marker dropped: Current Lat: " +
-      //     evt.latLng.lat().toFixed(3) +
-      //     " Current Lng: " +
-      //     evt.latLng.lng().toFixed(3) +
-      //     "</p>";
-      this.lat = evt.latLng.lat().toFixed(3);
-      this.lng = evt.latLng.lng().toFixed(3);
+      this.latgfhdfhdfhgdfghfdhgdfhdfhdfhdfhdfhgdfhfdhdfgh = evt.latLng.lat().toFixed(3);
+      this.lng= evt.latLng.lng().toFixed(3);
     });
   }
 
@@ -175,11 +171,11 @@ export class Step2Page implements OnInit {
   }
 
   getdata() {
+    console.log(this.map);
+    console.log(this.myMarker);
     this.fg2.controls["Tuend"].setValue(this.fg2.value.Mend);
     this.fg1.value.DoctorID = this.doctorID;
     this.fg1.value.OffDays = "Sunday";
-    this.fg1.value.Lat = this.lat;
-    this.fg1.value.Long = this.lng;
     var ct = [];
     if (this.fg2.value.Monday) {
       this.fg2.value.Mstart = moment(
@@ -314,8 +310,7 @@ export class Step2Page implements OnInit {
       ct.push(obj);
     }
     this.fg1.value.ClinicTimings = ct;
-
-    this.addNewClinic(this.fg1.value);
+    // this.addNewClinic(this.fg1.value);
   }
 
   async addNewClinic(data) {
@@ -330,7 +325,6 @@ export class Step2Page implements OnInit {
       res => {
         if (res.IsSuccess) {
           loading.dismiss();
-          this.toastService.create("successfully added");
           this.router.navigate(["/signup/step3", { id: res.ResponseData.ID }]);
         } else {
           loading.dismiss();
@@ -354,7 +348,11 @@ export class Step2Page implements OnInit {
         type: "minlength",
         message: "Phone Number must be at least 7 Digits long."
       },
-      { type: "pattern", message: "Enter Must be Number" }
+      { type: "pattern", message: "Enter Must be Number" },
+      {
+        type: "maxlength",
+        message: "Phone Number must be at least 11 Digits long."
+      }
     ],
     ConsultationFee: [
       { type: "required", message: "ConsultationFee is required." },

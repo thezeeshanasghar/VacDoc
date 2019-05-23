@@ -5,12 +5,13 @@
 export const environment = {
   production: false,
   // BASE_URL: "http://vac-api.afz-sol.com/api/"
-   BASE_URL: "http://vac-api.afz-sol.com/api/",
+  BASE_URL: "http://vac-api.afz-sol.com/api/",
   //BASE_URL: "http://localhost:4309/api/",
 
-  DOCTOR_ID:"DoctorID",
-  CLINIC_ID:"ClinicID",
-  USER_ID:"UserID"
+  DOCTOR_ID: "DoctorID",
+  CLINIC_ID: "ClinicID",
+  USER_ID: "UserID",
+  SMS: "SMS",
 };
 /*
  * For easier debugging in development mode, you can import the following file

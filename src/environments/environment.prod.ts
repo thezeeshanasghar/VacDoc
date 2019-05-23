@@ -3,9 +3,10 @@ export const environment = {
 
   // BASE_URL: "https://api.vaccs.io/api/"
   BASE_URL: "http://vac-api.afz-sol.com/api/",
-  // BASE_URL: "http://localhost:4309/api/"
+  //BASE_URL: "http://localhost:4309/api/",
 
   DOCTOR_ID: "DoctorID",
   CLINIC_ID: "ClinicID",
-  USER_ID: "UserID"
+  USER_ID: "UserID",
+  SMS: "SMS",
 };

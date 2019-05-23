@@ -10,51 +10,135 @@
 <ion-content padding>
 
   <form [formGroup]="fg">
-  <ion-radio-group>
+    <ion-radio-group>
 
-    <ion-grid>
-      <ion-row>
+      <ion-grid>
+        <ion-row>
 
-        <ion-col>
-          <ion-item>
-            <ion-label color="primary">Child Specialist</ion-label>
-            <ion-radio slot="start" value="CS"  (click)="setValueAndShowSpeciality('CS', false)">
-            </ion-radio>
-          </ion-item>
-        </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary">Child Specialist</ion-label>
+              <ion-radio slot="start" value="CS" (click)="setValueAndShowSpeciality('CS', '')">
+              </ion-radio>
+            </ion-item>
+          </ion-col>
 
-        <ion-col>
-          <ion-item>
-            <ion-label color="primary" *ngIf="showSpeciality==false">Other speciality</ion-label>
-            <ion-radio slot="start" value="D" (click)="setValueAndShowSpeciality('D', true)"></ion-radio>
-          
-            <ion-label *ngIf="showSpeciality==true">Select speciality</ion-label>
-            <ion-select *ngIf="showSpeciality==true" multiple formControlName="Speciality">
-              <ion-select-option value="Cardialogist">Cardialogist</ion-select-option>
-              <ion-select-option value="Pulmonologist">Pulmonologist</ion-select-option>
-              <ion-select-option value="Gastroenterologist">Gastroenterologist</ion-select-option>
-              <ion-select-option value="Rheumatologist">Rheumatologist</ion-select-option>
-              <ion-select-option value="Nephrologist">Nephrologist</ion-select-option>
-              <ion-select-option value="Medical Specialist,">Medical Specialist</ion-select-option>
-              <ion-select-option value="Sexologist">Sexologist</ion-select-option>
-              <ion-select-option value="General Surgeon">General Surgeon</ion-select-option>
-              <ion-select-option value="Plastic Surgeon">Plastic Surgeon</ion-select-option>
-              <ion-select-option value="Dermatologist">Dermatologist</ion-select-option>
-              <ion-select-option value="Dental Surgeon">Dental Surgeon</ion-select-option>
-              <ion-select-option value="Orthodontist">Orthodontist</ion-select-option>
-              <ion-select-option value="Diabetologist">Diabetologist</ion-select-option>
-              <ion-select-option value="Neurologist">Neurologist</ion-select-option>
-              <ion-select-option value="Neuro Surgeon">Neuro Surgeon</ion-select-option>
-              <ion-select-option value="Urologist">Urologist</ion-select-option>
-              <ion-select-option value="Infectious Disease Specialist">Infectious Disease Specialist</ion-select-option>
-            </ion-select>
-          </ion-item>
+          <ion-col>
+            <ion-item>
+              <ion-radio [checked]="checkedVal" slot="start" value="D"
+                (click)="setValueAndShowSpeciality('D','checked')"></ion-radio>
+              <ion-label color="primary">Other speciality</ion-label>
+              <ion-select multiple formControlName="Speciality" (click)="setValueAndShowSpeciality('D', 'checked')" x>
+                <ion-select-option value="Cardiac Surgeon">Cardiac Surgeon</ion-select-option>
+                <ion-select-option value="Dentist">Dentist</ion-select-option>
+                <ion-select-option value="Dermatologist">Dermatologist</ion-select-option>
+                <ion-select-option value="ENT Specialist
+                ">ENT Specialist
+                </ion-select-option>
+                <ion-select-option value="Eye Specialist">Eye Specialist</ion-select-option>
+                <ion-select-option value=" Gastroenterologist"> Gastroenterologist</ion-select-option>
+                <ion-select-option value="General Physician">General Physician</ion-select-option>
+                <ion-select-option value="Gynecologist">Gynecologist</ion-select-option>
 
-          
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-radio-group>
+                <ion-select-option value="Hepatobiliary and Liver Transplant Surgeon">Hepatobiliary and Liver Transplant
+                  Surgeon</ion-select-option>
+                <ion-select-option value="Orthopedic Surgeon">Orthopedic Surgeon</ion-select-option>
+                <ion-select-option value="Pediatric Cardiologist">Pediatric Cardiologist</ion-select-option>
+                <ion-select-option value="Pediatric Urologist">Pediatric Urologist</ion-select-option>
+                <ion-select-option value="Pediatrician">Pediatrician</ion-select-option>
+                <ion-select-option value="Psychiatrist">Psychiatrist</ion-select-option>
+
+                <ion-select-option value="Weight Loss Surgeon">Weight Loss Surgeon</ion-select-option>
+                <ion-select-option value="Acupuncturist">Acupuncturist</ion-select-option>
+                <ion-select-option value="Aesthetic Gynecologist">Aesthetic Gynecologist</ion-select-option>
+                <ion-select-option value="Anesthesiologist">Anesthesiologist</ion-select-option>
+                <ion-select-option value="Asthma Specialist">Asthma Specialist</ion-select-option>
+                <ion-select-option value="Audiologist">Audiologist</ion-select-option>
+                <ion-select-option value="Autism Consultant">Autism Consultant</ion-select-option>
+                <ion-select-option value="Bio-resonance Specialist">Bio-resonance Specialist</ion-select-option>
+                <ion-select-option value="Breast Surgeon">Breast Surgeon</ion-select-option>
+                <ion-select-option value="Cancer Surgeon">Cancer Surgeon</ion-select-option>
+                <ion-select-option value="Cardiologist">Cardiologist</ion-select-option>
+                <ion-select-option value="Cardiothoracic Surgeon">Cardiothoracic Surgeon</ion-select-option>
+                <ion-select-option value="Chiropractor">Chiropractor</ion-select-option>
+                <ion-select-option value="Colorectal Cancer Surgeon">Colorectal Cancer Surgeon</ion-select-option>
+                <ion-select-option value="Cosmetic Dentist">Cosmetic Dentist</ion-select-option>
+                <ion-select-option value="Cosmetic Surgeon">Cosmetic Surgeon</ion-select-option>
+                <ion-select-option value="Cosmetologist">Cosmetologist</ion-select-option>
+                <ion-select-option value="Counselor">Counselor</ion-select-option>
+                <ion-select-option value="Diabetes Counsellor">Diabetes Counsellor</ion-select-option>
+                <ion-select-option value="Diabetologist">Diabetologist</ion-select-option>
+                <ion-select-option value="Dietitian">Dietitian</ion-select-option>
+                <ion-select-option value="Endocrinologist">Endocrinologist</ion-select-option>
+                <ion-select-option value="Endodontist">Endodontist</ion-select-option>
+                <ion-select-option value="ENT Surgeon">ENT Surgeon</ion-select-option>
+                <ion-select-option value="Eye Surgeon">Eye Surgeon</ion-select-option>
+                <ion-select-option value="Family Physician">Family Physician</ion-select-option>
+                <ion-select-option value="Fertility Consultant">Fertility Consultant</ion-select-option>
+                <ion-select-option value="General Surgeon">General Surgeon</ion-select-option>
+                <ion-select-option value="Hair Transplant Surgeon">Hair Transplant Surgeon</ion-select-option>
+                <ion-select-option value="Hand Surgeon">Hand Surgeon</ion-select-option>
+                <ion-select-option value="Head and Neck Surgeon">Head and Neck Surgeon</ion-select-option>
+                <ion-select-option value="Hematologist">Hematologist</ion-select-option>
+                <ion-select-option value="Hepatologist">Hepatologist</ion-select-option>
+                <ion-select-option value="Hernia Surgeon">Hernia Surgeon</ion-select-option>
+                <ion-select-option value="Homeopath">Homeopath</ion-select-option>
+                <ion-select-option value="Hypertension Specialist">Hypertension Specialist</ion-select-option>
+                <ion-select-option value="Immunologist">Immunologist</ion-select-option>
+                <ion-select-option value="Infectious Disease Specialist">Infectious Disease Specialist
+                </ion-select-option>
+                <ion-select-option value="Internal Medicine Specialist">Internal Medicine Specialist</ion-select-option>
+                <ion-select-option value="Interventional Cardiologist">Interventional Cardiologist</ion-select-option>
+                <ion-select-option value="Kidney Transplant Surgeon">Kidney Transplant Surgeon</ion-select-option>
+                <ion-select-option value="Laparoscopic Surgeon">Laparoscopic Surgeon</ion-select-option>
+                <ion-select-option value="Laser Specialist">Laser Specialist</ion-select-option>
+                <ion-select-option value="Neonatologist">Neonatologist</ion-select-option>
+                <ion-select-option value="Nephrologist">Nephrologist</ion-select-option>
+                <ion-select-option value="Neuro Surgeon">Neuro Surgeon</ion-select-option>
+                <ion-select-option value="Neurologist">Neurologist</ion-select-option>
+                <ion-select-option value="Neuroradiologist">Neuroradiologist</ion-select-option>
+                <ion-select-option value="Nutritional Psychologist">Nutritional Psychologist</ion-select-option>
+                <ion-select-option value="Obstetrician">Obstetrician</ion-select-option>
+                <ion-select-option value="Oncologist">Oncologist</ion-select-option>
+                <ion-select-option value="Oral and Maxillofacial Surgeon">Oral and Maxillofacial Surgeon
+                </ion-select-option>
+                <ion-select-option value="Pain Management Specialist">Pain Management Specialist</ion-select-option>
+                <ion-select-option value="Pathology Lab">Pathology Lab</ion-select-option>
+                <ion-select-option value="Pediatric Neurologist">Pediatric Neurologist</ion-select-option>
+                <ion-select-option value="Pediatric Oncologist">Pediatric Oncologist</ion-select-option>
+                <ion-select-option value="Pediatric Orthopedic Surgeon">Pediatric Orthopedic Surgeon</ion-select-option>
+                <ion-select-option value="Pediatric Surgeon">Pediatric Surgeon</ion-select-option>
+                <ion-select-option value="Physiotherapist">Physiotherapist</ion-select-option>
+                <ion-select-option value="Plastic Surgeon">Plastic Surgeon</ion-select-option>
+                <ion-select-option value="Psychologist">Psychologist</ion-select-option>
+                <ion-select-option value="Pulmonologist">Pulmonologist</ion-select-option>
+                <ion-select-option value="Radiologist">Radiologist</ion-select-option>
+                <ion-select-option value="Radiology Lab">Radiology Lab</ion-select-option>
+                <ion-select-option value="Reconstructive Surgeon">Reconstructive Surgeon</ion-select-option>
+                <ion-select-option value="Regenerative Medicine">Regenerative Medicine</ion-select-option>
+                <ion-select-option value="Rehablitation Specialist">Rehablitation Specialist</ion-select-option>
+                <ion-select-option value="Rheumatologist">Rheumatologist</ion-select-option>
+                <ion-select-option value="Sexologist">Sexologist</ion-select-option>
+                <ion-select-option value="Sonologist">Sonologist</ion-select-option>
+                <ion-select-option value="Specialist in Operative Dentistry">Specialist in Operative Dentistry
+                </ion-select-option>
+                <ion-select-option value="Speech and Language Pathologist">Speech and Language Pathologist
+                </ion-select-option>
+                <ion-select-option value="Spinal Surgeon">Spinal Surgeon</ion-select-option>
+                <ion-select-option value="Sports Medicine Specialist">Sports Medicine Specialist</ion-select-option>
+                <ion-select-option value="Thyroid Surgeon">Thyroid Surgeon</ion-select-option>
+                <ion-select-option value="Urologist">Urologist</ion-select-option>
+                <ion-select-option value="Vascular Surgeon">Vascular Surgeon</ion-select-option>
+                <ion-select-option value="Infectious Disease Specialist">Infectious Disease Specialist
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+
+
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-radio-group>
 
 
 
@@ -73,12 +157,12 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">Design Your letterpad</ion-label>
-      <ion-textarea type="text" formControlName="AdditionalInfo"></ion-textarea>
+      <ion-textarea type="text" formControlName="AdditionalInfo" text-capitalize></ion-textarea>
     </ion-item>
 
     <ion-item>
       <ion-label color="primary" position="floating">First Name</ion-label>
-      <ion-input autocapitalize="characters" type="text" formControlName="FirstName" text-capitalize required>
+      <ion-input type="text" formControlName="FirstName" text-capitalize required>
       </ion-input>
     </ion-item>
     <div class="validation-errors">
@@ -135,7 +219,7 @@
 
       <ion-item slot="end" lines="none">
         <ion-checkbox formControlName="ShowMobile"></ion-checkbox>
-        <ion-label color="primary">&nbsp;Display</ion-label>
+        <ion-label color="primary">&nbsp;Public Display</ion-label>
       </ion-item>
 
     </ion-item>
@@ -155,7 +239,7 @@
       <ion-input type="text" formControlName="PhoneNo" required></ion-input>
       <ion-item slot="end" lines="none">
         <ion-checkbox formControlName="ShowPhone"></ion-checkbox>
-        <ion-label color="primary">&nbsp;Display</ion-label>
+        <ion-label color="primary">&nbsp;Public Display</ion-label>
       </ion-item>
     </ion-item>
     <div class="validation-errors">

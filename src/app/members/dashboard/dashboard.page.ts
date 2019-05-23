@@ -23,15 +23,15 @@ export class DashboardPage implements OnInit {
   ngOnInit() {
     this.storage.get(environment.DOCTOR_ID).then(docId => {
       this.doctorID = docId;
+      this.getClinics(this.doctorID);
     });
-    this.getClinics();
   }
 
-  async getClinics() {
+  async getClinics(id) {
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
 
-    await this.clinicService.getClinics(this.doctorID).subscribe(
+    await this.clinicService.getClinics(id).subscribe(
       res => {
         this.clinics = res.ResponseData;
         loading.dismiss();
