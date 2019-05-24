@@ -29,7 +29,7 @@ export class FollowupService extends BaseService {
       .pipe(catchError(this.handleError));
   }
 
-  getFollowupChild(followupId: String, Id: String): Observable<any> {
+  getFollowupChild(followupId: number, Id: String): Observable<any> {
     const url = `${this.API_ALERT}followup/alert/${followupId}/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),

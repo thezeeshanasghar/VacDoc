@@ -31,7 +31,7 @@ export class Step1Page implements OnInit {
       LastName: [],
       DisplayName: [],
       Email: new FormControl(
-        "thezeeshanasghar@gmail.com",
+        "",
         Validators.compose([
           Validators.required,
           Validators.pattern(
@@ -43,7 +43,7 @@ export class Step1Page implements OnInit {
       Password: [],
       CountryCode: ["92"],
       MobileNumber: new FormControl(
-        "3465430413",
+        "",
         Validators.compose([
           Validators.required,
           Validators.pattern("[0-9]{10}$")
@@ -56,7 +56,7 @@ export class Step1Page implements OnInit {
           Validators.required,
           Validators.minLength(7),
           Validators.maxLength(11),
-          Validators.pattern("^(0|[1-9][0-9]*)$")
+          Validators.pattern("^([0-9]*)$")
         ])
       ),
       ShowPhone: [true],

@@ -5,7 +5,6 @@ import { ToastService } from "src/app/shared/toast.service";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { AndroidPermissions } from "@ionic-native/android-permissions/ngx";
-import { ChildService } from "src/app/services/child.service";
 declare var SMS: any;
 @Component({
   selector: "app-vaccine-alert",
@@ -53,7 +52,7 @@ export class VaccineAlertPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.Childs = res.ResponseData;
-          console.log(this.Childs);
+
           loading.dismiss();
         } else {
           loading.dismiss();
@@ -67,17 +66,13 @@ export class VaccineAlertPage implements OnInit {
     );
   }
   sendSMS(child: any) {
-    console.log(child);
     for (let i = 0; i < child.length; i++) {
-      this.sendIndividualAlertMsg(
-        child[i].ChildId,
-        child[i].Child.User.MobileNumber
-      );
+      this.sendAlertMsg(child[i].ChildId, child[i].Child.User.MobileNumber);
     }
   }
 
-  // send Alert Msg individual childs
-  async sendIndividualAlertMsg(id, childMobile) {
+  // send Alert Msg to childs
+  async sendAlertMsg(id, childMobile) {
     if (this.SMSKey == 0) {
       const loading = await this.loadingController.create({
         message: "Loading"
@@ -101,11 +96,6 @@ export class VaccineAlertPage implements OnInit {
           }
         );
     } else {
-      for (let i = 0; i < this.Childs.length; i++) {
-        if (this.Childs[i].ChildId == id) {
-          console.log(this.Childs[i]);
-        }
-      }
       this.androidPermissions
         .checkPermission(this.androidPermissions.PERMISSION.SEND_SMS)
         .then(
@@ -144,7 +134,7 @@ export class VaccineAlertPage implements OnInit {
   sendMessage(childMobile) {
     if (SMS) {
       SMS.sendSMS(
-        "92" + childMobile,
+        "0092" + childMobile,
         "Test Message faisal",
         () => {
           console.log("Message sent successfully");

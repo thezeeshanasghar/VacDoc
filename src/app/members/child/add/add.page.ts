@@ -183,18 +183,26 @@ export class AddPage implements OnInit {
   }
 
   async addNewChild(data) {
+    const loading = await this.loadingController.create({
+      message: "loading"
+    });
+    await loading.present();
+
     this.fg1.value.ClinicID = this.clinicID;
     await this.childService.addChild(data).subscribe(
       res => {
         if (res.IsSuccess) {
+          loading.dismiss();
           this.toastService.create("successfully added");
           this.router.navigate(["/members/child"]);
         } else {
+          loading.dismiss();
           this.formcontroll = false;
           this.toastService.create(res.Message, "danger");
         }
       },
       err => {
+        loading.dismiss();
         this.formcontroll = false;
         this.toastService.create(err, "danger");
       }

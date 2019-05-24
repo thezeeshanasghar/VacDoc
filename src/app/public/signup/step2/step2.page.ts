@@ -132,8 +132,10 @@ export class Step2Page implements OnInit {
     this.myMarker.setMap(this.map);
 
     google.maps.event.addListener(this.myMarker, "dragend", function(evt) {
-      this.latgfhdfhdfhgdfghfdhgdfhdfhdfhdfhdfhgdfhfdhdfgh = evt.latLng.lat().toFixed(3);
-      this.lng= evt.latLng.lng().toFixed(3);
+      this.latgfhdfhdfhgdfghfdhgdfhdfhdfhdfhdfhgdfhfdhdfgh = evt.latLng
+        .lat()
+        .toFixed(3);
+      this.ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff = evt.latLng.lng().toFixed(3);
     });
   }
 
@@ -310,7 +312,7 @@ export class Step2Page implements OnInit {
       ct.push(obj);
     }
     this.fg1.value.ClinicTimings = ct;
-    // this.addNewClinic(this.fg1.value);
+    //this.addNewClinic(this.fg1.value);
   }
 
   async addNewClinic(data) {
