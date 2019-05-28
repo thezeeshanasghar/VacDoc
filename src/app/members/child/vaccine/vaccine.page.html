@@ -10,7 +10,20 @@
 <ion-content padding>
   <ion-button (click)="printdata()">print</ion-button>
   <div *ngFor="let item of dataGrouping | keyvalue:mySortingFunction">
-    <p style="text-align: center;">{{item.key}}</p>
+    <p style="text-align: center;">{{item.key}}
+
+      <ion-img style="height: 30px;" src="../../assets/injectionEmpty.png"
+        routerLink="/members/child/vaccine/{{childID}}/bulk/{{item.key}}"></ion-img>
+
+
+
+      <ion-icon color="primary" name="calendar" (click)="picker.open()">
+        <ion-datetime (ionChange)="updateBulkDate(item.value.ID)" #picker picker-format="DD-MM-YYYY">
+        </ion-datetime>
+      </ion-icon>
+
+
+    </p>
 
     <ion-card>
       <ion-card-content *ngFor="let v of item.value">

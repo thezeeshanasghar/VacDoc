@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Bulk</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+
+  <form [formGroup]="fg" (ngSubmit)="onSubmit()">
+    <ion-item>
+      <ion-label color="primary" position="floating">weight</ion-label>
+      <ion-input type="number" placeholder="Weight" formControlName="Weight"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label color="primary" position="floating">Height</ion-label>
+      <ion-input type="number" placeholder="Height" formControlName="Height"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label color="primary" position="floating">OFC</ion-label>
+      <ion-input type="number" placeholder="OFC" formControlName="Circle"></ion-input>
+    </ion-item>
+
+    <ion-item *ngFor="let user of bulkData; let i = index;">
+      <ion-label>Brands</ion-label>
+      <ion-select formControlName="BrandId{{i}}">
+        <ion-select-option *ngFor="let user1 of user.Brands; let i = index;" selected [value]="user1.ID">{{user1.Name}}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-datetime picker-format="DD-MM-YYYY" value="{{currentDate}}" formControlName="GivenDate"></ion-datetime>
+    </ion-item>
+
+    <ion-button type="submit">Submit</ion-button>
+  </form>
+</ion-content>

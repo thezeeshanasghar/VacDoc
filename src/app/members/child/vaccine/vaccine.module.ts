@@ -13,6 +13,7 @@ const routes: Routes = [
     component: VaccinePage
   },
   { path: 'fill/:id', loadChildren: './fill/fill.module#FillPageModule' },
+  { path: 'bulk/:childId', loadChildren: './bulk/bulk.module#BulkPageModule' },
 ];
 
 @NgModule({

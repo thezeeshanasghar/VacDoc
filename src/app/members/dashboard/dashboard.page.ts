@@ -25,6 +25,7 @@ export class DashboardPage implements OnInit {
       this.doctorID = docId;
       this.getClinics(this.doctorID);
     });
+    this.storage.set(environment.SMS, 0);
   }
 
   async getClinics(id) {

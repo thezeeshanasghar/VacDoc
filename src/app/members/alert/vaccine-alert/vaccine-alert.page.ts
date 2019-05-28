@@ -65,33 +65,35 @@ export class VaccineAlertPage implements OnInit {
       }
     );
   }
-  sendSMS(child: any) {
+  async sendSMS(child: any) {
+    const loading = await this.loadingController.create({
+      message: "Loading"
+    });
+    await loading.present();
+
     for (let i = 0; i < child.length; i++) {
       this.sendAlertMsg(child[i].ChildId, child[i].Child.User.MobileNumber);
     }
+    loading.dismiss();
   }
 
   // send Alert Msg to childs
   async sendAlertMsg(id, childMobile) {
     if (this.SMSKey == 0) {
-      const loading = await this.loadingController.create({
-        message: "Loading"
-      });
-      await loading.present();
       await this.alertService
         .sendIndividualAlertMsg(this.numOfDays, id)
         .subscribe(
           res => {
             if (res.IsSuccess) {
-              loading.dismiss();
+              //loading.dismiss();
               this.toastService.create("Alerts has been sent successfully");
             } else {
-              loading.dismiss();
+              //loading.dismiss();
               this.toastService.create(res.Message, "danger");
             }
           },
           err => {
-            loading.dismiss();
+            //loading.dismiss();
             this.toastService.create(err, "danger");
           }
         );
