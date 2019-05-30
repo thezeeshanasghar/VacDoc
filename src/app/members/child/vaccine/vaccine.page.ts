@@ -10,7 +10,7 @@ import * as moment from "moment";
   templateUrl: "./vaccine.page.html",
   styleUrls: ["./vaccine.page.scss"]
 })
-export class VaccinePage implements OnInit {
+export class VaccinePage {
   vaccine: any[] = [];
   dataGrouping: any[] = [];
   childID: any;
@@ -22,12 +22,12 @@ export class VaccinePage implements OnInit {
     private toastService: ToastService
   ) {}
 
-  ngOnInit() {
+  ionViewWillEnter() {
     this.childID = this.route.snapshot.paramMap.get("id");
     this.getVaccination();
   }
 
-  updateBulkDate(id){
+  updateBulkDate(id) {
     console.log(id);
   }
   async getVaccination() {
