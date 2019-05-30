@@ -4,6 +4,7 @@ import { VaccineService } from "src/app/services/vaccine.service";
 import { ToastService } from "src/app/shared/toast.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import * as moment from "moment";
+import { BulkService } from "src/app/services/bulk.service";
 
 @Component({
   selector: "app-vaccine",
@@ -19,6 +20,7 @@ export class VaccinePage {
     public route: ActivatedRoute,
     public router: Router,
     private vaccineService: VaccineService,
+    private bulkService: BulkService,
     private toastService: ToastService
   ) {}
 
@@ -26,10 +28,17 @@ export class VaccinePage {
     this.childID = this.route.snapshot.paramMap.get("id");
     this.getVaccination();
   }
-
-  updateBulkDate(id) {
-    console.log(id);
+  checkVaccineIsDon(data): boolean {
+    var isdone: boolean = true;
+    for (let i = 0; i < data.length; i++) {
+      if (!data[i].IsDone == false) {
+        isdone = false;
+        break;
+      }
+    }
+    return isdone;
   }
+
   async getVaccination() {
     const loading = await this.loadingController.create({
       message: "Loading"
@@ -61,14 +70,18 @@ export class VaccinePage {
   }
 
   groupBy(objectArray, property) {
-    return objectArray.reduce(function(acc, obj) {
-      var key = obj[property];
-      if (!acc[key]) {
-        acc[key] = [];
-      }
-      acc[key].push(obj);
-      return acc;
-    }, {});
+    return objectArray.reduce(
+      function(acc, obj) {
+        var key = obj[property];
+        if (!acc[key]) {
+          acc[key] = [];
+        }
+        acc[key].push(obj);
+        return acc;
+      },
+
+      {}
+    );
   }
 
   async updateDate($event, vacId) {
@@ -90,6 +103,25 @@ export class VaccinePage {
     );
   }
 
+  async updateBulkDate($event, id) {
+    let newDate = $event.detail.value;
+    newDate = moment(newDate, "YYYY-MM-DD").format("DD-MM-YYYY");
+    let data = { Date: newDate, ID: id };
+
+    await this.bulkService.updateInjectionDate(data).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          this.getVaccination();
+          this.toastService.create(res.Message);
+        } else {
+          this.toastService.create(res.Message, "danger");
+        }
+      },
+      err => {
+        this.toastService.create(err, "danger");
+      }
+    );
+  }
   printdata() {
     //this.vaccineService.printVaccineSchedule(this.childID);
   }
