@@ -15,8 +15,7 @@
         </ion-item>
         <div class="validation-errors">
             <ng-container *ngFor="let validation of validation_messages.Name">
-                <div class="error-message"
-                    *ngIf="fg1.get('Name').hasError(validation.type) && (fg1.get('Name').dirty || fg1.get('Name').touched)">
+                <div class="error-message" *ngIf="fg1.get('Name').hasError(validation.type) && (fg1.get('Name').dirty || fg1.get('Name').touched)">
                     <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
                 </div>
             </ng-container>
@@ -24,12 +23,11 @@
 
         <ion-item>
             <ion-label color="primary" position="floating">Phone Number</ion-label>
-            <ion-input type="text" formControlName="PhoneNumber" required></ion-input>
+            <ion-input type="number" formControlName="PhoneNumber" required></ion-input>
         </ion-item>
         <div class="validation-errors">
             <ng-container *ngFor="let validation of validation_messages.phoneNumber">
-                <div class="error-message"
-                    *ngIf="fg1.get('PhoneNumber').hasError(validation.type) && (fg1.get('PhoneNumber').dirty || fg1.get('PhoneNumber').touched)">
+                <div class="error-message" *ngIf="fg1.get('PhoneNumber').hasError(validation.type) && (fg1.get('PhoneNumber').dirty || fg1.get('PhoneNumber').touched)">
                     <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
                 </div>
             </ng-container>
@@ -41,8 +39,7 @@
         </ion-item>
         <div class="validation-errors">
             <ng-container *ngFor="let validation of validation_messages.Address">
-                <div class="error-message"
-                    *ngIf="fg1.get('Address').hasError(validation.type) && (fg1.get('Address').dirty || fg1.get('Address').touched)">
+                <div class="error-message" *ngIf="fg1.get('Address').hasError(validation.type) && (fg1.get('Address').dirty || fg1.get('Address').touched)">
                     <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
                 </div>
             </ng-container>
@@ -54,8 +51,7 @@
         </ion-item>
         <div class="validation-errors">
             <ng-container *ngFor="let validation of validation_messages.ConsultationFee">
-                <div class="error-message"
-                    *ngIf="fg1.get('ConsultationFee').hasError(validation.type) && (fg1.get('ConsultationFee').dirty || fg1.get('ConsultationFee').touched)">
+                <div class="error-message" *ngIf="fg1.get('ConsultationFee').hasError(validation.type) && (fg1.get('ConsultationFee').dirty || fg1.get('ConsultationFee').touched)">
                     <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
                 </div>
             </ng-container>
@@ -74,15 +70,13 @@
 
                         <ion-item lines="none" no-padding>
                             <ion-label color="primary" position="floating">Start Time</ion-label>
-                            <ion-datetime formControlName="Mstart" display-format="h:mm a"
-                                (ionChange)="setAllDaysValueStrat1()">
+                            <ion-datetime formControlName="Mstart" display-format="h:mm a" (ionChange)="setAllDaysValueStrat1()">
                             </ion-datetime>
                         </ion-item>
 
                         <ion-item slot="end" lines="none" no-padding>
                             <ion-label color="primary" position="floating">End Time</ion-label>
-                            <ion-datetime formControlName="Mend" display-format="h:mm a"
-                                (ionChange)="setAllDaysValueEnd1()">
+                            <ion-datetime formControlName="Mend" display-format="h:mm a" (ionChange)="setAllDaysValueEnd1()">
                             </ion-datetime>
                         </ion-item>
                     </ion-item>
@@ -91,15 +85,13 @@
 
                         <ion-item lines="none" no-padding>
                             <ion-label color="primary" position="floating">Start Time</ion-label>
-                            <ion-datetime formControlName="Mstart2" display-format="h:mm a"
-                                (ionChange)="setAllDaysValueStrat2()">
+                            <ion-datetime formControlName="Mstart2" display-format="h:mm a" (ionChange)="setAllDaysValueStrat2()">
                             </ion-datetime>
                         </ion-item>
 
                         <ion-item slot="end" lines="none" no-padding>
                             <ion-label color="primary" position="floating">End Time</ion-label>
-                            <ion-datetime formControlName="Mend2" display-format="h:mm a"
-                                (ionChange)="setAllDaysValueEnd2()">
+                            <ion-datetime formControlName="Mend2" display-format="h:mm a" (ionChange)="setAllDaysValueEnd2()">
                             </ion-datetime>
                         </ion-item>
                     </ion-item>
@@ -109,8 +101,7 @@
             <ion-card>
                 <ion-item>
                     <ion-card-title>Tuesday</ion-card-title>
-                    <ion-toggle #Tuesday id="Tuesday" name="Tuesday" slot="end" color="primary"
-                        formControlName="Tuesday">
+                    <ion-toggle #Tuesday id="Tuesday" name="Tuesday" slot="end" color="primary" formControlName="Tuesday">
                     </ion-toggle>
                 </ion-item>
                 <ion-card-content *ngIf="Tuesday.checked==true">
@@ -150,8 +141,7 @@
             <ion-card>
                 <ion-item>
                     <ion-card-title>Wednesday</ion-card-title>
-                    <ion-toggle #Wednesday id="Wednesday" name="Wednesday" slot="end" color="primary"
-                        formControlName="Wednesday">
+                    <ion-toggle #Wednesday id="Wednesday" name="Wednesday" slot="end" color="primary" formControlName="Wednesday">
                     </ion-toggle>
                 </ion-item>
                 <ion-card-content *ngIf="Wednesday.checked==true">
@@ -191,8 +181,7 @@
             <ion-card>
                 <ion-item>
                     <ion-card-title>Thursday</ion-card-title>
-                    <ion-toggle #Thursday id="Thursday" name="Thursday" slot="end" color="primary"
-                        formControlName="Thursday">
+                    <ion-toggle #Thursday id="Thursday" name="Thursday" slot="end" color="primary" formControlName="Thursday">
                     </ion-toggle>
                 </ion-item>
                 <ion-card-content *ngIf="Thursday.checked==true">
@@ -272,8 +261,7 @@
             <ion-card>
                 <ion-item>
                     <ion-card-title>Saturday</ion-card-title>
-                    <ion-toggle #Saturday id="Saturday" name="Saturday" slot="end" color="primary"
-                        formControlName="Saturday">
+                    <ion-toggle #Saturday id="Saturday" name="Saturday" slot="end" color="primary" formControlName="Saturday">
                     </ion-toggle>
                 </ion-item>
                 <ion-card-content *ngIf="Saturday.checked==true">

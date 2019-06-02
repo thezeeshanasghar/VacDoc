@@ -132,10 +132,8 @@ export class Step2Page implements OnInit {
     this.myMarker.setMap(this.map);
 
     google.maps.event.addListener(this.myMarker, "dragend", function(evt) {
-      this.latgfhdfhdfhgdfghfdhgdfhdfhdfhdfhdfhgdfhfdhdfgh = evt.latLng
-        .lat()
-        .toFixed(3);
-      this.ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff = evt.latLng.lng().toFixed(3);
+      this.lat = evt.latLng.lat().toFixed(3);
+      this.lng = evt.latLng.lng().toFixed(3);
     });
   }
 
@@ -173,10 +171,11 @@ export class Step2Page implements OnInit {
   }
 
   getdata() {
-    console.log(this.map);
-    console.log(this.myMarker);
     this.fg2.controls["Tuend"].setValue(this.fg2.value.Mend);
     this.fg1.value.DoctorID = this.doctorID;
+    this.fg1.value.Lat = this.myMarker.lat;
+    this.fg1.value.Long = this.myMarker.lng;
+    console.log(this.fg1.value);
     this.fg1.value.OffDays = "Sunday";
     var ct = [];
     if (this.fg2.value.Monday) {
@@ -312,32 +311,9 @@ export class Step2Page implements OnInit {
       ct.push(obj);
     }
     this.fg1.value.ClinicTimings = ct;
-    //this.addNewClinic(this.fg1.value);
-  }
-
-  async addNewClinic(data) {
-    const loading = await this.loadingController.create({
-      message: "Loading"
-    });
-    await loading.present();
-
     this.signupService.clinicData = this.fg1.value;
-
-    await this.signupService.addDoctor().subscribe(
-      res => {
-        if (res.IsSuccess) {
-          loading.dismiss();
-          this.router.navigate(["/signup/step3", { id: res.ResponseData.ID }]);
-        } else {
-          loading.dismiss();
-          this.toastService.create(res.Message, "danger");
-        }
-      },
-      err => {
-        loading.dismiss();
-        this.toastService.create(err, "danger");
-      }
-    );
+    this.router.navigate(["/signup/step3"]);
+    //this.addNewClinic(this.fg1.value);
   }
 
   validation_messages = {

@@ -71,12 +71,32 @@ export class Step3Page implements OnInit {
   }
 
   onSubmit() {
-    this.addDoctorSchedule();
+    this.addNewClinic();
   }
 
-  async addDoctorSchedule() {
-    let id;
-    id = this.activatedRoute.snapshot.paramMap.get("id");
+  async addNewClinic() {
+    const loading = await this.loadingController.create({
+      message: "Loading"
+    });
+    await loading.present();
+    await this.signupService.addDoctor().subscribe(
+      res => {
+        if (res.IsSuccess) {
+          this.addDoctorSchedule(res.ResponseData.ID);
+          loading.dismiss();
+        } else {
+          loading.dismiss();
+          this.toastService.create(res.Message, "danger");
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, "danger");
+      }
+    );
+  }
+
+  async addDoctorSchedule(id) {
     this.signupService.vaccineData = this.fg.value;
     await this.signupService.addSchedule(id).subscribe(
       res => {
