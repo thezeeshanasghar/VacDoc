@@ -14,8 +14,8 @@ import * as moment from "moment";
   styleUrls: ["./bulk.page.scss"]
 })
 export class BulkPage implements OnInit {
-  childID: any;
-  doctorID: any;
+  childId: any;
+  doctorId: any;
   currentDate: any;
   bulkData: any;
   fg: FormGroup;
@@ -30,11 +30,11 @@ export class BulkPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.storage.get(environment.DOCTOR_ID).then(val => {
-      this.doctorID = val;
+    this.storage.get(environment.DOCTOR_Id).then(val => {
+      this.doctorId = val;
     });
-    this.childID = this.activatedRoute.snapshot.paramMap.get("id");
-    console.log(this.childID);
+    this.childId = this.activatedRoute.snapshot.paramMap.get("id");
+    console.log(this.childId);
 
     this.currentDate = this.activatedRoute.snapshot.paramMap.get("childId");
     console.log(this.currentDate);
@@ -42,8 +42,8 @@ export class BulkPage implements OnInit {
     this.getBulk();
 
     this.fg = this.formBuilder.group({
-      DoctorID: [""],
-      ID: [null],
+      DoctorId: [""],
+      Id: [null],
       Weight: [null],
       Height: [null],
       Circle: [null],
@@ -56,7 +56,7 @@ export class BulkPage implements OnInit {
   }
 
   async getBulk() {
-    let data = { ChildId: this.childID, Date: this.currentDate };
+    let data = { ChildId: this.childId, Date: this.currentDate };
     const loading = await this.loadingController.create({
       message: "Loading"
     });
@@ -83,7 +83,7 @@ export class BulkPage implements OnInit {
     let data = {
       Circle: this.fg.value.Circle,
       Date: this.fg.value.Date,
-      DoctorID: this.doctorID,
+      DoctorId: this.doctorId,
       GivenDate: this.fg.value.GivenDate,
       Height: this.fg.value.Height,
       Weight: this.fg.value.Weight,
@@ -93,20 +93,20 @@ export class BulkPage implements OnInit {
         { BrandId: "", ScheduleId: "" },
         { BrandId: "", ScheduleId: "" }
       ],
-      ID: ""
+      Id: ""
     };
     if (this.fg.value.BrandId0) {
-      data.ScheduleBrands[0].ScheduleId = this.bulkData[0].ID;
+      data.ScheduleBrands[0].ScheduleId = this.bulkData[0].Id;
       data.ScheduleBrands[0].BrandId = this.fg.value.BrandId0;
-      data.ID = this.bulkData[0].ID;
+      data.Id = this.bulkData[0].ID;
     }
 
     if (this.fg.value.BrandId1) {
-      data.ScheduleBrands[1].ScheduleId = this.bulkData[1].ID;
+      data.ScheduleBrands[1].ScheduleId = this.bulkData[1].Id;
       data.ScheduleBrands[1].BrandId = this.fg.value.BrandId1;
     }
     if (this.fg.value.BrandId2) {
-      data.ScheduleBrands[2].ScheduleId = this.bulkData[2].ID;
+      data.ScheduleBrands[2].ScheduleId = this.bulkData[2].Id;
       data.ScheduleBrands[2].BrandId = this.fg.value.BrandId2;
     }
     console.log(data);
@@ -127,7 +127,7 @@ export class BulkPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.toastService.create("Succfully Update");
-          this.router.navigate(["/members/child/vaccine/"+this.childID]);
+          this.router.navigate(["/members/child/vaccine/"+this.childId]);
           loading.dismiss();
         } else {
           loading.dismiss();

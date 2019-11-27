@@ -28,7 +28,7 @@ export class AppComponent {
       this.splashScreen.hide();
 
       // read local storage and set authentication variable's
-      this.storage.get(environment.DOCTOR_ID).then(value => {
+      this.storage.get(environment.DOCTOR_Id).then(value => {
         if (value) {
           let state = true;
           this.loginService.changeState(state);

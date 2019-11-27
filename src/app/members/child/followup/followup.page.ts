@@ -14,8 +14,8 @@ import { LoadingController } from '@ionic/angular';
 export class FollowupPage implements OnInit {
 
   childData: any;
-  doctorID: any;
-  childID: any;
+  doctorId: any;
+  childId: any;
   constructor(
     public route: ActivatedRoute,
     public loadingController: LoadingController,
@@ -25,15 +25,15 @@ export class FollowupPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.storage.get(environment.DOCTOR_ID).then((val) => {
-      this.doctorID = val;
+    this.storage.get(environment.DOCTOR_Id).then((val) => {
+      this.doctorId = val;
     });
-    this.childID = this.route.snapshot.paramMap.get('id');
+    this.childId = this.route.snapshot.paramMap.get('id');
     this.getfollowupchild();
   }
 
   async getfollowupchild() {
-    let data = { 'ChildID': this.childID, 'DoctorID': this.doctorID }
+    let data = { 'ChildId': this.childId, 'DoctorId': this.doctorId }
     const loading = await this.loadingController.create({
       message: 'Loading'
     });

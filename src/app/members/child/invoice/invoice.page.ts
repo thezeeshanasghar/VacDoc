@@ -41,13 +41,13 @@ export class InvoicePage implements OnInit {
   ngOnInit() {
 
     this.fg = this.formBuilder.group({
-      'ID': [this.route.snapshot.paramMap.get('id')],
+      'Id': [this.route.snapshot.paramMap.get('id')],
       'IsBrand': [false],
       'IsConsultationFee': [false],
       'InvoiceDate': [],
-      'DoctorID': [],
+      'DoctorId': [],
     })
-    this.storage.get(environment.DOCTOR_ID).then((val) => {
+    this.storage.get(environment.DOCTOR_Id).then((val) => {
       this.doctorId = val;
     });
   }

@@ -21,7 +21,7 @@ export class MessagePage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.storage.get(environment.DOCTOR_ID).then((val) => {
+    this.storage.get(environment.DOCTOR_Id).then((val) => {
       this.getMsg(val);
     });
   }

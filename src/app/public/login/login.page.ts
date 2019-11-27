@@ -38,7 +38,7 @@ export class LoginPage implements OnInit {
   }
 
   skipLoginIfAlreadyLoggedIn() {
-    this.storage.get(environment.DOCTOR_ID).then(value => {
+    this.storage.get(environment.DOCTOR_Id).then(value => {
       if (value) {
         let state = true;
         this.loginservice.changeState(state);
@@ -56,8 +56,8 @@ export class LoginPage implements OnInit {
     await this.loginservice.checkAuth(this.fg.value)
       .subscribe(res => {
         if (res.IsSuccess) {
-          this.storage.set(environment.DOCTOR_ID, res.ResponseData.DoctorID);
-          this.storage.set(environment.USER_ID, res.ResponseData.ID);
+          this.storage.set(environment.DOCTOR_Id, res.ResponseData.DoctorId);
+          this.storage.set(environment.USER_Id, res.ResponseData.Id);
           let state = true;
           this.loginservice.changeState(state);
           this.router.navigate(['/members']);

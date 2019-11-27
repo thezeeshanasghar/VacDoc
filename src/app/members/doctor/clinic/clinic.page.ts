@@ -15,7 +15,7 @@ import { AlertService } from 'src/app/shared/alert.service';
 export class ClinicPage {
 
   clinics: any;
-  doctorID: number;
+  doctorId: number;
 
   constructor(
     public loadingController: LoadingController,
@@ -27,8 +27,8 @@ export class ClinicPage {
   ) { }
 
   ionViewWillEnter() {
-    this.storage.get(environment.DOCTOR_ID).then((docId) => {
-      this.doctorID = docId;
+    this.storage.get(environment.DOCTOR_Id).then((docId) => {
+      this.doctorId = docId;
       this.getClinics();
     });
   }
@@ -37,7 +37,7 @@ export class ClinicPage {
     const loading = await this.loadingController.create({ message: 'Loading' });
     await loading.present();
 
-    await this.clinicService.getClinics(this.doctorID).subscribe(
+    await this.clinicService.getClinics(this.doctorId).subscribe(
       res => {
 
         this.clinics = res.ResponseData;
@@ -45,7 +45,7 @@ export class ClinicPage {
         if (res.IsSuccess) {
           for (let i = 0; i < this.clinics.length; i++) {
             if (this.clinics[i].IsOnline == true) {
-              this.storage.set(environment.CLINIC_ID, this.clinics[i].ID)
+              this.storage.set(environment.CLINIC_Id, this.clinics[i].Id)
             }
           }
         }
@@ -61,12 +61,12 @@ export class ClinicPage {
     );
   }
 
-  async setOnlineClinic(clinicID) {
+  async setOnlineClinic(clinicId) {
     const loading = await this.loadingController.create({ message: 'Loading' });
     await loading.present();
 
-    this.storage.set(environment.CLINIC_ID, clinicID)
-    let data = { 'DoctorID': this.doctorID, 'ID': clinicID, 'IsOnline': 'true' }
+    this.storage.set(environment.CLINIC_Id, clinicId)
+    let data = { 'DoctorID': this.doctorId, 'ID': clinicId, 'IsOnline': 'true' }
     await this.clinicService.changeOnlineClinic(data)
       .subscribe(res => {
         if (res.IsSuccess) {

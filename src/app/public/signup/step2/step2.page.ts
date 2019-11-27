@@ -27,7 +27,7 @@ export class Step2Page implements OnInit {
   @ViewChild("mapElement") mapElement;
   fg1: FormGroup;
   fg2: FormGroup;
-  doctorID: any;
+  doctorId: any;
   latitude: any;
   longitude: any;
   section: boolean = false;
@@ -43,11 +43,11 @@ export class Step2Page implements OnInit {
 
   ngOnInit() {
     this.hello();
-    this.storage.get(environment.DOCTOR_ID).then(val => {
-      this.doctorID = val;
+    this.storage.get(environment.DOCTOR_Id).then(val => {
+      this.doctorId = val;
     });
     this.fg1 = this.formbuilder.group({
-      DoctorID: [null],
+      DoctorId: [null],
       Name: [null],
       PhoneNumber: new FormControl(
         "",
@@ -172,7 +172,7 @@ export class Step2Page implements OnInit {
 
   getdata() {
     this.fg2.controls["Tuend"].setValue(this.fg2.value.Mend);
-    this.fg1.value.DoctorID = this.doctorID;
+    this.fg1.value.DoctorID = this.doctorId;
     this.fg1.value.Lat = this.myMarker.lat;
     this.fg1.value.Long = this.myMarker.lng;
     console.log(this.fg1.value);

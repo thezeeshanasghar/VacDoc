@@ -23,7 +23,7 @@ export class BrandAmountPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.storage.get(environment.DOCTOR_ID).then((val) => {
+    this.storage.get(environment.DOCTOR_Id).then((val) => {
       this.getBrandAmount(val);
     });
   }

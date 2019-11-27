@@ -32,7 +32,7 @@ export class SchedulePage implements OnInit {
 
   ngOnInit() {
     this.fg = this.formBuilder.group({});
-    this.storage.get(environment.DOCTOR_ID).then(val => {
+    this.storage.get(environment.DOCTOR_Id).then(val => {
       this.getSchedule(val);
     });
   }
@@ -75,9 +75,9 @@ export class SchedulePage implements OnInit {
     let var1 = [];
     for (let i = 0; i < this.schedule.length; i++) {
       var1.push({
-        ID: this.schedule[i].ID,
-        DoseID: this.schedule[i].DoseID,
-        DoctorID: this.schedule[i].DoctorID,
+        Id: this.schedule[i].Id,
+        DoseId: this.schedule[i].DoseId,
+        DoctorId: this.schedule[i].DoctorId,
         GapInDays: this.fg.value[this.schedule[i].Dose.Name]
       });
     }

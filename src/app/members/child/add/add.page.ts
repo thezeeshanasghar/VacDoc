@@ -26,8 +26,8 @@ export class AddPage implements OnInit {
   fg2: FormGroup;
   formcontroll: boolean = false;
   vaccines: any;
-  doctorID: any;
-  clinicID: any;
+  doctorId: any;
+  clinicId: any;
   clinics: any;
   todaydate: any;
   gender: any;
@@ -49,7 +49,7 @@ export class AddPage implements OnInit {
     this.getVaccine();
 
     this.fg1 = this.formBuilder.group({
-      ClinicID: [""],
+      ClinicId: [""],
       Name: new FormControl("", Validators.required),
       FatherName: new FormControl("", Validators.required),
       Email: new FormControl(
@@ -81,13 +81,13 @@ export class AddPage implements OnInit {
       ChildVaccines: [null]
     });
 
-    this.storage.get(environment.DOCTOR_ID).then(val => {
-      this.doctorID = val;
+    this.storage.get(environment.DOCTOR_Id).then(val => {
+      this.doctorId = val;
     });
     this.getClinics();
 
-    this.storage.get(environment.CLINIC_ID).then(val => {
-      this.clinicID = val;
+    this.storage.get(environment.CLINIC_Id).then(val => {
+      this.clinicId = val;
     });
   }
 
@@ -105,7 +105,7 @@ export class AddPage implements OnInit {
 
   getChildVaccinefromUser() {
     this.fg2.value.ChildVaccines = this.fg2.value.ChildVaccines.map((v, i) =>
-      v ? this.vaccines[i].ID : null
+      v ? this.vaccines[i].Id : null
     ).filter(v => v !== null);
 
     this.fg2.value.ChildVaccines = this.fg2.value.ChildVaccines;
@@ -121,14 +121,14 @@ export class AddPage implements OnInit {
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
 
-    await this.clinicService.getClinics(this.doctorID).subscribe(
+    await this.clinicService.getClinics(this.doctorId).subscribe(
       res => {
         this.clinics = res.ResponseData;
         loading.dismiss();
         if (res.IsSuccess) {
           for (let i = 0; i < this.clinics.length; i++) {
             if (this.clinics[i].IsOnline == true) {
-              this.storage.set(environment.CLINIC_ID, this.clinics[i].ID);
+              this.storage.set(environment.CLINIC_Id, this.clinics[i].Id);
             }
           }
         } else {
@@ -188,7 +188,7 @@ export class AddPage implements OnInit {
     });
     await loading.present();
 
-    this.fg1.value.ClinicID = this.clinicID;
+    this.fg1.value.ClinicID = this.clinicId;
     await this.childService.addChild(data).subscribe(
       res => {
         if (res.IsSuccess) {

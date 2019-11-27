@@ -14,7 +14,7 @@ declare var SMS: any;
   providers: [AndroidPermissions]
 })
 export class FollowUpPage implements OnInit {
-  doctorID: any;
+  doctorId: any;
   followUpChild: any;
   numOfDays: number = 0;
   SMSKey: any;
@@ -27,8 +27,8 @@ export class FollowUpPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.storage.get(environment.DOCTOR_ID).then(val => {
-      this.doctorID = val;
+    this.storage.get(environment.DOCTOR_Id).then(val => {
+      this.doctorId = val;
     });
     this.storage.get(environment.SMS).then(val => {
       this.SMSKey = val;
@@ -44,7 +44,7 @@ export class FollowUpPage implements OnInit {
     });
     await loading.present();
     await this.followupService
-      .getFollowupChild(this.numOfDays, this.doctorID)
+      .getFollowupChild(this.numOfDays, this.doctorId)
       .subscribe(
         res => {
           if (res.IsSuccess) {

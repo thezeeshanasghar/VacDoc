@@ -16,7 +16,7 @@ export class PasswordPage implements OnInit {
 
   fg: FormGroup;
   matching_passwords_group: FormGroup;
-  userID: any;
+  userId: any;
   constructor(
     private formBuilder: FormBuilder,
     public loadingController: LoadingController,
@@ -26,8 +26,8 @@ export class PasswordPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.storage.get(environment.USER_ID).then((val) => {
-      this.userID = val;
+    this.storage.get(environment.USER_Id).then((val) => {
+      this.userId = val;
     });
 
     this.matching_passwords_group = new FormGroup({
@@ -41,14 +41,14 @@ export class PasswordPage implements OnInit {
     });
 
     this.fg = this.formBuilder.group({
-      'UserID': [null],
+      'UserId': [null],
       'OldPassword': new FormControl('', Validators.required),
       'NewPassword': [null],
       matching_passwords: this.matching_passwords_group,
     });
   }
   async changePassword() {
-    this.fg.value.UserID = this.userID;
+    this.fg.value.UserId = this.userId;
     this.fg.value.NewPassword = this.matching_passwords_group.value.password;
     console.log(this.fg.value);
     const loading = await this.loadingController.create({ message: 'Loading' });

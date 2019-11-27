@@ -17,20 +17,20 @@
 
     <ion-item>
       <ion-label>{{clinic.Name}}</ion-label>
-      <ion-icon slot="end" routerLink="/members/doctor/clinic/edit/{{clinic.ID}}" color="primary" name="create">
+      <ion-icon slot="end" routerLink="/members/doctor/clinic/edit/{{clinic.Id}}" color="primary" name="create">
       </ion-icon>
-      <ion-icon slot="end" (click)="alertDeleteClinic(clinic.ID)" color="primary" name="trash"></ion-icon>
+      <ion-icon slot="end" (click)="alertDeleteClinic(clinic.Id)" color="primary" name="trash"></ion-icon>
     </ion-item>
 
     <ion-card-content>
       <p>Consultation Fee : {{clinic.ConsultationFee}}</p>
       <p> Off Days : {{clinic.OffDays}}</p>
       <p>Timming : {{clinic.StartTime}} - {{clinic.EndTime}} </p>
-      <ion-button size="small" fill="outline" color="tertiary" routerLink="/vaccine/{{clinic.ID}}/dose">
+      <ion-button size="small" fill="outline" color="tertiary" routerLink="/vaccine/{{clinic.Id}}/dose">
         Patients &nbsp;<ion-badge size="small" color="primary">{{clinic.childrenCount}}</ion-badge>
       </ion-button>
       <ion-button *ngIf="!clinic.IsOnline" size="small" fill="outline" color="tertiary"
-        (click)="setOnlineClinic(clinic.ID)">
+        (click)="setOnlineClinic(clinic.Id)">
         Set as Online
       </ion-button>
       <ion-button *ngIf="clinic.IsOnline" size="small" color="success" enabled="false" routerLink="/members/dashboard">

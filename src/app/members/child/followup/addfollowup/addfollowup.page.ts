@@ -16,8 +16,8 @@ import { LoadingController } from '@ionic/angular';
 export class AddfollowupPage implements OnInit {
 
   fg: FormGroup;
-  doctorID: any;
-  childID: any;
+  doctorId: any;
+  childId: any;
   constructor(
     public router: Router,
     public route: ActivatedRoute,
@@ -29,12 +29,12 @@ export class AddfollowupPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.storage.get(environment.DOCTOR_ID).then((val) => {
-      this.doctorID = val;
+    this.storage.get(environment.DOCTOR_Id).then((val) => {
+      this.doctorId = val;
     })
     this.fg = this.formBuilder.group({
-      'DoctorID': [null],
-      'ChildID': [null],
+      'DoctorId': [null],
+      'ChildId': [null],
       'Disease': [null],
       'CurrentVisitDate': [null],
       'NextVisitDate': [null],
@@ -47,8 +47,8 @@ export class AddfollowupPage implements OnInit {
   }
 
   async addFollowUp() {
-    this.fg.value.DoctorID = this.doctorID;
-    this.fg.value.ChildID = this.route.snapshot.paramMap.get('id');;
+    this.fg.value.DoctorId = this.doctorId;
+    this.fg.value.ChildId = this.route.snapshot.paramMap.get('id');;
     this.fg.value.NextVisitDate = moment(this.fg.value.NextVisitDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
 
     const loading = await this.loadingController.create({

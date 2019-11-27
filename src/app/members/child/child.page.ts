@@ -17,7 +17,7 @@ export class ChildPage {
 
   fg: FormGroup;
   childs: any;
-  userID: any;
+  userId: any;
   constructor(
     public router: Router,
     public loadingController: LoadingController,
@@ -33,8 +33,8 @@ export class ChildPage {
   }
 
   ionViewWillEnter() {
-    this.storage.get(environment.USER_ID).then((val) => {
-      this.userID = val;
+    this.storage.get(environment.USER_Id).then((val) => {
+      this.userId = val;
     });
   }
 

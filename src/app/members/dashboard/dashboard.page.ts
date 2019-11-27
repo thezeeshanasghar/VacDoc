@@ -12,7 +12,7 @@ import { ToastService } from "src/app/shared/toast.service";
 })
 export class DashboardPage implements OnInit {
   clinics: any;
-  doctorID: any;
+  doctorId: any;
   constructor(
     private loadingController: LoadingController,
     private clinicService: ClinicService,
@@ -21,9 +21,9 @@ export class DashboardPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.storage.get(environment.DOCTOR_ID).then(docId => {
-      this.doctorID = docId;
-      this.getClinics(this.doctorID);
+    this.storage.get(environment.DOCTOR_Id).then(docId => {
+      this.doctorId = docId;
+      this.getClinics(this.doctorId);
     });
     this.storage.set(environment.SMS, 0);
   }
@@ -39,7 +39,7 @@ export class DashboardPage implements OnInit {
         if (res.IsSuccess) {
           for (let i = 0; i < this.clinics.length; i++) {
             if (this.clinics[i].IsOnline == true) {
-              this.storage.set(environment.CLINIC_ID, this.clinics[i].ID);
+              this.storage.set(environment.CLINIC_Id, this.clinics[i].Id);
             }
           }
         } else {

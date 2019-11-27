@@ -11,8 +11,8 @@ import { ToastService } from "../shared/toast.service";
   styleUrls: ["./members.page.scss"]
 })
 export class MembersPage implements OnInit {
-  doctorID: any;
-  clinicID: any;
+  DoctorId: any;
+  clinicId: any;
   public appPages = [
     {
       title: "Dashboard",

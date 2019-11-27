@@ -21,9 +21,9 @@ import * as moment from "moment";
 export class EditPage implements OnInit {
   fg1: FormGroup;
   fg2: FormGroup;
-  clinicID: any;
+  clinicId: any;
   clinic: any;
-  doctorID: any;
+  doctorId: any;
 
   constructor(
     public loadingController: LoadingController,
@@ -37,8 +37,8 @@ export class EditPage implements OnInit {
 
   ngOnInit() {
     this.fg1 = this.formbuilder.group({
-      ID: [null],
-      DoctorID: [null],
+      Id: [null],
+      DoctorId: [null],
       Name: [null],
       PhoneNumber: new FormControl(
         "",
@@ -106,9 +106,9 @@ export class EditPage implements OnInit {
       Suend: [null],
       Suend2: [null]
     });
-    this.clinicID = this.route.snapshot.paramMap.get("id");
-    this.storage.get(environment.DOCTOR_ID).then(val => {
-      this.doctorID = val;
+    this.clinicId = this.route.snapshot.paramMap.get("id");
+    this.storage.get(environment.DOCTOR_Id).then(val => {
+      this.doctorId = val;
     });
     this.getClinic();
   }
@@ -149,7 +149,7 @@ export class EditPage implements OnInit {
   async getClinic() {
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
-    await this.clinicService.getClinicById(this.clinicID).subscribe(
+    await this.clinicService.getClinicById(this.clinicId).subscribe(
       res => {
         if (res.IsSuccess) {
           this.clinic = res.ResponseData;
@@ -282,8 +282,8 @@ export class EditPage implements OnInit {
   }
 
   getdata() {
-    this.fg1.value.DoctorID = this.doctorID;
-    this.fg1.value.ID = this.clinicID;
+    this.fg1.value.DoctorId = this.doctorId;
+    this.fg1.value.Id = this.clinicId;
     this.fg1.value.Lat = 33.63207;
     this.fg1.value.Long = 72.935488;
     var ct = [];
@@ -298,7 +298,7 @@ export class EditPage implements OnInit {
         ),
         IsOpen: true,
         Session: 1,
-        ClinicID: this.clinicID
+        ClinicId: this.clinicId
       };
       ct.push(obj);
     }
@@ -314,7 +314,7 @@ export class EditPage implements OnInit {
         ),
         IsOpen: true,
         Session: 1,
-        ClinicID: this.clinicID
+        ClinicId: this.clinicId
       };
       ct.push(obj);
     }
@@ -330,7 +330,7 @@ export class EditPage implements OnInit {
         ),
         IsOpen: true,
         Session: 1,
-        ClinicID: this.clinicID
+        ClinicId: this.clinicId
       };
       ct.push(obj);
     }
@@ -346,7 +346,7 @@ export class EditPage implements OnInit {
         ),
         IsOpen: true,
         Session: 1,
-        ClinicID: this.clinicID
+        ClinicId: this.clinicId
       };
       ct.push(obj);
     }
@@ -362,7 +362,7 @@ export class EditPage implements OnInit {
         ),
         IsOpen: true,
         Session: 1,
-        ClinicID: this.clinicID
+        ClinicId: this.clinicId
       };
       ct.push(obj);
     }
@@ -381,7 +381,7 @@ export class EditPage implements OnInit {
         ),
         IsOpen: true,
         Session: 1,
-        ClinicID: this.clinicID
+        ClinicId: this.clinicId
       };
       ct.push(obj);
     }
@@ -397,7 +397,7 @@ export class EditPage implements OnInit {
         ),
         IsOpen: true,
         Session: 1,
-        ClinicID: this.clinicID
+        ClinicId: this.clinicId
       };
       ct.push(obj);
     }
@@ -413,7 +413,7 @@ export class EditPage implements OnInit {
       });
       await loading.present();
 
-      await this.clinicService.putClinic(this.clinicID, data).subscribe(
+      await this.clinicService.putClinic(this.clinicId, data).subscribe(
         res => {
           if (res.IsSuccess) {
             loading.dismiss();

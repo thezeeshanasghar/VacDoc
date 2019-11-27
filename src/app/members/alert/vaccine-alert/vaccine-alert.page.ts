@@ -13,8 +13,8 @@ declare var SMS: any;
   providers: [AndroidPermissions]
 })
 export class VaccineAlertPage implements OnInit {
-  doctorID: any;
-  clinicID: any;
+  doctorId: any;
+  clinicId: any;
   SMSKey: any;
   Childs: any;
 
@@ -29,11 +29,11 @@ export class VaccineAlertPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.storage.get(environment.DOCTOR_ID).then(val => {
-      this.doctorID = val;
+    this.storage.get(environment.DOCTOR_Id).then(val => {
+      this.doctorId = val;
     });
-    this.storage.get(environment.CLINIC_ID).then(clinicID => {
-      this.clinicID = clinicID;
+    this.storage.get(environment.CLINIC_Id).then(clinicId => {
+      this.clinicId = clinicId;
     });
     this.storage.get(environment.SMS).then(val => {
       this.SMSKey = val;
@@ -48,7 +48,7 @@ export class VaccineAlertPage implements OnInit {
       message: "Loading"
     });
     await loading.present();
-    await this.alertService.getChild(this.numOfDays, this.clinicID).subscribe(
+    await this.alertService.getChild(this.numOfDays, this.clinicId).subscribe(
       res => {
         if (res.IsSuccess) {
           this.Childs = res.ResponseData;

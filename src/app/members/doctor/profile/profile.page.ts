@@ -17,7 +17,7 @@ import { UploadService } from 'src/app/services/upload.service';
 export class ProfilePage implements OnInit {
   fg: FormGroup;
   doctorData: any;
-  docotrID: any;
+  docotrId: any;
 
   public profileUploader: FileUploader = new FileUploader({});
   public signatureUploader: FileUploader = new FileUploader({});
@@ -32,12 +32,12 @@ export class ProfilePage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.storage.get(environment.DOCTOR_ID).then(val => {
-      this.docotrID = val;
+    this.storage.get(environment.DOCTOR_Id).then(val => {
+      this.docotrId = val;
     });
     this.getProfile();
     this.fg = this.formBuilder.group({
-      ID: [null],
+      Id: [null],
       FirstName: [null],
       LastName: [null],
       DisplayName: [null],
@@ -82,11 +82,11 @@ export class ProfilePage implements OnInit {
       message: "Loading"
     });
     await loading.present();
-    await this.doctorService.getDoctorProfile(this.docotrID).subscribe(
+    await this.doctorService.getDoctorProfile(this.docotrId).subscribe(
       res => {
         if (res.IsSuccess) {
           this.doctorData = res.ResponseData;
-          this.fg.controls["ID"].setValue(this.doctorData.ID);
+          this.fg.controls["Id"].setValue(this.doctorData.Id);
           this.fg.controls["FirstName"].setValue(this.doctorData.FirstName);
           this.fg.controls["LastName"].setValue(this.doctorData.LastName);
           this.fg.controls["DisplayName"].setValue(this.doctorData.DisplayName);
@@ -117,7 +117,7 @@ export class ProfilePage implements OnInit {
     });
     await loading.present();
     await this.doctorService
-      .updateDoctorProfile(this.docotrID, this.fg.value)
+      .updateDoctorProfile(this.docotrId, this.fg.value)
       .subscribe(
         res => {
           if (res.IsSuccess) {
@@ -126,7 +126,7 @@ export class ProfilePage implements OnInit {
             var file2 = this.signatureUploader.queue.pop().file;
             formData.append('ProfileImage', file1.rawFile, file1.name);
             formData.append('SignatureImage', file2.rawFile, file2.name);
-            this.uploadService.uploadFormData(this.docotrID, formData).subscribe(
+            this.uploadService.uploadFormData(this.docotrId, formData).subscribe(
               (res1) => {
                 this.toastService.create("Profile updated successfully.");
                 loading.dismiss();

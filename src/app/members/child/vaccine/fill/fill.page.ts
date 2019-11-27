@@ -17,8 +17,8 @@ import { environment } from 'src/environments/environment';
 export class FillPage implements OnInit {
 
   fg: FormGroup;
-  doctorID: any;
-  vaccinID: any;
+  doctorId: any;
+  vaccinId: any;
   vaccineData: any;
   brandName: any;
   Date: any;
@@ -33,12 +33,12 @@ export class FillPage implements OnInit {
 
 
   ngOnInit() {
-    this.storage.get(environment.DOCTOR_ID).then((val) => {
-      this.doctorID = val;
+    this.storage.get(environment.DOCTOR_Id).then((val) => {
+      this.doctorId = val;
     });
     this.fg = this.formBuilder.group({
-      'DoctorID': [''],
-      'ID': [null],
+      'DoctorId': [''],
+      'Id': [null],
       'IsDone': [null],
       'Weight': [null],
       'Height': [null],
@@ -78,8 +78,8 @@ export class FillPage implements OnInit {
   }
 
   async fillVaccine() {
-    this.fg.value.ID = this.route.snapshot.paramMap.get('id');
-    this.fg.value.DoctorID = this.doctorID;
+    this.fg.value.Id = this.route.snapshot.paramMap.get('id');
+    this.fg.value.DoctorId = this.doctorId;
     this.fg.value.IsDone = true;
     this.fg.value.GivenDate = moment(this.fg.value.GivenDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
     console.log(this.fg.value);
