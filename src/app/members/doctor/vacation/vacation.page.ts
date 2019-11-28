@@ -19,8 +19,8 @@ export class VacationPage implements OnInit {
   fg2: FormGroup;
   clinics: any = [];
 
-  doctorId: any;
-  clinicId: any = [];
+  DoctorId: any;
+  ClinicId: any = [];
   todaydate;
 
   constructor(
@@ -44,7 +44,7 @@ export class VacationPage implements OnInit {
 
   ngOnInit() {
     this.storage.get(environment.DOCTOR_Id).then((val) => {
-      this.doctorId = val;
+      this.DoctorId = val;
     });
     this.getClinics();
 
@@ -59,10 +59,10 @@ export class VacationPage implements OnInit {
   getChildVaccinefromUser() {
     for (let i = 0; i <= this.clinics.length; i++) {
       if (this.fg2.value.clinics[i] == true) {
-        this.clinicId.push(this.clinics[i].Id);
+        this.ClinicId.push(this.clinics[i].Id);
       }
     }
-    let data = { 'Clinics': this.clinicId, 'FromDate': this.fg2.value.formDate, 'ToDate': this.fg2.value.ToDate }
+    let data = { 'Clinics': this.ClinicId, 'FromDate': this.fg2.value.formDate, 'ToDate': this.fg2.value.ToDate }
     this.addVacation(data)
   }
 
@@ -70,7 +70,7 @@ export class VacationPage implements OnInit {
     const loading = await this.loadingController.create({ message: 'Loading' });
     await loading.present();
 
-    await this.clinicService.getClinics(this.doctorId).subscribe(
+    await this.clinicService.getClinics(this.DoctorId).subscribe(
       res => {
         if (res.IsSuccess) {
           this.clinics = res.ResponseData;

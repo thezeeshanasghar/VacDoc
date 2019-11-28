@@ -17,7 +17,7 @@ import { UploadService } from 'src/app/services/upload.service';
 export class ProfilePage implements OnInit {
   fg: FormGroup;
   doctorData: any;
-  docotrId: any;
+  DocotrId: any;
 
   public profileUploader: FileUploader = new FileUploader({});
   public signatureUploader: FileUploader = new FileUploader({});
@@ -33,7 +33,7 @@ export class ProfilePage implements OnInit {
 
   ngOnInit() {
     this.storage.get(environment.DOCTOR_Id).then(val => {
-      this.docotrId = val;
+      this.DocotrId = val;
     });
     this.getProfile();
     this.fg = this.formBuilder.group({
@@ -82,7 +82,7 @@ export class ProfilePage implements OnInit {
       message: "Loading"
     });
     await loading.present();
-    await this.doctorService.getDoctorProfile(this.docotrId).subscribe(
+    await this.doctorService.getDoctorProfile(this.DocotrId).subscribe(
       res => {
         if (res.IsSuccess) {
           this.doctorData = res.ResponseData;
@@ -117,7 +117,7 @@ export class ProfilePage implements OnInit {
     });
     await loading.present();
     await this.doctorService
-      .updateDoctorProfile(this.docotrId, this.fg.value)
+      .updateDoctorProfile(this.DocotrId, this.fg.value)
       .subscribe(
         res => {
           if (res.IsSuccess) {
@@ -126,7 +126,7 @@ export class ProfilePage implements OnInit {
             var file2 = this.signatureUploader.queue.pop().file;
             formData.append('ProfileImage', file1.rawFile, file1.name);
             formData.append('SignatureImage', file2.rawFile, file2.name);
-            this.uploadService.uploadFormData(this.docotrId, formData).subscribe(
+            this.uploadService.uploadFormData(this.DocotrId, formData).subscribe(
               (res1) => {
                 this.toastService.create("Profile updated successfully.");
                 loading.dismiss();

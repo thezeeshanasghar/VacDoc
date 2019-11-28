@@ -75,8 +75,8 @@ export class AddPage implements OnInit {
       City: [null],
       PreferredDayOfReminder: [null],
       PreferredSchedule: [null],
-      IsEPIDone: [null],
-      IsVerified: [null],
+      IsEPIDone: [false],
+      IsVerified: [false],
       Password: [null],
       ChildVaccines: [null]
     });
@@ -112,7 +112,7 @@ export class AddPage implements OnInit {
     let vaccine = this.fg1.value;
     vaccine.ChildVaccines = [];
     for (let i = 0; i < this.fg2.value.ChildVaccines.length; i++) {
-      vaccine.ChildVaccines.push({ ID: this.fg2.value.ChildVaccines[i] });
+      vaccine.ChildVaccines.push({ Id: this.fg2.value.ChildVaccines[i] });
     }
     this.addNewChild(vaccine);
   }
@@ -188,7 +188,7 @@ export class AddPage implements OnInit {
     });
     await loading.present();
 
-    this.fg1.value.ClinicID = this.clinicId;
+    this.fg1.value.ClinicId = this.clinicId;
     await this.childService.addChild(data).subscribe(
       res => {
         if (res.IsSuccess) {

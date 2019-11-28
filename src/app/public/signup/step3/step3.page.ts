@@ -82,7 +82,7 @@ export class Step3Page implements OnInit {
     await this.signupService.addDoctor().subscribe(
       res => {
         if (res.IsSuccess) {
-          this.addDoctorSchedule(res.ResponseData.ID);
+          this.addDoctorSchedule(res.ResponseData.Id);
           loading.dismiss();
         } else {
           loading.dismiss();

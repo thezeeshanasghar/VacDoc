@@ -66,7 +66,7 @@ export class ClinicPage {
     await loading.present();
 
     this.storage.set(environment.CLINIC_Id, clinicId)
-    let data = { 'DoctorID': this.doctorId, 'ID': clinicId, 'IsOnline': 'true' }
+    let data = { 'DoctorId': this.doctorId, 'Id': clinicId, 'IsOnline': 'true' }
     await this.clinicService.changeOnlineClinic(data)
       .subscribe(res => {
         if (res.IsSuccess) {

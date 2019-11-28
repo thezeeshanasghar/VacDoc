@@ -21,7 +21,7 @@ import { SignupService } from "src/app/services/signup.service";
 export class AddPage implements OnInit {
   fg1: FormGroup;
   fg2: FormGroup;
-  doctorId: any;
+  DoctorId: any;
   section: boolean = false;
   constructor(
     private formbuilder: FormBuilder,
@@ -35,7 +35,7 @@ export class AddPage implements OnInit {
 
   ngOnInit() {
     this.storage.get(environment.DOCTOR_Id).then(val => {
-      this.doctorId = val;
+      this.DoctorId = val;
     });
     this.fg1 = this.formbuilder.group({
       DoctorId: [null],
@@ -141,7 +141,7 @@ export class AddPage implements OnInit {
 
   getdata() {
     //this.fg2.controls["Tuend"].setValue(this.fg2.value.Mend);
-    this.fg1.value.DoctorId = this.doctorId;
+    this.fg1.value.DoctorId = this.DoctorId;
     //this.fg1.value.OffDays = "Sunday";
     this.fg1.value.Lat = 33.63207;
     this.fg1.value.Long = 72.935488;

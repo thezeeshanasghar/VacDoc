@@ -9,7 +9,7 @@ import { catchError, map } from "rxjs/operators";
   providedIn: "root"
 })
 export class SignupService extends BaseService {
-  private readonly API_Doctor = `${environment.BASE_URL}/doctor`;
+  private readonly API_Doctor = `${environment.BASE_URL}doctor`;
 
   personalData: any;
   clinicData: any;
