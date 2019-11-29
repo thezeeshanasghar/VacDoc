@@ -56,9 +56,9 @@ export class SignupService extends BaseService {
     let var1 = [];
     for (let i = 0; i < this.vaccineData2.length; i++) {
       var1.push({
-        DoseID: this.vaccineData2[i].ID,
+        DoseId: this.vaccineData2[i].Id,
         GapInDays: this.vaccineData[this.vaccineData2[i].Name],
-        DoctorID: id
+        DoctorId: id
       });
     }
     const url = `${this.API_Doctor}schedule`;

@@ -12,6 +12,7 @@ import { ToastService } from "src/app/shared/toast.service";
 import { Router } from "@angular/router";
 import { LoadingController } from "@ionic/angular";
 import { SignupService } from "src/app/services/signup.service";
+import * as moment from "moment";
 
 @Component({
   selector: "app-add",
@@ -147,6 +148,14 @@ export class AddPage implements OnInit {
     this.fg1.value.Long = 72.935488;
     var ct = [];
     if (this.fg2.value.Monday) {
+      this.fg2.value.Mstart = moment(
+        this.fg2.value.Mstart,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Mend = moment(
+        this.fg2.value.Mend,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
       let obj = {
         Day: "Monday",
         StartTime: this.fg2.value.Mstart,
@@ -158,6 +167,14 @@ export class AddPage implements OnInit {
     }
 
     if (this.fg2.value.Tuesday) {
+      this.fg2.value.Tustart = moment(
+        this.fg2.value.Tustart,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Tuend = moment(
+        this.fg2.value.Tuend,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
       let obj = {
         Day: "Tuesday",
         StartTime: this.fg2.value.Tustart,
@@ -169,6 +186,14 @@ export class AddPage implements OnInit {
     }
 
     if (this.fg2.value.Wednesday) {
+      this.fg2.value.Tuend = moment(
+        this.fg2.value.Wstart,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Tuend = moment(
+        this.fg2.value.Wend,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
       let obj = {
         Day: "Wednesday",
         StartTime: this.fg2.value.Wstart,
@@ -180,6 +205,14 @@ export class AddPage implements OnInit {
     }
 
     if (this.fg2.value.Thursday) {
+      this.fg2.value.Thstart = moment(
+        this.fg2.value.Thstart,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Thend = moment(
+        this.fg2.value.Thend,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
       let obj = {
         Day: "Thursday",
         StartTime: this.fg2.value.Thstart,
@@ -191,6 +224,14 @@ export class AddPage implements OnInit {
     }
 
     if (this.fg2.value.Friday) {
+      this.fg2.value.Fstart = moment(
+        this.fg2.value.Fstart,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Fend = moment(
+        this.fg2.value.Fend,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
       let obj = {
         Day: "Friday",
         StartTime: this.fg2.value.Fstart,
@@ -202,6 +243,14 @@ export class AddPage implements OnInit {
     }
 
     if (this.fg2.value.Saturday) {
+      this.fg2.value.Sastart = moment(
+        this.fg2.value.Sastart,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Saend = moment(
+        this.fg2.value.Saend,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
       let obj = {
         Day: "Saturday",
         StartTime: this.fg2.value.Sastart,
@@ -213,6 +262,14 @@ export class AddPage implements OnInit {
     }
 
     if (this.fg2.value.Sunday) {
+      this.fg2.value.Sustart = moment(
+        this.fg2.value.Sustart,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Suend = moment(
+        this.fg2.value.Suend,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
       let obj = {
         Day: "Sunday",
         StartTime: this.fg2.value.Sustart,

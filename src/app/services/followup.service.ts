@@ -37,10 +37,10 @@ export class FollowupService extends BaseService {
     );
   }
 
-  sendAlertMsgToAll(numOfDays: number, doctorID: number): Observable<any> {
+  sendAlertMsgToAll(numOfDays: number, doctorId: number): Observable<any> {
     const url = `${
       this.API_ALERT
-    }schedule/bulk-sms-alert/${numOfDays}/${doctorID}`;
+    }schedule/bulk-sms-alert/${numOfDays}/${doctorId}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
