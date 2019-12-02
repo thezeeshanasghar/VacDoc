@@ -26,8 +26,8 @@ export class EditPage implements OnInit {
 
   ngOnInit() {
     this.fg = this.formBuilder.group({
-      'ID': [null],
-      'ClinicID': [null],
+      'Id': [null],
+      'ClinicId': [null],
       'Name': [null],
       'FatherName': [null],
       'Email': [null],
@@ -36,7 +36,7 @@ export class EditPage implements OnInit {
       'PreferredDayOfWeek': [null],
       'Gender': [null],
       'City': [null],
-      'PreferredDayOfReminder': [null],
+      'PreferredDayOfReminder': 0,
       'IsEPIDone': [null],
       'IsVerified': [null],
       'PreferredSchedule': [null]
@@ -59,8 +59,8 @@ export class EditPage implements OnInit {
         if (res.IsSuccess) {
           this.child = res.ResponseData;
           loading.dismiss();
-          this.fg.controls['ID'].setValue(this.child.ID);
-          this.fg.controls['ClinicID'].setValue(this.child.ClinicID);
+          this.fg.controls['Id'].setValue(this.child.ID);
+          this.fg.controls['ClinicId'].setValue(this.child.ClinicID);
           this.fg.controls['Name'].setValue(this.child.Name);
           this.fg.controls['FatherName'].setValue(this.child.FatherName);
           this.fg.controls['Email'].setValue(this.child.Email);

@@ -73,7 +73,7 @@ export class AddPage implements OnInit {
       PreferredDayOfWeek: [null],
       Gender: [null],
       City: [null],
-      PreferredDayOfReminder: [null],
+      PreferredDayOfReminder: 0,
       PreferredSchedule: [null],
       IsEPIDone: [false],
       IsVerified: [false],
