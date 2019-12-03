@@ -217,11 +217,11 @@ export class Step2Page implements OnInit {
     }
 
     if (this.fg2.value.Wednesday) {
-      this.fg2.value.Tuend = moment(
+      this.fg2.value.Wstart = moment(
         this.fg2.value.Wstart,
         "YYYY-MM-DD HH:mm"
       ).format("HH:mm");
-      this.fg2.value.Tuend = moment(
+      this.fg2.value.Wend = moment(
         this.fg2.value.Wend,
         "YYYY-MM-DD HH:mm"
       ).format("HH:mm");
