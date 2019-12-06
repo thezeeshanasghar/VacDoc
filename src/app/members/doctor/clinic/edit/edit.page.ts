@@ -60,7 +60,7 @@ export class EditPage implements OnInit {
       ClinicTimings: [null],
       Lat: [null],
       Long: [null],
-      IsOnline: []
+      IsOnline: [false]
     });
 
     this.fg2 = this.formbuilder.group({
