@@ -14,7 +14,7 @@ import { BulkService } from "src/app/services/bulk.service";
 export class VaccinePage {
   vaccine: any[] = [];
   dataGrouping: any[] = [];
-  childID: any;
+  childId: any;
   constructor(
     public loadingController: LoadingController,
     public route: ActivatedRoute,
@@ -25,7 +25,7 @@ export class VaccinePage {
   ) {}
 
   ionViewWillEnter() {
-    this.childID = this.route.snapshot.paramMap.get("id");
+    this.childId = this.route.snapshot.paramMap.get("id");
     this.getVaccination();
   }
   checkVaccineIsDon(data): boolean {
@@ -87,7 +87,7 @@ export class VaccinePage {
   async updateDate($event, vacId) {
     let newDate = $event.detail.value;
     newDate = moment(newDate, "YYYY-MM-DD").format("DD-MM-YYYY");
-    let data = { Date: newDate, ID: vacId };
+    let data = { Date: newDate, Id: vacId };
     await this.vaccineService.updateVaccinationDate(data).subscribe(
       res => {
         if (res.IsSuccess) {
@@ -106,7 +106,7 @@ export class VaccinePage {
   async updateBulkDate($event, id) {
     let newDate = $event.detail.value;
     newDate = moment(newDate, "YYYY-MM-DD").format("DD-MM-YYYY");
-    let data = { Date: newDate, ID: id };
+    let data = { Date: newDate, Id: id };
 
     await this.bulkService.updateInjectionDate(data).subscribe(
       res => {

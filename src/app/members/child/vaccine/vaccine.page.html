@@ -17,14 +17,14 @@
 
           {{item.key}}
           <ion-img *ngIf="checkVaccineIsDon(item.value)" style="height: 15px;display: inline-block;"
-            src="../../assets/injectionEmpty.png" routerLink="/members/child/vaccine/{{childID}}/bulk/{{item.key}}">
+            src="../../assets/injectionEmpty.png" routerLink="/members/child/vaccine/{{childId}}/bulk/{{item.key}}">
           </ion-img>
 
           <ion-img *ngIf="!checkVaccineIsDon(item.value)" style="height: 15px;display: inline-block;"
             src="../../assets/injectionFilled.png"></ion-img>
 
           <ion-icon color="primary" name="calendar" (click)="picker.open()">
-            <ion-datetime (ionChange)="updateBulkDate($event, item.value[0].ID)" #picker picker-format="DD-MM-YYYY">
+            <ion-datetime (ionChange)="updateBulkDate($event, item.value[0].Id)" #picker picker-format="DD-MM-YYYY">
             </ion-datetime>
           </ion-icon>
 
@@ -40,11 +40,11 @@
             <p *ngIf="v.IsDone==true" style="background-color:rgb(55, 231, 10);">{{v.Date}}</p>
             <ion-icon *ngIf="v.IsDone==false" color="primary" name="calendar" (click)="picker.open()">
               <ion-datetime #picker picker-format="DD-MM-YYYY" value="{{v.Date}}"
-                (ionChange)="updateDate($event, v.ID)">
+                (ionChange)="updateDate($event, v.Id)">
               </ion-datetime>
             </ion-icon>
             <ion-img *ngIf="v.IsDone==false" style="height: 30px;" src="../../assets/injectionEmpty.png"
-              routerLink="/members/child/vaccine/{{childID}}/fill/{{v.ID}}"></ion-img>
+              routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}"></ion-img>
             <ion-img *ngIf="v.IsDone==true" style="height: 30px;" src="../../assets/injectionFilled.png">
             </ion-img>
           </ion-item>

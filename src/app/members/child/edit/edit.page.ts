@@ -59,8 +59,8 @@ export class EditPage implements OnInit {
         if (res.IsSuccess) {
           this.child = res.ResponseData;
           loading.dismiss();
-          this.fg.controls['Id'].setValue(this.child.ID);
-          this.fg.controls['ClinicId'].setValue(this.child.ClinicID);
+          this.fg.controls['Id'].setValue(this.child.Id);
+          this.fg.controls['ClinicId'].setValue(this.child.ClinicId);
           this.fg.controls['Name'].setValue(this.child.Name);
           this.fg.controls['FatherName'].setValue(this.child.FatherName);
           this.fg.controls['Email'].setValue(this.child.Email);
