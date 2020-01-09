@@ -35,7 +35,7 @@
 
         <ion-item>
             <ion-label color="primary" position="floating">Address</ion-label>
-            <ion-input type="text" formControlName="Address" text-capitalize required></ion-input>
+            <ion-textarea type="text" formControlName="Address" text-capitalize required></ion-textarea>
         </ion-item>
         <div class="validation-errors">
             <ng-container *ngFor="let validation of validation_messages.Address">
@@ -66,7 +66,8 @@
                 </ion-item>
                 <ion-card-content *ngIf="Monday.checked==true">
                     <ion-label>Session:1 </ion-label>
-                    <ion-item lines="none" no-padding>
+                    <ion-toggle #MondayS1 id="MondayS1" name="MondayS1" slot="end" color="primary" formControlName="MondayS1"></ion-toggle>
+                    <ion-item *ngIf="MondayS1.checked==true" lines="none" no-padding>
 
                         <ion-item lines="none" no-padding>
                             <ion-label color="primary" position="floating">Start Time</ion-label>
@@ -81,7 +82,8 @@
                         </ion-item>
                     </ion-item>
                     <ion-label>Session:2 </ion-label>
-                    <ion-item lines="none" no-padding>
+                    <ion-toggle #MondayS2 id="MondayS2" name="MondayS2" slot="end" color="primary" formControlName="MondayS2"></ion-toggle>
+                    <ion-item *ngIf="MondayS2.checked==true" lines="none" no-padding>
 
                         <ion-item lines="none" no-padding>
                             <ion-label color="primary" position="floating">Start Time</ion-label>
@@ -106,7 +108,8 @@
                 </ion-item>
                 <ion-card-content *ngIf="Tuesday.checked==true">
                     <ion-label>Session:1 </ion-label>
-                    <ion-item lines="none" no-padding>
+                    <ion-toggle #TuesdayS1 id="TuesdayS1" name="TuesdayS1" slot="end" color="primary" formControlName="TuesdayS1"></ion-toggle>
+                    <ion-item *ngIf="TuesdayS1.checked==true" lines="none" no-padding>
 
                         <ion-item lines="none" no-padding>
                             <ion-label color="primary" position="floating">Start Time</ion-label>
@@ -121,7 +124,8 @@
                         </ion-item>
                     </ion-item>
                     <ion-label>Session:2 </ion-label>
-                    <ion-item lines="none" no-padding>
+                    <ion-toggle #TuesdayS2 id="TuesdayS2" name="TuesdayS2" slot="end" color="primary" formControlName="TuesdayS2"></ion-toggle>
+                    <ion-item *ngIf="TuesdayS2.checked==true" lines="none" no-padding>
 
                         <ion-item lines="none" no-padding>
                             <ion-label color="primary" position="floating">Start Time</ion-label>
@@ -146,7 +150,8 @@
                 </ion-item>
                 <ion-card-content *ngIf="Wednesday.checked==true">
                     <ion-label>Session:1 </ion-label>
-                    <ion-item lines="none" no-padding>
+                    <ion-toggle #WednesdayS1 id="WednesdayS1" name="WednesdayS1" slot="end" color="primary" formControlName="WednesdayS1"></ion-toggle>
+                    <ion-item *ngIf="WednesdayS1.checked==true" lines="none" no-padding>
 
                         <ion-item lines="none" no-padding>
                             <ion-label color="primary" position="floating">Start Time</ion-label>
@@ -161,7 +166,8 @@
                         </ion-item>
                     </ion-item>
                     <ion-label>Session:2 </ion-label>
-                    <ion-item lines="none" no-padding>
+                    <ion-toggle #WednesdayS2 id="WednesdayS2" name="WednesdayS2" slot="end" color="primary" formControlName="WednesdayS2"></ion-toggle>
+                    <ion-item *ngIf="WednesdayS2.checked==true" lines="none" no-padding>
 
                         <ion-item lines="none" no-padding>
                             <ion-label color="primary" position="floating">Start Time</ion-label>
@@ -186,7 +192,8 @@
                 </ion-item>
                 <ion-card-content *ngIf="Thursday.checked==true">
                     <ion-label>Session:1 </ion-label>
-                    <ion-item lines="none" no-padding>
+                    <ion-toggle #ThursdayS1 id="ThursdayS1" name="ThursdayS1" slot="end" color="primary" formControlName="ThursdayS1"></ion-toggle>
+                    <ion-item *ngIf="ThursdayS1.checked==true" lines="none" no-padding>
 
                         <ion-item lines="none" no-padding>
                             <ion-label color="primary" position="floating">Start Time</ion-label>
@@ -201,7 +208,8 @@
                         </ion-item>
                     </ion-item>
                     <ion-label>Session:2 </ion-label>
-                    <ion-item lines="none" no-padding>
+                    <ion-toggle #ThursdayS2 id="ThursdayS2" name="ThursdayS2" slot="end" color="primary" formControlName="ThursdayS2"></ion-toggle>
+                    <ion-item *ngIf="ThursdayS2.checked==true" lines="none" no-padding>
 
                         <ion-item lines="none" no-padding>
                             <ion-label color="primary" position="floating">Start Time</ion-label>
@@ -226,7 +234,8 @@
                 </ion-item>
                 <ion-card-content *ngIf="Friday.checked==true">
                     <ion-label>Session:1 </ion-label>
-                    <ion-item lines="none" no-padding>
+                    <ion-toggle #FridayS1 id="FridayS1" name="FridayS1" slot="end" color="primary" formControlName="FridayS1"></ion-toggle>
+                    <ion-item *ngIf="FridayS1.checked==true" lines="none" no-padding>
 
                         <ion-item lines="none" no-padding>
                             <ion-label color="primary" position="floating">Start Time</ion-label>
@@ -241,7 +250,8 @@
                         </ion-item>
                     </ion-item>
                     <ion-label>Session:2 </ion-label>
-                    <ion-item lines="none" no-padding>
+                    <ion-toggle #FridayS2 id="FridayS2" name="FridayS2" slot="end" color="primary" formControlName="FridayS2"></ion-toggle>
+                    <ion-item *ngIf="FridayS2.checked==true" lines="none" no-padding>
 
                         <ion-item lines="none" no-padding>
                             <ion-label color="primary" position="floating">Start Time</ion-label>
@@ -266,7 +276,8 @@
                 </ion-item>
                 <ion-card-content *ngIf="Saturday.checked==true">
                     <ion-label>Session:1 </ion-label>
-                    <ion-item lines="none" no-padding>
+                    <ion-toggle #SaturdayS1 id="TuesdayS1" name="SaturdayS1" slot="end" color="primary" formControlName="SaturdayS1"></ion-toggle>
+                    <ion-item *ngIf="SaturdayS1.checked==true" lines="none" no-padding>
 
                         <ion-item lines="none" no-padding>
                             <ion-label color="primary" position="floating">Start Time</ion-label>
@@ -281,7 +292,8 @@
                         </ion-item>
                     </ion-item>
                     <ion-label>Session:2 </ion-label>
-                    <ion-item lines="none" no-padding>
+                    <ion-toggle #SaturdayS2 id="SaturdayS2" name="SaturdayS2" slot="end" color="primary" formControlName="SaturdayS2"></ion-toggle>
+                    <ion-item *ngIf="SaturdayS2.checked==true" lines="none" no-padding>
 
                         <ion-item lines="none" no-padding>
                             <ion-label color="primary" position="floating">Start Time</ion-label>
@@ -304,9 +316,10 @@
                     <ion-toggle #Sunday id="Sunday" name="Sunday" slot="end" color="primary" formControlName="Sunday">
                     </ion-toggle>
                 </ion-item>
-                <ion-card-content *ngIf="Sunday.checked==true">
+                <ion-card-content *ngIf = "Sunday.checked == true">
                     <ion-label>Session:1 </ion-label>
-                    <ion-item lines="none" no-padding>
+                    <ion-toggle #SundayS1 id="SundayS1" name="SundayS1" slot="end" color="primary" formControlName="SundayS1"></ion-toggle>
+                    <ion-item *ngIf="SundayS1.checked==true" lines="none" no-padding>
 
                         <ion-item lines="none" no-padding>
                             <ion-label color="primary" position="floating">Start Time</ion-label>
@@ -321,7 +334,8 @@
                         </ion-item>
                     </ion-item>
                     <ion-label>Session:2 </ion-label>
-                    <ion-item lines="none" no-padding>
+                    <ion-toggle #SundayS2 id="SundayS2" name="SundayS2" slot="end" color="primary" formControlName="SundayS2"></ion-toggle>
+                    <ion-item *ngIf="SundayS2.checked==true" lines="none" no-padding>
 
                         <ion-item lines="none" no-padding>
                             <ion-label color="primary" position="floating">Start Time</ion-label>
@@ -342,7 +356,8 @@
             <div #mapElement class="map" style="min-height: 300px;"></div>
         </ion-item>
 
-        <ion-button [disabled]="!fg1.valid" (click)="getdata()">Next Step</ion-button>
+        <!-- <ion-button [disabled]="!fg1.valid" (click)="getdata()">Next Step</ion-button> -->
+        <ion-button (click)="getdata()">Next Step</ion-button>
     </form>
 
 

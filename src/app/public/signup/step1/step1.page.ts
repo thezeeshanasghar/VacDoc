@@ -1,9 +1,10 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, ViewChild, OnInit } from "@angular/core";
+import { IonSelect } from '@ionic/angular';
 import {
   FormGroup,
   FormBuilder,
   FormControl,
-  Validators
+  Validators,
 } from "@angular/forms";
 import { Router } from "@angular/router";
 import { SignupService } from "src/app/services/signup.service";
@@ -16,6 +17,7 @@ import { SignupService } from "src/app/services/signup.service";
 export class Step1Page implements OnInit {
   fg: FormGroup;
   checkedVal: any;
+  @ViewChild('speciality') selectPop: IonSelect;
   constructor(
     private frombuilder: FormBuilder,
     private router: Router,
@@ -91,6 +93,10 @@ export class Step1Page implements OnInit {
   setValueAndShowSpeciality(value: String, checkedVal) {
     this.fg.value.DoctorType = value;
     this.checkedVal = checkedVal;
+  }
+
+  opendrop(){
+    this.selectPop.open();
   }
   validation_messages = {
     qualification: [

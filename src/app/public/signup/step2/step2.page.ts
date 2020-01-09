@@ -73,43 +73,57 @@ export class Step2Page implements OnInit {
     });
 
     this.fg2 = this.formbuilder.group({
-      Monday: [false],
+      Monday: [true],
+      MondayS1: [true],
+      MondayS2: [true],
       Mstart: [null],
       Mstart2: [null],
       Mend: [null],
       Mend2: [null],
 
-      Tuesday: [false],
+      Tuesday: [true],
+      TuesdayS1: [true],
+      TuesdayS2: [true],
       Tustart: [null],
       Tustart2: [null],
       Tuend: [null],
       Tuend2: [null],
 
-      Wednesday: [false],
+      Wednesday: [true],
+      WednesdayS1: [true],
+      WednesdayS2: [true],
       Wstart: [null],
       Wstart2: [null],
       Wend: [null],
       Wend2: [null],
 
-      Thursday: [false],
+      Thursday: [true],
+      ThursdayS1: [true],
+      ThursdayS2: [true],
       Thstart: [null],
       Thstart2: [null],
       Thend: [null],
       Thend2: [null],
 
-      Friday: [false],
+      Friday: [true],
+      FridayS1: [true],
+      FridayS2: [true],
       Fstart: [null],
       Fstart2: [null],
       Fend: [null],
       Fend2: [null],
 
-      Saturday: [false],
+      Saturday: [true],
+      SaturdayS1: [true],
+      SaturdayS2: [true],
       Sastart: [null],
       Sastart2: [null],
       Saend: [null],
       Saend2: [null],
 
       Sunday: [false],
+      SundayS1: [true],
+      SundayS2: [true],
       Sustart: [null],
       Sustart2: [null],
       Suend: [null],
@@ -171,7 +185,7 @@ export class Step2Page implements OnInit {
   }
 
   getdata() {
-    this.fg2.controls["Tuend"].setValue(this.fg2.value.Mend);
+    // this.fg2.controls["Tuend"].setValue(this.fg2.value.Mend);
     this.fg1.value.DoctorId = this.DoctorId;
     this.fg1.value.Lat = this.myMarker.lat;
     this.fg1.value.Long = this.myMarker.lng;
@@ -179,6 +193,7 @@ export class Step2Page implements OnInit {
     this.fg1.value.OffDays = "Sunday";
     var ct = [];
     if (this.fg2.value.Monday) {
+      if (this.fg2.value.MondayS1){
       this.fg2.value.Mstart = moment(
         this.fg2.value.Mstart,
         "YYYY-MM-DD HH:mm"
@@ -196,8 +211,29 @@ export class Step2Page implements OnInit {
       };
       ct.push(obj);
     }
+       // For Session 2
+       if (this.fg2.value.MondayS2){
+       this.fg2.value.Mstart2 = moment(
+        this.fg2.value.Mstart2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Mend2 = moment(
+        this.fg2.value.Mend2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      let obj1 = {
+        Day: "Monday",
+        StartTime: this.fg2.value.Mstart2,
+        EndTime: this.fg2.value.Mend2,
+        IsOpen: true,
+        Session: 2
+      };
+      ct.push(obj1);
+    }
+    }
 
     if (this.fg2.value.Tuesday) {
+      if (this.fg2.value.TuesdayS1){
       this.fg2.value.Tustart = moment(
         this.fg2.value.Tustart,
         "YYYY-MM-DD HH:mm"
@@ -215,8 +251,29 @@ export class Step2Page implements OnInit {
       };
       ct.push(obj);
     }
+    // session 2
+    if (this.fg2.value.TuesdayS2){
+      this.fg2.value.Tustart2 = moment(
+        this.fg2.value.Tustart2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Tuend2 = moment(
+        this.fg2.value.Tuend2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      let obj1 = {
+        Day: "Tuesday",
+        StartTime: this.fg2.value.Tustart2,
+        EndTime: this.fg2.value.Tuend2,
+        IsOpen: true,
+        Session: 2
+      };
+      ct.push(obj1);
+    }
+    }
 
     if (this.fg2.value.Wednesday) {
+      if (this.fg2.value.WednesdayS1){
       this.fg2.value.Wstart = moment(
         this.fg2.value.Wstart,
         "YYYY-MM-DD HH:mm"
@@ -234,8 +291,29 @@ export class Step2Page implements OnInit {
       };
       ct.push(obj);
     }
+    // Session 2
+    if (this.fg2.value.WednesdayS2){
+      this.fg2.value.Wstart2 = moment(
+        this.fg2.value.Wstart2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Wend2 = moment(
+        this.fg2.value.Wend2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      let obj1 = {
+        Day: "Wednesday",
+        StartTime: this.fg2.value.Wstart2,
+        EndTime: this.fg2.value.Wend2,
+        IsOpen: true,
+        Session: 2
+      };
+      ct.push(obj1);
+    }
+    }
 
     if (this.fg2.value.Thursday) {
+      if (this.fg2.value.ThursdayS1){
       this.fg2.value.Thstart = moment(
         this.fg2.value.Thstart,
         "YYYY-MM-DD HH:mm"
@@ -253,8 +331,29 @@ export class Step2Page implements OnInit {
       };
       ct.push(obj);
     }
+    // SESSION 2
+    if (this.fg2.value.ThursdayS2){
+      this.fg2.value.Thstart2 = moment(
+        this.fg2.value.Thstart2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Thend2 = moment(
+        this.fg2.value.Thend2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      let obj1 = {
+        Day: "Thursday",
+        StartTime: this.fg2.value.Thstart2,
+        EndTime: this.fg2.value.Thend2,
+        IsOpen: true,
+        Session: 2
+      };
+      ct.push(obj1);
+    }
+    }
 
     if (this.fg2.value.Friday) {
+      if (this.fg2.value.FridayS1) {
       this.fg2.value.Fstart = moment(
         this.fg2.value.Fstart,
         "YYYY-MM-DD HH:mm"
@@ -272,8 +371,30 @@ export class Step2Page implements OnInit {
       };
       ct.push(obj);
     }
+    // SESSION 2
+    if (this.fg2.value.FridayS2) {
+      this.fg2.value.Fstart2 = moment(
+        this.fg2.value.Fstart2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Fend2 = moment(
+        this.fg2.value.Fend2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      let obj = {
+        Day: "Friday",
+        StartTime: this.fg2.value.Fstart2,
+        EndTime: this.fg2.value.Fend2,
+        IsOpen: true,
+        Session: 2
+      };
+      ct.push(obj);
+    }
+
+    }
 
     if (this.fg2.value.Saturday) {
+      if (this.fg2.value.SaturdayS1) {
       this.fg2.value.Sastart = moment(
         this.fg2.value.Sastart,
         "YYYY-MM-DD HH:mm"
@@ -291,8 +412,30 @@ export class Step2Page implements OnInit {
       };
       ct.push(obj);
     }
+    // SESSION 2
+    if (this.fg2.value.SaturdayS2) {
+      this.fg2.value.Sastart2 = moment(
+        this.fg2.value.Sastart2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Saend2 = moment(
+        this.fg2.value.Saend2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      let obj = {
+        Day: "Saturday",
+        StartTime: this.fg2.value.Sastart2,
+        EndTime: this.fg2.value.Saend2,
+        IsOpen: true,
+        Session: 2
+      };
+      ct.push(obj);
+    }
+
+    }
 
     if (this.fg2.value.Sunday) {
+      if (this.fg2.value.SundayS1) {
       this.fg2.value.Sustart = moment(
         this.fg2.value.Sustart,
         "YYYY-MM-DD HH:mm"
@@ -309,6 +452,26 @@ export class Step2Page implements OnInit {
         Session: 1
       };
       ct.push(obj);
+    }
+    // SESSION 2
+    if (this.fg2.value.SundayS1) {
+      this.fg2.value.Sustart = moment(
+        this.fg2.value.Sustart,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Suend = moment(
+        this.fg2.value.Suend,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      let obj = {
+        Day: "Sunday",
+        StartTime: this.fg2.value.Sustart,
+        EndTime: this.fg2.value.Suend,
+        IsOpen: true,
+        Session: 2
+      };
+      ct.push(obj);
+    }
     }
     this.fg1.value.ClinicTimings = ct;
     this.signupService.clinicData = this.fg1.value;

@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { MessageService } from 'src/app/services/message.service';
 import { ToastService } from 'src/app/shared/toast.service';
-import { Router } from '@angular/router';
+import { Router , ActivatedRoute } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
+import { ChildService } from 'src/app/services/child.service';
 
 @Component({
   selector: 'app-cmsg',
@@ -13,13 +14,17 @@ import { LoadingController } from '@ionic/angular';
 export class CMsgPage implements OnInit {
 
   fg: FormGroup;
+  child: any;
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private loadingController: LoadingController,
     private msgService: MessageService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private childService: ChildService,
+    public route: ActivatedRoute,
+    
   ) { }
 
   ngOnInit() {
@@ -30,8 +35,35 @@ export class CMsgPage implements OnInit {
       ])),
       'SMS': [null, Validators.required]
     });
+    this.getchild();
   }
 
+  async getchild() {
+    const loading = await this.loadingController.create({
+      message: 'Loading'
+    });
+
+    await loading.present();
+
+    await this.childService.getChildById(this.route.snapshot.paramMap.get('id')).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          this.child = res.ResponseData;
+          loading.dismiss();
+          this.fg.controls['MobileNumber'].setValue(this.child.MobileNumber);
+          console.log(this.fg.value);
+        }
+        else {
+          loading.dismiss();
+          this.toastService.create(res.Message, 'danger')
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, 'danger');
+      }
+    );
+  }
   async sendMsg() {
     const loading = await this.loadingController.create({
       message: 'loading'

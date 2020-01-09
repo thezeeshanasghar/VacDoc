@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment.prod';
 import { AlertService } from 'src/app/shared/alert.service';
 import { Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { CallNumber } from '@ionic-native/call-number/ngx';
 
 @Component({
   selector: 'app-child',
@@ -18,6 +19,7 @@ export class ChildPage {
   fg: FormGroup;
   childs: any;
   userId: any;
+  doctorId: number;
   constructor(
     public router: Router,
     public loadingController: LoadingController,
@@ -25,18 +27,24 @@ export class ChildPage {
     private formBuilder: FormBuilder,
     private toastService: ToastService,
     private storage: Storage,
-    private alertService: AlertService
+    private alertService: AlertService,
+  //  public callNumber: CallNumber
   ) {
     this.fg = this.formBuilder.group({
       Name: [null],
     });
   }
-
   ionViewWillEnter() {
-    this.storage.get(environment.USER_Id).then((val) => {
-      this.userId = val;
+    this.storage.get(environment.DOCTOR_Id).then((docId) => {
+      this.doctorId = docId;
     });
   }
+
+  // ionViewWillEnter() {
+  //   this.storage.get(environment.USER_Id).then((val) => {
+  //     this.userId = val;
+  //   });
+  // }
 
   // Alert Msg Show for deletion of Child
   async alertforDeleteChild(id) {
@@ -77,7 +85,7 @@ export class ChildPage {
       message: 'Loading'
     });
     await loading.present();
-    await this.childService.getChildByUserSearch(this.fg.value.Name).subscribe(
+    await this.childService.getChildByUserSearch(this.doctorId , this.fg.value.Name).subscribe(
       res => {
         if (res.IsSuccess) {
           this.childs = res.ResponseData
@@ -94,5 +102,13 @@ export class ChildPage {
       }
     )
   }
+
+  // callFunction()
+  // {
+  //   this.callNumber.callNumber('3143041544', true)
+  //   .then(res => console.log('Launched dialer!', res))
+  //   .catch(err => console.log('Error launching dialer', err));
+  // }
+ 
 
 }

@@ -12,7 +12,7 @@
 
   <form [formGroup]="fg">
     <ion-item>
-      <ion-input type="text" placeholder="search" formControlName="Name" required></ion-input>
+      <ion-input type="text" placeholder="search" formControlName="Name" (keyup.Enter)="getChlidbyUser()" required></ion-input>
       <ion-button (click)="getChlidbyUser()">search</ion-button>
     </ion-item>
 
@@ -27,7 +27,7 @@
       <ion-icon slot="end" color="primary" name="create" routerLink="/members/child/edit/{{child.Id}}"></ion-icon>
       <ion-icon slot="end" color="primary" name="trash" (click)="alertforDeleteChild(child.Id)"></ion-icon>
       <ion-icon slot="end" color="primary" name="mail" routerLink="/members/child/cmsg/{{child.Id}}"></ion-icon>
-      <ion-icon slot="end" color="primary" name="call" (click)="alertforDeleteChild(child.Id)"></ion-icon>
+      <ion-icon slot="end" color="primary" name="call"(click)="callFunction()"></ion-icon>
     </ion-item>
 
     <ion-card-content>

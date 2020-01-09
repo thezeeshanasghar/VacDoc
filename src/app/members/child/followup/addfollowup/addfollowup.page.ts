@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FollowupService } from 'src/app/services/followup.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { LoadingController } from '@ionic/angular';
+import { stringify } from '@angular/core/src/render3/util';
 
 @Component({
   selector: 'app-addfollowup',
@@ -31,12 +32,13 @@ export class AddfollowupPage implements OnInit {
   ngOnInit() {
     this.storage.get(environment.DOCTOR_Id).then((val) => {
       this.doctorId = val;
-    })
+    });
     this.fg = this.formBuilder.group({
       'DoctorId': [null],
       'ChildId': [null],
       'Disease': [null],
-      'CurrentVisitDate': [null],
+     //'CurrentVisitDate': [null],
+      'CurrentVisitDate': this.GetCurrentDate(),
       'NextVisitDate': [null],
       'Height': [null],
       'OFC': [null],
@@ -48,8 +50,9 @@ export class AddfollowupPage implements OnInit {
 
   async addFollowUp() {
     this.fg.value.DoctorId = this.doctorId;
-    this.fg.value.ChildId = this.route.snapshot.paramMap.get('id');;
+    this.fg.value.ChildId = this.route.snapshot.paramMap.get('id');
     this.fg.value.NextVisitDate = moment(this.fg.value.NextVisitDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
+    //this.fg.value.CurrentVisitDate = moment(this.fg.value.CurrentVisitDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
 
     const loading = await this.loadingController.create({
       message: 'loading'
@@ -71,5 +74,13 @@ export class AddfollowupPage implements OnInit {
         this.toastService.create(err)
       });
   }
+   GetCurrentDate() {
+ 
+ var today = new Date();
+ var dd = String(today.getDate()).padStart(2, '0');
+ var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+ var yyyy = today.getFullYear();
 
+    return dd + '-' + mm + '-' + yyyy; 
+}
 }

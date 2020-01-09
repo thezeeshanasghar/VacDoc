@@ -22,13 +22,12 @@
               </ion-radio>
             </ion-item>
           </ion-col>
-
           <ion-col>
-            <ion-item>
+            <ion-item >
               <ion-radio [checked]="checkedVal" slot="start" value="D"
-                (click)="setValueAndShowSpeciality('D','checked')"></ion-radio>
+                (click)="setValueAndShowSpeciality('D','checked');opendrop();"></ion-radio>
               <ion-label color="primary">Other speciality</ion-label>
-              <ion-select multiple formControlName="Speciality" (click)="setValueAndShowSpeciality('D', 'checked')" x>
+              <ion-select #speciality name = speciality multiple formControlName="Speciality" (click)="setValueAndShowSpeciality('D', 'checked')" >
                 <ion-select-option value="Cardiac Surgeon">Cardiac Surgeon</ion-select-option>
                 <ion-select-option value="Dentist">Dentist</ion-select-option>
                 <ion-select-option value="Dermatologist">Dermatologist</ion-select-option>

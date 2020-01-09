@@ -64,43 +64,57 @@ export class AddPage implements OnInit {
     });
 
     this.fg2 = this.formbuilder.group({
-      Monday: [false],
+      Monday: [true],
+      MondayS1: [true],
+      MondayS2: [true],
       Mstart: [null],
       Mstart2: [null],
       Mend: [null],
       Mend2: [null],
 
-      Tuesday: [false],
+      Tuesday: [true],
+      TuesdayS1: [true],
+      TuesdayS2: [true],
       Tustart: [null],
       Tustart2: [null],
       Tuend: [null],
       Tuend2: [null],
 
-      Wednesday: [false],
+      Wednesday: [true],
+      WednesdayS1: [true],
+      WednesdayS2: [true],
       Wstart: [null],
       Wstart2: [null],
       Wend: [null],
       Wend2: [null],
 
-      Thursday: [false],
+      Thursday: [true],
+      ThursdayS1: [true],
+      ThursdayS2: [true],
       Thstart: [null],
       Thstart2: [null],
       Thend: [null],
       Thend2: [null],
 
-      Friday: [false],
+      Friday: [true],
+      FridayS1: [true],
+      FridayS2: [true],
       Fstart: [null],
       Fstart2: [null],
       Fend: [null],
       Fend2: [null],
 
-      Saturday: [false],
+      Saturday: [true],
+      SaturdayS1: [true],
+      SaturdayS2: [true],
       Sastart: [null],
       Sastart2: [null],
       Saend: [null],
       Saend2: [null],
 
-      Sunday: [false],
+      Sunday: [true],
+      SundayS1: [true],
+      SundayS2: [true],
       Sustart: [null],
       Sustart2: [null],
       Suend: [null],
@@ -148,6 +162,7 @@ export class AddPage implements OnInit {
     this.fg1.value.Long = 72.935488;
     var ct = [];
     if (this.fg2.value.Monday) {
+      if (this.fg2.value.MondayS1) {
       this.fg2.value.Mstart = moment(
         this.fg2.value.Mstart,
         "YYYY-MM-DD HH:mm"
@@ -164,9 +179,30 @@ export class AddPage implements OnInit {
         Session: 1
       };
       ct.push(obj);
+    } 
+      // For Session 2
+      if (this.fg2.value.MondayS2) {
+      this.fg2.value.Mstart2 = moment(
+        this.fg2.value.Mstart2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Mend2 = moment(
+        this.fg2.value.Mend2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      let obj1 = {
+        Day: "Monday",
+        StartTime: this.fg2.value.Mstart2,
+        EndTime: this.fg2.value.Mend2,
+        IsOpen: true,
+        Session: 2
+      };
+      ct.push(obj1);
+    }
     }
 
     if (this.fg2.value.Tuesday) {
+      if (this.fg2.value.TuesdayS1) {
       this.fg2.value.Tustart = moment(
         this.fg2.value.Tustart,
         "YYYY-MM-DD HH:mm"
@@ -184,13 +220,35 @@ export class AddPage implements OnInit {
       };
       ct.push(obj);
     }
+    // session 2
+    if (this.fg2.value.TuesdayS2) {
+      this.fg2.value.Tustart2 = moment(
+        this.fg2.value.Tustart2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Tuend2 = moment(
+        this.fg2.value.Tuend2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      let obj = {
+        Day: "Tuesday",
+        StartTime: this.fg2.value.Tustart2,
+        EndTime: this.fg2.value.Tuend2,
+        IsOpen: true,
+        Session: 2
+      };
+      ct.push(obj);
+    }
+
+    }
 
     if (this.fg2.value.Wednesday) {
-      this.fg2.value.Tuend = moment(
+      if (this.fg2.value.WednesdayS1) {
+      this.fg2.value.Wstart = moment(
         this.fg2.value.Wstart,
         "YYYY-MM-DD HH:mm"
       ).format("HH:mm");
-      this.fg2.value.Tuend = moment(
+      this.fg2.value.Wend = moment(
         this.fg2.value.Wend,
         "YYYY-MM-DD HH:mm"
       ).format("HH:mm");
@@ -203,8 +261,30 @@ export class AddPage implements OnInit {
       };
       ct.push(obj);
     }
+    // session 2
+    if (this.fg2.value.WednesdayS2) {
+      this.fg2.value.Wstart2 = moment(
+        this.fg2.value.Wstart2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Wend2 = moment(
+        this.fg2.value.Wend2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      let obj = {
+        Day: "Wednesday",
+        StartTime: this.fg2.value.Wstart2,
+        EndTime: this.fg2.value.Wend2,
+        IsOpen: true,
+        Session: 2
+      };
+      ct.push(obj);
+    }
+
+    }
 
     if (this.fg2.value.Thursday) {
+      if (this.fg2.value.ThursdayS1) {
       this.fg2.value.Thstart = moment(
         this.fg2.value.Thstart,
         "YYYY-MM-DD HH:mm"
@@ -222,8 +302,29 @@ export class AddPage implements OnInit {
       };
       ct.push(obj);
     }
+    // session 2
+    if (this.fg2.value.ThursdayS2) {
+      this.fg2.value.Thstart2 = moment(
+        this.fg2.value.Thstart2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Thend2 = moment(
+        this.fg2.value.Thend2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      let obj = {
+        Day: "Thursday",
+        StartTime: this.fg2.value.Thstart2,
+        EndTime: this.fg2.value.Thend2,
+        IsOpen: true,
+        Session: 2
+      };
+      ct.push(obj);
+    }
+    }
 
     if (this.fg2.value.Friday) {
+      if (this.fg2.value.FridayS1) {
       this.fg2.value.Fstart = moment(
         this.fg2.value.Fstart,
         "YYYY-MM-DD HH:mm"
@@ -241,8 +342,29 @@ export class AddPage implements OnInit {
       };
       ct.push(obj);
     }
+// session
+    if (this.fg2.value.FridayS2) {
+      this.fg2.value.Fstart2 = moment(
+        this.fg2.value.Fstart2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Fend2 = moment(
+        this.fg2.value.Fend2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      let obj = {
+        Day: "Friday",
+        StartTime: this.fg2.value.Fstart2,
+        EndTime: this.fg2.value.Fend2,
+        IsOpen: true,
+        Session: 2
+      };
+      ct.push(obj);
+    }
+    }
 
     if (this.fg2.value.Saturday) {
+      if (this.fg2.value.SaturdayS1) {
       this.fg2.value.Sastart = moment(
         this.fg2.value.Sastart,
         "YYYY-MM-DD HH:mm"
@@ -260,8 +382,28 @@ export class AddPage implements OnInit {
       };
       ct.push(obj);
     }
+    if (this.fg2.value.SaturdayS2) {
+      this.fg2.value.Sastart2 = moment(
+        this.fg2.value.Sastart2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Saend2 = moment(
+        this.fg2.value.Saend2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      let obj = {
+        Day: "Saturday",
+        StartTime: this.fg2.value.Sastart2,
+        EndTime: this.fg2.value.Saend2,
+        IsOpen: true,
+        Session: 2
+      };
+      ct.push(obj);
+    }
+    }
 
     if (this.fg2.value.Sunday) {
+      if (this.fg2.value.SundayS1) {
       this.fg2.value.Sustart = moment(
         this.fg2.value.Sustart,
         "YYYY-MM-DD HH:mm"
@@ -278,6 +420,25 @@ export class AddPage implements OnInit {
         Session: 1
       };
       ct.push(obj);
+    }
+    if (this.fg2.value.SundayS2) {
+      this.fg2.value.Sustart2 = moment(
+        this.fg2.value.Sustart2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      this.fg2.value.Suend2 = moment(
+        this.fg2.value.Suend2,
+        "YYYY-MM-DD HH:mm"
+      ).format("HH:mm");
+      let obj = {
+        Day: "Sunday",
+        StartTime: this.fg2.value.Sustart2,
+        EndTime: this.fg2.value.Suend2,
+        IsOpen: true,
+        Session: 2
+      };
+      ct.push(obj);
+    }
     }
     this.fg1.value.ClinicTimings = ct;
 
