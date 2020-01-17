@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, ViewChild } from "@angular/core";
+
 import {
   FormBuilder,
   FormGroup,
@@ -13,6 +14,7 @@ import { Router } from "@angular/router";
 import { LoadingController } from "@ionic/angular";
 import { SignupService } from "src/app/services/signup.service";
 import * as moment from "moment";
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { validateConfig } from "@angular/router/src/config";
 declare var google;
 
@@ -22,11 +24,12 @@ declare var google;
   styleUrls: ["./step2.page.scss"]
 })
 export class Step2Page implements OnInit {
+  
+  fg1: FormGroup;
+  fg2: FormGroup;
   map;
   myMarker;
   @ViewChild("mapElement") mapElement;
-  fg1: FormGroup;
-  fg2: FormGroup;
   DoctorId: any;
   latitude: any;
   longitude: any;
@@ -38,11 +41,13 @@ export class Step2Page implements OnInit {
     private clinicService: ClinicService,
     private toastService: ToastService,
     private signupService: SignupService,
-    private storage: Storage
+    private storage: Storage,
+    private geolocation: Geolocation
   ) {}
 
   ngOnInit() {
-    this.hello();
+    this.ionViewDidEnte();
+    // this.hello();
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.DoctorId = val;
     });
@@ -134,12 +139,20 @@ export class Step2Page implements OnInit {
   hello(): void {
     //Called after ngOnInit when the component's or directive's content has been initialized.
     //Add 'implements AfterContentInit' to the class.
+    // this.map = new google.maps.Map(this.mapElement.nativeElement, {
+    //   center: { lat: 33.632553, lng: 72.934592 },
+    //   zoom: 15
+    // });
     this.map = new google.maps.Map(this.mapElement.nativeElement, {
-      center: { lat: 33.632553, lng: 72.934592 },
+      center: { lat: this.latitude, lng: this.longitude },
       zoom: 15
     });
+    // this.myMarker = new google.maps.Marker({
+    //   position: { lat: 30.632553, lng: 72.934592 },
+    //   draggable: true
+    // });
     this.myMarker = new google.maps.Marker({
-      position: { lat: 33.632553, lng: 72.934592 },
+      position: { lat: this.latitude, lng: this.longitude },
       draggable: true
     });
     this.map.setCenter(this.myMarker.position);
@@ -150,6 +163,17 @@ export class Step2Page implements OnInit {
       this.lng = evt.latLng.lng().toFixed(3);
     });
   }
+  ionViewDidEnte(){
+    this.geolocation.getCurrentPosition().then((resp) => {
+      this.latitude = resp.coords.latitude;
+      this.longitude = resp.coords.longitude;
+      this.hello();
+     }).catch((error) => {
+       console.log('Error getting location', error);
+     });
+     
+    }
+  
 
   setAllDaysValueStrat1() {
     this.fg2.controls["Tustart"].setValue(this.fg2.value.Mstart);
@@ -479,6 +503,111 @@ export class Step2Page implements OnInit {
     //this.addNewClinic(this.fg1.value);
   }
 
+  setTimeValidators(){
+    if (this.fg2.value.MondayS1)
+    {
+    const MEnd1 = Date.parse(this.fg2.value.Mend);
+    const MStart2 = Date.parse(this.fg2.value.Mstart2);
+    if (MStart2 <= MEnd1){
+    console.log(5);
+    //Mstart2c.setValidators([Validators.maxLength(0)]);
+    this.fg2.controls['Mstart2'].setErrors({'required': true});
+    }
+    else {
+      this.fg2.controls['Mstart2'].setErrors(null);
+    }
+    }
+  }
+  setTimeValidatorsTuesday(){
+    if (this.fg2.value.TuesdayS1)
+    {
+    const TuEnd1 = Date.parse(this.fg2.value.Tuend);
+    const TuStart2 = Date.parse(this.fg2.value.Tustart2);
+    if (TuStart2 <= TuEnd1){
+    console.log(5);
+    //Mstart2c.setValidators([Validators.maxLength(0)]);
+    this.fg2.controls['Tustart2'].setErrors({'required': true});
+    }
+    else {
+      this.fg2.controls['Tustart2'].setErrors(null);
+    }
+    }
+  }
+  setTimeValidatorsWed(){
+    if (this.fg2.value.WednesdayS1)
+    {
+    const TuEnd1 = Date.parse(this.fg2.value.Wend);
+    const TuStart2 = Date.parse(this.fg2.value.Wstart2);
+    if (TuStart2 <= TuEnd1){
+    console.log(5);
+    //Mstart2c.setValidators([Validators.maxLength(0)]);
+    this.fg2.controls['Wstart2'].setErrors({'required': true});
+    }
+    else {
+      this.fg2.controls['Wstart2'].setErrors(null);
+    }
+    }
+  }
+  setTimeValidatorsThu(){
+    if (this.fg2.value.ThursdayS1)
+    {
+    const TuEnd1 = Date.parse(this.fg2.value.Thend);
+    const TuStart2 = Date.parse(this.fg2.value.Thstart2);
+    if (TuStart2 <= TuEnd1){
+    console.log(5);
+    //Mstart2c.setValidators([Validators.maxLength(0)]);
+    this.fg2.controls['Thstart2'].setErrors({'required': true});
+    }
+    else {
+      this.fg2.controls['Tustart2'].setErrors(null);
+    }
+    }
+  }
+  setTimeValidatorsFri(){
+    if (this.fg2.value.FridayS1)
+    {
+    const TuEnd1 = Date.parse(this.fg2.value.Fend);
+    const TuStart2 = Date.parse(this.fg2.value.Fstart2);
+    if (TuStart2 <= TuEnd1){
+    console.log(5);
+    //Mstart2c.setValidators([Validators.maxLength(0)]);
+    this.fg2.controls['Fstart2'].setErrors({'required': true});
+    }
+    else {
+      this.fg2.controls['Fstart2'].setErrors(null);
+    }
+    }
+  }
+  setTimeValidatorsSat(){
+    if (this.fg2.value.SaturdayS1)
+    {
+    const TuEnd1 = Date.parse(this.fg2.value.Saend);
+    const TuStart2 = Date.parse(this.fg2.value.Sastart2);
+    if (TuStart2 <= TuEnd1){
+    console.log(5);
+    //Mstart2c.setValidators([Validators.maxLength(0)]);
+    this.fg2.controls['Sastart2'].setErrors({'required': true});
+    }
+    else {
+      this.fg2.controls['Sastart2'].setErrors(null);
+    }
+    }
+  }
+  setTimeValidatorsSun(){
+    if (this.fg2.value.SundayS1)
+    {
+    const TuEnd1 = Date.parse(this.fg2.value.Suend);
+    const TuStart2 = Date.parse(this.fg2.value.Sustart2);
+    if (TuStart2 <= TuEnd1){
+    console.log(5);
+    //Mstart2c.setValidators([Validators.maxLength(0)]);
+    this.fg2.controls['Sustart2'].setErrors({'required': true});
+    }
+    else {
+      this.fg2.controls['Sustart2'].setErrors(null);
+    }
+    }
+  }
   validation_messages = {
     Name: [{ type: "required", message: "Name is required." }],
     Address: [{ type: "required", message: "Address is required." }],
@@ -501,6 +630,7 @@ export class Step2Page implements OnInit {
         type: "pattern",
         message: "Your Consultation Fee must contain positive number"
       }
-    ]
+    ],
+    Mstart2:[{type: "required" , message:"Session 2 Must Start after Session 1"}]
   };
 }

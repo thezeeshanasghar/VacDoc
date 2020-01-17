@@ -22,6 +22,7 @@ import * as moment from "moment";
 export class AddPage implements OnInit {
   fg1: FormGroup;
   fg2: FormGroup;
+
   DoctorId: any;
   section: boolean = false;
   constructor(
@@ -470,6 +471,99 @@ export class AddPage implements OnInit {
       );
     }
   }
+  setTimeValidatorsMonday(){
+    if (this.fg2.value.MondayS1)
+    {
+    const MEnd1 = Date.parse(this.fg2.value.Mend);
+    const MStart2 = Date.parse(this.fg2.value.Mstart2);
+    if (MStart2 <= MEnd1){
+    this.fg2.controls['Mstart2'].setErrors({'required': true});
+    }
+    else {
+      this.fg2.controls['Mstart2'].setErrors(null);
+    }
+    }
+  }
+  setTimeValidatorsTuesday(){
+    if (this.fg2.value.TuesdayS1)
+    {
+    const TuEnd1 = Date.parse(this.fg2.value.Tuend);
+    const TuStart2 = Date.parse(this.fg2.value.Tustart2);
+    if (TuStart2 <= TuEnd1){
+    this.fg2.controls['Tustart2'].setErrors({'required': true});
+    }
+    else {
+      this.fg2.controls['Tustart2'].setErrors(null);
+    }
+    }
+  }
+  setTimeValidatorsWed(){
+    if (this.fg2.value.WednesdayS1)
+    {
+    const TuEnd1 = Date.parse(this.fg2.value.Wend);
+    const TuStart2 = Date.parse(this.fg2.value.Wstart2);
+    if (TuStart2 <= TuEnd1){
+    this.fg2.controls['Wstart2'].setErrors({'required': true});
+    }
+    else {
+      this.fg2.controls['Wstart2'].setErrors(null);
+    }
+    }
+  }
+  setTimeValidatorsThu(){
+    if (this.fg2.value.ThursdayS1)
+    {
+    const TuEnd1 = Date.parse(this.fg2.value.Thend);
+    const TuStart2 = Date.parse(this.fg2.value.Thstart2);
+    if (TuStart2 <= TuEnd1){
+    this.fg2.controls['Thstart2'].setErrors({'required': true});
+    }
+    else {
+      this.fg2.controls['Tustart2'].setErrors(null);
+    }
+    }
+  }
+  setTimeValidatorsFri(){
+    if (this.fg2.value.FridayS1)
+    {
+    const TuEnd1 = Date.parse(this.fg2.value.Fend);
+    const TuStart2 = Date.parse(this.fg2.value.Fstart2);
+    if (TuStart2 <= TuEnd1){
+    this.fg2.controls['Fstart2'].setErrors({'required': true});
+    }
+    else {
+      this.fg2.controls['Fstart2'].setErrors(null);
+    }
+    }
+  }
+  setTimeValidatorsSat(){
+    if (this.fg2.value.SaturdayS1)
+    {
+    const TuEnd1 = Date.parse(this.fg2.value.Saend);
+    const TuStart2 = Date.parse(this.fg2.value.Sastart2);
+    if (TuStart2 <= TuEnd1){
+    this.fg2.controls['Sastart2'].setErrors({'required': true});
+    }
+    else {
+      this.fg2.controls['Sastart2'].setErrors(null);
+    }
+    }
+  }
+  setTimeValidatorsSun(){
+    if (this.fg2.value.SundayS1)
+    {
+    const TuEnd1 = Date.parse(this.fg2.value.Suend);
+    const TuStart2 = Date.parse(this.fg2.value.Sustart2);
+    if (TuStart2 <= TuEnd1){
+    this.fg2.controls['Sustart2'].setErrors({'required': true});
+    }
+    else {
+      this.fg2.controls['Sustart2'].setErrors(null);
+    }
+    }
+  }
+
+ 
 
   validation_messages = {
     Name: [{ type: "required", message: "Name is required." }],
@@ -489,6 +583,7 @@ export class AddPage implements OnInit {
         type: "pattern",
         message: "Your Consultation Fee must contain positive number"
       }
-    ]
+    ],
+    Mstart2:[{type: "required" , message:"Session 2 Must Start after Session 1"}]
   };
 }
