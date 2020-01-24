@@ -22,11 +22,15 @@
       <ion-label color="primary" position="floating">OFC</ion-label>
       <ion-input type="number" placeholder="OFC" formControlName="Circle"></ion-input>
     </ion-item>
+    <ion-item>
+      <ion-label color="primary" position="floating">Disease</ion-label>
+      <ion-input type="text" placeholder="Disease" ></ion-input>
+    </ion-item>
 
     <ion-item>
       <ion-label>Brands</ion-label>
       <ion-select formControlName="BrandId">
-        <ion-select-option *ngFor="let user of brandName" [value]="user.ID">{{user.Name}}</ion-select-option>
+        <ion-select-option *ngFor="let user of brandName" [value]="user.Id">{{user.Name}}</ion-select-option>
       </ion-select>
     </ion-item>
 

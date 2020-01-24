@@ -471,98 +471,265 @@ export class AddPage implements OnInit {
       );
     }
   }
-  setTimeValidatorsMonday(){
-    if (this.fg2.value.MondayS1)
-    {
-    const MEnd1 = Date.parse(this.fg2.value.Mend);
-    const MStart2 = Date.parse(this.fg2.value.Mstart2);
-    if (MStart2 <= MEnd1){
-    this.fg2.controls['Mstart2'].setErrors({'required': true});
+  setTimeValidatorsMonday() {
+    if (this.fg2.value.MondayS1 && this.fg2.value.MondayS2) {
+      const MEnd1 = Date.parse(this.fg2.value.Mend);
+      const MStart2 = Date.parse(this.fg2.value.Mstart2);
+      if (MStart2 <= MEnd1) {
+        console.log(5);
+        //Mstart2c.setValidators([Validators.maxLength(0)]);
+        this.fg2.controls["Mstart2"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Mstart2"].setErrors(null);
+      }
+    } else {
+      this.fg2.controls["Mstart2"].setErrors(null);
     }
-    else {
-      this.fg2.controls['Mstart2'].setErrors(null);
+  
+    if (this.fg2.value.MondayS1) {
+      const MStart1 = Date.parse(this.fg2.value.Mstart);
+      const MEnd1 = Date.parse(this.fg2.value.Mend);
+      if (MEnd1 <= MStart1) {
+        console.log(5);
+        //Mstart2c.setValidators([Validators.maxLength(0)]);
+        this.fg2.controls["Mstart"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Mstart"].setErrors(null);
+      }
     }
-    }
-  }
-  setTimeValidatorsTuesday(){
-    if (this.fg2.value.TuesdayS1)
-    {
-    const TuEnd1 = Date.parse(this.fg2.value.Tuend);
-    const TuStart2 = Date.parse(this.fg2.value.Tustart2);
-    if (TuStart2 <= TuEnd1){
-    this.fg2.controls['Tustart2'].setErrors({'required': true});
-    }
-    else {
-      this.fg2.controls['Tustart2'].setErrors(null);
-    }
-    }
-  }
-  setTimeValidatorsWed(){
-    if (this.fg2.value.WednesdayS1)
-    {
-    const TuEnd1 = Date.parse(this.fg2.value.Wend);
-    const TuStart2 = Date.parse(this.fg2.value.Wstart2);
-    if (TuStart2 <= TuEnd1){
-    this.fg2.controls['Wstart2'].setErrors({'required': true});
-    }
-    else {
-      this.fg2.controls['Wstart2'].setErrors(null);
-    }
-    }
-  }
-  setTimeValidatorsThu(){
-    if (this.fg2.value.ThursdayS1)
-    {
-    const TuEnd1 = Date.parse(this.fg2.value.Thend);
-    const TuStart2 = Date.parse(this.fg2.value.Thstart2);
-    if (TuStart2 <= TuEnd1){
-    this.fg2.controls['Thstart2'].setErrors({'required': true});
-    }
-    else {
-      this.fg2.controls['Tustart2'].setErrors(null);
-    }
+  
+    if (this.fg2.value.MondayS2) {
+      const MStart2 = Date.parse(this.fg2.value.Mstart2);
+      const MEnd2 = Date.parse(this.fg2.value.Mend2);
+      if (MEnd2 <= MStart2) {
+        console.log(5);
+        //Mstart2c.setValidators([Validators.maxLength(0)]);
+        this.fg2.controls["Mend"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Mend"].setErrors(null);
+      }
     }
   }
-  setTimeValidatorsFri(){
-    if (this.fg2.value.FridayS1)
-    {
-    const TuEnd1 = Date.parse(this.fg2.value.Fend);
-    const TuStart2 = Date.parse(this.fg2.value.Fstart2);
-    if (TuStart2 <= TuEnd1){
-    this.fg2.controls['Fstart2'].setErrors({'required': true});
+  setTimeValidatorsTuesday() {
+    if (this.fg2.value.TuesdayS1 && this.fg2.value.TuesdayS2) {
+      const TuEnd1 = Date.parse(this.fg2.value.Tuend);
+      const TuStart2 = Date.parse(this.fg2.value.Tustart2);
+      if (TuStart2 <= TuEnd1) {
+        console.log(5);
+        //Mstart2c.setValidators([Validators.maxLength(0)]);
+        this.fg2.controls["Tustart2"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Tustart2"].setErrors(null);
+      }
+    } else {
+      this.fg2.controls["Tustart2"].setErrors(null);
     }
-    else {
-      this.fg2.controls['Fstart2'].setErrors(null);
-    }
-    }
-  }
-  setTimeValidatorsSat(){
-    if (this.fg2.value.SaturdayS1)
-    {
-    const TuEnd1 = Date.parse(this.fg2.value.Saend);
-    const TuStart2 = Date.parse(this.fg2.value.Sastart2);
-    if (TuStart2 <= TuEnd1){
-    this.fg2.controls['Sastart2'].setErrors({'required': true});
-    }
-    else {
-      this.fg2.controls['Sastart2'].setErrors(null);
-    }
-    }
-  }
-  setTimeValidatorsSun(){
-    if (this.fg2.value.SundayS1)
-    {
-    const TuEnd1 = Date.parse(this.fg2.value.Suend);
-    const TuStart2 = Date.parse(this.fg2.value.Sustart2);
-    if (TuStart2 <= TuEnd1){
-    this.fg2.controls['Sustart2'].setErrors({'required': true});
-    }
-    else {
-      this.fg2.controls['Sustart2'].setErrors(null);
-    }
-    }
-  }
 
+    if (this.fg2.value.TuesdayS1) {
+      const MStart1 = Date.parse(this.fg2.value.Tustart);
+      const MEnd1 = Date.parse(this.fg2.value.Tuend);
+      if (MEnd1 <= MStart1) {
+        console.log(5);
+        this.fg2.controls["Tustart"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Tustart"].setErrors(null);
+      }
+    }
+
+    if (this.fg2.value.TuesdayS2) {
+      const MStart2 = Date.parse(this.fg2.value.Tustart2);
+      const MEnd2 = Date.parse(this.fg2.value.Tuend2);
+      if (MEnd2 <= MStart2) {
+        console.log(5);
+        //Mstart2c.setValidators([Validators.maxLength(0)]);
+        this.fg2.controls["Tuend"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Tuend"].setErrors(null);
+      }
+    }
+  }
+  setTimeValidatorsWed() {
+    if (this.fg2.value.WednesdayS1 && this.fg2.value.WednesdayS2) {
+      const TuEnd1 = Date.parse(this.fg2.value.Wend);
+      const TuStart2 = Date.parse(this.fg2.value.Wstart2);
+      if (TuStart2 <= TuEnd1) {
+        console.log(5);
+        this.fg2.controls["Wstart2"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Wstart2"].setErrors(null);
+      }
+    } else {
+      this.fg2.controls["Wstart2"].setErrors(null);
+    }
+
+    if (this.fg2.value.WednesdayS1) {
+      const MStart1 = Date.parse(this.fg2.value.Wstart);
+      const MEnd1 = Date.parse(this.fg2.value.Wend);
+      if (MEnd1 <= MStart1) {
+        console.log(5);
+        this.fg2.controls["Wstart"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Wstart"].setErrors(null);
+      }
+    }
+
+    if (this.fg2.value.WednesdayS2) {
+      const MStart2 = Date.parse(this.fg2.value.Wstart2);
+      const MEnd2 = Date.parse(this.fg2.value.Wend2);
+      if (MEnd2 <= MStart2) {
+        console.log(5);
+        //Mstart2c.setValidators([Validators.maxLength(0)]);
+        this.fg2.controls["Wend"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Wend"].setErrors(null);
+      }
+    }
+  }
+  setTimeValidatorsThu() {
+    if ((this.fg2.value.ThursdayS1) && (this.fg2.value.ThursdayS2)) {
+      const TuEnd1 = Date.parse(this.fg2.value.Thend);
+      const TuStart2 = Date.parse(this.fg2.value.Thstart2);
+      if (TuStart2 <= TuEnd1) {
+        console.log(5);
+        //Mstart2c.setValidators([Validators.maxLength(0)]);
+        this.fg2.controls["Thstart2"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Thstart2"].setErrors(null);
+      }
+    } else {
+      this.fg2.controls["Thstart2"].setErrors(null);
+    }
+
+    if (this.fg2.value.ThursdayS1) {
+      const MStart1 = Date.parse(this.fg2.value.Thstart);
+      const MEnd1 = Date.parse(this.fg2.value.Thend);
+      if (MEnd1 <= MStart1) {
+        console.log(5);
+        this.fg2.controls["Thstart"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Thstart"].setErrors(null);
+      }
+    }
+
+    if (this.fg2.value.ThursdayS2) {
+      const MStart2 = Date.parse(this.fg2.value.Thstart2);
+      const MEnd2 = Date.parse(this.fg2.value.Thend2);
+      if (MEnd2 <= MStart2) {
+        console.log(5);
+        this.fg2.controls["Thend"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Thend"].setErrors(null);
+      }
+    }
+  }
+  setTimeValidatorsFri() {
+    if (this.fg2.value.FridayS1 && this.fg2.value.FridayS2) {
+      const TuEnd1 = Date.parse(this.fg2.value.Fend);
+      const TuStart2 = Date.parse(this.fg2.value.Fstart2);
+      if (TuStart2 <= TuEnd1) {
+        console.log(5);
+        //Mstart2c.setValidators([Validators.maxLength(0)]);
+        this.fg2.controls["Fstart2"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Fstart2"].setErrors(null);
+      }
+    } else {
+      this.fg2.controls["Fstart2"].setErrors(null);
+    }
+    if (this.fg2.value.FridayS1) {
+      const MStart1 = Date.parse(this.fg2.value.Fstart);
+      const MEnd1 = Date.parse(this.fg2.value.Fend);
+      if (MEnd1 <= MStart1) {
+        console.log(5);
+        this.fg2.controls["Fstart"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Fstart"].setErrors(null);
+      }
+    }
+
+    if (this.fg2.value.FridayS2) {
+      const MStart2 = Date.parse(this.fg2.value.Fstart2);
+      const MEnd2 = Date.parse(this.fg2.value.Fend2);
+      if (MEnd2 <= MStart2) {
+        console.log(5);
+        this.fg2.controls["Fend"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Fend"].setErrors(null);
+      }
+    }
+  }
+  setTimeValidatorsSat() {
+    if (this.fg2.value.SaturdayS1 && this.fg2.value.SaturdayS2) {
+      const TuEnd1 = Date.parse(this.fg2.value.Saend);
+      const TuStart2 = Date.parse(this.fg2.value.Sastart2);
+      if (TuStart2 <= TuEnd1) {
+        console.log(5);
+        //Mstart2c.setValidators([Validators.maxLength(0)]);
+        this.fg2.controls["Sastart2"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Sastart2"].setErrors(null);
+      }
+    } else {
+      this.fg2.controls["Sastart2"].setErrors(null);
+    }
+
+    if (this.fg2.value.SaturdayS1) {
+      const MStart1 = Date.parse(this.fg2.value.Sastart);
+      const MEnd1 = Date.parse(this.fg2.value.Saend);
+      if (MEnd1 <= MStart1) {
+        console.log(5);
+        this.fg2.controls["Sastart"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Sastart"].setErrors(null);
+      }
+    }
+
+    if (this.fg2.value.SaturdayS2) {
+      const MStart2 = Date.parse(this.fg2.value.Sastart2);
+      const MEnd2 = Date.parse(this.fg2.value.Saend2);
+      if (MEnd2 <= MStart2) {
+        console.log(5);
+        this.fg2.controls["Saend"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Saend"].setErrors(null);
+      }
+    }
+  }
+  setTimeValidatorsSun() {
+    if (this.fg2.value.SundayS1 && this.fg2.value.SundayS2) {
+      const TuEnd1 = Date.parse(this.fg2.value.Suend);
+      const TuStart2 = Date.parse(this.fg2.value.Sustart2);
+      if (TuStart2 <= TuEnd1) {
+        console.log(5);
+        //Mstart2c.setValidators([Validators.maxLength(0)]);
+        this.fg2.controls["Sustart2"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Sustart2"].setErrors(null);
+      }
+    } else {
+      this.fg2.controls["Sustart2"].setErrors(null);
+    }
+    if (this.fg2.value.SundayS1) {
+      const MStart1 = Date.parse(this.fg2.value.Sustart);
+      const MEnd1 = Date.parse(this.fg2.value.Suend);
+      if (MEnd1 <= MStart1) {
+        console.log(5);
+        this.fg2.controls["Sustart"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Sustart"].setErrors(null);
+      }
+    }
+    if (this.fg2.value.SundayS2) {
+      const MStart2 = Date.parse(this.fg2.value.Sustart2);
+      const MEnd2 = Date.parse(this.fg2.value.Suend2);
+      if (MEnd2 <= MStart2) {
+        console.log(5);
+        this.fg2.controls["Suend"].setErrors({ required: true });
+      } else {
+        this.fg2.controls["Suend"].setErrors(null);
+      }
+    }
+  }
  
 
   validation_messages = {
@@ -584,6 +751,10 @@ export class AddPage implements OnInit {
         message: "Your Consultation Fee must contain positive number"
       }
     ],
-    Mstart2:[{type: "required" , message:"Session 2 Must Start after Session 1"}]
+    Mstart2:[{type: "required" , message:"Session 2 Must Start after Session 1"}],
+    Mstart: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Mend: [{ type: "required", message: "End Time Must be after Start Time" }],
   };
 }

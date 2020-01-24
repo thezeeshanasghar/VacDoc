@@ -30,8 +30,9 @@ export class VaccineService extends BaseService {
     );
   }
 
-  updateVaccinationDate(data): Observable<any> {
-    const url = `${this.API_VACCINE}schedule/Reschedule?ignoreMaxAgeRule=false&ignoreMinAgeFromDOB=false&ignoreMinGapFromPreviousDose=false`;
+  updateVaccinationDate(data , max , min , gap): Observable<any> {
+    //const url = `${this.API_VACCINE}schedule/Reschedule?ignoreMaxAgeRule=${max}false&ignoreMinAgeFromDOB=false&ignoreMinGapFromPreviousDose=false`;
+    const url = `${this.API_VACCINE}schedule/Reschedule?ignoreMaxAgeRule=${max}&ignoreMinAgeFromDOB=${min}&ignoreMinGapFromPreviousDose=${gap}`;
     return this.http.put(url, data, this.httpOptions)
       .pipe(
         catchError(this.handleError)

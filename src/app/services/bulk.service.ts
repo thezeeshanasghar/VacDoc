@@ -22,10 +22,9 @@ export class BulkService extends BaseService {
       .pipe(catchError(this.handleError));
   }
 
-  updateInjectionDate(data): Observable<any> {
+  updateInjectionDate(data, max , min , gap): Observable<any> {
     const url = `${
-      this.API_BULK
-    }schedule/BulkReschedule?ignoreMaxAgeRule=false&ignoreMinAgeFromDOB=false&ignoreMinGapFromPreviousDose=false`;
+       this.API_BULK}schedule/BulkReschedule?ignoreMaxAgeRule=${max}&ignoreMinAgeFromDOB=${min}&ignoreMinGapFromPreviousDose=${gap}`;
     return this.http
       .put(url, data, this.httpOptions)
       .pipe(catchError(this.handleError));

@@ -7,6 +7,7 @@ import { FormBuilder, FormGroup } from "@angular/forms";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import * as moment from "moment";
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: "app-bulk",
@@ -26,7 +27,8 @@ export class BulkPage implements OnInit {
     private formBuilder: FormBuilder,
     private bulkService: BulkService,
     private toastService: ToastService,
-    private storage: Storage
+    private storage: Storage,
+    public alertController: AlertController
   ) {}
 
   ngOnInit() {
@@ -98,7 +100,7 @@ export class BulkPage implements OnInit {
     if (this.fg.value.BrandId0) {
       data.ScheduleBrands[0].ScheduleId = this.bulkData[0].Id;
       data.ScheduleBrands[0].BrandId = this.fg.value.BrandId0;
-      data.Id = this.bulkData[0].ID;
+      data.Id = this.bulkData[0].Id;
     }
 
     if (this.fg.value.BrandId1) {

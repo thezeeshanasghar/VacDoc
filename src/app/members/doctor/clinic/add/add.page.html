@@ -75,13 +75,13 @@
 
             <ion-item lines="none" no-padding>
               <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Mstart" display-format="h:mm a" (ionChange)="setAllDaysValueStrat1()">
+              <ion-datetime formControlName="Mstart" display-format="h:mm a" (ionChange)="setAllDaysValueStrat1();setTimeValidatorsMonday()">
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
               <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Mend" display-format="h:mm a" (ionChange)="setAllDaysValueEnd1()">
+              <ion-datetime formControlName="Mend" display-format="h:mm a" (ionChange)="setAllDaysValueEnd1();setTimeValidatorsMonday()">
               </ion-datetime>
             </ion-item>
           </ion-item>
@@ -97,7 +97,7 @@
 
             <ion-item slot="end" lines="none" no-padding>
               <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Mend2" display-format="h:mm a" (ionChange)="setAllDaysValueEnd2()">
+              <ion-datetime formControlName="Mend2" display-format="h:mm a" (ionChange)="setAllDaysValueEnd2();setTimeValidatorsMonday()">
               </ion-datetime>
             </ion-item>
           </ion-item>
@@ -105,6 +105,18 @@
             <ng-container *ngFor="let validation of validation_messages.Mstart2">
               <div class="error-message"
                   *ngIf="fg2.get('Mstart2').hasError('required')">  
+                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              </div>
+            </ng-container>
+            <ng-container *ngFor="let validation of validation_messages.Mstart">
+              <div class="error-message"
+                  *ngIf="fg2.get('Mstart').hasError('required')">  
+                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              </div>
+            </ng-container>
+            <ng-container *ngFor="let validation of validation_messages.Mend">
+              <div class="error-message"
+                  *ngIf="fg2.get('Mend').hasError('required')">  
                  <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
               </div>
             </ng-container>
@@ -125,13 +137,13 @@
 
             <ion-item lines="none" no-padding>
               <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Tustart" display-format="h:mm a">
+              <ion-datetime formControlName="Tustart" display-format="h:mm a" (ionChange)='setTimeValidatorsTuesday()'>
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
               <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Tuend" display-format="h:mm a">
+              <ion-datetime formControlName="Tuend" display-format="h:mm a" (ionChange)='setTimeValidatorsTuesday()'>
               </ion-datetime>
             </ion-item>
           </ion-item>
@@ -147,7 +159,7 @@
 
             <ion-item slot="end" lines="none" no-padding>
               <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Tuend2" display-format="h:mm a" >
+              <ion-datetime formControlName="Tuend2" display-format="h:mm a" (ionChange)='setTimeValidatorsTuesday()'>
               </ion-datetime>
             </ion-item>
           </ion-item>
@@ -155,6 +167,18 @@
             <ng-container *ngFor="let validation of validation_messages.Mstart2">
               <div class="error-message"
                   *ngIf="fg2.get('Tustart2').hasError('required')">  
+                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              </div>
+            </ng-container>
+            <ng-container *ngFor="let validation of validation_messages.Mstart">
+              <div class="error-message"
+                  *ngIf="fg2.get('Tustart').hasError('required')">  
+                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              </div>
+            </ng-container>
+            <ng-container *ngFor="let validation of validation_messages.Mend">
+              <div class="error-message"
+                  *ngIf="fg2.get('Tuend').hasError('required')">  
                  <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
               </div>
             </ng-container>
@@ -175,13 +199,13 @@
 
             <ion-item lines="none" no-padding>
               <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Wstart" display-format="h:mm a">
+              <ion-datetime formControlName="Wstart" display-format="h:mm a" (ionChange)='setTimeValidatorsWed()'>
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
               <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Wend" display-format="h:mm a">
+              <ion-datetime formControlName="Wend" display-format="h:mm a" (ionChange)='setTimeValidatorsWed()'>
               </ion-datetime>
             </ion-item>
           </ion-item>
@@ -197,7 +221,7 @@
 
             <ion-item slot="end" lines="none" no-padding>
               <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Wend2" display-format="h:mm a">
+              <ion-datetime formControlName="Wend2" display-format="h:mm a" (ionChange)='setTimeValidatorsWed()'>
               </ion-datetime>
             </ion-item>
           </ion-item>
@@ -205,6 +229,18 @@
             <ng-container *ngFor="let validation of validation_messages.Mstart2">
               <div class="error-message"
                   *ngIf="fg2.get('Wstart2').hasError('required')">  
+                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              </div>
+            </ng-container>
+            <ng-container *ngFor="let validation of validation_messages.Mstart">
+              <div class="error-message"
+                  *ngIf="fg2.get('Wstart').hasError('required')">  
+                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              </div>
+            </ng-container>
+            <ng-container *ngFor="let validation of validation_messages.Mend">
+              <div class="error-message"
+                  *ngIf="fg2.get('Wend').hasError('required')">  
                  <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
               </div>
             </ng-container>
@@ -225,13 +261,13 @@
 
             <ion-item lines="none" no-padding>
               <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Thstart" display-format="h:mm a">
+              <ion-datetime formControlName="Thstart" display-format="h:mm a" (ionChange)='setTimeValidatorsThu()'>
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
               <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Thend" display-format="h:mm a">
+              <ion-datetime formControlName="Thend" display-format="h:mm a" (ionChange)='setTimeValidatorsThu()'>
               </ion-datetime>
             </ion-item>
           </ion-item>
@@ -247,7 +283,7 @@
 
             <ion-item slot="end" lines="none" no-padding>
               <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Thend2" display-format="h:mm a">
+              <ion-datetime formControlName="Thend2" display-format="h:mm a" (ionChange)='setTimeValidatorsThu()'>
               </ion-datetime>
             </ion-item>
           </ion-item>
@@ -255,6 +291,18 @@
             <ng-container *ngFor="let validation of validation_messages.Mstart2">
               <div class="error-message"
                   *ngIf="fg2.get('Thstart2').hasError('required')">  
+                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              </div>
+            </ng-container>
+            <ng-container *ngFor="let validation of validation_messages.Mstart">
+              <div class="error-message"
+                  *ngIf="fg2.get('Thstart').hasError('required')">  
+                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              </div>
+            </ng-container>
+            <ng-container *ngFor="let validation of validation_messages.Mend">
+              <div class="error-message"
+                  *ngIf="fg2.get('Thend').hasError('required')">  
                  <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
               </div>
             </ng-container>
@@ -275,13 +323,13 @@
 
             <ion-item lines="none" no-padding>
               <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Fstart" display-format="h:mm a">
+              <ion-datetime formControlName="Fstart" display-format="h:mm a" (ionChange)='setTimeValidatorsFri()'>
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
               <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Fend" display-format="h:mm a">
+              <ion-datetime formControlName="Fend" display-format="h:mm a" (ionChange)='setTimeValidatorsFri()'>
               </ion-datetime>
             </ion-item>
           </ion-item>
@@ -297,7 +345,7 @@
 
             <ion-item slot="end" lines="none" no-padding>
               <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Fend2" display-format="h:mm a">
+              <ion-datetime formControlName="Fend2" display-format="h:mm a" (ionChange)='setTimeValidatorsFri()'>
               </ion-datetime>
             </ion-item>
           </ion-item>
@@ -305,6 +353,18 @@
             <ng-container *ngFor="let validation of validation_messages.Mstart2">
               <div class="error-message"
                   *ngIf="fg2.get('Fstart2').hasError('required')">  
+                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              </div>
+            </ng-container>
+            <ng-container *ngFor="let validation of validation_messages.Mstart">
+              <div class="error-message"
+                  *ngIf="fg2.get('Fstart').hasError('required')">  
+                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              </div>
+            </ng-container>
+            <ng-container *ngFor="let validation of validation_messages.Mend">
+              <div class="error-message"
+                  *ngIf="fg2.get('Fend').hasError('required')">  
                  <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
               </div>
             </ng-container>
@@ -325,13 +385,13 @@
 
             <ion-item lines="none" no-padding>
               <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Sastart" display-format="h:mm a">
+              <ion-datetime formControlName="Sastart" display-format="h:mm a" (ionChange)='setTimeValidatorsSat()'>
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
               <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Saend" display-format="h:mm a">
+              <ion-datetime formControlName="Saend" display-format="h:mm a" (ionChange)='setTimeValidatorsSat()'>
               </ion-datetime>
             </ion-item>
           </ion-item>
@@ -347,7 +407,7 @@
 
             <ion-item slot="end" lines="none" no-padding>
               <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Saend2" display-format="h:mm a">
+              <ion-datetime formControlName="Saend2" display-format="h:mm a" (ionChange)='setTimeValidatorsSat()'>
               </ion-datetime>
             </ion-item>
           </ion-item>
@@ -355,6 +415,18 @@
             <ng-container *ngFor="let validation of validation_messages.Mstart2">
               <div class="error-message"
                   *ngIf="fg2.get('Sastart2').hasError('required')">  
+                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              </div>
+            </ng-container>
+            <ng-container *ngFor="let validation of validation_messages.Mstart">
+              <div class="error-message"
+                  *ngIf="fg2.get('Sastart').hasError('required')">  
+                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              </div>
+            </ng-container>
+            <ng-container *ngFor="let validation of validation_messages.Mend">
+              <div class="error-message"
+                  *ngIf="fg2.get('Saend').hasError('required')">  
                  <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
               </div>
             </ng-container>
@@ -375,13 +447,13 @@
 
             <ion-item lines="none" no-padding>
               <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Sustart" display-format="h:mm a">
+              <ion-datetime formControlName="Sustart" display-format="h:mm a" (ionChange)="setTimeValidatorsSun()">
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
               <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Suend" display-format="h:mm a">
+              <ion-datetime formControlName="Suend" display-format="h:mm a" (ionChange)="setTimeValidatorsSun()">
               </ion-datetime>
             </ion-item>
           </ion-item>
@@ -397,7 +469,7 @@
 
             <ion-item slot="end" lines="none" no-padding>
               <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Suend2" display-format="h:mm a">
+              <ion-datetime formControlName="Suend2" display-format="h:mm a" (ionChange)="setTimeValidatorsSun()">
               </ion-datetime>
             </ion-item>
           </ion-item>
@@ -405,6 +477,18 @@
             <ng-container *ngFor="let validation of validation_messages.Mstart2">
               <div class="error-message"
                   *ngIf="fg2.get('Sustart2').hasError('required')">  
+                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              </div>
+            </ng-container>
+            <ng-container *ngFor="let validation of validation_messages.Mstart">
+              <div class="error-message"
+                  *ngIf="fg2.get('Sustart').hasError('required')">  
+                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              </div>
+            </ng-container>
+            <ng-container *ngFor="let validation of validation_messages.Mend">
+              <div class="error-message"
+                  *ngIf="fg2.get('Suend').hasError('required')">  
                  <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
               </div>
             </ng-container>
