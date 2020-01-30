@@ -8,11 +8,11 @@ import { InvoiceService } from 'src/app/services/invoice.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import * as moment from 'moment';
 
-import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { FileTransfer , FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
-
+import { FilePath } from '@ionic-native/file-path/ngx';
 @Component({
   selector: 'app-invoice',
   templateUrl: './invoice.page.html',
@@ -22,6 +22,7 @@ export class InvoicePage implements OnInit {
 
   fg: FormGroup
   doctorId: any;
+  private readonly API_INVOICE = `${environment.BASE_URL}child/`;
   constructor(
     public loadingController: LoadingController,
     public formBuilder: FormBuilder,
@@ -31,12 +32,15 @@ export class InvoicePage implements OnInit {
     private toastService: ToastService,
     private platform: Platform,
     private file: File,
-    private ft: FileTransfer,
+    private transfer: FileTransfer,
     private fileOpener: FileOpener,
     private document: DocumentViewer,
+    private filePath: FilePath,
 
 
-  ) { }
+  ) { 
+    
+  }
 
   ngOnInit() {
 
@@ -53,14 +57,14 @@ export class InvoicePage implements OnInit {
   }
 
   // async sendRequestForInvoice() {
-  //   this.fg.value.DoctorID = this.doctorId;
+  //   this.fg.value.DoctorId = this.doctorId;
   //   this.fg.value.InvoiceDate = moment(this.fg.value.InvoiceDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
   //   console.log(this.fg.value);
   //   const loading = await this.loadingController.create({
   //     message: 'Loading'
   //   });
   //   await loading.present();
-  //   await this.invoiceService.getInvoice()
+  //   await this.invoiceService.getInvoice(this.fg.value)
   //     .subscribe(res => {
   //       if (res.IsSuccess) {
 
@@ -76,20 +80,25 @@ export class InvoicePage implements OnInit {
   //     });
   // }
 
-  download() {
-    let downloadUrl = 'https://devdactic.com/html/5-simple-hacks-LBT.pdf';
-    let path = this.file.dataDirectory;
-    const transfer = this.ft.create();
-
-    transfer.download(downloadUrl, `${path}myfile.pdf`).then(entry => {
-      let url = entry.toURL();
-
-      if (this.platform.is('ios')) {
-        this.document.viewDocument(url, 'application/pdf', {});
-      }
-      else {
-        this.fileOpener.open(url, 'application/pdf');
-      }
+  downloadInvoice() {
+    this.fg.value.DoctorId = this.doctorId;
+   // this.fg.value.InvoiceDate = moment(this.fg.value.InvoiceDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
+   // this.fg.value.InvoiceDate = moment(this.fg.value.InvoiceDate, 'YYYY-MM-DD');
+    console.log(this.fg.value);
+    const fileTransfer: FileTransferObject = this.transfer.create();
+    // let path = this.file.externalApplicationStorageDirectory;
+    let path = this.file.externalDataDirectory;
+    this.filePath.resolveNativePath(path)
+   .then(filePath => path = filePath);
+      const url = `${this.API_INVOICE}${this.fg.value.Id}/${this.fg.value.IsBrand}/
+      ${this.fg.value.IsConsultationFee}/${this.fg.value.InvoiceDate}/${this.fg.value.DoctorId}/Download-Invoice-PDF`;
+    fileTransfer.download( url , path + 'invoice.pdf').then((entry) => {
+      let durl = entry.toURL();
+     // this.document.viewDocument(durl , 'application/pdf', {});
+     this.fileOpener.open(durl, 'application/pdf').then(() => console.log('File is opened'));
+      console.log('download complete: ' + entry.toURL());
+    }, (error) => {
+      // handle error
     });
   }
 

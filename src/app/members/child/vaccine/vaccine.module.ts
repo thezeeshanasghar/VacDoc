@@ -6,7 +6,11 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { VaccinePage } from './vaccine.page';
-
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
+import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
 const routes: Routes = [
   {
     path: '',
@@ -24,6 +28,10 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     ReactiveFormsModule
   ],
-  declarations: [VaccinePage]
+  declarations: [VaccinePage],
+  providers: [
+    FileTransfer, FileTransferObject,
+    File, FileOpener , FilePath , DocumentViewer
+  ],
 })
 export class VaccinePageModule {}

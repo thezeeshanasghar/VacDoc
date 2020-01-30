@@ -54,4 +54,14 @@ export class VaccineService extends BaseService {
         catchError(this.handleError)
       );
   }
+  // getscheduleprint(id)
+  // {
+  //   const url = `${this.API_VACCINE}child/${id}/Download-Schedule-PDF`;
+  //   return this.http.get(url, this.httpOptions).pipe(
+  //     map(this.extractData),
+  //     catchError(this.handleError)
+  //   );
+  // }
+
+
 }

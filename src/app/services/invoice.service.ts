@@ -10,16 +10,17 @@ import { environment } from 'src/environments/environment';
 })
 export class InvoiceService extends BaseService {
 
-  private readonly API_INVOICE = `${environment.BASE_URL}child/Download-Invoice-PDF`
+  private readonly API_INVOICE = `${environment.BASE_URL}child/Download-Invoice-PDF/`
 
   constructor(
     protected http: HttpClient
   ) { super(http); }
 
-  getInvoice(data): Observable<any> {
-    return this.http.post(this.API_INVOICE, data, this.httpOptions)
-      .pipe(
-        catchError(this.handleError)
-      );
-  }
+  // getInvoice(data): Observable<any> {
+  //   const url = `${this.API_INVOICE}`;
+  //   return this.http.get(url, this.httpOptions)
+  //     .pipe(
+  //       catchError(this.handleError)
+  //     );
+  // }
 }

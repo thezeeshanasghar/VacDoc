@@ -6,6 +6,13 @@ import { ActivatedRoute, Router } from "@angular/router";
 import * as moment from "moment";
 import { BulkService } from "src/app/services/bulk.service";
 import { AlertController } from '@ionic/angular';
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
+import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
+import { environment } from 'src/environments/environment';
+
 
 @Component({
   selector: "app-vaccine",
@@ -16,6 +23,7 @@ export class VaccinePage {
   vaccine: any[] = [];
   dataGrouping: any[] = [];
   childId: any;
+  private readonly API_VACCINE = `${environment.BASE_URL}`
   constructor(
     public loadingController: LoadingController,
     public route: ActivatedRoute,
@@ -23,7 +31,12 @@ export class VaccinePage {
     private vaccineService: VaccineService,
     private bulkService: BulkService,
     private toastService: ToastService,
-    public alertController: AlertController
+    public alertController: AlertController,
+    private transfer: FileTransfer,
+    private file: File,
+    private fileOpener: FileOpener,
+    private filePath: FilePath,
+    private document: DocumentViewer,
   ) {}
 
   ionViewWillEnter() {
@@ -280,7 +293,40 @@ export class VaccinePage {
   }
   printdata() {
     //this.vaccineService.printVaccineSchedule(this.childID);
+    console.log(this.childId);
+    this.download(this.childId);
   }
+  download(id) {
+    const fileTransfer: FileTransferObject = this.transfer.create();
+    // let path = this.file.externalApplicationStorageDirectory;
+    let path = this.file.externalDataDirectory;
+    this.filePath.resolveNativePath(path)
+   .then(filePath => path = filePath);
+  //  const url = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+      const url = `${this.API_VACCINE}child/${id}/Download-Schedule-PDF`;
+    fileTransfer.download(url, path + 'schedule.pdf').then((entry) => {
+      let durl = entry.toURL();
+     // this.document.viewDocument(durl , 'application/pdf', {});
+     this.fileOpener.open(durl, 'application/pdf').then(() => console.log('File is opened'));
+      console.log('download complete: ' + entry.toURL());
+    }, (error) => {
+      // handle error
+    });
+  }
+
+  // getprint(id)
+  // {
+  //   this.vaccineService.getscheduleprint(id).subscribe(
+  //     res => {
+  //       console.log("success");
+  //     },
+  //     err => {
+  //       this.toastService.create(err, "danger");
+  //     }
+  //   );
+  // }
+
+  
 }
 
 // https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-a-array-of-objects
