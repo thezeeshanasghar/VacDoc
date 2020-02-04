@@ -51,11 +51,17 @@ export class Step3Page implements OnInit {
           this.doses = res.ResponseData;
           this.signupService.vaccineData2 = this.doses;
           this.doses.forEach(dose => {
-            let value = dose.MinGap == null ? 0 : dose.MinGap;
+         //   let value = dose.MinGap == null ? 0 : dose.MinGap;
+              let value = dose.MinAge == null ? 0 : dose.MinAge;
+          //    let minage = value;
             this.fg.addControl(
               dose.Name,
               new FormControl(value, Validators.required)
             );
+            // this.fg.addControl(
+            //   dose.MinAge,
+            //   new FormControl(minage, Validators.required)
+            // );
           });
           loading.dismiss();
         } else {
@@ -112,4 +118,15 @@ export class Step3Page implements OnInit {
       }
     );
   }
+
+  checkScheduleValidity(minage,key) {
+  console.log(minage);
+  console.log(key);
+//  console.log(select);
+
+ // this.fg.controls[key].setErrors({ required: true });
+  }
+  validation_messages = {
+    MinAge: [{ type: "required", message: "Can not reschedule" }]
+  };
 }

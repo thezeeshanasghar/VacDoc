@@ -3,7 +3,8 @@ import { Route, ActivatedRoute, Router } from "@angular/router";
 import { LoadingController } from "@ionic/angular";
 import { BulkService } from "src/app/services/bulk.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { FormBuilder, FormGroup } from "@angular/forms";
+import { FormBuilder, FormGroup , FormControl , Validators} from "@angular/forms";
+
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import * as moment from "moment";
@@ -20,6 +21,7 @@ export class BulkPage implements OnInit {
   currentDate: any;
   bulkData: any;
   fg: FormGroup;
+  BrandIds = [] ;
   constructor(
     private loadingController: LoadingController,
     private activatedRoute: ActivatedRoute,
@@ -40,9 +42,8 @@ export class BulkPage implements OnInit {
 
     this.currentDate = this.activatedRoute.snapshot.paramMap.get("childId");
     console.log(this.currentDate);
-
+    
     this.getBulk();
-
     this.fg = this.formBuilder.group({
       DoctorId: [""],
       Id: [null],
@@ -53,7 +54,8 @@ export class BulkPage implements OnInit {
       BrandId1: [null],
       BrandId2: [null],
       BrandId3: [null],
-      GivenDate: [null]
+    //  BrandId: this.BrandId,
+      GivenDate: this.currentDate
     });
   }
 
@@ -68,6 +70,14 @@ export class BulkPage implements OnInit {
         if (res.IsSuccess) {
           this.bulkData = res.ResponseData;
           console.log(this.bulkData);
+          // this.bulkData.forEach(element => {
+          //   this.fg.addControl(
+          //     element.Id ,
+          //     new FormControl(element.Id, Validators.required)
+          //   );
+          // });
+          // console.log(this.fg.value);
+         
         } else {
           this.toastService.create(res.Message, "danger");
         }
@@ -79,9 +89,17 @@ export class BulkPage implements OnInit {
         this.toastService.create(err, "danger");
       }
     );
+    
   }
 
   onSubmit() {
+    var brands = [] ;
+    var i = 0;
+    this.bulkData.forEach(element => {
+      brands.push({ BrandId: this.BrandIds[i], ScheduleId: element.Id });
+      i++ ;
+    }); 
+    console.log(brands);
     let data = {
       Circle: this.fg.value.Circle,
       Date: this.fg.value.Date,
@@ -90,27 +108,29 @@ export class BulkPage implements OnInit {
       Height: this.fg.value.Height,
       Weight: this.fg.value.Weight,
       IsDone: true,
-      ScheduleBrands: [
-        { BrandId: "", ScheduleId: "" },
-        { BrandId: "", ScheduleId: "" },
-        { BrandId: "", ScheduleId: "" }
-      ],
-      Id: ""
+      ScheduleBrands: brands,
+      // ScheduleBrands: [
+      //   { BrandId: "", ScheduleId: "" },
+      //   { BrandId: "", ScheduleId: "" },
+      //   { BrandId: "", ScheduleId: "" }
+      // ],
+     // Id: ""
+     Id: this.bulkData[0].Id
     };
-    if (this.fg.value.BrandId0) {
-      data.ScheduleBrands[0].ScheduleId = this.bulkData[0].Id;
-      data.ScheduleBrands[0].BrandId = this.fg.value.BrandId0;
-      data.Id = this.bulkData[0].Id;
-    }
+    // if (this.fg.value.BrandId0) {
+    //   data.ScheduleBrands[0].ScheduleId = this.bulkData[0].Id;
+    //   data.ScheduleBrands[0].BrandId = this.fg.value.BrandId0;
+    //   data.Id = this.bulkData[0].Id;
+    // }
 
-    if (this.fg.value.BrandId1) {
-      data.ScheduleBrands[1].ScheduleId = this.bulkData[1].Id;
-      data.ScheduleBrands[1].BrandId = this.fg.value.BrandId1;
-    }
-    if (this.fg.value.BrandId2) {
-      data.ScheduleBrands[2].ScheduleId = this.bulkData[2].Id;
-      data.ScheduleBrands[2].BrandId = this.fg.value.BrandId2;
-    }
+    // if (this.fg.value.BrandId1) {
+    //   data.ScheduleBrands[1].ScheduleId = this.bulkData[1].Id;
+    //   data.ScheduleBrands[1].BrandId = this.fg.value.BrandId1;
+    // }
+    // if (this.fg.value.BrandId2) {
+    //   data.ScheduleBrands[2].ScheduleId = this.bulkData[2].Id;
+    //   data.ScheduleBrands[2].BrandId = this.fg.value.BrandId2;
+    // }
     console.log(data);
     this.fillVaccine(data);
   }

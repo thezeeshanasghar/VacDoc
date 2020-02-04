@@ -29,7 +29,8 @@
 
     <ion-item *ngFor="let user of bulkData; let i = index;">
       <ion-label>Brands</ion-label>
-      <ion-select formControlName="BrandId{{i}}">
+      <!-- <ion-select formControlName="BrandId{{i}}"> -->
+          <ion-select [(ngModel)]="BrandIds[i]" [ngModelOptions]="{standalone: true}">
         <ion-select-option *ngFor="let user1 of user.Brands; let i = index;" selected [value]="user1.Id">{{user1.Name}}
         </ion-select-option>
       </ion-select>

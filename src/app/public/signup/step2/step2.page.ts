@@ -30,8 +30,8 @@ export class Step2Page implements OnInit {
   myMarker;
   @ViewChild("mapElement") mapElement;
   DoctorId: any;
-  latitude: any;
-  longitude: any;
+  latitude: any = 33.6328532;
+  longitude: any = 72.93583679;
   section: boolean = false;
   constructor(
     private formbuilder: FormBuilder,
@@ -158,8 +158,10 @@ export class Step2Page implements OnInit {
     this.myMarker.setMap(this.map);
 
     google.maps.event.addListener(this.myMarker, "dragend", function(evt) {
-      this.lat = evt.latLng.lat().toFixed(3);
-      this.lng = evt.latLng.lng().toFixed(3);
+      this.latitude = evt.latLng.lat().toFixed(3);
+      this.longitude = evt.latLng.lng().toFixed(3);
+      // this.lat = evt.latLng.lat().toFixed(3);
+      // this.lng = evt.latLng.lng().toFixed(3);
     });
   }
   ionViewDidEnte() {
@@ -223,8 +225,10 @@ export class Step2Page implements OnInit {
   getdata() {
     // this.fg2.controls["Tuend"].setValue(this.fg2.value.Mend);
     this.fg1.value.DoctorId = this.DoctorId;
-    this.fg1.value.Lat = this.myMarker.lat;
-    this.fg1.value.Long = this.myMarker.lng;
+    // this.fg1.value.Lat = this.myMarker.lat;
+    // this.fg1.value.Long = this.myMarker.lng;
+    this.fg1.value.Lat = this.latitude;
+    this.fg1.value.Long = this.longitude;
     console.log(this.fg1.value);
     this.fg1.value.OffDays = "Sunday";
     var ct = [];
