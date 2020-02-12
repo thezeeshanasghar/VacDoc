@@ -86,6 +86,7 @@ export class VaccineAlertPage implements OnInit {
           res => {
             if (res.IsSuccess) {
               //loading.dismiss();
+
               this.toastService.create("Alerts has been sent successfully");
             } else {
               //loading.dismiss();
@@ -137,7 +138,7 @@ export class VaccineAlertPage implements OnInit {
     if (SMS) {
       SMS.sendSMS(
         "0092" + childMobile,
-        "Test Message faisal",
+        "Test Message",
         () => {
           console.log("Message sent successfully");
         },

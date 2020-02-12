@@ -22,7 +22,7 @@ import * as moment from "moment";
 export class AddPage implements OnInit {
   fg1: FormGroup;
   fg2: FormGroup;
-
+  clinics: any ;
   DoctorId: any;
   section: boolean = false;
   constructor(
@@ -39,6 +39,10 @@ export class AddPage implements OnInit {
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.DoctorId = val;
     });
+    
+    this.storage.get(environment.CLINICS).then(clinics => {
+      this.clinics = clinics;
+      });
     this.fg1 = this.formbuilder.group({
       DoctorId: [null],
       Name: [null],
@@ -61,7 +65,9 @@ export class AddPage implements OnInit {
       OffDays: [null],
       ClinicTimings: [null],
       Lat: [null],
-      Long: [null]
+      Long: [null],
+      IsOnline: false,
+      childrenCount: 0
     });
 
     this.fg2 = this.formbuilder.group({
@@ -448,27 +454,35 @@ export class AddPage implements OnInit {
 
   async addNewClinic(data) {
     {
+
       const loading = await this.loadingController.create({
         message: "Loading"
       });
       await loading.present();
+      this.clinics.push(data);
+      console.log(data);
+      console.log(this.clinics);
+     await this.storage.set(environment.CLINICS, this.clinics);
+      loading.dismiss();
+      this.toastService.create("successfully added");
+      this.router.navigate(["/members/doctor/clinic"]).then(() => {window.location.reload();});
 
-      await this.clinicService.addClinic(data).subscribe(
-        res => {
-          if (res.IsSuccess) {
-            loading.dismiss();
-            this.toastService.create("successfully added");
-            this.router.navigate(["/members/doctor/clinic"]);
-          } else {
-            loading.dismiss();
-            this.toastService.create(res.Message, "danger");
-          }
-        },
-        err => {
-          loading.dismiss();
-          this.toastService.create(err, "danger");
-        }
-      );
+      // await this.clinicService.addClinic(data).subscribe(
+      //   res => {
+      //     if (res.IsSuccess) {
+      //       loading.dismiss();
+      //       this.toastService.create("successfully added");
+      //       this.router.navigate(["/members/doctor/clinic"]);
+      //     } else {
+      //       loading.dismiss();
+      //       this.toastService.create(res.Message, "danger");
+      //     }
+      //   },
+      //   err => {
+      //     loading.dismiss();
+      //     this.toastService.create(err, "danger");
+      //   }
+      // );
     }
   }
   setTimeValidatorsMonday() {

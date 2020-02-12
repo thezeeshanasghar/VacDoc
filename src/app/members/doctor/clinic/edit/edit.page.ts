@@ -158,7 +158,7 @@ export class EditPage implements OnInit {
           this.fg1.controls["PhoneNumber"].setValue(this.clinic.PhoneNumber);
           this.fg1.controls["Address"].setValue(this.clinic.Address);
           this.fg1.controls["ConsultationFee"].setValue(
-            this.clinic.ConsultationFee
+          this.clinic.ConsultationFee
           );
 
           // moment(clinicTiming.StartTime,"HH:mm" ).format( "YYYY-MM-DD HH:mm");
