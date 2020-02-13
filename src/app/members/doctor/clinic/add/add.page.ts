@@ -22,7 +22,7 @@ import * as moment from "moment";
 export class AddPage implements OnInit {
   fg1: FormGroup;
   fg2: FormGroup;
-  clinics: any ;
+  clinics: any;
   DoctorId: any;
   section: boolean = false;
   constructor(
@@ -39,10 +39,10 @@ export class AddPage implements OnInit {
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.DoctorId = val;
     });
-    
+
     this.storage.get(environment.CLINICS).then(clinics => {
       this.clinics = clinics;
-      });
+    });
     this.fg1 = this.formbuilder.group({
       DoctorId: [null],
       Name: [null],
@@ -170,282 +170,280 @@ export class AddPage implements OnInit {
     var ct = [];
     if (this.fg2.value.Monday) {
       if (this.fg2.value.MondayS1) {
-      this.fg2.value.Mstart = moment(
-        this.fg2.value.Mstart,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      this.fg2.value.Mend = moment(
-        this.fg2.value.Mend,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      let obj = {
-        Day: "Monday",
-        StartTime: this.fg2.value.Mstart,
-        EndTime: this.fg2.value.Mend,
-        IsOpen: true,
-        Session: 1
-      };
-      ct.push(obj);
-    } 
+        this.fg2.value.Mstart = moment(
+          this.fg2.value.Mstart,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        this.fg2.value.Mend = moment(
+          this.fg2.value.Mend,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        let obj = {
+          Day: "Monday",
+          StartTime: this.fg2.value.Mstart,
+          EndTime: this.fg2.value.Mend,
+          IsOpen: true,
+          Session: 1
+        };
+        ct.push(obj);
+      }
       // For Session 2
       if (this.fg2.value.MondayS2) {
-      this.fg2.value.Mstart2 = moment(
-        this.fg2.value.Mstart2,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      this.fg2.value.Mend2 = moment(
-        this.fg2.value.Mend2,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      let obj1 = {
-        Day: "Monday",
-        StartTime: this.fg2.value.Mstart2,
-        EndTime: this.fg2.value.Mend2,
-        IsOpen: true,
-        Session: 2
-      };
-      ct.push(obj1);
-    }
+        this.fg2.value.Mstart2 = moment(
+          this.fg2.value.Mstart2,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        this.fg2.value.Mend2 = moment(
+          this.fg2.value.Mend2,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        let obj1 = {
+          Day: "Monday",
+          StartTime: this.fg2.value.Mstart2,
+          EndTime: this.fg2.value.Mend2,
+          IsOpen: true,
+          Session: 2
+        };
+        ct.push(obj1);
+      }
     }
 
     if (this.fg2.value.Tuesday) {
       if (this.fg2.value.TuesdayS1) {
-      this.fg2.value.Tustart = moment(
-        this.fg2.value.Tustart,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      this.fg2.value.Tuend = moment(
-        this.fg2.value.Tuend,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      let obj = {
-        Day: "Tuesday",
-        StartTime: this.fg2.value.Tustart,
-        EndTime: this.fg2.value.Tuend,
-        IsOpen: true,
-        Session: 1
-      };
-      ct.push(obj);
-    }
-    // session 2
-    if (this.fg2.value.TuesdayS2) {
-      this.fg2.value.Tustart2 = moment(
-        this.fg2.value.Tustart2,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      this.fg2.value.Tuend2 = moment(
-        this.fg2.value.Tuend2,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      let obj = {
-        Day: "Tuesday",
-        StartTime: this.fg2.value.Tustart2,
-        EndTime: this.fg2.value.Tuend2,
-        IsOpen: true,
-        Session: 2
-      };
-      ct.push(obj);
-    }
-
+        this.fg2.value.Tustart = moment(
+          this.fg2.value.Tustart,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        this.fg2.value.Tuend = moment(
+          this.fg2.value.Tuend,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        let obj = {
+          Day: "Tuesday",
+          StartTime: this.fg2.value.Tustart,
+          EndTime: this.fg2.value.Tuend,
+          IsOpen: true,
+          Session: 1
+        };
+        ct.push(obj);
+      }
+      // session 2
+      if (this.fg2.value.TuesdayS2) {
+        this.fg2.value.Tustart2 = moment(
+          this.fg2.value.Tustart2,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        this.fg2.value.Tuend2 = moment(
+          this.fg2.value.Tuend2,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        let obj = {
+          Day: "Tuesday",
+          StartTime: this.fg2.value.Tustart2,
+          EndTime: this.fg2.value.Tuend2,
+          IsOpen: true,
+          Session: 2
+        };
+        ct.push(obj);
+      }
     }
 
     if (this.fg2.value.Wednesday) {
       if (this.fg2.value.WednesdayS1) {
-      this.fg2.value.Wstart = moment(
-        this.fg2.value.Wstart,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      this.fg2.value.Wend = moment(
-        this.fg2.value.Wend,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      let obj = {
-        Day: "Wednesday",
-        StartTime: this.fg2.value.Wstart,
-        EndTime: this.fg2.value.Wend,
-        IsOpen: true,
-        Session: 1
-      };
-      ct.push(obj);
-    }
-    // session 2
-    if (this.fg2.value.WednesdayS2) {
-      this.fg2.value.Wstart2 = moment(
-        this.fg2.value.Wstart2,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      this.fg2.value.Wend2 = moment(
-        this.fg2.value.Wend2,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      let obj = {
-        Day: "Wednesday",
-        StartTime: this.fg2.value.Wstart2,
-        EndTime: this.fg2.value.Wend2,
-        IsOpen: true,
-        Session: 2
-      };
-      ct.push(obj);
-    }
-
+        this.fg2.value.Wstart = moment(
+          this.fg2.value.Wstart,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        this.fg2.value.Wend = moment(
+          this.fg2.value.Wend,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        let obj = {
+          Day: "Wednesday",
+          StartTime: this.fg2.value.Wstart,
+          EndTime: this.fg2.value.Wend,
+          IsOpen: true,
+          Session: 1
+        };
+        ct.push(obj);
+      }
+      // session 2
+      if (this.fg2.value.WednesdayS2) {
+        this.fg2.value.Wstart2 = moment(
+          this.fg2.value.Wstart2,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        this.fg2.value.Wend2 = moment(
+          this.fg2.value.Wend2,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        let obj = {
+          Day: "Wednesday",
+          StartTime: this.fg2.value.Wstart2,
+          EndTime: this.fg2.value.Wend2,
+          IsOpen: true,
+          Session: 2
+        };
+        ct.push(obj);
+      }
     }
 
     if (this.fg2.value.Thursday) {
       if (this.fg2.value.ThursdayS1) {
-      this.fg2.value.Thstart = moment(
-        this.fg2.value.Thstart,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      this.fg2.value.Thend = moment(
-        this.fg2.value.Thend,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      let obj = {
-        Day: "Thursday",
-        StartTime: this.fg2.value.Thstart,
-        EndTime: this.fg2.value.Thend,
-        IsOpen: true,
-        Session: 1
-      };
-      ct.push(obj);
-    }
-    // session 2
-    if (this.fg2.value.ThursdayS2) {
-      this.fg2.value.Thstart2 = moment(
-        this.fg2.value.Thstart2,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      this.fg2.value.Thend2 = moment(
-        this.fg2.value.Thend2,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      let obj = {
-        Day: "Thursday",
-        StartTime: this.fg2.value.Thstart2,
-        EndTime: this.fg2.value.Thend2,
-        IsOpen: true,
-        Session: 2
-      };
-      ct.push(obj);
-    }
+        this.fg2.value.Thstart = moment(
+          this.fg2.value.Thstart,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        this.fg2.value.Thend = moment(
+          this.fg2.value.Thend,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        let obj = {
+          Day: "Thursday",
+          StartTime: this.fg2.value.Thstart,
+          EndTime: this.fg2.value.Thend,
+          IsOpen: true,
+          Session: 1
+        };
+        ct.push(obj);
+      }
+      // session 2
+      if (this.fg2.value.ThursdayS2) {
+        this.fg2.value.Thstart2 = moment(
+          this.fg2.value.Thstart2,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        this.fg2.value.Thend2 = moment(
+          this.fg2.value.Thend2,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        let obj = {
+          Day: "Thursday",
+          StartTime: this.fg2.value.Thstart2,
+          EndTime: this.fg2.value.Thend2,
+          IsOpen: true,
+          Session: 2
+        };
+        ct.push(obj);
+      }
     }
 
     if (this.fg2.value.Friday) {
       if (this.fg2.value.FridayS1) {
-      this.fg2.value.Fstart = moment(
-        this.fg2.value.Fstart,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      this.fg2.value.Fend = moment(
-        this.fg2.value.Fend,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      let obj = {
-        Day: "Friday",
-        StartTime: this.fg2.value.Fstart,
-        EndTime: this.fg2.value.Fend,
-        IsOpen: true,
-        Session: 1
-      };
-      ct.push(obj);
-    }
-// session
-    if (this.fg2.value.FridayS2) {
-      this.fg2.value.Fstart2 = moment(
-        this.fg2.value.Fstart2,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      this.fg2.value.Fend2 = moment(
-        this.fg2.value.Fend2,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      let obj = {
-        Day: "Friday",
-        StartTime: this.fg2.value.Fstart2,
-        EndTime: this.fg2.value.Fend2,
-        IsOpen: true,
-        Session: 2
-      };
-      ct.push(obj);
-    }
+        this.fg2.value.Fstart = moment(
+          this.fg2.value.Fstart,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        this.fg2.value.Fend = moment(
+          this.fg2.value.Fend,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        let obj = {
+          Day: "Friday",
+          StartTime: this.fg2.value.Fstart,
+          EndTime: this.fg2.value.Fend,
+          IsOpen: true,
+          Session: 1
+        };
+        ct.push(obj);
+      }
+      // session
+      if (this.fg2.value.FridayS2) {
+        this.fg2.value.Fstart2 = moment(
+          this.fg2.value.Fstart2,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        this.fg2.value.Fend2 = moment(
+          this.fg2.value.Fend2,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        let obj = {
+          Day: "Friday",
+          StartTime: this.fg2.value.Fstart2,
+          EndTime: this.fg2.value.Fend2,
+          IsOpen: true,
+          Session: 2
+        };
+        ct.push(obj);
+      }
     }
 
     if (this.fg2.value.Saturday) {
       if (this.fg2.value.SaturdayS1) {
-      this.fg2.value.Sastart = moment(
-        this.fg2.value.Sastart,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      this.fg2.value.Saend = moment(
-        this.fg2.value.Saend,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      let obj = {
-        Day: "Saturday",
-        StartTime: this.fg2.value.Sastart,
-        EndTime: this.fg2.value.Saend,
-        IsOpen: true,
-        Session: 1
-      };
-      ct.push(obj);
-    }
-    if (this.fg2.value.SaturdayS2) {
-      this.fg2.value.Sastart2 = moment(
-        this.fg2.value.Sastart2,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      this.fg2.value.Saend2 = moment(
-        this.fg2.value.Saend2,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      let obj = {
-        Day: "Saturday",
-        StartTime: this.fg2.value.Sastart2,
-        EndTime: this.fg2.value.Saend2,
-        IsOpen: true,
-        Session: 2
-      };
-      ct.push(obj);
-    }
+        this.fg2.value.Sastart = moment(
+          this.fg2.value.Sastart,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        this.fg2.value.Saend = moment(
+          this.fg2.value.Saend,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        let obj = {
+          Day: "Saturday",
+          StartTime: this.fg2.value.Sastart,
+          EndTime: this.fg2.value.Saend,
+          IsOpen: true,
+          Session: 1
+        };
+        ct.push(obj);
+      }
+      if (this.fg2.value.SaturdayS2) {
+        this.fg2.value.Sastart2 = moment(
+          this.fg2.value.Sastart2,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        this.fg2.value.Saend2 = moment(
+          this.fg2.value.Saend2,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        let obj = {
+          Day: "Saturday",
+          StartTime: this.fg2.value.Sastart2,
+          EndTime: this.fg2.value.Saend2,
+          IsOpen: true,
+          Session: 2
+        };
+        ct.push(obj);
+      }
     }
 
     if (this.fg2.value.Sunday) {
       if (this.fg2.value.SundayS1) {
-      this.fg2.value.Sustart = moment(
-        this.fg2.value.Sustart,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      this.fg2.value.Suend = moment(
-        this.fg2.value.Suend,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      let obj = {
-        Day: "Sunday",
-        StartTime: this.fg2.value.Sustart,
-        EndTime: this.fg2.value.Suend,
-        IsOpen: true,
-        Session: 1
-      };
-      ct.push(obj);
-    }
-    if (this.fg2.value.SundayS2) {
-      this.fg2.value.Sustart2 = moment(
-        this.fg2.value.Sustart2,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      this.fg2.value.Suend2 = moment(
-        this.fg2.value.Suend2,
-        "YYYY-MM-DD HH:mm"
-      ).format("HH:mm");
-      let obj = {
-        Day: "Sunday",
-        StartTime: this.fg2.value.Sustart2,
-        EndTime: this.fg2.value.Suend2,
-        IsOpen: true,
-        Session: 2
-      };
-      ct.push(obj);
-    }
+        this.fg2.value.Sustart = moment(
+          this.fg2.value.Sustart,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        this.fg2.value.Suend = moment(
+          this.fg2.value.Suend,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        let obj = {
+          Day: "Sunday",
+          StartTime: this.fg2.value.Sustart,
+          EndTime: this.fg2.value.Suend,
+          IsOpen: true,
+          Session: 1
+        };
+        ct.push(obj);
+      }
+      if (this.fg2.value.SundayS2) {
+        this.fg2.value.Sustart2 = moment(
+          this.fg2.value.Sustart2,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        this.fg2.value.Suend2 = moment(
+          this.fg2.value.Suend2,
+          "YYYY-MM-DD HH:mm"
+        ).format("HH:mm");
+        let obj = {
+          Day: "Sunday",
+          StartTime: this.fg2.value.Sustart2,
+          EndTime: this.fg2.value.Suend2,
+          IsOpen: true,
+          Session: 2
+        };
+        ct.push(obj);
+      }
     }
     this.fg1.value.ClinicTimings = ct;
 
@@ -454,7 +452,6 @@ export class AddPage implements OnInit {
 
   async addNewClinic(data) {
     {
-
       const loading = await this.loadingController.create({
         message: "Loading"
       });
@@ -462,10 +459,12 @@ export class AddPage implements OnInit {
       this.clinics.push(data);
       console.log(data);
       console.log(this.clinics);
-     await this.storage.set(environment.CLINICS, this.clinics);
+      await this.storage.set(environment.CLINICS, this.clinics);
       loading.dismiss();
       this.toastService.create("successfully added");
-      this.router.navigate(["/members/doctor/clinic"]).then(() => {window.location.reload();});
+      this.router.navigate(["/members/doctor/clinic"]).then(() => {
+        window.location.reload();
+      });
 
       // await this.clinicService.addClinic(data).subscribe(
       //   res => {
@@ -499,7 +498,7 @@ export class AddPage implements OnInit {
     } else {
       this.fg2.controls["Mstart2"].setErrors(null);
     }
-  
+
     if (this.fg2.value.MondayS1) {
       const MStart1 = Date.parse(this.fg2.value.Mstart);
       const MEnd1 = Date.parse(this.fg2.value.Mend);
@@ -511,7 +510,7 @@ export class AddPage implements OnInit {
         this.fg2.controls["Mstart"].setErrors(null);
       }
     }
-  
+
     if (this.fg2.value.MondayS2) {
       const MStart2 = Date.parse(this.fg2.value.Mstart2);
       const MEnd2 = Date.parse(this.fg2.value.Mend2);
@@ -600,7 +599,7 @@ export class AddPage implements OnInit {
     }
   }
   setTimeValidatorsThu() {
-    if ((this.fg2.value.ThursdayS1) && (this.fg2.value.ThursdayS2)) {
+    if (this.fg2.value.ThursdayS1 && this.fg2.value.ThursdayS2) {
       const TuEnd1 = Date.parse(this.fg2.value.Thend);
       const TuStart2 = Date.parse(this.fg2.value.Thstart2);
       if (TuStart2 <= TuEnd1) {
@@ -744,7 +743,6 @@ export class AddPage implements OnInit {
       }
     }
   }
- 
 
   validation_messages = {
     Name: [{ type: "required", message: "Name is required." }],
@@ -765,10 +763,12 @@ export class AddPage implements OnInit {
         message: "Your Consultation Fee must contain positive number"
       }
     ],
-    Mstart2:[{type: "required" , message:"Session 2 Must Start after Session 1"}],
+    Mstart2: [
+      { type: "required", message: "Session 2 Must Start after Session 1" }
+    ],
     Mstart: [
       { type: "required", message: "End Time Must be after Start Time" }
     ],
-    Mend: [{ type: "required", message: "End Time Must be after Start Time" }],
+    Mend: [{ type: "required", message: "End Time Must be after Start Time" }]
   };
 }
