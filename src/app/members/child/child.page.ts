@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment.prod';
 import { AlertService } from 'src/app/shared/alert.service';
 import { Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { CallNumber } from '@ionic-native/call-number/ngx';
+// import { CallNumber } from '@ionic-native/call-number/ngx';
 
 @Component({
   selector: 'app-child',
