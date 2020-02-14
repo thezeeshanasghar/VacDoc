@@ -16,6 +16,9 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { SMS } from '@ionic-native/sms/ngx';
+import { TitleCasePipe } from '@angular/common';
 
 @NgModule({
   declarations: [AppComponent],
@@ -36,7 +39,11 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
     Geolocation,
     FileOpener,
     FileTransfer,
-    DocumentViewer
+    DocumentViewer,
+    SMS,
+    AndroidPermissions,
+    TitleCasePipe
+
   ],
   bootstrap: [AppComponent]
 })

@@ -45,7 +45,7 @@ export class Step2Page implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.ionViewDidEnte();
+    //this.ionViewDidEnte();
     // this.hello();
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.DoctorId = val;
@@ -133,6 +133,7 @@ export class Step2Page implements OnInit {
       Suend: [null],
       Suend2: [null]
     });
+    this.ionViewDidEnte();
   }
 
   hello(): void {

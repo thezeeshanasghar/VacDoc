@@ -15,6 +15,9 @@ import { Router } from "@angular/router";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { ClinicService } from "src/app/services/clinic.service";
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { SMS } from '@ionic-native/sms/ngx';
+import { TitleCasePipe } from '@angular/common';
 
 @Component({
   selector: "app-add",
@@ -40,7 +43,10 @@ export class AddPage implements OnInit {
     private toastService: ToastService,
     private router: Router,
     private storage: Storage,
-    private clinicService: ClinicService
+    private clinicService: ClinicService,
+    private androidPermissions: AndroidPermissions ,
+    private sms: SMS,
+    private titlecasePipe: TitleCasePipe
   ) {}
 
   ngOnInit() {
@@ -192,6 +198,24 @@ export class AddPage implements OnInit {
     await this.childService.addChild(data).subscribe(
       res => {
         if (res.IsSuccess) {
+          var sms1 = "Mr. " + res.ResponseData.FatherName + "\n";
+          if (res.ResponseData.Gender == "Boy")
+              sms1 += "Your Son " + this.titlecasePipe.transform(res.ResponseData.Name);
+
+          if (res.ResponseData.Gender == "Girl")
+              sms1 += "Your Daughter " + this.titlecasePipe.transform(res.ResponseData.Name);
+
+        //  sms1 += " has been registered with Dr. " + this.titlecasePipe.transform(res.ResponseData.Clinic.Doctor.FirstName) + " " + this.titlecasePipe.transform(res.ResponseData.Clinic.Doctor.LastName);
+        //  sms1 += " at " + res.ResponseData.Clinic.Name.Replace("&", "and") + "\n";
+
+          // sendsms 1
+          this.sendsms(res.ResponseData.MobileNumber , sms1);
+
+           var sms2 = "Id: " + res.ResponseData.MobileNumber + "\nPassword: " + res.ResponseData.Password;
+          //       + "\nClinic: " + res.ResponseData.Clinic.PhoneNumber + "\nhttps://vaccs.io/";
+          // send sms 2
+          this.sendsms(res.ResponseData.MobileNumber , sms2);
+         
           loading.dismiss();
           this.toastService.create("successfully added");
           this.router.navigate(["/members/child"]);
@@ -207,6 +231,29 @@ export class AddPage implements OnInit {
         this.toastService.create(err, "danger");
       }
     );
+  }
+  sendsms(number , message)
+  {
+    console.log(number + message);
+    this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS).then(
+      result => {
+        console.log('Has permission?',result.hasPermission);
+        if(result.hasPermission){
+          this.sms.send('+92' + number, message)
+          .then(()=>{
+          console.log("The Message is sent");
+          }).catch((error)=>{
+          console.log("The Message is Failed",error);
+          });
+        }
+        else {
+        this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.SEND_SMS);
+        this.sms.send('+92' + number, message);
+        }
+      },
+      err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.SEND_SMS)
+    );
+    console.log('success');
   }
 
   validation_messages = {

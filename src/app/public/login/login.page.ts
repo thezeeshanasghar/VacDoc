@@ -56,6 +56,7 @@ export class LoginPage implements OnInit {
     await this.loginservice.checkAuth(this.fg.value)
       .subscribe(res => {
         if (res.IsSuccess) {
+          this.storage.set(environment.DOCTOR, res.ResponseData);
           this.storage.set(environment.DOCTOR_Id, res.ResponseData.DoctorId);
           this.storage.set(environment.USER_Id, res.ResponseData.Id);
           let state = true;

@@ -12,6 +12,9 @@ import { SignupService } from "src/app/services/signup.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { SMS } from '@ionic-native/sms/ngx';
+import { TitleCasePipe } from '@angular/common';
 
 //https://www.joshmorony.com/dynamic-infinite-input-fields-in-an-ionic-application/
 
@@ -32,7 +35,10 @@ export class Step3Page implements OnInit {
     private formBuilder: FormBuilder,
     private router: Router,
     private storage: Storage,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private androidPermissions: AndroidPermissions ,
+    private sms: SMS,
+    private titlecasePipe: TitleCasePipe
   ) {}
   ngOnInit() {
     this.fg = this.formBuilder.group({});
@@ -89,6 +95,16 @@ export class Step3Page implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.addDoctorSchedule(res.ResponseData.Id);
+          // create sms
+          // {
+          //   var sms = "Hi Dr. " + this.titlecasePipe.transform(res.ResponseData.FirstName) + " " + this.titlecasePipe.transform(res.ResponseData.LastName) + " \n"
+          //   + "You are registered at Vaccs.io\n\n"
+          //   + "Your account credentials are: \n"
+          //   + "Id/Mobile Number: " + res.ResponseData.MobileNumber + "\n"
+          //   + "Password: " + res.ResponseData.Password + "\n"
+          //   + "https://vaccs.io/";
+          // }
+
           loading.dismiss();
         } else {
           loading.dismiss();
@@ -117,6 +133,30 @@ export class Step3Page implements OnInit {
         this.toastService.create(err, "danger");
       }
     );
+  }
+
+  sendsms(number , message)
+  {
+    console.log(number + message);
+    this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS).then(
+      result => {
+        console.log('Has permission?',result.hasPermission);
+        if(result.hasPermission){
+          this.sms.send('+92' + number, message)
+          .then(()=>{
+          alert("The Message is sent");
+          }).catch((error)=>{
+          alert("The Message is Failed" + error);
+          });
+        }
+        else {
+        this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.SEND_SMS);
+        this.sms.send('+92' + number, message);
+        }
+      },
+      err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.SEND_SMS)
+    );
+    console.log('success');
   }
 
   checkScheduleValidity(minage,key) {
