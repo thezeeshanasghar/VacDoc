@@ -1,8 +1,18 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-buttons slot="start">
+    <!-- <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
-    </ion-buttons>
+    </ion-buttons> -->
+    <ion-buttons slot="end">     
+        <ion-grid>
+          <ion-row>
+            <ion-col><ion-item color ="primary" [routerLink]="['../../child/add']"><ion-icon slot="end" name="person-add" size="large" > </ion-icon></ion-item></ion-col>
+            <ion-col><ion-item color ="primary"><ion-icon slot="end" name="alert" size="large" [routerLink]="['../../alert']"> </ion-icon></ion-item></ion-col>
+            <ion-col><ion-item color ="primary"><ion-icon slot="end" name="medkit" size="large" [routerLink]="['../../doctor/clinic']"> </ion-icon></ion-item></ion-col>
+            <ion-col><ion-item color ="primary"><ion-menu-button></ion-menu-button></ion-item></ion-col>
+          </ion-row>
+          </ion-grid>
+        </ion-buttons>
     <ion-title>Add Clinic</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -65,12 +75,12 @@
       <ion-card>
         <ion-item>
           <ion-card-title>Monday</ion-card-title>
-          <ion-toggle #Monday id="Monday" name="Monday" slot="end" color="primary" formControlName="Monday">
+          <ion-toggle #Monday id="Monday" name="Monday" slot="end" color="primary" formControlName="Monday" (ionChange) = "setTimeValidatorsMonday()">
           </ion-toggle>
         </ion-item>
         <ion-card-content *ngIf="Monday.checked==true">
           <ion-label>Session:1 </ion-label>
-          <ion-toggle #MondayS1 id="MondayS1" name="MondayS1" slot="end" color="primary" formControlName="MondayS1"></ion-toggle>
+          <ion-toggle #MondayS1 id="MondayS1" name="MondayS1" slot="end" color="primary" formControlName="MondayS1" (click) = "setTimeValidatorsMonday()"></ion-toggle>
           <ion-item *ngIf="MondayS1.checked==true" lines="none" no-padding>
 
             <ion-item lines="none" no-padding>
@@ -86,7 +96,7 @@
             </ion-item>
           </ion-item>
           <ion-label>Session:2 </ion-label>
-          <ion-toggle #MondayS2 id="MondayS2" name="MondayS2" slot="end" color="primary" formControlName="MondayS2"></ion-toggle>
+          <ion-toggle #MondayS2 id="MondayS2" name="MondayS2" slot="end" color="primary" formControlName="MondayS2" (click) = "setTimeValidatorsMonday()"></ion-toggle>
           <ion-item *ngIf="MondayS2.checked==true" lines="none" no-padding>
 
             <ion-item lines="none" no-padding>

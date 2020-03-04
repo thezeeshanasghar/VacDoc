@@ -39,10 +39,12 @@ export class AddPage implements OnInit {
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.DoctorId = val;
     });
+    // this.storage.get(environment.CLINICS).then(clinics => {
+    //   this.clinics = clinics;
+    //   console.log(this.clinicService.clinics);
+    // console.log(this.clinics);
+    // });
 
-    this.storage.get(environment.CLINICS).then(clinics => {
-      this.clinics = clinics;
-    });
     this.fg1 = this.formbuilder.group({
       DoctorId: [null],
       Name: [null],
@@ -70,7 +72,7 @@ export class AddPage implements OnInit {
       childrenCount: 0
     });
 
-    this.fg2 = this.formbuilder.group({
+    this.fg2 =  this.formbuilder.group({
       Monday: [true],
       MondayS1: [true],
       MondayS2: [true],
@@ -127,6 +129,7 @@ export class AddPage implements OnInit {
       Suend: [null],
       Suend2: [null]
     });
+    
   }
   setAllDaysValueStrat1() {
     this.fg2.controls["Tustart"].setValue(this.fg2.value.Mstart);
@@ -456,14 +459,14 @@ export class AddPage implements OnInit {
         message: "Loading"
       });
       await loading.present();
-      this.clinics.push(data);
+      this.clinicService.clinics.push(data);
       console.log(data);
-      console.log(this.clinics);
-      await this.storage.set(environment.CLINICS, this.clinics);
+      console.log(this.clinicService.clinics);
+      await this.storage.set(environment.CLINICS, this.clinicService.clinics);
       loading.dismiss();
       this.toastService.create("successfully added");
       this.router.navigate(["/members/doctor/clinic"]).then(() => {
-        window.location.reload();
+        //   window.location.reload();
       });
 
       // await this.clinicService.addClinic(data).subscribe(
@@ -485,45 +488,55 @@ export class AddPage implements OnInit {
     }
   }
   setTimeValidatorsMonday() {
-    if (this.fg2.value.MondayS1 && this.fg2.value.MondayS2) {
-      const MEnd1 = Date.parse(this.fg2.value.Mend);
-      const MStart2 = Date.parse(this.fg2.value.Mstart2);
-      if (MStart2 <= MEnd1) {
-        console.log(5);
-        //Mstart2c.setValidators([Validators.maxLength(0)]);
-        this.fg2.controls["Mstart2"].setErrors({ required: true });
+    if (this.fg2.value.Monday) {
+      if (this.fg2.value.MondayS1 && this.fg2.value.MondayS2) {
+        const MEnd1 = Date.parse(this.fg2.value.Mend);
+        const MStart2 = Date.parse(this.fg2.value.Mstart2);
+        if (MStart2 <= MEnd1) {
+          console.log(5);
+          //Mstart2c.setValidators([Validators.maxLength(0)]);
+          this.fg2.controls["Mstart2"].setErrors({ required: true });
+        } else {
+          this.fg2.controls["Mstart2"].setErrors(null);
+        }
       } else {
         this.fg2.controls["Mstart2"].setErrors(null);
       }
-    } else {
-      this.fg2.controls["Mstart2"].setErrors(null);
-    }
 
-    if (this.fg2.value.MondayS1) {
-      const MStart1 = Date.parse(this.fg2.value.Mstart);
-      const MEnd1 = Date.parse(this.fg2.value.Mend);
-      if (MEnd1 <= MStart1) {
-        console.log(5);
-        //Mstart2c.setValidators([Validators.maxLength(0)]);
-        this.fg2.controls["Mstart"].setErrors({ required: true });
-      } else {
-        this.fg2.controls["Mstart"].setErrors(null);
-      }
-    }
+      if (this.fg2.value.MondayS1) {
+        const MStart1 = Date.parse(this.fg2.value.Mstart);
+        const MEnd1 = Date.parse(this.fg2.value.Mend);
+        // if (!MStart1 || !MEnd1)
+        //   this.fg2.controls["Mend2"].setErrors({ required: true });
 
-    if (this.fg2.value.MondayS2) {
-      const MStart2 = Date.parse(this.fg2.value.Mstart2);
-      const MEnd2 = Date.parse(this.fg2.value.Mend2);
-      if (MEnd2 <= MStart2) {
-        console.log(5);
-        //Mstart2c.setValidators([Validators.maxLength(0)]);
-        this.fg2.controls["Mend"].setErrors({ required: true });
-      } else {
-        this.fg2.controls["Mend"].setErrors(null);
-      }
+        if (MEnd1 <= MStart1) {
+          console.log(5);
+          //Mstart2c.setValidators([Validators.maxLength(0)]);
+          this.fg2.controls["Mstart"].setErrors({ required: true });
+        } else {
+          this.fg2.controls["Mstart"].setErrors(null);
+        }
+      } else this.fg2.controls["Mend2"].setErrors(null);
+
+      if (this.fg2.value.MondayS2) {
+        const MStart2 = Date.parse(this.fg2.value.Mstart2);
+        const MEnd2 = Date.parse(this.fg2.value.Mend2);
+        // if (!MStart2 || !MEnd2)
+        //   this.fg2.controls["Mend2"].setErrors({ required: true });
+        if (MEnd2 <= MStart2) {
+          console.log(5);
+          //Mstart2c.setValidators([Validators.maxLength(0)]);
+          this.fg2.controls["Mend"].setErrors({ required: true });
+        } else {
+          this.fg2.controls["Mend"].setErrors(null);
+        }
+      } else this.fg2.controls["Mend2"].setErrors(null);
     }
+    else 
+     this.fg2.controls["Mend2"].setErrors(null);
   }
   setTimeValidatorsTuesday() {
+    if (this.fg2.value.Tuesday) {
     if (this.fg2.value.TuesdayS1 && this.fg2.value.TuesdayS2) {
       const TuEnd1 = Date.parse(this.fg2.value.Tuend);
       const TuStart2 = Date.parse(this.fg2.value.Tustart2);
@@ -561,7 +574,10 @@ export class AddPage implements OnInit {
       }
     }
   }
+  }
   setTimeValidatorsWed() {
+    if (this.fg2.value.Wednesday)
+    {
     if (this.fg2.value.WednesdayS1 && this.fg2.value.WednesdayS2) {
       const TuEnd1 = Date.parse(this.fg2.value.Wend);
       const TuStart2 = Date.parse(this.fg2.value.Wstart2);
@@ -598,7 +614,10 @@ export class AddPage implements OnInit {
       }
     }
   }
+  }
   setTimeValidatorsThu() {
+    if (this.fg2.value.Thursday)
+    {
     if (this.fg2.value.ThursdayS1 && this.fg2.value.ThursdayS2) {
       const TuEnd1 = Date.parse(this.fg2.value.Thend);
       const TuStart2 = Date.parse(this.fg2.value.Thstart2);
@@ -635,7 +654,10 @@ export class AddPage implements OnInit {
       }
     }
   }
+  }
   setTimeValidatorsFri() {
+    if (this.fg2.value.Friday)
+    {
     if (this.fg2.value.FridayS1 && this.fg2.value.FridayS2) {
       const TuEnd1 = Date.parse(this.fg2.value.Fend);
       const TuStart2 = Date.parse(this.fg2.value.Fstart2);
@@ -671,7 +693,10 @@ export class AddPage implements OnInit {
       }
     }
   }
+  }
   setTimeValidatorsSat() {
+    if (this.fg2.value.Saturday)
+    {
     if (this.fg2.value.SaturdayS1 && this.fg2.value.SaturdayS2) {
       const TuEnd1 = Date.parse(this.fg2.value.Saend);
       const TuStart2 = Date.parse(this.fg2.value.Sastart2);
@@ -708,7 +733,10 @@ export class AddPage implements OnInit {
       }
     }
   }
+  }
   setTimeValidatorsSun() {
+    if (this.fg2.value.Sunday)
+    {
     if (this.fg2.value.SundayS1 && this.fg2.value.SundayS2) {
       const TuEnd1 = Date.parse(this.fg2.value.Suend);
       const TuStart2 = Date.parse(this.fg2.value.Sustart2);
@@ -742,6 +770,7 @@ export class AddPage implements OnInit {
         this.fg2.controls["Suend"].setErrors(null);
       }
     }
+  }
   }
 
   validation_messages = {

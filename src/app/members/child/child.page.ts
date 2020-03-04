@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment.prod';
 import { AlertService } from 'src/app/shared/alert.service';
 import { Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
-// import { CallNumber } from '@ionic-native/call-number/ngx';
+import { CallNumber } from '@ionic-native/call-number/ngx';
 
 @Component({
   selector: 'app-child',
@@ -28,7 +28,7 @@ export class ChildPage {
     private toastService: ToastService,
     private storage: Storage,
     private alertService: AlertService,
-  //  public callNumber: CallNumber
+    private callNumber: CallNumber
   ) {
     this.fg = this.formBuilder.group({
       Name: [null],
@@ -103,12 +103,10 @@ export class ChildPage {
     )
   }
 
-  // callFunction()
-  // {
-  //   this.callNumber.callNumber('3143041544', true)
-  //   .then(res => console.log('Launched dialer!', res))
-  //   .catch(err => console.log('Error launching dialer', err));
-  // }
- 
-
+  callFunction(celnumber)
+  {
+    this.callNumber.callNumber(0 + celnumber, true)
+    .then(res => console.log('Launched dialer!', res))
+    .catch(err => console.log('Error launching dialer', err));
+  }
 }

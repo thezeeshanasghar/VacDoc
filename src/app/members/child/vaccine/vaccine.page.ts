@@ -314,6 +314,33 @@ export class VaccinePage {
     });
   }
 
+  async UnfillVaccine(id) {
+    console.log(5);
+    const loading = await this.loadingController.create({
+      message: 'Loading'
+    });
+    await loading.present();
+    let data = {
+      Id: id,
+      IsDone: false,
+    }
+    await this.vaccineService.UnfillChildVaccine(data).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          this.toastService.create('Succfully Update');
+          loading.dismiss();
+        }
+        else {
+          loading.dismiss();
+          this.toastService.create(res.Message, 'danger');
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, 'danger');
+      }
+    );
+  }
   // getprint(id)
   // {
   //   this.vaccineService.getscheduleprint(id).subscribe(

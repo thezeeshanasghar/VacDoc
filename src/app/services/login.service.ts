@@ -3,7 +3,7 @@ import { BaseService } from './base.service';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError,map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +30,13 @@ export class LoginService extends BaseService {
       .pipe(
         catchError(this.handleError)
       );
+  }
+  getDoctorProfile(userId: number): Observable<any> {
+    const url = `${environment.BASE_URL}doctor/user/${userId}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
   }
 
   forgotPassword(data): Observable<any> {

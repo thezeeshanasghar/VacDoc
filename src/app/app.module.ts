@@ -19,6 +19,7 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { SMS } from '@ionic-native/sms/ngx';
 import { TitleCasePipe } from '@angular/common';
+import { CallNumber } from '@ionic-native/call-number/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -42,7 +43,8 @@ import { TitleCasePipe } from '@angular/common';
     DocumentViewer,
     SMS,
     AndroidPermissions,
-    TitleCasePipe
+    TitleCasePipe,
+    CallNumber
 
   ],
   bootstrap: [AppComponent]

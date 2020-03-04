@@ -22,6 +22,7 @@ export class FillPage implements OnInit {
   vaccineData: any;
   brandName: any;
   Date: any;
+  todaydate: any;
   constructor(
     public loadingController: LoadingController,
     private formBuilder: FormBuilder,
@@ -46,8 +47,9 @@ export class FillPage implements OnInit {
       'BrandId': [null],
       'GivenDate': [null],
     });
-
     this.getVaccination();
+    this.todaydate = new Date();
+    this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format("YYYY-MM-DD");
   }
 
   async getVaccination() {

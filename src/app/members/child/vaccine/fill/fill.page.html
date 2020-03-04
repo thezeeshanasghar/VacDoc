@@ -22,11 +22,14 @@
       <ion-label color="primary" position="floating">OFC</ion-label>
       <ion-input type="number" placeholder="OFC" formControlName="Circle"></ion-input>
     </ion-item>
-    <ion-item>
+    <!-- <ion-item>
       <ion-label color="primary" position="floating">Disease</ion-label>
       <ion-input type="text" placeholder="Disease" ></ion-input>
-    </ion-item>
-
+    </ion-item> -->
+            <ion-item>
+              <ion-label color="primary">Disease</ion-label>
+              <ion-radio></ion-radio>
+            </ion-item>
     <ion-item>
       <ion-label>Brands</ion-label>
       <ion-select formControlName="BrandId">
@@ -35,7 +38,7 @@
     </ion-item>
 
     <ion-item>
-      <ion-datetime picker-format="DD-MM-YYYY" value="{{Date}}" formControlName="GivenDate"></ion-datetime>
+      <ion-datetime picker-format="DD-MM-YYYY" value="{{Date}}" formControlName="GivenDate" max = "{{todaydate}}"></ion-datetime>
     </ion-item>
 
     <ion-button (click)="fillVaccine()">Submit</ion-button>

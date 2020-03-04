@@ -34,12 +34,13 @@ export class AddPage implements OnInit {
   clinics: any;
   todaydate: any;
   gender: any;
+  City: any;
 
   constructor(
     public loadingController: LoadingController,
     private formBuilder: FormBuilder,
     private vaccineService: VaccineService,
-    private childService: ChildService,
+    public childService: ChildService,
     private toastService: ToastService,
     private router: Router,
     private storage: Storage,
@@ -61,7 +62,7 @@ export class AddPage implements OnInit {
       Email: new FormControl(
         "",
         Validators.compose([
-          Validators.required,
+         // Validators.required,
           Validators.pattern(
             "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
           )
@@ -95,6 +96,17 @@ export class AddPage implements OnInit {
     this.storage.get(environment.CLINIC_Id).then(val => {
       this.clinicId = val;
     });
+    
+    this.storage.get(environment.CITY).then(val => {
+      this.City = val;
+    });
+    // this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS).then(
+    //   result => {
+    //     if(!result.hasPermission){
+    //       this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.SEND_SMS);
+    //     }
+    //   }
+    // );
   }
 
   moveNextStep() {
@@ -193,7 +205,8 @@ export class AddPage implements OnInit {
       message: "loading"
     });
     await loading.present();
-
+    let str = this.fg1.value.PreferredDayOfWeek;
+    this.fg1.value.PreferredDayOfWeek = str.toString();
     this.fg1.value.ClinicId = this.clinicId;
     await this.childService.addChild(data).subscribe(
       res => {
@@ -255,14 +268,18 @@ export class AddPage implements OnInit {
     );
     console.log('success');
   }
+  setCity(city)
+  {
+    this.storage.set(environment.CITY, city);
+  }
 
   validation_messages = {
     name: [{ type: "required", message: "Name is required." }],
     fatherName: [{ type: "required", message: "Father name is required." }],
-    email: [
-      { type: "required", message: "Email is required." },
-      { type: "pattern", message: "Please enter a valid email." }
-    ],
+    // email: [
+    //   { type: "required", message: "Email is required." },
+    //   { type: "pattern", message: "Please enter a valid email." }
+    // ],
     DOB: [{ type: "required", message: "Date of Birth is required." }],
     mobileNumber: [
       {

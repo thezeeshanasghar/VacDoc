@@ -21,6 +21,7 @@
     "@angular/platform-browser-dynamic": "^7.2.2",
     "@angular/router": "^7.2.2",
     "@ionic-native/android-permissions": "^5.6.0",
+    "@ionic-native/call-number": "^5.22.0",
     "@ionic-native/core": "^5.0.0",
     "@ionic-native/document-viewer": "^5.2.0",
     "@ionic-native/file": "^5.2.0",
@@ -33,6 +34,7 @@
     "@ionic-native/status-bar": "^5.0.0",
     "@ionic/angular": "^4.1.0",
     "@ionic/storage": "^2.2.0",
+    "call-number": "^1.0.1",
     "cordova-android": "8.0.0",
     "cordova-browser": "5.0.4",
     "cordova-plugin-android-permissions": "1.0.0",
@@ -70,6 +72,7 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~12.0.0",
     "codelyzer": "~4.5.0",
+    "cordova-plugin-sms": "^1.0.5",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~4.1.0",
@@ -101,7 +104,9 @@
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
       "cordova-plugin-android-permissions": {},
-      "cordova-sms-plugin": {}
+      "cordova-sms-plugin": {},
+      "cordova-plugin-sms": {},
+      "mx.ferreyra.callnumber": {}
     },
     "platforms": [
       "android",

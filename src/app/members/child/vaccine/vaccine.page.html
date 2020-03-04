@@ -21,7 +21,7 @@
           </ion-img>
 
           <ion-img *ngIf="!checkVaccineIsDon(item.value)" style="height: 15px;display: inline-block;"
-            src="../../assets/injectionFilled.png"></ion-img>
+            src="../../assets/injectionFilled.png" ></ion-img>
 
           <ion-icon color="primary" name="calendar" (click)="picker.open()">
             <ion-datetime (ionChange)="updateBulkDate($event, item.value[0].Id)" #picker picker-format="DD-MM-YYYY">
@@ -45,7 +45,7 @@
             </ion-icon>
             <ion-img *ngIf="v.IsDone==false" style="height: 30px;" src="../../assets/injectionEmpty.png"
               routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}"></ion-img>
-            <ion-img *ngIf="v.IsDone==true" style="height: 30px;" src="../../assets/injectionFilled.png">
+            <ion-img *ngIf="v.IsDone==true" style="height: 30px;" src="../../assets/injectionFilled.png" (click) ="UnfillVaccine(v.Id)">
             </ion-img>
           </ion-item>
         </div>
