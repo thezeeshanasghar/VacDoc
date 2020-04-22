@@ -5,6 +5,7 @@ import { ToastService } from "src/app/shared/toast.service";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { AndroidPermissions } from "@ionic-native/android-permissions/ngx";
+import { CallNumber } from '@ionic-native/call-number/ngx';
 declare var SMS: any;
 @Component({
   selector: "app-vaccine-alert",
@@ -25,7 +26,8 @@ export class VaccineAlertPage implements OnInit {
     private alertService: AlertService,
     private toastService: ToastService,
     private storage: Storage,
-    private androidPermissions: AndroidPermissions
+    private androidPermissions: AndroidPermissions,
+    private callNumber: CallNumber
   ) {}
 
   ngOnInit() {
@@ -147,5 +149,13 @@ export class VaccineAlertPage implements OnInit {
         }
       );
     }
+  }
+
+  callFunction(celnumber)
+  {
+    console.log(celnumber);
+    this.callNumber.callNumber(0 + celnumber, true)
+    .then(res => console.log('Launched dialer!', res))
+    .catch(err => console.log('Error launching dialer', err));
   }
 }

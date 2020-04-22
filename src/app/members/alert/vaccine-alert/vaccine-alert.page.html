@@ -21,7 +21,7 @@
       <ion-col>
         <ion-item>
           <ion-label>{{child.Child.Name}}</ion-label>
-          <ion-icon slot="end" color="primary" name="call" routerLink="/members/child/edit/"></ion-icon>
+          <ion-icon slot="end" color="primary" name="call" (click)="callFunction(child.Child.User.MobileNumber)"></ion-icon>
           <ion-icon slot="end" color="primary" name="mail" (click)="sendSMS([child])">
           </ion-icon>
         </ion-item>
