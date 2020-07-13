@@ -4,6 +4,9 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Messages</ion-title>
+    <ion-title *ngIf="clinicService.OnlineClinic" slot="end">
+      {{clinicService.OnlineClinic.Name}}
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 

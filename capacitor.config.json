@@ -1,0 +1,8 @@
+{
+  "appId": "vacdoc.bitforceapps",
+  "appName": "vacdoc",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www",
+  "cordova": {}
+}

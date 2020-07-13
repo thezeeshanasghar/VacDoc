@@ -54,6 +54,13 @@ export class VaccineService extends BaseService {
         catchError(this.handleError)
       );
   }
+  UnfillChildVaccine(data): Observable<any> {
+    const url = `${this.API_VACCINE}schedule/child-schedule`;
+    return this.http.put(url, data, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
   // getscheduleprint(id)
   // {
   //   const url = `${this.API_VACCINE}child/${id}/Download-Schedule-PDF`;

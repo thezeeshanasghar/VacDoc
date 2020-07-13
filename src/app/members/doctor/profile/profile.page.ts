@@ -5,7 +5,7 @@ import { ToastService } from "src/app/shared/toast.service";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { FormGroup, FormBuilder, FormControl, Validators } from "@angular/forms";
-import { FileUploader, FileLikeObject } from 'ng2-file-upload';
+//import { FileUploader, FileLikeObject } from 'ng2-file-upload';
 import { concat } from 'rxjs';
 import { UploadService } from 'src/app/services/upload.service';
 
@@ -19,8 +19,8 @@ export class ProfilePage implements OnInit {
   doctorData: any;
   DocotrId: any;
 
-  public profileUploader: FileUploader = new FileUploader({});
-  public signatureUploader: FileUploader = new FileUploader({});
+  // public profileUploader: FileUploader = new FileUploader({});
+  // public signatureUploader: FileUploader = new FileUploader({});
 
   constructor(
     public loadingController: LoadingController,
@@ -122,10 +122,10 @@ export class ProfilePage implements OnInit {
         res => {
           if (res.IsSuccess) {
             let formData = new FormData();
-            var file1 = this.profileUploader.queue.pop().file;
-            var file2 = this.signatureUploader.queue.pop().file;
-            formData.append('ProfileImage', file1.rawFile, file1.name);
-            formData.append('SignatureImage', file2.rawFile, file2.name);
+            // var file1 = this.profileUploader.queue.pop().file;
+            // var file2 = this.signatureUploader.queue.pop().file;
+            // formData.append('ProfileImage', file1.rawFile, file1.name);
+            // formData.append('SignatureImage', file2.rawFile, file2.name);
             this.uploadService.uploadFormData(this.DocotrId, formData).subscribe(
               (res1) => {
                 this.toastService.create("Profile updated successfully.");

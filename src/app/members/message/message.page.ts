@@ -4,6 +4,7 @@ import { MessageService } from 'src/app/services/message.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment.prod';
+import { ClinicService } from "src/app/services/clinic.service";
 
 @Component({
   selector: 'app-message',
@@ -17,7 +18,8 @@ export class MessagePage implements OnInit {
     public loadingController: LoadingController,
     private messageService: MessageService,
     private toastService: ToastService,
-    private storage: Storage
+    private storage: Storage,
+    public clinicService: ClinicService,
   ) { }
 
   ngOnInit() {

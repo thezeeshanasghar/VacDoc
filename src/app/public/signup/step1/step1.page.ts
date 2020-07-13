@@ -17,7 +17,7 @@ import { SignupService } from "src/app/services/signup.service";
 export class Step1Page implements OnInit {
   fg: FormGroup;
   checkedVal: any;
-  @ViewChild('speciality') selectPop: IonSelect;
+  @ViewChild('speciality' , {static: false}) selectPop: IonSelect;
   constructor(
     private frombuilder: FormBuilder,
     private router: Router,

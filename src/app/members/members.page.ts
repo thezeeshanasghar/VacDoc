@@ -97,5 +97,8 @@ export class MembersPage implements OnInit {
   ngOnInit() {}
   clearStorage() {
     this.storage.clear();
+    this.clinicService.clinics = null;
+    this.clinicService.doctorId = null;
+    this.clinicService.OnlineClinicId = null;
   }
 }

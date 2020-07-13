@@ -24,6 +24,14 @@ export class DoseService extends BaseService {
     );
   }
 
+  getNewDoses(id): Observable<any> {
+    const url = `${this.API_DOSE}/newdoctor/${id}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
   // updateDoctorProfile(docId: number, newDate: String): any {
   //   const url = `${this.API_DOCTOR}/${docId}`;
   //   return this.http.put(url, newDate, this.httpOptions)

@@ -10,15 +10,12 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from './shared/shared.module';
-import { IonicStorageModule } from '@ionic/storage';
-import { File } from '@ionic-native/file/ngx';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { FileTransfer } from '@ionic-native/file-transfer/ngx';
-import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
+import { IonicStorageModule } from '@ionic/storage';;
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { SMS } from '@ionic-native/sms/ngx';
 import { TitleCasePipe } from '@angular/common';
+import { CallNumber } from '@ionic-native/call-number/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -35,14 +32,11 @@ import { TitleCasePipe } from '@angular/common';
     StatusBar,
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    File,
     Geolocation,
-    FileOpener,
-    FileTransfer,
-    DocumentViewer,
     SMS,
     AndroidPermissions,
-    TitleCasePipe
+    TitleCasePipe,
+    CallNumber
 
   ],
   bootstrap: [AppComponent]

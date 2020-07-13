@@ -5,6 +5,7 @@ import { ToastService } from "src/app/shared/toast.service";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { AndroidPermissions } from "@ionic-native/android-permissions/ngx";
+import { CallNumber } from '@ionic-native/call-number/ngx';
 declare var SMS: any;
 @Component({
   selector: "app-vaccine-alert",
@@ -25,20 +26,21 @@ export class VaccineAlertPage implements OnInit {
     private alertService: AlertService,
     private toastService: ToastService,
     private storage: Storage,
-    private androidPermissions: AndroidPermissions
+    private androidPermissions: AndroidPermissions,
+    private callNumber: CallNumber
   ) {}
 
-  ngOnInit() {
-    this.storage.get(environment.DOCTOR_Id).then(val => {
+ async ngOnInit() {
+    await this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
     });
-    this.storage.get(environment.CLINIC_Id).then(clinicId => {
+    await this.storage.get(environment.CLINIC_Id).then(clinicId => {
       this.clinicId = clinicId;
     });
-    this.storage.get(environment.SMS).then(val => {
+   await  this.storage.get(environment.SMS).then(val => {
       this.SMSKey = val;
     });
-    this.getChlid(this.numOfDays);
+   await this.getChlid(this.numOfDays);
   }
 
   // Get childs get from server
@@ -147,5 +149,13 @@ export class VaccineAlertPage implements OnInit {
         }
       );
     }
+  }
+
+  callFunction(celnumber)
+  {
+    console.log(celnumber);
+    this.callNumber.callNumber(0 + celnumber, true)
+    .then(res => console.log('Launched dialer!', res))
+    .catch(err => console.log('Error launching dialer', err));
   }
 }

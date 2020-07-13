@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { ProfilePage } from './profile.page';
 
-import { FileUploadModule } from 'ng2-file-upload';
+//import { FileUploadModule } from 'ng2-file-upload';
 
 const routes: Routes = [
   {
@@ -22,7 +22,7 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     ReactiveFormsModule,
-    FileUploadModule,
+    //FileUploadModule,
     RouterModule.forChild(routes)
   ],
   declarations: [ProfilePage]

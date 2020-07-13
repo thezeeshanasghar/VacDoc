@@ -78,7 +78,7 @@ export class SchedulePage implements OnInit {
         Id: this.schedule[i].Id,
         DoseId: this.schedule[i].DoseId,
         DoctorId: this.schedule[i].DoctorId,
-        GapInDays: this.fg.value[this.schedule[i].Dose.Name]
+        GapInDays: parseInt(this.fg.value[this.schedule[i].Dose.Name])
       });
     }
     const loading = await this.loadingcontroller.create({

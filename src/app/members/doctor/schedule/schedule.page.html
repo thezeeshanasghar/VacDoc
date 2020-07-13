@@ -7,15 +7,15 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content class="ion-padding">
 
   <form [formGroup]="fg" (ngSubmit)="onSubmit()">
 
     <ion-item *ngFor="let control of fg.controls | keyvalue">
       <ion-label>{{control.key}}</ion-label>
       <ion-select [formControlName]="control.key" value="{{control.value.value}}">
-        <ion-select-option value="0">At Birth</ion-select-option>
-        <ion-select-option value="7">1 Week</ion-select-option>
+        <ion-select-option value= 0>At Birth</ion-select-option>
+        <ion-select-option value=7>1 Week</ion-select-option>
         <ion-select-option value="14">2 Weeks</ion-select-option>
         <ion-select-option value="21">3 Weeks</ion-select-option>
         <ion-select-option value="28">4 Weeks</ion-select-option>
@@ -111,4 +111,9 @@
     <ion-button type="submit">Finish</ion-button>
 
   </form>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button routerLink = "edit" >
+      <ion-icon  name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

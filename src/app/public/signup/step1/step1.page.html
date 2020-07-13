@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content class="ion-padding">
 
   <form [formGroup]="fg">
     <ion-radio-group>
@@ -24,7 +24,7 @@
           </ion-col>
           <ion-col>
             <ion-item >
-              <ion-radio [checked]="checkedVal" slot="start" value="D"
+              <ion-radio  slot="start" value="D"
                 (click)="setValueAndShowSpeciality('D','checked');opendrop();"></ion-radio>
               <ion-label color="primary">Other speciality</ion-label>
               <ion-select #speciality name = speciality multiple formControlName="Speciality" (click)="setValueAndShowSpeciality('D', 'checked')" >
@@ -143,7 +143,7 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">Qulification</ion-label>
-      <ion-input type="text" formControlName="Qualification" text-capitalize required></ion-input>
+      <ion-input type="text" formControlName="Qualification" class="ion-text-capitalize" required></ion-input>
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.qualification">
@@ -156,12 +156,12 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">Design Your letterpad</ion-label>
-      <ion-textarea type="text" formControlName="AdditionalInfo" text-capitalize></ion-textarea>
+      <ion-textarea type="text" formControlName="AdditionalInfo" class="ion-text-capitalize"></ion-textarea>
     </ion-item>
 
     <ion-item>
       <ion-label color="primary" position="floating">First Name</ion-label>
-      <ion-input type="text" formControlName="FirstName" text-capitalize required>
+      <ion-input type="text" formControlName="FirstName" classs="ion-text-capitalize" required>
       </ion-input>
     </ion-item>
     <div class="validation-errors">
@@ -175,7 +175,7 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">Last Name</ion-label>
-      <ion-input type="text" formControlName="LastName" text-capitalize required></ion-input>
+      <ion-input type="text" formControlName="LastName" class="ion-text-capitalize" required></ion-input>
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.lastName">
@@ -188,7 +188,7 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">Display Name</ion-label>
-      <ion-input type="text" formControlName="DisplayName" text-capitalize required></ion-input>
+      <ion-input type="text" formControlName="DisplayName" class="ion-text-capitalize" required></ion-input>
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.displayName">

@@ -7,12 +7,10 @@ import { LoadingController, Platform } from '@ionic/angular';
 import { InvoiceService } from 'src/app/services/invoice.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import * as moment from 'moment';
+import { Downloader , DownloadRequest , NotificationVisibility } from '@ionic-native/downloader/ngx';
 
-import { FileTransfer , FileTransferObject } from '@ionic-native/file-transfer/ngx';
-import { File } from '@ionic-native/file/ngx';
-import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { FilePath } from '@ionic-native/file-path/ngx';
+//import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
+
 @Component({
   selector: 'app-invoice',
   templateUrl: './invoice.page.html',
@@ -31,16 +29,8 @@ export class InvoicePage implements OnInit {
     private invoiceService: InvoiceService,
     private toastService: ToastService,
     private platform: Platform,
-    private file: File,
-    private transfer: FileTransfer,
-    private fileOpener: FileOpener,
-    private document: DocumentViewer,
-    private filePath: FilePath,
-
-
-  ) { 
-    
-  }
+    private downloader: Downloader
+  ) { }
 
   ngOnInit() {
 
@@ -80,26 +70,47 @@ export class InvoicePage implements OnInit {
   //     });
   // }
 
-  downloadInvoice() {
+  // downloadInvoice1() {
+  //   this.fg.value.DoctorId = this.doctorId;
+  //  // this.fg.value.InvoiceDate = moment(this.fg.value.InvoiceDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
+  //  // this.fg.value.InvoiceDate = moment(this.fg.value.InvoiceDate, 'YYYY-MM-DD');
+  //   console.log(this.fg.value);
+  //   const fileTransfer: FileTransferObject = this.transfer.create();
+  //   // let path = this.file.externalApplicationStorageDirectory;
+  //   let path = this.file.externalDataDirectory;
+  //   this.filePath.resolveNativePath(path)
+  //  .then(filePath => path = filePath);
+  //     const url = `${this.API_INVOICE}${this.fg.value.Id}/${this.fg.value.IsBrand}/
+  //     ${this.fg.value.IsConsultationFee}/${this.fg.value.InvoiceDate}/${this.fg.value.DoctorId}/Download-Invoice-PDF`;
+  //   fileTransfer.download( url , path + 'invoice.pdf').then((entry) => {
+  //     let durl = entry.toURL();
+  //    // this.document.viewDocument(durl , 'application/pdf', {});
+  //    this.fileOpener.open(durl, 'application/pdf').then(() => console.log('File is opened'));
+  //     console.log('download complete: ' + entry.toURL());
+  //   }, (error) => {
+  //     // handle error
+  //   });
+  // }
+  downloadInvoice(){
     this.fg.value.DoctorId = this.doctorId;
-   // this.fg.value.InvoiceDate = moment(this.fg.value.InvoiceDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
-   // this.fg.value.InvoiceDate = moment(this.fg.value.InvoiceDate, 'YYYY-MM-DD');
-    console.log(this.fg.value);
-    const fileTransfer: FileTransferObject = this.transfer.create();
-    // let path = this.file.externalApplicationStorageDirectory;
-    let path = this.file.externalDataDirectory;
-    this.filePath.resolveNativePath(path)
-   .then(filePath => path = filePath);
-      const url = `${this.API_INVOICE}${this.fg.value.Id}/${this.fg.value.IsBrand}/
-      ${this.fg.value.IsConsultationFee}/${this.fg.value.InvoiceDate}/${this.fg.value.DoctorId}/Download-Invoice-PDF`;
-    fileTransfer.download( url , path + 'invoice.pdf').then((entry) => {
-      let durl = entry.toURL();
-     // this.document.viewDocument(durl , 'application/pdf', {});
-     this.fileOpener.open(durl, 'application/pdf').then(() => console.log('File is opened'));
-      console.log('download complete: ' + entry.toURL());
-    }, (error) => {
-      // handle error
-    });
+    var request: DownloadRequest = {
+      uri: `${this.API_INVOICE}${this.fg.value.Id}/${this.fg.value.IsBrand}/
+      ${this.fg.value.IsConsultationFee}/${this.fg.value.InvoiceDate}/${this.fg.value.DoctorId}/Download-Invoice-PDF` ,
+      title: 'Child Invoice',
+      description: '',
+      mimeType: '',
+      visibleInDownloadsUi: true,
+      notificationVisibility: NotificationVisibility.VisibleNotifyCompleted,
+     // notificationVisibility: 0,
+      destinationInExternalFilesDir: {
+          dirType: 'Downloads',
+          subPath: 'ChildSchedule.pdf'
+      }
+  };
+  this.downloader.download(request)
+  .then((location: string) => console.log('File downloaded at:'+location))
+  .catch((error: any) => console.error(error));
+  
   }
 
 }

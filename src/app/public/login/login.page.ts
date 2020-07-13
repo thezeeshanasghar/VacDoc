@@ -16,6 +16,7 @@ export class LoginPage implements OnInit {
 
 
   fg: FormGroup;
+  obj:any;
   constructor(
     public router: Router,
     public alertController: AlertController,
@@ -35,6 +36,7 @@ export class LoginPage implements OnInit {
       'CountryCode': ['92'],
       'UserType': ['DOCTOR']
     });
+   
   }
 
   skipLoginIfAlreadyLoggedIn() {
@@ -56,11 +58,12 @@ export class LoginPage implements OnInit {
     await this.loginservice.checkAuth(this.fg.value)
       .subscribe(res => {
         if (res.IsSuccess) {
-          this.storage.set(environment.DOCTOR, res.ResponseData);
+          this.storage.set(environment.USER, res.ResponseData);
           this.storage.set(environment.DOCTOR_Id, res.ResponseData.DoctorId);
           this.storage.set(environment.USER_Id, res.ResponseData.Id);
           let state = true;
           this.loginservice.changeState(state);
+          this.getdoctorprofile(res.ResponseData.Id);
           this.router.navigate(['/members']);
           loading.dismiss();
         }
@@ -73,6 +76,16 @@ export class LoginPage implements OnInit {
         loading.dismiss();
         this.toastService.create(err, 'danger');
       });
+  }
+  async getdoctorprofile(id){
+await this.loginservice.getDoctorProfile(id).subscribe(res => 
+  {
+    if (res.IsSuccess)
+    {
+      this.storage.set(environment.DOCTOR, res.ResponseData);
+    }
+});
+
   }
 
   async forgotPasswordAlert() {

@@ -1,0 +1,123 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Vaccine Schedule</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  
+<form [formGroup]="fg" (ngSubmit)="onSubmit()">
+  
+  <ion-item *ngFor="let control of fg.controls | keyvalue">
+    <ion-checkbox slot="start"></ion-checkbox>
+    <ion-label>{{control.key}}</ion-label>
+    <ion-select [formControlName]="control.key" value="{{control.value.value}}">
+      <ion-select-option [disabled]="control.value.value > 0" value="0">At Birth</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 7" value="7">1 Week</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 14" value="14">2 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 21" value="21">3 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 28" value="28">4 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 35" value="35">5 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 42" value="42">6 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 49" value="49">7 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 56" value="56">8 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 63" value="63">9 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 70" value="70">10 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 77" value="77">11 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 84" value="84">3 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 91" value="91">13 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 98" value="98">14 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 105" value="105">15 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 112" value="112">16 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 119" value="119">17 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 126" value="126">18 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 133" value="133">19 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 140" value="140">20 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 147" value="147">21 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 154" value="154">22 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 161" value="161">23 Weeks</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 168" value="168">6 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 212" value="212">7 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 243" value="243">8 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 274" value="274">9 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 304" value="304">10 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 334" value="334">11 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 365" value="365">1 Year</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 395" value="395">13 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 426" value="426">14 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 456" value="456">15 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 486" value="486">16 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 517" value="517">17 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 547" value="547">18 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 578" value="578">19 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 608" value="608">20 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 639" value="639">21 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 669" value="669">22 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 699" value="699">23 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 730" value="730">2 Years</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 760" value="760">25 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 791" value="791">26 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 821" value="821">27 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 851" value="851">28 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 882" value="882">29 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 912" value="912">30 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 943" value="943">31 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 973" value="973">32 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1004" value="1004">33 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1034" value="1034">34 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1064" value="1064">35 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1095" value="1095">3 Years</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1125" value="1125">37 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1156" value="1156">38 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1186" value="1186">39 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1216" value="1216">40 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1247" value="1247">41 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1277" value="1277">42 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1308" value="1308">43 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1338" value="1338">44 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1369" value="1369">45 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1399" value="1399">46 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1429" value="1429">47 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1460" value="1460">4 Years</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1490" value="1490">49 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1521" value="1521">50 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1551" value="1551">51 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1582" value="1582">52 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1612" value="1612">53 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1642" value="1642">54 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1673" value="1673">55 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1703" value="1703">56 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1734" value="1734">57 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1764" value="1764">58 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1795" value="1795">59 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 1825" value="1825">5 Years</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 2190" value="2190">6 Years</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 2555" value="2555">7 Years</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 2920" value="2920">8 Years</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 3285" value="3285">9 Years</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 3315" value="3315">9 Year 1 Month</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 3650" value="3650">10 Years</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 3833" value="3833">10 Year 6 Months</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 4015" value="4015">11 Years</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 4380" value="4380">12 Years</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 4745" value="4745">13 Years</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 5110" value="5110">14 Years</ion-select-option>
+      <ion-select-option [disabled]="control.value.value > 5475" value="5475">15 Years</ion-select-option>
+    </ion-select> 
+     <!-- <div [ngStyle] ="{display:block}" class="validation-errors"> 
+      <ng-container *ngFor="let validation of validation_messages.MinAge">
+        <div class="error-message"
+            *ngIf="fg.get(control.key).hasError('required')">  
+           <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+        </div>
+      </ng-container>
+    </div> -->
+  </ion-item>
+  
+  <ion-button type="submit">Finish</ion-button> 
+
+</form>
+</ion-content>

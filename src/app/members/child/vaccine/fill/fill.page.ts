@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute , Router } from '@angular/router';
 import { VaccineService } from 'src/app/services/vaccine.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { LoadingController } from '@ionic/angular';
@@ -19,16 +19,19 @@ export class FillPage implements OnInit {
   fg: FormGroup;
   doctorId: any;
   vaccinId: any;
-  vaccineData: any;
+  vaccineData: any = [];
+  vaccineName:any;
   brandName: any;
   Date: any;
+  todaydate: any;
   constructor(
     public loadingController: LoadingController,
     private formBuilder: FormBuilder,
     private storage: Storage,
     private route: ActivatedRoute,
     private vaccineService: VaccineService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private router: Router
   ) { }
 
 
@@ -45,9 +48,14 @@ export class FillPage implements OnInit {
       'Circle': [null],
       'BrandId': [null],
       'GivenDate': [null],
-    });
+      'IsDisease': [false],
+      'DiseaseYear': ['2019'],
 
+    });
     this.getVaccination();
+    this.todaydate = new Date();
+    this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format("YYYY-MM-DD");
+   // this.fg.value.DiseaseYear = this.todaydate;
   }
 
   async getVaccination() {
@@ -59,7 +67,9 @@ export class FillPage implements OnInit {
     await this.vaccineService.getVaccineByVaccineId(this.route.snapshot.paramMap.get('id')).subscribe(
       res => {
         if (res.IsSuccess) {
+          console.log(res.ResponseData);
           this.vaccineData = res.ResponseData;
+          this.vaccineName = this.vaccineData.Dose.Vaccine.Name;
           this.brandName = this.vaccineData.Brands;
           this.Date = this.vaccineData.Date;
           this.Date = moment(this.Date, 'DD-MM-YYYY').format('YYYY-MM-DD');
@@ -81,6 +91,7 @@ export class FillPage implements OnInit {
     this.fg.value.Id = this.route.snapshot.paramMap.get('id');
     this.fg.value.DoctorId = this.doctorId;
     this.fg.value.IsDone = true;
+    this.fg.value.DiseaseYear = moment(this.fg.value.DiseaseYear, 'YYYY-MM-DD').format('YYYY');
     this.fg.value.GivenDate = moment(this.fg.value.GivenDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
     console.log(this.fg.value);
     const loading = await this.loadingController.create({
@@ -91,6 +102,7 @@ export class FillPage implements OnInit {
     await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
       res => {
         if (res.IsSuccess) {
+          this.router.navigate(['/members/child/vaccine/'+this.vaccineData.ChildId]);
           this.toastService.create('Succfully Update');
           loading.dismiss();
         }

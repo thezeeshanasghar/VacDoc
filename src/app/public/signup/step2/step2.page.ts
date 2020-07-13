@@ -15,7 +15,7 @@ import { LoadingController } from "@ionic/angular";
 import { SignupService } from "src/app/services/signup.service";
 import * as moment from "moment";
 import { Geolocation } from "@ionic-native/geolocation/ngx";
-import { validateConfig } from "@angular/router/src/config";
+//import { validateConfig } from "@angular/router/src/config";
 declare var google;
 
 @Component({
@@ -24,11 +24,12 @@ declare var google;
   styleUrls: ["./step2.page.scss"]
 })
 export class Step2Page implements OnInit {
+  //google:any;
   fg1: FormGroup;
   fg2: FormGroup;
   map;
   myMarker;
-  @ViewChild("mapElement") mapElement;
+  @ViewChild("mapElement", {static: true}) mapElement;
   DoctorId: any;
   latitude: any = 33.6328532;
   longitude: any = 72.93583679;
@@ -47,9 +48,9 @@ export class Step2Page implements OnInit {
   ngOnInit() {
     //this.ionViewDidEnte();
     // this.hello();
-    this.storage.get(environment.DOCTOR_Id).then(val => {
-      this.DoctorId = val;
-    });
+    // this.storage.get(environment.DOCTOR_Id).then(val => {
+    //   this.DoctorId = val;
+    // });
     this.fg1 = this.formbuilder.group({
       DoctorId: [null],
       Name: [null],
@@ -171,6 +172,7 @@ export class Step2Page implements OnInit {
       .then(resp => {
         this.latitude = resp.coords.latitude;
         this.longitude = resp.coords.longitude;
+        console.log(this.latitude);
         this.hello();
       })
       .catch(error => {

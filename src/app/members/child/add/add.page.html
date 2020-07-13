@@ -3,7 +3,20 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Add Child</ion-title>
+    <!-- <ion-buttons slot="end">     
+        <ion-grid>
+          <ion-row>
+            <ion-col><ion-item color ="primary"><ion-icon slot="end" name="person-add" size="large" > </ion-icon></ion-item></ion-col>
+            <ion-col><ion-item color ="primary" routerLink="/members/alert"><ion-icon slot="end" name="alert" size="large" > </ion-icon></ion-item></ion-col>
+            <ion-col><ion-item color ="primary" routerLink="/members/doctor/clinic"><ion-icon slot="end" name="medkit" size="large" > </ion-icon></ion-item></ion-col>
+            <ion-col><ion-item color ="primary"><ion-menu-button></ion-menu-button></ion-item></ion-col>
+          </ion-row>
+          </ion-grid>
+        </ion-buttons> -->
+    <ion-title>Add Patient</ion-title>
+    <ion-title *ngIf="clinicService.OnlineClinic" slot="end">
+      {{clinicService.OnlineClinic.Name}}
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -36,60 +49,6 @@
         </div>
       </ng-container>
     </div>
-
-    <ion-item>
-      <ion-label color="primary" position="floating">Email</ion-label>
-      <ion-input type="text" formControlName="Email" required></ion-input>
-    </ion-item>
-    <div class="validation-errors">
-      <ng-container *ngFor="let validation of validation_messages.email">
-        <div class="error-message"
-          *ngIf="fg1.get('Email').hasError(validation.type) && (fg1.get('Email').dirty || fg1.get('Email').touched)">
-          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
-        </div>
-      </ng-container>
-    </div>
-
-    <ion-item>
-      <ion-label color="primary" position="floating">Date of Birth</ion-label>
-      <ion-datetime displayFormat="DD-MM-YYYY" picker-format="DD-MM-YYYY" formControlName="DOB"></ion-datetime>
-    </ion-item>
-    <div class="validation-errors">
-      <ng-container *ngFor="let validation of validation_messages.DOB">
-        <div class="error-message"
-          *ngIf="fg1.get('DOB').hasError(validation.type) && (fg1.get('DOB').dirty || fg1.get('DOB').touched)">
-          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
-        </div>
-      </ng-container>
-    </div>
-
-    <ion-item>
-      <ion-label color="primary" position="floating">Mobile Number</ion-label>
-      <ion-input type="text" formControlName="MobileNumber" required></ion-input>
-    </ion-item>
-    <div class="validation-errors">
-      <ng-container *ngFor="let validation of validation_messages.mobileNumber">
-        <div class="error-message"
-          *ngIf="fg1.get('MobileNumber').hasError(validation.type) && (fg1.get('MobileNumber').dirty || fg1.get('MobileNumber').touched)">
-          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
-        </div>
-      </ng-container>
-    </div>
-
-    <ion-item>
-      <ion-label color="primary" position="floating">Preferred Day of week</ion-label>
-      <ion-select formControlName="PreferredDayOfWeek" value="Any">
-        <ion-select-option value="Any">Any</ion-select-option>
-        <ion-select-option value="Monday">Monday</ion-select-option>
-        <ion-select-option value="Tuesday">Tuesday</ion-select-option>
-        <ion-select-option value="Wednesday">Wednesday</ion-select-option>
-        <ion-select-option value="Thrusday">Thrusday</ion-select-option>
-        <ion-select-option value="Friday">Friday</ion-select-option>
-        <ion-select-option value="Saturday">Saturday</ion-select-option>
-        <ion-select-option value="Sunday">Sunday</ion-select-option>
-      </ion-select>
-    </ion-item>
-
     <ion-radio-group>
       <ion-list-header>
         Gender
@@ -97,7 +56,6 @@
 
       <ion-grid>
         <ion-row>
-
           <ion-col>
             <ion-item>
               <ion-label color="primary">Boy</ion-label>
@@ -117,9 +75,75 @@
     </ion-radio-group>
 
     <ion-item>
+      <ion-label color="primary" position="floating">Date of Birth</ion-label>
+      <ion-datetime displayFormat="DD-MM-YYYY" picker-format="DD-MM-YYYY" formControlName="DOB" max = "{{todaydate}}"></ion-datetime>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.DOB">
+        <div class="error-message"
+          *ngIf="fg1.get('DOB').hasError(validation.type) && (fg1.get('DOB').dirty || fg1.get('DOB').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Email</ion-label>
+      <ion-input type="text" formControlName="Email"></ion-input>
+    </ion-item>
+    <!-- <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.email">
+        <div class="error-message"
+          *ngIf="fg1.get('Email').hasError(validation.type) && (fg1.get('Email').dirty || fg1.get('Email').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div> -->
+
+    
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Mobile Number</ion-label>
+      <ion-input type="text" formControlName="MobileNumber" required></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.mobileNumber">
+        <div class="error-message"
+          *ngIf="fg1.get('MobileNumber').hasError(validation.type) && (fg1.get('MobileNumber').dirty || fg1.get('MobileNumber').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Preferred Day of week</ion-label>
+      <ion-select formControlName="PreferredDayOfWeek"(ionChange)="uncheckany()"  multiple="true" [(ngModel)]="fg1.value.PreferredDayOfWeek" >
+        <ion-select-option value="Any">Any</ion-select-option>
+        <ion-select-option value="Monday">Monday</ion-select-option>
+        <ion-select-option value="Tuesday">Tuesday</ion-select-option>
+        <ion-select-option value="Wednesday">Wednesday</ion-select-option>
+        <ion-select-option value="Thrusday">Thrusday</ion-select-option>
+        <ion-select-option value="Friday">Friday</ion-select-option>
+        <ion-select-option value="Saturday">Saturday</ion-select-option>
+        <ion-select-option value="Sunday">Sunday</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label color="primary" position="floating">Preferred Day of Reminder</ion-label>
+      <ion-select formControlName="PreferredDayOfReminder" value ='0'>
+        <ion-select-option value="0">On Due Day</ion-select-option>
+        <ion-select-option value="1">Due day + 1 Day before</ion-select-option>
+        <ion-select-option value="2">Due day + 2 Day before</ion-select-option>
+        <ion-select-option value="3">Due day + 3 Day before</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+   
+    <ion-item>
       <ion-label color="primary" position="floating">City</ion-label>
-      <ion-select formControlName="City" required>
-        <ion-select-option value="">-- select city --</ion-select-option>
+      <ion-select formControlName="City" [(ngModel)]="City" (ionChange)='setCity(City)' required>
+        <ion-select-option *ngIf='City' value="{{City}}">{{City}}</ion-select-option>
+        <ion-select-option *ngIf='!City' value="">--Select City--</ion-select-option>
         <ion-select-option value="Abbottabad">Abbottabad</ion-select-option>
         <ion-select-option value="Adezai">Adezai</ion-select-option>
         <ion-select-option value="Ali Bandar">Ali Bandar</ion-select-option>
@@ -433,15 +457,7 @@
       </ion-select>
     </ion-item> -->
 
-        <ion-item>
-      <ion-label color="primary" position="floating">Preferred Day of Reminder</ion-label>
-      <ion-select formControlName="PreferredDayOfReminder" value ='0'>
-        <ion-select-option value="0">On Due Day</ion-select-option>
-        <ion-select-option value="1">Due day + 1 Day before</ion-select-option>
-        <ion-select-option value="2">Due day + 2 Day before</ion-select-option>
-        <ion-select-option value="3">Due day + 3 Day before</ion-select-option>
-      </ion-select>
-    </ion-item>
+       
 
 
     <ion-grid>

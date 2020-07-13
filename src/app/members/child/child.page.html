@@ -27,7 +27,7 @@
       <ion-icon slot="end" color="primary" name="create" routerLink="/members/child/edit/{{child.Id}}"></ion-icon>
       <ion-icon slot="end" color="primary" name="trash" (click)="alertforDeleteChild(child.Id)"></ion-icon>
       <ion-icon slot="end" color="primary" name="mail" routerLink="/members/child/cmsg/{{child.Id}}"></ion-icon>
-      <ion-icon slot="end" color="primary" name="call"(click)="callFunction()"></ion-icon>
+      <ion-icon slot="end" color="primary" name="call"(click)="callFunction(child.User.MobileNumber)"></ion-icon>
     </ion-item>
 
     <ion-card-content>

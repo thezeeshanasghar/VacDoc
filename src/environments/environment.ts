@@ -7,12 +7,19 @@ export const environment = {
   // BASE_URL: "http://vac-api.afz-sol.com/api/"
  // BASE_URL: "http://vac-api.ehs.edu.pk/api/",
   //BASE_URL: "http://localhost:4309/api/",
+// BASE_URL: "http://13.233.255.96:5002/api/",
   BASE_URL: "http://localhost:5000/api/",
-
+  USER: 'User',
   DOCTOR_Id: "DoctorId",
   CLINIC_Id: "ClinicId",
   USER_Id: "UserId",
-  SMS: "SMS"
+  SMS: "SMS",
+  CLINICS: 'Clinics',
+  Childs: 'Childs',
+  CITY: 'City',
+  DOCTOR: 'Doctor',
+  ON_CLINIC: 'OnlineClinic'
+
 };
 /*
  * For easier debugging in development mode, you can import the following file
