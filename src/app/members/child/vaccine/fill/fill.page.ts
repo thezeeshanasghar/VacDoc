@@ -24,6 +24,7 @@ export class FillPage implements OnInit {
   brandName: any;
   Date: any;
   todaydate: any;
+  birthYear: any;
   constructor(
     public loadingController: LoadingController,
     private formBuilder: FormBuilder,
@@ -39,6 +40,10 @@ export class FillPage implements OnInit {
     this.storage.get(environment.DOCTOR_Id).then((val) => {
       this.doctorId = val;
     });
+    this.storage.get('BirthYear').then((val) => {
+      this.birthYear = moment(val, "DD-MM-YYYY").format("YYYY-MM-DD");
+    });
+
     this.fg = this.formBuilder.group({
       'DoctorId': [''],
       'Id': [null],

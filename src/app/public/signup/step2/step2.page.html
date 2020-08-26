@@ -49,6 +49,7 @@
             <ion-label color="primary" position="floating">Consultation Fee</ion-label>
             <ion-input type="number" formControlName="ConsultationFee" required></ion-input>
         </ion-item>
+       
         <div class="validation-errors">
             <ng-container *ngFor="let validation of validation_messages.ConsultationFee">
                 <div class="error-message" *ngIf="fg1.get('ConsultationFee').hasError(validation.type) && (fg1.get('ConsultationFee').dirty || fg1.get('ConsultationFee').touched)">
@@ -56,6 +57,15 @@
                 </div>
             </ng-container>
         </div>
+
+        <ion-item>
+            <ion-button slot="end" (click) = "uploadMonogram()">Upload Monogram</ion-button>
+        </ion-item>
+        <ion-item *ngIf="fg1.value.MonogramImage">
+            <p *ngIf="uploading">Uploading Monogram...</p>
+             <ion-img *ngIf="fg1.value.MonogramImage" [src]="resourceURL + fg1.value.MonogramImage" alt="CNIC Image"></ion-img>
+          </ion-item>
+       
 
         <form [formGroup]="fg2">
             <ion-card>

@@ -55,9 +55,10 @@ export class SignupService extends BaseService {
   addSchedule(id): Observable<any> {
     let var1 = [];
     for (let i = 0; i < this.vaccineData2.length; i++) {
+      if (this.vaccineData2[i].IsSpecial)
       var1.push({
         DoseId: this.vaccineData2[i].Id,
-        GapInDays: this.vaccineData[this.vaccineData2[i].Name],
+        GapInDays: this.vaccineData2[i].MinAge,  //this.vaccineData[this.vaccineData2[i].Name],
         DoctorId: id
       });
     }

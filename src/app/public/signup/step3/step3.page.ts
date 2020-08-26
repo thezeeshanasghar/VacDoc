@@ -55,20 +55,45 @@ export class Step3Page implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.doses = res.ResponseData;
-          this.signupService.vaccineData2 = this.doses;
-          this.doses.forEach(dose => {
-         //   let value = dose.MinGap == null ? 0 : dose.MinGap;
-              let value = dose.MinAge == null ? 0 : dose.MinAge;
-          //    let minage = value;
+         // this.signupService.vaccineData2 = this.doses;
+           this.doses.forEach(dose => {
+         
+               let value = dose.MinAge == null ? 0 : dose.MinAge;
+               let name = dose.Name;
+              if (dose.DoseOrder == 1)
+              name = dose.Name+'_first';
+              else if (dose.DoseOrder == 2)
+              name = dose.Name+'_second';
+              else if (dose.DoseOrder == 3)
+              name = dose.Name+'_third';
+              else if (dose.DoseOrder == 4)
+              name = dose.Name+'_fourth';
+              else if (dose.DoseOrder == 5)
+              name = dose.Name+'_fifth'
+              else if (dose.DoseOrder == 6)
+              name = dose.Name+'_sixth'
+              else if (dose.DoseOrder == 7)
+              name = dose.Name+'_seventh'
+              
             this.fg.addControl(
-              dose.Name,
+              name,
               new FormControl(value, Validators.required)
             );
-            // this.fg.addControl(
-            //   dose.MinAge,
-            //   new FormControl(minage, Validators.required)
-            // );
+            dose.IsSpecial = false;
+           // changes in old copy
           });
+
+          // for(var i=0; i<this.doses.length; i++)
+          // {
+          //   //let value = 
+          //  // if (this.doses[i].MinAge == null)  
+          //  // this.doses[i].MinAge = 0;
+          //   // this.fg.addControl(
+          //   //       this.doses[i].Name,
+          //   //       new FormControl(value, Validators.required)
+          //   //     );
+                
+          // }
           loading.dismiss();
         } else {
           loading.dismiss();
@@ -85,6 +110,7 @@ export class Step3Page implements OnInit {
   onSubmit() {
     this.addNewClinic();
   }
+
 
   async addNewClinic() {
     const loading = await this.loadingController.create({
@@ -120,6 +146,7 @@ export class Step3Page implements OnInit {
 
   async addDoctorSchedule(id) {
     this.signupService.vaccineData = this.fg.value;
+    this.signupService.vaccineData2 = this.doses;
     await this.signupService.addSchedule(id).subscribe(
       res => {
         if (res.IsSuccess) {
@@ -135,38 +162,15 @@ export class Step3Page implements OnInit {
     );
   }
 
-  sendsms(number , message)
-  {
-    console.log(number + message);
-    this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS).then(
-      result => {
-        console.log('Has permission?',result.hasPermission);
-        if(result.hasPermission){
-          this.sms.send('+92' + number, message)
-          .then(()=>{
-          alert("The Message is sent");
-          }).catch((error)=>{
-          alert("The Message is Failed" + error);
-          });
-        }
-        else {
-        this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.SEND_SMS);
-        this.sms.send('+92' + number, message);
-        }
-      },
-      err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.SEND_SMS)
-    );
-    console.log('success');
-  }
 
-  checkScheduleValidity(minage,key) {
-  console.log(minage);
-  console.log(key);
-//  console.log(select);
+//   checkScheduleValidity(minage,key) {
+//   console.log(minage);
+//   console.log(key);
+// //  console.log(select);
 
- // this.fg.controls[key].setErrors({ required: true });
-  }
-  validation_messages = {
-    MinAge: [{ type: "required", message: "Can not reschedule" }]
-  };
+//  // this.fg.controls[key].setErrors({ required: true });
+//   }
+//   validation_messages = {
+//     MinAge: [{ type: "required", message: "Can not reschedule" }]
+//   };
 }

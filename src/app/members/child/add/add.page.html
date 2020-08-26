@@ -20,7 +20,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content class="ion-padding">
 
   <!-- 1st Step of Add Child -->
   <form [formGroup]="fg1" *ngIf="formcontroll==false">
@@ -38,7 +38,7 @@
     </div>
 
     <ion-item>
-      <ion-label color="primary" position="floating">Father Name</ion-label>
+      <ion-label color="primary" position="floating">Father's Name</ion-label>
       <ion-input type="text" formControlName="FatherName" required></ion-input>
     </ion-item>
     <div class="validation-errors">
@@ -59,24 +59,23 @@
           <ion-col>
             <ion-item>
               <ion-label color="primary">Boy</ion-label>
-              <ion-radio slot="start" value="Boy" (ionSelect)="updateGender('Boy')"></ion-radio>
+              <ion-radio slot="start" value="Boy" (click)="updateGender('Boy')"></ion-radio>
             </ion-item>
           </ion-col>
 
           <ion-col>
             <ion-item>
               <ion-label color="primary">Girl</ion-label>
-              <ion-radio slot="start" value="Girl" (ionSelect)="updateGender('Girl')"></ion-radio>
+              <ion-radio slot="start" value="Girl" (click)="updateGender('Girl')" ></ion-radio>
             </ion-item>
           </ion-col>
         </ion-row>
       </ion-grid>
 
     </ion-radio-group>
-
     <ion-item>
       <ion-label color="primary" position="floating">Date of Birth</ion-label>
-      <ion-datetime displayFormat="DD-MM-YYYY" picker-format="DD-MM-YYYY" formControlName="DOB" max = "{{todaydate}}"></ion-datetime>
+      <ion-datetime displayFormat="DD-MM-YYYY" picker-format="DD-MM-YYYY" formControlName="DOB" max = "{{todaydate}}" (ionChange) = "checkEpi()"></ion-datetime>
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.DOB">
@@ -86,6 +85,7 @@
         </div>
       </ng-container>
     </div>
+  
 
     <ion-item>
       <ion-label color="primary" position="floating">Email</ion-label>
@@ -140,312 +140,14 @@
 
    
     <ion-item>
-      <ion-label color="primary" position="floating">City</ion-label>
+      <ion-label color="primary" position="">City</ion-label>
       <ion-select formControlName="City" [(ngModel)]="City" (ionChange)='setCity(City)' required>
-        <ion-select-option *ngIf='City' value="{{City}}">{{City}}</ion-select-option>
-        <ion-select-option *ngIf='!City' value="">--Select City--</ion-select-option>
-        <ion-select-option value="Abbottabad">Abbottabad</ion-select-option>
-        <ion-select-option value="Adezai">Adezai</ion-select-option>
-        <ion-select-option value="Ali Bandar">Ali Bandar</ion-select-option>
-        <ion-select-option value="Amir Chah">Amir Chah</ion-select-option>
-        <ion-select-option value="Attock">Attock</ion-select-option>
-        <ion-select-option value="Ayubia">Ayubia</ion-select-option>
-        <ion-select-option value="Bahawalpur">Bahawalpur</ion-select-option>
-        <ion-select-option value="Baden">Baden</ion-select-option>
-        <ion-select-option value="Bagh">Bagh</ion-select-option>
-        <ion-select-option value="Bahawalnagar">Bahawalnagar</ion-select-option>
-        <ion-select-option value="Burewala">Burewala</ion-select-option>
-        <ion-select-option value="Banda Daud Shah">Banda Daud Shah</ion-select-option>
-        <ion-select-option value="Bannu district|Bannu">Bannu</ion-select-option>
-        <ion-select-option value="Batagram">Batagram</ion-select-option>
-        <ion-select-option value="Bazdar">Bazdar</ion-select-option>
-        <ion-select-option value="Bela">Bela</ion-select-option>
-        <ion-select-option value="Bellpat">Bellpat</ion-select-option>
-        <ion-select-option value="Bhag">Bhag</ion-select-option>
-        <ion-select-option value="Bhakkar">Bhakkar</ion-select-option>
-        <ion-select-option value="Bhalwal">Bhalwal</ion-select-option>
-        <ion-select-option value="Bhimber">Bhimber</ion-select-option>
-        <ion-select-option value="Birote">Birote</ion-select-option>
-        <ion-select-option value="Buner">Buner</ion-select-option>
-        <ion-select-option value="Burj">Burj</ion-select-option>
-        <ion-select-option value="Chiniot">Chiniot</ion-select-option>
-        <ion-select-option value="Chachro">Chachro</ion-select-option>
-        <ion-select-option value="Chagai">Chagai</ion-select-option>
-        <ion-select-option value="Chah Sandan">Chah Sandan</ion-select-option>
-        <ion-select-option value="Chailianwala">Chailianwala</ion-select-option>
-        <ion-select-option value="Chakdara">Chakdara</ion-select-option>
-        <ion-select-option value="Chakku">Chakku</ion-select-option>
-        <ion-select-option value="Chakwal">Chakwal</ion-select-option>
-        <ion-select-option value="Chaman">Chaman</ion-select-option>
-        <ion-select-option value="Charsadda">Charsadda</ion-select-option>
-        <ion-select-option value="Chhatr">Chhatr</ion-select-option>
-        <ion-select-option value="Chichawatni">Chichawatni</ion-select-option>
-        <ion-select-option value="Chitral">Chitral</ion-select-option>
-        <ion-select-option value="Dadu">Dadu</ion-select-option>
-        <ion-select-option value="Dera Ghazi Khan">Dera Ghazi Khan</ion-select-option>
-        <ion-select-option value="Dera Ismail Khan">Dera Ismail Khan</ion-select-option>
-        <ion-select-option value="Dalbandin">Dalbandin</ion-select-option>
-        <ion-select-option value="Dargai">Dargai</ion-select-option>
-        <ion-select-option value="Darya Khan">Darya Khan</ion-select-option>
-        <ion-select-option value="Daska">Daska</ion-select-option>
-        <ion-select-option value="Dera Bugti">Dera Bugti</ion-select-option>
-        <ion-select-option value="Dhana Sar">Dhana Sar</ion-select-option>
-        <ion-select-option value="Digri">Digri</ion-select-option>
-        <ion-select-option value="Dina City|Dina">Dina</ion-select-option>
-        <ion-select-option value="Dinga">Dinga</ion-select-option>
-        <ion-select-option value="Diplo, Pakistan|Diplo">Diplo</ion-select-option>
-        <ion-select-option value="Diwana">Diwana</ion-select-option>
-        <ion-select-option value="Dokri">Dokri</ion-select-option>
-        <ion-select-option value="Drosh">Drosh</ion-select-option>
-        <ion-select-option value="Duki">Duki</ion-select-option>
-        <ion-select-option value="Dushi">Dushi</ion-select-option>
-        <ion-select-option value="Duzab">Duzab</ion-select-option>
-        <ion-select-option value="Faisalabad">Faisalabad</ion-select-option>
-        <ion-select-option value="Fateh Jang">Fateh Jang</ion-select-option>
-        <ion-select-option value="Ghotki">Ghotki</ion-select-option>
-        <ion-select-option value="Gwadar">Gwadar</ion-select-option>
-        <ion-select-option value="Gujranwala">Gujranwala</ion-select-option>
-        <ion-select-option value="Gujrat">Gujrat</ion-select-option>
-        <ion-select-option value="Gadra">Gadra</ion-select-option>
-        <ion-select-option value="Gajar">Gajar</ion-select-option>
-        <ion-select-option value="Gandava">Gandava</ion-select-option>
-        <ion-select-option value="Garhi Khairo">Garhi Khairo</ion-select-option>
-        <ion-select-option value="Garruck">Garruck</ion-select-option>
-        <ion-select-option value="Ghakhar Mandi">Ghakhar Mandi</ion-select-option>
-        <ion-select-option value="Ghanian">Ghanian</ion-select-option>
-        <ion-select-option value="Ghauspur">Ghauspur</ion-select-option>
-        <ion-select-option value="Ghazluna">Ghazluna</ion-select-option>
-        <ion-select-option value="Girdan">Girdan</ion-select-option>
-        <ion-select-option value="Gulistan">Gulistan</ion-select-option>
-        <ion-select-option value="Gwash">Gwash</ion-select-option>
-        <ion-select-option value="Hyderabad">Hyderabad</ion-select-option>
-        <ion-select-option value="Hala">Hala</ion-select-option>
-        <ion-select-option value="Haripur">Haripur</ion-select-option>
-        <ion-select-option value="Hab Chauki">Hab Chauki</ion-select-option>
-        <ion-select-option value="Hafizabad">Hafizabad</ion-select-option>
-        <ion-select-option value="Hameedabad">Hameedabad</ion-select-option>
-        <ion-select-option value="Hangu">Hangu</ion-select-option>
-        <ion-select-option value="Harnai">Harnai</ion-select-option>
-        <ion-select-option value="Hasilpur">Hasilpur</ion-select-option>
-        <ion-select-option value="Haveli Lakha">Haveli Lakha</ion-select-option>
-        <ion-select-option value="Hinglaj">Hinglaj</ion-select-option>
-        <ion-select-option value="Hoshab">Hoshab</ion-select-option>
-        <ion-select-option value="Islamabad">Islamabad</ion-select-option>
-        <ion-select-option value="Islamkot">Islamkot</ion-select-option>
-        <ion-select-option value="Ispikan">Ispikan</ion-select-option>
-        <ion-select-option value="Jacobabad">Jacobabad</ion-select-option>
-        <ion-select-option value="Jamshoro">Jamshoro</ion-select-option>
-        <ion-select-option value="Jhang">Jhang</ion-select-option>
-        <ion-select-option value="Jhelum">Jhelum</ion-select-option>
-        <ion-select-option value="Jamesabad">Jamesabad</ion-select-option>
-        <ion-select-option value="Jampur">Jampur</ion-select-option>
-        <ion-select-option value="Janghar">Janghar</ion-select-option>
-        <ion-select-option value="Jati, Jati(Mughalbhin)">Jati</ion-select-option>
-        <ion-select-option value="Jauharabad">Jauharabad</ion-select-option>
-        <ion-select-option value="Jhal">Jhal</ion-select-option>
-        <ion-select-option value="Jhal Jhao">Jhal Jhao</ion-select-option>
-        <ion-select-option value="Jhatpat">Jhatpat</ion-select-option>
-        <ion-select-option value="Jhudo">Jhudo</ion-select-option>
-        <ion-select-option value="Jiwani">Jiwani</ion-select-option>
-        <ion-select-option value="Jungshahi">Jungshahi</ion-select-option>
-        <ion-select-option value="Karachi">Karachi</ion-select-option>
-        <ion-select-option value="Kotri">Kotri</ion-select-option>
-        <ion-select-option value="Kalam">Kalam</ion-select-option>
-        <ion-select-option value="Kalandi">Kalandi</ion-select-option>
-        <ion-select-option value="Kalat">Kalat</ion-select-option>
-        <ion-select-option value="Kamalia">Kamalia</ion-select-option>
-        <ion-select-option value="Kamararod">Kamararod</ion-select-option>
-        <ion-select-option value="Kamber">Kamber</ion-select-option>
-        <ion-select-option value="Kamokey">Kamokey</ion-select-option>
-        <ion-select-option value="Kanak">Kanak</ion-select-option>
-        <ion-select-option value="Kandi">Kandi</ion-select-option>
-        <ion-select-option value="Kandiaro">Kandiaro</ion-select-option>
-        <ion-select-option value="Kanpur">Kanpur</ion-select-option>
-        <ion-select-option value="Kapip">Kapip</ion-select-option>
-        <ion-select-option value="Kappar">Kappar</ion-select-option>
-        <ion-select-option value="Karak City">Karak City</ion-select-option>
-        <ion-select-option value="Karodi">Karodi</ion-select-option>
-        <ion-select-option value="Kashmor">Kashmor</ion-select-option>
-        <ion-select-option value="Kasur">Kasur</ion-select-option>
-        <ion-select-option value="Katuri">Katuri</ion-select-option>
-        <ion-select-option value="Keti Bandar">Keti Bandar</ion-select-option>
-        <ion-select-option value="Khairpur">Khairpur</ion-select-option>
-        <ion-select-option value="Khanaspur">Khanaspur</ion-select-option>
-        <ion-select-option value="Khanewal">Khanewal</ion-select-option>
-        <ion-select-option value="Kharan">Kharan</ion-select-option>
-        <ion-select-option value="kharian">kharian</ion-select-option>
-        <ion-select-option value="Khokhropur">Khokhropur</ion-select-option>
-        <ion-select-option value="Khora">Khora</ion-select-option>
-        <ion-select-option value="Khushab">Khushab</ion-select-option>
-        <ion-select-option value="Khuzdar">Khuzdar</ion-select-option>
-        <ion-select-option value="Kikki">Kikki</ion-select-option>
-        <ion-select-option value="Klupro">Klupro</ion-select-option>
-        <ion-select-option value="Kohan">Kohan</ion-select-option>
-        <ion-select-option value="Kohat">Kohat</ion-select-option>
-        <ion-select-option value="Kohistan">Kohistan</ion-select-option>
-        <ion-select-option value="Kohlu">Kohlu</ion-select-option>
-        <ion-select-option value="Korak">Korak</ion-select-option>
-        <ion-select-option value="Korangi">Korangi</ion-select-option>
-        <ion-select-option value="Kot Sarae">Kot Sarae</ion-select-option>
-        <ion-select-option value="Kotli">Kotli</ion-select-option>
-        <ion-select-option value="Lahore">Lahore</ion-select-option>
-        <ion-select-option value="Larkana">Larkana</ion-select-option>
-        <ion-select-option value="Lahri">Lahri</ion-select-option>
-        <ion-select-option value="Lakki Marwat">Lakki Marwat</ion-select-option>
-        <ion-select-option value="Lasbela">Lasbela</ion-select-option>
-        <ion-select-option value="Latamber">Latamber</ion-select-option>
-        <ion-select-option value="Layyah">Layyah</ion-select-option>
-        <ion-select-option value="Leiah">Leiah</ion-select-option>
-        <ion-select-option value="Liari">Liari</ion-select-option>
-        <ion-select-option value="Lodhran">Lodhran</ion-select-option>
-        <ion-select-option value="Loralai">Loralai</ion-select-option>
-        <ion-select-option value="Lower Dir">Lower Dir</ion-select-option>
-        <ion-select-option value="Shadan Lund">Shadan Lund</ion-select-option>
-        <ion-select-option value="Multan">Multan</ion-select-option>
-        <ion-select-option value="Mandi Bahauddin">Mandi Bahauddin</ion-select-option>
-        <ion-select-option value="Mansehra">Mansehra</ion-select-option>
-        <ion-select-option value="Mian Chanu">Mian Chanu</ion-select-option>
-        <ion-select-option value="Mirpur">Mirpur</ion-select-option>
-        <ion-select-option value="Moro, Pakistan|Moro">Moro</ion-select-option>
-        <ion-select-option value="Mardan">Mardan</ion-select-option>
-        <ion-select-option value="Mach">Mach</ion-select-option>
-        <ion-select-option value="Madyan">Madyan</ion-select-option>
-        <ion-select-option value="Malakand">Malakand</ion-select-option>
-        <ion-select-option value="Mand">Mand</ion-select-option>
-        <ion-select-option value="Manguchar">Manguchar</ion-select-option>
-        <ion-select-option value="Mashki Chah">Mashki Chah</ion-select-option>
-        <ion-select-option value="Maslti">Maslti</ion-select-option>
-        <ion-select-option value="Mastuj">Mastuj</ion-select-option>
-        <ion-select-option value="Mastung">Mastung</ion-select-option>
-        <ion-select-option value="Mathi">Mathi</ion-select-option>
-        <ion-select-option value="Matiari">Matiari</ion-select-option>
-        <ion-select-option value="Mehar">Mehar</ion-select-option>
-        <ion-select-option value="Mekhtar">Mekhtar</ion-select-option>
-        <ion-select-option value="Merui">Merui</ion-select-option>
-        <ion-select-option value="Mianwali">Mianwali</ion-select-option>
-        <ion-select-option value="Mianez">Mianez</ion-select-option>
-        <ion-select-option value="Mirpur Batoro">Mirpur Batoro</ion-select-option>
-        <ion-select-option value="Mirpur Khas">Mirpur Khas</ion-select-option>
-        <ion-select-option value="Mirpur Sakro">Mirpur Sakro</ion-select-option>
-        <ion-select-option value="Mithi">Mithi</ion-select-option>
-        <ion-select-option value="Mongora">Mongora</ion-select-option>
-        <ion-select-option value="Murgha Kibzai">Murgha Kibzai</ion-select-option>
-        <ion-select-option value="Muridke">Muridke</ion-select-option>
-        <ion-select-option value="Musa Khel Bazar">Musa Khel Bazar</ion-select-option>
-        <ion-select-option value="Muzaffar Garh">Muzaffar Garh</ion-select-option>
-        <ion-select-option value="Muzaffarabad">Muzaffarabad</ion-select-option>
-        <ion-select-option value="Nawabshah">Nawabshah</ion-select-option>
-        <ion-select-option value="Nazimabad">Nazimabad</ion-select-option>
-        <ion-select-option value="Nowshera">Nowshera</ion-select-option>
-        <ion-select-option value="Nagar Parkar">Nagar Parkar</ion-select-option>
-        <ion-select-option value="Nagha Kalat">Nagha Kalat</ion-select-option>
-        <ion-select-option value="Nal">Nal</ion-select-option>
-        <ion-select-option value="Naokot">Naokot</ion-select-option>
-        <ion-select-option value="Nasirabad">Nasirabad</ion-select-option>
-        <ion-select-option value="Nauroz Kalat">Nauroz Kalat</ion-select-option>
-        <ion-select-option value="Naushara">Naushara</ion-select-option>
-        <ion-select-option value="Nur Gamma">Nur Gamma</ion-select-option>
-        <ion-select-option value="Nushki">Nushki</ion-select-option>
-        <ion-select-option value="Nuttal">Nuttal</ion-select-option>
-        <ion-select-option value="Okara">Okara</ion-select-option>
-        <ion-select-option value="Ormara">Ormara</ion-select-option>
-        <ion-select-option value="Peshawar">Peshawar</ion-select-option>
-        <ion-select-option value="Panjgur">Panjgur</ion-select-option>
-        <ion-select-option value="Pasni City">Pasni City</ion-select-option>
-        <ion-select-option value="Paharpur">Paharpur</ion-select-option>
-        <ion-select-option value="Palantuk">Palantuk</ion-select-option>
-        <ion-select-option value="Pendoo">Pendoo</ion-select-option>
-        <ion-select-option value="Piharak">Piharak</ion-select-option>
-        <ion-select-option value="Pirmahal">Pirmahal</ion-select-option>
-        <ion-select-option value="Pishin">Pishin</ion-select-option>
-        <ion-select-option value="Plandri">Plandri</ion-select-option>
-        <ion-select-option value="Pokran">Pokran</ion-select-option>
-        <ion-select-option value="Pounch">Pounch</ion-select-option>
-        <ion-select-option value="Quetta">Quetta</ion-select-option>
-        <ion-select-option value="Qambar">Qambar</ion-select-option>
-        <ion-select-option value="Qamruddin Karez">Qamruddin Karez</ion-select-option>
-        <ion-select-option value="Qazi Ahmad">Qazi Ahmad</ion-select-option>
-        <ion-select-option value="Qila Abdullah">Qila Abdullah</ion-select-option>
-        <ion-select-option value="Qila Ladgasht">Qila Ladgasht</ion-select-option>
-        <ion-select-option value="Qila Safed">Qila Safed</ion-select-option>
-        <ion-select-option value="Qila Saifullah">Qila Saifullah</ion-select-option>
-        <ion-select-option value="Rawalpindi">Rawalpindi</ion-select-option>
-        <ion-select-option value="Rabwah">Rabwah</ion-select-option>
-        <ion-select-option value="Rahim Yar Khan">Rahim Yar Khan</ion-select-option>
-        <ion-select-option value="Rajan Pur">Rajan Pur</ion-select-option>
-        <ion-select-option value="Rakhni">Rakhni</ion-select-option>
-        <ion-select-option value="Ranipur">Ranipur</ion-select-option>
-        <ion-select-option value="Ratodero">Ratodero</ion-select-option>
-        <ion-select-option value="Rawalakot">Rawalakot</ion-select-option>
-        <ion-select-option value="Renala Khurd">Renala Khurd</ion-select-option>
-        <ion-select-option value="Robat Thana">Robat Thana</ion-select-option>
-        <ion-select-option value="Rodkhan">Rodkhan</ion-select-option>
-        <ion-select-option value="Rohri">Rohri</ion-select-option>
-        <ion-select-option value="Sialkot">Sialkot</ion-select-option>
-        <ion-select-option value="Sadiqabad">Sadiqabad</ion-select-option>
-        <ion-select-option value="Safdar Abad- (Dhaban Singh)">Safdar Abad</ion-select-option>
-        <ion-select-option value="Sahiwal">Sahiwal</ion-select-option>
-        <ion-select-option value="Saidu Sharif">Saidu Sharif</ion-select-option>
-        <ion-select-option value="Saindak">Saindak</ion-select-option>
-        <ion-select-option value="Sakrand">Sakrand</ion-select-option>
-        <ion-select-option value="Sanjawi">Sanjawi</ion-select-option>
-        <ion-select-option value="Sargodha">Sargodha</ion-select-option>
-        <ion-select-option value="Saruna">Saruna</ion-select-option>
-        <ion-select-option value="Shabaz Kalat">Shabaz Kalat</ion-select-option>
-        <ion-select-option value="Shadadkhot">Shadadkhot</ion-select-option>
-        <ion-select-option value="Shahbandar">Shahbandar</ion-select-option>
-        <ion-select-option value="Shahpur">Shahpur</ion-select-option>
-        <ion-select-option value="Shahpur Chakar">Shahpur Chakar</ion-select-option>
-        <ion-select-option value="Shakargarh">Shakargarh</ion-select-option>
-        <ion-select-option value="Shangla">Shangla</ion-select-option>
-        <ion-select-option value="Sharam Jogizai">Sharam Jogizai</ion-select-option>
-        <ion-select-option value="Sheikhupura">Sheikhupura</ion-select-option>
-        <ion-select-option value="Shikarpur">Shikarpur</ion-select-option>
-        <ion-select-option value="Shingar">Shingar</ion-select-option>
-        <ion-select-option value="Shorap">Shorap</ion-select-option>
-        <ion-select-option value="Sibi">Sibi</ion-select-option>
-        <ion-select-option value="Sohawa">Sohawa</ion-select-option>
-        <ion-select-option value="Sonmiani">Sonmiani</ion-select-option>
-        <ion-select-option value="Sooianwala">Sooianwala</ion-select-option>
-        <ion-select-option value="Spezand">Spezand</ion-select-option>
-        <ion-select-option value="Spintangi">Spintangi</ion-select-option>
-        <ion-select-option value="Sui">Sui</ion-select-option>
-        <ion-select-option value="Sujawal">Sujawal</ion-select-option>
-        <ion-select-option value="Sukkur">Sukkur</ion-select-option>
-        <ion-select-option value="Suntsar">Suntsar</ion-select-option>
-        <ion-select-option value="Surab">Surab</ion-select-option>
-        <ion-select-option value="Swabi">Swabi</ion-select-option>
-        <ion-select-option value="Swat">Swat</ion-select-option>
-        <ion-select-option value="Tando Adam">Tando Adam</ion-select-option>
-        <ion-select-option value="Tando Bago">Tando Bago</ion-select-option>
-        <ion-select-option value="Tangi">Tangi</ion-select-option>
-        <ion-select-option value="Tank City">Tank City</ion-select-option>
-        <ion-select-option value="Tar Ahamd Rind">Tar Ahamd Rind</ion-select-option>
-        <ion-select-option value="Thalo">Thalo</ion-select-option>
-        <ion-select-option value="Thatta">Thatta</ion-select-option>
-        <ion-select-option value="Toba Tek Singh">Toba Tek Singh</ion-select-option>
-        <ion-select-option value="Tordher">Tordher</ion-select-option>
-        <ion-select-option value="Tujal">Tujal</ion-select-option>
-        <ion-select-option value="Tump">Tump</ion-select-option>
-        <ion-select-option value="Turbat">Turbat</ion-select-option>
-        <ion-select-option value="Umarao">Umarao</ion-select-option>
-        <ion-select-option value="Umarkot">Umarkot</ion-select-option>
-        <ion-select-option value="Upper Dir">Upper Dir</ion-select-option>
-        <ion-select-option value="Uthal">Uthal</ion-select-option>
-        <ion-select-option value="Vehari">Vehari</ion-select-option>
-        <ion-select-option value="Veirwaro">Veirwaro</ion-select-option>
-        <ion-select-option value="Vitakri">Vitakri</ion-select-option>
-        <ion-select-option value="Wadh">Wadh</ion-select-option>
-        <ion-select-option value="Wah Cantt">Wah Cantt</ion-select-option>
-        <ion-select-option value="Warah">Warah</ion-select-option>
-        <ion-select-option value="Washap">Washap</ion-select-option>
-        <ion-select-option value="Wasjuk">Wasjuk</ion-select-option>
-        <ion-select-option value="Wazirabad">Wazirabad</ion-select-option>
-        <ion-select-option value="Yakmach">Yakmach</ion-select-option>
-        <ion-select-option value="Zhob">Zhob</ion-select-option>
-        <ion-select-option value="Other">Other</ion-select-option>
+         <ion-select-option *ngFor ="let city of childService.cities" value ="{{city}}">{{city}}</ion-select-option>
+        
       </ion-select>
     </ion-item>
+
+    
 
     <!-- <ion-item>
       <ion-label color="primary" position="floating">Preferred Day of Reminder</ion-label>
@@ -466,7 +168,7 @@
         <ion-col>
           <ion-item>
             <ion-label color="primary">Is EPI Done</ion-label>
-            <ion-checkbox slot="start" formControlName="IsEPIDone"></ion-checkbox>
+            <ion-checkbox [disabled]="!epiDone" slot="start" formControlName="IsEPIDone"></ion-checkbox>
           </ion-item>
         </ion-col>
 
@@ -483,7 +185,7 @@
   </form>
 
   <!-- 2nd step of Add Child -->
-  <div>
+  <!-- <div>
     <form [formGroup]="fg2" *ngIf="formcontroll == true">
       <ion-list>
         <ion-row>
@@ -498,5 +200,6 @@
       </ion-list>
       <ion-button (click)="getChildVaccinefromUser()">Save</ion-button>
     </form>
-  </div>
+  </div> -->
 </ion-content>
+

@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit , ViewChild, ɵConsole } from "@angular/core";
 import {
   FormGroup,
   FormBuilder,
@@ -38,6 +38,8 @@ export class AddPage implements OnInit {
   gender: any;
   City: any;
   Doctor:any;
+  epiDone = false;
+  //cities: any;
 
   constructor(
     public loadingController: LoadingController,
@@ -58,7 +60,7 @@ export class AddPage implements OnInit {
  async  ngOnInit() {
     this.todaydate = new Date();
     this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format("YYYY-MM-DD");
-    this.getVaccine();
+   // this.getVaccine();
 
     this.fg1 = this.formBuilder.group({
       ClinicId: [""],
@@ -73,7 +75,7 @@ export class AddPage implements OnInit {
           )
         ])
       ),
-      DOB: new FormControl(this.todaydate, Validators.required),
+      DOB: new FormControl('', Validators.required),
       CountryCode: ["92"],
       MobileNumber: new FormControl(
         "",
@@ -83,7 +85,7 @@ export class AddPage implements OnInit {
         ])
       ),
       PreferredDayOfWeek: 'Any',
-      Gender: [null],
+      Gender: "Boy",
       City: [null],
       PreferredDayOfReminder: 0,
       PreferredSchedule: [null],
@@ -100,6 +102,7 @@ export class AddPage implements OnInit {
     this.storage.get(environment.CITY).then(val => {
       this.City = val;
     });
+
   await this.storage.get(environment.DOCTOR).then(doc => {
       this.Doctor = doc;
     });
@@ -112,34 +115,36 @@ export class AddPage implements OnInit {
     // );
     console.log(this.Doctor);
     console.log(this.clinicService.OnlineClinic);
-    console.log(this.clinicService.OnlineClinic.Id);
+  //  console.log(this.clinicService.OnlineClinic.Id);
   }
 
-  moveNextStep() {
-    this.fg1.value.DOB = moment(this.fg1.value.DOB, "YYYY-MM-DD").format(
+ async moveNextStep() {
+    this.fg1.value.DOB = await moment(this.fg1.value.DOB, "YYYY-MM-DD").format(
       "DD-MM-YYYY"
     );
-    this.formcontroll = true;
-    this.fg1.value.Gender = this.gender;
-    this.PasswordGenerator();
+   // this.formcontroll = true;
+    //this.fg1.value.Gender = this.gender;
+   await this.PasswordGenerator();
+   await this.addNewChild(this.fg1.value);
   }
   updateGender(g) {
-    this.gender = g;
+   // this.fg1.value.Gender = g;
+    this.fg1.controls['Gender'].setValue(g);
   }
 
-  getChildVaccinefromUser() {
-    this.fg2.value.ChildVaccines = this.fg2.value.ChildVaccines.map((v, i) =>
-      v ? this.vaccines[i].Id : null
-    ).filter(v => v !== null);
+  // getChildVaccinefromUser() {
+  //   this.fg2.value.ChildVaccines = this.fg2.value.ChildVaccines.map((v, i) =>
+  //     v ? this.vaccines[i].Id : null
+  //   ).filter(v => v !== null);
 
-    this.fg2.value.ChildVaccines = this.fg2.value.ChildVaccines;
-    let vaccine = this.fg1.value;
-    vaccine.ChildVaccines = [];
-    for (let i = 0; i < this.fg2.value.ChildVaccines.length; i++) {
-      vaccine.ChildVaccines.push({ Id: this.fg2.value.ChildVaccines[i] });
-    }
-    this.addNewChild(vaccine);
-  }
+  //   this.fg2.value.ChildVaccines = this.fg2.value.ChildVaccines;
+  //   let vaccine = this.fg1.value;
+  //   vaccine.ChildVaccines = [];
+  //   for (let i = 0; i < this.fg2.value.ChildVaccines.length; i++) {
+  //     vaccine.ChildVaccines.push({ Id: this.fg2.value.ChildVaccines[i] });
+  //   }
+  //   this.addNewChild(vaccine);
+  // }
 
   PasswordGenerator() {
     var length = 4,
@@ -151,71 +156,72 @@ export class AddPage implements OnInit {
     this.fg1.value.Password = retVal;
   }
 
-  async getVaccine() {
-    const loading = await this.loadingController.create({
-      message: "loading"
-    });
-    await loading.present();
-    await this.vaccineService.getVaccine().subscribe(
-      res => {
-        if (res.IsSuccess) {
-          this.vaccines = res.ResponseData;
-          this.PasswordGenerator();
+  // async getVaccine() {
+  //   const loading = await this.loadingController.create({
+  //     message: "loading"
+  //   });
+  //   await loading.present();
+  //   await this.vaccineService.getVaccine().subscribe(
+  //     res => {
+  //       if (res.IsSuccess) {
+  //         this.vaccines = res.ResponseData;
+  //         this.PasswordGenerator();
 
-          const controls = this.vaccines.map(c => new FormControl(true));
-          this.fg2 = this.formBuilder.group({
-            ChildVaccines: new FormArray(controls)
-          });
+  //         const controls = this.vaccines.map(c => new FormControl(true));
+  //         this.fg2 = this.formBuilder.group({
+  //           ChildVaccines: new FormArray(controls)
+  //         });
 
-          loading.dismiss();
-        } else {
-          loading.dismiss();
-          this.toastService.create(res.Message, "danger");
-        }
-      },
-      err => {
-        loading.dismiss();
-        this.toastService.create(err, "danger");
-      }
-    );
-  }
+  //         loading.dismiss();
+  //       } else {
+  //         loading.dismiss();
+  //         this.toastService.create(res.Message, "danger");
+  //       }
+  //     },
+  //     err => {
+  //       loading.dismiss();
+  //       this.toastService.create(err, "danger");
+  //     }
+  //   );
+  // }
 
   async addNewChild(data) {
     console.log(data);
     const loading = await this.loadingController.create({
       message: "loading"
     });
+    const loading1 = await this.loadingController.create({
+      message: "sending Message"
+    });
     await loading.present();
     let str = this.fg1.value.PreferredDayOfWeek;
     this.fg1.value.PreferredDayOfWeek = str.toString();
     this.fg1.value.ClinicId = this.clinicService.OnlineClinic.Id;
     await this.childService.addChild(data).subscribe(
-      res => {
+      async res => {
         if (res.IsSuccess) {
           // loading.dismiss();
           // this.toastService.create("successfully added");
           // this.router.navigate(["/members/child"]);
-          var sms1 = "Mr. " + res.ResponseData.FatherName + "\n";
+          var sms1 = ""; 
           if (res.ResponseData.Gender == "Boy")
-              sms1 += "Your Son " + this.titlecasePipe.transform(res.ResponseData.Name);
+              sms1 += ("Mr. " + this.titlecasePipe.transform(res.ResponseData.Name));
 
           if (res.ResponseData.Gender == "Girl")
-              sms1 += "Your Daughter " + this.titlecasePipe.transform(res.ResponseData.Name);
+              sms1 += ("Miss. " + this.titlecasePipe.transform(res.ResponseData.Name));
 
-          sms1 += " has been registered with Dr. " + this.titlecasePipe.transform(this.Doctor.FirstName) + " " + this.titlecasePipe.transform(this.Doctor.LastName);
-          sms1 += " at " + this.clinicService.OnlineClinic.Name;
+          sms1 += " has been registered Succesfully at Vaccine.pk";
+          sms1 += "\nId: " + res.ResponseData.MobileNumber + " \nPassword: " + res.ResponseData.Password;
+          sms1 += "\nClinic Phone Number: " + this.clinicService.OnlineClinic.PhoneNumber;
+          sms1 += "\nWeb Link:  https://vaccine.pk/";
           console.log(sms1);
-
-          // sendsms 1
-          this.sendsms(res.ResponseData.MobileNumber , sms1);
-
-           var sms2 = "Id: " + res.ResponseData.MobileNumber + "\nPassword: " + res.ResponseData.Password
-                 + "\nClinic: " + this.clinicService.OnlineClinic.PhoneNumber + "\nhttps://vaccs.io/";
-          // send sms 2
-          console.log(sms2);
-          this.sendsms(res.ResponseData.MobileNumber , sms2);
+         
           loading.dismiss();
           this.toastService.create("successfully added");
+          loading1.present();
+          // sendsms 1
+         await this.sendsms(res.ResponseData.MobileNumber , sms1);
+          loading1.dismiss();
           this.router.navigate(["/members/child"]);
         } else {
           loading.dismiss();
@@ -230,18 +236,20 @@ export class AddPage implements OnInit {
       }
     );
   }
-  sendsms(number , message)
+   sendsms(number , message)
   {
     console.log(number + message);
     this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS).then(
       result => {
-        console.log('Has permission?',result.hasPermission);
+        // console.log('Has permission?',result.hasPermission);
         if(result.hasPermission){
           this.sms.send('+92' + number, message)
           .then(()=>{
-          console.log("The Message is sent");
+          // console.log("The Message is sent");
+          this.toastService.create("Message Sent Successful");
           }).catch((error)=>{
-          console.log("The Message is Failed",error);
+          //console.log("The Message is Failed",error);
+          this.toastService.create("Message Sent Failed");
           });
         }
         else {
@@ -257,12 +265,28 @@ export class AddPage implements OnInit {
   {
     if(city == 'Other')
     await this.otherCityAlert();
+    this.childService.othercity = true;
     this.storage.set(environment.CITY, city);
   }
   uncheckany(){
     if(this.fg1.value.PreferredDayOfWeek.length > 1)
     this.fg1.value.PreferredDayOfWeek = this.fg1.value.PreferredDayOfWeek.filter(x=> (x !== 'Any'));
   }
+  async checkEpi(){ 
+    let days = await this.calculateDiff(this.fg1.value.DOB);
+    console.log(days);
+    if (days > 272)
+    this.epiDone = true;
+    else
+    this.epiDone = false;
+  }
+  
+  calculateDiff(dateSent){
+    let currentDate = new Date();
+    dateSent = new Date(dateSent);
+    return Math.floor((Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()) - Date.UTC(dateSent.getFullYear(), dateSent.getMonth(), dateSent.getDate()) ) /(1000 * 60 * 60 * 24));
+}
+
  async otherCityAlert() {
     let alert = await this.alertCtrl.create({
      // title: 'Login',
@@ -282,9 +306,10 @@ export class AddPage implements OnInit {
           }
         },
         {
-          text: 'Login',
+          text: 'ok',
           handler: data => {
             if (data.cityname) {
+            this.childService.cities.push(data.cityname);
             this.City = data.cityname;
             } 
           }
@@ -314,4 +339,7 @@ export class AddPage implements OnInit {
     ],
     gender: [{ type: "required", message: "Gender is required." }]
   };
+  cities=['Islamabad' , 'Rawalpindi' , 'Multan' , 'Other']
 }
+
+///

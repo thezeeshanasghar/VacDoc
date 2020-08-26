@@ -9,6 +9,7 @@ import { AlertController } from '@ionic/angular';
 //import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
 import { environment } from 'src/environments/environment';
 import { Downloader , DownloadRequest , NotificationVisibility } from '@ionic-native/downloader/ngx';
+import { Storage } from '@ionic/storage';
 
 
 @Component({
@@ -22,6 +23,7 @@ export class VaccinePage {
   dataGrouping: any[] = [];
   childId: any;
   Pneum2Date: any;
+  BirthYear: any;
   private readonly API_VACCINE = `${environment.BASE_URL}`
   constructor(
     public loadingController: LoadingController,
@@ -31,7 +33,8 @@ export class VaccinePage {
     private bulkService: BulkService,
     private toastService: ToastService,
     public alertController: AlertController,
-    private downloader: Downloader
+    private downloader: Downloader,
+    private storage: Storage,
 
     // private document: DocumentViewer,
   ) { }
@@ -63,7 +66,10 @@ export class VaccinePage {
         res => {
           if (res.IsSuccess) {
           // res.ResponseData = res.ResponseData.filter(item=> (!item.IsSkip));
-           console.log(res.ResponseData);
+           // console.log(res.ResponseData);
+           this.BirthYear = res.ResponseData[0].Child.DOB;
+           console.log(this.BirthYear);
+           this.storage.set('BirthYear' , this.BirthYear);
             // res.ResponseData.forEach(vac => {
             //   if (vac.Dose.IsSpecial) {
             //     let id = this.specialvaccineids.find(x => x === vac.Dose.VaccineId);
@@ -97,6 +103,7 @@ export class VaccinePage {
             this.vaccine.forEach(doc => {
               doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
             });
+           
             this.dataGrouping = this.groupBy(this.vaccine, "Date");
             console.log(this.dataGrouping);
             loading.dismiss();

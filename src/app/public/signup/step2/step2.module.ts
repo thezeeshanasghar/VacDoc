@@ -7,6 +7,11 @@ import { IonicModule } from "@ionic/angular";
 
 import { Step2Page } from "./step2.page";
 
+import { FileChooser } from '@ionic-native/file-chooser/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
+import { FileTransfer} from '@ionic-native/file-transfer/ngx';
+
 const routes: Routes = [
   {
     path: "",
@@ -22,6 +27,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     ReactiveFormsModule
   ],
-  declarations: [Step2Page]
+  declarations: [Step2Page],
+  providers:[FileChooser , File ,FilePath, FileTransfer]
 })
 export class Step2PageModule {}

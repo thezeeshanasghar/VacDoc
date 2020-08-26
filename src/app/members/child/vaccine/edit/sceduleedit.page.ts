@@ -24,9 +24,10 @@ import { TitleCasePipe } from '@angular/common';
   templateUrl: "./sceduleedit.page.html",
   styleUrls: ["./sceduleedit.page.scss"]
 })
-export class SceduleEditPage implements OnInit {
+export class ChildSceduleEditPage implements OnInit {
   public fg: FormGroup;
-  doctorId: any;
+  ChildId: any;
+  NewDoses = true;
 
   doses: any;
   constructor(
@@ -45,10 +46,8 @@ export class SceduleEditPage implements OnInit {
   ) {}
  async ngOnInit() {
     this.fg = this.formBuilder.group({});
-    await this.storage.get(environment.DOCTOR_Id).then(docId => {
-      this.doctorId = docId;
-    });
-    this.getVaccineInfo(this.doctorId);
+    this.ChildId = await this.activatedRoute.snapshot.paramMap.get('id');
+    this.getVaccineInfo(this.ChildId);
   }
 
   async getVaccineInfo(id) {
@@ -56,19 +55,15 @@ export class SceduleEditPage implements OnInit {
       message: "Loading"
     });
     await loading.present();
-    await this.doseService.getNewDoses(id).subscribe(
+    await this.doseService.getNewDosesChild(id).subscribe(
       res => {
         if (res.IsSuccess) {
           this.doses = res.ResponseData;
-         // this.signupService.vaccineData2 = this.doses;
-          this.doses.forEach(dose => {
-              let value = dose.MinAge == null ? 0 : dose.MinAge;
-            this.fg.addControl(
-              dose.Name,
-              new FormControl(value, Validators.required)
-            );   
-
-          });
+          if (this.doses.length == 0)
+          {
+            this.NewDoses = false;
+          }
+      
           loading.dismiss();
         } else {
           loading.dismiss();
@@ -107,28 +102,34 @@ export class SceduleEditPage implements OnInit {
 
  
   async getdoses(){
+    console.log(this.doses);
    let newschedule=[]
     this.doses.forEach(dose => {
       if (dose.IsSpecial)
       {
         newschedule.push({
           DoseId: dose.Id,
-          DoctorId: this.doctorId,
-          GapInDays: dose.MinAge
+          ChildId: this.ChildId,
+         // Date: null,
+          IsDone: false,
+          Due2EPI: false,
+         // GivenDate: null
+
+
         });
       }
     });
-    
+    console.log(newschedule);
     const loading = await this.loadingController.create({
       message: "loading"
     });
     await loading.present();
-    if(newschedule)
-    this.doseService.addScheduleDose(newschedule).subscribe(
+    if (newschedule)
+    this.doseService.addScheduleDoseChild(newschedule).subscribe(
       res => {
         loading.dismiss();
         this.toastService.create("successfully Added", "success");
-        this.router.navigate(['/members/doctor/schedule']);
+        this.router.navigate([`/members/child/vaccine/${this.ChildId}`]);
       },
       err => {
         loading.dismiss();

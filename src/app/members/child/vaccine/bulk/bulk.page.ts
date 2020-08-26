@@ -40,8 +40,9 @@ export class BulkPage implements OnInit {
     this.childId = this.activatedRoute.snapshot.paramMap.get("id");
     console.log(this.childId);
 
-    this.currentDate = this.activatedRoute.snapshot.paramMap.get("childId");
+    this.currentDate = new Date(this.activatedRoute.snapshot.paramMap.get("childId"));
     console.log(this.currentDate);
+    let currentDate1 = new Date(this.currentDate);
     
     this.getBulk();
     this.fg = this.formBuilder.group({
@@ -96,6 +97,7 @@ export class BulkPage implements OnInit {
     var brands = [] ;
     var i = 0;
     this.bulkData.forEach(element => {
+      if(this.BrandIds[i])
       brands.push({ BrandId: this.BrandIds[i], ScheduleId: element.Id });
       i++ ;
     }); 

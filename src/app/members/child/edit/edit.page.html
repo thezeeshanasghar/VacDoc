@@ -16,7 +16,7 @@
     </ion-item>
 
     <ion-item>
-      <ion-label color="primary" position="floating">Father Name</ion-label>
+      <ion-label color="primary" position="floating">Father's Name</ion-label>
       <ion-input type="text" formControlName="FatherName" required></ion-input>
     </ion-item>
 
@@ -49,7 +49,7 @@
       </ion-select>
     </ion-item>
 
-    <ion-radio-group>
+    <ion-radio-group *ngIf ="child" value="{{child.Gender}}">
       <ion-list-header>
         Gender
       </ion-list-header>
@@ -67,7 +67,7 @@
           <ion-col>
             <ion-item>
               <ion-label color="primary">Girl</ion-label>
-              <ion-radio slot="start" value="Girl" (ionSelect)="updateGender('Girl')"></ion-radio>
+              <ion-radio slot="start" value="Girl" (ionSelect)="updateGender('Girl')" Checked></ion-radio>
             </ion-item>
           </ion-col>
         </ion-row>
@@ -77,12 +77,10 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">Select a City</ion-label>
-      <ion-select formControlName="City" required>
-        <ion-select-option value="Rawalpindi">Rawalpindi</ion-select-option>
-        <ion-select-option value="Islamabad">Islamabad</ion-select-option>
-        <ion-select-option value="Taxila">Taxila</ion-select-option>
-        <ion-select-option value="Murre">Murre</ion-select-option>
-      </ion-select>
+      <ion-select formControlName="City"  required>
+        <ion-select-option *ngFor ="let city of childService.cities" value ="{{city}}">{{city}}</ion-select-option>
+       
+     </ion-select>
     </ion-item>
 
     <ion-item>

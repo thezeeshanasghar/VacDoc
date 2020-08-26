@@ -15,6 +15,10 @@ import { SignupService } from "src/app/services/signup.service";
 import * as moment from "moment";
 import { Geolocation } from "@ionic-native/geolocation/ngx";
 //import { validateConfig } from "@angular/router/src/config";
+import { FileChooser } from '@ionic-native/file-chooser/ngx';
+import { File , FileEntry } from '@ionic-native/file/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 declare var google;
 
 @Component({
@@ -27,12 +31,14 @@ export class AddPage implements OnInit {
   fg2: FormGroup;
   map;
   myMarker;
+  uploading = false;
   @ViewChild("mapElement", { static: true }) mapElement;
   clinics: any;
   DoctorId: any;
   section: boolean = false;
   latitude: any = 33.6328532;
   longitude: any = 72.93583679;
+  resourceURL = environment.RESOURCE_URL;
   constructor(
     private formbuilder: FormBuilder,
     private router: Router,
@@ -42,7 +48,11 @@ export class AddPage implements OnInit {
     private signupService: SignupService,
     private storage: Storage,
     private geolocation: Geolocation,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private fileChooser: FileChooser,
+    private file: File,
+    private filePath: FilePath,
+    private transfer: FileTransfer
   ) { }
 
   ngOnInit() {
@@ -74,6 +84,7 @@ export class AddPage implements OnInit {
           Validators.pattern("^(0|[1-9][0-9]*)$")
         ])
       ),
+      MonogramImage: [null],
       OffDays: [null],
       ClinicTimings: [null],
       Lat: [null],
@@ -509,6 +520,59 @@ export class AddPage implements OnInit {
     this.addNewClinic(this.fg1.value);
   }
 
+  uploadMonogram() {
+    
+    this.fileChooser.open().then(async uri =>
+      {
+        console.log(uri);
+       await  this.filePath.resolveNativePath(uri).then(filePath =>
+          {
+            //this.filesPath = filePath;
+            this.uploading = true;
+            this.file.resolveLocalFilesystemUrl(filePath).then(fileInfo =>
+              {
+                let files = fileInfo as FileEntry;
+                files.file(async success =>
+                  {
+                    //this.fileType   = success.type;
+                    let filesName  = success.name;
+                    console.log(filesName);
+                    let options: FileUploadOptions = {
+                      fileName: filesName
+                    }
+                    const fileTransfer: FileTransferObject = this.transfer.create();
+                  await  fileTransfer.upload(uri, 'http://13.233.255.96:5002/api/upload', options)
+                    .then((data) => {
+                      // success
+                      //console.log(data);
+                      this.toastService.create("successfully Uploaded");
+                      this.uploading = false;
+                      let dbpath = JSON.parse(data.response)
+                      this.fg1.value.MonogramImage = dbpath.dbPath;
+                     // console.log(this.fg1.value.MonogramImage);
+                    }, (err) => {
+                      console.log(err)
+                      // error
+                    })
+                  });
+              },err =>
+              {
+                console.log(err);
+                throw err;
+              });
+          },err =>
+          {
+            console.log(err);
+            throw err;
+          });
+      },err =>
+      {
+        console.log(err);
+        throw err;
+      });
+  
+  }
+
   async addNewClinic(data) {
     {
       const loading = await this.loadingController.create({
@@ -845,7 +909,7 @@ export class AddPage implements OnInit {
     }
     else {
       this.fg2.controls["Saend"].setErrors(null);
-      this.fg2.controls["Satart2"].setErrors(null);
+      this.fg2.controls["Sastart2"].setErrors(null);
       this.fg2.controls["Sastart"].setErrors(null);
     }
   }
@@ -895,7 +959,7 @@ export class AddPage implements OnInit {
     }
     else {
       this.fg2.controls["Suend"].setErrors(null);
-      this.fg2.controls["Sutart2"].setErrors(null);
+      this.fg2.controls["Sustart2"].setErrors(null);
       this.fg2.controls["Sustart"].setErrors(null);
     }
   }

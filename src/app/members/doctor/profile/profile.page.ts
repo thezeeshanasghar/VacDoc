@@ -5,9 +5,13 @@ import { ToastService } from "src/app/shared/toast.service";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { FormGroup, FormBuilder, FormControl, Validators } from "@angular/forms";
-//import { FileUploader, FileLikeObject } from 'ng2-file-upload';
+// import { FileUploader, FileLikeObject } from 'ng2-file-upload';
 import { concat } from 'rxjs';
 import { UploadService } from 'src/app/services/upload.service';
+import { FileChooser } from '@ionic-native/file-chooser/ngx';
+import { File , FileEntry } from '@ionic-native/file/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 
 @Component({
   selector: "app-profile",
@@ -18,6 +22,7 @@ export class ProfilePage implements OnInit {
   fg: FormGroup;
   doctorData: any;
   DocotrId: any;
+  uploading: any;
 
   // public profileUploader: FileUploader = new FileUploader({});
   // public signatureUploader: FileUploader = new FileUploader({});
@@ -28,7 +33,12 @@ export class ProfilePage implements OnInit {
     private toastService: ToastService,
     private storage: Storage,
     private formBuilder: FormBuilder,
-    private uploadService: UploadService
+    private uploadService: UploadService,
+    private fileChooser: FileChooser,
+    private file: File,
+    private filePath: FilePath,
+    private transfer: FileTransfer
+
   ) { }
 
   ngOnInit() {
@@ -73,9 +83,128 @@ export class ProfilePage implements OnInit {
           Validators.required,
           Validators.pattern("^[0-9-\\+]*-[A-Z]$")
         ])
+      ),
+      SignatureImage: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required
+        ])
+      ),
+      ProfileImage: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required
+        ])
       )
     });
   }
+
+
+  uploadSignatureImage() {
+
+    this.fileChooser.open().then(async uri =>
+      {
+        console.log(uri);
+       await  this.filePath.resolveNativePath(uri).then(filePath =>
+          {
+            //this.filesPath = filePath;
+            this.uploading = true;
+            this.file.resolveLocalFilesystemUrl(filePath).then(fileInfo =>
+              {
+                let files = fileInfo as FileEntry;
+                files.file(async success =>
+                  {
+                    //this.fileType   = success.type;
+                    let filesName  = success.name;
+                    console.log(filesName);
+                    let options: FileUploadOptions = {
+                      fileName: filesName
+                    }
+                    const fileTransfer: FileTransferObject = this.transfer.create();
+                  await  fileTransfer.upload(uri, 'http://13.233.255.96:5002/api/upload', options)
+                    .then((data) => {
+                      // success
+                      console.log(data);
+                      this.uploading = false;
+                      let dbpath = JSON.parse(data.response)
+                      this.fg.value.SignatureImage = dbpath.dbPath;
+                      console.log(this.fg.value.SignatureImage);
+                    }, (err) => {
+                      console.log(err)
+                      // error
+                    })
+                  });
+              },err =>
+              {
+                console.log(err);
+                throw err;
+              });
+          },err =>
+          {
+            console.log(err);
+            throw err;
+          });
+      },err =>
+      {
+        console.log(err);
+        throw err;
+      });
+  
+  }
+
+  uploadProfileImage() {
+
+    this.fileChooser.open().then(async uri =>
+      {
+        console.log(uri);
+       await  this.filePath.resolveNativePath(uri).then(filePath =>
+          {
+            //this.filesPath = filePath;
+            this.uploading = true;
+            this.file.resolveLocalFilesystemUrl(filePath).then(fileInfo =>
+              {
+                let files = fileInfo as FileEntry;
+                files.file(async success =>
+                  {
+                    //this.fileType   = success.type;
+                    let filesName  = success.name;
+                    console.log(filesName);
+                    let options: FileUploadOptions = {
+                      fileName: filesName
+                    }
+                    const fileTransfer: FileTransferObject = this.transfer.create();
+                  await  fileTransfer.upload(uri, 'http://13.233.255.96:5002/api/upload', options)
+                    .then((data) => {
+                      // success
+                      console.log(data);
+                      this.uploading = false;
+                      let dbpath = JSON.parse(data.response)
+                      this.fg.value.ProfileImage = dbpath.dbPath;
+                      console.log(this.fg.value.ProfileImage);
+                    }, (err) => {
+                      console.log(err)
+                      // error
+                    })
+                  });
+              },err =>
+              {
+                console.log(err);
+                throw err;
+              });
+          },err =>
+          {
+            console.log(err);
+            throw err;
+          });
+      },err =>
+      {
+        console.log(err);
+        throw err;
+      });
+  
+  }
+
+
 
   async getProfile() {
     const loading = await this.loadingController.create({

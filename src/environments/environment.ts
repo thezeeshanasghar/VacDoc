@@ -7,8 +7,10 @@ export const environment = {
   // BASE_URL: "http://vac-api.afz-sol.com/api/"
  // BASE_URL: "http://vac-api.ehs.edu.pk/api/",
   //BASE_URL: "http://localhost:4309/api/",
-// BASE_URL: "http://13.233.255.96:5002/api/",
-  BASE_URL: "http://localhost:5000/api/",
+ BASE_URL: "http://13.233.255.96:5002/api/",
+ RESOURCE_URL: "http://13.233.255.96:5002/",
+  // BASE_URL: "http://localhost:5000/api/",
+  // RESOURCE_URL: "http://localhost:5000/",
   USER: 'User',
   DOCTOR_Id: "DoctorId",
   CLINIC_Id: "ClinicId",

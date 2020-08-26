@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content class= "ion-padding">
 
   <form [formGroup]="fg">
     <ion-item>
@@ -99,9 +99,14 @@
       <ion-input type="text" formControlName="PMDC" required></ion-input>
     </ion-item>
     <ion-item>
-      <input type="file" accept="image/*" id="file1" name="file1" ng2FileSelect [uploader]="profileUploader" /></ion-item>
+       <!-- <input type="file" accept="image/*" id="file1" name="file1" ng2FileSelect [uploader]="profileUploader" /></ion-item>
       <ion-item>
-      <input type="file" accept="image/*" id="file2" name="file2" ng2FileSelect [uploader]="signatureUploader" /></ion-item>
+      <input type="file" accept="image/*" id="file2" name="file2" ng2FileSelect [uploader]="signatureUploader" /> -->
+
+      <ion-button (click) = "uploadSignatureImage()"> Signature Image</ion-button>
+      <ion-button (click) = "uploadProfileImage()"> Profile Image</ion-button>
+
+    </ion-item> 
 
     <ion-button [disabled]="!fg.valid" (click)="updateProfile()">Update</ion-button>
   </form>

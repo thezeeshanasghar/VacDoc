@@ -14,7 +14,7 @@
     <ion-grid>
       <ion-row>
         <ion-col style="text-align: center">
-          {{item.key}}
+          {{item.key | date}}
           <ion-img *ngIf="checkVaccineIsDon(item.value)" style="height: 15px;display: inline-block;"
            src="../../assets/injectionEmpty.png" routerLink="/members/child/vaccine/{{childId}}/bulk/{{item.key}}">   
           </ion-img>
@@ -23,7 +23,7 @@
             src="../../assets/injectionFilled.png" ></ion-img>
 
           <ion-icon color="primary" name="calendar" (click)="picker.open()">
-            <ion-datetime (ionChange)="updateBulkDate($event, item.value[0].Id)" #picker picker-format="DD-MM-YYYY">
+            <ion-datetime (ionChange)="updateBulkDate($event, item.value[0].Id)" max='2030' min ='2000' #picker picker-format="DD-MM-YYYY">
             </ion-datetime>
           </ion-icon>
 
@@ -36,28 +36,35 @@
         <div *ngFor="let v of item.value">
           <ion-item lines="none">
             <ion-label>{{v.Dose.Name}}</ion-label>
-            <p *ngIf="v.IsDone==true && (v.IsDisease==false || v.IsDisease==null)" style="background-color:rgb(55, 231, 10);">{{v.Date}}</p>
-            <p *ngIf="v.IsDone==true && v.IsDisease==true" style="background-color:rgb(55, 231, 10);" 
+            <p *ngIf="v.Due2EPI==true" style="background-color:rgb(55, 231, 10);">Due to EPI</p>
+            <ion-img *ngIf="v.Due2EPI==true" style="height: 30px;" src="../../assets/injectionFilled.png">
+            </ion-img>
+            <p *ngIf="v.IsDone==true && v.Due2EPI==false && (v.IsDisease==false || v.IsDisease==null)" style="background-color:rgb(55, 231, 10);">{{v.Date | date}}</p>
+            <p *ngIf="v.IsDone==true && v.Due2EPI==false && v.IsDisease==true" style="background-color:rgb(55, 231, 10);" 
             routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}">Disease Year: {{v.DiseaseYear}}</p>
-            <ion-icon *ngIf="v.IsDone==false" color="primary" name="calendar" (click)="picker.open()">
+            <ion-icon *ngIf="v.IsDone==false && v.Due2EPI==false && v.IsSkip != true" color="primary" name="calendar" (click)="picker.open()">
               <ion-datetime #picker picker-format="DD-MM-YYYY" value="{{v.Date}}"
                 (ionChange)="updateDate($event, v.Id)">
               </ion-datetime>
             </ion-icon>
-            <ion-img *ngIf="v.IsDone==false" style="height: 30px;" src="../../assets/injectionEmpty.png"
+            <ion-img *ngIf="(v.IsDone==false) && v.Due2EPI==false && (v.IsSkip!=true)" style="height: 30px;" src="../../assets/injectionEmpty.png"
              routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}"
               ></ion-img>
               <!-- routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}" -->
               <!-- (click)="checkforpnemococal(v.Dose.Name,v.Child.DOB , v.Id)" -->
-            <ion-img *ngIf="v.IsDone==true && (v.IsDisease==false || v.IsDisease==null)" style="height: 30px;" src="../../assets/injectionFilled.png" (click) ="UnfillVaccine(v.Id)">
+            <ion-img *ngIf="v.IsDone==true && v.Due2EPI==false && (v.IsDisease==false || v.IsDisease==null) && v.IsSkip!=true" style="height: 30px;" src="../../assets/injectionFilled.png" (click) ="UnfillVaccine(v.Id)">
             </ion-img>
-            <ion-button *ngIf="v.IsDone==false && (v.IsSkip==null ||v.IsSkip==false)" (click)="SkipVaccine(v.Id)">skip</ion-button>
-            <ion-button color="danger" *ngIf="(v.IsDone==false && v.IsSkip==true)" (click)="UnSkipVaccine(v.Id)">UnSkip</ion-button>
+            <ion-button *ngIf="v.IsDone==false && v.Due2EPI==false && (v.IsSkip==null ||v.IsSkip==false)" (click)="SkipVaccine(v.Id)">skip</ion-button>
+            <ion-button color="danger" *ngIf="(v.IsDone==false && v.IsSkip==true && v.Due2EPI==false)" (click)="UnSkipVaccine(v.Id)">UnSkip</ion-button>
           </ion-item>
         </div>
       </ion-card-content>
     </ion-card>
 
   </div>
-
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button routerLink = "edit" >
+      <ion-icon  name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

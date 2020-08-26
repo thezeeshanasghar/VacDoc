@@ -11,6 +11,8 @@ import { environment } from 'src/environments/environment';
 export class DoseService extends BaseService {
 
   private readonly API_DOSE = `${environment.BASE_URL}dose`
+  private readonly API_schedule = `${environment.BASE_URL}doctorschedule`
+  private readonly API_schedule1 = `${environment.BASE_URL}schedule`
 
   constructor(
     protected http: HttpClient
@@ -30,6 +32,28 @@ export class DoseService extends BaseService {
       map(this.extractData),
       catchError(this.handleError)
     );
+  }
+
+  getNewDosesChild(id): Observable<any> {
+    const url = `${this.API_DOSE}/newchild/${id}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
+  addScheduleDose(data): Observable<any> {
+    const url = `${this.API_schedule}`;
+    return this.http
+      .post(url, data, this.httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+
+  addScheduleDoseChild(data): Observable<any> {
+    const url = `${this.API_schedule1}`;
+    return this.http
+      .post(url, data, this.httpOptions)
+      .pipe(catchError(this.handleError));
   }
 
   // updateDoctorProfile(docId: number, newDate: String): any {

@@ -5,7 +5,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content *ngIf = "!forgot">
 
   <ion-card style="background-color: #d3cccc94;">
     <ion-card-content>
@@ -34,7 +34,7 @@
 
       <ion-text class="ion-text-right">
         <a (click)="forgotPasswordAlert()">
-          <h2>Forget password</h2>
+          <h2>Forgot password</h2>
         </a>
       </ion-text>
 
@@ -45,6 +45,29 @@
       </ion-text>
 
 
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
+
+<ion-content *ngIf = "forgot">
+
+  <ion-card style="background-color: #d3cccc94;">
+    <ion-card-content>
+
+        <ion-label color="primary" position="floating" class="ion-margin-top">
+          <ion-icon name="mail" class="ion-item-start"></ion-icon>
+          Mobile Number
+        </ion-label>
+        <ion-input type="text" [(ngModel)] = "MobileNumber"></ion-input>
+
+
+        <ion-button class="ion-margin-top" expand="full" color="tertiary" (click)="sendPassword()">
+          <ion-icon name="log-in"></ion-icon>&nbsp;
+          Send Password
+        </ion-button>
+
+      
     </ion-card-content>
   </ion-card>
 

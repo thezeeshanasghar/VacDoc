@@ -68,8 +68,9 @@ export class ChildPage {
     await loading.present();
     await this.childService.deleteChild(id).subscribe(
       res => {
-        if (res.IsSuccess == true) {
+        if (res.IsSuccess) {
           this.toastService.create(res.Message);
+          this.getChlidByClinic(this.clinicService.OnlineClinic.Id);
           loading.dismiss();
         }
         else {

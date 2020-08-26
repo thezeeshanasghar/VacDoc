@@ -3,11 +3,11 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>Vaccine Schedule</ion-title>
+    <ion-title>Add New Dose</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding" *ngIf = "NewDoses">
   
 <!-- <form [formGroup]="fg" (ngSubmit)="onSubmit()"> -->
   
@@ -124,4 +124,8 @@
   <ion-button (click)="getdoses()" type="submit">Finish</ion-button> 
 
 <!-- </form> -->
+</ion-content>
+<ion-content *ngIf="!NewDoses" class="ion-margin">
+ <p class="ion-margin"> No New Doses Found</p>
+
 </ion-content>

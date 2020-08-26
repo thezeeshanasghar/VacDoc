@@ -6,6 +6,10 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { ProfilePage } from './profile.page';
+import { FileChooser } from '@ionic-native/file-chooser/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
+import { FileTransfer} from '@ionic-native/file-transfer/ngx';
 
 //import { FileUploadModule } from 'ng2-file-upload';
 
@@ -25,6 +29,7 @@ const routes: Routes = [
     //FileUploadModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [ProfilePage]
+  declarations: [ProfilePage],
+  providers:[FileChooser , File ,FilePath, FileTransfer ]
 })
 export class ProfilePageModule {}

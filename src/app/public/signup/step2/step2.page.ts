@@ -16,6 +16,10 @@ import { SignupService } from "src/app/services/signup.service";
 import * as moment from "moment";
 import { Geolocation } from "@ionic-native/geolocation/ngx";
 //import { validateConfig } from "@angular/router/src/config";
+import { FileChooser } from '@ionic-native/file-chooser/ngx';
+import { File , FileEntry } from '@ionic-native/file/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 declare var google;
 
 @Component({
@@ -29,6 +33,8 @@ export class Step2Page implements OnInit {
   fg2: FormGroup;
   map;
   myMarker;
+  uploading;
+  resourceURL = environment.RESOURCE_URL;
   @ViewChild("mapElement", {static: true}) mapElement;
   DoctorId: any;
   latitude: any = 33.6328532;
@@ -42,7 +48,11 @@ export class Step2Page implements OnInit {
     private toastService: ToastService,
     private signupService: SignupService,
     private storage: Storage,
-    private geolocation: Geolocation
+    private geolocation: Geolocation,
+    private fileChooser: FileChooser,
+    private file: File,
+    private filePath: FilePath,
+    private transfer: FileTransfer
   ) {}
 
   ngOnInit() {
@@ -71,6 +81,7 @@ export class Step2Page implements OnInit {
           Validators.pattern("^(0|[1-9][0-9]*)$")
         ])
       ),
+      MonogramImage: [null],
       OffDays: [null],
       ClinicTimings: [null],
       Lat: [null],
@@ -136,7 +147,58 @@ export class Step2Page implements OnInit {
     });
     this.ionViewDidEnte();
   }
+  uploadMonogram() {
 
+    this.fileChooser.open().then(async uri =>
+      {
+        console.log(uri);
+       await  this.filePath.resolveNativePath(uri).then(filePath =>
+          {
+            //this.filesPath = filePath;
+            this.uploading = true;
+            this.file.resolveLocalFilesystemUrl(filePath).then(fileInfo =>
+              {
+                let files = fileInfo as FileEntry;
+                files.file(async success =>
+                  {
+                    //this.fileType   = success.type;
+                    let filesName  = success.name;
+                    console.log(filesName);
+                    let options: FileUploadOptions = {
+                      fileName: filesName
+                    }
+                    const fileTransfer: FileTransferObject = this.transfer.create();
+                  await  fileTransfer.upload(uri, 'http://13.233.255.96:5002/api/upload', options)
+                    .then((data) => {
+                      // success
+                     // console.log(data);
+                     this.toastService.create("successfully Uploaded");
+                      this.uploading = false;
+                      let dbpath = JSON.parse(data.response)
+                      this.fg1.value.MonogramImage = dbpath.dbPath;
+                      //console.log(this.fg1.value.MonogramImage);
+                    }, (err) => {
+                      console.log(err)
+                      // error
+                    })
+                  });
+              },err =>
+              {
+                console.log(err);
+                throw err;
+              });
+          },err =>
+          {
+            console.log(err);
+            throw err;
+          });
+      },err =>
+      {
+        console.log(err);
+        throw err;
+      });
+  
+  }
   hello(): void {
     //Called after ngOnInit when the component's or directive's content has been initialized.
     //Add 'implements AfterContentInit' to the class.

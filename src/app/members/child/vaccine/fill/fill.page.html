@@ -32,10 +32,9 @@
               <ion-checkbox formControlName="IsDisease" ></ion-checkbox>
             </ion-item>
 
-            <ion-item *ngIf = "vaccineName === 'Hepatitis A' || vaccineName === 'Chicken Pox '" >
+            <ion-item *ngIf = "fg.value.IsDisease" >
               <ion-label color="primary">Disease Year</ion-label>
-              <ion-datetime picker-format="YYYY" displayFormat="YYYY" value="{{Date}}" formControlName="DiseaseYear" max = "{{todaydate}}"></ion-datetime>
-              
+              <ion-datetime picker-format="YYYY" displayFormat="YYYY" value="{{Date}}" formControlName="DiseaseYear" min ="{{birthYear}}" max = "{{todaydate}}" ></ion-datetime>    
             </ion-item>
 
     <ion-item *ngIf = "!fg.value.IsDisease">

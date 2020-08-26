@@ -4,6 +4,7 @@ import { LoadingController } from "@ionic/angular";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { ToastService } from "src/app/shared/toast.service";
+import { Router } from "@angular/router";
 import {
   FormGroup,
   FormBuilder,
@@ -20,14 +21,15 @@ import { DoseService } from "src/app/services/dose.service";
 })
 export class SchedulePage implements OnInit {
   fg: FormGroup;
-  schedule: any;
+  doses: any;
   vaccines: any;
   constructor(
     public loadingcontroller: LoadingController,
     private formBuilder: FormBuilder,
     private scheduleService: ScheduleService,
     private toastService: ToastService,
-    private storage: Storage
+    private storage: Storage,
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -47,9 +49,8 @@ export class SchedulePage implements OnInit {
     await this.scheduleService.getSchedule(id).subscribe(
       res => {
         if (res.IsSuccess) {
-          this.schedule = res.ResponseData;
-
-          this.schedule.forEach(dose => {
+          this.doses = res.ResponseData;
+          this.doses.forEach(dose => {
             //console.log(dose.Dose.Name);
             let value = dose.GapInDays == null ? 0 : dose.GapInDays;
             this.fg.addControl(
@@ -73,12 +74,12 @@ export class SchedulePage implements OnInit {
 
   async addCustomSchedule() {
     let var1 = [];
-    for (let i = 0; i < this.schedule.length; i++) {
+    for (let i = 0; i < this.doses.length; i++) {
       var1.push({
-        Id: this.schedule[i].Id,
-        DoseId: this.schedule[i].DoseId,
-        DoctorId: this.schedule[i].DoctorId,
-        GapInDays: parseInt(this.fg.value[this.schedule[i].Dose.Name])
+        Id: this.doses[i].Id,
+        DoseId: this.doses[i].DoseId,
+        DoctorId: this.doses[i].DoctorId,
+        GapInDays: parseInt(this.fg.value[this.doses[i].Dose.Name])
       });
     }
     const loading = await this.loadingcontroller.create({
@@ -91,6 +92,7 @@ export class SchedulePage implements OnInit {
       res => {
         if (res.IsSuccess) {
           loading.dismiss();
+          this.router.navigate(['/members/dashboard']);
           this.toastService.create("successfully updated");
         } else {
           loading.dismiss();
