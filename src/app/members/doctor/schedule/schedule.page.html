@@ -105,10 +105,12 @@
         <ion-select-option [disabled]="doses[i].GapInDays > 4745" value="4745">13 Years</ion-select-option>
         <ion-select-option [disabled]="doses[i].GapInDays > 5110" value="5110">14 Years</ion-select-option>
         <ion-select-option [disabled]="doses[i].GapInDays > 5475" value="5475">15 Years</ion-select-option>
+        <ion-select-option [disabled]="doses[i].GapInDays > 5505" value="5505">15 Years 1 months</ion-select-option>
+      <ion-select-option [disabled]="doses[i].GapInDays > 5655" value="5655">15 Years 6 months</ion-select-option>
       </ion-select>
     </ion-item>
 
-    <ion-button type="submit">Finish</ion-button>
+    <ion-button type="submit">Save</ion-button>
 
   </form>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">

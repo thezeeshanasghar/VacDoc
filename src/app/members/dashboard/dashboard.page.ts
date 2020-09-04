@@ -92,78 +92,7 @@ export class DashboardPage implements OnInit {
   }
 
   async uploadata() {
-    // await this.storage.get(environment.CLINICS).then(clinics => {
-    //   this.clinics = clinics;
-    // });
-    // console.log(this.clinics);
-    // for new clinics
-  //   this.clinicService.clinics.forEach(item => {
-  //     if (!item.Id && !item.Isdeleted) this.NewClinics.push(item);
-  //     if (item.Id && item.Isdeleted) this.DelClinics.push(item);
-  //   });
-  //   console.log(this.NewClinics);
-  //   console.log(this.DelClinics);
-  //   const loading = await this.loadingController.create({
-  //     message: "Loading"
-  //   });
-  //   await loading.present();
-  //   if (this.NewClinics.length > 0) {
-  //     this.NewClinics.forEach(element => {
-  //       this.addNewClinic(element);
-  //     });
-  //   }
-  //   if (this.DelClinics.length > 0) {
-  //     this.DelClinics.forEach(element => {
-  //       this.deleteClinic(element.Id);
-  //     });
-  //   }
-  //   this.clinicService.getClinics(this.clinicService.doctorId);
-  //   loading.dismiss();
-  //   this.toastService.create("successfully added");
-  // }
-
-  // async addNewClinic(data) {
+   
     
-  //     console.log(data);
-  //     this.toastService.create("successfully added");
-  //     await this.clinicService.addClinic(data).subscribe(
-  //       res => {
-  //         if (res.IsSuccess) {
-  //           // this.toastService.create("successfully added");
-  //         } else {
-  //           //  loading.dismiss();
-  //           //  this.toastService.create(res.Message, "danger");
-  //         }
-  //       },
-  //       err => {
-  //         //  loading.dismiss();
-  //         this.toastService.create(err, "danger");
-  //       }
-  //     );
-    
-  }
-
-  async deleteClinic(id) {
-    // const loading = await this.loadingController.create({
-    //   message: "Loading"
-    // });
-    // await loading.present();
-    this.storage.set(environment.CLINICS, this.Clinics);
-    // loading.dismiss();
-
-    await this.clinicService.deleteClinic(id).subscribe(
-      res => {
-        if (res.IsSuccess) {
-          // loading.dismiss();
-        } else {
-          // loading.dismiss();
-          this.toastService.create(res.Message, "danger");
-        }
-      },
-      err => {
-        // loading.dismiss();
-        this.toastService.create(err, "danger");
-      }
-    );
   }
 }

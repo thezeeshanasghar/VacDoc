@@ -128,23 +128,8 @@ export class AddPage implements OnInit {
    await this.addNewChild(this.fg1.value);
   }
   updateGender(g) {
-   // this.fg1.value.Gender = g;
     this.fg1.controls['Gender'].setValue(g);
   }
-
-  // getChildVaccinefromUser() {
-  //   this.fg2.value.ChildVaccines = this.fg2.value.ChildVaccines.map((v, i) =>
-  //     v ? this.vaccines[i].Id : null
-  //   ).filter(v => v !== null);
-
-  //   this.fg2.value.ChildVaccines = this.fg2.value.ChildVaccines;
-  //   let vaccine = this.fg1.value;
-  //   vaccine.ChildVaccines = [];
-  //   for (let i = 0; i < this.fg2.value.ChildVaccines.length; i++) {
-  //     vaccine.ChildVaccines.push({ Id: this.fg2.value.ChildVaccines[i] });
-  //   }
-  //   this.addNewChild(vaccine);
-  // }
 
   PasswordGenerator() {
     var length = 4,
@@ -156,42 +141,12 @@ export class AddPage implements OnInit {
     this.fg1.value.Password = retVal;
   }
 
-  // async getVaccine() {
-  //   const loading = await this.loadingController.create({
-  //     message: "loading"
-  //   });
-  //   await loading.present();
-  //   await this.vaccineService.getVaccine().subscribe(
-  //     res => {
-  //       if (res.IsSuccess) {
-  //         this.vaccines = res.ResponseData;
-  //         this.PasswordGenerator();
-
-  //         const controls = this.vaccines.map(c => new FormControl(true));
-  //         this.fg2 = this.formBuilder.group({
-  //           ChildVaccines: new FormArray(controls)
-  //         });
-
-  //         loading.dismiss();
-  //       } else {
-  //         loading.dismiss();
-  //         this.toastService.create(res.Message, "danger");
-  //       }
-  //     },
-  //     err => {
-  //       loading.dismiss();
-  //       this.toastService.create(err, "danger");
-  //     }
-  //   );
-  // }
+  
 
   async addNewChild(data) {
     console.log(data);
     const loading = await this.loadingController.create({
       message: "loading"
-    });
-    const loading1 = await this.loadingController.create({
-      message: "sending Message"
     });
     await loading.present();
     let str = this.fg1.value.PreferredDayOfWeek;
@@ -218,7 +173,10 @@ export class AddPage implements OnInit {
          
           loading.dismiss();
           this.toastService.create("successfully added");
-          loading1.present();
+          const loading1 = await this.loadingController.create({
+            message: "sending Message"
+          });
+          await loading1.present();
           // sendsms 1
          await this.sendsms(res.ResponseData.MobileNumber , sms1);
           loading1.dismiss();

@@ -105,6 +105,8 @@
       <ion-select-option [disabled]="doses[i].MinAge > 4745" value="4745">13 Years</ion-select-option>
       <ion-select-option [disabled]="doses[i].MinAge > 5110" value="5110">14 Years</ion-select-option>
       <ion-select-option [disabled]="doses[i].MinAge > 5475" value="5475">15 Years</ion-select-option>
+      <ion-select-option [disabled]="doses[i].MinAge > 5505" value="5505">15 Years 1 months</ion-select-option>
+      <ion-select-option [disabled]="doses[i].MinAge > 5655" value="5655">15 Years 6 months</ion-select-option>
     </ion-select> 
 
     <ion-checkbox [(ngModel)] = "doses[i].IsSpecial" [ngModelOptions]="{standalone: true}"></ion-checkbox>
