@@ -6,6 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { VaccineAlertPage } from './vaccine-alert.page';
+import { Downloader} from '@ionic-native/downloader/ngx';
 
 const routes: Routes = [
   {
@@ -21,6 +22,9 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [VaccineAlertPage]
+  declarations: [VaccineAlertPage],
+  providers: [
+    Downloader
+ ],
 })
 export class VaccineAlertPageModule {}
