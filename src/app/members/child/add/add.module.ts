@@ -6,6 +6,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { AddPage } from './add.page';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatFormFieldModule , MatInputModule } from '@angular/material';
 
 const routes: Routes = [
   {
@@ -20,7 +22,10 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   declarations: [AddPage]
 })

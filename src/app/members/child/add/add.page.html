@@ -3,16 +3,6 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <!-- <ion-buttons slot="end">     
-        <ion-grid>
-          <ion-row>
-            <ion-col><ion-item color ="primary"><ion-icon slot="end" name="person-add" size="large" > </ion-icon></ion-item></ion-col>
-            <ion-col><ion-item color ="primary" routerLink="/members/alert"><ion-icon slot="end" name="alert" size="large" > </ion-icon></ion-item></ion-col>
-            <ion-col><ion-item color ="primary" routerLink="/members/doctor/clinic"><ion-icon slot="end" name="medkit" size="large" > </ion-icon></ion-item></ion-col>
-            <ion-col><ion-item color ="primary"><ion-menu-button></ion-menu-button></ion-item></ion-col>
-          </ion-row>
-          </ion-grid>
-        </ion-buttons> -->
     <ion-title>Add Patient</ion-title>
     <ion-title *ngIf="clinicService.OnlineClinic" slot="end">
       {{clinicService.OnlineClinic.Name}}
@@ -49,34 +39,63 @@
         </div>
       </ng-container>
     </div>
-    <ion-radio-group>
-      <ion-list-header>
+    <ion-radio-group formControlName="Gender">
+      <ion-list-header>    
         Gender
       </ion-list-header>
-
       <ion-grid>
         <ion-row>
           <ion-col>
             <ion-item>
               <ion-label color="primary">Boy</ion-label>
-              <ion-radio slot="start" value="Boy" (click)="updateGender('Boy')"></ion-radio>
+              <ion-radio slot="start" value="Boy" ></ion-radio> 
+              <!-- (click)="updateGender('Boy')" -->
             </ion-item>
           </ion-col>
 
           <ion-col>
             <ion-item>
               <ion-label color="primary">Girl</ion-label>
-              <ion-radio slot="start" value="Girl" (click)="updateGender('Girl')" ></ion-radio>
+              <ion-radio slot="start" value="Girl"></ion-radio>
             </ion-item>
           </ion-col>
-        </ion-row>
+        </ion-row>    
       </ion-grid>
-
     </ion-radio-group>
-    <ion-item>
-      <ion-label color="primary" position="floating">Date of Birth</ion-label>
-      <ion-datetime displayFormat="DD-MM-YYYY" picker-format="DD-MM-YYYY" formControlName="DOB" max = "{{todaydate}}" (ionChange) = "checkEpi()"></ion-datetime>
-    </ion-item>
+
+    <ion-radio-group formControlName="ScheduleType">
+      <ion-list-header >    
+        Schedule Type
+      </ion-list-header>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary">Regular</ion-label>
+              <ion-radio slot="start" value="Regular" ></ion-radio> 
+            </ion-item>
+          </ion-col>
+
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary">Special</ion-label>
+              <ion-radio slot="start" value="Partial"></ion-radio>
+            </ion-item>
+          </ion-col>
+        </ion-row>    
+      </ion-grid>
+    </ion-radio-group>
+
+    <!-- <ion-item> -->
+       <ion-label id="dob" color="primary" position="floating">Date of Birth</ion-label>
+      <!-- <ion-datetime displayFormat="DD-MM-YYYY" picker-format="DD-MM-YYYY" formControlName="DOB" max = "{{todaydate}}" (ionChange) = "checkEpi()"></ion-datetime> -->
+       <!-- <mat-form-field appearance="fill"> -->
+        <!-- <mat-label>Choose a date</mat-label> -->
+        <input formControlName="DOB"  matInput [matDatepicker]="picker" disabled  max = "{{todaydate}}" (click)="picker.open()">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker disabled="false" [calendarHeaderComponent]="exampleHeader"></mat-datepicker>
+       <!-- </mat-form-field> -->
+    <!-- </ion-item> -->
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.DOB">
         <div class="error-message"

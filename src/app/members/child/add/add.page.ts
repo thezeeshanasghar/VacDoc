@@ -1,4 +1,4 @@
-import { Component, OnInit , ViewChild, ɵConsole } from "@angular/core";
+import { Component, OnInit, ViewChild, ɵConsole } from "@angular/core";
 import {
   FormGroup,
   FormBuilder,
@@ -20,6 +20,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { SMS } from '@ionic-native/sms/ngx';
 import { TitleCasePipe } from '@angular/common';
 import { AlertController } from '@ionic/angular';
+import { env } from 'process';
 
 @Component({
   selector: "app-add",
@@ -37,8 +38,9 @@ export class AddPage implements OnInit {
   todaydate: any;
   gender: any;
   City: any;
-  Doctor:any;
+  Doctor: any;
   epiDone = false;
+  Messages:any = []
   //cities: any;
 
   constructor(
@@ -51,16 +53,19 @@ export class AddPage implements OnInit {
     private storage: Storage,
     private clinicService: ClinicService,
     private doctorService: DoctorService,
-    private androidPermissions: AndroidPermissions ,
+    private androidPermissions: AndroidPermissions,
     private sms: SMS,
     private titlecasePipe: TitleCasePipe,
     public alertCtrl: AlertController
-  ) {}
+  ) { }
 
- async  ngOnInit() {
+  async ngOnInit() {
+    // let obj = {'toNumber':'+923143041544' , 'message': 'this is test message' , 'created': Date.now(), 'status':false};
+    // this.Messages.push(obj); this.Messages.push(obj); this.Messages.push(obj);
+    // this.storage.set(environment.MESSAGES , this.Messages);
     this.todaydate = new Date();
     this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format("YYYY-MM-DD");
-   // this.getVaccine();
+    // this.getVaccine();
 
     this.fg1 = this.formBuilder.group({
       ClinicId: [""],
@@ -69,7 +74,7 @@ export class AddPage implements OnInit {
       Email: new FormControl(
         "",
         Validators.compose([
-         // Validators.required,
+          // Validators.required,
           Validators.pattern(
             "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
           )
@@ -86,6 +91,7 @@ export class AddPage implements OnInit {
       ),
       PreferredDayOfWeek: 'Any',
       Gender: "Boy",
+      ScheduleType: "Regular",
       City: [null],
       PreferredDayOfReminder: 0,
       PreferredSchedule: [null],
@@ -98,13 +104,17 @@ export class AddPage implements OnInit {
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
     });
-    
+
     this.storage.get(environment.CITY).then(val => {
       this.City = val;
     });
 
-  await this.storage.get(environment.DOCTOR).then(doc => {
+    await this.storage.get(environment.DOCTOR).then(doc => {
       this.Doctor = doc;
+    });
+    
+    await this.storage.get(environment.MESSAGES).then(messages => {
+      this.Messages = messages;
     });
     // this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS).then(
     //   result => {
@@ -115,17 +125,18 @@ export class AddPage implements OnInit {
     // );
     console.log(this.Doctor);
     console.log(this.clinicService.OnlineClinic);
-  //  console.log(this.clinicService.OnlineClinic.Id);
+    //  console.log(this.clinicService.OnlineClinic.Id);
   }
 
- async moveNextStep() {
+  async moveNextStep() {
     this.fg1.value.DOB = await moment(this.fg1.value.DOB, "YYYY-MM-DD").format(
       "DD-MM-YYYY"
     );
-   // this.formcontroll = true;
+    // this.formcontroll = true;
     //this.fg1.value.Gender = this.gender;
-   await this.PasswordGenerator();
-   await this.addNewChild(this.fg1.value);
+    await this.PasswordGenerator();
+    //console.log(this.fg1.value);
+    await this.addNewChild(this.fg1.value);
   }
   updateGender(g) {
     this.fg1.controls['Gender'].setValue(g);
@@ -141,10 +152,10 @@ export class AddPage implements OnInit {
     this.fg1.value.Password = retVal;
   }
 
-  
+
 
   async addNewChild(data) {
-    console.log(data);
+  //  console.log(data);
     const loading = await this.loadingController.create({
       message: "loading"
     });
@@ -155,22 +166,19 @@ export class AddPage implements OnInit {
     await this.childService.addChild(data).subscribe(
       async res => {
         if (res.IsSuccess) {
-          // loading.dismiss();
-          // this.toastService.create("successfully added");
-          // this.router.navigate(["/members/child"]);
-          var sms1 = ""; 
+          var sms1 = "";
           if (res.ResponseData.Gender == "Boy")
-              sms1 += ("Mr. " + this.titlecasePipe.transform(res.ResponseData.Name));
+            sms1 += ("Mr. " + this.titlecasePipe.transform(res.ResponseData.Name));
 
           if (res.ResponseData.Gender == "Girl")
-              sms1 += ("Miss. " + this.titlecasePipe.transform(res.ResponseData.Name));
+            sms1 += ("Miss. " + this.titlecasePipe.transform(res.ResponseData.Name));
 
           sms1 += " has been registered Succesfully at Vaccine.pk";
           sms1 += "\nId: " + res.ResponseData.MobileNumber + " \nPassword: " + res.ResponseData.Password;
           sms1 += "\nClinic Phone Number: " + this.clinicService.OnlineClinic.PhoneNumber;
           sms1 += "\nWeb Link:  https://vaccine.pk/";
           console.log(sms1);
-         
+
           loading.dismiss();
           this.toastService.create("successfully added");
           const loading1 = await this.loadingController.create({
@@ -178,7 +186,7 @@ export class AddPage implements OnInit {
           });
           await loading1.present();
           // sendsms 1
-         await this.sendsms(res.ResponseData.MobileNumber , sms1);
+          await this.sendsms(res.ResponseData.MobileNumber, sms1);
           loading1.dismiss();
           this.router.navigate(["/members/child"]);
         } else {
@@ -194,60 +202,62 @@ export class AddPage implements OnInit {
       }
     );
   }
-   sendsms(number , message)
-  {
+  sendsms(number, message) {
     console.log(number + message);
     this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS).then(
       result => {
         // console.log('Has permission?',result.hasPermission);
-        if(result.hasPermission){
+        if (result.hasPermission) {
           this.sms.send('+92' + number, message)
-          .then(()=>{
-          // console.log("The Message is sent");
-          this.toastService.create("Message Sent Successful");
-          }).catch((error)=>{
-          //console.log("The Message is Failed",error);
-          this.toastService.create("Message Sent Failed");
-          });
+            .then(() => {
+              let obj = {'toNumber':'+92' + number , 'message': message , 'created': Date.now(), 'status':true};
+              this.toastService.create("Message Sent Successful");
+              this.Messages.push(obj);
+              this.storage.set(environment.MESSAGES , this.Messages);
+            }).catch((error) => {
+              let obj = {'toNumber':'+92' + number , 'message': message , 'created': Date.now(), 'status':false};
+              this.Messages.push(obj);
+              this.storage.set(environment.MESSAGES , this.Messages);
+              this.toastService.create("Message Sent Failed" , "danger");
+            });
         }
         else {
-        this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.SEND_SMS);
-        this.sms.send('+92' + number, message);
+          this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.SEND_SMS);
+          this.sms.send('+92' + number, message);
         }
       },
       err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.SEND_SMS)
     );
     console.log('success');
   }
-  async setCity(city)
-  {
-    if(city == 'Other')
-    await this.otherCityAlert();
+  async setCity(city) {
+    if (city == 'Other')
+      await this.otherCityAlert();
     this.childService.othercity = true;
     this.storage.set(environment.CITY, city);
   }
-  uncheckany(){
-    if(this.fg1.value.PreferredDayOfWeek.length > 1)
-    this.fg1.value.PreferredDayOfWeek = this.fg1.value.PreferredDayOfWeek.filter(x=> (x !== 'Any'));
+  uncheckany() {
+    if (this.fg1.value.PreferredDayOfWeek.length > 1)
+      this.fg1.value.PreferredDayOfWeek = this.fg1.value.PreferredDayOfWeek.filter(x => (x !== 'Any'));
   }
-  async checkEpi(){ 
+  async checkEpi() {
     let days = await this.calculateDiff(this.fg1.value.DOB);
     console.log(days);
     if (days > 272)
-    this.epiDone = true;
+      this.epiDone = true;
     else
-    this.epiDone = false;
+      this.epiDone = false;
   }
-  
-  calculateDiff(dateSent){
+
+  calculateDiff(dateSent) {
     let currentDate = new Date();
     dateSent = new Date(dateSent);
-    return Math.floor((Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()) - Date.UTC(dateSent.getFullYear(), dateSent.getMonth(), dateSent.getDate()) ) /(1000 * 60 * 60 * 24));
-}
+    return Math.floor((Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()) - Date.UTC(dateSent.getFullYear(), dateSent.getMonth(), dateSent.getDate())) / (1000 * 60 * 60 * 24));
+  }
 
- async otherCityAlert() {
+  async otherCityAlert() {
     let alert = await this.alertCtrl.create({
-     // title: 'Login',
+      // title: 'Login',
       inputs: [
         {
           name: 'cityname',
@@ -267,14 +277,14 @@ export class AddPage implements OnInit {
           text: 'ok',
           handler: data => {
             if (data.cityname) {
-            this.childService.cities.push(data.cityname);
-            this.City = data.cityname;
-            } 
+              this.childService.cities.push(data.cityname);
+              this.City = data.cityname;
+            }
           }
         }
       ]
     });
-   await alert.present();
+    await alert.present();
   }
   // removeSelection(){
 
@@ -297,7 +307,7 @@ export class AddPage implements OnInit {
     ],
     gender: [{ type: "required", message: "Gender is required." }]
   };
-  cities=['Islamabad' , 'Rawalpindi' , 'Multan' , 'Other']
+  cities = ['Islamabad', 'Rawalpindi', 'Multan', 'Other']
 }
 
 ///
