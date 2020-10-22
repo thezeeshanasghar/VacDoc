@@ -16,6 +16,12 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { SMS } from '@ionic-native/sms/ngx';
 import { TitleCasePipe } from '@angular/common';
 import { CallNumber } from '@ionic-native/call-number/ngx';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material';
+//import {MatDatepickerModule} from '@angular/material/datepicker';
+// import { MatFormFieldModule , MatInputModule } from '@angular/material';
+//import { MatMomentDateModule } from "@angular/material-moment-adapter";
 
 @NgModule({
   declarations: [AppComponent],
@@ -27,6 +33,11 @@ import { CallNumber } from '@ionic-native/call-number/ngx';
     HttpClientModule,
     SharedModule,
     IonicStorageModule.forRoot(),
+    NoopAnimationsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    // MatFormFieldModule,
+    // MatInputModule
   ],
   providers: [
     StatusBar,

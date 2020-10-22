@@ -534,7 +534,7 @@ export class AddPage implements OnInit {
                 let files = fileInfo as FileEntry;
                 files.file(async success =>
                   {
-                    //this.fileType   = success.type;
+                    if (success.size < 100000) {
                     let filesName  = success.name;
                     console.log(filesName);
                     let options: FileUploadOptions = {
@@ -544,16 +544,19 @@ export class AddPage implements OnInit {
                   await  fileTransfer.upload(uri, 'http://13.233.255.96:5002/api/upload', options)
                     .then((data) => {
                       // success
-                      //console.log(data);
+                      console.log(data);
                       this.toastService.create("successfully Uploaded");
                       this.uploading = false;
                       let dbpath = JSON.parse(data.response)
                       this.fg1.value.MonogramImage = dbpath.dbPath;
-                     // console.log(this.fg1.value.MonogramImage);
+                      console.log(this.fg1.value.MonogramImage);
                     }, (err) => {
                       console.log(err)
                       // error
                     })
+                  }
+                  else
+                  this.toastService.create("File size must be less than 100 kb", "danger");
                   });
               },err =>
               {

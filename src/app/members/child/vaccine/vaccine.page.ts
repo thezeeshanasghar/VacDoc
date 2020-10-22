@@ -70,34 +70,7 @@ export class VaccinePage {
            this.BirthYear = res.ResponseData[0].Child.DOB;
            console.log(this.BirthYear);
            this.storage.set('BirthYear' , this.BirthYear);
-            // res.ResponseData.forEach(vac => {
-            //   if (vac.Dose.IsSpecial) {
-            //     let id = this.specialvaccineids.find(x => x === vac.Dose.VaccineId);
-            //     console.log(id);
-            //     if (id == null)
-            //       this.specialvaccineids.push(vac.Dose.VaccineId);
-            //   }
-            // });
-            // console.log(this.specialvaccineids);
-
-            // res.ResponseData.forEach((vac, index) => {
-            //   if ((vac.Dose.Name == 'Pneumococcal # 2') && (vac.IsDone == true))
-            //     this.Pneum2Date = vac.GivenDate;
-            //   if ((vac.Dose.IsSpecial) && (vac.IsDone == false)) {
-            //     let id = this.specialvaccineids.find(x => x === vac.Dose.VaccineId);
-            //     console.log(id);
-            //     if (id != null) {
-            //       this.vaccine.push(vac);
-            //       this.specialvaccineids = this.specialvaccineids.filter(item => item !== vac.Dose.VaccineId);
-            //     }
-            //   }
-            //   else {
-            //     this.vaccine.push(vac);
-            //   }
-            // });
-            // console.log(this.vaccine);
-
-
+           
             //original code
             this.vaccine = res.ResponseData;
             this.vaccine.forEach(doc => {
@@ -136,7 +109,8 @@ export class VaccinePage {
   }
 
   async updateDate($event, vacId) {
-    let newDate = $event.detail.value;
+    console.log($event.value);
+    let newDate = $event.value;
     newDate = moment(newDate, "YYYY-MM-DD").format("DD-MM-YYYY");
     let data = { Date: newDate, Id: vacId };
     await this.vaccineService.updateVaccinationDate(data, false, false, false).subscribe(
@@ -156,7 +130,7 @@ export class VaccinePage {
   }
 
   async updateBulkDate($event, id) {
-    let newDate = $event.detail.value;
+    let newDate = $event.value; //$event.detail.value;
     newDate = moment(newDate, "YYYY-MM-DD").format("DD-MM-YYYY");
     let data = { Date: newDate, Id: id };
 
@@ -345,7 +319,6 @@ console.log(diffDays);console.log(firstDate);console.log(secondDate);
 
 
   printdata() {
-    //this.vaccineService.printVaccineSchedule(this.childID);
     console.log(this.childId);
     this.download(this.childId);
   }
@@ -369,6 +342,27 @@ console.log(diffDays);console.log(firstDate);console.log(secondDate);
   .catch((error: any) => console.error(error));
   
   }
+
+  downloadCsv(id){
+    var request: DownloadRequest = {
+      uri: `${this.API_VACCINE}child/${id}/downloadcsv`,
+      title: 'Child Detail',
+      description: '',
+      mimeType: '',
+      visibleInDownloadsUi: true,
+      notificationVisibility: NotificationVisibility.VisibleNotifyCompleted,
+     // notificationVisibility: 0,
+      destinationInExternalFilesDir: {
+          dirType: 'Downloads',
+          subPath: 'ChildDetail.csv'
+      }
+  };
+  this.downloader.download(request)
+  .then((location: string) => console.log('File downloaded at:'+location))
+  .catch((error: any) => console.error(error));
+  
+  }
+
   
 
   async UnfillVaccine(id) {

@@ -8,6 +8,8 @@ import { IonicModule } from '@ionic/angular';
 import { VaccinePage } from './vaccine.page';
 
 import { Downloader} from '@ionic-native/downloader/ngx';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatFormFieldModule , MatInputModule } from '@angular/material';
 //import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
 const routes: Routes = [
   {
@@ -25,7 +27,10 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   declarations: [VaccinePage],
   providers: [

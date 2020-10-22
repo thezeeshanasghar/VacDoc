@@ -46,7 +46,7 @@ export class DashboardPage implements OnInit {
   async ionViewDidEnter(){
    // console.log(this.clinicService.clinics);
   
-    this.storage.set(environment.SMS, 0);
+    this.storage.set(environment.SMS, 1);
     this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS).then(
       result => {
         if(!result.hasPermission){

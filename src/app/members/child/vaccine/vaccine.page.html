@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-button (click)="printdata()">print</ion-button>
+  <ion-button (click)="printdata()">print</ion-button>  <ion-button (click)="downloadCsv(childId)">Download</ion-button>
   <div *ngFor="let item of dataGrouping | keyvalue:mySortingFunction; let i=index">
 
     <ion-grid>
@@ -23,8 +23,10 @@
             src="../../assets/injectionFilled.png" ></ion-img>
 
           <ion-icon color="primary" name="calendar" (click)="picker.open()">
-            <ion-datetime (ionChange)="updateBulkDate($event, item.value[0].Id)" max='2030' min ='2000' #picker picker-format="DD-MM-YYYY">
-            </ion-datetime>
+            <!-- <ion-datetime (ionChange)="updateBulkDate($event, item.value[0].Id)" max='2030' min ='2000' #picker picker-format="DD-MM-YYYY">
+            </ion-datetime> -->
+            <input [matDatepicker]="picker" value="{{item.key}}"  (dateChange)="updateBulkDate($event, item.value[0].Id)">
+                <mat-datepicker #picker></mat-datepicker>
           </ion-icon>
 
         </ion-col>
@@ -43,9 +45,12 @@
             <p *ngIf="v.IsDone==true && v.Due2EPI==false && v.IsDisease==true" style="background-color:rgb(55, 231, 10);" 
             routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}">Disease Year: {{v.DiseaseYear}}</p>
             <ion-icon *ngIf="v.IsDone==false && v.Due2EPI==false && v.IsSkip != true" color="primary" name="calendar" (click)="picker.open()">
-              <ion-datetime #picker picker-format="DD-MM-YYYY" value="{{v.Date}}"
-                (ionChange)="updateDate($event, v.Id)">
-              </ion-datetime>
+              <!-- <ion-datetime #picker picker-format="DD-MM-YYYY" value="{{v.Date}}"
+                (ionChange)="updateDate($event, v.Id)"></ion-datetime> -->
+
+                <input [matDatepicker]="picker" value="{{v.Date}}"  (dateChange)="updateDate($event, v.Id)">
+                <mat-datepicker #picker></mat-datepicker>
+
             </ion-icon>
             <ion-img *ngIf="(v.IsDone==false) && v.Due2EPI==false && (v.IsSkip!=true)" style="height: 30px;" src="../../assets/injectionEmpty.png"
              routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}"

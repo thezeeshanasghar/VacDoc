@@ -162,6 +162,7 @@ export class Step2Page implements OnInit {
                 files.file(async success =>
                   {
                     //this.fileType   = success.type;
+                    if (success.size < 100000) {
                     let filesName  = success.name;
                     console.log(filesName);
                     let options: FileUploadOptions = {
@@ -181,6 +182,9 @@ export class Step2Page implements OnInit {
                       console.log(err)
                       // error
                     })
+                  }
+                  else 
+                  this.toastService.create("File size must be less than 100 kb", "danger");
                   });
               },err =>
               {
@@ -299,6 +303,8 @@ export class Step2Page implements OnInit {
     var ct = [];
     if (this.fg2.value.Monday) {
       if (this.fg2.value.MondayS1) {
+        if (this.fg2.value.Mstart == null) {this.fg2.controls["Mstart"].setValue('2020-09-11 08:30');}  
+        if (this.fg2.value.Mend == null) {this.fg2.controls["Mend"].setValue('2020-09-11 08:30');}  
         this.fg2.value.Mstart = moment(
           this.fg2.value.Mstart,
           "YYYY-MM-DD HH:mm"
@@ -318,6 +324,8 @@ export class Step2Page implements OnInit {
       }
       // For Session 2
       if (this.fg2.value.MondayS2) {
+        if (this.fg2.value.Mstart2 == null) {this.fg2.value.Mstart2 = '2020-09-11 08:30'}  
+        if (this.fg2.value.Mend2 == null) {this.fg2.value.Mend2 = '2020-09-11 08:30'}  
         this.fg2.value.Mstart2 = moment(
           this.fg2.value.Mstart2,
           "YYYY-MM-DD HH:mm"
@@ -339,6 +347,8 @@ export class Step2Page implements OnInit {
 
     if (this.fg2.value.Tuesday) {
       if (this.fg2.value.TuesdayS1) {
+        if (this.fg2.value.Tustart == null) {this.fg2.value.Tustart = '2020-09-11 08:30'}  
+        if (this.fg2.value.Tuend == null) {this.fg2.value.Tuend = '2020-09-11 08:30'}  
         this.fg2.value.Tustart = moment(
           this.fg2.value.Tustart,
           "YYYY-MM-DD HH:mm"
@@ -358,6 +368,8 @@ export class Step2Page implements OnInit {
       }
       // session 2
       if (this.fg2.value.TuesdayS2) {
+        if (this.fg2.value.Tustart2 == null) {this.fg2.value.Tustart2 = '2020-09-11 08:30'} 
+        if (this.fg2.value.Tuend2 == null) {this.fg2.value.Tuend2 = '2020-09-11 08:30'}
         this.fg2.value.Tustart2 = moment(
           this.fg2.value.Tustart2,
           "YYYY-MM-DD HH:mm"
@@ -379,6 +391,8 @@ export class Step2Page implements OnInit {
 
     if (this.fg2.value.Wednesday) {
       if (this.fg2.value.WednesdayS1) {
+        if (this.fg2.value.Wstart == null) {this.fg2.value.Wstart = '2020-09-11 08:30'}
+        if (this.fg2.value.Wend == null) {this.fg2.value.Wend = '2020-09-11 08:30'}
         this.fg2.value.Wstart = moment(
           this.fg2.value.Wstart,
           "YYYY-MM-DD HH:mm"
@@ -398,6 +412,8 @@ export class Step2Page implements OnInit {
       }
       // Session 2
       if (this.fg2.value.WednesdayS2) {
+        if (this.fg2.value.Wstart2 == null) {this.fg2.value.Wstart2 = '2020-09-11 08:30'}
+        if (this.fg2.value.Wend2 == null) {this.fg2.value.Wend2 = '2020-09-11 08:30'}
         this.fg2.value.Wstart2 = moment(
           this.fg2.value.Wstart2,
           "YYYY-MM-DD HH:mm"
@@ -419,6 +435,8 @@ export class Step2Page implements OnInit {
 
     if (this.fg2.value.Thursday) {
       if (this.fg2.value.ThursdayS1) {
+        if (this.fg2.value.Thstart == null) {this.fg2.value.Thstart = '2020-09-11 08:30'}
+        if (this.fg2.value.Thend == null) {this.fg2.value.Thend = '2020-09-11 08:30'}
         this.fg2.value.Thstart = moment(
           this.fg2.value.Thstart,
           "YYYY-MM-DD HH:mm"
@@ -438,6 +456,8 @@ export class Step2Page implements OnInit {
       }
       // SESSION 2
       if (this.fg2.value.ThursdayS2) {
+        if (this.fg2.value.Thstart2 == null) {this.fg2.value.Thstart2 = '2020-09-11 08:30'}
+        if (this.fg2.value.Thend2 == null) {this.fg2.value.Thend2 = '2020-09-11 08:30'}
         this.fg2.value.Thstart2 = moment(
           this.fg2.value.Thstart2,
           "YYYY-MM-DD HH:mm"
@@ -459,6 +479,8 @@ export class Step2Page implements OnInit {
 
     if (this.fg2.value.Friday) {
       if (this.fg2.value.FridayS1) {
+        if (this.fg2.value.Fstart == null) {this.fg2.value.Fstart = '2020-09-11 08:30'}
+        if (this.fg2.value.Fend == null) {this.fg2.value.Fend = '2020-09-11 08:30'}
         this.fg2.value.Fstart = moment(
           this.fg2.value.Fstart,
           "YYYY-MM-DD HH:mm"
@@ -478,6 +500,8 @@ export class Step2Page implements OnInit {
       }
       // SESSION 2
       if (this.fg2.value.FridayS2) {
+        if (this.fg2.value.Fstart2 == null) {this.fg2.value.Fstart2 = '2020-09-11 08:30'}
+        if (this.fg2.value.Fend2 == null) {this.fg2.value.Fend2 = '2020-09-11 08:30'}
         this.fg2.value.Fstart2 = moment(
           this.fg2.value.Fstart2,
           "YYYY-MM-DD HH:mm"
@@ -499,6 +523,8 @@ export class Step2Page implements OnInit {
 
     if (this.fg2.value.Saturday) {
       if (this.fg2.value.SaturdayS1) {
+        if (this.fg2.value.Sastart == null) {this.fg2.value.Sastart = '2020-09-11 08:30'}
+        if (this.fg2.value.Saend == null) {this.fg2.value.Saend = '2020-09-11 08:30'}
         this.fg2.value.Sastart = moment(
           this.fg2.value.Sastart,
           "YYYY-MM-DD HH:mm"
@@ -518,6 +544,8 @@ export class Step2Page implements OnInit {
       }
       // SESSION 2
       if (this.fg2.value.SaturdayS2) {
+        if (this.fg2.value.Sastart2 == null) {this.fg2.value.Sastart2 = '2020-09-11 08:30'}
+        if (this.fg2.value.Saend2 == null) {this.fg2.value.Saend2 = '2020-09-11 08:30'}
         this.fg2.value.Sastart2 = moment(
           this.fg2.value.Sastart2,
           "YYYY-MM-DD HH:mm"
@@ -539,6 +567,8 @@ export class Step2Page implements OnInit {
 
     if (this.fg2.value.Sunday) {
       if (this.fg2.value.SundayS1) {
+        if (this.fg2.value.Sustart == null) {this.fg2.value.Sustart = '2020-09-11 08:30'}
+        if (this.fg2.value.Suend == null) {this.fg2.value.Suend = '2020-09-11 08:30'}
         this.fg2.value.Sustart = moment(
           this.fg2.value.Sustart,
           "YYYY-MM-DD HH:mm"
@@ -557,19 +587,21 @@ export class Step2Page implements OnInit {
         ct.push(obj);
       }
       // SESSION 2
-      if (this.fg2.value.SundayS1) {
-        this.fg2.value.Sustart = moment(
-          this.fg2.value.Sustart,
+      if (this.fg2.value.SundayS2) {
+        if (this.fg2.value.Sustart2 == null) {this.fg2.value.Sustart2 = '2020-09-11 08:30'}
+        if (this.fg2.value.Suend2 == null) {this.fg2.value.Suend2 = '2020-09-11 08:30'}
+        this.fg2.value.Sustart2 = moment(
+          this.fg2.value.Sustart2,
           "YYYY-MM-DD HH:mm"
         ).format("HH:mm");
-        this.fg2.value.Suend = moment(
-          this.fg2.value.Suend,
+        this.fg2.value.Suend2 = moment(
+          this.fg2.value.Suend2,
           "YYYY-MM-DD HH:mm"
         ).format("HH:mm");
         let obj = {
           Day: "Sunday",
-          StartTime: this.fg2.value.Sustart,
-          EndTime: this.fg2.value.Suend,
+          StartTime: this.fg2.value.Sustart2,
+          EndTime: this.fg2.value.Suend2,
           IsOpen: true,
           Session: 2
         };
@@ -577,6 +609,7 @@ export class Step2Page implements OnInit {
       }
     }
     this.fg1.value.ClinicTimings = ct;
+    console.log(this.fg1.value);
     this.signupService.clinicData = this.fg1.value;
     this.router.navigate(["/signup/step3"]);
     //this.addNewClinic(this.fg1.value);
