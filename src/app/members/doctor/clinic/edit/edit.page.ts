@@ -12,6 +12,12 @@ import {
 import { environment } from "src/environments/environment";
 import { Storage } from "@ionic/storage";
 import * as moment from "moment";
+import { FileChooser } from '@ionic-native/file-chooser/ngx';
+import { File , FileEntry } from '@ionic-native/file/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
+import {FileTransfer , FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { Base64 } from '@ionic-native/base64/ngx';
+
 
 @Component({
   selector: "app-edit",
@@ -24,6 +30,8 @@ export class EditPage implements OnInit {
   clinicId: any;
   clinic: any;
   doctorId: any;
+  uploading = false;
+  resourceURL = environment.RESOURCE_URL;
 
   constructor(
     public loadingController: LoadingController,
@@ -32,7 +40,12 @@ export class EditPage implements OnInit {
     private formbuilder: FormBuilder,
     private clinicService: ClinicService,
     private toastService: ToastService,
-    private storage: Storage
+    private storage: Storage,
+    private fileChooser: FileChooser,
+    private file: File,
+    private filePath: FilePath,
+    private transfer: FileTransfer,
+    private base64: Base64
   ) {}
 
   ngOnInit() {
@@ -60,7 +73,8 @@ export class EditPage implements OnInit {
       ClinicTimings: [null],
       Lat: [null],
       Long: [null],
-      IsOnline: [false]
+      IsOnline: [false],
+      MonogramImage: [null]
     });
 
     this.fg2 = this.formbuilder.group({
@@ -162,13 +176,18 @@ export class EditPage implements OnInit {
 
   async getClinic() {
     const loading = await this.loadingController.create({ message: "Loading" });
+    await this.clinicService.getClinicById(this.clinicId).subscribe(
+        res => {
+          if (res.IsSuccess) {
+            this.clinic = res.ResponseData;
    // await loading.present();
-     this.clinic = this.clinicService.clinics.find(x=> x.Id == this.clinicId);
-     console.log(this.clinic);
+    //  this.clinic = this.clinicService.clinics.find(x=> x.Id == this.clinicId);
+    //  console.log(this.clinic);
      this.fg1.controls["Name"].setValue(this.clinic.Name);
            this.fg1.controls["PhoneNumber"].setValue(this.clinic.PhoneNumber);
            this.fg1.controls["Address"].setValue(this.clinic.Address);
            this.fg1.controls["ConsultationFee"].setValue(this.clinic.ConsultationFee);
+           this.fg1.controls["MonogramImage"].setValue(this.clinic.MonogramImage);
            // moment(clinicTiming.StartTime,"HH:mm" ).format( "YYYY-MM-DD HH:mm");
           for (
             let index = 0;
@@ -395,6 +414,20 @@ export class EditPage implements OnInit {
                 break;
             }
           }
+          loading.dismiss();
+              } 
+              
+              else {
+                loading.dismiss();
+                this.toastService.create(res.Message, "danger");
+              }
+            },
+            err => {
+              loading.dismiss();
+              this.toastService.create(err, "danger");
+            }
+          );
+  }
 
     // await this.clinicService.getClinicById(this.clinicId).subscribe(
     //   res => {
@@ -526,7 +559,7 @@ export class EditPage implements OnInit {
     //     this.toastService.create(err, "danger");
     //   }
     // );
-  }
+  
 
   getdata() {
     this.fg1.value.DoctorId = this.doctorId;
@@ -1210,6 +1243,61 @@ export class EditPage implements OnInit {
         this.fg2.controls["Suend"].setErrors(null);
       }
     }
+  }
+
+  uploadMonogram() {
+
+    this.fileChooser.open().then(async uri =>
+      {
+        console.log(uri);
+       await  this.filePath.resolveNativePath(uri).then(filePath =>
+          {
+            console.log (filePath);        
+            this.uploading = true;
+            this.file.resolveLocalFilesystemUrl(filePath).then(fileInfo =>
+              {
+                let files = fileInfo as FileEntry;
+                files.file(async success =>
+                  {
+                    let filesName  = success.name;
+                    if (success.size < 100000){
+                    let options: FileUploadOptions = {
+                      fileName: filesName
+                    }
+                    const fileTransfer: FileTransferObject = this.transfer.create();
+                  await  fileTransfer.upload(uri, 'http://13.233.255.96:5002/api/upload', options)
+                    .then((data) => {
+                      // success
+                     console.log(data);
+                     this.toastService.create("successfully Uploaded");
+                      this.uploading = false;
+                      let dbpath = JSON.parse(data.response)                      
+                      this.fg1.value.MonogramImage = dbpath.dbPath;
+                      console.log(this.fg1.value.MonogramImage);
+                    }, (err) => {
+                      console.log(err)
+                      // error
+                    })
+                  }
+                  else 
+                  this.toastService.create("File size must be less than 100kb" , 'danger');
+                  });
+              },err =>
+              {
+                console.log(err);
+                throw err;
+              });
+          },err =>
+          {
+            console.log(err);
+            throw err;
+          });
+      },err =>
+      {
+        console.log(err);
+        throw err;
+      });
+  
   }
   validation_messages = {
     Name: [{ type: "required", message: "Name is required." }],
