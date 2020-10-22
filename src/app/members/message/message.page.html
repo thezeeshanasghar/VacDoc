@@ -12,25 +12,25 @@
 
 <ion-content padding>
 
-  <ion-card *ngIf="message && message.length == 0">
+  <ion-card *ngIf="!Messages">
     <ion-card-header>
       <ion-card-title>No message found !</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      Server returned an empty response
+      
     </ion-card-content>
   </ion-card>
 
-  <ion-card *ngFor="let msg of message">
+  <ion-card *ngFor="let msg of Messages">
     <ion-card-header>
       <ion-card-title color="primary">
-        To: {{msg.MobileNumber}}, From: {{msg.User.MobileNumber == '3331231231'? 'Admin': msg.User.MobileNumber}}
+        To: {{msg.toNumber}}
       </ion-card-title>
-      <ion-card-subtitle>{{msg.Created}}</ion-card-subtitle>
+      <ion-card-subtitle>{{msg.created | date}} <span *ngIf="!msg.status">failed</span> <ion-icon (click)="sendMessage(msg.toNumber , msg.message , msg.created)" *ngIf="!msg.status" color="primary" name="refresh"></ion-icon></ion-card-subtitle>
     </ion-card-header>
 
     <ion-card-content>
-      <p>{{msg.SMS}}</p>
+      <p>{{msg.message}}</p>
     </ion-card-content>
   </ion-card>
 </ion-content>
