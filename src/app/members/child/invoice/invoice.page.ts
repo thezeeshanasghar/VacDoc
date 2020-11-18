@@ -93,23 +93,25 @@ export class InvoicePage implements OnInit {
   // }
   downloadInvoice(){
     this.fg.value.DoctorId = this.doctorId;
-    var request: DownloadRequest = {
-      uri: `${this.API_INVOICE}${this.fg.value.Id}/${this.fg.value.IsBrand}/
-      ${this.fg.value.IsConsultationFee}/${this.fg.value.InvoiceDate}/${this.fg.value.DoctorId}/Download-Invoice-PDF` ,
-      title: 'Child Invoice',
-      description: '',
-      mimeType: '',
-      visibleInDownloadsUi: true,
-      notificationVisibility: NotificationVisibility.VisibleNotifyCompleted,
-     // notificationVisibility: 0,
-      destinationInExternalFilesDir: {
-          dirType: 'Downloads',
-          subPath: 'ChildSchedule.pdf'
-      }
-  };
-  this.downloader.download(request)
-  .then((location: string) => console.log('File downloaded at:'+location))
-  .catch((error: any) => console.error(error));
+   // var request: DownloadRequest = {
+     let uri= `${this.API_INVOICE}${this.fg.value.Id}/${this.fg.value.IsBrand}/
+      ${this.fg.value.IsConsultationFee}/${this.fg.value.InvoiceDate}/${this.fg.value.DoctorId}/Download-Invoice-PDF`;
+    //   title: 'Child Invoice',
+    //   description: '',
+    //   mimeType: '',
+    //   visibleInDownloadsUi: true,
+    //   notificationVisibility: NotificationVisibility.VisibleNotifyCompleted,
+    //  // notificationVisibility: 0,
+    //   destinationInExternalFilesDir: {
+    //       dirType: 'Downloads',
+    //       subPath: 'ChildSchedule.pdf'
+    //   }
+ // };
+  // this.downloader.download(request)
+  // .then((location: string) => console.log('File downloaded at:'+location))
+  // .catch((error: any) => console.error(error));
+
+  console.log(uri);
   
   }
 

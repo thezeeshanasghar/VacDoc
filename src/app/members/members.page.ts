@@ -67,11 +67,11 @@ export class MembersPage implements OnInit {
       url: "/members/doctor/brand-amount",
       icon: "locate"
     },
-    {
-      title: "Setting",
-      url: "/members/doctor/sms-setting",
-      icon: "locate"
-    }
+    // {
+    //   title: "Setting",
+    //   url: "/members/doctor/sms-setting",
+    //   icon: "locate"
+    // }
   ];
 
   public childPages = [

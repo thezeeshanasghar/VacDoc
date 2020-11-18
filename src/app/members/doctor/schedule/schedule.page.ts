@@ -31,8 +31,8 @@ export class SchedulePage implements OnInit {
     private storage: Storage,
     private router: Router,
   ) {}
-
-  ngOnInit() {
+ngOnInit(){}
+  ionViewDidEnter() {
     this.fg = this.formBuilder.group({});
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.getSchedule(val);

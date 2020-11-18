@@ -22,8 +22,8 @@ export class ChildService extends BaseService {
     );
   }
 
-  getChildByClinic(Id: String): Observable<any> {
-    const url = `${this.API_CHILD}child/clinic/${Id}`;
+  getChildByClinic(Id: String , page: number): Observable<any> {
+    const url = `${this.API_CHILD}child/clinic/${Id}/${page}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
@@ -62,8 +62,8 @@ export class ChildService extends BaseService {
       );
   }
 
-  getChildByUserSearch(docId , value): Observable<any> {
-    const url = `${this.API_CHILD}doctor/${docId}/20/0/childs?searchKeyword=${value}`;
+  getChildByUserSearch(docId , page, value): Observable<any> {
+    const url = `${this.API_CHILD}doctor/${docId}/${page}/childs?searchKeyword=${value}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)

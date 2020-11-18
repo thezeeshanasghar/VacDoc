@@ -59,7 +59,7 @@ export class FillPage implements OnInit {
     });
     this.getVaccination();
     this.todaydate = new Date();
-    this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format("YYYY-MM-DD");
+    this.todaydate = moment(this.todaydate,'DD-MM-YYYY').format("YYYY-MM-DD");
    // this.fg.value.DiseaseYear = this.todaydate;
   }
 
@@ -78,6 +78,7 @@ export class FillPage implements OnInit {
           this.brandName = this.vaccineData.Brands;
           this.Date = this.vaccineData.Date;
           this.Date = moment(this.Date, 'DD-MM-YYYY').format('YYYY-MM-DD');
+          this.fg.controls.GivenDate.setValue(this.todaydate);
           loading.dismiss();
         }
         else {
@@ -97,6 +98,7 @@ export class FillPage implements OnInit {
     this.fg.value.DoctorId = this.doctorId;
     this.fg.value.IsDone = true;
     this.fg.value.DiseaseYear = moment(this.fg.value.DiseaseYear, 'YYYY-MM-DD').format('YYYY');
+    console.log(this.fg.value.GivenDate);
     this.fg.value.GivenDate = moment(this.fg.value.GivenDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
     console.log(this.fg.value);
     const loading = await this.loadingController.create({

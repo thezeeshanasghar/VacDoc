@@ -5,7 +5,9 @@ import { environment } from "src/environments/environment";
 import { Storage } from "@ionic/storage";
 import { FollowupService } from "src/app/services/followup.service";
 import { AndroidPermissions } from "@ionic-native/android-permissions/ngx";
-declare var SMS: any;
+import { TitleCasePipe } from '@angular/common';
+import { CallNumber } from '@ionic-native/call-number/ngx';
+import { SMS } from '@ionic-native/sms/ngx';
 
 @Component({
   selector: "app-follow-up",
@@ -18,12 +20,17 @@ export class FollowUpPage implements OnInit {
   followUpChild: any;
   numOfDays: number = 0;
   SMSKey: any;
+  clinicId:any;
+  Messages:any = [];
   constructor(
     public loadingController: LoadingController,
     private followupService: FollowupService,
     private toastService: ToastService,
     private storage: Storage,
-    private androidPermissions: AndroidPermissions
+    private androidPermissions: AndroidPermissions,
+    private titlecasePipe: TitleCasePipe,
+    private sms: SMS,
+    private callNumber: CallNumber
   ) {}
 
   ngOnInit() {
@@ -33,6 +40,10 @@ export class FollowUpPage implements OnInit {
     this.storage.get(environment.SMS).then(val => {
       this.SMSKey = val;
     });
+     this.storage.get(environment.CLINIC_Id).then(clinicId => {
+      this.clinicId = clinicId;
+    });
+    this.storage.get(environment.MESSAGES).then(messages=> {this.Messages = messages});
     this.getFollowupChild(this.numOfDays);
   }
 
@@ -44,7 +55,7 @@ export class FollowUpPage implements OnInit {
     });
     await loading.present();
     await this.followupService
-      .getFollowupChild(this.numOfDays, this.doctorId)
+      .getFollowupChild(this.numOfDays, this.clinicId)
       .subscribe(
         res => {
           if (res.IsSuccess) {
@@ -62,14 +73,21 @@ export class FollowUpPage implements OnInit {
       );
   }
 
-  sendSMS(child: any) {
+  async sendSMS(child: any) {
+    const loading = await this.loadingController.create({
+      message: "Loading"
+    });
+    await loading.present();
+
     for (let i = 0; i < child.length; i++) {
-      this.sendAlertMsg(child[i].ChildId, child[i].Child.User.MobileNumber);
+      let message = this.generateSMS(child[i]);
+      this.sendAlertMsg(child[i].ChildId, child[i].Child.User.MobileNumber , message);
     }
+    loading.dismiss();
   }
 
   // send Alert Msg to childs
-  async sendAlertMsg(id, childMobile) {
+  async sendAlertMsg(id, childMobile , message) {
     if (this.SMSKey == 0) {
       const loading = await this.loadingController.create({
         message: "Loading"
@@ -102,14 +120,14 @@ export class FollowUpPage implements OnInit {
                 .requestPermission(this.androidPermissions.PERMISSION.SEND_SMS)
                 .then(
                   success => {
-                    this.sendMessage(childMobile);
+                    this.sendMessage(childMobile , message);
                   },
                   err => {
                     console.error(err);
                   }
                 );
             } else {
-              this.sendMessage(childMobile);
+              this.sendMessage(childMobile , message);
             }
           },
           err => {
@@ -117,7 +135,7 @@ export class FollowUpPage implements OnInit {
               .requestPermission(this.androidPermissions.PERMISSION.SEND_SMS)
               .then(
                 success => {
-                  this.sendMessage(childMobile);
+                  this.sendMessage(childMobile , message);
                 },
                 err => {
                   console.error(err);
@@ -128,19 +146,38 @@ export class FollowUpPage implements OnInit {
     }
   }
 
-  sendMessage(childMobile) {
-    if (SMS) {
-      SMS.sendSMS(
-        "0092" + childMobile,
-        "Test Message faisal",
-        () => {
-          console.log("Message sent successfully");
-        },
-        error => {
-          console.error(error);
-        }
-      );
-    }
+  generateSMS(schedule){
+    var sms1="Reminder: Followup visit of "; 
+
+    sms1 += schedule.Child.Name + ' is due on ' + schedule.NextVisitDate ;
+
+    sms1 += ' with Dr. ' + this.titlecasePipe.transform(schedule.Doctor.FirstName) + ' ' + this.titlecasePipe.transform(schedule.Doctor.LastName);
+
+  return sms1;
+  }
+
+  sendMessage(childMobile , message) {
+    this.sms.send('+92'+childMobile, message)
+          .then(()=>{
+            let obj = {'toNumber':'+92' + childMobile , 'message': message , 'created': Date.now(), 'status':true};
+            this.Messages.push(obj);
+            this.storage.set(environment.MESSAGES , this.Messages);
+          this.toastService.create("Message Sent Successful");
+          }).catch((error)=>{
+          //console.log("The Message is Failed",error);
+          this.toastService.create("Message Sent Failed" , "danger");
+          let obj = {'toNumber':'+92' + childMobile , 'message': message , 'created': Date.now(), 'status':false};
+            this.Messages.push(obj);
+            this.storage.set(environment.MESSAGES , this.Messages);
+          });
+  }
+
+  callFunction(celnumber)
+  {
+    console.log(celnumber);
+    this.callNumber.callNumber(0 + celnumber, true)
+    .then(res => console.log('Launched dialer!', res))
+    .catch(err => console.log('Error launching dialer', err));
   }
 
   // async sendAlertMsgToAll() {

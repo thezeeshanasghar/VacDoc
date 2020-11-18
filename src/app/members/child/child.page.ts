@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { IonInfiniteScroll } from '@ionic/angular';
 import { LoadingController } from '@ionic/angular';
 import { ChildService } from 'src/app/services/child.service';
 import { ClinicService } from 'src/app/services/clinic.service';
@@ -16,11 +17,13 @@ import { CallNumber } from '@ionic-native/call-number/ngx';
   styleUrls: ['./child.page.scss'],
 })
 export class ChildPage {
-
+  @ViewChild (IonInfiniteScroll, {static: false}) infiniteScroll: IonInfiniteScroll;
   fg: FormGroup;
-  childs: any;
+  childs: any = [];
   userId: any;
   doctorId: number;
+  page: number;
+  search: boolean;
   constructor(
     public router: Router,
     public loadingController: LoadingController,
@@ -40,15 +43,18 @@ export class ChildPage {
     this.storage.get(environment.DOCTOR_Id).then((docId) => {
       this.doctorId = docId;
     });
+    this.page = 0;
+    this.search = false;
     console.log(this.clinicService.OnlineClinic.Id);
-    this.getChlidByClinic(this.clinicService.OnlineClinic.Id);
+    this.getChlidByClinic(false);
   }
 
-  // ionViewWillEnter() {
-  //   this.storage.get(environment.USER_Id).then((val) => {
-  //     this.userId = val;
-  //   });
-  // }
+  loadData(){
+    if (this.search)
+    this.getChlidbyUser(false);
+    else
+    this.getChlidByClinic(false);
+  }
 
   // Alert Msg Show for deletion of Child
   async alertforDeleteChild(id) {
@@ -70,7 +76,7 @@ export class ChildPage {
       res => {
         if (res.IsSuccess) {
           this.toastService.create(res.Message);
-          this.getChlidByClinic(this.clinicService.OnlineClinic.Id);
+          this.getChlidByClinic(true);
           loading.dismiss();
         }
         else {
@@ -85,15 +91,25 @@ export class ChildPage {
     );
   }
 
-  async getChlidbyUser() {
+  async getChlidbyUser(keypress: boolean) {
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
     await loading.present();
-    await this.childService.getChildByUserSearch(this.doctorId , this.fg.value.Name).subscribe(
+    if(keypress) {
+      this.search = true;
+      this.page = 0;
+      this.childs = [];
+      this.infiniteScroll.disabled = false;
+      }
+    await this.childService.getChildByUserSearch(this.doctorId , this.page , this.fg.value.Name).subscribe(
       res => {
         if (res.IsSuccess) {
-          this.childs = res.ResponseData
+          if(res.ResponseData.length < 15)
+          this.infiniteScroll.disabled = true;
+            this.childs =  (this.childs.concat(res.ResponseData));
+            this.page += 1;
+            this.infiniteScroll.complete();
           loading.dismiss();
         }
         else {
@@ -108,16 +124,24 @@ export class ChildPage {
     )
   }
 
-  async getChlidByClinic(id) {
+  async getChlidByClinic(isdelete: boolean) {
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
     await loading.present();
-    await this.childService.getChildByClinic(id).subscribe(
+    if(isdelete) {
+      this.page = 0;
+      this.childs = [];
+      }
+    await this.childService.getChildByClinic(this.clinicService.OnlineClinic.Id , this.page).subscribe(
       res => {
         if (res.IsSuccess) {
-          this.childs = res.ResponseData
+          if(res.ResponseData.length < 10)
+          this.infiniteScroll.disabled = true;
+          this.childs = this.childs.concat(res.ResponseData);
+          this.page += 1 ;
           loading.dismiss();
+          this.infiniteScroll.complete();
         }
         else {
           loading.dismiss();
@@ -130,6 +154,8 @@ export class ChildPage {
       }
     )
   }
+
+
 
   callFunction(celnumber)
   {

@@ -64,7 +64,7 @@ export class VaccinePage {
       .getVaccinationById(this.route.snapshot.paramMap.get("id"))
       .subscribe(
         res => {
-          if (res.IsSuccess) {
+          if (res.IsSuccess && res.ResponseData.length > 0 ) {
           // res.ResponseData = res.ResponseData.filter(item=> (!item.IsSkip));
            // console.log(res.ResponseData);
            this.BirthYear = res.ResponseData[0].Child.DOB;
@@ -75,6 +75,8 @@ export class VaccinePage {
             this.vaccine = res.ResponseData;
             this.vaccine.forEach(doc => {
               doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
+              if (doc.GivenDate)
+              doc.GivenDate = moment(doc.GivenDate, "DD-MM-YYYY").format("YYYY-MM-DD");
             });
            
             this.dataGrouping = this.groupBy(this.vaccine, "Date");
@@ -83,7 +85,7 @@ export class VaccinePage {
           
           } else {
             loading.dismiss();
-            this.toastService.create(res.Message, "danger");
+           // this.toastService.create(res.Message, "danger");
           }
         },
         err => {
@@ -319,7 +321,6 @@ console.log(diffDays);console.log(firstDate);console.log(secondDate);
 
 
   printdata() {
-    console.log(this.childId);
     this.download(this.childId);
   }
   
@@ -342,28 +343,6 @@ console.log(diffDays);console.log(firstDate);console.log(secondDate);
   .catch((error: any) => console.error(error));
   
   }
-
-  downloadCsv(id){
-    var request: DownloadRequest = {
-      uri: `${this.API_VACCINE}child/${id}/downloadcsv`,
-      title: 'Child Detail',
-      description: '',
-      mimeType: '',
-      visibleInDownloadsUi: true,
-      notificationVisibility: NotificationVisibility.VisibleNotifyCompleted,
-     // notificationVisibility: 0,
-      destinationInExternalFilesDir: {
-          dirType: 'Downloads',
-          subPath: 'ChildDetail.csv'
-      }
-  };
-  this.downloader.download(request)
-  .then((location: string) => console.log('File downloaded at:'+location))
-  .catch((error: any) => console.error(error));
-  
-  }
-
-  
 
   async UnfillVaccine(id) {
     console.log(5);

@@ -11,7 +11,7 @@
     </ion-segment-button>
   </ion-segment>
 
-  <ion-button (click)="sendSMS(followUpChild)">send sms to all</ion-button>
+  <ion-button fill="outline" [disabled]="followUpChild == 0" (click)="sendSMS(followUpChild)">send sms to all</ion-button>
 
   <div>
     <h1 *ngIf="followUpChild == 0" style="color: red;">No alert for today.</h1>
@@ -21,8 +21,8 @@
         <ion-col>
           <ion-item>
             <ion-label>{{child.Child.Name}}</ion-label>
-            <ion-icon slot="end" color="primary" name="call" routerLink="/members/child/edit/"></ion-icon>
-            <ion-icon slot="end" color="primary" name="mail" (click)="sendSMS(child)">
+            <ion-icon slot="end" color="primary" name="call" (click)="callFunction(child.Child.User.MobileNumber)"></ion-icon>
+            <ion-icon slot="end" color="primary" name="mail" (click)="sendSMS([child])">
             </ion-icon>
           </ion-item>
         </ion-col>

@@ -19,9 +19,22 @@ import { CallNumber } from '@ionic-native/call-number/ngx';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material';
+import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
 //import {MatDatepickerModule} from '@angular/material/datepicker';
 // import { MatFormFieldModule , MatInputModule } from '@angular/material';
 //import { MatMomentDateModule } from "@angular/material-moment-adapter";
+
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'LL',
+  },
+  display: {
+    dateInput: 'LL',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 @NgModule({
   declarations: [AppComponent],
@@ -47,7 +60,8 @@ import {MatNativeDateModule} from '@angular/material';
     SMS,
     AndroidPermissions,
     TitleCasePipe,
-    CallNumber
+    CallNumber,
+    {provide: MAT_DATE_LOCALE, useValue: 'fr'}
 
   ],
   bootstrap: [AppComponent]

@@ -60,20 +60,20 @@ export class Step3Page implements OnInit {
          
                let value = dose.MinAge == null ? 0 : dose.MinAge;
                let name = dose.Name;
-              if (dose.DoseOrder == 1)
-              name = dose.Name+'_first';
-              else if (dose.DoseOrder == 2)
-              name = dose.Name+'_second';
-              else if (dose.DoseOrder == 3)
-              name = dose.Name+'_third';
-              else if (dose.DoseOrder == 4)
-              name = dose.Name+'_fourth';
-              else if (dose.DoseOrder == 5)
-              name = dose.Name+'_fifth'
-              else if (dose.DoseOrder == 6)
-              name = dose.Name+'_sixth'
-              else if (dose.DoseOrder == 7)
-              name = dose.Name+'_seventh'
+              // if (dose.DoseOrder == 1)
+              // name = dose.Name+'_first';
+              // else if (dose.DoseOrder == 2)
+              // name = dose.Name+'_second';
+              // else if (dose.DoseOrder == 3)
+              // name = dose.Name+'_third';
+              // else if (dose.DoseOrder == 4)
+              // name = dose.Name+'_fourth';
+              // else if (dose.DoseOrder == 5)
+              // name = dose.Name+'_fifth'
+              // else if (dose.DoseOrder == 6)
+              // name = dose.Name+'_sixth'
+              // else if (dose.DoseOrder == 7)
+              // name = dose.Name+'_seventh'
               
             this.fg.addControl(
               name,

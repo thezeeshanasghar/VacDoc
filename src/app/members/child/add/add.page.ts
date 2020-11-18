@@ -59,7 +59,10 @@ export class AddPage implements OnInit {
     public alertCtrl: AlertController
   ) { }
 
-  async ngOnInit() {
+  ngOnInit()
+  // {}
+  // ionViewWillEnter() 
+  {
     // let obj = {'toNumber':'+923143041544' , 'message': 'this is test message' , 'created': Date.now(), 'status':false};
     // this.Messages.push(obj); this.Messages.push(obj); this.Messages.push(obj);
     // this.storage.set(environment.MESSAGES , this.Messages);
@@ -91,7 +94,7 @@ export class AddPage implements OnInit {
       ),
       PreferredDayOfWeek: 'Any',
       Gender: "Boy",
-      ScheduleType: "Regular",
+      Type: "regular",
       City: [null],
       PreferredDayOfReminder: 0,
       PreferredSchedule: [null],
@@ -109,12 +112,11 @@ export class AddPage implements OnInit {
       this.City = val;
     });
 
-    await this.storage.get(environment.DOCTOR).then(doc => {
+     this.storage.get(environment.DOCTOR).then(doc => {
       this.Doctor = doc;
     });
     
-    await this.storage.get(environment.MESSAGES).then(messages => {
-      this.Messages = messages;
+     this.storage.get(environment.MESSAGES).then(messages => {messages==null?"": this.Messages = messages;
     });
     // this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS).then(
     //   result => {

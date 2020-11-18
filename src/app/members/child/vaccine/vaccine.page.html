@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-button (click)="printdata()">print</ion-button>  <ion-button (click)="downloadCsv(childId)">Download</ion-button>
+  <ion-button (click)="printdata()">print</ion-button>
   <div *ngFor="let item of dataGrouping | keyvalue:mySortingFunction; let i=index">
 
     <ion-grid>
@@ -21,6 +21,8 @@
          
           <ion-img *ngIf="!checkVaccineIsDon(item.value)" style="height: 15px;display: inline-block;"
             src="../../assets/injectionFilled.png" ></ion-img>
+
+            <ion-icon style="margin-right:10px" *ngIf="!checkVaccineIsDon(item.value)" size="small" routerLink="/members/child/vaccine/{{childId}}/bulkinvoice/{{item.key}}" color="primary" name="document-text-outline"></ion-icon>
 
           <ion-icon color="primary" name="calendar" (click)="picker.open()">
             <!-- <ion-datetime (ionChange)="updateBulkDate($event, item.value[0].Id)" max='2030' min ='2000' #picker picker-format="DD-MM-YYYY">
@@ -41,7 +43,7 @@
             <p *ngIf="v.Due2EPI==true" style="background-color:rgb(55, 231, 10);">Due to EPI</p>
             <ion-img *ngIf="v.Due2EPI==true" style="height: 30px;" src="../../assets/injectionFilled.png">
             </ion-img>
-            <p *ngIf="v.IsDone==true && v.Due2EPI==false && (v.IsDisease==false || v.IsDisease==null)" style="background-color:rgb(55, 231, 10);">{{v.GivenDate | date}}</p>
+            <p *ngIf="v.IsDone==true && v.Due2EPI==false && (v.IsDisease==false || v.IsDisease==null)" style="background-color:rgb(55, 231, 10);">{{v.GivenDate | date }}</p>
             <p *ngIf="v.IsDone==true && v.Due2EPI==false && v.IsDisease==true" style="background-color:rgb(55, 231, 10);" 
             routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}">Disease Year: {{v.DiseaseYear}}</p>
             <ion-icon *ngIf="v.IsDone==false && v.Due2EPI==false && v.IsSkip != true" color="primary" name="calendar" (click)="picker.open()">

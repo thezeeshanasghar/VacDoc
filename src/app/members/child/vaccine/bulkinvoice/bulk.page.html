@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Invoice</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <form [formGroup]="fg" (ngSubmit)="onSubmit()">
+    <ion-card *ngFor="let bulk of bulkData">
+    <ion-item >
+      <b style="padding-right:10%">vaccine:</b> {{bulk.Dose.Name}}
+      </ion-item>
+      <ion-item >
+        <b style="padding-right:10%">brand</b> <ion-select [(ngModel)]="bulk.BrandId" [ngModelOptions]="{standalone: true}" disabled>
+          <ion-select-option *ngFor="let user1 of bulk.Brands; let i = index;" selected [value]="user1.Id">{{user1.Name}}
+          </ion-select-option>
+        </ion-select>
+        </ion-item>
+        <ion-item >
+          <b style="padding-right:10%">Amount</b> <ion-input [(ngModel)]="bulk.Amount" placeholder="Enter Amount" position="end" type = "text" [ngModelOptions]="{standalone: true}"></ion-input>
+          </ion-item>
+      </ion-card>
+    <ion-button type="submit">Save</ion-button> <ion-button (click)= saveanddownload()>Download</ion-button>
+  </form>
+</ion-content>

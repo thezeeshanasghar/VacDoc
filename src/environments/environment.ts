@@ -4,13 +4,15 @@
 
 export const environment = {
   production: false,
-  // BASE_URL: "http://vac-api.afz-sol.com/api/"
- // BASE_URL: "http://vac-api.ehs.edu.pk/api/",
-  //BASE_URL: "http://localhost:4309/api/",
- BASE_URL: "http://13.233.255.96:5002/api/",
- RESOURCE_URL: "http://13.233.255.96:5002/",
+  // BASE_URL: "http://testvaccinebe.fernflowers.com/api/",
+  // RESOURCE_URL: "http://testvaccinebe.fernflowers.com/",
+
+  BASE_URL: "https://be.vaccineapi.fernflowers.com/api/",
+  RESOURCE_URL: "https://be.vaccineapi.fernflowers.com/",
+  
   // BASE_URL: "http://localhost:5000/api/",
   // RESOURCE_URL: "http://localhost:5000/",
+  
   USER: 'User',
   DOCTOR_Id: "DoctorId",
   CLINIC_Id: "ClinicId",
@@ -20,7 +22,8 @@ export const environment = {
   Childs: 'Childs',
   CITY: 'City',
   DOCTOR: 'Doctor',
-  ON_CLINIC: 'OnlineClinic'
+  ON_CLINIC: 'OnlineClinic',
+  MESSAGES: 'Messages'
 
 };
 /*

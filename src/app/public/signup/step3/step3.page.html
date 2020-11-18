@@ -13,7 +13,7 @@
   
     <ion-item *ngFor="let control of fg.controls | keyvalue : 0 ; let i = index ">
     <ion-label>{{control.key}}</ion-label>
-    <ion-select [formControlName]="control.key" value="{{control.value.value}}">
+    <!-- <ion-select [formControlName]="control.key" value="{{control.value.value}}">
       <ion-select-option [disabled]="doses[i].MinAge > 0"  value="0">At Birth</ion-select-option>
       <ion-select-option [disabled]="doses[i].MinAge > 7" value="7">1 Week</ion-select-option>
       <ion-select-option [disabled]="doses[i].MinAge > 14" value="14">2 Weeks</ion-select-option>
@@ -107,7 +107,7 @@
       <ion-select-option [disabled]="doses[i].MinAge > 5475" value="5475">15 Years</ion-select-option>
       <ion-select-option [disabled]="doses[i].MinAge > 5505" value="5505">15 Years 1 months</ion-select-option>
       <ion-select-option [disabled]="doses[i].MinAge > 5655" value="5655">15 Years 6 months</ion-select-option>
-    </ion-select> 
+    </ion-select>  -->
 
     <ion-checkbox [(ngModel)] = "doses[i].IsSpecial" [ngModelOptions]="{standalone: true}"></ion-checkbox>
      <!-- <div [ngStyle] ="{display:block}" class="validation-errors"> 

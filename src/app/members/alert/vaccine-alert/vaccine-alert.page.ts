@@ -22,7 +22,7 @@ export class VaccineAlertPage implements OnInit {
   SMSKey: any;
   Childs: any;
   private readonly API_VACCINE = `${environment.BASE_URL}`;
-  Messages:any = [];
+  Messages = [];
   numOfDays: number = 0; // 0 means get alert for today, 5 means get alert for next five days, same as for -5
 
   constructor(
@@ -47,7 +47,7 @@ export class VaccineAlertPage implements OnInit {
    await  this.storage.get(environment.SMS).then(val => {
       this.SMSKey = val;
     });
-    this.storage.get(environment.MESSAGES).then(messages=> {this.Messages = messages});
+    this.storage.get(environment.MESSAGES).then(messages=> {messages==null?'':this.Messages = messages});
    await this.getChlid(this.numOfDays);
   }
 
@@ -84,7 +84,7 @@ this.Childs.map(x=>x.Child.Id).forEach(id => {
 });
     var request: DownloadRequest = {
       uri: `${this.API_VACCINE}child/downloadcsv?${query}`,
-      title: 'Child Schedule',
+      title: 'Chil dAlerts CSV',
       description: '',
       mimeType: '',
       visibleInDownloadsUi: true,
@@ -92,7 +92,7 @@ this.Childs.map(x=>x.Child.Id).forEach(id => {
      // notificationVisibility: 0,
       destinationInExternalFilesDir: {
           dirType: 'Downloads',
-          subPath: 'ChildSchedule.pdf'
+          subPath: 'Child Alerts.csv'
       }
   };
   this.downloader.download(request)
@@ -108,21 +108,16 @@ this.Childs.map(x=>x.Child.Id).forEach(id => {
 
     for (let i = 0; i < child.length; i++) {
       let message = this.generateSMS(child[i]);
-      this.sendAlertMsg(child[i].ChildId, child[i].Child.User.MobileNumber , message);
+      await this.sendAlertMsg(child[i].ChildId, child[i].Child.User.MobileNumber , message);
     }
     loading.dismiss();
   }
 generateSMS(schedule){
-  var sms1="Mr ."+ this.titlecasePipe.transform(schedule.Child.FatherName) + 'vaccine for';
-  if (schedule.Child.Gender == 'Boy')
-  {
-    sms1 += ' Your Son '
-  }
-  if (schedule.Child.Gender == 'Girl')
-  {
-    sms1 += ' Your Daughter '
-  }
-  sms1 += schedule.Child.Name + ' is scheduled on ' + schedule.Date ;
+  var sms1 = 'Reminder: Vaccination for ';
+ 
+  sms1 += schedule.Child.Name + ' is due on ' + schedule.Date ;
+
+  sms1 += ' ('  + schedule.Dose.Name + ' )';
 
 return sms1;
 }
@@ -158,7 +153,7 @@ return sms1;
                 .requestPermission(this.androidPermissions.PERMISSION.SEND_SMS)
                 .then(
                   success => {
-                    this.sendMessage(childMobile , message);
+                   this.sendMessage(childMobile , message);
                   },
                   err => {
                     console.error(err);
@@ -184,12 +179,12 @@ return sms1;
     }
   }
 
-  sendMessage(childMobile , message) {
+ async sendMessage(childMobile , message) {
     this.sms.send('+92'+childMobile, message)
           .then(()=>{
             let obj = {'toNumber':'+92' + childMobile , 'message': message , 'created': Date.now(), 'status':true};
             this.Messages.push(obj);
-            this.storage.set(environment.MESSAGES , this.Messages);
+             this.storage.set(environment.MESSAGES , this.Messages);
           this.toastService.create("Message Sent Successful");
           }).catch((error)=>{
           //console.log("The Message is Failed",error);

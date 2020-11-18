@@ -12,10 +12,10 @@
     </ion-segment-button>
   </ion-segment>
 
-  <ion-button (click)="sendSMS(Childs)">send sms to all</ion-button>
-  <ion-button [disabled]="Childs == 0" (click)="downloadcsv()" >Download Sheet</ion-button>
+  <ion-button fill="outline" [disabled]="Childs == 0" (click)="sendSMS(Childs)">send sms to all</ion-button>
+  <ion-button fill="outline"  [disabled]="Childs == 0" (click)="downloadcsv()" >Download Sheet</ion-button>
   <!-- childs -->
-  <h1 *ngIf="Childs == 0" style="color: red;">No alert for today.</h1>
+  <h1 *ngIf="Childs == 0" style="color: red;">No alert found</h1>
   <ion-grid *ngFor="let child of Childs">
     <ion-row>
 

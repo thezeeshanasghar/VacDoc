@@ -12,23 +12,25 @@
 
   <form [formGroup]="fg">
     <ion-item>
-      <ion-input type="text" placeholder="search" formControlName="Name" (keyup.Enter)="getChlidbyUser()" required></ion-input>
-      <ion-button (click)="getChlidbyUser()">search</ion-button>
+      <ion-input type="text" placeholder="search" formControlName="Name" (keyup.Enter)="getChlidbyUser(true)" required></ion-input>
+      <ion-button (click)="getChlidbyUser(true)">search</ion-button>
     </ion-item>
 
   </form>
 
   <ion-card *ngFor="let child of childs" [ngClass]="child.Gender=='Girl' ? 'girl' : 'boy'">
-    <ion-item>
+  <ion-item>
       <ion-thumbnail slot="start">
         <ion-img [src]="child.Gender=='Girl' ? '../../assets/female.png' : '../../assets/male.png'"></ion-img>
       </ion-thumbnail>
       <ion-label>{{child.Name}}</ion-label>
-      <ion-icon slot="end" color="primary" name="create" routerLink="/members/child/edit/{{child.Id}}"></ion-icon>
-      <ion-icon slot="end" color="primary" name="trash" (click)="alertforDeleteChild(child.Id)"></ion-icon>
-      <ion-icon slot="end" color="primary" name="mail" routerLink="/members/child/cmsg/{{child.Id}}"></ion-icon>
-      <ion-icon slot="end" color="primary" name="call"(click)="callFunction(child.User.MobileNumber)"></ion-icon>
-    </ion-item>
+  </ion-item>
+  <ion-item class="ion-justify-content-center">
+      <ion-icon class="iconchild" slot="start" color="primary" name="create" routerLink="/members/child/edit/{{child.Id}}"></ion-icon>
+      <ion-icon class="iconchild" slot="start" color="primary" name="trash" (click)="alertforDeleteChild(child.Id)"></ion-icon>
+      <ion-icon class="iconchild" slot="start" color="primary" name="mail" routerLink="/members/child/cmsg/{{child.Id}}"></ion-icon>
+      <ion-icon class="iconchild" slot="start" color="primary" name="call"(click)="callFunction(child.User.MobileNumber)"></ion-icon>
+    </ion-item> 
 
     <ion-card-content>
       <!-- <p> -->
@@ -57,4 +59,12 @@
     </ion-card-content>
 
   </ion-card>
+
+  <ion-infinite-scroll threshold="100%" (ionInfinite)="loadData()">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
 </ion-content>
