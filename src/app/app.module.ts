@@ -61,7 +61,7 @@ export const MY_FORMATS = {
     AndroidPermissions,
     TitleCasePipe,
     CallNumber,
-    {provide: MAT_DATE_LOCALE, useValue: 'en'}
+    {provide: MAT_DATE_LOCALE, useValue: 'en-GB'}
 
   ],
   bootstrap: [AppComponent]

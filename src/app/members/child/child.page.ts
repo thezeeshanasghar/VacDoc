@@ -8,7 +8,7 @@ import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment.prod';
 import { AlertService } from 'src/app/shared/alert.service';
 import { Router } from '@angular/router';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder , Validators } from '@angular/forms';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 
 @Component({
@@ -36,7 +36,7 @@ export class ChildPage {
     private callNumber: CallNumber
   ) {
     this.fg = this.formBuilder.group({
-      Name: [null],
+      Name: ["" , Validators.required],
     });
   }
   ionViewWillEnter() {
@@ -132,6 +132,8 @@ export class ChildPage {
     if(isdelete) {
       this.page = 0;
       this.childs = [];
+      this.search = false;
+      this.fg.controls['Name'].setValue(null);
       }
     await this.childService.getChildByClinic(this.clinicService.OnlineClinic.Id , this.page).subscribe(
       res => {

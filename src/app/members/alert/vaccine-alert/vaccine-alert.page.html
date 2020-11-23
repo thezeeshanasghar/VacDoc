@@ -17,8 +17,7 @@
   <!-- childs -->
   <h1 *ngIf="Childs == 0" style="color: red;">No alert found</h1>
   <ion-grid *ngFor="let child of Childs">
-    <ion-row>
-
+    <ion-row routerLink = "/members/child/vaccine/{{child.Child.Id}}">
       <ion-col>
         <ion-item>
           <ion-label>{{child.Child.Name}}</ion-label>
@@ -27,7 +26,6 @@
           </ion-icon>
         </ion-item>
       </ion-col>
-
     </ion-row>
   </ion-grid>
 </ion-content>

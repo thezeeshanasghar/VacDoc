@@ -78,7 +78,7 @@ export class FillPage implements OnInit {
           this.brandName = this.vaccineData.Brands;
           this.Date = this.vaccineData.Date;
           this.Date = moment(this.Date, 'DD-MM-YYYY').format('YYYY-MM-DD');
-          this.fg.controls.GivenDate.setValue(this.todaydate);
+          this.fg.controls.GivenDate.setValue(this.Date);
           loading.dismiss();
         }
         else {

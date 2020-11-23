@@ -60,8 +60,8 @@ export class AddPage implements OnInit {
   ) { }
 
   ngOnInit()
-  // {}
-  // ionViewWillEnter() 
+  {}
+  ngAfterContentInit() 
   {
     // let obj = {'toNumber':'+923143041544' , 'message': 'this is test message' , 'created': Date.now(), 'status':false};
     // this.Messages.push(obj); this.Messages.push(obj); this.Messages.push(obj);
@@ -93,8 +93,8 @@ export class AddPage implements OnInit {
         ])
       ),
       PreferredDayOfWeek: 'Any',
-      Gender: "Boy",
-      Type: "regular",
+      Gender: [null,Validators.required],
+      Type: [null,Validators.required],
       City: [null],
       PreferredDayOfReminder: 0,
       PreferredSchedule: [null],
@@ -130,10 +130,9 @@ export class AddPage implements OnInit {
     //  console.log(this.clinicService.OnlineClinic.Id);
   }
 
+
   async moveNextStep() {
-    this.fg1.value.DOB = await moment(this.fg1.value.DOB, "YYYY-MM-DD").format(
-      "DD-MM-YYYY"
-    );
+    this.fg1.value.DOB = await moment(this.fg1.value.DOB, "YYYY-MM-DD").format("DD-MM-YYYY");
     // this.formcontroll = true;
     //this.fg1.value.Gender = this.gender;
     await this.PasswordGenerator();
@@ -204,6 +203,7 @@ export class AddPage implements OnInit {
       }
     );
   }
+  
   sendsms(number, message) {
     console.log(number + message);
     this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS).then(
@@ -232,16 +232,19 @@ export class AddPage implements OnInit {
     );
     console.log('success');
   }
+
   async setCity(city) {
     if (city == 'Other')
       await this.otherCityAlert();
     this.childService.othercity = true;
     this.storage.set(environment.CITY, city);
   }
+
   uncheckany() {
     if (this.fg1.value.PreferredDayOfWeek.length > 1)
       this.fg1.value.PreferredDayOfWeek = this.fg1.value.PreferredDayOfWeek.filter(x => (x !== 'Any'));
   }
+  
   async checkEpi() {
     let days = await this.calculateDiff(this.fg1.value.DOB);
     console.log(days);

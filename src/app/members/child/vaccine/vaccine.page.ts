@@ -24,6 +24,7 @@ export class VaccinePage {
   childId: any;
   Pneum2Date: any;
   BirthYear: any;
+  ChildName: string;
   private readonly API_VACCINE = `${environment.BASE_URL}`
   constructor(
     public loadingController: LoadingController,
@@ -73,6 +74,7 @@ export class VaccinePage {
            
             //original code
             this.vaccine = res.ResponseData;
+            this.ChildName = this.vaccine[0].Child.Name;
             this.vaccine.forEach(doc => {
               doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
               if (doc.GivenDate)
