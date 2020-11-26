@@ -24,6 +24,13 @@
           <b style="padding-right:10%">Amount</b> <ion-input [(ngModel)]="bulk.Amount" placeholder="Enter Amount" position="end" type = "text" [ngModelOptions]="{standalone: true}"></ion-input>
           </ion-item>
       </ion-card>
-    <ion-button type="submit">Save</ion-button> <ion-button (click)= saveanddownload()>Download</ion-button>
+     
+      <ion-item style="padding:10px 0 10px" >
+        <b style="padding-right:10%">Consultation Fee</b>
+         <ion-input formControlName="ConsultationFee" placeholder="Enter Amount" position="end" type = "number"></ion-input>
+         <ion-checkbox formControlName="IsConsultationFee"></ion-checkbox>
+        </ion-item>
+        <ion-button type="submit">Save</ion-button> <ion-button (click)= saveanddownload()>Download</ion-button>
+        
   </form>
 </ion-content>

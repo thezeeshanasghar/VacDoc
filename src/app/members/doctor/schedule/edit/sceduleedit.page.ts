@@ -86,8 +86,6 @@ export class SceduleEditPage implements OnInit {
     console.log(this.fg.value);
   }
 
- 
-
   async updateDoctorSchedule(id) {
     this.signupService.vaccineData = this.fg.value;
     await this.signupService.addSchedule(id).subscribe(

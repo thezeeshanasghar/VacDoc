@@ -34,11 +34,11 @@ export class VacationPage implements OnInit {
 
   ) {
     this.todaydate = new Date();
-    this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format('YYYY-MM-DD');
+    //this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format('YYYY-MM-DD');
     this.fg2 = this.formBuilder.group({
       clinics: new FormArray([]),
-      'formDate': [null],
-      'ToDate': [null]
+      'formDate': [this.todaydate],
+      'ToDate': [this.todaydate]
     });
   }
 
@@ -50,16 +50,16 @@ export class VacationPage implements OnInit {
 
   }
   pickFromDate($event) {
-    this.fg2.value.formDate = $event.detail.value;
+    this.fg2.controls['formDate'].setValue($event.detail.value);
   }
   pickTodayDate($event) {
-    this.fg2.value.ToDate = $event.detail.value;
+    this.fg2.controls['ToDate'].setValue($event.detail.value);
   }
 
   getChildVaccinefromUser() {
     for (let i = 0; i <= this.clinics.length; i++) {
       if (this.fg2.value.clinics[i] == true) {
-        this.ClinicId.push(this.clinics[i].Id);
+        this.ClinicId.push({'Id':this.clinics[i].Id});
       }
     }
     let data = { 'Clinics': this.ClinicId, 'FromDate': this.fg2.value.formDate, 'ToDate': this.fg2.value.ToDate }
@@ -77,8 +77,8 @@ export class VacationPage implements OnInit {
           const controls = this.clinics.map(c => new FormControl(false));
           this.fg2 = this.formBuilder.group({
             clinics: new FormArray(controls),
-            'formDate': [null],
-            'ToDate': [null]
+             'formDate': [this.todaydate],
+             'ToDate': [this.todaydate]
           });
           loading.dismiss();
         }

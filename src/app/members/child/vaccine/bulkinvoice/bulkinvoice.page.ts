@@ -46,6 +46,12 @@ export class BulkInvoicePage implements OnInit {
     this.currentDate1 = new Date(this.currentDate);
     this.getBulk();
     this.fg = this.formBuilder.group({
+      IsConsultationFee: false,
+      ConsultationFee: null
+    });
+    this.storage.get(environment.ON_CLINIC).then(val => {
+      this.fg.controls['ConsultationFee'].setValue(val.ConsultationFee);
+    // this.fg.value.ConsultationFee = val.ConsultationFee;
     });
   }
 

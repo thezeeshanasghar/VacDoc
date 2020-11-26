@@ -10,6 +10,9 @@ export class BaseService {
   protected httpOptions = {
     headers : new HttpHeaders({'Content-Type':'application/json'})
   };
+  protected httpOptionsfile = {
+    headers : new HttpHeaders({'Content-Type':'blob'})
+  };
   constructor(
     protected http: HttpClient
   ) { }

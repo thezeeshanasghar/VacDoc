@@ -10,6 +10,7 @@ import { AlertController } from '@ionic/angular';
 import { environment } from 'src/environments/environment';
 import { Downloader , DownloadRequest , NotificationVisibility } from '@ionic-native/downloader/ngx';
 import { Storage } from '@ionic/storage';
+import { Platform } from '@ionic/angular';
 
 
 @Component({
@@ -36,6 +37,7 @@ export class VaccinePage {
     public alertController: AlertController,
     private downloader: Downloader,
     private storage: Storage,
+    public platform: Platform
 
     // private document: DocumentViewer,
   ) { }
@@ -323,6 +325,12 @@ console.log(diffDays);console.log(firstDate);console.log(secondDate);
 
 
   printdata() {
+    if(this.platform.is('desktop') || this.platform.is('mobileweb')) {
+      console.log("desktop");
+      const url = `${this.API_VACCINE}child/${this.childId}/Download-Schedule-PDF`;
+      window.open(url);
+    }
+    else
     this.download(this.childId);
   }
   

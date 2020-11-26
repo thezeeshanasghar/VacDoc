@@ -73,7 +73,8 @@ export class ProfilePage implements OnInit {
         Validators.compose([
           Validators.required,
           Validators.minLength(7),
-          Validators.pattern("^(0|[1-9][0-9]*)$")
+          Validators.maxLength(11),
+          Validators.pattern("^([0-9]*)$")
         ])
       ),
       ShowPhone: [null],
@@ -121,7 +122,7 @@ export class ProfilePage implements OnInit {
                       fileName: filesName
                     }
                     const fileTransfer: FileTransferObject = this.transfer.create();
-                  await  fileTransfer.upload(uri, 'http://13.233.255.96:5002/api/upload', options)
+                  await  fileTransfer.upload(uri, environment.BASE_URL+'upload', options)
                     .then((data) => {
                       // success
                       console.log(data);
@@ -173,7 +174,7 @@ export class ProfilePage implements OnInit {
                       fileName: filesName
                     }
                     const fileTransfer: FileTransferObject = this.transfer.create();
-                  await  fileTransfer.upload(uri, 'http://13.233.255.96:5002/api/upload', options)
+                  await  fileTransfer.upload(uri, environment.BASE_URL+'upload', options)
                     .then((data) => {
                       // success
                       console.log(data);
@@ -227,6 +228,10 @@ export class ProfilePage implements OnInit {
           this.fg.controls["PhoneNo"].setValue(this.doctorData.PhoneNo);
           this.fg.controls["ShowPhone"].setValue(this.doctorData.ShowPhone);
           this.fg.controls["PMDC"].setValue(this.doctorData.PMDC);
+          this.fg.controls["SignatureImage"].setValue(this.doctorData.SignatureImage);
+          this.fg.controls["ProfileImage"].setValue(this.doctorData.ProfileImage);
+
+
           loading.dismiss();
         } else {
           loading.dismiss();
@@ -244,35 +249,32 @@ export class ProfilePage implements OnInit {
     const loading = await this.loadingController.create({
       message: "Loading"
     });
+    console.log(this.fg.value);
     await loading.present();
-    await this.doctorService
-      .updateDoctorProfile(this.DocotrId, this.fg.value)
-      .subscribe(
-        res => {
-          if (res.IsSuccess) {
-            let formData = new FormData();
-            // var file1 = this.profileUploader.queue.pop().file;
-            // var file2 = this.signatureUploader.queue.pop().file;
-            // formData.append('ProfileImage', file1.rawFile, file1.name);
-            // formData.append('SignatureImage', file2.rawFile, file2.name);
-            this.uploadService.uploadFormData(this.DocotrId, formData).subscribe(
-              (res1) => {
-                this.toastService.create("Profile updated successfully.");
-                loading.dismiss();
-              },
-              (err1) => {
-                console.log(err1);
-              }
-            );
+    // await this.doctorService
+    //   .updateDoctorProfile(this.DocotrId, this.fg.value)
+    //   .subscribe(
+    //     res => {
+    //       if (res.IsSuccess) {
+    //         let formData = new FormData();
+    //         this.uploadService.uploadFormData(this.DocotrId, formData).subscribe(
+    //           (res1) => {
+    //             this.toastService.create("Profile updated successfully.");
+    //             loading.dismiss();
+    //           },
+    //           (err1) => {
+    //             console.log(err1);
+    //           }
+    //         );
 
-          } else {
-            this.toastService.create(res.Message, "danger");
-          }
-        },
-        err => {
-          this.toastService.create(err, "danger");
-        }
-      );
+    //       } else {
+    //         this.toastService.create(res.Message, "danger");
+    //       }
+    //     },
+    //     err => {
+    //       this.toastService.create(err, "danger");
+    //     }
+    //   );
   }
 
   validation_messages = {

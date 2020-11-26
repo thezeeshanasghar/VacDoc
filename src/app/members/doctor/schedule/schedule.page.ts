@@ -23,6 +23,7 @@ export class SchedulePage implements OnInit {
   fg: FormGroup;
   doses: any;
   vaccines: any;
+  IsActive = true;
   constructor(
     public loadingcontroller: LoadingController,
     private formBuilder: FormBuilder,
@@ -79,7 +80,8 @@ ngOnInit(){}
         Id: this.doses[i].Id,
         DoseId: this.doses[i].DoseId,
         DoctorId: this.doses[i].DoctorId,
-        GapInDays: parseInt(this.fg.value[this.doses[i].Dose.Name])
+        GapInDays: parseInt(this.fg.value[this.doses[i].Dose.Name]),
+        IsActive: this.doses[i].IsActive
       });
     }
     const loading = await this.loadingcontroller.create({

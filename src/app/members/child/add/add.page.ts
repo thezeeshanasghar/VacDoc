@@ -99,6 +99,7 @@ export class AddPage implements OnInit {
       PreferredDayOfReminder: 0,
       PreferredSchedule: [null],
       IsEPIDone: [false],
+      IsSkip: [true],
       IsVerified: [false],
       Password: [null],
       ChildVaccines: [null]

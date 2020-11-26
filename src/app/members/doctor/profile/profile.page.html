@@ -1,9 +1,18 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <!-- <ion-menu-button></ion-menu-button> -->
     </ion-buttons>
     <ion-title>Doctor</ion-title>
+  </ion-toolbar>
+
+  <ion-toolbar color="primary" >
+    <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
+      <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/clinic" name="medkit" size="large" > </ion-icon>
+      <ion-menu-button style="margin-left: 10%"></ion-menu-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -81,18 +90,18 @@
     <ion-item>
       <ion-label color="primary" position="floating">Phone No</ion-label>
       <ion-input type="text" formControlName="PhoneNo" required></ion-input>
-      <div class="validation-errors">
-        <ng-container *ngFor="let validation of validation_messages.PhoneNo">
-          <div class="error-message"
-            *ngIf="fg.get('PhoneNo').hasError(validation.type) && (fg.get('PhoneNo').dirty || fg.get('PhoneNo').touched)">
-            <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
-          </div>
-        </ng-container>
-      </div>
-
+      
       <ion-label color="primary">Display</ion-label>
       <ion-checkbox slot="end" formControlName="ShowPhone" required></ion-checkbox>
     </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.PhoneNo">
+        <div class="error-message"
+          *ngIf="fg.get('PhoneNo').hasError(validation.type) && (fg.get('PhoneNo').dirty || fg.get('PhoneNo').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
 
     <ion-item>
       <ion-label color="primary" position="floating">PMDC</ion-label>

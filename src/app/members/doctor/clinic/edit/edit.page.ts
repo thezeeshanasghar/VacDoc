@@ -57,8 +57,8 @@ export class EditPage implements OnInit {
         "",
         Validators.compose([
           Validators.required,
-          Validators.minLength(7),
-          Validators.pattern("^(0|[1-9][0-9]*)$")
+          Validators.minLength(10),
+          Validators.pattern("^([0-9]*)$")
         ])
       ),
       Address: [null],
@@ -1305,7 +1305,7 @@ export class EditPage implements OnInit {
       { type: "required", message: "Phone number is required" },
       {
         type: "minlength",
-        message: "Phone Number must be at least 7 Digits long."
+        message: "Phone Number must be at least 10 Digits long."
       },
       { type: "pattern", message: "Enter Must be Number" }
     ],
