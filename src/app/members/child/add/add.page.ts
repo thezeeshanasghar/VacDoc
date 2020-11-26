@@ -51,7 +51,7 @@ export class AddPage implements OnInit {
     private toastService: ToastService,
     private router: Router,
     private storage: Storage,
-    private clinicService: ClinicService,
+    public clinicService: ClinicService,
     private doctorService: DoctorService,
     private androidPermissions: AndroidPermissions,
     private sms: SMS,

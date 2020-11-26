@@ -20,16 +20,16 @@
   <form [formGroup]="fg2">
     <ion-item>
       <ion-label color="primary" position="floating" (click)="picker.open()">From Date</ion-label>
-      <ion-datetime picker-format="DD-MM-YYYY" value="{{todaydate}}" (ionChange)="pickFromDate($event)">
+      <ion-datetime #picker picker-format="DD-MM-YYYY" value="{{todaydate}}" (ionChange)="pickFromDate($event)">
       </ion-datetime>
     </ion-item>
     <ion-item>
       <ion-label color="primary" position="floating" (click)="picker1.open()">To Date</ion-label>
-      <ion-datetime picker-format="DD-MM-YYYY" value="{{todaydate}}" (ionChange)="pickTodayDate($event)"></ion-datetime>
+      <ion-datetime #picker1 picker-format="DD-MM-YYYY" value="{{todaydate}}" (ionChange)="pickTodayDate($event)"></ion-datetime>
 
     </ion-item>
     <h1>Clinics</h1>
-    <ion-item formArrayName="clinics" *ngFor="let a of fg2.controls.clinics.controls; let i = index">
+    <ion-item formArrayName="clinics" *ngFor="let a of fg2.get('clinics')['controls']; let i = index">
       <ion-label color="primary"> {{clinics[i].Name}}</ion-label>
       <ion-checkbox slot="start" required [formControlName]="i"></ion-checkbox>
     </ion-item>

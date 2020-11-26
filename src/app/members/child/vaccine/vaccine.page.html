@@ -10,12 +10,10 @@
 <ion-content class="ion-padding">
   <ion-button (click)="printdata()">Print</ion-button>
   <span *ngIf = "ChildName">{{ChildName}}</span>
-  <div *ngFor="let item of dataGrouping | keyvalue:mySortingFunction; let i=index">
-
+  <div *ngFor="let item of dataGrouping | keyvalue; let i=index">
     <ion-grid>
       <ion-row>
         <ion-col style="text-align: center">
-
           {{item.key | date}}
           <ion-img *ngIf="checkVaccineIsDon(item.value)" style="height: 15px;display: inline-block;"
            src="../../assets/injectionEmpty.png" routerLink="/members/child/vaccine/{{childId}}/bulk/{{item.key}}">   
