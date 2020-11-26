@@ -326,7 +326,6 @@ console.log(diffDays);console.log(firstDate);console.log(secondDate);
 
   printdata() {
     if(this.platform.is('desktop') || this.platform.is('mobileweb')) {
-      console.log("desktop");
       const url = `${this.API_VACCINE}child/${this.childId}/Download-Schedule-PDF`;
       window.open(url);
     }
