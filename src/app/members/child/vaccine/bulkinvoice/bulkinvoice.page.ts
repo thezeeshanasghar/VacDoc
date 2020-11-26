@@ -10,6 +10,7 @@ import * as moment from "moment";
 import { AlertController } from '@ionic/angular';
 import { elementAt } from 'rxjs/operators';
 import { Downloader , DownloadRequest , NotificationVisibility } from '@ionic-native/downloader/ngx';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: "app-bulk",
@@ -23,6 +24,7 @@ export class BulkInvoicePage implements OnInit {
   currentDate1: any;
   bulkData: any;
   fg: FormGroup;
+  consultationfee: number = 0;
   private readonly API_VACCINE = `${environment.BASE_URL}`
   BrandIds = [] ;
   constructor(
@@ -35,6 +37,7 @@ export class BulkInvoicePage implements OnInit {
     private storage: Storage,
     public alertController: AlertController,
     private downloader: Downloader,
+    public platform: Platform
   ) {}
 
   ngOnInit() {
@@ -117,7 +120,13 @@ export class BulkInvoicePage implements OnInit {
   }
 
   async saveanddownload(){
-    let data = [];
+    if (this.fg.value.IsConsultationFee){
+      this.consultationfee = this.fg.value.ConsultationFee;
+    }
+    else 
+  this.consultationfee = 0;
+   
+  let data = [];
     this.bulkData.forEach(schedule => {
       let obj = {
         Id: schedule.Id,
@@ -134,7 +143,7 @@ export class BulkInvoicePage implements OnInit {
       res => {
         if (res.IsSuccess) {
           loading.dismiss();
-          this.download(this.childId , this.currentDate);
+          this.download(this.childId , this.currentDate , this.consultationfee);
         } else {
           loading.dismiss();
           this.toastService.create(res.Message, "danger");
@@ -147,9 +156,16 @@ export class BulkInvoicePage implements OnInit {
     );
   }
 
-  download(id , date){
+  download(id , date , fee){
+  
+    if(this.platform.is('desktop') || this.platform.is('mobileweb')) {
+      const url = `${this.API_VACCINE}child/${id}/${date}/${fee}/Download-Invoice-PDF`;
+      window.open(url);
+    }
+else {
+
     var request: DownloadRequest = {
-      uri: `${this.API_VACCINE}child/${id}/${date}/Download-Invoice-PDF`,
+      uri: `${this.API_VACCINE}child/${id}/${date}/${fee}/Download-Invoice-PDF`,
       title: 'Invoice',
       description: '',
       mimeType: '',
@@ -165,6 +181,7 @@ export class BulkInvoicePage implements OnInit {
   this.downloader.download(request)
   .then((location: string) => console.log('File downloaded at:'+location))
   .catch((error: any) => console.error(error));
+}
   
   }
 }
