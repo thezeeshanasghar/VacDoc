@@ -5,6 +5,7 @@ import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { ToastService } from "src/app/shared/toast.service";
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: "app-dashboard",
@@ -22,7 +23,8 @@ export class DashboardPage implements OnInit {
     public clinicService: ClinicService,
     private toastService: ToastService,
     private storage: Storage,
-    private androidPermissions: AndroidPermissions
+    private androidPermissions: AndroidPermissions,
+    public platform: Platform
   ) {}
 
  async ngOnInit() {
@@ -44,16 +46,18 @@ export class DashboardPage implements OnInit {
      
   }
   async ionViewDidEnter(){
-   // console.log(this.clinicService.clinics);
-  
+   // console.log(this.clinicService.clinics);  
     this.storage.set(environment.SMS, 1);
-    this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS).then(
-      result => {
-        if(!result.hasPermission){
-          this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.SEND_SMS);
+    if(!this.platform.is('desktop') && !this.platform.is('mobileweb')) {
+      this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS).then(
+        result => {
+          if(!result.hasPermission){
+            this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.SEND_SMS);
+          }
         }
-      }
-    );
+      );
+    }
+   
   }
   async getClinics() {
     const loading = await this.loadingController.create({ message: "Loading" });

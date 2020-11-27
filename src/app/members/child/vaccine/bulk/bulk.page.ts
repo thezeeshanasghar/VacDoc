@@ -19,8 +19,10 @@ export class BulkPage implements OnInit {
   childId: any;
   doctorId: any;
   currentDate: any;
+  currentDate1: any;
   bulkData: any;
   fg: FormGroup;
+  todaydate: any;
   BrandIds = [] ;
   constructor(
     private loadingController: LoadingController,
@@ -41,8 +43,9 @@ export class BulkPage implements OnInit {
     console.log(this.childId);
 
     this.currentDate = new Date(this.activatedRoute.snapshot.paramMap.get("childId"));
-    console.log(this.currentDate);
-    let currentDate1 = new Date(this.currentDate);
+    this.currentDate1 = moment(this.currentDate).format("YYYY-MM-DD");
+    this.todaydate = new Date();
+    this.todaydate = moment(this.todaydate,'DD-MM-YYYY').format("YYYY-MM-DD");
     
     this.getBulk();
     this.fg = this.formBuilder.group({
@@ -61,7 +64,7 @@ export class BulkPage implements OnInit {
   }
 
   async getBulk() {
-    let data = { ChildId: this.childId, Date: this.currentDate };
+    let data = { ChildId: this.childId, Date: this.currentDate};
     const loading = await this.loadingController.create({
       message: "Loading"
     });

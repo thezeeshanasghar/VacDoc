@@ -9,6 +9,7 @@ import { CallNumber } from '@ionic-native/call-number/ngx';
 import { TitleCasePipe } from '@angular/common';
 import { SMS } from '@ionic-native/sms/ngx';
 import { Downloader , DownloadRequest , NotificationVisibility } from '@ionic-native/downloader/ngx';
+import { Platform } from '@ionic/angular';
 //declare var SMS: any;
 @Component({
   selector: "app-vaccine-alert",
@@ -35,6 +36,7 @@ export class VaccineAlertPage implements OnInit {
     private titlecasePipe: TitleCasePipe,
     private sms: SMS,
     private downloader: Downloader,
+    public platform: Platform
   ) {}
 
  async ngOnInit() {
@@ -82,6 +84,12 @@ export class VaccineAlertPage implements OnInit {
 this.Childs.map(x=>x.Child.Id).forEach(id => {
   query += 'arr[]='+id+'&';
 });
+
+if(this.platform.is('desktop') || this.platform.is('mobileweb')) {
+  var url = `${this.API_VACCINE}child/downloadcsv?${query}`;
+ window.open(url);
+}
+else {
     var request: DownloadRequest = {
       uri: `${this.API_VACCINE}child/downloadcsv?${query}`,
       title: 'Chil dAlerts CSV',
@@ -98,7 +106,7 @@ this.Childs.map(x=>x.Child.Id).forEach(id => {
   this.downloader.download(request)
   .then((location: string) => console.log('File downloaded at:'+location))
   .catch((error: any) => console.error(error));
-  
+}
   }
   async sendSMS(child: any) {
     const loading = await this.loadingController.create({
