@@ -19,7 +19,7 @@ export class EditPage implements OnInit {
     public router: Router,
     public route: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private childService: ChildService,
+    public childService: ChildService,
     private toastService: ToastService,
   ) {
   }
