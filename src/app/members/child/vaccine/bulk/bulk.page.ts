@@ -141,10 +141,10 @@ export class BulkPage implements OnInit {
   }
 
   async fillVaccine(data) {
-    this.fg.value.GivenDate = moment(
-      this.fg.value.GivenDate,
-      "YYYY-MM-DD"
-    ).format("DD-MM-YYYY");
+    console.log(this.fg.value.GivenDate);
+    //this.fg.value
+    data.GivenDate = moment(this.fg.value.GivenDate,"YYYY-MM-DD").format("DD-MM-YYYY");
+    console.log(this.fg.value);
     const loading = await this.loadingController.create({
       message: "Loading"
     });

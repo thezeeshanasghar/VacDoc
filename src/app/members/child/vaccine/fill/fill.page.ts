@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute , Router } from '@angular/router';
 import { VaccineService } from 'src/app/services/vaccine.service';
 import { ToastService } from 'src/app/shared/toast.service';
@@ -20,6 +20,7 @@ export class FillPage implements OnInit {
   doctorId: any;
   vaccinId: any;
   vaccineData: any = [];
+  vaccinesData: any;
   vaccineName:any;
   brandName: any;
   Date: any;
@@ -32,7 +33,8 @@ export class FillPage implements OnInit {
     private route: ActivatedRoute,
     private vaccineService: VaccineService,
     private toastService: ToastService,
-    private router: Router
+    private router: Router,
+    private ref: ChangeDetectorRef
   ) { }
 
 
@@ -42,6 +44,10 @@ export class FillPage implements OnInit {
     });
     this.storage.get('BirthYear').then((val) => {
       this.birthYear = moment(val, "DD-MM-YYYY").format("YYYY-MM-DD");
+    });
+
+    this.storage.get('vaccinesData').then((val) => {
+      this.vaccinesData = val;
     });
 
     this.fg = this.formBuilder.group({
@@ -79,6 +85,11 @@ export class FillPage implements OnInit {
           this.Date = this.vaccineData.Date;
           this.Date = moment(this.Date, 'DD-MM-YYYY').format('YYYY-MM-DD');
           this.fg.controls.GivenDate.setValue(this.Date);
+          var brand = this.vaccinesData.filter(x=>x.vaccineId == res.ResponseData.Dose.VaccineId);
+          if (brand[0].brandId != null)
+          this.fg.controls['BrandId'].setValue(brand[0].brandId);
+          this.ref.detectChanges();
+          console.log(brand);
           loading.dismiss();
         }
         else {

@@ -24,6 +24,7 @@ export class ChildPage {
   doctorId: number;
   page: number;
   search: boolean;
+  clinic:any;
   constructor(
     public router: Router,
     public loadingController: LoadingController,
@@ -43,9 +44,12 @@ export class ChildPage {
     this.storage.get(environment.DOCTOR_Id).then((docId) => {
       this.doctorId = docId;
     });
+    this.storage.get(environment.ON_CLINIC).then((clinic) => {
+      this.clinic = clinic;
+    });
     this.page = 0;
     this.search = false;
-    console.log(this.clinicService.OnlineClinic.Id);
+   // console.log(this.clinicService.OnlineClinic.Id);
     this.getChlidByClinic(false);
   }
 
@@ -135,7 +139,7 @@ export class ChildPage {
       this.search = false;
       this.fg.controls['Name'].setValue(null);
       }
-    await this.childService.getChildByClinic(this.clinicService.OnlineClinic.Id , this.page).subscribe(
+    await this.childService.getChildByClinic(this.clinic.Id , this.page).subscribe(
       res => {
         if (res.IsSuccess) {
           if(res.ResponseData.length < 10)

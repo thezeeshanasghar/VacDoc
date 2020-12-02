@@ -22,6 +22,7 @@ export class VaccinePage {
   vaccine: any[] = [];
   specialvaccineids: any[] = [];
   dataGrouping: any[] = [];
+  vaccinesData = [];
   childId: any;
   Pneum2Date: any;
   BirthYear: any;
@@ -44,6 +45,7 @@ export class VaccinePage {
 
   ionViewWillEnter() {
     this.childId = this.route.snapshot.paramMap.get("id");
+    this.vaccinesData = [];
     this.getVaccination();
   }
   checkVaccineIsDon(data): boolean {
@@ -81,7 +83,10 @@ export class VaccinePage {
               doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
               if (doc.GivenDate)
               doc.GivenDate = moment(doc.GivenDate, "DD-MM-YYYY").format("YYYY-MM-DD");
+              this.vaccinesData.push({childId:doc.Child.Id , vaccineId: doc.Dose.VaccineId , brandId: doc.BrandId});
             });
+
+            this.storage.set("vaccinesData" , this.vaccinesData);
            
             this.dataGrouping = this.groupBy(this.vaccine, "Date");
             console.log(this.dataGrouping);

@@ -15,14 +15,14 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding" *ngIf="doses">
+<ion-content class="ion-padding" *ngIf = "doses">
 
-  <form [formGroup]="fg" (ngSubmit)="onSubmit()">
+  <form [formGroup]="fg">
 
-    <ion-item *ngFor="let control of fg.controls; let i = index ">
+    <ion-item *ngFor="let control of fg.controls | keyvalue : 0; let i = index ">
       <ion-checkbox [(ngModel)]="doses[i].IsActive" [ngModelOptions]="{standalone: true}" slot="start"></ion-checkbox>
       <ion-label>{{control.key}}</ion-label>
-      <ion-select [formControlName]="control.key" value="{{control.value.value}}">
+      <ion-select [formControlName]="control.key" value="{{control.value.value}}" (ngModelChange)="checkMinGap(control.key , control.value.value , doses[i].Dose.MinAge, doses[i].Dose.DoseOrder , doses[i].Dose.VaccineId)">
         <ion-select-option [disabled]="doses[i].Dose.MinAge > 0"  value="0">At Birth</ion-select-option>
         <ion-select-option [disabled]="doses[i].Dose.MinAge > 7" value="7">1 Week</ion-select-option>
         <ion-select-option [disabled]="doses[i].Dose.MinAge > 14" value="14">2 Weeks</ion-select-option>
@@ -119,7 +119,7 @@
       </ion-select>
     </ion-item>
 
-    <ion-button type="submit">Save</ion-button>
+    <ion-button (click)="onSubmit()">Save</ion-button>
 
   </form>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">

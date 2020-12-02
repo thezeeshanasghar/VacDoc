@@ -33,7 +33,7 @@ export class AddPage implements OnInit {
   formcontroll: boolean = false;
   vaccines: any;
   doctorId: any;
-  clinicId: any;
+  clinic: any;
   clinics: any;
   todaydate: any;
   gender: any;
@@ -59,9 +59,8 @@ export class AddPage implements OnInit {
     public alertCtrl: AlertController
   ) { }
 
-  ngOnInit()
-  {}
-  ngAfterContentInit() 
+  ngOnInit() {}
+  ionViewWillEnter()//ngAfterContentInit() 
   {
     // let obj = {'toNumber':'+923143041544' , 'message': 'this is test message' , 'created': Date.now(), 'status':false};
     // this.Messages.push(obj); this.Messages.push(obj); this.Messages.push(obj);
@@ -69,7 +68,6 @@ export class AddPage implements OnInit {
     this.todaydate = new Date();
     this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format("YYYY-MM-DD");
     // this.getVaccine();
-
     this.fg1 = this.formBuilder.group({
       ClinicId: [""],
       Name: new FormControl("", Validators.required),
@@ -109,6 +107,10 @@ export class AddPage implements OnInit {
       this.doctorId = val;
     });
 
+    this.storage.get(environment.ON_CLINIC).then(val => {
+      this.clinic = val;
+    });
+
     this.storage.get(environment.CITY).then(val => {
       this.City = val;
     });
@@ -126,9 +128,7 @@ export class AddPage implements OnInit {
     //     }
     //   }
     // );
-    console.log(this.Doctor);
-    console.log(this.clinicService.OnlineClinic);
-    //  console.log(this.clinicService.OnlineClinic.Id);
+   
   }
 
 
@@ -164,7 +164,7 @@ export class AddPage implements OnInit {
     await loading.present();
     let str = this.fg1.value.PreferredDayOfWeek;
     this.fg1.value.PreferredDayOfWeek = str.toString();
-    this.fg1.value.ClinicId = this.clinicService.OnlineClinic.Id;
+    this.fg1.value.ClinicId = this.clinic.Id;
     await this.childService.addChild(data).subscribe(
       async res => {
         if (res.IsSuccess) {
@@ -177,7 +177,7 @@ export class AddPage implements OnInit {
 
           sms1 += " has been registered Succesfully at Vaccine.pk";
           sms1 += "\nId: " + res.ResponseData.MobileNumber + " \nPassword: " + res.ResponseData.Password;
-          sms1 += "\nClinic Phone Number: " + this.clinicService.OnlineClinic.PhoneNumber;
+          sms1 += "\nClinic Phone Number: " + this.clinic.PhoneNumber;
           sms1 += "\nWeb Link:  https://vaccine.pk/";
           console.log(sms1);
 

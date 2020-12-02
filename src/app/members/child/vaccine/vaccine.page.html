@@ -36,11 +36,12 @@
         <div *ngFor="let v of item.value">
           <ion-item lines="none">
             <ion-label>{{v.Dose.Name}}</ion-label>
-            <p *ngIf="v.Due2EPI==true" style="background-color:rgb(55, 231, 10);">EPI</p>
+            <p *ngIf="v.Due2EPI==true" style="color:rgb(55, 231, 10);">EPI</p>
             <ion-img *ngIf="v.Due2EPI==true" style="height: 30px;" src="../../assets/injectionFilled.png">
             </ion-img>
-            <p *ngIf="v.IsDone==true && v.Due2EPI==false && (v.IsDisease==false || v.IsDisease==null)" style="background-color:rgb(55, 231, 10);">{{v.GivenDate | date }}</p>
-            <p *ngIf="v.IsDone==true && v.Due2EPI==false && v.IsDisease==true" style="background-color:rgb(55, 231, 10);" 
+            <p *ngIf="v.IsDone==true && v.Due2EPI==false && (v.IsDisease==false || v.IsDisease==null)" style="color:rgb(55, 231, 10);">{{v.GivenDate | date }} </p>
+           
+            <p *ngIf="v.IsDone==true && v.Due2EPI==false && v.IsDisease==true" style="color:rgb(55, 231, 10);" 
             routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}">Disease Year: {{v.DiseaseYear}}</p>
             <ion-icon *ngIf="v.IsDone==false && v.Due2EPI==false && v.IsSkip != true" color="primary" name="calendar" (click)="picker.open()">
               <!-- <ion-datetime #picker picker-format="DD-MM-YYYY" value="{{v.Date}}"
@@ -60,6 +61,7 @@
             <ion-button *ngIf="v.IsDone==false && v.Due2EPI==false && (v.IsSkip==null ||v.IsSkip==false)" (click)="SkipVaccine(v.Id)">skip</ion-button>
             <ion-button color="danger" *ngIf="(v.IsDone==false && v.IsSkip==true && v.Due2EPI==false)" (click)="UnSkipVaccine(v.Id)">UnSkip</ion-button>
           </ion-item>
+                <p style="text-align: center;" *ngIf="v.BrandId">Brand:  {{v.Brand.Name}}</p>
         </div>
       </ion-card-content>
     </ion-card>
