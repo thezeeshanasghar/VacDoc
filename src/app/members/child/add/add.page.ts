@@ -21,6 +21,8 @@ import { SMS } from '@ionic-native/sms/ngx';
 import { TitleCasePipe } from '@angular/common';
 import { AlertController } from '@ionic/angular';
 import { env } from 'process';
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
 
 @Component({
   selector: "app-add",
@@ -40,7 +42,9 @@ export class AddPage implements OnInit {
   City: any;
   Doctor: any;
   epiDone = false;
-  Messages:any = []
+  Messages:any = [];
+  cities: string[];
+  filteredOptions: Observable<string[]>;
   //cities: any;
 
   constructor(
@@ -62,9 +66,9 @@ export class AddPage implements OnInit {
   ngOnInit() {}
   ionViewWillEnter()//ngAfterContentInit() 
   {
-    // let obj = {'toNumber':'+923143041544' , 'message': 'this is test message' , 'created': Date.now(), 'status':false};
-    // this.Messages.push(obj); this.Messages.push(obj); this.Messages.push(obj);
-    // this.storage.set(environment.MESSAGES , this.Messages);
+    let obj = {'toNumber':'+923143041544' , 'message': 'this is test message' , 'created': Date.now(), 'status':false};
+    this.Messages.push(obj); this.Messages.push(obj); this.Messages.push(obj);
+    this.storage.set(environment.MESSAGES , this.Messages);
     this.todaydate = new Date();
     this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format("YYYY-MM-DD");
     // this.getVaccine();
@@ -121,14 +125,13 @@ export class AddPage implements OnInit {
     
      this.storage.get(environment.MESSAGES).then(messages => {messages==null?"": this.Messages = messages;
     });
-    // this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS).then(
-    //   result => {
-    //     if(!result.hasPermission){
-    //       this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.SEND_SMS);
-    //     }
-    //   }
-    // );
+
+    this.cities = this.childService.cities;
    
+  }
+
+  private filter(value: string) {
+    this.cities =  this.childService.cities.filter(option => (option.toLowerCase().includes(value) || option.includes(value)));
   }
 
 
@@ -313,7 +316,7 @@ export class AddPage implements OnInit {
     ],
     gender: [{ type: "required", message: "Gender is required." }]
   };
-  cities = ['Islamabad', 'Rawalpindi', 'Multan', 'Other']
+  //cities = ['Islamabad', 'Rawalpindi', 'Multan', 'Other']
 }
 
 ///

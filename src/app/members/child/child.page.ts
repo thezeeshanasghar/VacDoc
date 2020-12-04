@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild} from '@angular/core';
 import { IonInfiniteScroll } from '@ionic/angular';
 import { LoadingController } from '@ionic/angular';
 import { ChildService } from 'src/app/services/child.service';
@@ -10,6 +10,7 @@ import { AlertService } from 'src/app/shared/alert.service';
 import { Router } from '@angular/router';
 import { FormGroup, FormBuilder , Validators } from '@angular/forms';
 import { CallNumber } from '@ionic-native/call-number/ngx';
+
 
 @Component({
   selector: 'app-child',
@@ -34,7 +35,8 @@ export class ChildPage {
     private toastService: ToastService,
     private storage: Storage,
     private alertService: AlertService,
-    private callNumber: CallNumber
+    private callNumber: CallNumber,
+  
   ) {
     this.fg = this.formBuilder.group({
       Name: ["" , Validators.required],
@@ -49,6 +51,7 @@ export class ChildPage {
     });
     this.page = 0;
     this.search = false;
+    this.childs = [];
    // console.log(this.clinicService.OnlineClinic.Id);
     this.getChlidByClinic(false);
   }

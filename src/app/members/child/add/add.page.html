@@ -175,12 +175,27 @@
     </ion-item>
 
    
-    <ion-item>
+    <!-- <ion-item>
       <ion-label color="primary" position="">City</ion-label>
-      <ion-select formControlName="City" [(ngModel)]="City" (ionChange)='setCity(City)' required>
-         <ion-select-option *ngFor ="let city of childService.cities" value ="{{city}}">{{city}}</ion-select-option>
-        
-      </ion-select>
+      <select formControlName="City" [(ngModel)]="City" (ionChange)='setCity(City)' required>
+         <option *ngFor ="let city of cities" value ="{{city}}">{{city}}</option>    
+      </select>
+    </ion-item> -->
+    <ion-item>
+      <ion-label color="primary" position="floating">City</ion-label>
+    <mat-form-field class="example-full-width">
+      <input type="text"
+             aria-label="Number"
+             matInput
+             formControlName="City"
+             [matAutocomplete]="auto"
+             (ngModelChange)="filter($event)">
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let option of cities" [value]="option">
+          {{option}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
     </ion-item>
 
     

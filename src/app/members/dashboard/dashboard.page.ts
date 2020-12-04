@@ -18,6 +18,7 @@ export class DashboardPage implements OnInit {
   doctorId: any;
   NewClinics: any = [];
   DelClinics: any = [];
+  Messages: any = [];
   constructor(
     private loadingController: LoadingController,
     public clinicService: ClinicService,
@@ -43,7 +44,16 @@ export class DashboardPage implements OnInit {
          this.getClinics();
        }
      });
-     
+
+    //  var today  = Date.now();
+    //  this.storage.get(environment.MESSAGES).then(messages => {messages==null?"": this.Messages = messages
+    // });
+    
+    // if (this.Messages != null){
+    //    console.log("called");
+    //    this.Messages = this.Messages.filter(x=> (this.datediff(x.created , today) < 30));  //2505600000
+    //    this.storage.set(environment.MESSAGES , this.Messages);
+    //  }
   }
   async ionViewDidEnter(){
    // console.log(this.clinicService.clinics);  
@@ -59,6 +69,11 @@ export class DashboardPage implements OnInit {
     }
    
   }
+
+   datediff(first, second) {
+     console.log(Math.round((second-first)/(1000*60*60*24)));
+    return Math.round((second-first)/(1000*60*60*24));
+}
   async getClinics() {
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();

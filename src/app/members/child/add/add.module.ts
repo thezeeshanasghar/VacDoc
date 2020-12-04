@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { AddPage } from './add.page';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatFormFieldModule , MatInputModule } from '@angular/material';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 const routes: Routes = [
   {
@@ -25,7 +26,8 @@ const routes: Routes = [
     ReactiveFormsModule,
     MatDatepickerModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatAutocompleteModule
   ],
   declarations: [AddPage]
 })
