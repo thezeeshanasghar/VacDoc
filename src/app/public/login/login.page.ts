@@ -7,6 +7,10 @@ import { ToastService } from 'src/app/shared/toast.service';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { IonRouterOutlet, Platform } from '@ionic/angular';
+import { Plugins } from '@capacitor/core';
+const { App } = Plugins;
+
 
 @Component({
   selector: 'app-login',
@@ -28,9 +32,17 @@ export class LoginPage implements OnInit {
     private toastService: ToastService,
     private storage: Storage,
     private loadingController: LoadingController,
-  ) { }
-
-  ngOnInit() {
+    private platform: Platform,
+    private routerOutlet: IonRouterOutlet
+  ) {   
+    this.platform.backButton.subscribeWithPriority(-1, () => {
+    if (!this.routerOutlet.canGoBack()) {
+      App.exitApp();
+    }
+  }); 
+}
+  ngOnInit(){}
+  ionViewWillEnter() {
     this.skipLoginIfAlreadyLoggedIn();
     this.loginservice.changeState(false);
     this.fg = this.formBuilder.group({

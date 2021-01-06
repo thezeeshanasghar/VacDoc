@@ -66,8 +66,8 @@ export class AddPage implements OnInit {
   ngOnInit() {}
   ionViewWillEnter()//ngAfterContentInit() 
   {
-    let obj = {'toNumber':'+923143041544' , 'message': 'this is test message' , 'created': Date.now(), 'status':false};
-    this.Messages.push(obj); this.Messages.push(obj); this.Messages.push(obj);
+    // let obj = {'toNumber':'+923143041544' , 'message': 'this is test message' , 'created': Date.now(), 'status':false};
+    // this.Messages.push(obj); this.Messages.push(obj); this.Messages.push(obj);
     this.storage.set(environment.MESSAGES , this.Messages);
     this.todaydate = new Date();
     this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format("YYYY-MM-DD");
@@ -116,7 +116,7 @@ export class AddPage implements OnInit {
     });
 
     this.storage.get(environment.CITY).then(val => {
-      this.City = val;
+      val == null? "": this.fg1.controls['City'].setValue(val);
     });
 
      this.storage.get(environment.DOCTOR).then(doc => {
@@ -170,6 +170,7 @@ export class AddPage implements OnInit {
     this.fg1.value.ClinicId = this.clinic.Id;
     await this.childService.addChild(data).subscribe(
       async res => {
+        this.setCity(this.fg1.value.City);
         if (res.IsSuccess) {
           var sms1 = "";
           if (res.ResponseData.Gender == "Boy")
@@ -238,9 +239,9 @@ export class AddPage implements OnInit {
   }
 
   async setCity(city) {
-    if (city == 'Other')
-      await this.otherCityAlert();
-    this.childService.othercity = true;
+    // if (city == 'Other')
+    //   await this.otherCityAlert();
+    // this.childService.othercity = true;
     this.storage.set(environment.CITY, city);
   }
 

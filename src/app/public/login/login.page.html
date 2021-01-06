@@ -7,7 +7,7 @@
 
 <ion-content *ngIf = "!forgot">
 
-  <ion-card style="background-color: #d3cccc94;">
+  <ion-card *ngIf = "fg" style="background-color: #d3cccc94;">
     <ion-card-content>
 
       <form [formGroup]="fg">
