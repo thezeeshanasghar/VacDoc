@@ -79,6 +79,29 @@ export class VaccineAlertPage implements OnInit {
     );
   }
 
+  async sendemails(){
+    
+    const loading = await this.loadingController.create({
+      message: "sending emails"
+    });
+    await loading.present();
+    await this.alertService.sendAlertMsgToAll(this.numOfDays, this.clinicId).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          loading.dismiss();
+          this.toastService.create("emails sent successfull" , "success");
+        } else {
+          loading.dismiss();
+          this.toastService.create(res.Message, "danger");
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, "danger");
+      }
+    );
+  }
+
   downloadcsv(){
     let query = "";
 this.Childs.map(x=>x.Child.Id).forEach(id => {
