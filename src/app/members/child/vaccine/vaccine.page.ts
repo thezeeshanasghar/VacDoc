@@ -341,7 +341,7 @@ console.log(diffDays);console.log(firstDate);console.log(secondDate);
   download(id){
     var request: DownloadRequest = {
       uri: `${this.API_VACCINE}child/${id}/Download-Schedule-PDF`,
-      title: 'Child Schedule',
+      title: this.ChildName+'-Schedule',
       description: '',
       mimeType: '',
       visibleInDownloadsUi: true,
