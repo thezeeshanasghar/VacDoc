@@ -10,6 +10,7 @@ export const environment = {
 
   // BASE_URL:"https://testemail.fernflowers.com",
   // RESOURCE_URL: "http://localhost:5000/api/",
+  
   BASE_URL: "https://fernflowers.com/api/",
   RESOURCE_URL: "https://fernflowers.com/",
 

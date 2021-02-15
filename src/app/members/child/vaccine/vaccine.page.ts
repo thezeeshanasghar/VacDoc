@@ -399,7 +399,7 @@ console.log(diffDays);console.log(firstDate);console.log(secondDate);
     await this.vaccineService.UnfillChildVaccine(data).subscribe(
       res => {
         if (res.IsSuccess) {
-          this.toastService.create('Succfully Update');
+          this.toastService.create('Successfully Update');
           loading.dismiss();
           this.getVaccination();
 
