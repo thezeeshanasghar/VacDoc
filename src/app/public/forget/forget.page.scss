@@ -1,0 +1,33 @@
+ion-content{
+    --background: #fff url('../../../assets/login.jpg') no-repeat center center / cover;
+}
+
+ion-card{
+    margin-top: 15%;
+    align-content: center;
+    width: 80%;
+    margin-left: 10%;
+}
+
+ion-input{
+    border-bottom: 1px solid rgb(41, 39, 39);
+    --padding-start: 7px;
+}
+
+
+.item.item-trns {
+	border-color: rgba(0, 0, 0, 0);
+	background-color: rgba(0, 0, 0, 0);
+	color: white; 
+}
+
+h2{
+    color:#0039a2;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
