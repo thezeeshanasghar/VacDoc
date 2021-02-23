@@ -82,7 +82,6 @@ export class Step3Page implements OnInit {
             dose.IsSpecial = false;
            // changes in old copy
           });
-console.log(this.fg);
 
           // for(var i=0; i<this.doses.length; i++)
           // {
