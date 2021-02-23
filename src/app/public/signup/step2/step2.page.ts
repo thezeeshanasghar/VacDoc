@@ -298,7 +298,6 @@ export class Step2Page implements OnInit {
     // this.fg1.value.Long = this.myMarker.lng;
     this.fg1.value.Lat = this.latitude;
     this.fg1.value.Long = this.longitude;
-    console.log(this.fg1.value);
     this.fg1.value.OffDays = "Sunday";
     var ct = [];
     if (this.fg2.value.Monday) {
@@ -609,7 +608,6 @@ export class Step2Page implements OnInit {
       }
     }
     this.fg1.value.ClinicTimings = ct;
-    console.log(this.fg1.value);
     this.signupService.clinicData = this.fg1.value;
     this.router.navigate(["/signup/step3"]);
     //this.addNewClinic(this.fg1.value);
