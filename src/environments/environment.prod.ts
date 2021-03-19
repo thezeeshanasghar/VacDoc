@@ -14,8 +14,8 @@ export const environment = {
   // BASE_URL: "https://fernflowers.com/api/",
   // RESOURCE_URL: "https://fernflowers.com/",
 
-  RESOURCE_URL: "https://fernflowers.com/",
-  BASE_URL:"http://localhost:5000/api/",
+  RESOURCE_URL: "http://localhost:3306/",
+  BASE_URL:"http://localhost:3306/api/",
 
   USER: 'User',
   DOCTOR_Id: "DoctorId",

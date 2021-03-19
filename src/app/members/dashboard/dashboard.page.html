@@ -1,4 +1,5 @@
 <ion-header>
+  
   <ion-toolbar color="primary">
     <ion-title>
       Dashboard
@@ -6,13 +7,13 @@
     <ion-title *ngIf="clinicService.OnlineClinic" slot="end">
       {{clinicService.OnlineClinic.Name}}
     </ion-title>
-    
   </ion-toolbar>
-  <ion-toolbar color="primary" >
+
+  <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
-      <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/clinic" name="medkit" size="large" > </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/child/add" name="person-add" size="large"> </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/alert" name="alert" size="large"> </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/clinic" name="medkit" size="large"> </ion-icon>
       <ion-menu-button style="margin-left: 10%"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
@@ -25,9 +26,14 @@
       <ion-card-title>Welcome to Doctor Dashboard</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p>Childhood vaccines are one of the great triumphs of modern medicine. Indeed, parents whose children are vaccinated no longer have to worry about their child’s death or disability from whooping cough, polio, diphtheria, hepatitis, or a host of other infections.
-        Vaccines are a miracle; they’re fantastic. Anything that makes people hesitate to give their children these vaccines according to the recommended schedule creates risk. Risk for the children who don’t get vaccinated and risk for children, some of whom don’t have an immune system, so they’re benefiting from the fact that the community protection means the disease doesn’t get to them..</p>
+      <p>Childhood vaccines are one of the great triumphs of modern medicine. Indeed, parents whose children are
+        vaccinated no longer have to worry about their child’s death or disability from whooping cough, polio,
+        diphtheria, hepatitis, or a host of other infections.
+        Vaccines are a miracle; they’re fantastic. Anything that makes people hesitate to give their children these
+        vaccines according to the recommended schedule creates risk. Risk for the children who don’t get vaccinated and
+        risk for children, some of whom don’t have an immune system, so they’re benefiting from the fact that the
+        community protection means the disease doesn’t get to them..</p>
     </ion-card-content>
   </ion-card>
-  
+
 </ion-content>

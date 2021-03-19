@@ -8,11 +8,12 @@
       {{clinicService.OnlineClinic.Name}}
     </ion-title>
   </ion-toolbar>
-  <ion-toolbar color="primary" >
+
+  <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
-      <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/clinic" name="medkit" size="large" > </ion-icon>
+      <ion-icon style="margin-left: 4%" routerLink="/members/child/add" name="person-add" size="large"> </ion-icon>
+      <ion-icon style="margin-left: 4%" routerLink="/members/alert" name="alert" size="large"> </ion-icon>
+      <ion-icon style="margin-left: 4%" routerLink="/members/doctor/clinic" name="medkit" size="large"> </ion-icon>
       <ion-menu-button style="margin-left: 10%"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
@@ -21,9 +22,9 @@
 
 <ion-content padding>
 
- 
+
   <div>
-    <ion-segment [(ngModel)]="type" (ionChange)="segmentChanged($event)"  value="sendMessages" slot="start" >
+    <ion-segment [(ngModel)]="type" (ionChange)="segmentChanged($event)" value="sendMessages" slot="start">
       <ion-segment-button value="sendMessages">sent messages</ion-segment-button>
       <ion-segment-button value="notsendmessages">failed Messages</ion-segment-button>
     </ion-segment>
@@ -33,7 +34,7 @@
       <ion-card-title>No message found !</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      
+
     </ion-card-content>
   </ion-card>
   <!-- <ion-card *ngFor="let msg of Messages">
@@ -48,27 +49,30 @@
       <p>{{msg.message}}</p>
     </ion-card-content>
   </ion-card> -->
-  <div [ngSwitch]="type" >
+  <div [ngSwitch]="type">
     <ion-list *ngSwitchCase="'sendMessages'">
       <ion-card *ngFor="let msg of Messages">
         <div *ngIf="msg.status">
-        <ion-card-header>
-          <ion-card-title color="primary">
-            To: {{msg.toNumber}}
-          </ion-card-title>
-          <ion-card-subtitle>{{msg.created | date}} <span *ngIf="!msg.status">failed</span> <ion-icon (click)="sendMessage(msg.toNumber , msg.message , msg.created)" *ngIf="!msg.status" color="primary" name="refresh"></ion-icon></ion-card-subtitle>
-        </ion-card-header>
+          <ion-card-header>
+            <ion-card-title color="primary">
+              To: {{msg.toNumber}}
+            </ion-card-title>
+            <ion-card-subtitle>{{msg.created | date}} <span *ngIf="!msg.status">failed</span>
+              <ion-icon (click)="sendMessage(msg.toNumber , msg.message , msg.created)" *ngIf="!msg.status"
+                color="primary" name="refresh"></ion-icon>
+            </ion-card-subtitle>
+          </ion-card-header>
 
-    
-        <ion-card-content>
-          <p>{{msg.message}}</p>
-        </ion-card-content>
-      </div>
+
+          <ion-card-content>
+            <p>{{msg.message}}</p>
+          </ion-card-content>
+        </div>
       </ion-card>
     </ion-list>
   </div>
 
-  
+
 
   <div [ngSwitch]="type">
     <ion-list *ngSwitchCase="'notsendmessages'">
@@ -79,7 +83,8 @@
               To: {{msg.toNumber}}
             </ion-card-title>
             <ion-card-subtitle>{{msg.created | date}} <span *ngIf="!msg.status" class="spansize">failed</span>
-              <ion-icon (click)="sendMessage(msg.toNumber , msg.message , msg.created)" *ngIf="!msg.status" color="primary" name="sync-outline" size="large" ></ion-icon> 
+              <ion-icon (click)="sendMessage(msg.toNumber , msg.message , msg.created)" *ngIf="!msg.status"
+                color="primary" name="sync-outline" size="large"></ion-icon>
             </ion-card-subtitle>
           </ion-card-header>
           <ion-card-content>
@@ -90,6 +95,6 @@
     </ion-list>
   </div>
 
- 
+
 
 </ion-content>

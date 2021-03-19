@@ -11,13 +11,14 @@ import { Storage } from "@ionic/storage";
   providedIn: 'root'
 })
 export class DoctorService extends BaseService {
-doctor: any;
+  doctor: any;
   private readonly API_DOCTOR = `${environment.BASE_URL}doctor`
 
   constructor(
     protected http: HttpClient, private storage: Storage
-  ) { super(http);
-   }
+  ) {
+    super(http);
+  }
 
   getDoctorProfile(docId: number): Observable<any> {
     const url = `${this.API_DOCTOR}/${docId}`;

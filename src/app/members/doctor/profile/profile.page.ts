@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { LoadingController } from "@ionic/angular";
+import { LoadingController, Platform } from "@ionic/angular";
 import { DoctorService } from "src/app/services/doctor.service";
 import { ToastService } from "src/app/shared/toast.service";
 import { Storage } from "@ionic/storage";
@@ -9,7 +9,7 @@ import { FormGroup, FormBuilder, FormControl, Validators } from "@angular/forms"
 import { concat } from 'rxjs';
 import { UploadService } from 'src/app/services/upload.service';
 import { FileChooser } from '@ionic-native/file-chooser/ngx';
-import { File , FileEntry } from '@ionic-native/file/ngx';
+import { File, FileEntry } from '@ionic-native/file/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 
@@ -18,14 +18,14 @@ import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-nati
   templateUrl: "./profile.page.html",
   styleUrls: ["./profile.page.scss"]
 })
+
 export class ProfilePage implements OnInit {
   fg: FormGroup;
   doctorData: any;
   DocotrId: any;
   uploading: any;
-
-  // public profileUploader: FileUploader = new FileUploader({});
-  // public signatureUploader: FileUploader = new FileUploader({});
+  profileImagePath: any;
+  signatureImagePath: any
 
   constructor(
     public loadingController: LoadingController,
@@ -37,7 +37,8 @@ export class ProfilePage implements OnInit {
     private fileChooser: FileChooser,
     private file: File,
     private filePath: FilePath,
-    private transfer: FileTransfer
+    private transfer: FileTransfer,
+    private platform: Platform
 
   ) { }
 
@@ -45,7 +46,9 @@ export class ProfilePage implements OnInit {
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.DocotrId = val;
     });
+
     this.getProfile();
+
     this.fg = this.formBuilder.group({
       Id: [null],
       FirstName: [null],
@@ -85,152 +88,102 @@ export class ProfilePage implements OnInit {
           Validators.pattern("^[0-9-\\+]*-[A-Z]$")
         ])
       ),
-      SignatureImage: new FormControl(
-        "",
-        Validators.compose([
-          Validators.required
-        ])
-      ),
-      ProfileImage: new FormControl(
-        "",
-        Validators.compose([
-          Validators.required
-        ])
-      )
+      SignatureImage: new FormControl([null]),
+      ProfileImage: new FormControl([null])
+
     });
   }
 
-
-  uploadSignatureImage() {
-
-    this.fileChooser.open().then(async uri =>
-      {
-        console.log(uri);
-       await  this.filePath.resolveNativePath(uri).then(filePath =>
-          {
-            //this.filesPath = filePath;
-            this.uploading = true;
-            this.file.resolveLocalFilesystemUrl(filePath).then(fileInfo =>
-              {
-                let files = fileInfo as FileEntry;
-                files.file(async success =>
-                  {
-                    //this.fileType   = success.type;
-                    let filesName  = success.name;
-                    console.log(filesName);
-                    let options: FileUploadOptions = {
-                      fileName: filesName
-                    }
-                    const fileTransfer: FileTransferObject = this.transfer.create();
-                  await  fileTransfer.upload(uri, environment.BASE_URL+'upload', options)
-                    .then((data) => {
-                      // success
-                      console.log(data);
-                      this.uploading = false;
-                      let dbpath = JSON.parse(data.response)
-                      this.fg.value.SignatureImage = dbpath.dbPath;
-                      console.log(this.fg.value.SignatureImage);
-                    }, (err) => {
-                      console.log(err)
-                      // error
-                    })
-                  });
-              },err =>
-              {
-                console.log(err);
-                throw err;
-              });
-          },err =>
-          {
-            console.log(err);
-            throw err;
-          });
-      },err =>
-      {
-        console.log(err);
-        throw err;
-      });
-  
+  private previewImage(file: FileList, imagePath: string) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (imagePath == "profile")
+        this.profileImagePath = reader.result as string;
+      else if (imagePath == "signature")
+        this.signatureImagePath = reader.result as string;
+    }
+    reader.readAsDataURL(file.item(0));
   }
 
-  uploadProfileImage() {
+  async SelectProfileImage(profileFile: FileList) {
 
-    this.fileChooser.open().then(async uri =>
-      {
-        console.log(uri);
-       await  this.filePath.resolveNativePath(uri).then(filePath =>
-          {
-            //this.filesPath = filePath;
-            this.uploading = true;
-            this.file.resolveLocalFilesystemUrl(filePath).then(fileInfo =>
-              {
-                let files = fileInfo as FileEntry;
-                files.file(async success =>
-                  {
-                    //this.fileType   = success.type;
-                    let filesName  = success.name;
-                    console.log(filesName);
-                    let options: FileUploadOptions = {
-                      fileName: filesName
-                    }
-                    const fileTransfer: FileTransferObject = this.transfer.create();
-                  await  fileTransfer.upload(uri, environment.BASE_URL+'upload', options)
-                    .then((data) => {
-                      // success
-                      console.log(data);
-                      this.uploading = false;
-                      let dbpath = JSON.parse(data.response)
-                      this.fg.value.ProfileImage = dbpath.dbPath;
-                      console.log(this.fg.value.ProfileImage);
-                    }, (err) => {
-                      console.log(err)
-                      // error
-                    })
-                  });
-              },err =>
-              {
-                console.log(err);
-                throw err;
-              });
-          },err =>
-          {
-            console.log(err);
-            throw err;
-          });
-      },err =>
-      {
-        console.log(err);
-        throw err;
-      });
-  
+    this.previewImage(profileFile, "profile");
+
+    const loading = await this.loadingController.create({
+      message: "Uploading Image"
+    });
+    await loading.present();
+    const profileData = new FormData();
+    profileData.append("ProfileImage", profileFile.item(0));
+
+    await this.uploadService.uploadImage(profileData).subscribe(res => {
+      if (res) {
+        let pImage = res.dbPath;
+        this.fg.value.ProfileImage = pImage;
+        console.log("ProfileImage = " + this.fg.value.ProfileImage);
+        loading.dismiss();
+      }
+      else {
+        console.log(res.Message);
+        console.log("Error: Try Again! Failed to upload ProfileImage");
+        this.toastService.create("Error: Try Again! Failed to upload ProfileImage.")
+        loading.dismiss();
+      }
+    });
   }
 
+  async SelectSignatureImage(signatureFile: FileList) {
 
+    this.previewImage(signatureFile, "signature");
+
+    const loading = await this.loadingController.create({
+      message: "Uploading Image"
+    });
+    await loading.present();
+    const signatureData = new FormData();
+    signatureData.append("SignatureImage", signatureFile.item(0));
+
+    await this.uploadService.uploadImage(signatureData).subscribe(res => {
+      if (res) {
+        let sData = res.dbPath;
+        this.fg.value.SignatureImage = sData;
+        console.log("SignatureImage = " + this.fg.value.SignatureImage);
+        loading.dismiss();
+      }
+      else {
+        console.log(res.Message);
+        console.log("Error: Try Again! Failed to upload SignatureImage");
+        this.toastService.create("Error: Try Again! Failed to upload SignatureImage.")
+        loading.dismiss();
+      }
+    });
+  }
 
   async getProfile() {
     const loading = await this.loadingController.create({
-      message: "Loading"
+      message: "Loading Profile"
     });
+
     await loading.present();
     await this.doctorService.getDoctorProfile(this.DocotrId).subscribe(
       res => {
         if (res.IsSuccess) {
           this.doctorData = res.ResponseData;
+          console.log(this.doctorData);
           this.fg.controls["Id"].setValue(this.doctorData.Id);
           this.fg.controls["FirstName"].setValue(this.doctorData.FirstName);
           this.fg.controls["LastName"].setValue(this.doctorData.LastName);
           this.fg.controls["DisplayName"].setValue(this.doctorData.DisplayName);
           this.fg.controls["Email"].setValue(this.doctorData.Email);
-          this.fg.controls["MobileNumber"].setValue(
-            this.doctorData.MobileNumber
-          );
+          this.fg.controls["MobileNumber"].setValue(this.doctorData.MobileNumber);
           this.fg.controls["ShowMobile"].setValue(this.doctorData.ShowMobile);
           this.fg.controls["PhoneNo"].setValue(this.doctorData.PhoneNo);
           this.fg.controls["ShowPhone"].setValue(this.doctorData.ShowPhone);
           this.fg.controls["PMDC"].setValue(this.doctorData.PMDC);
           this.fg.controls["SignatureImage"].setValue(this.doctorData.SignatureImage);
           this.fg.controls["ProfileImage"].setValue(this.doctorData.ProfileImage);
-
+          this.profileImagePath = this.doctorData.ProfileImage;
+          this.signatureImagePath = this.doctorData.SignatureImage;
 
           loading.dismiss();
         } else {
@@ -246,35 +199,30 @@ export class ProfilePage implements OnInit {
   }
 
   async updateProfile() {
+
     const loading = await this.loadingController.create({
-      message: "Loading"
+      message: "Updating Profile"
     });
+
     console.log(this.fg.value);
     await loading.present();
-    // await this.doctorService
-    //   .updateDoctorProfile(this.DocotrId, this.fg.value)
-    //   .subscribe(
-    //     res => {
-    //       if (res.IsSuccess) {
-    //         let formData = new FormData();
-    //         this.uploadService.uploadFormData(this.DocotrId, formData).subscribe(
-    //           (res1) => {
-    //             this.toastService.create("Profile updated successfully.");
-    //             loading.dismiss();
-    //           },
-    //           (err1) => {
-    //             console.log(err1);
-    //           }
-    //         );
-
-    //       } else {
-    //         this.toastService.create(res.Message, "danger");
-    //       }
-    //     },
-    //     err => {
-    //       this.toastService.create(err, "danger");
-    //     }
-    //   );
+    await this.doctorService
+      .updateDoctorProfile(this.DocotrId, this.fg.value)
+      .subscribe(
+        res => {
+          if (res.IsSuccess) {
+            console.log(res.ResponseData);
+            this.toastService.create("Profile Updated !");
+          } else {
+            this.toastService.create(res.Message, "danger");
+            loading.dismiss();
+          }
+        },
+        err => {
+          this.toastService.create(err, "danger");
+          loading.dismiss();
+        }
+      );
   }
 
   validation_messages = {
