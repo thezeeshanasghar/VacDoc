@@ -27,6 +27,7 @@ import { Base64 } from '@ionic-native/base64/ngx';
 export class EditPage implements OnInit {
   fg1: FormGroup;
   fg2: FormGroup;
+  updateClinic:any;
   clinicId: any;
   clinic: any;
   doctorId: any;
@@ -969,6 +970,25 @@ export class EditPage implements OnInit {
       await this.clinicService.putClinic(this.clinicId, data).subscribe(
         res => {
           if (res.IsSuccess) {
+            this.storage.get('Clinics').then((val) => {
+           this.updateClinic=val.filter(x=>x.Id===this.clinicId);
+           console.log(this.updateClinic);
+           for(var i=0;i<val.length;i++){
+             if(val[i].Id==this.clinicId){
+               val[i].Name=this.fg1.value.Name;
+              val[i].ConsultationFee=this.fg1.value.ConsultationFee;
+              val[i].PhoneNumber=this.fg1.value.PhoneNumber;
+              val[i].IsOnline=this.fg1.value.IsOnline;
+              val[i].Address=this.fg1.value.Address;
+              }
+           }
+           this.storage.set('Clinics',val);
+           
+        
+      
+     });
+
+
             loading.dismiss();
             this.toastService.create("successfully added");
             this.router.navigate(["/members/doctor/clinic"]);
