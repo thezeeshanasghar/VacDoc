@@ -6,23 +6,24 @@
     <ion-title>Doctor</ion-title>
   </ion-toolbar>
 
-  <ion-toolbar color="primary" >
+  <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
-      <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/clinic" name="medkit" size="large" > </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/child/add" name="person-add" size="large"> </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/alert" name="alert" size="large"> </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/clinic" name="medkit" size="large"> </ion-icon>
       <ion-menu-button style="margin-left: 10%"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class= "ion-padding">
+<ion-content class="ion-padding">
 
   <form [formGroup]="fg">
     <ion-item>
       <ion-label color="primary" position="floating">First Name</ion-label>
       <ion-input type="text" formControlName="FirstName" required></ion-input>
     </ion-item>
+
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.FirstName">
         <div class="error-message"
@@ -36,6 +37,7 @@
       <ion-label color="primary" position="floating">Last Name</ion-label>
       <ion-input type="text" formControlName="LastName" required></ion-input>
     </ion-item>
+
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.LastName">
         <div class="error-message"
@@ -49,6 +51,7 @@
       <ion-label color="primary" position="floating">Display Name</ion-label>
       <ion-input type="text" formControlName="DisplayName" required></ion-input>
     </ion-item>
+
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.DisplayName">
         <div class="error-message"
@@ -62,6 +65,7 @@
       <ion-label color="primary" position="floating">Email</ion-label>
       <ion-input type="text" formControlName="Email" required [disabled]="true"></ion-input>
     </ion-item>
+
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.Email">
         <div class="error-message"
@@ -90,10 +94,11 @@
     <ion-item>
       <ion-label color="primary" position="floating">Phone No</ion-label>
       <ion-input type="text" formControlName="PhoneNo" required></ion-input>
-      
+
       <ion-label color="primary">Display</ion-label>
       <ion-checkbox slot="end" formControlName="ShowPhone" required></ion-checkbox>
     </ion-item>
+    
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.PhoneNo">
         <div class="error-message"
@@ -107,16 +112,32 @@
       <ion-label color="primary" position="floating">PMDC</ion-label>
       <ion-input type="text" formControlName="PMDC" required></ion-input>
     </ion-item>
+
     <ion-item>
-       <!-- <input type="file" accept="image/*" id="file1" name="file1" ng2FileSelect [uploader]="profileUploader" /></ion-item>
-      <ion-item>
-      <input type="file" accept="image/*" id="file2" name="file2" ng2FileSelect [uploader]="signatureUploader" /> -->
+      <div>
+        <label for="file">Profile Image</label>
+        <input type="file" (change)="SelectProfileImage($event.target.files)">
+      </div>
+    </ion-item>
 
-      <ion-button (click) = "uploadSignatureImage()"> Signature Image</ion-button>
-      <ion-button (click) = "uploadProfileImage()"> Profile Image</ion-button>
+    <ion-item>
+      <ion-img class="preview-image" [src]="profileImagePath" alt="No image"></ion-img>
+    </ion-item>
 
-    </ion-item> 
+    <ion-item>
+      <div>
+        <label for="file">Signature Image</label>
+        <input type="file" (change)="SelectSignatureImage($event.target.files)">
+      </div>
+    </ion-item>
 
-    <ion-button [disabled]="!fg.valid" (click)="updateProfile()">Update</ion-button>
+    <ion-item>
+      <ion-img class="preview-image" [src]="signatureImagePath" alt="No image"></ion-img>
+    </ion-item>
+
+    <ion-item>
+      <ion-button (click)="updateProfile()">Update</ion-button>
+    </ion-item>
+
   </form>
 </ion-content>
