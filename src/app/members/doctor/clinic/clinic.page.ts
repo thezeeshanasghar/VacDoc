@@ -26,9 +26,16 @@ export class ClinicPage {
     private storage: Storage,
     private router: Router,
     private alertService: AlertService
-  ) {}
+  ) {
+    router.events.subscribe((val)=> {
+      this.storage.get(environment.CLINICS).then(clinics => {
+        this.Clinics = clinics;
+      });
+    })
+  }
 
   async ngOnInit() {
+
     await this.storage.get(environment.DOCTOR_Id).then(docId => {
       this.doctorId = docId;
     });
@@ -54,6 +61,7 @@ export class ClinicPage {
       res => {
         loading.dismiss();
         if (res.IsSuccess) {
+          console.log(res);
           this.Clinics = res.ResponseData;
           this.storage.set(environment.CLINICS, this.Clinics);
           for (let i = 0; i < this.Clinics.length; i++) {
@@ -137,4 +145,13 @@ export class ClinicPage {
       }
     );
   }
+  doRefresh(event) {
+    console.log('Begin async operation');
+   this.ngOnInit();
+    setTimeout(() => {
+      console.log('Async operation has ended');
+      event.target.complete();
+    }, 1000);
+  }
+  
 }
