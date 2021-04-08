@@ -8,7 +8,7 @@ import { AndroidPermissions } from "@ionic-native/android-permissions/ngx";
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { TitleCasePipe } from '@angular/common';
 import { SMS } from '@ionic-native/sms/ngx';
-import { Downloader , DownloadRequest , NotificationVisibility } from '@ionic-native/downloader/ngx';
+import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 import { Platform } from '@ionic/angular';
 //declare var SMS: any;
 @Component({
@@ -26,6 +26,7 @@ export class VaccineAlertPage implements OnInit {
   Messages = [];
   numOfDays: number = 0; // 0 means get alert for today, 5 means get alert for next five days, same as for -5
 
+
   constructor(
     public loadingController: LoadingController,
     private alertService: AlertService,
@@ -37,20 +38,28 @@ export class VaccineAlertPage implements OnInit {
     private sms: SMS,
     private downloader: Downloader,
     public platform: Platform
-  ) {}
+  ) {
 
- async ngOnInit() {
+  }
+
+  async ngOnInit() {
     await this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
     });
     await this.storage.get(environment.CLINIC_Id).then(clinicId => {
       this.clinicId = clinicId;
     });
-   await  this.storage.get(environment.SMS).then(val => {
+    await this.storage.get(environment.SMS).then(val => {
       this.SMSKey = val;
     });
-    this.storage.get(environment.MESSAGES).then(messages=> {messages==null?'':this.Messages = messages});
-   await this.getChlid(this.numOfDays);
+    this.storage.get(environment.MESSAGES).then(messages => { messages == null ? '' : this.Messages = messages });
+    await this.getChlid(this.numOfDays);
+
+    // if (!this.checkSmsPermission()) {
+    //   this.toastService.create('check function body')
+    //   this.requestSmsPermissions();
+    // }
+
   }
 
   // Get childs get from server
@@ -79,8 +88,8 @@ export class VaccineAlertPage implements OnInit {
     );
   }
 
-  async sendemails(){
-    
+  async sendemails() {
+
     const loading = await this.loadingController.create({
       message: "sending emails"
     });
@@ -89,7 +98,7 @@ export class VaccineAlertPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           loading.dismiss();
-          this.toastService.create("emails sent successfull" , "success");
+          this.toastService.create("emails sent successfull", "success");
         } else {
           loading.dismiss();
           this.toastService.create(res.Message, "danger");
@@ -102,34 +111,34 @@ export class VaccineAlertPage implements OnInit {
     );
   }
 
-  downloadcsv(){
+  downloadcsv() {
     let query = "";
-this.Childs.map(x=>x.Child.Id).forEach(id => {
-  query += 'arr[]='+id+'&';
-});
+    this.Childs.map(x => x.Child.Id).forEach(id => {
+      query += 'arr[]=' + id + '&';
+    });
 
-if(this.platform.is('desktop') || this.platform.is('mobileweb')) {
-  var url = `${this.API_VACCINE}child/downloadcsv?${query}`;
- window.open(url);
-}
-else {
-    var request: DownloadRequest = {
-      uri: `${this.API_VACCINE}child/downloadcsv?${query}`,
-      title: 'Chil dAlerts CSV',
-      description: '',
-      mimeType: '',
-      visibleInDownloadsUi: true,
-      notificationVisibility: NotificationVisibility.VisibleNotifyCompleted,
-     // notificationVisibility: 0,
-      destinationInExternalFilesDir: {
+    if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
+      var url = `${this.API_VACCINE}child/downloadcsv?${query}`;
+      window.open(url);
+    }
+    else {
+      var request: DownloadRequest = {
+        uri: `${this.API_VACCINE}child/downloadcsv?${query}`,
+        title: 'Chil dAlerts CSV',
+        description: '',
+        mimeType: '',
+        visibleInDownloadsUi: true,
+        notificationVisibility: NotificationVisibility.VisibleNotifyCompleted,
+        // notificationVisibility: 0,
+        destinationInExternalFilesDir: {
           dirType: 'Downloads',
           subPath: 'Child Alerts.csv'
-      }
-  };
-  this.downloader.download(request)
-  .then((location: string) => console.log('File downloaded at:'+location))
-  .catch((error: any) => console.error(error));
-}
+        }
+      };
+      this.downloader.download(request)
+        .then((location: string) => console.log('File downloaded at:' + location))
+        .catch((error: any) => console.error(error));
+    }
   }
   async sendSMS(child: any) {
     const loading = await this.loadingController.create({
@@ -139,21 +148,21 @@ else {
 
     for (let i = 0; i < child.length; i++) {
       let message = this.generateSMS(child[i]);
-      await this.sendAlertMsg(child[i].ChildId, child[i].Child.User.MobileNumber , message);
+      await this.sendAlertMsg(child[i].ChildId, child[i].Child.User.MobileNumber, message);
     }
     loading.dismiss();
   }
-generateSMS(schedule){
-  var sms1 = 'Reminder: Vaccination for ';
- 
-  sms1 += schedule.Child.Name + ' is due on ' + schedule.Date ;
+  generateSMS(schedule) {
+    var sms1 = 'Reminder: Vaccination for ';
 
-  sms1 += ' ('  + schedule.Dose.Name + ' )';
+    sms1 += schedule.Child.Name + ' is due on ' + schedule.Date;
 
-return sms1;
-}
+    sms1 += ' (' + schedule.Dose.Name + ' )';
+
+    return sms1;
+  }
   // send Alert Msg to childs
-  async sendAlertMsg(id, childMobile , message) {
+  async sendAlertMsg(id, childMobile, message) {
     console.log(message);
     if (this.SMSKey == 0) {
       await this.alertService
@@ -184,14 +193,14 @@ return sms1;
                 .requestPermission(this.androidPermissions.PERMISSION.SEND_SMS)
                 .then(
                   success => {
-                   this.sendMessage(childMobile , message);
+                    this.sendMessage(childMobile, message);
                   },
                   err => {
                     console.error(err);
                   }
                 );
             } else {
-              this.sendMessage(childMobile , message);
+              this.sendMessage(childMobile, message);
             }
           },
           err => {
@@ -199,7 +208,7 @@ return sms1;
               .requestPermission(this.androidPermissions.PERMISSION.SEND_SMS)
               .then(
                 success => {
-                  this.sendMessage(childMobile , message);
+                  this.sendMessage(childMobile, message);
                 },
                 err => {
                   console.error(err);
@@ -210,27 +219,60 @@ return sms1;
     }
   }
 
- async sendMessage(childMobile , message) {
-    this.sms.send('+92'+childMobile, message)
-          .then(()=>{
-            let obj = {'toNumber':'+92' + childMobile , 'message': message , 'created': Date.now(), 'status':true};
-            this.Messages.push(obj);
-             this.storage.set(environment.MESSAGES , this.Messages);
-          this.toastService.create("Message Sent Successful");
-          }).catch((error)=>{
-          //console.log("The Message is Failed",error);
-          this.toastService.create("Message Sent Failed" , "danger");
-          let obj = {'toNumber':'+92' + childMobile , 'message': message , 'created': Date.now(), 'status':false};
-            this.Messages.push(obj);
-            this.storage.set(environment.MESSAGES , this.Messages);
-          });
+  async sendMessage(childMobile, message) {
+    this.sms.send('+92' + childMobile, message)
+      .then(() => {
+        let obj = { 'toNumber': '+92' + childMobile, 'message': message, 'created': Date.now(), 'status': true };
+        this.Messages.push(obj);
+        this.storage.set(environment.MESSAGES, this.Messages);
+        this.toastService.create("Message Sent Successful");
+      }).catch((error) => {
+        //console.log("The Message is Failed",error);
+        this.toastService.create("Message Sent Failed", "danger");
+        let obj = { 'toNumber': '+92' + childMobile, 'message': message, 'created': Date.now(), 'status': false };
+        this.Messages.push(obj);
+        this.storage.set(environment.MESSAGES, this.Messages);
+      });
   }
 
-  callFunction(celnumber)
-  {
+  callFunction(celnumber) {
     console.log(celnumber);
     this.callNumber.callNumber(0 + celnumber, true)
-    .then(res => console.log('Launched dialer!', res))
-    .catch(err => console.log('Error launching dialer', err));
+      .then(res => console.log('Launched dialer!', res))
+      .catch(err => console.log('Error launching dialer', err));
   }
+
+  // checkSmsPermission(): any {
+  //   this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS)
+  //     .then((success) => {
+  //       if (success.hasPermission) {
+  //         return true;
+  //       } else {
+  //         return false;
+  //       }
+  //     },
+  //       err => {
+  //         this.requestSmsPermissions();
+  //       }
+  //     );
+
+  // }
+
+  // requestSmsPermissions() {
+  //   this.androidPermissions.requestPermissions(this.androidPermissions.PERMISSION.SEND_SMS)
+  //     .then((success) => {
+  //       if (success.hasPermission) {
+  //         // return true;
+  //       } else {
+  //         // return false;
+  //       }
+  //     },
+  //       err => {
+  //         this.toastService.create('Error: ' + err.message)
+  //       }
+  //     );
+  // }
+
+
+
 }

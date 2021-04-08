@@ -8,9 +8,10 @@ import { BulkService } from "src/app/services/bulk.service";
 import { AlertController } from '@ionic/angular';
 //import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
 import { environment } from 'src/environments/environment';
-import { Downloader , DownloadRequest , NotificationVisibility } from '@ionic-native/downloader/ngx';
+import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 import { Storage } from '@ionic/storage';
 import { Platform } from '@ionic/angular';
+import { FormBuilder, FormGroup } from "@angular/forms";
 
 
 @Component({
@@ -27,7 +28,9 @@ export class VaccinePage {
   Pneum2Date: any;
   BirthYear: any;
   ChildName: string;
+  fgAddData: FormGroup;
   private readonly API_VACCINE = `${environment.BASE_URL}`
+
   constructor(
     public loadingController: LoadingController,
     public route: ActivatedRoute,
@@ -38,7 +41,8 @@ export class VaccinePage {
     public alertController: AlertController,
     private downloader: Downloader,
     private storage: Storage,
-    public platform: Platform
+    public platform: Platform,
+    private formBuilder: FormBuilder,
 
     // private document: DocumentViewer,
   ) { }
@@ -47,7 +51,27 @@ export class VaccinePage {
     this.childId = this.route.snapshot.paramMap.get("id");
     this.vaccinesData = [];
     this.getVaccination();
+
+    this.fgAddData = this.formBuilder.group({
+      'DoctorId': [''],
+      'IsDone': [null],
+      // 'Weight': [null],
+      // 'Height': [null],
+      // 'Circle': [null],
+      'BrandId': [null],
+      // 'GivenDate': [null],
+      'IsDisease': [false],
+      'DiseaseYear': ['2019'],
+      'DoseId': [null],
+      'ChildId': [null],
+      'Date': [null]
+
+    });
+
+
+
   }
+
   checkVaccineIsDon(data): boolean {
     var isdone: boolean = true;
     for (let i = 0; i < data.length; i++) {
@@ -61,7 +85,7 @@ export class VaccinePage {
 
   async getVaccination() {
     const loading = await this.loadingController.create({
-      message: "Loading"
+      message: "Loading Vaccines"
     });
 
     await loading.present();
@@ -69,37 +93,33 @@ export class VaccinePage {
       .getVaccinationById(this.route.snapshot.paramMap.get("id"))
       .subscribe(
         res => {
-          if (res.IsSuccess && res.ResponseData.length > 0 ) {
-          // res.ResponseData = res.ResponseData.filter(item=> (!item.IsSkip));
-           // console.log(res.ResponseData);
-           this.BirthYear = res.ResponseData[0].Child.DOB;
-           console.log(this.BirthYear);
-           this.storage.set('BirthYear' , this.BirthYear);
-           
+          if (res.IsSuccess && res.ResponseData.length > 0) {
+            this.BirthYear = res.ResponseData[0].Child.DOB;
+            this.storage.set('BirthYear', this.BirthYear);
+
             //original code
             this.vaccine = res.ResponseData;
             this.ChildName = this.vaccine[0].Child.Name;
             this.vaccine.forEach(doc => {
               doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
               if (doc.GivenDate)
-              doc.GivenDate = moment(doc.GivenDate, "DD-MM-YYYY").format("YYYY-MM-DD");
-              this.vaccinesData.push({childId:doc.Child.Id , vaccineId: doc.Dose.VaccineId , brandId: doc.BrandId});
+                doc.GivenDate = moment(doc.GivenDate, "DD-MM-YYYY").format("YYYY-MM-DD");
+              this.vaccinesData.push({ childId: doc.Child.Id, vaccineId: doc.Dose.VaccineId, brandId: doc.BrandId });
             });
 
-            this.storage.set("vaccinesData" , this.vaccinesData);
-           
+            this.storage.set("vaccinesData", this.vaccinesData);
+
             this.dataGrouping = this.groupBy(this.vaccine, "Date");
-            console.log(this.dataGrouping);
             loading.dismiss();
-          
+
           } else {
+            this.toastService.create("Error: failed to get vaccines");
             loading.dismiss();
-           // this.toastService.create(res.Message, "danger");
           }
         },
         err => {
+          this.toastService.create("Error: server failure");
           loading.dismiss();
-          this.toastService.create(err, "danger");
         }
       );
   }
@@ -160,6 +180,7 @@ export class VaccinePage {
       }
     );
   }
+
   async resheduleAlert(message, data) {
     const alert = await this.alertController.create({
       header: 'Alert',
@@ -233,6 +254,7 @@ export class VaccinePage {
     });
     await alert.present();
   }
+
   async resheduleBulkAlert(message, data) {
     const alert = await this.alertController.create({
       header: 'Alert',
@@ -306,156 +328,258 @@ export class VaccinePage {
 
     await alert.present();
   }
+
   checkforpnemococal(name, DOB, Id) {
     if ((name == 'Pneumococcal # 3') || (name == 'Pneumococcal # 4')) {
       console.log(name);
-//       const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
- let firstDate =  new Date(DOB);
- const secondDate = new Date(this.Pneum2Date);
+      //       const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+      let firstDate = new Date(DOB);
+      const secondDate = new Date(this.Pneum2Date);
 
-// const diffDays = Math.round(Math.abs((firstDate - secondDate) / oneDay));
-var diff = Math.abs(firstDate.getTime() - secondDate.getTime());
-var diffDays = Math.ceil(diff / (1000 * 3600 * 24)); 
-console.log(diffDays);console.log(firstDate);console.log(secondDate);
+      // const diffDays = Math.round(Math.abs((firstDate - secondDate) / oneDay));
+      var diff = Math.abs(firstDate.getTime() - secondDate.getTime());
+      var diffDays = Math.ceil(diff / (1000 * 3600 * 24));
+      console.log(diffDays); console.log(firstDate); console.log(secondDate);
 
     }
     else {
       this.router.navigate(["/members/child/vaccine/" + this.childId + "/fill/" + Id]);
     }
-   // let Date = moment(DOB, 'DD-MM-YYYY');
+    // let Date = moment(DOB, 'DD-MM-YYYY');
     console.log(DOB);
     console.log(this.Pneum2Date);
   }
 
-
-
   printdata() {
-    if(this.platform.is('desktop') || this.platform.is('mobileweb')) {
+    if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
       const url = `${this.API_VACCINE}child/${this.childId}/Download-Schedule-PDF`;
       window.open(url);
     }
     else
-    this.download(this.childId);
+      this.download(this.childId);
   }
-  
-  download(id){
+
+  download(id) {
     var request: DownloadRequest = {
       uri: `${this.API_VACCINE}child/${id}/Download-Schedule-PDF`,
-      title: this.ChildName+'-Schedule',
+      title: this.ChildName + '-Schedule',
       description: '',
       mimeType: '',
       visibleInDownloadsUi: true,
       notificationVisibility: NotificationVisibility.VisibleNotifyCompleted,
-     // notificationVisibility: 0,
+      // notificationVisibility: 0,
       destinationInExternalFilesDir: {
-          dirType: 'Downloads',
-          subPath: 'ChildSchedule.pdf'
+        dirType: 'Downloads',
+        subPath: 'ChildSchedule.pdf'
       }
-  };
-  this.downloader.download(request)
-  .then((location: string) => console.log('File downloaded at:'+location))
-  .catch((error: any) => console.error(error));
-  
+    };
+    this.downloader.download(request)
+      .then((location: string) => console.log('File downloaded at:' + location))
+      .catch((error: any) => console.error(error));
+
   }
 
   async UnfillVaccine(id) {
-    console.log(5);
     const loading = await this.loadingController.create({
-      message: 'Loading'
+      message: 'Unfilling vaccine'
     });
+
     await loading.present();
     let data = {
       Id: id,
       IsDone: false,
     }
-    await this.vaccineService.UnfillChildVaccine(data).subscribe(
-      res => {
-        if (res.IsSuccess) {
-          this.toastService.create('Succfully Update');
+
+    await this.vaccineService.UnfillChildVaccine(data)
+      .subscribe(
+        res => {
+          if (res.IsSuccess) {
+            if (res.ResponseData.Dose.Vaccine.isInfinite) {
+              var cId = res.ResponseData.ChildId;
+              var dId = res.ResponseData.Dose.Id;
+              var dSchedule = res.ResponseData.Date;
+              this.deleteFutureSchedules(cId, dId, dSchedule);
+              loading.dismiss();
+            }
+            else {
+              this.getVaccination();
+              loading.dismiss();
+            }
+
+          }
+          else {
+            loading.dismiss();
+            this.toastService.create(res.Message, 'danger');
+          }
+        },
+        err => {
+          this.toastService.create('Error: server failure');
           loading.dismiss();
-          this.getVaccination();
         }
-        else {
-          loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
-        }
-      },
-      err => {
-        loading.dismiss();
-        this.toastService.create(err, 'danger');
-      }
-    );
+      );
   }
 
-  async SkipVaccine(id) {
+  async deleteFutureSchedules(ChildId: string, DoseId: string, date: String) {
     const loading = await this.loadingController.create({
-      message: 'Loading'
+      message: 'Deleting Doses'
+    });
+
+    await loading.present();
+    await this.vaccineService.DeleteVaccineByChildidDoseidDate(ChildId, DoseId, date)
+      .subscribe(
+        (result) => {
+          let data: any = result;
+          if (data.IsSuccess) {
+            this.toastService.create('Success: Deleted future doses', 'success', false, 3000);
+            this.getVaccination();
+            loading.dismiss();
+          }
+          else {
+            this.toastService.create('Error: Try again\nFailed to delete future doses', 'danger', false, 7000);
+            loading.dismiss();
+          }
+
+        }, err => {
+          this.toastService.create('Error: Try Again\nServer failure', 'danger', false, 3000);
+          loading.dismiss();
+        }
+      );
+
+  }
+
+  async SkipVaccine(id, doseName) {
+    const loading = await this.loadingController.create({
+      message: 'Skipping ' + doseName
     });
     await loading.present();
     let data = {
       Id: id,
       IsSkip: true,
     }
+ 
     await this.vaccineService.UnfillChildVaccine(data).subscribe(
       res => {
         if (res.IsSuccess) {
-          this.toastService.create('Successfully Update');
-          loading.dismiss();
-          this.getVaccination();
-
+          this.toastService.create('Success: Skipped ' + res.ResponseData.Dose.Name, 'success', false, 3000);
+          if (res.ResponseData.Dose.Vaccine.isInfinite) {
+            let scheduleDate: any = this.addDays(res.ResponseData.Date, res.ResponseData.Dose.MinGap);
+            this.addNewVaccineInScheduleTable(scheduleDate, res.ResponseData);
+            loading.dismiss();
+          } else {
+            this.getVaccination();
+            loading.dismiss();
+          }
         }
         else {
+          this.toastService.create('Error: Try again\nFailed to fill ' + res.ResponseData.Dose.Name, 'danger', false, 3000);
           loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
         }
       },
       err => {
+        this.toastService.create('Error: Try Again\nServer failure', 'danger', false, 3000);
         loading.dismiss();
-        this.toastService.create(err, 'danger');
       }
     );
   }
 
-  async UnSkipVaccine(id) {
+  async addNewVaccineInScheduleTable(scheduleDate, unfillData) {
     const loading = await this.loadingController.create({
-      message: 'Loading'
+      message: 'Updating Schedule'
     });
+
+    await loading.present();
+
+    this.fgAddData.value.DoctorId = unfillData.DoctorId;
+    this.fgAddData.value.IsDone = false;
+    this.fgAddData.value.BrandId = unfillData.BrandId;
+    this.fgAddData.value.IsDisease = unfillData.IsDisease;
+    this.fgAddData.value.DiseaseYear = unfillData.DiseaseYear;
+    this.fgAddData.value.ChildId = unfillData.ChildId;
+    this.fgAddData.value.DoseId = unfillData.DoseId;
+    this.fgAddData.value.Date = scheduleDate;
+
+    await this.vaccineService.AddChildSchedule(this.fgAddData.value).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          this.toastService.create('Success: Created new dose of ' + unfillData.Dose.Name, 'success', false, 3000);
+          console.log("Added vaccine");
+          console.log(res.ResponseData);
+          this.getVaccination();
+          loading.dismiss();
+        }
+        else {
+          this.toastService.create("Error: Try Again\nFailed to create new dose of " + unfillData.Dose.Name + "\nRequired Action: Unskip and Skip Again", 'danger', false, 7000);
+          loading.dismiss();
+        }
+      },
+      err => {
+        this.toastService.create('Error: Try Again\nServer failure', 'danger', false, 3000);
+        loading.dismiss();
+      }
+    );
+
+
+  }
+
+
+  async UnSkipVaccine(id, doseName) {
+    const loading = await this.loadingController.create({
+      message: 'Unskipping ' + doseName
+    });
+
     await loading.present();
     let data = {
       Id: id,
       IsSkip: false,
     }
+
+
     await this.vaccineService.UnfillChildVaccine(data).subscribe(
       res => {
         if (res.IsSuccess) {
-          this.toastService.create('Succfully Update');
-          loading.dismiss();
-          this.getVaccination();
-
+          console.log(res.ResponseData)
+          this.toastService.create('Success: Unskipped ' + doseName, 'success', false, 3000);
+          if (res.ResponseData.Dose.Vaccine.isInfinite) {
+            var cId = res.ResponseData.ChildId;
+            var dId = res.ResponseData.Dose.Id;
+            var dSchedule = res.ResponseData.Date;
+            this.deleteFutureSchedules(cId, dId, dSchedule);
+            loading.dismiss();
+          }
+          else {
+            this.getVaccination();
+            loading.dismiss();
+          }
         }
         else {
+          this.toastService.create('Error: Try again\nFailed to Unskip ' + doseName, 'danger', false, 7000);
           loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
         }
       },
       err => {
+        this.toastService.create('Error: Try Again\nServer failure', 'danger', false, 3000);
         loading.dismiss();
-        this.toastService.create(err, 'danger');
       }
     );
   }
-  // getprint(id)
-  // {
-  //   this.vaccineService.getscheduleprint(id).subscribe(
-  //     res => {
-  //       console.log("success");
-  //     },
-  //     err => {
-  //       this.toastService.create(err, "danger");
-  //     }
-  //   );
-  // }
 
+
+  addDays(date, days) {
+    console.log("days");
+    console.log(days);
+    console.log("date");
+    console.log(date);
+
+    let momentVariable = moment(date, 'DD-MM-YYYY');
+    var stringvalue = momentVariable.format('YYYY-MM-DD');
+    var myDate = new Date(stringvalue);
+    myDate.setDate(myDate.getDate() + days);
+
+    console.log("schedule date")
+    console.log(myDate)
+
+    return myDate;
+  }
 
 }
 
