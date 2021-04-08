@@ -13,7 +13,7 @@ export class ScheduleService extends BaseService {
 
   constructor(protected http: HttpClient) {
     super(http);
-  }
+  } 
 
   getSchedule(Id: String): Observable<any> {
     const url = `${this.API_SCHEDULE}doctorschedule/${Id}`;

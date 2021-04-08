@@ -31,7 +31,7 @@ export class VaccineService extends BaseService {
     );
   }
 
-  updateVaccinationDate(data , max , min , gap): Observable<any> {
+  updateVaccinationDate(data, max, min, gap): Observable<any> {
     //const url = `${this.API_VACCINE}schedule/Reschedule?ignoreMaxAgeRule=${max}false&ignoreMinAgeFromDOB=false&ignoreMinGapFromPreviousDose=false`;
     const url = `${this.API_VACCINE}schedule/Reschedule?ignoreMaxAgeRule=${max}&ignoreMinAgeFromDOB=${min}&ignoreMinGapFromPreviousDose=${gap}`;
     return this.http.put(url, data, this.httpOptions)
@@ -55,13 +55,32 @@ export class VaccineService extends BaseService {
         catchError(this.handleError)
       );
   }
+
+  AddChildSchedule(data): Observable<any> {
+    const url = `${this.API_VACCINE}schedule/add-schedule`;
+    return this.http.post(url, data, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   UnfillChildVaccine(data): Observable<any> {
     const url = `${this.API_VACCINE}schedule/child-schedule`;
     return this.http.put(url, data, this.httpOptions)
       .pipe(
         catchError(this.handleError)
       );
+  } 
+
+  DeleteVaccineByChildidDoseidDate(Childid: string, Doseid: string, date: String) {
+    const url = `${this.API_VACCINE}schedule/${Childid}/${Doseid}/${date}`;
+    return this.http.delete(url,this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
   }
+
+
   // getscheduleprint(id)
   // {
   //   const url = `${this.API_VACCINE}child/${id}/Download-Schedule-PDF`;

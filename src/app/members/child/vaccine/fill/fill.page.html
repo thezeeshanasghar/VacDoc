@@ -22,23 +22,26 @@
       <ion-label color="primary" position="floating">OFC</ion-label>
       <ion-input type="number" placeholder="OFC" formControlName="Circle"></ion-input>
     </ion-item>
+    
     <!-- <ion-item>
       <ion-label color="primary" position="floating">Disease</ion-label>
       <ion-input type="text" placeholder="Disease" ></ion-input>
     </ion-item> -->
     <!--  -->
-            <ion-item *ngIf = "vaccineName === 'Hepatitis A' || vaccineName === 'Chicken Pox'" >
-              <ion-label color="primary">Disease</ion-label>
-              <ion-checkbox formControlName="IsDisease" ></ion-checkbox>
-            </ion-item>
 
-            <ion-item *ngIf = "fg.value.IsDisease" >
-              <ion-label color="primary">Disease Year</ion-label>
-              <ion-datetime picker-format="YYYY" displayFormat="YYYY" value="{{Date}}" formControlName="DiseaseYear" min ="{{birthYear}}" max = "{{todaydate}}" ></ion-datetime>    
-            </ion-item>
+    <ion-item *ngIf="vaccineName === 'Hepatitis A' || vaccineName === 'Chicken Pox'">
+      <ion-label color="primary">Disease</ion-label>
+      <ion-checkbox formControlName="IsDisease"></ion-checkbox>
+    </ion-item>
 
-    <ion-item *ngIf = "!fg.value.IsDisease">
-      <ion-label color="primary" >Brands</ion-label>
+    <ion-item *ngIf="fg.value.IsDisease">
+      <ion-label color="primary">Disease Year</ion-label>
+      <ion-datetime picker-format="YYYY" displayFormat="YYYY" value="{{Date}}" formControlName="DiseaseYear"
+        min="{{birthYear}}" max="{{todaydate}}"></ion-datetime>
+    </ion-item>
+
+    <ion-item *ngIf="!fg.value.IsDisease">
+      <ion-label color="primary">Brands</ion-label>
       <ion-select formControlName="BrandId">
         <ion-select-option *ngFor="let user of brandName" [value]="user.Id">{{user.Name}}</ion-select-option>
       </ion-select>
@@ -46,18 +49,18 @@
 
     <ion-item>
       <ion-label>Schedule Date</ion-label>
-      <ion-datetime disabled  displayFormat="DD-MM-YYYY" value="{{Date}}" ></ion-datetime>    
+      <ion-datetime disabled displayFormat="DD-MM-YYYY" value="{{Date}}"></ion-datetime>
     </ion-item>
 
-    <ion-item *ngIf = "!fg.value.IsDisease" (click)="picker.open()"> 
+    <ion-item *ngIf="!fg.value.IsDisease" (click)="picker.open()">
       <!-- <ion-datetime  picker-format="DD-MM-YYYY" value="{{Date}}" formControlName="GivenDate" max = "{{todaydate}}"></ion-datetime> -->
-                <!-- <mat-form-field appearance="fill"> -->
-                  <!-- <mat-label>Choose a date</mat-label> -->
-                  <ion-label color="primary" >Given Date</ion-label>
-                   <input formControlName="GivenDate"  matInput [matDatepicker]="picker" value="{{Date}}" max = "{{todaydate}}">
-                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                  <mat-datepicker #picker disabled="false"></mat-datepicker>
-                 <!-- </mat-form-field> -->
+      <!-- <mat-form-field appearance="fill"> -->
+      <!-- <mat-label>Choose a date</mat-label> -->
+      <ion-label color="primary">Given Date</ion-label>
+      <input formControlName="GivenDate" matInput [matDatepicker]="picker" value="{{Date}}" max="{{todaydate}}">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker disabled="false"></mat-datepicker>
+      <!-- </mat-form-field> -->
     </ion-item>
 
     <ion-button (click)="fillVaccine()">Submit</ion-button>

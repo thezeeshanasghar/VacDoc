@@ -5,25 +5,23 @@
     </ion-buttons>
     <ion-title>Vaccine Schedule</ion-title>
   </ion-toolbar>
-  <ion-toolbar color="primary" >
+  <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
-      <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/clinic" name="medkit" size="large" > </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/child/add" name="person-add" size="large"> </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/alert" name="alert" size="large"> </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/clinic" name="medkit" size="large"> </ion-icon>
       <ion-menu-button style="margin-left: 10%"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding" *ngIf = "doses">
-
+<ion-content class="ion-padding" *ngIf="doses">
   <form [formGroup]="fg">
-
     <ion-item *ngFor="let control of fg.controls | keyvalue : 0; let i = index ">
       <ion-checkbox [(ngModel)]="doses[i].IsActive" [ngModelOptions]="{standalone: true}" slot="start"></ion-checkbox>
       <ion-label>{{control.key}}</ion-label>
       <ion-select [formControlName]="control.key" value="{{control.value.value}}">
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 0"  value="0">At Birth</ion-select-option>
+        <ion-select-option [disabled]="doses[i].Dose.MinAge > 0" value="0">At Birth</ion-select-option>
         <ion-select-option [disabled]="doses[i].Dose.MinAge > 7" value="7">1 Week</ion-select-option>
         <ion-select-option [disabled]="doses[i].Dose.MinAge > 14" value="14">2 Weeks</ion-select-option>
         <ion-select-option [disabled]="doses[i].Dose.MinAge > 21" value="21">3 Weeks</ion-select-option>
@@ -115,7 +113,7 @@
         <ion-select-option [disabled]="doses[i].Dose.MinAge > 5110" value="5110">14 Years</ion-select-option>
         <ion-select-option [disabled]="doses[i].Dose.MinAge > 5475" value="5475">15 Years</ion-select-option>
         <ion-select-option [disabled]="doses[i].Dose.MinAge > 5505" value="5505">15 Years 1 months</ion-select-option>
-      <ion-select-option [disabled]="doses[i].Dose.MinAge > 5655" value="5655">15 Years 6 months</ion-select-option>
+        <ion-select-option [disabled]="doses[i].Dose.MinAge > 5655" value="5655">15 Years 6 months</ion-select-option>
       </ion-select>
     </ion-item>
 
@@ -123,8 +121,8 @@
 
   </form>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button routerLink = "edit" >
-      <ion-icon  name="add"></ion-icon>
+    <ion-fab-button routerLink="edit">
+      <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 </ion-content>

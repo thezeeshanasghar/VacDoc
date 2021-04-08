@@ -24,7 +24,7 @@
     "@angular/router": "~8.2.14",
     "@capacitor/android": "^2.0.1",
     "@capacitor/core": "2.0.1",
-    "@ionic-native/android-permissions": "^5.26.0",
+    "@ionic-native/android-permissions": "^5.31.1",
     "@ionic-native/base64": "^5.28.0",
     "@ionic-native/call-number": "^5.26.0",
     "@ionic-native/core": "^5.0.7",
