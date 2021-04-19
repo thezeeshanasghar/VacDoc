@@ -42,6 +42,9 @@ export class VaccineAlertPage implements OnInit {
 
   }
 
+
+
+
   async ngOnInit() {
     await this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
@@ -64,6 +67,7 @@ export class VaccineAlertPage implements OnInit {
 
   // Get childs get from server
   async getChlid(numOfDays: number) {
+    console.log(numOfDays)
     this.numOfDays = numOfDays;
     const loading = await this.loadingController.create({
       message: "Loading"
@@ -72,7 +76,12 @@ export class VaccineAlertPage implements OnInit {
     await this.alertService.getChild(this.numOfDays, this.clinicId).subscribe(
       res => {
         if (res.IsSuccess) {
+          this.Childs = "";
           this.Childs = res.ResponseData;
+
+          console.log("Childs Saved in this.Childs");
+          console.log(res.ResponseData);
+
           //console.log(this.Childs.map(x=>x.Child.Id));
 
           loading.dismiss();
@@ -140,6 +149,7 @@ export class VaccineAlertPage implements OnInit {
         .catch((error: any) => console.error(error));
     }
   }
+
   async sendSMS(child: any) {
     const loading = await this.loadingController.create({
       message: "Loading"
@@ -147,20 +157,26 @@ export class VaccineAlertPage implements OnInit {
     await loading.present();
 
     for (let i = 0; i < child.length; i++) {
+      console.log("");
+      console.log("message No = " + (i + 1));
       let message = this.generateSMS(child[i]);
-      await this.sendAlertMsg(child[i].ChildId, child[i].Child.User.MobileNumber, message);
+
+      // await this.sendAlertMsg(child[i].ChildId, child[i].Child.User.MobileNumber, message);
     }
     loading.dismiss();
   }
+
   generateSMS(schedule) {
     var sms1 = 'Reminder: Vaccination for ';
-
     sms1 += schedule.Child.Name + ' is due on ' + schedule.Date;
-
     sms1 += ' (' + schedule.Dose.Name + ' )';
+
+    console.log("message => Id = " + schedule.Id);
+    console.log(sms1);
 
     return sms1;
   }
+
   // send Alert Msg to childs
   async sendAlertMsg(id, childMobile, message) {
     console.log(message);
@@ -180,7 +196,7 @@ export class VaccineAlertPage implements OnInit {
           },
           err => {
             //loading.dismiss();
-            this.toastService.create(err, "danger");
+            this.toastService.create('Error: Server failure', 'danger', false, 3000);
           }
         );
     } else {
@@ -274,5 +290,44 @@ export class VaccineAlertPage implements OnInit {
   // }
 
 
+  async sendMsgsThroughList() {
+    let listMessages: any;
+    const loading = await this.loadingController.create({
+      message: "Loading Messages"
+    });
+    await loading.present();
+    await this.alertService.sendMsgsThroughDictionary(0, this.clinicId).subscribe(
+      (response) => {
+        if (response.IsSuccess) {
+          this.toastService.create('Success: Generated messages', 'success', false, 3000);
+          listMessages = response.ResponseData;
+          this.sendMessagesToChildren(listMessages);
+          loading.dismiss();
+        }
+        else {
+          this.toastService.create('Error: Failed to generate messages\nTry Again', 'danger', false, 6000);
+          loading.dismiss();
+        }
+      },
+      (err) => {
+        this.toastService.create('Error: Server failure', 'danger', false, 3000);
+        loading.dismiss();
+      }
+    );
+  }
+
+  async sendMessagesToChildren(listMessages: any) {
+    const loading = await this.loadingController.create({
+      message: "Sending Messages"
+    });
+    await loading.present();
+
+    await listMessages.forEach(element => {
+      this.sendAlertMsg(element.ChildId, element.MobileNumber, element.SMS);
+    });
+
+    loading.dismiss();
+
+  }
 
 }
