@@ -3,13 +3,13 @@ import { Route, ActivatedRoute, Router } from "@angular/router";
 import { LoadingController } from "@ionic/angular";
 import { BulkService } from "src/app/services/bulk.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { FormBuilder, FormGroup , FormControl , Validators} from "@angular/forms";
+import { FormBuilder, FormGroup, FormControl, Validators } from "@angular/forms";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import * as moment from "moment";
 import { AlertController } from '@ionic/angular';
 import { elementAt } from 'rxjs/operators';
-import { Downloader , DownloadRequest , NotificationVisibility } from '@ionic-native/downloader/ngx';
+import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 import { Platform } from '@ionic/angular';
 
 @Component({
@@ -26,7 +26,7 @@ export class BulkInvoicePage implements OnInit {
   fg: FormGroup;
   consultationfee: number = 0;
   private readonly API_VACCINE = `${environment.BASE_URL}`
-  BrandIds = [] ;
+  BrandIds = [];
   constructor(
     private loadingController: LoadingController,
     private activatedRoute: ActivatedRoute,
@@ -38,7 +38,7 @@ export class BulkInvoicePage implements OnInit {
     public alertController: AlertController,
     private downloader: Downloader,
     public platform: Platform
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.storage.get(environment.DOCTOR_Id).then(val => {
@@ -54,7 +54,7 @@ export class BulkInvoicePage implements OnInit {
     });
     this.storage.get(environment.ON_CLINIC).then(val => {
       this.fg.controls['ConsultationFee'].setValue(val.ConsultationFee);
-    // this.fg.value.ConsultationFee = val.ConsultationFee;
+      // this.fg.value.ConsultationFee = val.ConsultationFee;
     });
   }
 
@@ -67,8 +67,8 @@ export class BulkInvoicePage implements OnInit {
     await this.bulkService.getBulk(data).subscribe(
       res => {
         if (res.IsSuccess) {
-          this.bulkData = res.ResponseData.filter(x=>x.IsDone == true);
-          console.log(this.bulkData); 
+          this.bulkData = res.ResponseData.filter(x => x.IsDone == true);
+          // console.log(this.bulkData);
         } else {
           this.toastService.create(res.Message, "danger");
         }
@@ -80,7 +80,7 @@ export class BulkInvoicePage implements OnInit {
         this.toastService.create(err, "danger");
       }
     );
-    
+
   }
 
   onSubmit() {
@@ -92,7 +92,7 @@ export class BulkInvoicePage implements OnInit {
       }
       data.push(obj);
     });
-     
+
     this.fillVaccine(data);
   }
 
@@ -105,7 +105,7 @@ export class BulkInvoicePage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.toastService.create("Successfully Updated");
-          this.router.navigate(["/members/child/vaccine/"+this.childId]);
+          this.router.navigate(["/members/child/vaccine/" + this.childId]);
           loading.dismiss();
         } else {
           loading.dismiss();
@@ -119,14 +119,14 @@ export class BulkInvoicePage implements OnInit {
     );
   }
 
-  async saveanddownload(){
-    if (this.fg.value.IsConsultationFee){
+  async saveanddownload() {
+    if (this.fg.value.IsConsultationFee) {
       this.consultationfee = this.fg.value.ConsultationFee;
     }
-    else 
-  this.consultationfee = 0;
-   
-  let data = [];
+    else
+      this.consultationfee = 0;
+
+    let data = [];
     this.bulkData.forEach(schedule => {
       let obj = {
         Id: schedule.Id,
@@ -143,7 +143,7 @@ export class BulkInvoicePage implements OnInit {
       res => {
         if (res.IsSuccess) {
           loading.dismiss();
-          this.download(this.childId , this.currentDate , this.consultationfee);
+          this.download(this.childId, this.currentDate, this.consultationfee);
         } else {
           loading.dismiss();
           this.toastService.create(res.Message, "danger");
@@ -156,32 +156,32 @@ export class BulkInvoicePage implements OnInit {
     );
   }
 
-  download(id , date , fee){
-  
-    if(this.platform.is('desktop') || this.platform.is('mobileweb')) {
+  download(id, date, fee) {
+
+    if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
       const url = `${this.API_VACCINE}child/${id}/${date}/${fee}/Download-Invoice-PDF`;
       window.open(url);
     }
-else {
+    else {
 
-    var request: DownloadRequest = {
-      uri: `${this.API_VACCINE}child/${id}/${date}/${fee}/Download-Invoice-PDF`,
-      title: 'Invoice',
-      description: '',
-      mimeType: '',
-      visibleInDownloadsUi: true,
-      notificationVisibility: NotificationVisibility.VisibleNotifyCompleted,
-     // notificationVisibility: 0,
-      destinationInExternalFilesDir: {
+      var request: DownloadRequest = {
+        uri: `${this.API_VACCINE}child/${id}/${date}/${fee}/Download-Invoice-PDF`,
+        title: 'Invoice',
+        description: '',
+        mimeType: '',
+        visibleInDownloadsUi: true,
+        notificationVisibility: NotificationVisibility.VisibleNotifyCompleted,
+        // notificationVisibility: 0,
+        destinationInExternalFilesDir: {
           dirType: 'Downloads',
           subPath: 'Invoice.pdf'
-      }
-  };
-  console.log(request.uri);
-  this.downloader.download(request)
-  .then((location: string) => console.log('File downloaded at:'+location))
-  .catch((error: any) => console.error(error));
-}
-  
+        }
+      };
+      // console.log(request.uri);
+      this.downloader.download(request)
+        .then((location: string) => console.log('File downloaded at:' + location))
+        .catch((error: any) => console.error(error));
+    }
+
   }
 }
