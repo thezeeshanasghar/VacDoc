@@ -21,6 +21,7 @@ export class BulkInvoicePage implements OnInit {
   childId: any;
   doctorId: any;
   currentDate: any;
+  InvoiceDate: any;
   currentDate1: any;
   bulkData: any;
   fg: FormGroup;
@@ -47,6 +48,7 @@ export class BulkInvoicePage implements OnInit {
     this.childId = this.activatedRoute.snapshot.paramMap.get("id");
     this.currentDate = this.activatedRoute.snapshot.paramMap.get("childId");
     this.currentDate1 = new Date(this.currentDate);
+     
     this.getBulk();
     this.fg = this.formBuilder.group({
       IsConsultationFee: false,
@@ -68,6 +70,7 @@ export class BulkInvoicePage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.bulkData = res.ResponseData.filter(x => x.IsDone == true);
+          this.InvoiceDate = moment(this.bulkData[0].InvoiceDate, "DD-MM-YYYY").format("YYYY-MM-DD");
           // console.log(this.bulkData);
         } else {
           this.toastService.create(res.Message, "danger");
@@ -143,7 +146,7 @@ export class BulkInvoicePage implements OnInit {
       res => {
         if (res.IsSuccess) {
           loading.dismiss();
-          this.download(this.childId, this.currentDate, this.consultationfee);
+          this.download(this.childId, this.currentDate, this.InvoiceDate, this.consultationfee);
         } else {
           loading.dismiss();
           this.toastService.create(res.Message, "danger");
@@ -156,16 +159,16 @@ export class BulkInvoicePage implements OnInit {
     );
   }
 
-  download(id, date, fee) {
+  download(id,scheduledate, invoicedate, fee) {
 
     if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
-      const url = `${this.API_VACCINE}child/${id}/${date}/${fee}/Download-Invoice-PDF`;
+      const url = `${this.API_VACCINE}child/${id}/${scheduledate}/${invoicedate}/${fee}/Download-Invoice-PDF`;
       window.open(url);
     }
     else {
 
       var request: DownloadRequest = {
-        uri: `${this.API_VACCINE}child/${id}/${date}/${fee}/Download-Invoice-PDF`,
+        uri: `${this.API_VACCINE}child/${id}/${scheduledate}/${invoicedate}/${fee}/Download-Invoice-PDF`,
         title: 'Invoice',
         description: '',
         mimeType: '',
