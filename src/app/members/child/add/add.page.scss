@@ -28,3 +28,8 @@ ion-list-header{
 .example-full-width {
   width: 100%;
 }
+
+
+.mat-input-element:disabled{
+  color: rgb(0 0 0);
+}

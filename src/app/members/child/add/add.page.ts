@@ -23,6 +23,7 @@ import { AlertController } from '@ionic/angular';
 import { env } from 'process';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
+import { NULL_EXPR, THIS_EXPR } from "@angular/compiler/src/output/output_ast";
 
 @Component({
   selector: "app-add",
@@ -45,6 +46,8 @@ export class AddPage implements OnInit {
   Messages:any = [];
   cities: string[];
   filteredOptions: Observable<string[]>;
+  dateentered = false;   // for disabled form control on DOB
+  DOB:any;
   //cities: any;
 
   constructor(
@@ -68,6 +71,8 @@ export class AddPage implements OnInit {
   {
     // let obj = {'toNumber':'+923143041544' , 'message': 'this is test message' , 'created': Date.now(), 'status':false};
     // this.Messages.push(obj); this.Messages.push(obj); this.Messages.push(obj);
+    this.DOB = '';
+    this.dateentered = false;
     this.storage.set(environment.MESSAGES , this.Messages);
     this.todaydate = new Date();
     this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format("YYYY-MM-DD");
@@ -85,7 +90,8 @@ export class AddPage implements OnInit {
           )
         ])
       ),
-      DOB: new FormControl('', Validators.required),
+      //DOB: new FormControl('',Validators.required),
+      DOB: '',
       CountryCode: ["92"],
       MobileNumber: new FormControl(
         "",
@@ -130,17 +136,16 @@ export class AddPage implements OnInit {
    
   }
 
-  private filter(value: string) {
+  public filter(value: string) {
     this.cities =  this.childService.cities.filter(option => (option.toLowerCase().includes(value) || option.includes(value)));
   }
 
 
   async moveNextStep() {
-    this.fg1.value.DOB = await moment(this.fg1.value.DOB, "YYYY-MM-DD").format("DD-MM-YYYY");
-    // this.formcontroll = true;
-    //this.fg1.value.Gender = this.gender;
+    console.log(this.DOB);
+    this.fg1.value.DOB = await moment(this.DOB, "YYYY-MM-DD").format("DD-MM-YYYY");
+     //console.log(this.fg1.value);
     await this.PasswordGenerator();
-    //console.log(this.fg1.value);
     await this.addNewChild(this.fg1.value);
   }
   updateGender(g) {
@@ -251,6 +256,8 @@ export class AddPage implements OnInit {
   }
   
   async checkEpi() {
+    console.log("called");
+    this.dateentered = true;
     let days = await this.calculateDiff(this.fg1.value.DOB);
     console.log(days);
     if (days > 272)

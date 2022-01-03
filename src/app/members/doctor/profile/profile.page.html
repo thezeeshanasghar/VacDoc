@@ -52,6 +52,11 @@
       <ion-input type="text" formControlName="DisplayName" required></ion-input>
     </ion-item>
 
+    <ion-item>
+      <ion-label color="primary" position="floating">Letter Pad</ion-label>
+      <ion-textarea type="text" formControlName="AdditionalInfo" required></ion-textarea>
+    </ion-item>
+
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.DisplayName">
         <div class="error-message"
@@ -113,7 +118,7 @@
       <ion-input type="text" formControlName="PMDC" required></ion-input>
     </ion-item>
 
-    <ion-item>
+    <!-- <ion-item>
       <div>
         <label for="file">Profile Image</label>
         <input type="file" (change)="SelectProfileImage($event.target.files)">
@@ -133,7 +138,7 @@
 
     <ion-item>
       <ion-img class="preview-image" [src]="signatureImagePath" alt="No image"></ion-img>
-    </ion-item>
+    </ion-item> -->
 
     <ion-item>
       <ion-button (click)="updateProfile()">Update</ion-button>

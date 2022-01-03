@@ -223,6 +223,11 @@
 
     </ion-item>
 
+    <ion-item>
+      <ion-label color="primary" position="floating">Password</ion-label>
+      <ion-input type="text" formControlName="Password" required></ion-input>
+    </ion-item>
+
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.mobileNumber">
         <div class="error-message"

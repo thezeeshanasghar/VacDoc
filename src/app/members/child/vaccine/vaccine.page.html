@@ -5,14 +5,17 @@
     </ion-buttons>
     <ion-title>Vaccinations</ion-title>
   </ion-toolbar>
+  <ion-toolbar color="light">
+    
+    <ion-button slot="start" (click)="printdata()">Print</ion-button>
+    <span class="ion-padding" slot="end" *ngIf="ChildName">{{ChildName}}</span>
+   
+
+  </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <ion-button (click)="printdata()">Print</ion-button>
-  <span *ngIf="ChildName">{{ChildName}}</span>
-
+<ion-content class="ion-padding">      
   <div *ngFor="let item of dataGrouping | keyvalue; let i=index">
-
     <ion-grid>
       <ion-row>
         <ion-col style="text-align: center">
@@ -84,7 +87,7 @@
             <ion-button color="danger" *ngIf="(v.IsDone==false && v.IsSkip==true && v.Due2EPI==false)"
               (click)="UnSkipVaccine(v.Id, v.Dose.Name)">UnSkip</ion-button>
           </ion-item>
-          <p style="text-align: center;" *ngIf="v.BrandId">Brand: {{v.Brand.Name}}</p>
+          <p style="text-align: center;" *ngIf="v.BrandId && v.IsDone">Brand: {{v.Brand.Name}}</p>
         </div>
       </ion-card-content>
     </ion-card>

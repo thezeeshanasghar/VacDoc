@@ -100,6 +100,7 @@ export class VaccinePage {
             //original code
             this.vaccine = res.ResponseData;
             this.ChildName = this.vaccine[0].Child.Name;
+            this.storage.set('ChildName', this.ChildName);
             this.vaccine.forEach(doc => {
               doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
               if (doc.GivenDate)
@@ -370,7 +371,7 @@ export class VaccinePage {
       // notificationVisibility: 0,
       destinationInExternalFilesDir: {
         dirType: 'Downloads',
-        subPath: 'ChildSchedule.pdf'
+        subPath: this.ChildName+'-Schedule.pdf'
       }
     };
     this.downloader.download(request)

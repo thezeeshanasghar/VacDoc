@@ -25,6 +25,7 @@ export class BulkPage implements OnInit {
   fg: FormGroup;
   todaydate: any;
   BrandIds = [];
+  birthYear:any;
   constructor(
     private loadingController: LoadingController,
     private activatedRoute: ActivatedRoute,
@@ -40,6 +41,9 @@ export class BulkPage implements OnInit {
   ngOnInit() {
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
+    });
+    this.storage.get('BirthYear').then((val) => {
+      this.birthYear = moment(val, "DD-MM-YYYY").format("YYYY-MM-DD");
     });
     this.childId = this.activatedRoute.snapshot.paramMap.get("id");
 

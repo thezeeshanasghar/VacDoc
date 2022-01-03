@@ -42,7 +42,7 @@
 
     <ion-item (click)="picker.open()">
       <ion-label color="primary">Given Date</ion-label>
-      <input formControlName="GivenDate" matInput [matDatepicker]="picker" value="{{currentDate1}}" max="{{todaydate}}">
+      <input formControlName="GivenDate" matInput [matDatepicker]="picker" value="{{currentDate1}}" min="{{birthYear}}" max="{{todaydate}}">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker disabled="false"></mat-datepicker>
     </ion-item>

@@ -1,6 +1,6 @@
  {
-  "appId": "vacdoc.bitforceapps",
-  "appName": "vacdoc",
+  "appId": "pk.vaccine.doctor",
+  "appName": "vaccine doctor",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "www",

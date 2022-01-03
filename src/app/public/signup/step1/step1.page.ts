@@ -83,7 +83,7 @@ export class Step1Page implements OnInit {
   }
 
   nextpage() {
-    this.fg.value.Password = this.PasswordGenerator();
+    //this.fg.value.Password = this.PasswordGenerator();
     this.signupService.personalData = this.fg.value;
     console.log(this.fg.value);
 

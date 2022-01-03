@@ -9,6 +9,7 @@ import {
   FormControl,
   Validators
 } from "@angular/forms";
+import { HttpClient, HttpEventType } from '@angular/common/http';
 import { environment } from "src/environments/environment";
 import { Storage } from "@ionic/storage";
 import * as moment from "moment";
@@ -17,6 +18,7 @@ import { File , FileEntry } from '@ionic-native/file/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import {FileTransfer , FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { Base64 } from '@ionic-native/base64/ngx';
+import { Platform } from '@ionic/angular';
 
 
 @Component({
@@ -46,7 +48,9 @@ export class EditPage implements OnInit {
     private file: File,
     private filePath: FilePath,
     private transfer: FileTransfer,
-    private base64: Base64
+    private base64: Base64,
+    public platform: Platform,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -1319,6 +1323,18 @@ export class EditPage implements OnInit {
       });
   
   }
+
+  upoadfromweb = files =>{
+    const fileToUpload = files[0];
+    const formData = new FormData();
+    formData.append('file', fileToUpload , fileToUpload.name);
+    this.http.post(environment.BASE_URL + 'upload', formData, { reportProgress: true, observe: 'events' }).subscribe(event => {
+       if (event.type === HttpEventType.Response) {
+        this.fg1.value.MonogramImage = event.body['dbPath'];
+      }
+    });
+}
+
   validation_messages = {
     Name: [{ type: "required", message: "Name is required." }],
     phoneNumber: [

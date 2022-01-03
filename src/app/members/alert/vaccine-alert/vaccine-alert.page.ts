@@ -77,7 +77,7 @@ export class VaccineAlertPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.Childs = "";
-          this.Childs = res.ResponseData;
+          this.Childs = res.ResponseData.filter(x=>x.Child.IsInactive != true);
 
           // console.log("Childs Saved in this.Childs");
           // console.log(res.ResponseData);

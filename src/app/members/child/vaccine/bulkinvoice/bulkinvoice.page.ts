@@ -28,6 +28,7 @@ export class BulkInvoicePage implements OnInit {
   consultationfee: number = 0;
   private readonly API_VACCINE = `${environment.BASE_URL}`
   BrandIds = [];
+  ChildName:any;
   constructor(
     private loadingController: LoadingController,
     private activatedRoute: ActivatedRoute,
@@ -44,6 +45,9 @@ export class BulkInvoicePage implements OnInit {
   ngOnInit() {
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
+    });
+    this.storage.get("ChildName").then(val => {
+     this.ChildName = val;
     });
     this.childId = this.activatedRoute.snapshot.paramMap.get("id");
     this.currentDate = this.activatedRoute.snapshot.paramMap.get("childId");
@@ -169,7 +173,7 @@ export class BulkInvoicePage implements OnInit {
 
       var request: DownloadRequest = {
         uri: `${this.API_VACCINE}child/${id}/${scheduledate}/${invoicedate}/${fee}/Download-Invoice-PDF`,
-        title: 'Invoice',
+        title: this.ChildName+'-Invoice',
         description: '',
         mimeType: '',
         visibleInDownloadsUi: true,
@@ -177,7 +181,7 @@ export class BulkInvoicePage implements OnInit {
         // notificationVisibility: 0,
         destinationInExternalFilesDir: {
           dirType: 'Downloads',
-          subPath: 'Invoice.pdf'
+          subPath: this.ChildName+'-Invoice.pdf'
         }
       };
       // console.log(request.uri);

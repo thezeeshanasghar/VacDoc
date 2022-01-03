@@ -6,6 +6,7 @@ import {
   FormControl,
   Validators
 } from "@angular/forms";
+import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { ClinicService } from "src/app/services/clinic.service";
@@ -20,6 +21,7 @@ import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { File, FileEntry } from '@ionic-native/file/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { Platform } from '@ionic/angular';
 declare var google;
 
 @Component({
@@ -52,7 +54,9 @@ export class Step2Page implements OnInit {
     private fileChooser: FileChooser,
     private file: File,
     private filePath: FilePath,
-    private transfer: FileTransfer
+    private transfer: FileTransfer,
+    public platform: Platform,
+    private http: HttpClient
   ) { }
 
   ngOnInit() {
@@ -68,7 +72,7 @@ export class Step2Page implements OnInit {
         "",
         Validators.compose([
           Validators.required,
-          Validators.minLength(7),
+          Validators.minLength(10),
           Validators.maxLength(11),
           Validators.pattern("^([0-9]*)$")
         ])
@@ -88,68 +92,69 @@ export class Step2Page implements OnInit {
       Long: [null]
     });
 
-    this.fg2 = this.formbuilder.group({
-      Monday: [true],
-      MondayS1: [true],
-      MondayS2: [true],
-      Mstart: [null],
-      Mstart2: [null],
-      Mend: [null],
-      Mend2: [null],
+    // this.fg2 = this.formbuilder.group({
+    //   Monday: [true],
+    //   MondayS1: [true],
+    //   MondayS2: [true],
+    //   Mstart: [null],
+    //   Mstart2: [null],
+    //   Mend: [null],
+    //   Mend2: [null],
 
-      Tuesday: [true],
-      TuesdayS1: [true],
-      TuesdayS2: [true],
-      Tustart: [null],
-      Tustart2: [null],
-      Tuend: [null],
-      Tuend2: [null],
+    //   Tuesday: [true],
+    //   TuesdayS1: [true],
+    //   TuesdayS2: [true],
+    //   Tustart: [null],
+    //   Tustart2: [null],
+    //   Tuend: [null],
+    //   Tuend2: [null],
 
-      Wednesday: [true],
-      WednesdayS1: [true],
-      WednesdayS2: [true],
-      Wstart: [null],
-      Wstart2: [null],
-      Wend: [null],
-      Wend2: [null],
+    //   Wednesday: [true],
+    //   WednesdayS1: [true],
+    //   WednesdayS2: [true],
+    //   Wstart: [null],
+    //   Wstart2: [null],
+    //   Wend: [null],
+    //   Wend2: [null],
 
-      Thursday: [true],
-      ThursdayS1: [true],
-      ThursdayS2: [true],
-      Thstart: [null],
-      Thstart2: [null],
-      Thend: [null],
-      Thend2: [null],
+    //   Thursday: [true],
+    //   ThursdayS1: [true],
+    //   ThursdayS2: [true],
+    //   Thstart: [null],
+    //   Thstart2: [null],
+    //   Thend: [null],
+    //   Thend2: [null],
 
-      Friday: [true],
-      FridayS1: [true],
-      FridayS2: [true],
-      Fstart: [null],
-      Fstart2: [null],
-      Fend: [null],
-      Fend2: [null],
+    //   Friday: [true],
+    //   FridayS1: [true],
+    //   FridayS2: [true],
+    //   Fstart: [null],
+    //   Fstart2: [null],
+    //   Fend: [null],
+    //   Fend2: [null],
 
-      Saturday: [true],
-      SaturdayS1: [true],
-      SaturdayS2: [true],
-      Sastart: [null],
-      Sastart2: [null],
-      Saend: [null],
-      Saend2: [null],
+    //   Saturday: [true],
+    //   SaturdayS1: [true],
+    //   SaturdayS2: [true],
+    //   Sastart: [null],
+    //   Sastart2: [null],
+    //   Saend: [null],
+    //   Saend2: [null],
 
-      Sunday: [false],
-      SundayS1: [true],
-      SundayS2: [true],
-      Sustart: [null],
-      Sustart2: [null],
-      Suend: [null],
-      Suend2: [null]
-    });
+    //   Sunday: [false],
+    //   SundayS1: [true],
+    //   SundayS2: [true],
+    //   Sustart: [null],
+    //   Sustart2: [null],
+    //   Suend: [null],
+    //   Suend2: [null]
+    // });
     this.ionViewDidEnte();
   }
 
   uploadMonogram() {
-
+  
+    
     this.fileChooser.open().then(async uri => {
       console.log(uri);
       await this.filePath.resolveNativePath(uri).then(filePath => {
@@ -197,6 +202,19 @@ export class Step2Page implements OnInit {
     });
 
   }
+
+
+  upoadfromweb = files =>{
+      const fileToUpload = files[0];
+      const formData = new FormData();
+      formData.append('file', fileToUpload , fileToUpload.name);
+      this.http.post(environment.BASE_URL + 'upload', formData, { reportProgress: true, observe: 'events' }).subscribe(event => {
+         if (event.type === HttpEventType.Response) {
+          this.fg1.value.MonogramImage = event.body['dbPath'];
+        }
+      });
+  }
+
   hello(): void {
     //Called after ngOnInit when the component's or directive's content has been initialized.
     //Add 'implements AfterContentInit' to the class.
@@ -295,315 +313,315 @@ export class Step2Page implements OnInit {
     this.fg1.value.Lat = this.latitude;
     this.fg1.value.Long = this.longitude;
     this.fg1.value.OffDays = "Sunday";
-    var ct = [];
-    if (this.fg2.value.Monday) {
-      if (this.fg2.value.MondayS1) {
-        if (this.fg2.value.Mstart == null) { this.fg2.controls["Mstart"].setValue('2020-09-11 08:30'); }
-        if (this.fg2.value.Mend == null) { this.fg2.controls["Mend"].setValue('2020-09-11 08:30'); }
-        this.fg2.value.Mstart = moment(
-          this.fg2.value.Mstart,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Mend = moment(
-          this.fg2.value.Mend,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        let obj = {
-          Day: "Monday",
-          StartTime: this.fg2.value.Mstart,
-          EndTime: this.fg2.value.Mend,
-          IsOpen: true,
-          Session: 1
-        };
-        ct.push(obj);
-      }
-      // For Session 2
-      if (this.fg2.value.MondayS2) {
-        if (this.fg2.value.Mstart2 == null) { this.fg2.value.Mstart2 = '2020-09-11 08:30' }
-        if (this.fg2.value.Mend2 == null) { this.fg2.value.Mend2 = '2020-09-11 08:30' }
-        this.fg2.value.Mstart2 = moment(
-          this.fg2.value.Mstart2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Mend2 = moment(
-          this.fg2.value.Mend2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        let obj1 = {
-          Day: "Monday",
-          StartTime: this.fg2.value.Mstart2,
-          EndTime: this.fg2.value.Mend2,
-          IsOpen: true,
-          Session: 2
-        };
-        ct.push(obj1);
-      }
-    }
+    // var ct = [];
+    // if (this.fg2.value.Monday) {
+    //   if (this.fg2.value.MondayS1) {
+    //     if (this.fg2.value.Mstart == null) { this.fg2.controls["Mstart"].setValue('2020-09-11 08:30'); }
+    //     if (this.fg2.value.Mend == null) { this.fg2.controls["Mend"].setValue('2020-09-11 08:30'); }
+    //     this.fg2.value.Mstart = moment(
+    //       this.fg2.value.Mstart,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     this.fg2.value.Mend = moment(
+    //       this.fg2.value.Mend,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     let obj = {
+    //       Day: "Monday",
+    //       StartTime: this.fg2.value.Mstart,
+    //       EndTime: this.fg2.value.Mend,
+    //       IsOpen: true,
+    //       Session: 1
+    //     };
+    //     ct.push(obj);
+    //   }
+    //   // For Session 2
+    //   if (this.fg2.value.MondayS2) {
+    //     if (this.fg2.value.Mstart2 == null) { this.fg2.value.Mstart2 = '2020-09-11 08:30' }
+    //     if (this.fg2.value.Mend2 == null) { this.fg2.value.Mend2 = '2020-09-11 08:30' }
+    //     this.fg2.value.Mstart2 = moment(
+    //       this.fg2.value.Mstart2,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     this.fg2.value.Mend2 = moment(
+    //       this.fg2.value.Mend2,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     let obj1 = {
+    //       Day: "Monday",
+    //       StartTime: this.fg2.value.Mstart2,
+    //       EndTime: this.fg2.value.Mend2,
+    //       IsOpen: true,
+    //       Session: 2
+    //     };
+    //     ct.push(obj1);
+    //   }
+    // }
 
-    if (this.fg2.value.Tuesday) {
-      if (this.fg2.value.TuesdayS1) {
-        if (this.fg2.value.Tustart == null) { this.fg2.value.Tustart = '2020-09-11 08:30' }
-        if (this.fg2.value.Tuend == null) { this.fg2.value.Tuend = '2020-09-11 08:30' }
-        this.fg2.value.Tustart = moment(
-          this.fg2.value.Tustart,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Tuend = moment(
-          this.fg2.value.Tuend,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        let obj = {
-          Day: "Tuesday",
-          StartTime: this.fg2.value.Tustart,
-          EndTime: this.fg2.value.Tuend,
-          IsOpen: true,
-          Session: 1
-        };
-        ct.push(obj);
-      }
-      // session 2
-      if (this.fg2.value.TuesdayS2) {
-        if (this.fg2.value.Tustart2 == null) { this.fg2.value.Tustart2 = '2020-09-11 08:30' }
-        if (this.fg2.value.Tuend2 == null) { this.fg2.value.Tuend2 = '2020-09-11 08:30' }
-        this.fg2.value.Tustart2 = moment(
-          this.fg2.value.Tustart2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Tuend2 = moment(
-          this.fg2.value.Tuend2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        let obj1 = {
-          Day: "Tuesday",
-          StartTime: this.fg2.value.Tustart2,
-          EndTime: this.fg2.value.Tuend2,
-          IsOpen: true,
-          Session: 2
-        };
-        ct.push(obj1);
-      }
-    }
+    // if (this.fg2.value.Tuesday) {
+    //   if (this.fg2.value.TuesdayS1) {
+    //     if (this.fg2.value.Tustart == null) { this.fg2.value.Tustart = '2020-09-11 08:30' }
+    //     if (this.fg2.value.Tuend == null) { this.fg2.value.Tuend = '2020-09-11 08:30' }
+    //     this.fg2.value.Tustart = moment(
+    //       this.fg2.value.Tustart,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     this.fg2.value.Tuend = moment(
+    //       this.fg2.value.Tuend,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     let obj = {
+    //       Day: "Tuesday",
+    //       StartTime: this.fg2.value.Tustart,
+    //       EndTime: this.fg2.value.Tuend,
+    //       IsOpen: true,
+    //       Session: 1
+    //     };
+    //     ct.push(obj);
+    //   }
+    //   // session 2
+    //   if (this.fg2.value.TuesdayS2) {
+    //     if (this.fg2.value.Tustart2 == null) { this.fg2.value.Tustart2 = '2020-09-11 08:30' }
+    //     if (this.fg2.value.Tuend2 == null) { this.fg2.value.Tuend2 = '2020-09-11 08:30' }
+    //     this.fg2.value.Tustart2 = moment(
+    //       this.fg2.value.Tustart2,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     this.fg2.value.Tuend2 = moment(
+    //       this.fg2.value.Tuend2,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     let obj1 = {
+    //       Day: "Tuesday",
+    //       StartTime: this.fg2.value.Tustart2,
+    //       EndTime: this.fg2.value.Tuend2,
+    //       IsOpen: true,
+    //       Session: 2
+    //     };
+    //     ct.push(obj1);
+    //   }
+    // }
 
-    if (this.fg2.value.Wednesday) {
-      if (this.fg2.value.WednesdayS1) {
-        if (this.fg2.value.Wstart == null) { this.fg2.value.Wstart = '2020-09-11 08:30' }
-        if (this.fg2.value.Wend == null) { this.fg2.value.Wend = '2020-09-11 08:30' }
-        this.fg2.value.Wstart = moment(
-          this.fg2.value.Wstart,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Wend = moment(
-          this.fg2.value.Wend,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        let obj = {
-          Day: "Wednesday",
-          StartTime: this.fg2.value.Wstart,
-          EndTime: this.fg2.value.Wend,
-          IsOpen: true,
-          Session: 1
-        };
-        ct.push(obj);
-      }
-      // Session 2
-      if (this.fg2.value.WednesdayS2) {
-        if (this.fg2.value.Wstart2 == null) { this.fg2.value.Wstart2 = '2020-09-11 08:30' }
-        if (this.fg2.value.Wend2 == null) { this.fg2.value.Wend2 = '2020-09-11 08:30' }
-        this.fg2.value.Wstart2 = moment(
-          this.fg2.value.Wstart2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Wend2 = moment(
-          this.fg2.value.Wend2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        let obj1 = {
-          Day: "Wednesday",
-          StartTime: this.fg2.value.Wstart2,
-          EndTime: this.fg2.value.Wend2,
-          IsOpen: true,
-          Session: 2
-        };
-        ct.push(obj1);
-      }
-    }
+    // if (this.fg2.value.Wednesday) {
+    //   if (this.fg2.value.WednesdayS1) {
+    //     if (this.fg2.value.Wstart == null) { this.fg2.value.Wstart = '2020-09-11 08:30' }
+    //     if (this.fg2.value.Wend == null) { this.fg2.value.Wend = '2020-09-11 08:30' }
+    //     this.fg2.value.Wstart = moment(
+    //       this.fg2.value.Wstart,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     this.fg2.value.Wend = moment(
+    //       this.fg2.value.Wend,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     let obj = {
+    //       Day: "Wednesday",
+    //       StartTime: this.fg2.value.Wstart,
+    //       EndTime: this.fg2.value.Wend,
+    //       IsOpen: true,
+    //       Session: 1
+    //     };
+    //     ct.push(obj);
+    //   }
+    //   // Session 2
+    //   if (this.fg2.value.WednesdayS2) {
+    //     if (this.fg2.value.Wstart2 == null) { this.fg2.value.Wstart2 = '2020-09-11 08:30' }
+    //     if (this.fg2.value.Wend2 == null) { this.fg2.value.Wend2 = '2020-09-11 08:30' }
+    //     this.fg2.value.Wstart2 = moment(
+    //       this.fg2.value.Wstart2,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     this.fg2.value.Wend2 = moment(
+    //       this.fg2.value.Wend2,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     let obj1 = {
+    //       Day: "Wednesday",
+    //       StartTime: this.fg2.value.Wstart2,
+    //       EndTime: this.fg2.value.Wend2,
+    //       IsOpen: true,
+    //       Session: 2
+    //     };
+    //     ct.push(obj1);
+    //   }
+    // }
 
-    if (this.fg2.value.Thursday) {
-      if (this.fg2.value.ThursdayS1) {
-        if (this.fg2.value.Thstart == null) { this.fg2.value.Thstart = '2020-09-11 08:30' }
-        if (this.fg2.value.Thend == null) { this.fg2.value.Thend = '2020-09-11 08:30' }
-        this.fg2.value.Thstart = moment(
-          this.fg2.value.Thstart,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Thend = moment(
-          this.fg2.value.Thend,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        let obj = {
-          Day: "Thursday",
-          StartTime: this.fg2.value.Thstart,
-          EndTime: this.fg2.value.Thend,
-          IsOpen: true,
-          Session: 1
-        };
-        ct.push(obj);
-      }
-      // SESSION 2
-      if (this.fg2.value.ThursdayS2) {
-        if (this.fg2.value.Thstart2 == null) { this.fg2.value.Thstart2 = '2020-09-11 08:30' }
-        if (this.fg2.value.Thend2 == null) { this.fg2.value.Thend2 = '2020-09-11 08:30' }
-        this.fg2.value.Thstart2 = moment(
-          this.fg2.value.Thstart2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Thend2 = moment(
-          this.fg2.value.Thend2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        let obj1 = {
-          Day: "Thursday",
-          StartTime: this.fg2.value.Thstart2,
-          EndTime: this.fg2.value.Thend2,
-          IsOpen: true,
-          Session: 2
-        };
-        ct.push(obj1);
-      }
-    }
+    // if (this.fg2.value.Thursday) {
+    //   if (this.fg2.value.ThursdayS1) {
+    //     if (this.fg2.value.Thstart == null) { this.fg2.value.Thstart = '2020-09-11 08:30' }
+    //     if (this.fg2.value.Thend == null) { this.fg2.value.Thend = '2020-09-11 08:30' }
+    //     this.fg2.value.Thstart = moment(
+    //       this.fg2.value.Thstart,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     this.fg2.value.Thend = moment(
+    //       this.fg2.value.Thend,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     let obj = {
+    //       Day: "Thursday",
+    //       StartTime: this.fg2.value.Thstart,
+    //       EndTime: this.fg2.value.Thend,
+    //       IsOpen: true,
+    //       Session: 1
+    //     };
+    //     ct.push(obj);
+    //   }
+    //   // SESSION 2
+    //   if (this.fg2.value.ThursdayS2) {
+    //     if (this.fg2.value.Thstart2 == null) { this.fg2.value.Thstart2 = '2020-09-11 08:30' }
+    //     if (this.fg2.value.Thend2 == null) { this.fg2.value.Thend2 = '2020-09-11 08:30' }
+    //     this.fg2.value.Thstart2 = moment(
+    //       this.fg2.value.Thstart2,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     this.fg2.value.Thend2 = moment(
+    //       this.fg2.value.Thend2,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     let obj1 = {
+    //       Day: "Thursday",
+    //       StartTime: this.fg2.value.Thstart2,
+    //       EndTime: this.fg2.value.Thend2,
+    //       IsOpen: true,
+    //       Session: 2
+    //     };
+    //     ct.push(obj1);
+    //   }
+    // }
 
-    if (this.fg2.value.Friday) {
-      if (this.fg2.value.FridayS1) {
-        if (this.fg2.value.Fstart == null) { this.fg2.value.Fstart = '2020-09-11 08:30' }
-        if (this.fg2.value.Fend == null) { this.fg2.value.Fend = '2020-09-11 08:30' }
-        this.fg2.value.Fstart = moment(
-          this.fg2.value.Fstart,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Fend = moment(
-          this.fg2.value.Fend,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        let obj = {
-          Day: "Friday",
-          StartTime: this.fg2.value.Fstart,
-          EndTime: this.fg2.value.Fend,
-          IsOpen: true,
-          Session: 1
-        };
-        ct.push(obj);
-      }
-      // SESSION 2
-      if (this.fg2.value.FridayS2) {
-        if (this.fg2.value.Fstart2 == null) { this.fg2.value.Fstart2 = '2020-09-11 08:30' }
-        if (this.fg2.value.Fend2 == null) { this.fg2.value.Fend2 = '2020-09-11 08:30' }
-        this.fg2.value.Fstart2 = moment(
-          this.fg2.value.Fstart2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Fend2 = moment(
-          this.fg2.value.Fend2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        let obj = {
-          Day: "Friday",
-          StartTime: this.fg2.value.Fstart2,
-          EndTime: this.fg2.value.Fend2,
-          IsOpen: true,
-          Session: 2
-        };
-        ct.push(obj);
-      }
-    }
+    // if (this.fg2.value.Friday) {
+    //   if (this.fg2.value.FridayS1) {
+    //     if (this.fg2.value.Fstart == null) { this.fg2.value.Fstart = '2020-09-11 08:30' }
+    //     if (this.fg2.value.Fend == null) { this.fg2.value.Fend = '2020-09-11 08:30' }
+    //     this.fg2.value.Fstart = moment(
+    //       this.fg2.value.Fstart,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     this.fg2.value.Fend = moment(
+    //       this.fg2.value.Fend,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     let obj = {
+    //       Day: "Friday",
+    //       StartTime: this.fg2.value.Fstart,
+    //       EndTime: this.fg2.value.Fend,
+    //       IsOpen: true,
+    //       Session: 1
+    //     };
+    //     ct.push(obj);
+    //   }
+    //   // SESSION 2
+    //   if (this.fg2.value.FridayS2) {
+    //     if (this.fg2.value.Fstart2 == null) { this.fg2.value.Fstart2 = '2020-09-11 08:30' }
+    //     if (this.fg2.value.Fend2 == null) { this.fg2.value.Fend2 = '2020-09-11 08:30' }
+    //     this.fg2.value.Fstart2 = moment(
+    //       this.fg2.value.Fstart2,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     this.fg2.value.Fend2 = moment(
+    //       this.fg2.value.Fend2,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     let obj = {
+    //       Day: "Friday",
+    //       StartTime: this.fg2.value.Fstart2,
+    //       EndTime: this.fg2.value.Fend2,
+    //       IsOpen: true,
+    //       Session: 2
+    //     };
+    //     ct.push(obj);
+    //   }
+    // }
 
-    if (this.fg2.value.Saturday) {
-      if (this.fg2.value.SaturdayS1) {
-        if (this.fg2.value.Sastart == null) { this.fg2.value.Sastart = '2020-09-11 08:30' }
-        if (this.fg2.value.Saend == null) { this.fg2.value.Saend = '2020-09-11 08:30' }
-        this.fg2.value.Sastart = moment(
-          this.fg2.value.Sastart,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Saend = moment(
-          this.fg2.value.Saend,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        let obj = {
-          Day: "Saturday",
-          StartTime: this.fg2.value.Sastart,
-          EndTime: this.fg2.value.Saend,
-          IsOpen: true,
-          Session: 1
-        };
-        ct.push(obj);
-      }
-      // SESSION 2
-      if (this.fg2.value.SaturdayS2) {
-        if (this.fg2.value.Sastart2 == null) { this.fg2.value.Sastart2 = '2020-09-11 08:30' }
-        if (this.fg2.value.Saend2 == null) { this.fg2.value.Saend2 = '2020-09-11 08:30' }
-        this.fg2.value.Sastart2 = moment(
-          this.fg2.value.Sastart2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Saend2 = moment(
-          this.fg2.value.Saend2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        let obj = {
-          Day: "Saturday",
-          StartTime: this.fg2.value.Sastart2,
-          EndTime: this.fg2.value.Saend2,
-          IsOpen: true,
-          Session: 2
-        };
-        ct.push(obj);
-      }
-    }
+    // if (this.fg2.value.Saturday) {
+    //   if (this.fg2.value.SaturdayS1) {
+    //     if (this.fg2.value.Sastart == null) { this.fg2.value.Sastart = '2020-09-11 08:30' }
+    //     if (this.fg2.value.Saend == null) { this.fg2.value.Saend = '2020-09-11 08:30' }
+    //     this.fg2.value.Sastart = moment(
+    //       this.fg2.value.Sastart,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     this.fg2.value.Saend = moment(
+    //       this.fg2.value.Saend,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     let obj = {
+    //       Day: "Saturday",
+    //       StartTime: this.fg2.value.Sastart,
+    //       EndTime: this.fg2.value.Saend,
+    //       IsOpen: true,
+    //       Session: 1
+    //     };
+    //     ct.push(obj);
+    //   }
+    //   // SESSION 2
+    //   if (this.fg2.value.SaturdayS2) {
+    //     if (this.fg2.value.Sastart2 == null) { this.fg2.value.Sastart2 = '2020-09-11 08:30' }
+    //     if (this.fg2.value.Saend2 == null) { this.fg2.value.Saend2 = '2020-09-11 08:30' }
+    //     this.fg2.value.Sastart2 = moment(
+    //       this.fg2.value.Sastart2,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     this.fg2.value.Saend2 = moment(
+    //       this.fg2.value.Saend2,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     let obj = {
+    //       Day: "Saturday",
+    //       StartTime: this.fg2.value.Sastart2,
+    //       EndTime: this.fg2.value.Saend2,
+    //       IsOpen: true,
+    //       Session: 2
+    //     };
+    //     ct.push(obj);
+    //   }
+    // }
 
-    if (this.fg2.value.Sunday) {
-      if (this.fg2.value.SundayS1) {
-        if (this.fg2.value.Sustart == null) { this.fg2.value.Sustart = '2020-09-11 08:30' }
-        if (this.fg2.value.Suend == null) { this.fg2.value.Suend = '2020-09-11 08:30' }
-        this.fg2.value.Sustart = moment(
-          this.fg2.value.Sustart,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Suend = moment(
-          this.fg2.value.Suend,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        let obj = {
-          Day: "Sunday",
-          StartTime: this.fg2.value.Sustart,
-          EndTime: this.fg2.value.Suend,
-          IsOpen: true,
-          Session: 1
-        };
-        ct.push(obj);
-      }
-      // SESSION 2
-      if (this.fg2.value.SundayS2) {
-        if (this.fg2.value.Sustart2 == null) { this.fg2.value.Sustart2 = '2020-09-11 08:30' }
-        if (this.fg2.value.Suend2 == null) { this.fg2.value.Suend2 = '2020-09-11 08:30' }
-        this.fg2.value.Sustart2 = moment(
-          this.fg2.value.Sustart2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Suend2 = moment(
-          this.fg2.value.Suend2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        let obj = {
-          Day: "Sunday",
-          StartTime: this.fg2.value.Sustart2,
-          EndTime: this.fg2.value.Suend2,
-          IsOpen: true,
-          Session: 2
-        };
-        ct.push(obj);
-      }
-    }
-    this.fg1.value.ClinicTimings = ct;
+    // if (this.fg2.value.Sunday) {
+    //   if (this.fg2.value.SundayS1) {
+    //     if (this.fg2.value.Sustart == null) { this.fg2.value.Sustart = '2020-09-11 08:30' }
+    //     if (this.fg2.value.Suend == null) { this.fg2.value.Suend = '2020-09-11 08:30' }
+    //     this.fg2.value.Sustart = moment(
+    //       this.fg2.value.Sustart,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     this.fg2.value.Suend = moment(
+    //       this.fg2.value.Suend,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     let obj = {
+    //       Day: "Sunday",
+    //       StartTime: this.fg2.value.Sustart,
+    //       EndTime: this.fg2.value.Suend,
+    //       IsOpen: true,
+    //       Session: 1
+    //     };
+    //     ct.push(obj);
+    //   }
+    //   // SESSION 2
+    //   if (this.fg2.value.SundayS2) {
+    //     if (this.fg2.value.Sustart2 == null) { this.fg2.value.Sustart2 = '2020-09-11 08:30' }
+    //     if (this.fg2.value.Suend2 == null) { this.fg2.value.Suend2 = '2020-09-11 08:30' }
+    //     this.fg2.value.Sustart2 = moment(
+    //       this.fg2.value.Sustart2,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     this.fg2.value.Suend2 = moment(
+    //       this.fg2.value.Suend2,
+    //       "YYYY-MM-DD HH:mm"
+    //     ).format("HH:mm");
+    //     let obj = {
+    //       Day: "Sunday",
+    //       StartTime: this.fg2.value.Sustart2,
+    //       EndTime: this.fg2.value.Suend2,
+    //       IsOpen: true,
+    //       Session: 2
+    //     };
+    //     ct.push(obj);
+    //   }
+    // }
+    //this.fg1.value.ClinicTimings = ct;
     this.signupService.clinicData = this.fg1.value;
     this.router.navigate(["/signup/step3"]);
     //this.addNewClinic(this.fg1.value);

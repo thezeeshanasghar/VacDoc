@@ -37,8 +37,11 @@ export class EditPage implements OnInit {
       'Gender': [null],
       'City': [null],
       'PreferredDayOfReminder': 0,
+      //'AlertMobileNumber':[null],
       'IsEPIDone': [null],
       'IsVerified': [null],
+      'IsInactive': [null],
+      //'IsDivertAlert': [null],
       'PreferredSchedule': [null]
     });
     this.getchild();
@@ -71,8 +74,11 @@ export class EditPage implements OnInit {
           this.fg.controls['City'].setValue(this.child.City);
           this.fg.controls['PreferredDayOfReminder'].setValue(this.child.PreferredDayOfReminder + '');
           this.fg.controls['PreferredSchedule'].setValue(this.child.PreferredSchedule);
+          //this.fg.controls['AlertMobileNumber'].setValue(this.child.AlertMobileNumber);
           this.fg.controls['IsEPIDone'].setValue(this.child.IsEPIDone);
           this.fg.controls['IsVerified'].setValue(this.child.IsVerified);
+          this.fg.controls['IsInactive'].setValue(this.child.IsInactive);
+         //this.fg.controls['IsDivertAlert'].setValue(this.child.IsInactive);
           console.log(this.fg.value);
         }
         else {

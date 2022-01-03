@@ -27,6 +27,7 @@ export class SignupService extends BaseService {
         PhoneNumber: this.clinicData.PhoneNumber,
         Address: this.clinicData.Address,
         ConsultationFee: this.clinicData.ConsultationFee,
+        MonogramImage: this.clinicData.MonogramImage,
         ClinicTimings: this.clinicData.ClinicTimings,
         Lat: this.clinicData.Lat,
         Long: this.clinicData.Long

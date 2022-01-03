@@ -63,7 +63,11 @@
         </div>
 
         <ion-item>
-            <ion-button slot="end" (click)="uploadMonogram()">Upload Monogram</ion-button>
+            <input type="file" id="logo" name="logo" #logo placeholder="Choose file" (change)="upoadfromweb(logo.files)"
+                style="display:none;" accept=".jpg, .jpeg, .png, .gif">
+              <ion-button *ngIf = "platform.is('desktop') || platform.is('mobileweb')" slot="end" (click)="logo.click()">Upload Monogram</ion-button>
+
+            <ion-button *ngIf = "!platform.is('desktop') && !platform.is('mobileweb')" slot="end" (click)="uploadMonogram()">Upload Monogram</ion-button>
         </ion-item>
         <ion-item *ngIf="fg1.value.MonogramImage">
             <p *ngIf="uploading">Uploading Monogram...</p>
@@ -73,7 +77,7 @@
 
 
 
-        <form [formGroup]="fg2">
+        <!-- <form [formGroup]="fg2">
 
             <ion-card>
                 <ion-item>
@@ -545,12 +549,13 @@
                     </div>
                 </ion-card-content>
             </ion-card>
-        </form>
+        </form> -->
         <ion-item style="min-height: 300px;">
             <div #mapElement class="map" style="min-height: 300px;"></div>
         </ion-item>
 
-        <ion-button [disabled]="(!fg1.valid || !fg2.valid)" (click)="getdata()">Next Step</ion-button>
+        <!-- <ion-button [disabled]="(!fg1.valid || !fg2.valid)" (click)="getdata()">Next Step</ion-button> -->
+        <ion-button [disabled]="!fg1.valid" (click)="getdata()">Next Step</ion-button>
     </form>
 
 

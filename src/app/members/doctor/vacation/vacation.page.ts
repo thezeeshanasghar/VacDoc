@@ -34,6 +34,7 @@ export class VacationPage implements OnInit {
 
   ) {
     this.todaydate = new Date();
+    //this.todaydate.setHours(this.todaydate.getHours() + 5);
     //this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format('YYYY-MM-DD');
     this.fg2 = this.formBuilder.group({
       clinics: new FormArray([]),
@@ -50,9 +51,11 @@ export class VacationPage implements OnInit {
 
   }
   pickFromDate($event) {
-    this.fg2.controls['formDate'].setValue($event.detail.value);
+    $event.detail.value.setHours($event.detail.value.getHours() + 5);
+    this.fg2.controls['formDate'].setValue($event.detail.value );
   }
   pickTodayDate($event) {
+    $event.detail.value.setHours($event.detail.value.getHours() + 5);
     this.fg2.controls['ToDate'].setValue($event.detail.value);
   }
 
@@ -62,6 +65,8 @@ export class VacationPage implements OnInit {
         this.ClinicId.push({'Id':this.clinics[i].Id});
       }
     }
+    this.fg2.value.formDate = new Date(this.fg2.value.formDate.setHours(this.fg2.value.formDate.getHours() + 5));
+    this.fg2.value.ToDate = new Date(this.fg2.value.ToDate.setHours(this.fg2.value.ToDate.getHours() + 5));
     let data = { 'Clinics': this.ClinicId, 'FromDate': this.fg2.value.formDate, 'ToDate': this.fg2.value.ToDate }
     this.addVacation(data)
   }

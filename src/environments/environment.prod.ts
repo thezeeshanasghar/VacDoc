@@ -3,17 +3,7 @@ export const environment = {
 
   // BASE_URL: "https://api.vaccs.io/api/"
   // BASE_URL: "http://vac-api.ehs.edu.pk/api/",
-  //BASE_URL: "http://localhost:4309/api/",
-  // BASE_URL: "https://fernflowers.com/api/",
-  // RESOURCE_URL: "https://fernflowers.com/",
- // BASE_URL: "http://localhost:5000/api/",
-
-  // BASE_URL:"https://testemail.fernflowers.com",
-  // RESOURCE_URL: "http://localhost:5000/api/",
   
-  // BASE_URL: "https://fernflowers.com/api/",
-  // RESOURCE_URL: "https://fernflowers.com/",
-
   // for using web server
   RESOURCE_URL: "https://fernflowers.com/",
   BASE_URL: "https://fernflowers.com/api/",

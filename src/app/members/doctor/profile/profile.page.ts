@@ -54,6 +54,7 @@ export class ProfilePage implements OnInit {
       FirstName: [null],
       LastName: [null],
       DisplayName: [null],
+      AdditionalInfo: [null],
       Email: new FormControl(
         "",
         Validators.compose([
@@ -182,6 +183,7 @@ export class ProfilePage implements OnInit {
           this.fg.controls["PMDC"].setValue(this.doctorData.PMDC);
           this.fg.controls["SignatureImage"].setValue(this.doctorData.SignatureImage);
           this.fg.controls["ProfileImage"].setValue(this.doctorData.ProfileImage);
+          this.fg.controls["AdditionalInfo"].setValue(this.doctorData.AdditionalInfo);
           this.profileImagePath = this.doctorData.ProfileImage;
           this.signatureImagePath = this.doctorData.SignatureImage;
 
@@ -212,6 +214,7 @@ export class ProfilePage implements OnInit {
         res => {
           if (res.IsSuccess) {
             console.log(res.ResponseData);
+            loading.dismiss();
             this.toastService.create("Profile Updated !");
           } else {
             this.toastService.create(res.Message, "danger");

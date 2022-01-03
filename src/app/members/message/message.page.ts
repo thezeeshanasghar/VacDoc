@@ -16,6 +16,7 @@ export class MessagePage implements OnInit {
 
   message: any;
   Messages: any;
+  type:any;
   constructor(
     public loadingController: LoadingController,
     private messageService: MessageService,

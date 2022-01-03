@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { VacationPage } from './vacation.page';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatFormFieldModule , MatInputModule } from '@angular/material';
+import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
 
 const routes: Routes = [
   {
@@ -27,6 +28,7 @@ const routes: Routes = [
     MatFormFieldModule,
     MatInputModule
   ],
-  declarations: [VacationPage]
+  declarations: [VacationPage],
+  providers:[{provide: MAT_DATE_LOCALE, useValue: { useUtc: true }}]
 })
 export class VacationPageModule {}

@@ -63,8 +63,12 @@
 
   <ion-item>
       <p *ngIf="uploading">Uploading Monogram...</p>
-       <img *ngIf="fg1.value.MonogramImage" [src]="resourceURL + fg1.value.MonogramImage" alt="Monogram Image">
-       <ion-button slot="end" (click) = "uploadMonogram()">Upload Monogram</ion-button>
+       <ion-img *ngIf="fg1.value.MonogramImage" [src]="resourceURL + fg1.value.MonogramImage" alt="Monogram Image"></ion-img>
+       <input type="file" id="logo" name="logo" #logo placeholder="Choose file" (change)="upoadfromweb(logo.files)"
+                style="display:none;" accept=".jpg, .jpeg, .png, .gif">
+              <ion-button *ngIf = "platform.is('desktop') || platform.is('mobileweb')" slot="end" (click)="logo.click()">Upload Monogram</ion-button>
+
+            <ion-button *ngIf = "!platform.is('desktop') && !platform.is('mobileweb')" slot="end" (click)="uploadMonogram()">Upload Monogram</ion-button>
     </ion-item>
 
     <form [formGroup]="fg2">
