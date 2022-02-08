@@ -16,6 +16,7 @@ export class MessagePage implements OnInit {
 
   message: any;
   Messages: any;
+  type: any;
   constructor(
     public loadingController: LoadingController,
     private messageService: MessageService,
@@ -30,10 +31,9 @@ export class MessagePage implements OnInit {
     //   this.getMsg(val);
     // });
 
-    this.storage.get(environment.MESSAGES).then(messages=> {this.Messages = messages});
+    this.storage.get(environment.MESSAGES).then(messages => { this.Messages = messages });
   }
-  segmentChanged(eve: any)
-  {
+  segmentChanged(eve: any) {
 
   }
 
@@ -60,7 +60,7 @@ export class MessagePage implements OnInit {
       }
     );
   }
-  async sendMessage(childMobile , message , created) {
+  async sendMessage(childMobile, message, created) {
     const loading = await this.loadingController.create({
       message: 'message sending'
     });
@@ -68,19 +68,19 @@ export class MessagePage implements OnInit {
     setTimeout(() => {
       loading.dismiss();
     }, 2000);
-   
+
     this.sms.send(childMobile, message)
-          .then(()=>{
-            loading.dismiss();
-            let obj = {'toNumber':childMobile , 'message': message , 'created': Date.now(), 'status':true};
-            this.Messages = this.Messages.filter(x=> x.created != created);
-            this.Messages.push(obj);
-            this.storage.set(environment.MESSAGES , this.Messages);
-          
-          this.toastService.create("Message Sent Successful");
-          }).catch((error)=>{
-          this.toastService.create("Message Sent Failed" , "danger");
-          loading.dismiss();
-          });
+      .then(() => {
+        loading.dismiss();
+        let obj = { 'toNumber': childMobile, 'message': message, 'created': Date.now(), 'status': true };
+        this.Messages = this.Messages.filter(x => x.created != created);
+        this.Messages.push(obj);
+        this.storage.set(environment.MESSAGES, this.Messages);
+
+        this.toastService.create("Message Sent Successful");
+      }).catch((error) => {
+        this.toastService.create("Message Sent Failed", "danger");
+        loading.dismiss();
+      });
   }
 }

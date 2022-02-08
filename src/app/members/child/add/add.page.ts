@@ -130,7 +130,7 @@ export class AddPage implements OnInit {
    
   }
 
-  private filter(value: string) {
+  public filter(value: string) {
     this.cities =  this.childService.cities.filter(option => (option.toLowerCase().includes(value) || option.includes(value)));
   }
 
