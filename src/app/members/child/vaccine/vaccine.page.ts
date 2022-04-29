@@ -101,6 +101,7 @@ export class VaccinePage {
             this.vaccine = res.ResponseData;
             this.ChildName = this.vaccine[0].Child.Name;
             this.storage.set('ChildName', this.ChildName);
+            this.vaccinesData = [];
             this.vaccine.forEach(doc => {
               doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
               if (doc.GivenDate)

@@ -24,6 +24,7 @@ export class SchedulePage implements OnInit {
   doses: any;
   vaccines: any;
   IsActive = true;
+  unsorted: any = 0;
   constructor(
     public loadingcontroller: LoadingController,
     private formBuilder: FormBuilder,
@@ -82,7 +83,9 @@ export class SchedulePage implements OnInit {
       }
     );
   }
-
+  get formcontrols() {
+    return this.fg.controls as any;
+  }
   async addCustomSchedule() {
     let var1 = [];
 
