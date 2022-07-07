@@ -50,7 +50,7 @@
     "cordova-sms-plugin": "^1.0.0",
     "core-js": "^2.5.4",
     "integrator-cordova-plugin-downloader": "^1.1.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "rxjs": "~6.5.1",
     "tslib": "^1.9.0",
     "zone.js": "~0.9.1"
