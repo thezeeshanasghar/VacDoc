@@ -117,7 +117,11 @@ export class BulkPage implements OnInit {
   }
 
   async fillVaccine(data) {
-    data.GivenDate = moment(this.fg.value.GivenDate, "YYYY-MM-DD").format("DD-MM-YYYY");
+
+    if (new Date(this.fg.value.GivenDate).setHours(0, 0, 0 , 0) > new Date().setHours(0, 0, 0 , 0))
+    this.toastService.create("Error: Can not select future dates");
+    else {
+data.GivenDate = moment(this.fg.value.GivenDate, "YYYY-MM-DD").format("DD-MM-YYYY");
     const loading = await this.loadingController.create({
       message: "Filling Vaccine"
     });
@@ -140,6 +144,7 @@ export class BulkPage implements OnInit {
         loading.dismiss();
       }
     );
+    }
   }
 
   async validationOfInfiniteVaccine() {

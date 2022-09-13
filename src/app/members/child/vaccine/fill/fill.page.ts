@@ -135,7 +135,11 @@ export class FillPage implements OnInit {
   }
 
   async fillVaccine() {
-    const loading = await this.loadingController.create({
+    if (new Date(this.fg.value.GivenDate).setHours(0, 0, 0 , 0) > new Date().setHours(0, 0, 0 , 0))
+    this.toastService.create("Error: Can not select future dates");
+    else 
+    {
+const loading = await this.loadingController.create({
       message: 'Updating'
     });
 
@@ -170,9 +174,11 @@ export class FillPage implements OnInit {
         loading.dismiss();
       }
     );
+    }
   }
 
   async addNewVaccineInScheduleTable(scheduleDate) {
+    scheduleDate = moment(scheduleDate).format('DD-MM-YYYY');
     const loading = await this.loadingController.create({
       message: 'Updating Schedule'
     });
@@ -213,12 +219,16 @@ export class FillPage implements OnInit {
   }
  
   addDays(date, days) {
+    console.log(days);
+   
     console.log("date");
     console.log(date);
 
     var myDate = new Date(date);
-    myDate.setDate(myDate.getDate() + days);
-    
+    if(days === 365)
+    myDate.setFullYear(myDate.getFullYear() + 1); //myDate.setDate(myDate.getDate() + days);
+    else
+    myDate.setFullYear(myDate.getFullYear() + 3);
     console.log("scheduleDate");
     console.log(myDate);
     return myDate;

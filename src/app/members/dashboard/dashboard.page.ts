@@ -7,6 +7,7 @@ import { ToastService } from "src/app/shared/toast.service";
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import {IonRouterOutlet, Platform } from '@ionic/angular';
 import { Plugins } from '@capacitor/core';
+import { AlertService } from "src/app/services/alert.service";
 const { App } = Plugins;
 
 
@@ -22,6 +23,10 @@ export class DashboardPage implements OnInit {
   NewClinics: any = [];
   DelClinics: any = [];
   Messages: any = [];
+  vaccineAlersCount: number;
+  followupalertsCount: number;
+  onlineClinicId: number;
+
   constructor(
     private loadingController: LoadingController,
     public clinicService: ClinicService,
@@ -29,7 +34,8 @@ export class DashboardPage implements OnInit {
     private storage: Storage,
     private androidPermissions: AndroidPermissions,
     public platform: Platform,
-    private routerOutlet: IonRouterOutlet
+    private routerOutlet: IonRouterOutlet,
+    private alertService: AlertService
   ) { }
 
  async ngOnInit() {
@@ -58,6 +64,7 @@ export class DashboardPage implements OnInit {
     //    this.Messages = this.Messages.filter(x=> (this.datediff(x.created , today) < 30));  //2505600000
     //    this.storage.set(environment.MESSAGES , this.Messages);
     //  }
+    this.getDashboardData();
   }
   async ionViewDidEnter(){
    // console.log(this.clinicService.clinics);  
@@ -115,8 +122,46 @@ export class DashboardPage implements OnInit {
     );
   }
 
-  async uploadata() {
-   
-    
+  async getDashboardData(){
+    // get clinics
+    const loading = await this.loadingController.create({ message: "Loading" });
+    await loading.present();
+    await this.clinicService.getClinics(this.doctorId).subscribe(
+      res => {
+        loading.dismiss();
+        if (res.IsSuccess) {
+          this.Clinics = res.ResponseData;
+        } else {
+          loading.dismiss();
+          this.toastService.create(res.Message, "danger");
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, "danger");
+      }
+    );
+
+    //get vaccine alerts
+    const loading2 = await this.loadingController.create({
+      message: "Loading Dashboard Data"
+    });
+    await loading.present();
+    await this.alertService.getChild(0,  this.clinicService.OnlineClinic.Id).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          this.vaccineAlersCount = res.ResponseData.length;
+          loading.dismiss();
+        } else {
+          loading2.dismiss();
+          this.toastService.create(res.Message, "danger");
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, "danger");
+      }
+    );
+
   }
 }
