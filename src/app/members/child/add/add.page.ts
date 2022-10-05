@@ -20,9 +20,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { SMS } from '@ionic-native/sms/ngx';
 import { TitleCasePipe } from '@angular/common';
 import { AlertController } from '@ionic/angular';
-import { env } from 'process';
 import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
 
 @Component({
   selector: "app-add",
@@ -98,6 +96,7 @@ export class AddPage implements OnInit {
       Gender: [null,Validators.required],
       Type: [null,Validators.required],
       City: [null],
+      CNIC:[null],
       PreferredDayOfReminder: 0,
       PreferredSchedule: [null],
       IsEPIDone: [false],
