@@ -82,7 +82,9 @@ export class SchedulePage implements OnInit {
       }
     );
   }
-
+  returnZero() {
+    return 0
+}
   async addCustomSchedule() {
     let var1 = [];
 
