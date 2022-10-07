@@ -40,6 +40,7 @@ export class AddPage implements OnInit {
   todaydate: any;
   gender: any;
   City: any;
+  CNIC: any;
   Doctor: any;
   epiDone = false;
   Messages:any = [];
@@ -98,6 +99,7 @@ export class AddPage implements OnInit {
       Gender: [null,Validators.required],
       Type: [null,Validators.required],
       City: [null],
+      CNIC:[null],
       PreferredDayOfReminder: 0,
       PreferredSchedule: [null],
       IsEPIDone: [false],

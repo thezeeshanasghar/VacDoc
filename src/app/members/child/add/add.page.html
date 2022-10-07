@@ -57,7 +57,7 @@
         <ion-row>
           <ion-col>
             <ion-item>
-              <ion-label color="primary">Boy</ion-label>
+              <ion-label color="primary">Male</ion-label>
               <ion-radio slot="start" value="Boy" ></ion-radio> 
               <!-- (click)="updateGender('Boy')" -->
             </ion-item>
@@ -65,7 +65,7 @@
 
           <ion-col>
             <ion-item>
-              <ion-label color="primary">Girl</ion-label>
+              <ion-label color="primary">Female</ion-label>
               <ion-radio slot="start" value="Girl"></ion-radio>
             </ion-item>
           </ion-col>
@@ -136,7 +136,10 @@
       </ng-container>
     </div> -->
 
-    
+    <ion-item>
+      <ion-label color="primary" position="floating">CNIC/Passport No.</ion-label>
+      <ion-input type="text" formControlName="CNIC" required></ion-input>
+    </ion-item>
 
     <ion-item>
       <ion-label color="primary" position="floating">Mobile Number</ion-label>
