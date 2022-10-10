@@ -14,7 +14,13 @@ const routes: Routes = [
       { path: 'child', loadChildren: './child/child.module#ChildPageModule' },
       { path: 'message', loadChildren: './message/message.module#MessagePageModule' }
     ]
+  },  {
+    path: 'birthday-alert',
+    loadChildren: () => import('./alert/birthday-alert/birthday-alert.module').then( m => m.BirthdayAlertPageModule)
   },
+
+  
+
 ];
 
 
