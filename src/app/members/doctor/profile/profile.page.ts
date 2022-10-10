@@ -200,12 +200,12 @@ export class ProfilePage implements OnInit {
 
   async updateProfile() {
 
-    const loading = await this.loadingController.create({
-      message: "Updating Profile"
-    });
+    // const loading = await this.loadingController.create({
+    //   message: "Updating Profile"
+    // });
 
     console.log(this.fg.value);
-    await loading.present();
+    // await loading.present();
     await this.doctorService
       .updateDoctorProfile(this.DocotrId, this.fg.value)
       .subscribe(
@@ -215,12 +215,12 @@ export class ProfilePage implements OnInit {
             this.toastService.create("Profile Updated !");
           } else {
             this.toastService.create(res.Message, "danger");
-            loading.dismiss();
+            // loading.dismiss();
           }
         },
         err => {
           this.toastService.create(err, "danger");
-          loading.dismiss();
+          // loading.dismiss();
         }
       );
   }

@@ -36,11 +36,34 @@
         </div>
       </ng-container>
     </div>
+    
+    <ion-radio-group formControlName="guardian">
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-item lines="none">
+              <ion-label color="primary">Father's name</ion-label>
+              <ion-radio slot="start" value="father" ></ion-radio> 
+            </ion-item>
+          </ion-col>
+    <ion-col>
+            <ion-item lines="none">
+              <ion-label color="primary">Husband's name</ion-label>
+              <ion-radio slot="start" value="husband"></ion-radio>
+            </ion-item>
+          </ion-col>
+        </ion-row>    
+      </ion-grid>
+    </ion-radio-group>
 
     <ion-item>
-      <ion-label color="primary" position="floating">Father's Name</ion-label>
+     <!-- <ion-label color="primary" position="floating">Father's Name</ion-label> -->
       <ion-input type="text" formControlName="FatherName" required></ion-input>
     </ion-item>
+    <!-- <ion-item>
+      <ion-label color="primary" position="floating">Husband's Name</ion-label>
+      <ion-input type="text" formControlName="FatherName" required></ion-input>
+    </ion-item> -->
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.fatherName">
         <div class="error-message"
@@ -56,7 +79,7 @@
       <ion-grid>
         <ion-row>
           <ion-col>
-            <ion-item>
+            <ion-item lines="none">
               <ion-label color="primary">Male</ion-label>
               <ion-radio slot="start" value="Boy" ></ion-radio> 
               <!-- (click)="updateGender('Boy')" -->
@@ -64,7 +87,7 @@
           </ion-col>
 
           <ion-col>
-            <ion-item>
+            <ion-item lines="none">
               <ion-label color="primary">Female</ion-label>
               <ion-radio slot="start" value="Girl"></ion-radio>
             </ion-item>
@@ -80,14 +103,14 @@
       <ion-grid>
         <ion-row>
           <ion-col>
-            <ion-item>
+            <ion-item lines="none">
               <ion-label color="primary">Regular</ion-label>
               <ion-radio slot="start" value="regular" ></ion-radio> 
             </ion-item>
           </ion-col>
 
           <ion-col>
-            <ion-item>
+            <ion-item lines="none">
               <ion-label color="primary">Special</ion-label>
               <ion-radio slot="start" value="special"></ion-radio>
             </ion-item>

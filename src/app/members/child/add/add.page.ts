@@ -39,6 +39,7 @@ export class AddPage implements OnInit {
   clinics: any;
   todaydate: any;
   gender: any;
+  guardian:any;
   City: any;
   CNIC: any;
   Doctor: any;
@@ -64,7 +65,9 @@ export class AddPage implements OnInit {
     public alertCtrl: AlertController
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log(this.CNIC)
+  }
   ionViewWillEnter()//ngAfterContentInit() 
   {
     // let obj = {'toNumber':'+923143041544' , 'message': 'this is test message' , 'created': Date.now(), 'status':false};
@@ -97,6 +100,7 @@ export class AddPage implements OnInit {
       ),
       PreferredDayOfWeek: 'Any',
       Gender: [null,Validators.required],
+      guardian:[null,Validators.required],
       Type: [null,Validators.required],
       City: [null],
       CNIC:[null],
@@ -142,7 +146,7 @@ export class AddPage implements OnInit {
     // this.formcontroll = true;
     //this.fg1.value.Gender = this.gender;
     await this.PasswordGenerator();
-    //console.log(this.fg1.value);
+    console.log(this.fg1.value);
     await this.addNewChild(this.fg1.value);
   }
   updateGender(g) {
