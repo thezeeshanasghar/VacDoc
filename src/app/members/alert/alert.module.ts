@@ -15,7 +15,7 @@ const routes: Routes = [
       { path: '', redirectTo: 'vaccine-alert', pathMatch: 'full' },
       { path: 'follow-up', loadChildren: './follow-up/follow-up.module#FollowUpPageModule' },
       { path: 'vaccine-alert', loadChildren: './vaccine-alert/vaccine-alert.module#VaccineAlertPageModule' },
-
+      { path: 'birthday-alert', loadChildren: './birthday-alert/birthday-alert.module#BirthdayAlertPageModule'}
     ]
   }
 ];
