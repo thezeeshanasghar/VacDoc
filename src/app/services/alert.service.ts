@@ -16,7 +16,7 @@ export class AlertService extends BaseService {
   }
  
   getChild(numOfDays: number, Id: String): Observable<any> {
-    const url = `${this.API_ALERT}schedule/alert/${numOfDays}/${Id}`;
+    const url = `${this.API_ALERT}alert/${numOfDays}/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
@@ -26,7 +26,7 @@ export class AlertService extends BaseService {
   sendAlertMsgToAll(numOfDays: number, clinicID: number): Observable<any> {
     const url = `${
       this.API_ALERT
-    }schedule/sms-alert/${numOfDays}/${clinicID}`;
+    }alert/sms-alert/${numOfDays}/${clinicID}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
@@ -36,7 +36,7 @@ export class AlertService extends BaseService {
   sendIndividualAlertMsg(numOfDays: number, Id: String): Observable<any> {
     const url = `${
       this.API_ALERT
-    }schedule/individual-sms-alert/${numOfDays}/${Id}`;
+    }alert/individual-sms-alert/${numOfDays}/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
@@ -44,7 +44,7 @@ export class AlertService extends BaseService {
   }
 
   sendMsgsThroughDictionary(numOfDays: number, Id: String): Observable<any>{
-    const url = `${this.API_ALERT}schedule/send-msg/${numOfDays}/${Id}`;
+    const url = `${this.API_ALERT}alert/send-msg/${numOfDays}/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
