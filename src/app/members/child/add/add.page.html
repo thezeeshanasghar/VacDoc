@@ -37,8 +37,26 @@
       </ng-container>
     </div>
 
+    <ion-radio-group formControlName="Guardian">
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-item lines="none">
+              <ion-label color="primary">Father's name</ion-label>
+              <ion-radio slot="start" value="Father" ></ion-radio> 
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item lines="none">
+              <ion-label color="primary">Husband's name</ion-label>
+              <ion-radio slot="start" value="Husband"></ion-radio>
+            </ion-item>
+          </ion-col>
+        </ion-row>    
+      </ion-grid>
+    </ion-radio-group>
     <ion-item>
-      <ion-label color="primary" position="floating">Father's Name</ion-label>
+      <!-- <ion-label color="primary" position="floating">Father's Name</ion-label> -->
       <ion-input type="text" formControlName="FatherName" required></ion-input>
     </ion-item>
     <div class="validation-errors">

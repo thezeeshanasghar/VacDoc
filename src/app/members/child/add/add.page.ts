@@ -76,6 +76,7 @@ export class AddPage implements OnInit {
     this.fg1 = this.formBuilder.group({
       ClinicId: [""],
       Name: new FormControl("", Validators.required),
+      Guardian: new FormControl("", Validators.required),
       FatherName: new FormControl("", Validators.required),
       Email: new FormControl(
         "",
@@ -304,7 +305,7 @@ export class AddPage implements OnInit {
 
   validation_messages = {
     name: [{ type: "required", message: "Name is required." }],
-    fatherName: [{ type: "required", message: "Father name is required." }],
+    fatherName: [{ type: "required", message: "Guardian name is required." }],
     // email: [
     //   { type: "required", message: "Email is required." },
     //   { type: "pattern", message: "Please enter a valid email." }
