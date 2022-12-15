@@ -14,7 +14,7 @@ import { AlertService } from "src/app/shared/alert.service";
 })
 export class ClinicPage {
   Clinics: any;
- dispclinics: any = [];
+  dispclinics: any = [];
   doctorId: number;
   clinicId: any;
   onlineclinic: any;
@@ -27,7 +27,7 @@ export class ClinicPage {
     private router: Router,
     private alertService: AlertService
   ) {
-    router.events.subscribe((val)=> {
+    router.events.subscribe((val) => {
       this.storage.get(environment.CLINICS).then(clinics => {
         this.Clinics = clinics;
       });
@@ -50,7 +50,7 @@ export class ClinicPage {
     if (!this.Clinics) {
       this.getClinics();
     }
-   
+
   }
 
   async getClinics() {
@@ -91,27 +91,27 @@ export class ClinicPage {
   }
 
   async setOnlineClinic(clinicId) {
-   
+
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
-      let data = { 'DoctorId': this.doctorId, 'Id': clinicId, 'IsOnline': 'true' }
-      await this.clinicService.changeOnlineClinic(data)
-        .subscribe(res => {
-          if (res.IsSuccess) {
-            loading.dismiss();
-            this.getClinics();
-           // this.router.navigate(['/members/doctor/clinic']);
-          }
-          else {
-            this.toastService.create(res.Message)
-          }
+    let data = { 'DoctorId': this.doctorId, 'Id': clinicId, 'IsOnline': 'true' }
+    await this.clinicService.changeOnlineClinic(data)
+      .subscribe(res => {
+        if (res.IsSuccess) {
+          loading.dismiss();
+          this.getClinics();
+          // this.router.navigate(['/members/doctor/clinic']);
+        }
+        else {
+          this.toastService.create(res.Message)
+        }
 
-        }, (err) => {
-          this.toastService.create(err);
-        });
-      loading.dismiss();
-    }
- // }
+      }, (err) => {
+        this.toastService.create(err);
+      });
+    loading.dismiss();
+  }
+  // }
 
   alertDeleteClinic(id) {
     this.alertService
@@ -147,11 +147,11 @@ export class ClinicPage {
   }
   doRefresh(event) {
     console.log('Begin async operation');
-   this.ngOnInit();
+    this.ngOnInit();
     setTimeout(() => {
       console.log('Async operation has ended');
       event.target.complete();
     }, 1000);
   }
-  
+
 }
