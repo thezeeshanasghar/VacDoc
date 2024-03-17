@@ -9,12 +9,12 @@ import { catchError, map } from "rxjs/operators";
   providedIn: "root"
 })
 export class AlertService extends BaseService {
-  private readonly API_ALERT = `${environment.BASE_URL}`;
+  private readonly API_ALERT = `${environment.BASE_URL}` + 'schedule/';
 
   constructor(protected http: HttpClient) {
     super(http);
   }
- 
+
   getChild(numOfDays: number, Id: String): Observable<any> {
     const url = `${this.API_ALERT}alert/${numOfDays}/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
@@ -22,11 +22,10 @@ export class AlertService extends BaseService {
       catchError(this.handleError)
     );
   }
- 
+
   sendAlertMsgToAll(numOfDays: number, clinicID: number): Observable<any> {
-    const url = `${
-      this.API_ALERT
-    }alert/sms-alert/${numOfDays}/${clinicID}`;
+    const url = `${this.API_ALERT
+      }alert/sms-alert/${numOfDays}/${clinicID}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
@@ -34,16 +33,15 @@ export class AlertService extends BaseService {
   }
 
   sendIndividualAlertMsg(numOfDays: number, Id: String): Observable<any> {
-    const url = `${
-      this.API_ALERT
-    }alert/individual-sms-alert/${numOfDays}/${Id}`;
+    const url = `${this.API_ALERT
+      }alert/individual-sms-alert/${numOfDays}/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
     );
   }
 
-  sendMsgsThroughDictionary(numOfDays: number, Id: String): Observable<any>{
+  sendMsgsThroughDictionary(numOfDays: number, Id: String): Observable<any> {
     const url = `${this.API_ALERT}alert/send-msg/${numOfDays}/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),

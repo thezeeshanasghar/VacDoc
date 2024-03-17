@@ -4,26 +4,26 @@
 
 export const environment = {
   production: false,
-  // BASE_URL: "http://testvaccinebe.fernflowers.com/api/",
-  // RESOURCE_URL: "http://testvaccinebe.fernflowers.com/",
+  BASE_URL: "https://stage.skintechno.com/api/",
+  RESOURCE_URL: "https://stage.skintechno.com/",
 
   // BASE_URL: "https://fernflowers.com/api/",
-  
+
   // BASE_URL: "https://fernflowers.com/api/",
   // RESOURCE_URL: "https://fernflowers.com/",
 
   // RESOURCE_URL: "http://localhost:5000/api/",
 
   // for using web server
-  // BASE_URL: "https://fernflowers.com/api/",
-  // RESOURCE_URL: "https://fernflowers.com/",
-  
+  // BASE_URL: "https://skintechno.com/api/",
+  // RESOURCE_URL: "https://skintechno.com/",
+
   // for local server
-  BASE_URL: "http://localhost:5000/api/",
-  RESOURCE_URL: "http://localhost:5000/",
+  // BASE_URL: "http://localhost:5000/api/",
+  // RESOURCE_URL: "http://localhost:5000/",
 
 
-  
+
   USER: 'User',
   DOCTOR_Id: "DoctorId",
   CLINIC_Id: "ClinicId",
