@@ -348,25 +348,29 @@
       </ng-container>
     </div>
 
-<ion-item>
-  <ion-label color="primary" position="floating">Design Your letterpad</ion-label>
-  <ion-textarea
-    type="text"
-    formControlName="AdditionalInfo"
-    class="ion-text-capitalize"
-  ></ion-textarea>
-</ion-item>
-<div class="validation-errors">
-  <ng-container *ngFor="let validation of validation_messages.AdditionalInfo">
-    <div
-      class="error-message"
-      *ngIf="fg.get('AdditionalInfo').hasError(validation.type) && (fg.get('AdditionalInfo').dirty || fg.get('AdditionalInfo').touched)"
-    >
-      <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+    <ion-item>
+      <ion-label color="primary" position="floating"
+        >Design Your letterpad</ion-label
+      >
+      <ion-textarea
+        type="text"
+        formControlName="AdditionalInfo"
+        class="ion-text-capitalize"
+      ></ion-textarea>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container
+        *ngFor="let validation of validation_messages.AdditionalInfo"
+      >
+        <div
+          class="error-message"
+          *ngIf="fg.get('AdditionalInfo').hasError(validation.type) && (fg.get('AdditionalInfo').dirty || fg.get('AdditionalInfo').touched)"
+        >
+          <ion-icon name="information-circle-outline"></ion-icon> {{
+          validation.message }}
+        </div>
+      </ng-container>
     </div>
-  </ng-container>
-</div>
-
 
     <ion-item>
       <ion-label color="primary" position="floating">First Name</ion-label>
