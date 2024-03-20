@@ -21,6 +21,8 @@ import { File, FileEntry } from '@ionic-native/file/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 declare var google;
+import { HttpClient } from '@angular/common/http';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: "app-step2",
@@ -29,6 +31,7 @@ declare var google;
 })
 export class Step2Page implements OnInit {
   //google:any;
+  isWeb: boolean;
   fg1: FormGroup;
   fg2: FormGroup;
   map;
@@ -52,8 +55,13 @@ export class Step2Page implements OnInit {
     private fileChooser: FileChooser,
     private file: File,
     private filePath: FilePath,
-    private transfer: FileTransfer
-  ) { }
+    private transfer: FileTransfer,
+    private platform: Platform,
+    private http: HttpClient,
+  ) { 
+    this.isWeb = !this.platform.is('cordova');
+    console.log(this.isWeb)
+  }
 
   ngOnInit() {
     //this.ionViewDidEnte();
@@ -148,8 +156,41 @@ export class Step2Page implements OnInit {
     this.ionViewDidEnte();
   }
 
-  uploadMonogram() {
+  async uploadMonogram(event: Event) {
+    if(this.isWeb){
+      const fileInput = event.target as HTMLInputElement;
+      if (!fileInput.files || fileInput.files.length === 0) {
+        return;
+      }
+      
 
+      const file = fileInput.files[0];
+      console.log('Selected File:', file);
+      if (file.size < 100000) {
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
+
+          // Make sure to replace the URL below with your actual upload endpoint
+          const uploadUrl = 'http://localhost:5000/api/upload';
+          const response = await this.http.post(uploadUrl, formData).toPromise();
+          const dbPath = response['dbPath']; // Adjust this based on your server response
+          console.log(dbPath)
+
+          // Handle success
+          this.toastService.create('Successfully uploaded');
+          // Update your form value or handle the uploaded file path as needed
+        } catch (error) {
+          console.error('Error uploading file:', error);
+          this.toastService.create('Error uploading file', 'danger');
+        }
+      } else {
+        this.toastService.create('File size must be less than 100 KB', 'danger');
+      }
+    } 
+    else{
+
+    
     this.fileChooser.open().then(async uri => {
       console.log(uri);
       await this.filePath.resolveNativePath(uri).then(filePath => {
@@ -166,7 +207,7 @@ export class Step2Page implements OnInit {
                 fileName: filesName
               }
               const fileTransfer: FileTransferObject = this.transfer.create();
-              await fileTransfer.upload(uri, 'http://13.233.255.96:5002/api/upload', options)
+              await fileTransfer.upload(uri, 'https://stage.skintechno.com/api/upload', options)
                 .then((data) => {
                   // success
                   // console.log(data);
@@ -195,7 +236,7 @@ export class Step2Page implements OnInit {
       console.log(err);
       throw err;
     });
-
+  }
   }
   hello(): void {
     //Called after ngOnInit when the component's or directive's content has been initialized.
