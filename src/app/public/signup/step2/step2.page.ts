@@ -173,7 +173,7 @@ export class Step2Page implements OnInit {
           console.log(file)
 
           // Make sure to replace the URL below with your actual upload endpoint
-          const uploadUrl = "https://stage.skintechno.com/api/upload";
+          const uploadUrl = `${environment.BASE_URL}upload`;
           const response = await this.http.post(uploadUrl, formData).toPromise();
           const dbPath = response['dbPath']; // Adjust this based on your server response
           console.log(response["dbPath"]);
@@ -208,19 +208,23 @@ export class Step2Page implements OnInit {
                 fileName: filesName
               }
               const fileTransfer: FileTransferObject = this.transfer.create();
-              await fileTransfer.upload(uri, 'https://stage.skintechno.com/api/upload', options)
-                .then((data) => {
-                  // success
-                  // console.log(data);
-                  this.toastService.create("successfully Uploaded");
-                  this.uploading = false;
-                  let dbpath = JSON.parse(data.response)
-                  this.fg1.value.MonogramImage = dbpath.dbPath;
-                  //console.log(this.fg1.value.MonogramImage);
-                }, (err) => {
-                  console.log(err)
-                  // error
-                })
+              await fileTransfer
+                .upload(uri, `${environment.BASE_URL}upload`, options)
+                .then(
+                  (data) => {
+                    // success
+                    // console.log(data);
+                    this.toastService.create("successfully Uploaded");
+                    this.uploading = false;
+                    let dbpath = JSON.parse(data.response);
+                    this.fg1.value.MonogramImage = dbpath.dbPath;
+                    //console.log(this.fg1.value.MonogramImage);
+                  },
+                  (err) => {
+                    console.log(err);
+                    // error
+                  }
+                );
             }
             else
               this.toastService.create("File size must be less than 100 kb", "danger");
