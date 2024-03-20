@@ -1,34 +1,36 @@
 import { Component, ViewChild, OnInit } from "@angular/core";
-import { IonSelect } from '@ionic/angular';
-import {
-  FormGroup,
-  FormBuilder,
-  FormControl,
-  Validators,
-} from "@angular/forms";
+import { IonSelect } from "@ionic/angular";
+import { FormGroup, FormBuilder, FormControl, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { SignupService } from "src/app/services/signup.service";
 
 @Component({
   selector: "app-step1",
   templateUrl: "./step1.page.html",
-  styleUrls: ["./step1.page.scss"]
+  styleUrls: ["./step1.page.scss"],
 })
 export class Step1Page implements OnInit {
   fg: FormGroup;
   checkedVal: any;
-  @ViewChild('speciality' , {static: false}) selectPop: IonSelect;
+  @ViewChild("speciality", { static: false }) selectPop: IonSelect;
+
   constructor(
-    private frombuilder: FormBuilder,
+    private formBuilder: FormBuilder,
     private router: Router,
     private signupService: SignupService
   ) {}
 
   ngOnInit() {
-    this.fg = this.frombuilder.group({
+    this.fg = this.formBuilder.group({
       DoctorType: new FormControl("CS"),
       Qualification: [],
-      AdditionalInfo: [],
+      AdditionalInfo: [
+        "",
+        [
+          Validators.required,
+          this.fourLinesValidator,
+        ],
+      ],
       FirstName: [],
       LastName: [],
       DisplayName: [],
@@ -38,7 +40,7 @@ export class Step1Page implements OnInit {
           Validators.required,
           Validators.pattern(
             "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
-          )
+          ),
         ])
       ),
       Speciality: [],
@@ -48,7 +50,7 @@ export class Step1Page implements OnInit {
         "",
         Validators.compose([
           Validators.required,
-          Validators.pattern("[0-9]{10}$")
+          Validators.pattern("[0-9]{10}$"),
         ])
       ),
       ShowMobile: [true],
@@ -58,7 +60,7 @@ export class Step1Page implements OnInit {
           Validators.required,
           Validators.minLength(7),
           Validators.maxLength(11),
-          Validators.pattern("^([0-9]*)$")
+          Validators.pattern("^([0-9]*)$"),
         ])
       ),
       ShowPhone: [true],
@@ -66,14 +68,22 @@ export class Step1Page implements OnInit {
         "12345-A",
         Validators.compose([
           Validators.required,
-          Validators.pattern("^[0-9-\\+]*-[a-zA-Z]$")
+          Validators.pattern("^[0-9-\\+]*-[a-zA-Z]$"),
         ])
-      )
+      ),
     });
   }
 
+  
+  fourLinesValidator(control: FormControl) {
+    const value = control.value || "";
+    const lines = value.split('\n').filter(line => line.trim() !== '');
+    return lines.length >= 4 ? null : { insufficientLines: true };
+  }
+  
+
   PasswordGenerator() {
-      var length = 4,
+    var length = 4,
       charset = "0123456789",
       retVal = "";
     for (var i = 0, n = charset.length; i < length; ++i) {
@@ -90,45 +100,53 @@ export class Step1Page implements OnInit {
     this.router.navigate(["/signup/step2"]);
   }
 
-  setValueAndShowSpeciality(value: String, checkedVal) {
+  setValueAndShowSpeciality(value: string, checkedVal) {
     this.fg.value.DoctorType = value;
     this.checkedVal = checkedVal;
   }
 
-  opendrop(){
+  opendrop() {
     this.selectPop.open();
   }
-  validation_messages = {
-    qualification: [
-      { type: "required", message: "Qualification is required." }
-    ],
-    FirstName: [{ type: "required", message: "FirstName is required." }],
-    lastName: [{ type: "required", message: "LastName is required." }],
-    displayName: [{ type: "required", message: "DisplayName is required." }],
-    email: [
-      { type: "required", message: "Email is required." },
-      { type: "pattern", message: "Please enter a valid email." }
-    ],
-    mobileNumber: [
-      { type: "required", message: "MobileNumber is required." },
-      { type: "pattern", message: "Mobile number is required like 3331231231" }
-    ],
-    phoneNumber: [
-      { type: "required", message: "Phone number is required" },
 
+
+
+
+  validation_messages = {
+    FirstName: [{ type: "required", message: "First Name is required." }],
+    LastName: [{ type: "required", message: "Last Name is required." }],
+    DisplayName: [{ type: "required", message: "Display Name is required." }],
+    Email: [
+      { type: "required", message: "Email is required." },
+      { type: "pattern", message: "Please enter a valid email." },
+    ],
+    MobileNumber: [
+      { type: "required", message: "Mobile Number is required." },
+      { type: "pattern", message: "Mobile number must be like 3331231231." },
+    ],
+    PhoneNo: [
+      { type: "required", message: "Phone number is required." },
       {
         type: "minlength",
-        message: "Phone Number must be at least 7 Digits long."
+        message: "Phone Number must be at least 7 digits long.",
       },
       {
         type: "maxlength",
-        message: "Phone Number must be at least 11 Digits long."
+        message: "Phone Number must be at most 11 digits long.",
       },
-      { type: "pattern", message: "Enter Must be Number" }
+      { type: "pattern", message: "Enter must be a number." },
     ],
     PMDC: [
       { type: "required", message: "PMDC is required." },
-      { type: "pattern", message: "PMDC is required like 12345-A" }
-    ]
+      { type: "pattern", message: "PMDC is required like 12345-A." },
+    ],
+
+    AdditionalInfo: [
+      { type: "required", message: "Additional Info is required." },
+      {
+        type: "insufficientLines",
+        message: "Input must contain at least four lines.",
+      },
+    ],
   };
 }

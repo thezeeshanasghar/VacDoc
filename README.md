@@ -4,3 +4,4 @@ Recommended Changes in VaccineAPI Project for ProfileImage, SignatureImage to wo
             // dbDoctor.ProfileImage=doctorDTO.ProfileImage;
             // dbDoctor.SignatureImage=doctorDTO.SignatureImage;
 
+<!-- $env:NODE_OPTIONS = "--openssl-legacy-provider" -->

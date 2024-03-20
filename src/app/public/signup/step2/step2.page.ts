@@ -170,12 +170,13 @@ export class Step2Page implements OnInit {
         try {
           const formData = new FormData();
           formData.append('file', file);
+          console.log(file)
 
           // Make sure to replace the URL below with your actual upload endpoint
-          const uploadUrl = 'http://localhost:5000/api/upload';
+          const uploadUrl = "https://stage.skintechno.com/api/upload";
           const response = await this.http.post(uploadUrl, formData).toPromise();
           const dbPath = response['dbPath']; // Adjust this based on your server response
-          console.log(dbPath)
+          console.log(response["dbPath"]);
 
           // Handle success
           this.toastService.create('Successfully uploaded');
