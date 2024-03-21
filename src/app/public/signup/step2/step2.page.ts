@@ -173,10 +173,13 @@ export class Step2Page implements OnInit {
           console.log(file)
 
           // Make sure to replace the URL below with your actual upload endpoint
-          const uploadUrl = `${environment.BASE_URL}upload`;
+          const uploadUrl = 'https://stage.skintechno.com//api/upload';
           const response = await this.http.post(uploadUrl, formData).toPromise();
           const dbPath = response['dbPath']; // Adjust this based on your server response
-          console.log(response["dbPath"]);
+          localStorage.setItem('dbpath',dbPath)
+          console.log('dbpath uplaod',dbPath)
+          
+         
 
           // Handle success
           this.toastService.create('Successfully uploaded');
@@ -279,6 +282,7 @@ export class Step2Page implements OnInit {
         this.latitude = resp.coords.latitude;
         this.longitude = resp.coords.longitude;
         console.log(this.latitude);
+        console.log(this.longitude);
         this.hello();
       })
       .catch(error => {
@@ -336,10 +340,15 @@ export class Step2Page implements OnInit {
   getdata() {
     // this.fg2.controls["Tuend"].setValue(this.fg2.value.Mend);
     this.fg1.value.DoctorId = this.DoctorId;
+    
     // this.fg1.value.Lat = this.myMarker.lat;
     // this.fg1.value.Long = this.myMarker.lng;
     this.fg1.value.Lat = this.latitude;
     this.fg1.value.Long = this.longitude;
+    const monogram=localStorage.getItem('dbpath')
+    console.log('monogram',monogram)
+    
+    
     this.fg1.value.OffDays = "Sunday";
     var ct = [];
     if (this.fg2.value.Monday) {

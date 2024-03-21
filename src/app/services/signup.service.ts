@@ -28,8 +28,10 @@ export class SignupService extends BaseService {
         Address: this.clinicData.Address,
         ConsultationFee: this.clinicData.ConsultationFee,
         ClinicTimings: this.clinicData.ClinicTimings,
-        Lat: this.clinicData.Lat,
-        Long: this.clinicData.Long
+        Lat: this.clinicData.latitude,
+        Long: this.clinicData.longitude,
+        MonogramImage:localStorage.getItem('dbpath'),
+        
       },
       CountryCode: this.personalData.CountryCode,
       DisplayName: this.personalData.DisplayName,
@@ -44,8 +46,11 @@ export class SignupService extends BaseService {
       Qualification: this.personalData.Qualification,
       ShowMobile: this.personalData.ShowMobile,
       ShowPhone: this.personalData.ShowPhone,
-      Speciality: this.personalData.Speciality
+      Speciality: this.personalData.Speciality,
+      SignatureImage:null,
+      ProfileImage:null,
     };
+    localStorage.removeItem('dbpath')
     const url = `${this.API_Doctor}`;
     return this.http
       .post(url, var1, this.httpOptions)
