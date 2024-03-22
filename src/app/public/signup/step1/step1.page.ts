@@ -28,7 +28,7 @@ export class Step1Page implements OnInit {
     this.fg = this.frombuilder.group({
       DoctorType: new FormControl("CS"),
       Qualification: [],
-      AdditionalInfo: [],
+      AdditionalInfo: ["", [Validators.required,this.fourLinesValidator,]],
       FirstName: [],
       LastName: [],
       DisplayName: [],
@@ -71,7 +71,11 @@ export class Step1Page implements OnInit {
       )
     });
   }
-
+  fourLinesValidator(control: FormControl) {
+    const value = control.value || "";
+    const lines = value.split('\n').filter(line => line.trim() !== '');
+    return lines.length >= 4 ? null : { insufficientLines: true };
+  }
   PasswordGenerator() {
       var length = 4,
       charset = "0123456789",
@@ -129,6 +133,13 @@ export class Step1Page implements OnInit {
     PMDC: [
       { type: "required", message: "PMDC is required." },
       { type: "pattern", message: "PMDC is required like 12345-A" }
-    ]
+    ],
+    AdditionalInfo: [
+      { type: "required", message: "Additional Info is required." },
+      {
+        type: "insufficientLines",
+        message: "Input must contain at least four lines.",
+      },
+    ],
   };
 }
