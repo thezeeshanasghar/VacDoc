@@ -20,6 +20,9 @@ import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { File, FileEntry } from '@ionic-native/file/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+
+import { HttpClient } from '@angular/common/http';
+import { Platform } from '@ionic/angular';
 declare var google;
 
 @Component({
@@ -40,6 +43,7 @@ export class Step2Page implements OnInit {
   latitude: any = 33.6328532;
   longitude: any = 72.93583679;
   section: boolean = false;
+  isWeb: boolean;
   constructor(
     private formbuilder: FormBuilder,
     private router: Router,
@@ -52,8 +56,12 @@ export class Step2Page implements OnInit {
     private fileChooser: FileChooser,
     private file: File,
     private filePath: FilePath,
-    private transfer: FileTransfer
-  ) { }
+    private transfer: FileTransfer,
+    private platform: Platform,
+    private http: HttpClient,
+  ) { 
+    this.isWeb = !this.platform.is('cordova');
+  }
 
   ngOnInit() {
     //this.ionViewDidEnte();
@@ -148,40 +156,76 @@ export class Step2Page implements OnInit {
     this.ionViewDidEnte();
   }
 
-  uploadMonogram() {
+  async uploadMonogram(event: Event) {
+    if(this.isWeb){
+      const fileInput = event.target as HTMLInputElement;
+      if (!fileInput.files || fileInput.files.length === 0) {
+        return;
+      }
 
-    this.fileChooser.open().then(async uri => {
-      console.log(uri);
-      await this.filePath.resolveNativePath(uri).then(filePath => {
-        //this.filesPath = filePath;
-        this.uploading = true;
-        this.file.resolveLocalFilesystemUrl(filePath).then(fileInfo => {
-          let files = fileInfo as FileEntry;
-          files.file(async success => {
-            //this.fileType   = success.type;
-            if (success.size < 100000) {
-              let filesName = success.name;
-              console.log(filesName);
-              let options: FileUploadOptions = {
-                fileName: filesName
+
+      const file = fileInput.files[0];
+      console.log('Selected File:', file);
+      if (file.size < 100000) {
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
+
+          // Make sure to replace the URL below with your actual upload endpoint
+          const uploadUrl = `${environment.BASE_URL}upload`;
+          const response = await this.http.post(uploadUrl, formData).toPromise();
+          const dbPath = response['dbPath']; // Adjust this based on your server response
+          console.log(dbPath)
+
+          // Handle success
+          this.toastService.create('Successfully uploaded');
+          // Update your form value or handle the uploaded file path as needed
+        } catch (error) {
+          console.error('Error uploading file:', error);
+          this.toastService.create('Error uploading file', 'danger');
+        }
+      } else {
+        this.toastService.create('File size must be less than 100 KB', 'danger');
+      }
+    } 
+    else{
+
+      this.fileChooser.open().then(async uri => {
+        console.log(uri);
+        await this.filePath.resolveNativePath(uri).then(filePath => {
+          //this.filesPath = filePath;
+          this.uploading = true;
+          this.file.resolveLocalFilesystemUrl(filePath).then(fileInfo => {
+            let files = fileInfo as FileEntry;
+            files.file(async success => {
+              //this.fileType   = success.type;
+              if (success.size < 100000) {
+                let filesName = success.name;
+                console.log(filesName);
+                let options: FileUploadOptions = {
+                  fileName: filesName
+                }
+                const fileTransfer: FileTransferObject = this.transfer.create();
+                await fileTransfer.upload(uri, `${environment.BASE_URL}upload`                   , options)
+                  .then((data) => {
+                    // success
+                    // console.log(data);
+                    this.toastService.create("successfully Uploaded");
+                    this.uploading = false;
+                    let dbpath = JSON.parse(data.response)
+                    this.fg1.value.MonogramImage = dbpath.dbPath;
+                    //console.log(this.fg1.value.MonogramImage);
+                  }, (err) => {
+                    console.log(err)
+                    // error
+                  })
               }
-              const fileTransfer: FileTransferObject = this.transfer.create();
-              await fileTransfer.upload(uri, 'http://13.233.255.96:5002/api/upload', options)
-                .then((data) => {
-                  // success
-                  // console.log(data);
-                  this.toastService.create("successfully Uploaded");
-                  this.uploading = false;
-                  let dbpath = JSON.parse(data.response)
-                  this.fg1.value.MonogramImage = dbpath.dbPath;
-                  //console.log(this.fg1.value.MonogramImage);
-                }, (err) => {
-                  console.log(err)
-                  // error
-                })
-            }
-            else
-              this.toastService.create("File size must be less than 100 kb", "danger");
+              else
+                this.toastService.create("File size must be less than 100 kb", "danger");
+            });
+          }, err => {
+            console.log(err);
+            throw err;
           });
         }, err => {
           console.log(err);
@@ -191,11 +235,7 @@ export class Step2Page implements OnInit {
         console.log(err);
         throw err;
       });
-    }, err => {
-      console.log(err);
-      throw err;
-    });
-
+    }
   }
   hello(): void {
     //Called after ngOnInit when the component's or directive's content has been initialized.
@@ -294,6 +334,7 @@ export class Step2Page implements OnInit {
     // this.fg1.value.Long = this.myMarker.lng;
     this.fg1.value.Lat = this.latitude;
     this.fg1.value.Long = this.longitude;
+    const monogram=localStorage.getItem('dbpath')
     this.fg1.value.OffDays = "Sunday";
     var ct = [];
     if (this.fg2.value.Monday) {
