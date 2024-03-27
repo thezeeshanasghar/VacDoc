@@ -211,6 +211,7 @@ export class ProfilePage implements OnInit {
       .subscribe(
         res => {
           if (res.IsSuccess) {
+            loading.dismiss();
             console.log(res.ResponseData);
             this.toastService.create("Profile Updated !");
           } else {
