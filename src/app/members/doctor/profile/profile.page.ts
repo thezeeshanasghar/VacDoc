@@ -88,6 +88,8 @@ export class ProfilePage implements OnInit {
           Validators.pattern("^[0-9-\\+]*-[A-Z]$")
         ])
       ),
+      AdditionalInfo:[null],
+      Qualification:[null],
       SignatureImage: new FormControl([null]),
       ProfileImage: new FormControl([null])
 
@@ -180,6 +182,8 @@ export class ProfilePage implements OnInit {
           this.fg.controls["PhoneNo"].setValue(this.doctorData.PhoneNo);
           this.fg.controls["ShowPhone"].setValue(this.doctorData.ShowPhone);
           this.fg.controls["PMDC"].setValue(this.doctorData.PMDC);
+          this.fg.controls["AdditionalInfo"].setValue(this.doctorData.AdditionalInfo);
+          this.fg.controls["Qualification"].setValue(this.doctorData.Qualification);
           this.fg.controls["SignatureImage"].setValue(this.doctorData.SignatureImage);
           this.fg.controls["ProfileImage"].setValue(this.doctorData.ProfileImage);
           this.profileImagePath = this.doctorData.ProfileImage;
@@ -211,6 +215,7 @@ export class ProfilePage implements OnInit {
       .subscribe(
         res => {
           if (res.IsSuccess) {
+            loading.dismiss();
             console.log(res.ResponseData);
             this.toastService.create("Profile Updated !");
           } else {
