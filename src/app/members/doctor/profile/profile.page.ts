@@ -25,7 +25,8 @@ export class ProfilePage implements OnInit {
   DocotrId: any;
   uploading: any;
   profileImagePath: any;
-  signatureImagePath: any
+  signatureImagePath: any;
+  resourceURL = environment.RESOURCE_URL;
 
   constructor(
     public loadingController: LoadingController,
