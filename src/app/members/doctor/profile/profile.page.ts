@@ -25,7 +25,8 @@ export class ProfilePage implements OnInit {
   DocotrId: any;
   uploading: any;
   profileImagePath: any;
-  signatureImagePath: any
+  signatureImagePath: any;
+  resourceURL = environment.RESOURCE_URL;
 
   constructor(
     public loadingController: LoadingController,
@@ -88,12 +89,18 @@ export class ProfilePage implements OnInit {
           Validators.pattern("^[0-9-\\+]*-[A-Z]$")
         ])
       ),
+      AdditionalInfo:["", [Validators.required,this.fourLinesValidator,]],
+      Qualification:[null],
       SignatureImage: new FormControl([null]),
       ProfileImage: new FormControl([null])
 
     });
   }
-
+  fourLinesValidator(control: FormControl) {
+    const value = control.value || "";
+    const lines = value.split('\n').filter(line => line.trim() !== '');
+    return lines.length >= 4 ? null : { insufficientLines: true };
+  }
   private previewImage(file: FileList, imagePath: string) {
     const reader = new FileReader();
     reader.onload = () => {
@@ -180,6 +187,8 @@ export class ProfilePage implements OnInit {
           this.fg.controls["PhoneNo"].setValue(this.doctorData.PhoneNo);
           this.fg.controls["ShowPhone"].setValue(this.doctorData.ShowPhone);
           this.fg.controls["PMDC"].setValue(this.doctorData.PMDC);
+          this.fg.controls["AdditionalInfo"].setValue(this.doctorData.AdditionalInfo);
+          this.fg.controls["Qualification"].setValue(this.doctorData.Qualification);
           this.fg.controls["SignatureImage"].setValue(this.doctorData.SignatureImage);
           this.fg.controls["ProfileImage"].setValue(this.doctorData.ProfileImage);
           this.profileImagePath = this.doctorData.ProfileImage;
@@ -249,6 +258,13 @@ export class ProfilePage implements OnInit {
     PMDC: [
       { type: "required", message: "PMDC is required." },
       { type: "pattern", message: "PMDC is required like 12345-A" }
-    ]
+    ],
+    AdditionalInfo: [
+      { type: "required", message: "Additional Info is required." },
+      {
+        type: "insufficientLines",
+        message: "Input must contain at least four lines.",
+      },
+    ],
   };
 }
