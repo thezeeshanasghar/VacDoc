@@ -114,8 +114,15 @@
     </ion-item>
     <ion-item>
       <ion-label color="primary" position="floating">Additional Info</ion-label>
-      <ion-input type="text" formControlName="AdditionalInfo" required></ion-input>
+      <ion-textarea type="text" formControlName="AdditionalInfo" class="ion-text-capitalize"></ion-textarea>
     </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.AdditionalInfo">
+        <div class="error-message" *ngIf="fg.get('AdditionalInfo').hasError(validation.type) && (fg.get('AdditionalInfo').dirty || fg.get('AdditionalInfo').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{validation.message }}
+        </div>
+      </ng-container>
+    </div>
     <ion-item>
       <ion-label color="primary" position="floating">Qualification</ion-label>
       <ion-input type="text" formControlName="Qualification" required></ion-input>

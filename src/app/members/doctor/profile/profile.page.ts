@@ -258,6 +258,13 @@ export class ProfilePage implements OnInit {
     PMDC: [
       { type: "required", message: "PMDC is required." },
       { type: "pattern", message: "PMDC is required like 12345-A" }
-    ]
+    ],
+    AdditionalInfo: [
+      { type: "required", message: "Additional Info is required." },
+      {
+        type: "insufficientLines",
+        message: "Input must contain at least four lines.",
+      },
+    ],
   };
 }
