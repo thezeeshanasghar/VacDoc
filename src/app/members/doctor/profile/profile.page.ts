@@ -89,14 +89,18 @@ export class ProfilePage implements OnInit {
           Validators.pattern("^[0-9-\\+]*-[A-Z]$")
         ])
       ),
-      AdditionalInfo:[null],
+      AdditionalInfo:["", [Validators.required,this.fourLinesValidator,]],
       Qualification:[null],
       SignatureImage: new FormControl([null]),
       ProfileImage: new FormControl([null])
 
     });
   }
-
+  fourLinesValidator(control: FormControl) {
+    const value = control.value || "";
+    const lines = value.split('\n').filter(line => line.trim() !== '');
+    return lines.length >= 4 ? null : { insufficientLines: true };
+  }
   private previewImage(file: FileList, imagePath: string) {
     const reader = new FileReader();
     reader.onload = () => {
