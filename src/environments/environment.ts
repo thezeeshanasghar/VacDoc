@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  // BASE_URL: "https://stage.skintechno.com/api/",
-  // RESOURCE_URL: "https://stage.skintechno.com/",
+  BASE_URL: "https://stage.skintechno.com/api/",
+  RESOURCE_URL: "https://stage.skintechno.com/",
 
   // BASE_URL: "https://fernflowers.com/api/",
 
@@ -19,8 +19,8 @@ export const environment = {
   // RESOURCE_URL: "https://skintechno.com/",
 
   // for local server
-  BASE_URL: "https://localhost:5001/api/",
-  RESOURCE_URL: "https://localhost:5001/",
+  // BASE_URL: "https://localhost:5001/api/",
+  // RESOURCE_URL: "https://localhost:5001/",
 
 
 
