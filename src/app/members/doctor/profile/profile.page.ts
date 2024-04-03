@@ -126,7 +126,7 @@ export class ProfilePage implements OnInit {
     await this.uploadService.uploadImage(profileData).subscribe(res => {
       if (res) {
         let pImage = res.dbPath;
-        this.fg.value.ProfileImage = pImage;
+        this.fg.value.ProfileImage = environment.RESOURCE_URL+pImage;
         console.log("ProfileImage = " + this.fg.value.ProfileImage);
         loading.dismiss();
       }
@@ -153,7 +153,7 @@ export class ProfilePage implements OnInit {
     await this.uploadService.uploadImage(signatureData).subscribe(res => {
       if (res) {
         let sData = res.dbPath;
-        this.fg.value.SignatureImage = sData;
+        this.fg.value.SignatureImage = environment.RESOURCE_URL+sData;
         console.log("SignatureImage = " + this.fg.value.SignatureImage);
         loading.dismiss();
       }
