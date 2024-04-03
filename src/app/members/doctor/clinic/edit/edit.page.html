@@ -61,12 +61,16 @@
       </ng-container>
     </div>
 
-  <ion-item>
+  <!-- <ion-item>
       <p *ngIf="uploading">Uploading Monogram...</p>
        <img *ngIf="fg1.value.MonogramImage" [src]="resourceURL + fg1.value.MonogramImage" alt="Monogram Image">
        <ion-button slot="end" (click) = "uploadMonogram()">Upload Monogram</ion-button>
-    </ion-item>
-
+    </ion-item> -->
+        <ion-item>
+            <ion-label color="primary">Upload Monogram</ion-label>
+            <ion-img class="preview-image" [src]="resourceURL+ fg1.value.MonogramImage" alt="No Image"></ion-img>
+            <input type="file" (change)="uploadMonogram($event)" accept=".png, .jpg, .jpeg" />
+        </ion-item>
     <form [formGroup]="fg2">
       <ion-card>
         <ion-item>

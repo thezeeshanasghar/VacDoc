@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { LoadingController } from "@ionic/angular";
+import { LoadingController, Platform } from "@ionic/angular";
 import { ClinicService } from "src/app/services/clinic.service";
 import { ToastService } from "src/app/shared/toast.service";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -17,6 +17,7 @@ import { File, FileEntry } from '@ionic-native/file/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { Base64 } from '@ionic-native/base64/ngx';
+import { HttpClient } from "@angular/common/http";
 
 
 @Component({
@@ -25,6 +26,7 @@ import { Base64 } from '@ionic-native/base64/ngx';
   styleUrls: ["./edit.page.scss"]
 })
 export class EditPage implements OnInit {
+  isWeb:boolean;
   fg1: FormGroup;
   fg2: FormGroup;
   updateClinic: any;
@@ -48,8 +50,11 @@ export class EditPage implements OnInit {
     private file: File,
     private filePath: FilePath,
     private transfer: FileTransfer,
-    private base64: Base64
-  ) { }
+    private base64: Base64,
+    private http: HttpClient,
+     private platform: Platform,
+  ) { this.isWeb = !this.platform.is('cordova');
+    console.log(this.isWeb)}
 
   ngOnInit() {
     this.fg1 = this.formbuilder.group({
@@ -187,7 +192,14 @@ export class EditPage implements OnInit {
           this.fg1.controls["PhoneNumber"].setValue(this.clinic.PhoneNumber);
           this.fg1.controls["Address"].setValue(this.clinic.Address);
           this.fg1.controls["ConsultationFee"].setValue(this.clinic.ConsultationFee);
-          this.fg1.controls["MonogramImage"].setValue(this.clinic.MonogramImage);
+          // this.fg1.controls["MonogramImage"].setValue(this.clinic.MonogramImage);
+          localStorage.setItem('monogramImage', this.clinic.MonogramImage);
+          const monogramImageUrl = localStorage.getItem('monogramImage');
+          console.log(monogramImageUrl)
+          this.fg1.controls["MonogramImage"].setValue(monogramImageUrl)
+          console.log(this.fg1.controls["MonogramImage"].setValue(monogramImageUrl))
+          
+          
           for (let index = 0; index < this.clinic.ClinicTimings.length; index++) {
             const clinicTiming = this.clinic.ClinicTimings[index];
             switch (clinicTiming.Day) {
@@ -423,6 +435,7 @@ export class EditPage implements OnInit {
     this.fg1.value.Id = this.clinicId;
     this.fg1.value.Lat = 33.63207;
     this.fg1.value.Long = 72.935488;
+    // this.fg1.value.MonogramImage = this.
     var ct = [];
     if (this.fg2.value.Monday) {
       if (this.fg2.value.MondayS1) {
@@ -1024,36 +1037,81 @@ export class EditPage implements OnInit {
     }
   }
 
-  uploadMonogram() {
+   async uploadMonogram(event: Event) {
+    if(this.isWeb){
+      const fileInput = event.target as HTMLInputElement;
+      if (!fileInput.files || fileInput.files.length === 0) {
+        return;
+      }
+      
+
+      const file = fileInput.files[0];
+      console.log('Selected File:', file);
+      if (file.size < 100000) {
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
+          console.log(file)
+
+          // Make sure to replace the URL below with your actual upload endpoint
+          const uploadUrl = 'https://stage.skintechno.com//api/upload';
+          const response = await this.http.post(uploadUrl, formData).toPromise();
+          const dbPath = response['dbPath']; // Adjust this based on your server response
+          localStorage.setItem('dbpath',dbPath)
+          console.log('dbpath uplaod',dbPath)
+          
+         
+
+          // Handle success
+          this.toastService.create('Successfully uploaded');
+          // Update your form value or handle the uploaded file path as needed
+        } catch (error) {
+          console.error('Error uploading file:', error);
+          this.toastService.create('Error uploading file', 'danger');
+        }
+      } else {
+        this.toastService.create('File size must be less than 100 KB', 'danger');
+      }
+    } 
+    else{
+
+    
     this.fileChooser.open().then(async uri => {
       console.log(uri);
       await this.filePath.resolveNativePath(uri).then(filePath => {
-        console.log(filePath);
+        //this.filesPath = filePath;
         this.uploading = true;
         this.file.resolveLocalFilesystemUrl(filePath).then(fileInfo => {
           let files = fileInfo as FileEntry;
           files.file(async success => {
-            let filesName = success.name;
+            //this.fileType   = success.type;
             if (success.size < 100000) {
+              let filesName = success.name;
+              console.log(filesName);
               let options: FileUploadOptions = {
                 fileName: filesName
               }
               const fileTransfer: FileTransferObject = this.transfer.create();
-              await fileTransfer.upload(uri, 'http://13.233.255.96:5002/api/upload', options)
-                .then((data) => {
-                  // success
-                  console.log(data);
-                  this.toastService.create("successfully Uploaded");
-                  this.uploading = false;
-                  let dbpath = JSON.parse(data.response)
-                  this.fg1.value.MonogramImage = dbpath.dbPath;
-                  console.log(this.fg1.value.MonogramImage);
-                }, (err) => {
-                  console.log(err)
-                })
+              await fileTransfer
+                .upload(uri, `${environment.BASE_URL}upload`, options)
+                .then(
+                  (data) => {
+                    // success
+                    // console.log(data);
+                    this.toastService.create("successfully Uploaded");
+                    this.uploading = false;
+                    let dbpath = JSON.parse(data.response);
+                    this.fg1.value.MonogramImage = dbpath.dbPath;
+                    //console.log(this.fg1.value.MonogramImage);
+                  },
+                  (err) => {
+                    console.log(err);
+                    // error
+                  }
+                );
             }
             else
-              this.toastService.create("File size must be less than 100kb", 'danger');
+              this.toastService.create("File size must be less than 100 kb", "danger");
           });
         }, err => {
           console.log(err);
@@ -1067,7 +1125,7 @@ export class EditPage implements OnInit {
       console.log(err);
       throw err;
     });
-
+  }
   }
   validation_messages = {
     Name: [{ type: "required", message: "Name is required." }],
