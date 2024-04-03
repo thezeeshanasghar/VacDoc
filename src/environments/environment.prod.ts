@@ -6,17 +6,17 @@ export const environment = {
   //BASE_URL: "http://localhost:4309/api/",
   // BASE_URL: "https://fernflowers.com/api/",
   // RESOURCE_URL: "https://fernflowers.com/",
- // BASE_URL: "http://localhost:5000/api/",
+  // BASE_URL: "http://localhost:5000/api/",
 
   // BASE_URL:"https://testemail.fernflowers.com",
   // RESOURCE_URL: "http://localhost:5000/api/",
-  
+
   // BASE_URL: "https://fernflowers.com/api/",
   // RESOURCE_URL: "https://fernflowers.com/",
 
   // for using web server
-  RESOURCE_URL: "https://fernflowers.com/",
-  BASE_URL: "https://fernflowers.com/api/",
+  RESOURCE_URL: "https://skintechno.com/",
+  BASE_URL: "https://skintechno.com/api/",
 
   // for local server
   // BASE_URL: "http://localhost:5000/api/",
