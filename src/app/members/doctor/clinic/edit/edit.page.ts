@@ -26,7 +26,7 @@ import { HttpClient } from "@angular/common/http";
   styleUrls: ["./edit.page.scss"]
 })
 export class EditPage implements OnInit {
-  isWeb:boolean;
+  isWeb: boolean;
   fg1: FormGroup;
   fg2: FormGroup;
   updateClinic: any;
@@ -52,9 +52,11 @@ export class EditPage implements OnInit {
     private transfer: FileTransfer,
     private base64: Base64,
     private http: HttpClient,
-     private platform: Platform,
-  ) { this.isWeb = !this.platform.is('cordova');
-    console.log(this.isWeb)}
+    private platform: Platform,
+  ) {
+    this.isWeb = !this.platform.is('cordova');
+    console.log(this.isWeb)
+  }
 
   ngOnInit() {
     this.fg1 = this.formbuilder.group({
@@ -198,8 +200,8 @@ export class EditPage implements OnInit {
           console.log(monogramImageUrl)
           this.fg1.controls["MonogramImage"].setValue(monogramImageUrl)
           console.log(this.fg1.controls["MonogramImage"].setValue(monogramImageUrl))
-          
-          
+
+
           for (let index = 0; index < this.clinic.ClinicTimings.length; index++) {
             const clinicTiming = this.clinic.ClinicTimings[index];
             switch (clinicTiming.Day) {
@@ -1037,13 +1039,13 @@ export class EditPage implements OnInit {
     }
   }
 
-   async uploadMonogram(event: Event) {
-    if(this.isWeb){
+  async uploadMonogram(event: Event) {
+    if (this.isWeb) {
       const fileInput = event.target as HTMLInputElement;
       if (!fileInput.files || fileInput.files.length === 0) {
         return;
       }
-      
+
 
       const file = fileInput.files[0];
       console.log('Selected File:', file);
@@ -1054,13 +1056,13 @@ export class EditPage implements OnInit {
           console.log(file)
 
           // Make sure to replace the URL below with your actual upload endpoint
-          const uploadUrl = 'https://stage.skintechno.com//api/upload';
+          const uploadUrl = `${environment.BASE_URL}upload`;
           const response = await this.http.post(uploadUrl, formData).toPromise();
           const dbPath = response['dbPath']; // Adjust this based on your server response
-          localStorage.setItem('dbpath',dbPath)
-          console.log('dbpath uplaod',dbPath)
-          
-         
+          localStorage.setItem('dbpath', dbPath)
+          console.log('dbpath uplaod', dbPath)
+
+
 
           // Handle success
           this.toastService.create('Successfully uploaded');
@@ -1072,46 +1074,50 @@ export class EditPage implements OnInit {
       } else {
         this.toastService.create('File size must be less than 100 KB', 'danger');
       }
-    } 
-    else{
+    }
+    else {
 
-    
-    this.fileChooser.open().then(async uri => {
-      console.log(uri);
-      await this.filePath.resolveNativePath(uri).then(filePath => {
-        //this.filesPath = filePath;
-        this.uploading = true;
-        this.file.resolveLocalFilesystemUrl(filePath).then(fileInfo => {
-          let files = fileInfo as FileEntry;
-          files.file(async success => {
-            //this.fileType   = success.type;
-            if (success.size < 100000) {
-              let filesName = success.name;
-              console.log(filesName);
-              let options: FileUploadOptions = {
-                fileName: filesName
+
+      this.fileChooser.open().then(async uri => {
+        console.log(uri);
+        await this.filePath.resolveNativePath(uri).then(filePath => {
+          //this.filesPath = filePath;
+          this.uploading = true;
+          this.file.resolveLocalFilesystemUrl(filePath).then(fileInfo => {
+            let files = fileInfo as FileEntry;
+            files.file(async success => {
+              //this.fileType   = success.type;
+              if (success.size < 100000) {
+                let filesName = success.name;
+                console.log(filesName);
+                let options: FileUploadOptions = {
+                  fileName: filesName
+                }
+                const fileTransfer: FileTransferObject = this.transfer.create();
+                await fileTransfer
+                  .upload(uri, `${environment.BASE_URL}upload`, options)
+                  .then(
+                    (data) => {
+                      // success
+                      // console.log(data);
+                      this.toastService.create("successfully Uploaded");
+                      this.uploading = false;
+                      let dbpath = JSON.parse(data.response);
+                      this.fg1.value.MonogramImage = dbpath.dbPath;
+                      //console.log(this.fg1.value.MonogramImage);
+                    },
+                    (err) => {
+                      console.log(err);
+                      // error
+                    }
+                  );
               }
-              const fileTransfer: FileTransferObject = this.transfer.create();
-              await fileTransfer
-                .upload(uri, `${environment.BASE_URL}upload`, options)
-                .then(
-                  (data) => {
-                    // success
-                    // console.log(data);
-                    this.toastService.create("successfully Uploaded");
-                    this.uploading = false;
-                    let dbpath = JSON.parse(data.response);
-                    this.fg1.value.MonogramImage = dbpath.dbPath;
-                    //console.log(this.fg1.value.MonogramImage);
-                  },
-                  (err) => {
-                    console.log(err);
-                    // error
-                  }
-                );
-            }
-            else
-              this.toastService.create("File size must be less than 100 kb", "danger");
+              else
+                this.toastService.create("File size must be less than 100 kb", "danger");
+            });
+          }, err => {
+            console.log(err);
+            throw err;
           });
         }, err => {
           console.log(err);
@@ -1121,11 +1127,7 @@ export class EditPage implements OnInit {
         console.log(err);
         throw err;
       });
-    }, err => {
-      console.log(err);
-      throw err;
-    });
-  }
+    }
   }
   validation_messages = {
     Name: [{ type: "required", message: "Name is required." }],
