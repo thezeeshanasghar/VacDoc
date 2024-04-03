@@ -12,8 +12,8 @@
   </ion-segment>
 
   <ion-button fill="outline" [disabled]="followUpChild == 0" (click)="sendSMS(followUpChild)">SMS</ion-button>
-  <ion-button fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button>
-  <ion-button fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button>
+  <!-- <ion-button fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button> -->
+  <!-- <ion-button fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button> -->
 
   <div>
     <h1 *ngIf="followUpChild == 0" style="color: red;">No alert for today.</h1>
