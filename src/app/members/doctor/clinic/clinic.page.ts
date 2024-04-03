@@ -56,13 +56,30 @@ export class ClinicPage {
   async getClinics() {
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
-
+  
     await this.clinicService.getClinics(this.doctorId).subscribe(
       res => {
         loading.dismiss();
         if (res.IsSuccess) {
           console.log(res);
           this.Clinics = res.ResponseData;
+  
+          // Iterate over each clinic
+          for (let i = 0; i < this.Clinics.length; i++) {
+            const clinic = this.Clinics[i];
+            
+            // Access ClinicTimings array
+            if (clinic.ClinicTimings) {
+              // Iterate over each timing in ClinicTimings
+              for (let j = 0; j < clinic.ClinicTimings.length; j++) {
+                const timing = clinic.ClinicTimings[j];
+                
+                // Process timing as needed
+                console.log(timing);
+              }
+            }
+          }
+  
           this.storage.set(environment.CLINICS, this.Clinics);
           for (let i = 0; i < this.Clinics.length; i++) {
             if (this.Clinics[i].IsOnline) {
@@ -89,6 +106,7 @@ export class ClinicPage {
       }
     );
   }
+    
 
   async setOnlineClinic(clinicId) {
 
