@@ -47,27 +47,22 @@
 
     <ion-card-content>
       <p>Consultation Fee: {{ clinic.ConsultationFee }}</p>
-<p>Off Days: {{ clinic.OffDays }}</p>
+      <p>Off Days: {{ clinic.OffDays }}</p>
 
-<div *ngIf="clinic.ClinicTimings && clinic.ClinicTimings.length">
-  <p>Timings:</p>
-  <div class="timing-row" *ngFor="let timing of clinic.ClinicTimings; let i = index">
-    <div *ngIf="i % 2 === 0" class="timing-column">
-      <span>
-        <span>{{ timing.Day }}</span>
-        Start: {{ timing.StartTime }} - End: {{ timing.EndTime }}
-      </span>
-      <span *ngIf="clinic.ClinicTimings[i + 1]">
-        <span>{{ clinic.ClinicTimings[i + 1].Day }}</span>
-        Start: {{ clinic.ClinicTimings[i + 1].StartTime }} - End: {{ clinic.ClinicTimings[i + 1].EndTime }}
-      </span>
-    </div>
-  </div>
-</div>
 
-<p *ngIf="!clinic.ClinicTimings || clinic.ClinicTimings.length === 0">No timings available</p>
+      <p *ngIf="clinic.ClinicTimings && clinic.ClinicTimings.length">
+        Timings:
+        <span *ngFor="let timing of clinic.ClinicTimings">
+          {{timing.Day}}
+          {{ timing.StartTime }} - {{ timing.EndTime }}<br>
+        </span>
+      </p>
+      <p *ngIf="!clinic.ClinicTimings || !clinic.ClinicTimings.length">No timings available</p>
 
-      
+
+
+
+
 
       <ion-button size="small" fill="outline" color="tertiary" routerLink="/vaccine/{{clinic.Id}}/dose">
         Patients &nbsp;<ion-badge size="small" color="primary">{{clinic.childrenCount}}</ion-badge>
