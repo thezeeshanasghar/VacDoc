@@ -65,7 +65,7 @@ export class SchedulePage implements OnInit {
           this.doses.forEach(dose => {
             let value = dose.GapInDays == null ? 0 : dose.GapInDays;
             this.fg.addControl(
-              dose.Dose.Name,
+              dose.Dose.Name + ' ( ' + dose.Dose.Vaccine.Name + ' )',
               new FormControl(value, Validators.required)
             );
           });
@@ -84,7 +84,7 @@ export class SchedulePage implements OnInit {
   }
   returnZero() {
     return 0
-}
+  }
   async addCustomSchedule() {
     let var1 = [];
 
