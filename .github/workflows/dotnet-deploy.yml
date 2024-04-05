@@ -1,0 +1,38 @@
+name: Build and Deploy .NET Application
+
+on:
+  push:
+    branches: [master] # Trigger on push to main branch, adjust as needed
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest # Use a Windows runner to build .NET project
+
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout code
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "6.0" # Specify your .NET version here
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Publish
+        run: dotnet publish --configuration Release --no-restore --output publish
+
+      # Add any other steps needed for tests or other pre-deployment checks
+
+      - name: Deploy to .NET Hosting
+        run: |
+          # Use FTP, SSH, or any other command to copy the files to your hosting server
+          # This is an example using FTP
+          curl -T publish/* ftp://yourftpserver.com/wwwroot/ --user ${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}
+        env:
+          FTP_USERNAME: ${{ secrets.STAGING_FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.STAGING_FTP_PASSWORD }}
