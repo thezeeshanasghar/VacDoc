@@ -23,10 +23,15 @@ jobs:
       - run: npm run build --prod
 
       - name: Deploy to stage
-        uses: sebastianpopp/ftp-deploy@releases/v2
+        uses: SamKirkland/FTP-Deploy-Action@4.2.0
         with:
           server: ${{ secrets.STAGING_FTP_SERVER }}
           username: ${{ secrets.STAGING_FTP_USERNAME }}
           password: ${{ secrets.STAGING_FTP_PASSWORD }}
           local-dir: www
           server-dir: /
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            web.config
