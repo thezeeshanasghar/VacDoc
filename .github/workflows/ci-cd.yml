@@ -2,12 +2,11 @@ name: Angular CI/CD (FTP Deployment)
 
 on:
   push:
-    branches: [staging]
+    branches: [staging, master]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js 16
@@ -18,16 +17,32 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: "${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}"
       - run: npm ci
       - run: npm run build --prod
 
       - name: Deploy to stage
+        if: github.ref == 'refs/heads/staging'
         uses: SamKirkland/FTP-Deploy-Action@4.2.0
         with:
-          server: ${{ secrets.STAGING_FTP_SERVER }}
-          username: ${{ secrets.STAGING_FTP_USERNAME }}
-          password: ${{ secrets.STAGING_FTP_PASSWORD }}
+          server: "${{ secrets.STAGING_FTP_SERVER }}"
+          username: "${{ secrets.STAGING_FTP_USERNAME }}"
+          password: "${{ secrets.STAGING_FTP_PASSWORD }}"
+          local-dir: www/
+          server-dir: /
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            web.config
+
+      - name: Deploy for master
+        if: github.ref == 'refs/heads/master'
+        uses: SamKirkland/FTP-Deploy-Action@4.2.0
+        with:
+          server: "${{ secrets.PROD_FTP_SERVER }}"
+          username: "${{ secrets.PROD_FTP_USERNAME }}"
+          password: "${{ secrets.PROD_FTP_PASSWORD }}"
           local-dir: www/
           server-dir: /
           exclude: |
