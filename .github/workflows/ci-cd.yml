@@ -19,7 +19,8 @@ jobs:
           path: ~/.npm
           key: "${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}"
       - run: npm ci
-      - run: npm run build --prod
+      - run: export NODE_OPTIONS=--openssl-legacy-provider
+      - run: npm run build --prod --omit=dev
 
       - name: Deploy to stage
         if: github.ref == 'refs/heads/staging'
