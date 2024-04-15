@@ -57,12 +57,6 @@ export class VaccineAlertPage implements OnInit {
     });
     this.storage.get(environment.MESSAGES).then(messages => { messages == null ? '' : this.Messages = messages });
     await this.getChlid(this.numOfDays);
-
-    // if (!this.checkSmsPermission()) {
-    //   this.toastService.create('check function body')
-    //   this.requestSmsPermissions();
-    // }
-
   }
 
   // Get childs get from server
@@ -78,11 +72,6 @@ export class VaccineAlertPage implements OnInit {
         if (res.IsSuccess) {
           this.Childs = "";
           this.Childs = res.ResponseData;
-
-          // console.log("Childs Saved in this.Childs");
-          // console.log(res.ResponseData);
-
-          //console.log(this.Childs.map(x=>x.Child.Id));
 
           loading.dismiss();
         } else {
@@ -156,11 +145,7 @@ export class VaccineAlertPage implements OnInit {
     await loading.present();
 
     for (let i = 0; i < child.length; i++) {
-      // console.log("");
-      // console.log("message No = " + (i + 1));
       let message = this.generateSMS(child[i]);
-
-      // await this.sendAlertMsg(child[i].ChildId, child[i].Child.User.MobileNumber, message);
     }
     loading.dismiss();
   }
@@ -169,10 +154,6 @@ export class VaccineAlertPage implements OnInit {
     var sms1 = 'Reminder: Vaccination for ';
     sms1 += schedule.Child.Name + ' is due on ' + schedule.Date;
     sms1 += ' (' + schedule.Dose.Name + ' )';
-
-    // console.log("message => Id = " + schedule.Id);
-    // console.log(sms1);
-
     return sms1;
   }
 
@@ -186,7 +167,6 @@ export class VaccineAlertPage implements OnInit {
           res => {
             if (res.IsSuccess) {
               //loading.dismiss();
-
               this.toastService.create("Alerts has been sent successfully");
             } else {
               //loading.dismiss();
