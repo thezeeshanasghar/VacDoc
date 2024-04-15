@@ -23,7 +23,7 @@ jobs:
 
       - name: Deploy to stage
         if: github.ref == 'refs/heads/staging'
-        uses: SamKirkland/FTP-Deploy-Action@4.3.5
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: "${{ secrets.STAGING_FTP_SERVER }}"
           username: "${{ secrets.STAGING_FTP_USERNAME }}"
@@ -38,7 +38,7 @@ jobs:
 
       - name: Deploy for master
         if: github.ref == 'refs/heads/master'
-        uses: SamKirkland/FTP-Deploy-Action@4.3.5
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: "${{ secrets.PROD_FTP_SERVER }}"
           username: "${{ secrets.PROD_FTP_USERNAME }}"
