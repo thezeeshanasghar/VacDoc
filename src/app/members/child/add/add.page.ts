@@ -76,7 +76,7 @@ export class AddPage implements OnInit {
     this.fg1 = this.formBuilder.group({
       ClinicId: [""],
       Name: new FormControl("", Validators.required),
-      Guardian: new FormControl("", Validators.required),
+      Guardian: "Guardian",
       FatherName: new FormControl("", Validators.required),
       Email: new FormControl(
         "",
@@ -100,7 +100,7 @@ export class AddPage implements OnInit {
       Gender: [null,Validators.required],
       Type: [null,Validators.required],
       City: [null],
-      CNIC:[null],
+      CNIC:[""],
       PreferredDayOfReminder: 0,
       PreferredSchedule: [null],
       IsEPIDone: [false],
@@ -269,6 +269,20 @@ export class AddPage implements OnInit {
     console.log('success');
   }
 
+  capitalizePatientName(input:string) {
+    // this.fg1.value.Name = this.titlecasePipe.transform(this.fg1.value.Name);
+   
+    return input
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }
+  capitalizeGuardianName(input:string) {
+    return input
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }
   async setCity(city) {
     // if (city == 'Other')
     //   await this.otherCityAlert();
