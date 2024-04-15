@@ -8,7 +8,17 @@
 
     <ion-content color="light">
       <ion-list>
-
+        <ion-menu-toggle auto-hide="false" *ngFor="let p of profile">
+          <ion-item color="light" [routerDirection]="'root'" [routerLink]="[p.url]">
+            <ion-avatar slot="start"> <!-- Use ion-avatar for displaying profile images -->
+              <img [src]="p.imageUrl" *ngIf="p.imageUrl" /> <!-- Display image if URL exists -->
+              <ion-icon color="primary" *ngIf="!p.imageUrl" [name]="p.icon"></ion-icon> <!-- Display icon if no image URL -->
+            </ion-avatar>
+            <ion-label>
+              Profile
+            </ion-label>
+          </ion-item>
+        </ion-menu-toggle>
         <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
           <ion-item color="light" [routerDirection]="'root'" [routerLink]="[p.url]">
             <ion-icon color="primary" slot="start" [name]="p.icon"></ion-icon>
