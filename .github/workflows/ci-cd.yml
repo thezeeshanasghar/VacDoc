@@ -34,8 +34,7 @@ jobs:
             **/.git*
             **/.git*/**
             **/node_modules/**
-            web.config
-
+            web.config,
       - name: Deploy for master
         if: github.ref == 'refs/heads/master'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -49,4 +48,4 @@ jobs:
             **/.git*
             **/.git*/**
             **/node_modules/**
-            web.config
+            web.config,
