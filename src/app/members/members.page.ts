@@ -13,6 +13,16 @@ import { ToastService } from "../shared/toast.service";
 export class MembersPage implements OnInit {
   DoctorId: any;
   clinicId: any;
+  profileImagePath: any;
+  // resourceURL = environment.RESOURCE_URL;
+  public profile = [
+    {
+      title: "Profile",
+      url: "/members/doctor/profile",
+      icon: "create",
+      imageUrl: environment.RESOURCE_URL + "Resources/Images/1666458901673.jfif", // Use forward slashes in the path
+    },
+  ];  
   public appPages = [
     {
       title: "Dashboard",
@@ -37,11 +47,11 @@ export class MembersPage implements OnInit {
       url: "/members/doctor/clinic",
       icon: "moon"
     },
-    {
-      title: "Edit Profile",
-      url: "/members/doctor/profile",
-      icon: "create"
-    },
+    // {
+    //   title: "Edit Profile",
+    //   url: "/members/doctor/profile",
+    //   icon: "create"
+    // },
     {
       title: "Schedule",
       url: "/members/doctor/schedule",
@@ -95,6 +105,23 @@ export class MembersPage implements OnInit {
   ) {}
 
   ngOnInit() {}
+  private previewImage(file: FileList, imagePath: string) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (imagePath === "profile") {
+        this.profileImagePath = reader.result as string;
+      } 
+    };
+    reader.readAsDataURL(file.item(0));
+  }
+
+  setProfileImage(file: FileList) {
+    this.previewImage(file, "profile");
+  }
+
+  // setSignatureImage(file: FileList) {
+  //   this.previewImage(file, "signature");
+  // }
   clearStorage() {
     this.storage.clear();
     this.clinicService.clinics = null;
