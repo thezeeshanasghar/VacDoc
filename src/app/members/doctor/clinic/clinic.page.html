@@ -45,10 +45,17 @@
       <ion-icon slot="end" (click)="alertDeleteClinic(clinic.Id)" color="primary" name="trash"></ion-icon>
     </ion-item>
 
-    <ion-card-content >
-      <p>Consultation Fee : {{clinic.ConsultationFee}}</p>
-      <p> Off Days : {{clinic.OffDays}}</p>
-      <p>Timming : {{clinic.StartTime}} - {{clinic.EndTime}} </p>
+    <ion-card-content>
+      <p>Consultation Fee: {{ clinic.ConsultationFee }}</p>
+      <p>Off Days: {{ clinic.OffDays }}</p>
+      <p *ngIf="clinic.ClinicTimings && clinic.ClinicTimings.length">
+        Timings:
+        <span *ngFor="let timing of clinic.ClinicTimings">
+          {{timing.Day}}
+          {{ timing.StartTime }} - {{ timing.EndTime }}<br>
+        </span>
+      </p>
+      <p *ngIf="!clinic.ClinicTimings || !clinic.ClinicTimings.length">No timings available</p>
       <ion-button size="small" fill="outline" color="tertiary" routerLink="/vaccine/{{clinic.Id}}/dose">
         Patients &nbsp;<ion-badge size="small" color="primary">{{clinic.childrenCount}}</ion-badge>
       </ion-button>

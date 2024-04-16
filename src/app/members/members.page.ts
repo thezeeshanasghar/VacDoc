@@ -13,6 +13,15 @@ import { ToastService } from "../shared/toast.service";
 export class MembersPage implements OnInit {
   DoctorId: any;
   clinicId: any;
+ 
+  public profile = [
+    {
+      title: "Profile",
+      url: "/members/doctor/profile",
+      icon: "create",
+      imageUrl: environment.RESOURCE_URL + "Resources/Images/1666458901673.jfif", // Use forward slashes in the path
+    },
+  ];  
   public appPages = [
     {
       title: "Dashboard",
@@ -37,11 +46,11 @@ export class MembersPage implements OnInit {
       url: "/members/doctor/clinic",
       icon: "moon"
     },
-    {
-      title: "Edit Profile",
-      url: "/members/doctor/profile",
-      icon: "create"
-    },
+    // {
+    //   title: "Edit Profile",
+    //   url: "/members/doctor/profile",
+    //   icon: "create"
+    // },
     {
       title: "Schedule",
       url: "/members/doctor/schedule",
@@ -94,7 +103,11 @@ export class MembersPage implements OnInit {
     private toastService: ToastService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.storage.get(environment.DOCTOR_Id).then(val => {
+      this.DoctorId = val;
+    });
+  }
   clearStorage() {
     this.storage.clear();
     this.clinicService.clinics = null;
