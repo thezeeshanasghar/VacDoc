@@ -110,7 +110,7 @@ export class ClinicPage {
         if (res.IsSuccess) {
           loading.dismiss();
           this.getClinics();
-          // this.router.navigate(['/members/doctor/clinic']);
+          this.router.navigate(['/members/doctor/clinic']);
         }
         else {
           this.toastService.create(res.Message)
