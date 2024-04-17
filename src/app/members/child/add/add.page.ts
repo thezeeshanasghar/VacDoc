@@ -76,7 +76,7 @@ export class AddPage implements OnInit {
     this.fg1 = this.formBuilder.group({
       ClinicId: [""],
       Name: new FormControl("", Validators.required),
-      Guardian: new FormControl("", Validators.required),
+      Guardian: "Guardian",
       FatherName: new FormControl("", Validators.required),
       Email: new FormControl(
         "",
@@ -100,7 +100,7 @@ export class AddPage implements OnInit {
       Gender: [null,Validators.required],
       Type: [null,Validators.required],
       City: [null],
-      CNIC:[null],
+      CNIC:[""],
       PreferredDayOfReminder: 0,
       PreferredSchedule: [null],
       IsEPIDone: [false],
@@ -159,6 +159,18 @@ export class AddPage implements OnInit {
     }
     this.fg1.value.Password = retVal;
   }
+  capitalizePatientName = (input: string) => {
+    return input
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+};
+ capitalizeGuardianName = (input: string) => {
+  return input
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
 
 
 
@@ -187,35 +199,35 @@ export class AddPage implements OnInit {
           sms1 += "\nClinic Phone Number: " + this.clinic.PhoneNumber;
           sms1 += "\nWeb Link:  https://vaccine.pk/";
           console.log(sms1);
-          const ChildId=res.ResponseData.Id
-          if (data.Type === 'regular') {
-            try {
-              const apiUrl = `${environment.BASE_URL}/Schedule/regular?DoctorId=${this.doctorId}&ChildId=${ChildId}`; // Replace this with your API endpoint
-              console.log(apiUrl)
+          // const ChildId=res.ResponseData.Id
+          // if (data.Type === 'regular') {
+          //   try {
+          //     const apiUrl = `${environment.BASE_URL}/Schedule/regular?DoctorId=${this.doctorId}&ChildId=${ChildId}`; // Replace this with your API endpoint
+          //     console.log(apiUrl)
           
-              const response = await fetch(apiUrl, {
-                method: 'POST', // Specify your HTTP method (POST, GET, etc.)
-                headers: {
-                  'Content-Type': 'application/json', // Set your request content type if needed
-                  // Add any other headers if required
-                },
+          //     const response = await fetch(apiUrl, {
+          //       method: 'POST', // Specify your HTTP method (POST, GET, etc.)
+          //       headers: {
+          //         'Content-Type': 'application/json', // Set your request content type if needed
+          //         // Add any other headers if required
+          //       },
                
-              });
+          //     });
           
-              if (response.ok) {
-                const responseData = await response.json(); // Parse JSON response if needed
-                console.log('API Response:', responseData);
-                // Handle API response as needed
-              } else {
-                console.error('API Error:', response.statusText);
-                // Handle API error if needed
-              }
-            } catch (error) {
-              console.error('Error calling API:', error);
-              // Handle error if API call fails
-            }
+          //     if (response.ok) {
+          //       const responseData = await response.json(); // Parse JSON response if needed
+          //       console.log('API Response:', responseData);
+          //       // Handle API response as needed
+          //     } else {
+          //       console.error('API Error:', response.statusText);
+          //       // Handle API error if needed
+          //     }
+          //   } catch (error) {
+          //     console.error('Error calling API:', error);
+          //     // Handle error if API call fails
+          //   }
            
-          }
+          // }
           loading.dismiss();
           this.toastService.create("successfully added");
           const loading1 = await this.loadingController.create({
