@@ -50,13 +50,11 @@ export class ClinicPage {
     if (!this.Clinics) {
       this.getClinics();
     }
-
   }
 
   async getClinics() {
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
-
     await this.clinicService.getClinics(this.doctorId).subscribe(
       res => {
         loading.dismiss();
@@ -65,7 +63,6 @@ export class ClinicPage {
           this.Clinics = res.ResponseData;
           for (let i = 0; i < this.Clinics.length; i++) {
             const clinic = this.Clinics[i];
-
             // Access ClinicTimings array
             if (clinic.ClinicTimings) {
               // Iterate over each timing in ClinicTimings
@@ -105,7 +102,6 @@ export class ClinicPage {
   }
 
   async setOnlineClinic(clinicId) {
-
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
     let data = { 'DoctorId': this.doctorId, 'Id': clinicId, 'IsOnline': 'true' }

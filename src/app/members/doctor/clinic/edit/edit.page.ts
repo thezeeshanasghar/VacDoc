@@ -18,7 +18,7 @@ import { FilePath } from '@ionic-native/file-path/ngx';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { Base64 } from '@ionic-native/base64/ngx';
 import { HttpClient } from "@angular/common/http";
-
+import { UploadService } from 'src/app/services/upload.service';
 
 @Component({
   selector: "app-edit",
@@ -37,6 +37,7 @@ export class EditPage implements OnInit {
   resourceURL = environment.RESOURCE_URL;
 
   private readonly DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm";
+  
 
   constructor(
     public loadingController: LoadingController,
@@ -46,6 +47,7 @@ export class EditPage implements OnInit {
     private clinicService: ClinicService,
     private toastService: ToastService,
     private storage: Storage,
+    private uploadService: UploadService,
     private fileChooser: FileChooser,
     private file: File,
     private filePath: FilePath,
@@ -151,6 +153,40 @@ export class EditPage implements OnInit {
     this.getClinic();
   }
 
+  private previewMonogramImage(file: FileList) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.fg1.value.MonogramImage = reader.result as string;
+    };
+    reader.readAsDataURL(file.item(0));
+  }
+  
+  async SelectMonogramImage(monogramFile: FileList) {
+    this.previewMonogramImage(monogramFile);
+  
+    const loading = await this.loadingController.create({
+      message: "Uploading Monogram Image"
+    });
+    await loading.present();
+  
+    const monogramData = new FormData();
+    monogramData.append("MonogramImage", monogramFile.item(0));
+  
+    await this.uploadService.uploadImage(monogramData).subscribe(res => {
+      if (res) {
+        let mImage = res.dbPath;
+        this.fg1.value.MonogramImage = environment.RESOURCE_URL + mImage;
+        console.log("MonogramImage = " + this.fg1.value.MonogramImage);
+        loading.dismiss();
+      } else {
+        console.log("Error: Try Again! Failed to upload MonogramImage");
+        this.toastService.create("Error: Try Again! Failed to upload MonogramImage.");
+        loading.dismiss();
+      }
+    });
+  }
+  
+
   setAllDaysValueStrat1() {
     this.fg2.controls["Tustart"].setValue(this.fg2.value.Mstart);
     this.fg2.controls["Wstart"].setValue(this.fg2.value.Mstart);
@@ -195,7 +231,7 @@ export class EditPage implements OnInit {
           this.fg1.controls["Address"].setValue(this.clinic.Address);
           this.fg1.controls["ConsultationFee"].setValue(this.clinic.ConsultationFee);
           // this.fg1.controls["MonogramImage"].setValue(this.clinic.MonogramImage);
-          localStorage.setItem('monogramImage', this.clinic.MonogramImage);
+          localStorage.setItem('monogramImage', this.resourceURL+this.clinic.MonogramImage);
           const monogramImageUrl = localStorage.getItem('monogramImage');
           console.log(monogramImageUrl)
           this.fg1.controls["MonogramImage"].setValue(monogramImageUrl)
@@ -204,6 +240,7 @@ export class EditPage implements OnInit {
 
           for (let index = 0; index < this.clinic.ClinicTimings.length; index++) {
             const clinicTiming = this.clinic.ClinicTimings[index];
+            console.log(clinicTiming);
             switch (clinicTiming.Day) {
               case "Monday":
                 this.fg2.controls["Monday"].setValue(true);
@@ -310,7 +347,7 @@ export class EditPage implements OnInit {
                     )
                   );
                 }
-                if (clinicTiming.Session === 2) {
+                if (clinicTiming.Session == 2) {
                   this.fg2.controls["ThursdayS2"].setValue(true);
                   this.fg2.controls["Thstart2"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -327,7 +364,7 @@ export class EditPage implements OnInit {
 
               case "Friday":
                 this.fg2.controls["Friday"].setValue(true);
-                if (clinicTiming.Session === 1) {
+                if (clinicTiming.Session == 1) {
                   this.fg2.controls["FridayS1"].setValue(true);
                   this.fg2.controls["Fstart"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -340,7 +377,7 @@ export class EditPage implements OnInit {
                     )
                   );
                 }
-                if (clinicTiming.Session === 2) {
+                if (clinicTiming.Session == 2) {
                   this.fg2.controls["FridayS2"].setValue(true);
                   this.fg2.controls["Fstart2"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -358,7 +395,7 @@ export class EditPage implements OnInit {
 
               case "Saturday":
                 this.fg2.controls["Saturday"].setValue(true);
-                if (clinicTiming.Session === 1) {
+                if (clinicTiming.Session == 1) {
                   this.fg2.controls["SaturdayS1"].setValue(true);
                   this.fg2.controls["Sastart"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -371,7 +408,7 @@ export class EditPage implements OnInit {
                     )
                   );
                 }
-                if (clinicTiming.Session === 2) {
+                if (clinicTiming.Session == 2) {
                   this.fg2.controls["SaturdayS2"].setValue(true);
                   this.fg2.controls["Sastart2"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -388,7 +425,7 @@ export class EditPage implements OnInit {
 
               case "Sunday":
                 this.fg2.controls["Sunday"].setValue(true);
-                if (clinicTiming.Session === 1) {
+                if (clinicTiming.Session == 1) {
                   this.fg2.controls["SundayS1"].setValue(true);
                   this.fg2.controls["Sustart"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -401,7 +438,7 @@ export class EditPage implements OnInit {
                     )
                   );
                 }
-                if (clinicTiming.Session === 2) {
+                if (clinicTiming.Session == 2) {
                   this.fg2.controls["SundayS2"].setValue(true);
                   this.fg2.controls["Sustart2"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -757,6 +794,7 @@ export class EditPage implements OnInit {
                   val[i].PhoneNumber = this.fg1.value.PhoneNumber;
                   val[i].IsOnline = this.fg1.value.IsOnline;
                   val[i].Address = this.fg1.value.Address;
+                  val[i].MonogramImage = this.fg1.value.MonogramImage;
                 }
               }
               this.storage.set('Clinics', val);
@@ -767,7 +805,7 @@ export class EditPage implements OnInit {
 
 
             loading.dismiss();
-            this.toastService.create("successfully added");
+            this.toastService.create("successfully updated clinic");
             this.router.navigate(["/members/doctor/clinic"]);
           } else {
             loading.dismiss();
@@ -1039,96 +1077,101 @@ export class EditPage implements OnInit {
     }
   }
 
-  async uploadMonogram(event: Event) {
-    if (this.isWeb) {
-      const fileInput = event.target as HTMLInputElement;
-      if (!fileInput.files || fileInput.files.length === 0) {
-        return;
-      }
+//   async uploadMonogram(event: Event) {
+//     const reader = new FileReader();
+// reader.onload = (event) => {
+//     this.fg1.value.MonogramImage = event.target.result as string;
+// };
+// reader.readAsDataURL(event.item(0));
+//     if (this.isWeb) {
+//       const fileInput = event.target as HTMLInputElement;
+//       if (!fileInput.files || fileInput.files.length === 0) {
+//         return;
+//       }
 
 
-      const file = fileInput.files[0];
-      console.log('Selected File:', file);
-      if (file.size < 100000) {
-        try {
-          const formData = new FormData();
-          formData.append('file', file);
-          console.log(file)
+//       const file = fileInput.files[0];
+//       console.log('Selected File:', file);
+//       if (file.size < 100000) {
+//         try {
+//           const formData = new FormData();
+//           formData.append('file', file);
+//           console.log(file)
 
-          // Make sure to replace the URL below with your actual upload endpoint
-          const uploadUrl = `${environment.BASE_URL}upload`;
-          const response = await this.http.post(uploadUrl, formData).toPromise();
-          const dbPath = response['dbPath']; // Adjust this based on your server response
-          localStorage.setItem('dbpath', dbPath)
-          console.log('dbpath uplaod', dbPath)
-
-
-
-          // Handle success
-          this.toastService.create('Successfully uploaded');
-          // Update your form value or handle the uploaded file path as needed
-        } catch (error) {
-          console.error('Error uploading file:', error);
-          this.toastService.create('Error uploading file', 'danger');
-        }
-      } else {
-        this.toastService.create('File size must be less than 100 KB', 'danger');
-      }
-    }
-    else {
+//           // Make sure to replace the URL below with your actual upload endpoint
+//           const uploadUrl = `${environment.BASE_URL}upload`;
+//           const response = await this.http.post(uploadUrl, formData).toPromise();
+//           const dbPath = response['dbPath']; // Adjust this based on your server response
+//           localStorage.setItem('dbpath', dbPath)
+//           console.log('dbpath uplaod', dbPath)
 
 
-      this.fileChooser.open().then(async uri => {
-        console.log(uri);
-        await this.filePath.resolveNativePath(uri).then(filePath => {
-          //this.filesPath = filePath;
-          this.uploading = true;
-          this.file.resolveLocalFilesystemUrl(filePath).then(fileInfo => {
-            let files = fileInfo as FileEntry;
-            files.file(async success => {
-              //this.fileType   = success.type;
-              if (success.size < 100000) {
-                let filesName = success.name;
-                console.log(filesName);
-                let options: FileUploadOptions = {
-                  fileName: filesName
-                }
-                const fileTransfer: FileTransferObject = this.transfer.create();
-                await fileTransfer
-                  .upload(uri, `${environment.BASE_URL}upload`, options)
-                  .then(
-                    (data) => {
-                      // success
-                      // console.log(data);
-                      this.toastService.create("successfully Uploaded");
-                      this.uploading = false;
-                      let dbpath = JSON.parse(data.response);
-                      this.fg1.value.MonogramImage = dbpath.dbPath;
-                      //console.log(this.fg1.value.MonogramImage);
-                    },
-                    (err) => {
-                      console.log(err);
-                      // error
-                    }
-                  );
-              }
-              else
-                this.toastService.create("File size must be less than 100 kb", "danger");
-            });
-          }, err => {
-            console.log(err);
-            throw err;
-          });
-        }, err => {
-          console.log(err);
-          throw err;
-        });
-      }, err => {
-        console.log(err);
-        throw err;
-      });
-    }
-  }
+
+//           // Handle success
+//           this.toastService.create('Successfully uploaded');
+//           // Update your form value or handle the uploaded file path as needed
+//         } catch (error) {
+//           console.error('Error uploading file:', error);
+//           this.toastService.create('Error uploading file', 'danger');
+//         }
+//       } else {
+//         this.toastService.create('File size must be less than 100 KB', 'danger');
+//       }
+//     }
+//     else {
+
+
+//       this.fileChooser.open().then(async uri => {
+//         console.log(uri);
+//         await this.filePath.resolveNativePath(uri).then(filePath => {
+//           //this.filesPath = filePath;
+//           this.uploading = true;
+//           this.file.resolveLocalFilesystemUrl(filePath).then(fileInfo => {
+//             let files = fileInfo as FileEntry;
+//             files.file(async success => {
+//               //this.fileType   = success.type;
+//               if (success.size < 100000) {
+//                 let filesName = success.name;
+//                 console.log(filesName);
+//                 let options: FileUploadOptions = {
+//                   fileName: filesName
+//                 }
+//                 const fileTransfer: FileTransferObject = this.transfer.create();
+//                 await fileTransfer
+//                   .upload(uri, `${environment.BASE_URL}upload`, options)
+//                   .then(
+//                     (data) => {
+//                       // success
+//                       // console.log(data);
+//                       this.toastService.create("successfully Uploaded");
+//                       this.uploading = false;
+//                       let dbpath = JSON.parse(data.response);
+//                       this.fg1.value.MonogramImage = dbpath.dbPath;
+//                       //console.log(this.fg1.value.MonogramImage);
+//                     },
+//                     (err) => {
+//                       console.log(err);
+//                       // error
+//                     }
+//                   );
+//               }
+//               else
+//                 this.toastService.create("File size must be less than 100 kb", "danger");
+//             });
+//           }, err => {
+//             console.log(err);
+//             throw err;
+//           });
+//         }, err => {
+//           console.log(err);
+//           throw err;
+//         });
+//       }, err => {
+//         console.log(err);
+//         throw err;
+//       });
+//     }
+//   }
   validation_messages = {
     Name: [{ type: "required", message: "Name is required." }],
     phoneNumber: [

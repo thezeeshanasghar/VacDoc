@@ -11,6 +11,9 @@ import { Storage } from "@ionic/storage";
   providedIn: "root"
 })
 export class ClinicService extends BaseService {
+  uploadMonogram(formData: FormData) {
+    throw new Error("Method not implemented.");
+  }
   clinics: any;
   doctorId: any;
   OnlineClinicId: any;
