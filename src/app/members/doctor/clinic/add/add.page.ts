@@ -19,6 +19,7 @@ import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { File , FileEntry } from '@ionic-native/file/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { UploadService } from 'src/app/services/upload.service';
 declare var google;
 
 @Component({
@@ -39,6 +40,8 @@ export class AddPage implements OnInit {
   latitude: any = 33.6328532;
   longitude: any = 72.93583679;
   resourceURL = environment.RESOURCE_URL;
+  isWeb: any;
+  http: any;
   constructor(
     private formbuilder: FormBuilder,
     private router: Router,
@@ -46,6 +49,7 @@ export class AddPage implements OnInit {
     private clinicService: ClinicService,
     private toastService: ToastService,
     private signupService: SignupService,
+    private uploadService: UploadService,
     private storage: Storage,
     private geolocation: Geolocation,
     private cdr: ChangeDetectorRef,
@@ -68,12 +72,12 @@ export class AddPage implements OnInit {
     this.fg1 = this.formbuilder.group({
       DoctorId: [null],
       Name: [null],
-      PhoneNumber: new FormControl(
+    PhoneNumber: new FormControl(
         "",
         Validators.compose([
           Validators.required,
-          Validators.minLength(7),
-          Validators.pattern("^(0|[1-9][0-9]*)$")
+          Validators.minLength(10),
+          Validators.pattern("^([0-9]*)$")
         ])
       ),
       Address: [null],
@@ -90,7 +94,8 @@ export class AddPage implements OnInit {
       Lat: [null],
       Long: [null],
       IsOnline: false,
-      childrenCount: 0
+      childrenCount: 0,
+      
     });
 
     this.fg2 = this.formbuilder.group({
@@ -185,6 +190,39 @@ export class AddPage implements OnInit {
       .catch(error => {
         console.log("Error getting location", error);
       });
+  }
+  
+  private previewMonogramImage(file: FileList) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.fg1.value.MonogramImage = reader.result as string;
+    };
+    reader.readAsDataURL(file.item(0));
+  }
+  
+  async SelectMonogramImage(monogramFile: FileList) {
+    this.previewMonogramImage(monogramFile);
+  
+    const loading = await this.loadingController.create({
+      message: "Uploading Monogram Image"
+    });
+    await loading.present();
+  
+    const monogramData = new FormData();
+    monogramData.append("MonogramImage", monogramFile.item(0));
+  
+    await this.uploadService.uploadImage(monogramData).subscribe(res => {
+      if (res) {
+        let mImage = res.dbPath;
+        this.fg1.value.MonogramImage = mImage;
+        console.log("MonogramImage = " + this.fg1.value.MonogramImage);
+        loading.dismiss();
+      } else {
+        console.log("Error: Try Again! Failed to upload MonogramImage");
+        this.toastService.create("Error: Try Again! Failed to upload MonogramImage.");
+        loading.dismiss();
+      }
+    });
   }
   setAllDaysValueStrat1() {
     this.fg2.controls["Tustart"].setValue(this.fg2.value.Mstart);
@@ -520,62 +558,7 @@ export class AddPage implements OnInit {
     this.addNewClinic(this.fg1.value);
   }
 
-  uploadMonogram() {
-    
-    this.fileChooser.open().then(async uri =>
-      {
-        console.log(uri);
-       await  this.filePath.resolveNativePath(uri).then(filePath =>
-          {
-            //this.filesPath = filePath;
-            this.uploading = true;
-            this.file.resolveLocalFilesystemUrl(filePath).then(fileInfo =>
-              {
-                let files = fileInfo as FileEntry;
-                files.file(async success =>
-                  {
-                    if (success.size < 100000) {
-                    let filesName  = success.name;
-                    console.log(filesName);
-                    let options: FileUploadOptions = {
-                      fileName: filesName
-                    }
-                    const fileTransfer: FileTransferObject = this.transfer.create();
-                  await  fileTransfer.upload(uri, 'http://13.233.255.96:5002/api/upload', options)
-                    .then((data) => {
-                      // success
-                      console.log(data);
-                      this.toastService.create("successfully Uploaded");
-                      this.uploading = false;
-                      let dbpath = JSON.parse(data.response)
-                      this.fg1.value.MonogramImage = dbpath.dbPath;
-                      console.log(this.fg1.value.MonogramImage);
-                    }, (err) => {
-                      console.log(err)
-                      // error
-                    })
-                  }
-                  else
-                  this.toastService.create("File size must be less than 100 kb", "danger");
-                  });
-              },err =>
-              {
-                console.log(err);
-                throw err;
-              });
-          },err =>
-          {
-            console.log(err);
-            throw err;
-          });
-      },err =>
-      {
-        console.log(err);
-        throw err;
-      });
   
-  }
-
   async addNewClinic(data) {
     {
       const loading = await this.loadingController.create({
@@ -587,7 +570,7 @@ export class AddPage implements OnInit {
         res => {
           if (res.IsSuccess) {
             loading.dismiss();
-            this.toastService.create("successfully added");
+            this.toastService.create("successfully added Clinic");
             this.router.navigate(["/members/doctor/clinic"]);
           } else {
             loading.dismiss();
