@@ -26,7 +26,8 @@
   <form [formGroup]="fg1">
     <ion-item>
       <ion-label color="primary" position="floating">Patient Name</ion-label>
-      <ion-input type="text" formControlName="Name" required></ion-input>
+      <ion-input type="text" formControlName="Name" required [(ngModel)]="fg1.value.Name" #patientName (input)="fg1.value.Name = capitalizePatientName(patientName.value)">
+</ion-input>
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.name">
@@ -37,7 +38,7 @@
       </ng-container>
     </div>
 
-    <ion-radio-group formControlName="Guardian">
+    <!-- <ion-radio-group formControlName="Guardian">
       <ion-grid>
         <ion-row>
           <ion-col>
@@ -54,10 +55,11 @@
           </ion-col>
         </ion-row>    
       </ion-grid>
-    </ion-radio-group>
+    </ion-radio-group> -->
     <ion-item>
-      <!-- <ion-label color="primary" position="floating">Father's Name</ion-label> -->
-      <ion-input type="text" formControlName="FatherName" required></ion-input>
+      <ion-label color="primary" position="floating">Guardian's Name</ion-label>
+      <ion-input type="text" formControlName="FatherName" required [(ngModel)]="fg1.value.FatherName" #guardianName (input)="fg1.value.FatherName = capitalizeGuardianName(guardianName.value)">
+</ion-input>
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.fatherName">
@@ -156,7 +158,7 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">CNIC/Passport No.</ion-label>
-      <ion-input type="text" formControlName="CNIC" required></ion-input>
+      <ion-input type="text" formControlName="CNIC" ></ion-input>
     </ion-item>
 
     <ion-item>
