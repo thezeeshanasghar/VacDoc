@@ -175,7 +175,8 @@ export class Step2Page implements OnInit {
           const uploadUrl = `${environment.BASE_URL}upload`;
           const response = await this.http.post(uploadUrl, formData).toPromise();
           const dbPath = response['dbPath']; // Adjust this based on your server response
-          console.log(dbPath)
+          console.log('dbPath',dbPath)
+          localStorage.setItem('dbPath',dbPath)
 
           // Handle success
           this.toastService.create('Successfully uploaded');
@@ -209,12 +210,12 @@ export class Step2Page implements OnInit {
                 await fileTransfer.upload(uri, `${environment.BASE_URL}upload`                   , options)
                   .then((data) => {
                     // success
-                    // console.log(data);
+                    console.log(data);
                     this.toastService.create("successfully Uploaded");
                     this.uploading = false;
-                    let dbpath = JSON.parse(data.response)
-                    this.fg1.value.MonogramImage = dbpath.dbPath;
-                    //console.log(this.fg1.value.MonogramImage);
+                    let dbPath = JSON.parse(data.response)
+                    this.fg1.value.MonogramImage = dbPath.dbPath;
+                    console.log('this.fg1.value.MonogramImage',this.fg1.value.MonogramImage);
                   }, (err) => {
                     console.log(err)
                     // error
@@ -334,7 +335,7 @@ export class Step2Page implements OnInit {
     // this.fg1.value.Long = this.myMarker.lng;
     this.fg1.value.Lat = this.latitude;
     this.fg1.value.Long = this.longitude;
-    const monogram=localStorage.getItem('dbpath')
+    const monogram=localStorage.getItem('dbPath')
     this.fg1.value.OffDays = "Sunday";
     var ct = [];
     if (this.fg2.value.Monday) {

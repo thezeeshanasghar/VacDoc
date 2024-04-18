@@ -30,7 +30,7 @@ export class SignupService extends BaseService {
         ClinicTimings: this.clinicData.ClinicTimings,
         Lat: this.clinicData.latitude,
         Long: this.clinicData.Longitude,
-        MonogramImage:localStorage.getItem('dbpath'),
+        MonogramImage:localStorage.getItem('dbPath'),
         SignatureImage:null,
         ProfileImage:null,
       },
@@ -49,7 +49,7 @@ export class SignupService extends BaseService {
       ShowPhone: this.personalData.ShowPhone,
       Speciality: this.personalData.Speciality
     };
-    localStorage.removeItem('dbpath')
+    localStorage.removeItem('dbPath')
     const url = `${this.API_Doctor}`;
     return this.http
       .post(url, var1, this.httpOptions)
