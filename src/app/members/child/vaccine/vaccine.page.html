@@ -8,8 +8,18 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-button (click)="printdata()">Print</ion-button>
-  <span *ngIf="ChildName">{{ChildName}}</span>
+  <div style="display: flex">
+    <div style="flex: 0.8; display: flex; align-self: center">
+      <ion-icon
+        (click)="printdata()"
+        style="cursor: pointer"
+        name="print"
+        size="large"
+      ></ion-icon>
+    </div>
+
+    <h3 style="flex: 1" *ngIf="ChildName">{{ChildName}}</h3>
+  </div>
 
   <div *ngFor="let item of dataGrouping | keyvalue; let i=index">
 
