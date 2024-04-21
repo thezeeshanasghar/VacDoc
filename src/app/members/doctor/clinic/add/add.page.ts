@@ -435,7 +435,6 @@ export class AddPage implements OnInit {
         ct.push(obj);
       }
     }
-
     if (this.fg2.value.Friday) {
       if (this.fg2.value.FridayS1) {
         this.fg2.value.Fstart = moment(
@@ -455,7 +454,6 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
-      // session
       if (this.fg2.value.FridayS2) {
         this.fg2.value.Fstart2 = moment(
           this.fg2.value.Fstart2,
@@ -475,7 +473,6 @@ export class AddPage implements OnInit {
         ct.push(obj);
       }
     }
-
     if (this.fg2.value.Saturday) {
       if (this.fg2.value.SaturdayS1) {
         this.fg2.value.Sastart = moment(
@@ -514,7 +511,6 @@ export class AddPage implements OnInit {
         ct.push(obj);
       }
     }
-
     if (this.fg2.value.Sunday) {
       if (this.fg2.value.SundayS1) {
         this.fg2.value.Sustart = moment(
@@ -554,11 +550,8 @@ export class AddPage implements OnInit {
       }
     }
     this.fg1.value.ClinicTimings = ct;
-
     this.addNewClinic(this.fg1.value);
   }
-
-  
   async addNewClinic(data) {
     {
       const loading = await this.loadingController.create({
@@ -599,7 +592,6 @@ export class AddPage implements OnInit {
       } else {
         this.fg2.controls["Mstart2"].setErrors(null);
       }
-
       if (this.fg2.value.MondayS1) {
         const MStart1 = await Date.parse(this.fg2.value.Mstart);
         const MEnd1 = await Date.parse(this.fg2.value.Mend);
@@ -617,7 +609,6 @@ export class AddPage implements OnInit {
         this.fg2.controls["Mstart"].setErrors(null);
         this.fg2.controls["Mstart2"].setErrors(null);
       }
-
       if (this.fg2.value.MondayS2) {
         const MStart2 = await Date.parse(this.fg2.value.Mstart2);
         const MEnd2 = await Date.parse(this.fg2.value.Mend2);
@@ -656,7 +647,6 @@ export class AddPage implements OnInit {
       } else {
         this.fg2.controls["Tustart2"].setErrors(null);
       }
-
       if (this.fg2.value.TuesdayS1) {
         const MStart1 = Date.parse(this.fg2.value.Tustart);
         const MEnd1 = Date.parse(this.fg2.value.Tuend);
@@ -670,7 +660,6 @@ export class AddPage implements OnInit {
         this.fg2.controls["Tustart"].setErrors(null);
         this.fg2.controls["Tustart2"].setErrors(null);
       }
-
       if (this.fg2.value.TuesdayS2) {
         const MStart2 = Date.parse(this.fg2.value.Tustart2);
         const MEnd2 = Date.parse(this.fg2.value.Tuend2);
@@ -721,7 +710,6 @@ export class AddPage implements OnInit {
         this.fg2.controls["Wstart"].setErrors(null);
         this.fg2.controls["Wstart2"].setErrors(null);
       }
-
       if (this.fg2.value.WednesdayS2) {
         const MStart2 = Date.parse(this.fg2.value.Wstart2);
         const MEnd2 = Date.parse(this.fg2.value.Wend2);
@@ -825,7 +813,6 @@ export class AddPage implements OnInit {
         this.fg2.controls["Fstart"].setErrors(null);
         this.fg2.controls["Fstart2"].setErrors(null);
       }
-
       if (this.fg2.value.FridayS2) {
         const MStart2 = Date.parse(this.fg2.value.Fstart2);
         const MEnd2 = Date.parse(this.fg2.value.Fend2);
@@ -862,7 +849,6 @@ export class AddPage implements OnInit {
       } else {
         this.fg2.controls["Sastart2"].setErrors(null);
       }
-
       if (this.fg2.value.SaturdayS1) {
         const MStart1 = Date.parse(this.fg2.value.Sastart);
         const MEnd1 = Date.parse(this.fg2.value.Saend);
@@ -877,7 +863,6 @@ export class AddPage implements OnInit {
         this.fg2.controls["Sastart"].setErrors(null);
         this.fg2.controls["Sastart2"].setErrors(null);
       }
-
       if (this.fg2.value.SaturdayS2) {
         const MStart2 = Date.parse(this.fg2.value.Sastart2);
         const MEnd2 = Date.parse(this.fg2.value.Saend2);
@@ -949,7 +934,6 @@ export class AddPage implements OnInit {
       this.fg2.controls["Sustart"].setErrors(null);
     }
   }
-
   validation_messages = {
     Name: [{ type: "required", message: "Name is required." }],
     phoneNumber: [
@@ -957,7 +941,7 @@ export class AddPage implements OnInit {
 
       {
         type: "minlength",
-        message: "Phone Number must be at least 7 Digits long."
+        message: "Phone Number must be at least 10 Digits long."
       },
       { type: "pattern", message: "Enter Must be Number" }
     ],
@@ -975,6 +959,60 @@ export class AddPage implements OnInit {
     Mstart: [
       { type: "required", message: "End Time Must be after Start Time" }
     ],
-    Mend: [{ type: "required", message: "End Time Must be after Start Time" }]
+    Mend: [{ type: "required", message: "End Time Must be after Start Time" }],
+    Tustart2: [
+      { type: "required", message: "Session 2 Must Start after Session 1" }
+    ],
+    Tustart: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Tuend: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Wstart2: [
+      { type: "required", message: "Session 2 Must Start after Session 1" }
+    ],
+    Wstart: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Wend: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Thstart2: [
+      { type: "required", message: "Session 2 Must Start after Session 1" }
+    ],
+    Thstart: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Thend: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Fstart2: [
+      { type: "required", message: "Session 2 Must Start after Session 1" }
+    ],
+    Fstart: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Fend: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Sastart2: [
+      { type: "required", message: "Session 2 Must Start after Session 1" }
+    ],
+    Sastart: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Saend: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Sustart2: [
+      { type: "required", message: "Session 2 Must Start after Session 1" }
+    ],
+    Sustart: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Suend: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
   };
 }

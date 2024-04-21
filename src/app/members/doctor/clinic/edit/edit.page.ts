@@ -175,7 +175,7 @@ export class EditPage implements OnInit {
     await this.uploadService.uploadImage(monogramData).subscribe(res => {
       if (res) {
         let mImage = res.dbPath;
-        this.fg1.value.MonogramImage = environment.RESOURCE_URL + mImage;
+        this.fg1.value.MonogramImage = mImage;
         console.log("MonogramImage = " + this.fg1.value.MonogramImage);
         loading.dismiss();
       } else {
@@ -230,7 +230,7 @@ export class EditPage implements OnInit {
           this.fg1.controls["PhoneNumber"].setValue(this.clinic.PhoneNumber);
           this.fg1.controls["Address"].setValue(this.clinic.Address);
           this.fg1.controls["ConsultationFee"].setValue(this.clinic.ConsultationFee);
-          // this.fg1.controls["MonogramImage"].setValue(this.clinic.MonogramImage);
+          // this.fg1.controls["MonogramImage"].setValue(this.resourceURL+this.clinic.MonogramImage);
           localStorage.setItem('monogramImage', this.resourceURL+this.clinic.MonogramImage);
           const monogramImageUrl = localStorage.getItem('monogramImage');
           console.log(monogramImageUrl)
@@ -468,7 +468,6 @@ export class EditPage implements OnInit {
       }
     );
   }
-
   getdata() {
     this.fg1.value.DoctorId = this.doctorId;
     this.fg1.value.Id = this.clinicId;
@@ -783,6 +782,8 @@ export class EditPage implements OnInit {
 
       await this.clinicService.putClinic(this.clinicId, data).subscribe(
         res => {
+          console.log(this.clinicId);
+          console.log(data);
           if (res.IsSuccess) {
             this.storage.get('Clinics').then((val) => {
               this.updateClinic = val.filter(x => x.Id === this.clinicId);
@@ -798,15 +799,11 @@ export class EditPage implements OnInit {
                 }
               }
               this.storage.set('Clinics', val);
-
-
-
+              console.log(val);
             });
-
-
             loading.dismiss();
             this.toastService.create("successfully updated clinic");
-            this.router.navigate(["/members/doctor/clinic"]);
+            // this.router.navigate(["/members/doctor/clinic"]);
           } else {
             loading.dismiss();
             this.toastService.create(res.Message, "danger");

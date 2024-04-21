@@ -26,7 +26,7 @@
   <form [formGroup]="fg1">
     <ion-item>
       <ion-label color="primary" position="floating">Patient Name</ion-label>
-      <ion-input type="text" formControlName="Name" required [(ngModel)]="fg1.value.Name" #patientName (input)="fg1.value.Name = capitalizePatientName(patientName.value)">
+      <ion-input type="text" formControlName="Name" required [(ngModel)]="fg1.value.Name" #patientName (input)="fg1.value.Name = capitalizePatientName('patientName.value')">
 </ion-input>
     </ion-item>
     <div class="validation-errors">
@@ -58,7 +58,7 @@
     </ion-radio-group> -->
     <ion-item>
       <ion-label color="primary" position="floating">Guardian's Name</ion-label>
-      <ion-input type="text" formControlName="FatherName" required [(ngModel)]="fg1.value.FatherName" #guardianName (input)="fg1.value.FatherName = capitalizeGuardianName(guardianName.value)">
+      <ion-input type="text" formControlName="FatherName" required [(ngModel)]="fg1.value.FatherName" #guardianName (input)="fg1.value.FatherName = capitalizeGuardianName('guardianName.value')">
 </ion-input>
     </ion-item>
     <div class="validation-errors">
