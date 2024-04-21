@@ -13,7 +13,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: npm install -g @ionic/cli  # Install Ionic CLI globally
+      - run: npm install -g @ionic/cli # Install Ionic CLI globally
       - run: npm ci
       - run: ionic build --prod
 
@@ -39,7 +39,7 @@ jobs:
           username: "${{ secrets.PROD_FTP_USERNAME }}"
           password: "${{ secrets.PROD_FTP_PASSWORD }}"
           local-dir: www/
-          server-dir: /
+          server-dir: /doctor
           exclude: |
             **/.git*
             **/.git*/**
