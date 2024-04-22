@@ -40,10 +40,10 @@ export class SchedulePage implements OnInit {
 
   }
 
-  ionViewDidEnter() {
-    this.fg = this.formBuilder.group({});
-    this.storage.get(environment.DOCTOR_Id).then(val => {
-      this.getSchedule(val);
+  async ionViewDidEnter() {
+    this.fg = this.formBuilder.group({}); // Initialize the form group
+    await this.storage.get(environment.DOCTOR_Id).then(val => {
+      this.getSchedule(val); // Fetch data and initialize form controls
     });
   }
 
@@ -65,7 +65,7 @@ export class SchedulePage implements OnInit {
           this.doses.forEach(dose => {
             let value = dose.GapInDays == null ? 0 : dose.GapInDays;
             this.fg.addControl(
-              dose.Dose.Name + ' ( ' + dose.Dose.Vaccine.Name + ' )',
+              dose.Dose.Name,
               new FormControl(value, Validators.required)
             );
           });
@@ -89,19 +89,24 @@ export class SchedulePage implements OnInit {
     let var1 = [];
 
     for (let i = 0; i < this.doses.length; i++) {
-      var1.push({
-        Id: this.doses[i].Id,
-        DoseId: this.doses[i].DoseId,
-        DoctorId: this.doses[i].DoctorId,
-        GapInDays: parseInt(this.fg.value[this.doses[i].Dose.Name]),
-        IsActive: this.doses[i].IsActive
-      });
+    
+      if (!this.fg.get(this.doses[i].Dose.Name).value) { // Check if dose is selected
+        var1.push({
+          Id: this.doses[i].Id,
+          DoseId: this.doses[i].DoseId,
+          DoctorId: this.doses[i].DoctorId,
+          GapInDays: parseInt(this.fg.value[this.doses[i].Dose.Name]),
+          IsActive: this.doses[i].IsActive
+        });
+      }
     }
     const loading = await this.loadingcontroller.create({
       message: "Loading"
     });
 
     await loading.present();
+    console.log('var1',var1)
+    loading.dismiss();
     await this.scheduleService.putDoctorSchedule(var1).subscribe(
       res => {
         if (res.IsSuccess) {
