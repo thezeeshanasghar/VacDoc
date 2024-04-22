@@ -94,18 +94,18 @@
                       <ion-item lines="none" class="ion-no-padding">
                           <ion-label color="primary" position="floating">Start Time</ion-label>
                           <ion-datetime formControlName="Mstart" display-format="h:mm a"
-                              (ionChange)="setAllDaysValueStrat1();setTimeValidatorsMonday()">
+                              (ionChange)="setTimeValidatorsMonday()">
                           </ion-datetime>
                       </ion-item>
 
                       <ion-item slot="end" lines="none" class="ion-no-padding">
                           <ion-label color="primary" position="floating">End Time</ion-label>
                           <ion-datetime formControlName="Mend" display-format="h:mm a"
-                              (ionChange)="setAllDaysValueEnd1();setTimeValidatorsMonday()">
+                              (ionChange)="setTimeValidatorsMonday()">
                           </ion-datetime>
                       </ion-item>
                   </ion-item>
-
+                    <div > <ion-button (click)="setAllDaysValueStrat1();setAllDaysValueEnd1();">Apply Session:1 to All</ion-button></div>
                   <ion-label class="VerticalAlignMiddle">Session:2 </ion-label>
                   <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #MondayS2 id="MondayS2" name="MondayS2" slot="end" color="primary"
                       formControlName="MondayS2"></ion-toggle>
@@ -114,17 +114,18 @@
                       <ion-item lines="none" class="ion-no-padding">
                           <ion-label color="primary" position="floating">Start Time</ion-label>
                           <ion-datetime formControlName="Mstart2" display-format="h:mm a"
-                              (ionChange)="setAllDaysValueStrat2();setTimeValidatorsMonday()">
+                              (ionChange)="setTimeValidatorsMonday()">
                           </ion-datetime>
                       </ion-item>
 
                       <ion-item slot="end" lines="none" class="ion-no-padding">
                           <ion-label color="primary" position="floating">End Time</ion-label>
                           <ion-datetime formControlName="Mend2" display-format="h:mm a"
-                              (ionChange)="setAllDaysValueEnd2();setTimeValidatorsMonday()">
+                              (ionChange)="setTimeValidatorsMonday()">
                           </ion-datetime>
                       </ion-item>
                   </ion-item>
+                  <div><ion-button (click)="setAllDaysValueStrat2();setAllDaysValueEnd2();">Apply Session:2 to All</ion-button></div>
                   <div class="validation-errors">
                       <ng-container *ngFor="let validation of validation_messages.Mstart2">
                           <div class="error-message" *ngIf="fg2.get('Mstart2').hasError('required')">

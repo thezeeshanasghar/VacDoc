@@ -124,7 +124,7 @@
                             </ion-datetime>
                         </ion-item>
                     </ion-item>
-                     <ion-button (click)="setAllDaysValueStrat2();setAllDaysValueEnd2()">Apply Session:2 to All</ion-button>
+                     <div><ion-button (click)="setAllDaysValueStrat2();setAllDaysValueEnd2()">Apply Session:2 to All</ion-button></div>
                     <div class="validation-errors">
                         <ng-container *ngFor="let validation of validation_messages.Mstart2">
                             <div class="error-message" *ngIf="fg2.get('Mstart2').hasError('required')">
