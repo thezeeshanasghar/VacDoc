@@ -90,7 +90,7 @@ export class Step2Page implements OnInit {
         ])
       ),
       MonogramImage: [null],
-      OffDays: [null],
+      OffDays: [""],
       ClinicTimings: [null],
       Lat: [null],
       Long: [null]
@@ -145,7 +145,7 @@ export class Step2Page implements OnInit {
       Saend: [null],
       Saend2: [null],
 
-      Sunday: [false],
+      Sunday: [true],
       SundayS1: [true],
       SundayS2: [true],
       Sustart: [null],
@@ -336,7 +336,7 @@ export class Step2Page implements OnInit {
     this.fg1.value.Lat = this.latitude;
     this.fg1.value.Long = this.longitude;
     const monogram=localStorage.getItem('dbPath')
-    this.fg1.value.OffDays = "Sunday";
+    this.fg1.value.OffDays = "";
     var ct = [];
 
     if (this.fg2.value.Monday) {
