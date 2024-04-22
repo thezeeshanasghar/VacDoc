@@ -338,18 +338,32 @@ export class Step2Page implements OnInit {
     const monogram=localStorage.getItem('dbPath')
     this.fg1.value.OffDays = "Sunday";
     var ct = [];
+
     if (this.fg2.value.Monday) {
       if (this.fg2.value.MondayS1) {
-        if (this.fg2.value.Mstart == null) { this.fg2.controls["Mstart"].setValue('2020-09-11 08:30'); }
-        if (this.fg2.value.Mend == null) { this.fg2.controls["Mend"].setValue('2020-09-11 08:30'); }
-        this.fg2.value.Mstart = moment(
-          this.fg2.value.Mstart,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Mend = moment(
-          this.fg2.value.Mend,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
+        if (!this.fg2.value.Mstart) { 
+          this.fg2.controls["Mstart"].setValue(''); 
+        }
+        if (!this.fg2.value.Mend) { 
+          this.fg2.controls["Mend"].setValue(''); 
+        }
+
+        // Format start time
+        if (this.fg2.value.Mstart) {
+          let startTimeMoment = moment(this.fg2.value.Mstart, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Mstart = startTimeMoment.isValid() ? startTimeMoment.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Mstart = '';
+        }
+
+        // Format end time
+        if (this.fg2.value.Mend) {
+          let endTimeMoment = moment(this.fg2.value.Mend, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Mend = endTimeMoment.isValid() ? endTimeMoment.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Mend = '';
+        }
+
         let obj = {
           Day: "Monday",
           StartTime: this.fg2.value.Mstart,
@@ -359,18 +373,32 @@ export class Step2Page implements OnInit {
         };
         ct.push(obj);
       }
-      // For Session 2
+
+      // For Session 2 on Monday
       if (this.fg2.value.MondayS2) {
-        if (this.fg2.value.Mstart2 == null) { this.fg2.value.Mstart2 = '2020-09-11 08:30' }
-        if (this.fg2.value.Mend2 == null) { this.fg2.value.Mend2 = '2020-09-11 08:30' }
-        this.fg2.value.Mstart2 = moment(
-          this.fg2.value.Mstart2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Mend2 = moment(
-          this.fg2.value.Mend2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
+        if (!this.fg2.value.Mstart2) { 
+          this.fg2.controls["Mstart2"].setValue(''); 
+        }
+        if (!this.fg2.value.Mend2) { 
+          this.fg2.controls["Mend2"].setValue(''); 
+        }
+
+        // Format start time for Session 2
+        if (this.fg2.value.Mstart2) {
+          let startTimeMoment2 = moment(this.fg2.value.Mstart2, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Mstart2 = startTimeMoment2.isValid() ? startTimeMoment2.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Mstart2 = '';
+        }
+
+        // Format end time for Session 2
+        if (this.fg2.value.Mend2) {
+          let endTimeMoment2 = moment(this.fg2.value.Mend2, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Mend2 = endTimeMoment2.isValid() ? endTimeMoment2.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Mend2 = '';
+        }
+
         let obj1 = {
           Day: "Monday",
           StartTime: this.fg2.value.Mstart2,
@@ -383,17 +411,31 @@ export class Step2Page implements OnInit {
     }
 
     if (this.fg2.value.Tuesday) {
+      // For Session 1 on Tuesday
       if (this.fg2.value.TuesdayS1) {
-        if (this.fg2.value.Tustart == null) { this.fg2.value.Tustart = '2020-09-11 08:30' }
-        if (this.fg2.value.Tuend == null) { this.fg2.value.Tuend = '2020-09-11 08:30' }
-        this.fg2.value.Tustart = moment(
-          this.fg2.value.Tustart,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Tuend = moment(
-          this.fg2.value.Tuend,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
+        if (!this.fg2.value.Tustart) { 
+          this.fg2.controls["Tustart"].setValue(''); 
+        }
+        if (!this.fg2.value.Tuend) { 
+          this.fg2.controls["Tuend"].setValue(''); 
+        }
+        
+        // Format start time for Session 1 on Tuesday
+        if (this.fg2.value.Tustart) {
+          let startTimeTuesdayMoment = moment(this.fg2.value.Tustart, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Tustart = startTimeTuesdayMoment.isValid() ? startTimeTuesdayMoment.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Tustart = '';
+        }
+        
+        // Format end time for Session 1 on Tuesday
+        if (this.fg2.value.Tuend) {
+          let endTimeTuesdayMoment = moment(this.fg2.value.Tuend, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Tuend = endTimeTuesdayMoment.isValid() ? endTimeTuesdayMoment.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Tuend = '';
+        }
+        
         let obj = {
           Day: "Tuesday",
           StartTime: this.fg2.value.Tustart,
@@ -403,18 +445,32 @@ export class Step2Page implements OnInit {
         };
         ct.push(obj);
       }
-      // session 2
+
+      // For Session 2 on Tuesday
       if (this.fg2.value.TuesdayS2) {
-        if (this.fg2.value.Tustart2 == null) { this.fg2.value.Tustart2 = '2020-09-11 08:30' }
-        if (this.fg2.value.Tuend2 == null) { this.fg2.value.Tuend2 = '2020-09-11 08:30' }
-        this.fg2.value.Tustart2 = moment(
-          this.fg2.value.Tustart2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Tuend2 = moment(
-          this.fg2.value.Tuend2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
+        if (!this.fg2.value.Tustart2) { 
+          this.fg2.controls["Tustart2"].setValue(''); 
+        }
+        if (!this.fg2.value.Tuend2) { 
+          this.fg2.controls["Tuend2"].setValue(''); 
+        }
+        
+        // Format start time for Session 2 on Tuesday
+        if (this.fg2.value.Tustart2) {
+          let startTimeTuesdayMoment2 = moment(this.fg2.value.Tustart2, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Tustart2 = startTimeTuesdayMoment2.isValid() ? startTimeTuesdayMoment2.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Tustart2 = '';
+        }
+        
+        // Format end time for Session 2 on Tuesday
+        if (this.fg2.value.Tuend2) {
+          let endTimeTuesdayMoment2 = moment(this.fg2.value.Tuend2, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Tuend2 = endTimeTuesdayMoment2.isValid() ? endTimeTuesdayMoment2.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Tuend2 = '';
+        }
+        
         let obj1 = {
           Day: "Tuesday",
           StartTime: this.fg2.value.Tustart2,
@@ -427,17 +483,31 @@ export class Step2Page implements OnInit {
     }
 
     if (this.fg2.value.Wednesday) {
+      // For Session 1 on Wednesday
       if (this.fg2.value.WednesdayS1) {
-        if (this.fg2.value.Wstart == null) { this.fg2.value.Wstart = '2020-09-11 08:30' }
-        if (this.fg2.value.Wend == null) { this.fg2.value.Wend = '2020-09-11 08:30' }
-        this.fg2.value.Wstart = moment(
-          this.fg2.value.Wstart,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Wend = moment(
-          this.fg2.value.Wend,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
+        if (!this.fg2.value.Wstart) { 
+          this.fg2.controls["Wstart"].setValue(''); 
+        }
+        if (!this.fg2.value.Wend) { 
+          this.fg2.controls["Wend"].setValue(''); 
+        }
+        
+        // Format start time for Session 1 on Wednesday
+        if (this.fg2.value.Wstart) {
+          let startTimeWednesdayMoment = moment(this.fg2.value.Wstart, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Wstart = startTimeWednesdayMoment.isValid() ? startTimeWednesdayMoment.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Wstart = '';
+        }
+        
+        // Format end time for Session 1 on Wednesday
+        if (this.fg2.value.Wend) {
+          let endTimeWednesdayMoment = moment(this.fg2.value.Wend, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Wend = endTimeWednesdayMoment.isValid() ? endTimeWednesdayMoment.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Wend = '';
+        }
+        
         let obj = {
           Day: "Wednesday",
           StartTime: this.fg2.value.Wstart,
@@ -447,18 +517,32 @@ export class Step2Page implements OnInit {
         };
         ct.push(obj);
       }
-      // Session 2
+
+     // For Session 2 on Wednesday
       if (this.fg2.value.WednesdayS2) {
-        if (this.fg2.value.Wstart2 == null) { this.fg2.value.Wstart2 = '2020-09-11 08:30' }
-        if (this.fg2.value.Wend2 == null) { this.fg2.value.Wend2 = '2020-09-11 08:30' }
-        this.fg2.value.Wstart2 = moment(
-          this.fg2.value.Wstart2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Wend2 = moment(
-          this.fg2.value.Wend2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
+        if (!this.fg2.value.Wstart2) { 
+          this.fg2.controls["Wstart2"].setValue(''); 
+        }
+        if (!this.fg2.value.Wend2) { 
+          this.fg2.controls["Wend2"].setValue(''); 
+        }
+        
+        // Format start time for Session 2 on Wednesday
+        if (this.fg2.value.Wstart2) {
+          let startTimeWednesdayMoment2 = moment(this.fg2.value.Wstart2, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Wstart2 = startTimeWednesdayMoment2.isValid() ? startTimeWednesdayMoment2.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Wstart2 = '';
+        }
+        
+        // Format end time for Session 2 on Wednesday
+        if (this.fg2.value.Wend2) {
+          let endTimeWednesdayMoment2 = moment(this.fg2.value.Wend2, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Wend2 = endTimeWednesdayMoment2.isValid() ? endTimeWednesdayMoment2.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Wend2 = '';
+        }
+        
         let obj1 = {
           Day: "Wednesday",
           StartTime: this.fg2.value.Wstart2,
@@ -471,17 +555,31 @@ export class Step2Page implements OnInit {
     }
 
     if (this.fg2.value.Thursday) {
+      // For Session 1 on Thursday
       if (this.fg2.value.ThursdayS1) {
-        if (this.fg2.value.Thstart == null) { this.fg2.value.Thstart = '2020-09-11 08:30' }
-        if (this.fg2.value.Thend == null) { this.fg2.value.Thend = '2020-09-11 08:30' }
-        this.fg2.value.Thstart = moment(
-          this.fg2.value.Thstart,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Thend = moment(
-          this.fg2.value.Thend,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
+        if (!this.fg2.value.Thstart) { 
+          this.fg2.controls["Thstart"].setValue(''); 
+        }
+        if (!this.fg2.value.Thend) { 
+          this.fg2.controls["Thend"].setValue(''); 
+        }
+        
+        // Format start time for Session 1 on Thursday
+        if (this.fg2.value.Thstart) {
+          let startTimeThursdayMoment = moment(this.fg2.value.Thstart, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Thstart = startTimeThursdayMoment.isValid() ? startTimeThursdayMoment.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Thstart = '';
+        }
+        
+        // Format end time for Session 1 on Thursday
+        if (this.fg2.value.Thend) {
+          let endTimeThursdayMoment = moment(this.fg2.value.Thend, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Thend = endTimeThursdayMoment.isValid() ? endTimeThursdayMoment.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Thend = '';
+        }
+        
         let obj = {
           Day: "Thursday",
           StartTime: this.fg2.value.Thstart,
@@ -491,18 +589,32 @@ export class Step2Page implements OnInit {
         };
         ct.push(obj);
       }
-      // SESSION 2
+
+      // For Session 2 on Thursday
       if (this.fg2.value.ThursdayS2) {
-        if (this.fg2.value.Thstart2 == null) { this.fg2.value.Thstart2 = '2020-09-11 08:30' }
-        if (this.fg2.value.Thend2 == null) { this.fg2.value.Thend2 = '2020-09-11 08:30' }
-        this.fg2.value.Thstart2 = moment(
-          this.fg2.value.Thstart2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Thend2 = moment(
-          this.fg2.value.Thend2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
+        if (!this.fg2.value.Thstart2) { 
+          this.fg2.controls["Thstart2"].setValue(''); 
+        }
+        if (!this.fg2.value.Thend2) { 
+          this.fg2.controls["Thend2"].setValue(''); 
+        }
+        
+        // Format start time for Session 2 on Thursday
+        if (this.fg2.value.Thstart2) {
+          let startTimeThursdayMoment2 = moment(this.fg2.value.Thstart2, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Thstart2 = startTimeThursdayMoment2.isValid() ? startTimeThursdayMoment2.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Thstart2 = '';
+        }
+        
+        // Format end time for Session 2 on Thursday
+        if (this.fg2.value.Thend2) {
+          let endTimeThursdayMoment2 = moment(this.fg2.value.Thend2, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Thend2 = endTimeThursdayMoment2.isValid() ? endTimeThursdayMoment2.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Thend2 = '';
+        }
+        
         let obj1 = {
           Day: "Thursday",
           StartTime: this.fg2.value.Thstart2,
@@ -515,17 +627,31 @@ export class Step2Page implements OnInit {
     }
 
     if (this.fg2.value.Friday) {
+      // For Session 1 on Friday
       if (this.fg2.value.FridayS1) {
-        if (this.fg2.value.Fstart == null) { this.fg2.value.Fstart = '2020-09-11 08:30' }
-        if (this.fg2.value.Fend == null) { this.fg2.value.Fend = '2020-09-11 08:30' }
-        this.fg2.value.Fstart = moment(
-          this.fg2.value.Fstart,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Fend = moment(
-          this.fg2.value.Fend,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
+        if (!this.fg2.value.Fstart) { 
+          this.fg2.controls["Fstart"].setValue(''); 
+        }
+        if (!this.fg2.value.Fend) { 
+          this.fg2.controls["Fend"].setValue(''); 
+        }
+        
+        // Format start time for Session 1 on Friday
+        if (this.fg2.value.Fstart) {
+          let startTimeFridayMoment = moment(this.fg2.value.Fstart, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Fstart = startTimeFridayMoment.isValid() ? startTimeFridayMoment.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Fstart = '';
+        }
+        
+        // Format end time for Session 1 on Friday
+        if (this.fg2.value.Fend) {
+          let endTimeFridayMoment = moment(this.fg2.value.Fend, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Fend = endTimeFridayMoment.isValid() ? endTimeFridayMoment.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Fend = '';
+        }
+        
         let obj = {
           Day: "Friday",
           StartTime: this.fg2.value.Fstart,
@@ -535,41 +661,69 @@ export class Step2Page implements OnInit {
         };
         ct.push(obj);
       }
-      // SESSION 2
+
+      // For Session 2 on Friday
       if (this.fg2.value.FridayS2) {
-        if (this.fg2.value.Fstart2 == null) { this.fg2.value.Fstart2 = '2020-09-11 08:30' }
-        if (this.fg2.value.Fend2 == null) { this.fg2.value.Fend2 = '2020-09-11 08:30' }
-        this.fg2.value.Fstart2 = moment(
-          this.fg2.value.Fstart2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Fend2 = moment(
-          this.fg2.value.Fend2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        let obj = {
+        if (!this.fg2.value.Fstart2) { 
+          this.fg2.controls["Fstart2"].setValue(''); 
+        }
+        if (!this.fg2.value.Fend2) { 
+          this.fg2.controls["Fend2"].setValue(''); 
+        }
+        
+        // Format start time for Session 2 on Friday
+        if (this.fg2.value.Fstart2) {
+          let startTimeFridayMoment2 = moment(this.fg2.value.Fstart2, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Fstart2 = startTimeFridayMoment2.isValid() ? startTimeFridayMoment2.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Fstart2 = '';
+        }
+        
+        // Format end time for Session 2 on Friday
+        if (this.fg2.value.Fend2) {
+          let endTimeFridayMoment2 = moment(this.fg2.value.Fend2, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Fend2 = endTimeFridayMoment2.isValid() ? endTimeFridayMoment2.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Fend2 = '';
+        }
+        
+        let obj1 = {
           Day: "Friday",
           StartTime: this.fg2.value.Fstart2,
           EndTime: this.fg2.value.Fend2,
           IsOpen: true,
           Session: 2
         };
-        ct.push(obj);
+        ct.push(obj1);
       }
     }
 
     if (this.fg2.value.Saturday) {
+      // For Session 1 on Saturday
       if (this.fg2.value.SaturdayS1) {
-        if (this.fg2.value.Sastart == null) { this.fg2.value.Sastart = '2020-09-11 08:30' }
-        if (this.fg2.value.Saend == null) { this.fg2.value.Saend = '2020-09-11 08:30' }
-        this.fg2.value.Sastart = moment(
-          this.fg2.value.Sastart,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Saend = moment(
-          this.fg2.value.Saend,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
+        if (!this.fg2.value.Sastart) { 
+          this.fg2.controls["Sastart"].setValue(''); 
+        }
+        if (!this.fg2.value.Saend) { 
+          this.fg2.controls["Saend"].setValue(''); 
+        }
+        
+        // Format start time for Session 1 on Saturday
+        if (this.fg2.value.Sastart) {
+          let startTimeSaturdayMoment = moment(this.fg2.value.Sastart, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Sastart = startTimeSaturdayMoment.isValid() ? startTimeSaturdayMoment.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Sastart = '';
+        }
+        
+        // Format end time for Session 1 on Saturday
+        if (this.fg2.value.Saend) {
+          let endTimeSaturdayMoment = moment(this.fg2.value.Saend, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Saend = endTimeSaturdayMoment.isValid() ? endTimeSaturdayMoment.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Saend = '';
+        }
+        
         let obj = {
           Day: "Saturday",
           StartTime: this.fg2.value.Sastart,
@@ -579,41 +733,69 @@ export class Step2Page implements OnInit {
         };
         ct.push(obj);
       }
-      // SESSION 2
+
+      // For Session 2 on Saturday
       if (this.fg2.value.SaturdayS2) {
-        if (this.fg2.value.Sastart2 == null) { this.fg2.value.Sastart2 = '2020-09-11 08:30' }
-        if (this.fg2.value.Saend2 == null) { this.fg2.value.Saend2 = '2020-09-11 08:30' }
-        this.fg2.value.Sastart2 = moment(
-          this.fg2.value.Sastart2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Saend2 = moment(
-          this.fg2.value.Saend2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        let obj = {
+        if (!this.fg2.value.Sastart2) { 
+          this.fg2.controls["Sastart2"].setValue(''); 
+        }
+        if (!this.fg2.value.Saend2) { 
+          this.fg2.controls["Saend2"].setValue(''); 
+        }
+        
+        // Format start time for Session 2 on Saturday
+        if (this.fg2.value.Sastart2) {
+          let startTimeSaturdayMoment2 = moment(this.fg2.value.Sastart2, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Sastart2 = startTimeSaturdayMoment2.isValid() ? startTimeSaturdayMoment2.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Sastart2 = '';
+        }
+        
+        // Format end time for Session 2 on Saturday
+        if (this.fg2.value.Saend2) {
+          let endTimeSaturdayMoment2 = moment(this.fg2.value.Saend2, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Saend2 = endTimeSaturdayMoment2.isValid() ? endTimeSaturdayMoment2.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Saend2 = '';
+        }
+        
+        let obj1 = {
           Day: "Saturday",
           StartTime: this.fg2.value.Sastart2,
           EndTime: this.fg2.value.Saend2,
           IsOpen: true,
           Session: 2
         };
-        ct.push(obj);
+        ct.push(obj1);
       }
     }
 
     if (this.fg2.value.Sunday) {
+      // For Session 1 on Sunday
       if (this.fg2.value.SundayS1) {
-        if (this.fg2.value.Sustart == null) { this.fg2.value.Sustart = '2020-09-11 08:30' }
-        if (this.fg2.value.Suend == null) { this.fg2.value.Suend = '2020-09-11 08:30' }
-        this.fg2.value.Sustart = moment(
-          this.fg2.value.Sustart,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Suend = moment(
-          this.fg2.value.Suend,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
+        if (!this.fg2.value.Sustart) { 
+          this.fg2.controls["Sustart"].setValue(''); 
+        }
+        if (!this.fg2.value.Suend) { 
+          this.fg2.controls["Suend"].setValue(''); 
+        }
+        
+        // Format start time for Session 1 on Sunday
+        if (this.fg2.value.Sustart) {
+          let startTimeSundayMoment = moment(this.fg2.value.Sustart, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Sustart = startTimeSundayMoment.isValid() ? startTimeSundayMoment.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Sustart = '';
+        }
+        
+        // Format end time for Session 1 on Sunday
+        if (this.fg2.value.Suend) {
+          let endTimeSundayMoment = moment(this.fg2.value.Suend, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Suend = endTimeSundayMoment.isValid() ? endTimeSundayMoment.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Suend = '';
+        }
+        
         let obj = {
           Day: "Sunday",
           StartTime: this.fg2.value.Sustart,
@@ -623,28 +805,43 @@ export class Step2Page implements OnInit {
         };
         ct.push(obj);
       }
-      // SESSION 2
+
+      // For Session 2 on Sunday
       if (this.fg2.value.SundayS2) {
-        if (this.fg2.value.Sustart2 == null) { this.fg2.value.Sustart2 = '2020-09-11 08:30' }
-        if (this.fg2.value.Suend2 == null) { this.fg2.value.Suend2 = '2020-09-11 08:30' }
-        this.fg2.value.Sustart2 = moment(
-          this.fg2.value.Sustart2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        this.fg2.value.Suend2 = moment(
-          this.fg2.value.Suend2,
-          "YYYY-MM-DD HH:mm"
-        ).format("HH:mm");
-        let obj = {
+        if (!this.fg2.value.Sustart2) { 
+          this.fg2.controls["Sustart2"].setValue(''); 
+        }
+        if (!this.fg2.value.Suend2) { 
+          this.fg2.controls["Suend2"].setValue(''); 
+        }
+        
+        // Format start time for Session 2 on Sunday
+        if (this.fg2.value.Sustart2) {
+          let startTimeSundayMoment2 = moment(this.fg2.value.Sustart2, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Sustart2 = startTimeSundayMoment2.isValid() ? startTimeSundayMoment2.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Sustart2 = '';
+        }
+        
+        // Format end time for Session 2 on Sunday
+        if (this.fg2.value.Suend2) {
+          let endTimeSundayMoment2 = moment(this.fg2.value.Suend2, "YYYY-MM-DD HH:mm");
+          this.fg2.value.Suend2 = endTimeSundayMoment2.isValid() ? endTimeSundayMoment2.format("HH:mm") : '';
+        } else {
+          this.fg2.value.Suend2 = '';
+        }
+        
+        let obj1 = {
           Day: "Sunday",
           StartTime: this.fg2.value.Sustart2,
           EndTime: this.fg2.value.Suend2,
           IsOpen: true,
           Session: 2
         };
-        ct.push(obj);
+        ct.push(obj1);
       }
     }
+    ct = ct.filter(session => session.StartTime !== '' && session.EndTime !== '');
     this.fg1.value.ClinicTimings = ct;
     this.signupService.clinicData = this.fg1.value;
     this.router.navigate(["/signup/step3"]);
