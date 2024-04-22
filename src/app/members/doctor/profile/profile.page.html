@@ -132,13 +132,15 @@
         <label for="file">Profile Image</label>
         <input type="file" (change)="SelectProfileImage($event.target.files)">
       </div>
+      <ion-item>
+        <ion-img class="preview-image" [src]="profileImagePath2" alt="No image"></ion-img>
+      </ion-item>
+    </ion-item>
+    <ion-item>
+      <ion-img class="preview-image" [src]="resourceURL+profileImagePath" alt="No image"></ion-img>
     </ion-item>
 
-    <ion-item>
-      <ion-img class="preview-image" [src]="profileImagePath" alt="No image"></ion-img>
-    </ion-item>
-
-    <ion-item>
+    <!-- <ion-item>
       <div>
         <label for="file">Signature Image</label>
         <input type="file" (change)="SelectSignatureImage($event.target.files)">
@@ -147,7 +149,7 @@
 
     <ion-item>
       <ion-img class="preview-image" [src]="signatureImagePath" alt="No image"></ion-img>
-    </ion-item>
+    </ion-item> -->
 
     <ion-item>
       <ion-button (click)="updateProfile()">Update</ion-button>

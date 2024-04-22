@@ -25,8 +25,9 @@ export class ProfilePage implements OnInit {
   DocotrId: any;
   uploading: any;
   profileImagePath: any;
-  signatureImagePath: any;
+  // signatureImagePath: any;
   resourceURL = environment.RESOURCE_URL;
+  profileImagePath2: any;
 
   constructor(
     public loadingController: LoadingController,
@@ -91,7 +92,7 @@ export class ProfilePage implements OnInit {
       ),
       AdditionalInfo:["", [Validators.required,this.fourLinesValidator,]],
       Qualification:[null],
-      SignatureImage: new FormControl([null]),
+      // SignatureImage: new FormControl([null]),
       ProfileImage: new FormControl([null])
 
     });
@@ -105,13 +106,14 @@ export class ProfilePage implements OnInit {
     const reader = new FileReader();
     reader.onload = () => {
       if (imagePath == "profile")
-        this.profileImagePath = reader.result as string;
-      else if (imagePath == "signature")
-        this.signatureImagePath = reader.result as string;
+        this.profileImagePath2 = reader.result as string;
+      // else if (imagePath == "signature")
+      //   this.signatureImagePath = reader.result as string;
     }
     reader.readAsDataURL(file.item(0));
   }
 
+  
   async SelectProfileImage(profileFile: FileList) {
 
     this.previewImage(profileFile, "profile");
@@ -126,7 +128,7 @@ export class ProfilePage implements OnInit {
     await this.uploadService.uploadImage(profileData).subscribe(res => {
       if (res) {
         let pImage = res.dbPath;
-        this.fg.value.ProfileImage = environment.RESOURCE_URL+pImage;
+        this.fg.value.ProfileImage = pImage;
         console.log("ProfileImage = " + this.fg.value.ProfileImage);
         loading.dismiss();
       }
@@ -139,32 +141,32 @@ export class ProfilePage implements OnInit {
     });
   }
 
-  async SelectSignatureImage(signatureFile: FileList) {
+  // async SelectSignatureImage(signatureFile: FileList) {
 
-    this.previewImage(signatureFile, "signature");
+  //   this.previewImage(signatureFile, "signature");
 
-    const loading = await this.loadingController.create({
-      message: "Uploading Image"
-    });
-    await loading.present();
-    const signatureData = new FormData();
-    signatureData.append("SignatureImage", signatureFile.item(0));
+  //   const loading = await this.loadingController.create({
+  //     message: "Uploading Image"
+  //   });
+  //   await loading.present();
+  //   const signatureData = new FormData();
+  //   signatureData.append("SignatureImage", signatureFile.item(0));
 
-    await this.uploadService.uploadImage(signatureData).subscribe(res => {
-      if (res) {
-        let sData = res.dbPath;
-        this.fg.value.SignatureImage = environment.RESOURCE_URL+sData;
-        console.log("SignatureImage = " + this.fg.value.SignatureImage);
-        loading.dismiss();
-      }
-      else {
-        console.log(res.Message);
-        console.log("Error: Try Again! Failed to upload SignatureImage");
-        this.toastService.create("Error: Try Again! Failed to upload SignatureImage.")
-        loading.dismiss();
-      }
-    });
-  }
+  //   await this.uploadService.uploadImage(signatureData).subscribe(res => {
+  //     if (res) {
+  //       let sData = res.dbPath;
+  //       this.fg.value.SignatureImage = environment.RESOURCE_URL+sData;
+  //       console.log("SignatureImage = " + this.fg.value.SignatureImage);
+  //       loading.dismiss();
+  //     }
+  //     else {
+  //       console.log(res.Message);
+  //       console.log("Error: Try Again! Failed to upload SignatureImage");
+  //       this.toastService.create("Error: Try Again! Failed to upload SignatureImage.")
+  //       loading.dismiss();
+  //     }
+  //   });
+  // }
 
   async getProfile() {
     const loading = await this.loadingController.create({
@@ -189,10 +191,10 @@ export class ProfilePage implements OnInit {
           this.fg.controls["PMDC"].setValue(this.doctorData.PMDC);
           this.fg.controls["AdditionalInfo"].setValue(this.doctorData.AdditionalInfo);
           this.fg.controls["Qualification"].setValue(this.doctorData.Qualification);
-          this.fg.controls["SignatureImage"].setValue(this.doctorData.SignatureImage);
+          // this.fg.controls["SignatureImage"].setValue(this.doctorData.SignatureImage);
           this.fg.controls["ProfileImage"].setValue(this.doctorData.ProfileImage);
           this.profileImagePath = this.doctorData.ProfileImage;
-          this.signatureImagePath = this.doctorData.SignatureImage;
+          // this.signatureImagePath = this.doctorData.SignatureImage;
 
           loading.dismiss();
         } else {

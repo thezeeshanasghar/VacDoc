@@ -195,7 +195,7 @@ export class AddPage implements OnInit {
   private previewMonogramImage(file: FileList) {
     const reader = new FileReader();
     reader.onload = () => {
-      this.fg1.value.MonogramImage = reader.result as string;
+      this.fg1.value.MonogramImage1 = reader.result as string;
     };
     reader.readAsDataURL(file.item(0));
   }

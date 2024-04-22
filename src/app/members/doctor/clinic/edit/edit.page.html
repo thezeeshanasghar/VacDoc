@@ -60,14 +60,34 @@
         </div>
       </ng-container>
     </div>
-
-  
     <ion-item>
+      <div>
+        <label for="file">Profile Image</label>
+        <input type="file" (change)="SelectMonogramImage($event.target.files)">
+      </div>
+      <ion-item>
+        <ion-img class="preview-image" [src]="fg1.value.MonogramImage2" alt="No image"></ion-img>
+      </ion-item>
+    </ion-item>
+    <ion-item>
+      <ion-img class="preview-image" [src]="resourceURL+fg1.value.MonogramImage" alt="No image"></ion-img>
+    </ion-item>
+    <!-- <ion-item>
+      <div>
+        <label for="file">Profile Image</label>
+        <input type="file" (change)="SelectMonogramImage($event.target.files)" />
+      </div>
+    </ion-item>
+
+    <ion-item>
+      <ion-img *ngIf="fg1.value.MonogramImage" class="preview-image" [src]="fg1.value.MonogramImage" alt="Uploaded Monogram"></ion-img>
+    </ion-item> -->
+    <!-- <ion-item>
       <ion-label color="primary">Upload Monogram</ion-label>
       <ion-img *ngIf="fg1.value.MonogramImage" class="preview-image" [src]="fg1.value.MonogramImage" alt="Uploaded Monogram"></ion-img>
       <div *ngIf="!fg1.value.MonogramImage" class="placeholder">No Image</div>
       <input type="file" (change)="SelectMonogramImage($event.target.files)" accept=".png, .jpg, .jpeg" />
-  </ion-item>
+  </ion-item> -->
   
     <form [formGroup]="fg2">
       <ion-card>

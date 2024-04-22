@@ -153,16 +153,17 @@ export class EditPage implements OnInit {
     this.getClinic();
   }
 
-  private previewMonogramImage(file: FileList) {
+  private previewMonogramImage(file: FileList, imagePath: string) {
     const reader = new FileReader();
     reader.onload = () => {
-      this.fg1.value.MonogramImage = reader.result as string;
+      if (imagePath == "monogram")
+        this.fg1.value.MonogramImage2 = reader.result as string;
     };
     reader.readAsDataURL(file.item(0));
   }
   
   async SelectMonogramImage(monogramFile: FileList) {
-    this.previewMonogramImage(monogramFile);
+    this.previewMonogramImage(monogramFile, "monogram");
   
     const loading = await this.loadingController.create({
       message: "Uploading Monogram Image"
@@ -231,7 +232,7 @@ export class EditPage implements OnInit {
           this.fg1.controls["Address"].setValue(this.clinic.Address);
           this.fg1.controls["ConsultationFee"].setValue(this.clinic.ConsultationFee);
           // this.fg1.controls["MonogramImage"].setValue(this.resourceURL+this.clinic.MonogramImage);
-          localStorage.setItem('monogramImage', this.resourceURL+this.clinic.MonogramImage);
+          localStorage.setItem('monogramImage', this.clinic.MonogramImage);
           const monogramImageUrl = localStorage.getItem('monogramImage');
           console.log(monogramImageUrl)
           this.fg1.controls["MonogramImage"].setValue(monogramImageUrl)
@@ -786,7 +787,7 @@ export class EditPage implements OnInit {
           console.log(data);
           if (res.IsSuccess) {
             this.storage.get('Clinics').then((val) => {
-              this.updateClinic = val.filter(x => x.Id === this.clinicId);
+              this.updateClinic = val.filter(x => x.Id == this.clinicId);
               console.log(this.updateClinic);
               for (var i = 0; i < val.length; i++) {
                 if (val[i].Id == this.clinicId) {
