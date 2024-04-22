@@ -346,10 +346,10 @@ export class AddPage implements OnInit {
   validation_messages = {
     name: [{ type: "required", message: "Name is required." }],
     fatherName: [{ type: "required", message: "Guardian name is required." }],
-    // email: [
-    //   { type: "required", message: "Email is required." },
-    //   { type: "pattern", message: "Please enter a valid email." }
-    // ],
+    email: [
+      { type: "required", message: "Email is required." },
+      { type: "pattern", message: "Please enter a valid email." }
+    ],
     DOB: [{ type: "required", message: "Date of Birth is required." }],
     mobileNumber: [
       {
