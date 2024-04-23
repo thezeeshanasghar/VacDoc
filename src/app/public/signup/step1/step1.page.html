@@ -220,16 +220,23 @@
     </div>
 
     <ion-item>
+      <ion-item slot="start" lines="none">
+        <ion-label color="primary" position="floating">Country Code</ion-label>
+        <ion-select formControlName="selectedCountryCode">
+          <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
+            (+{{ country.code }}){{ country.name }} 
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
       <ion-label color="primary" position="floating">Mobile Number</ion-label>
       <ion-input type="text" formControlName="MobileNumber" required></ion-input>
-
+    </ion-item>
       <ion-item slot="end" lines="none">
         <ion-checkbox formControlName="ShowMobile"></ion-checkbox>
         <ion-label color="primary">&nbsp;Public Display</ion-label>
       </ion-item>
-
     </ion-item>
-
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.mobileNumber">
         <div class="error-message"
@@ -238,11 +245,10 @@
         </div>
       </ng-container>
     </div>
-
-
+    
     <ion-item>
       <ion-label color="primary" position="floating">Phone Number</ion-label>
-      <ion-input type="text" formControlName="PhoneNo" required></ion-input>
+      <ion-input type="tel" formControlName="PhoneNo" required></ion-input>
       <ion-item slot="end" lines="none">
         <ion-checkbox formControlName="ShowPhone"></ion-checkbox>
         <ion-label color="primary">&nbsp;Public Display</ion-label>
