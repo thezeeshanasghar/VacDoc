@@ -30,7 +30,7 @@ export class Step1Page implements OnInit {
     this.fg = this.frombuilder.group({
       DoctorType: new FormControl("CS"),
       Qualification: [],
-      AdditionalInfo: ["", [Validators.required,this.fourLinesValidator,]],
+      DesignYourLetterpad: ["", [Validators.required,this.fourLinesValidator,]],
       FirstName: [],
       LastName: [],
       DisplayName: [],
@@ -45,7 +45,7 @@ export class Step1Page implements OnInit {
       ),
       Speciality: [],
       Password: [],
-      selectedCountryCode: [],
+      CountryCode: ['92'],
       MobileNumber: new FormControl(
         "",
         Validators.compose([
@@ -378,8 +378,8 @@ export class Step1Page implements OnInit {
       { type: "required", message: "PMDC is required." },
       { type: "pattern", message: "PMDC is required like 12345-A" }
     ],
-    AdditionalInfo: [
-      { type: "required", message: "Additional Info is required." },
+    DesignYourLetterpad: [
+      { type: "required", message: "Design Your Letterpad is required." },
       {
         type: "insufficientLines",
         message: "Input must contain at least four lines.",

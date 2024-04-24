@@ -142,7 +142,7 @@
 
 
     <ion-item>
-      <ion-label color="primary" position="floating">Qulification</ion-label>
+      <ion-label color="primary" position="floating">Qualification</ion-label>
       <ion-input type="text" formControlName="Qualification" class="ion-text-capitalize" required></ion-input>
     </ion-item>
     <div class="validation-errors">
@@ -155,12 +155,12 @@
     </div>
 
     <ion-item>
-      <ion-label color="primary" position="floating">Design Your letterpad</ion-label>
-      <ion-textarea type="text" formControlName="AdditionalInfo" class="ion-text-capitalize"></ion-textarea>
+      <ion-label color="primary" position="floating">Design Your Letterpad</ion-label>
+      <ion-textarea type="text" formControlName="DesignYourLetterpad" class="ion-text-capitalize"></ion-textarea>
     </ion-item>
     <div class="validation-errors">
-      <ng-container *ngFor="let validation of validation_messages.AdditionalInfo">
-        <div class="error-message" *ngIf="fg.get('AdditionalInfo').hasError(validation.type) && (fg.get('AdditionalInfo').dirty || fg.get('AdditionalInfo').touched)">
+      <ng-container *ngFor="let validation of validation_messages.DesignYourletterpad">
+        <div class="error-message" *ngIf="fg.get('DesignYourLetterpad').hasError(validation.type) && (fg.get('DesignYourLetterpad').dirty || fg.get('DesignYourLetterpad').touched)">
           <ion-icon name="information-circle-outline"></ion-icon> {{validation.message }}
         </div>
       </ng-container>
@@ -222,9 +222,9 @@
     <ion-item>
       <ion-item slot="start" lines="none">
         <ion-label color="primary" position="floating">Country Code</ion-label>
-        <ion-select formControlName="selectedCountryCode">
+        <ion-select formControlName="CountryCode">
           <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
-            (+{{ country.code }}){{ country.name }} 
+            ({{ country.code }}){{ country.name }} 
           </ion-select-option>
         </ion-select>
       </ion-item>
