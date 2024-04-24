@@ -8,6 +8,7 @@ import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
 import { VacationService } from 'src/app/services/vacation.service';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-vacation',
@@ -31,6 +32,7 @@ export class VacationPage implements OnInit {
     private clinicService: ClinicService,
     private vacationService: VacationService,
     private toastService: ToastService,
+    private http: HttpClient
 
   ) {
     this.todaydate = new Date();
@@ -57,13 +59,17 @@ export class VacationPage implements OnInit {
   }
 
   getChildVaccinefromUser() {
-    for (let i = 0; i <= this.clinics.length; i++) {
-      if (this.fg2.value.clinics[i] == true) {
-        this.ClinicId.push({'Id':this.clinics[i].Id});
-      }
-    }
-    let data = { 'Clinics': this.ClinicId, 'FromDate': this.fg2.value.formDate, 'ToDate': this.fg2.value.ToDate }
-    this.addVacation(data)
+    // for (let i = 0; i <= this.clinics.length; i++) {
+    //   if (this.fg2.value.clinics[i] == true) {
+    //     this.ClinicId.push({'Id':this.clinics[i].Id});
+    //   }
+    // }
+    // let data = { 'Clinics': this.ClinicId, 'FromDate': this.fg2.value.formDate, 'ToDate': this.fg2.value.ToDate }
+    // this.addVacation(data)
+   
+    this.addVacation()
+
+
   }
 
   async getClinics() {
@@ -93,25 +99,42 @@ export class VacationPage implements OnInit {
       }
     );
   }
-  async addVacation(data) {
-    const loading = await this.loadingController.create({ message: 'Loading' });
-    await loading.present();
+  async addVacation() {
 
-    await this.vacationService.addVaccation(data)
-      .subscribe(res => {
-        if (res.IsSuccess) {
-          loading.dismiss();
-          this.toastService.create('successfully added');
-          this.router.navigate(['/members/']);
+    const clinicId = 56; // Example clinic IDs
+    const fromDate = '2024-04-23'; // Example from date
+    const toDate = '2024-04-24';
+
+    this.vacationService.patchChildIdsWithSchedules(clinicId, fromDate, toDate)
+      .subscribe(
+        (response) => {
+          console.log('Data patched successfully:', response);
+          // Add your success handling code here
+        },
+        (error) => {
+          console.error('Failed to patch data:', error);
+          // Add your error handling code here
         }
-        else {
-          loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
-        }
-      }, (err) => {
-        loading.dismiss();
-        this.toastService.create(err, 'danger')
-      });
+      );
+  
+    // const loading = await this.loadingController.create({ message: 'Loading' });
+    // await loading.present();
+
+    // await this.vacationService.addVaccation(data)
+    //   .subscribe(res => {
+    //     if (res.IsSuccess) {
+    //       loading.dismiss();
+    //       this.toastService.create('successfully added');
+    //       this.router.navigate(['/members/']);
+    //     }
+    //     else {
+    //       loading.dismiss();
+    //       this.toastService.create(res.Message, 'danger');
+    //     }
+    //   }, (err) => {
+    //     loading.dismiss();
+    //     this.toastService.create(err, 'danger')
+    //   });
   }
 }
 
