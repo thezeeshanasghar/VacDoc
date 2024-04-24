@@ -33,9 +33,17 @@ export class DoseService extends BaseService {
       catchError(this.handleError)
     );
   }
+  
 
   getNewDosesChild(id): Observable<any> {
     const url = `${this.API_DOSE}/newchild/${id}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+  getNewDosesChild2(id): Observable<any> {
+    const url = `${this.API_DOSE}/newchild2/${id}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)

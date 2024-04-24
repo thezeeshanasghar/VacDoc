@@ -20,11 +20,11 @@ import { TitleCasePipe } from '@angular/common';
 //https://www.joshmorony.com/dynamic-infinite-input-fields-in-an-ionic-application/
 
 @Component({
-  selector: "app-schedueedit",
-  templateUrl: "./sceduleedit.page.html",
-  styleUrls: ["./sceduleedit.page.scss"]
+  selector: "app-schedueedit2",
+  templateUrl: "./sceduleedit2.page.html",
+  styleUrls: ["./sceduleedit2.page.scss"]
 })
-export class ChildSceduleEditPage implements OnInit {
+export class ChildSceduleEditPage2 implements OnInit {
   public fg: FormGroup;
   ChildId: any;
   NewDoses = true;
@@ -55,21 +55,24 @@ export class ChildSceduleEditPage implements OnInit {
       message: "Loading"
     });
     await loading.present();
-    await this.doseService.getNewDosesChild(id).subscribe(
+    await this.doseService.getNewDosesChild2(id).subscribe(
       res => {
         if (res.IsSuccess) {
           this.doses = res.ResponseData;
+          console.log(res.ResponseData)
           // if (this.doses.length == 0)
           // {
           //   this.NewDoses = false;
           // }
           this.doses.forEach(dose => {
+            console.log(dose)
             let value = dose.MinAge == null ? 0 : dose.MinAge;
           this.fg.addControl(
-            dose.Name,
+            dose.Dose.Name,
             new FormControl(value, Validators.required)
           );   
           dose.IsSpecial=false;
+          
 
         });
       
@@ -117,7 +120,7 @@ export class ChildSceduleEditPage implements OnInit {
       if (dose.IsSpecial==true)
       {
         newschedule.push({
-          DoseId: dose.Id,
+          DoseId: dose.Dose.Id,
           ChildId: this.ChildId,
          // Date: null,
           IsDone: false,

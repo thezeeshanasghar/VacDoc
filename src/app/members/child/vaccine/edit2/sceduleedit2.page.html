@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Add Regular Doses</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" *ngIf = "NewDoses">
+  
+
+  <ion-item *ngFor ="let dose of doses let i = index">
+    <ion-checkbox [(ngModel)]="dose.IsSpecial" slot="start"  [checked]="dose.IsActive === false" [disabled]="dose.IsActive === false"></ion-checkbox>
+    <ion-label>{{dose.Dose.Name}}</ion-label>
+  </ion-item>
+  
+  <ion-button (click)="getdoses()" type="submit">Finish</ion-button> 
+
+
+</ion-content>
+<ion-content *ngIf="!NewDoses" class="ion-margin">
+ <p class="ion-margin"> No New Doses Found</p>
+
+</ion-content>

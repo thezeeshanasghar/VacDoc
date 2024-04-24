@@ -19,7 +19,8 @@ const routes: Routes = [
   { path: 'fill/:id', loadChildren: './fill/fill.module#FillPageModule' },
   { path: 'bulk/:childId', loadChildren: './bulk/bulk.module#BulkPageModule' },
   { path: 'bulkinvoice/:childId', loadChildren: './bulkinvoice/bulkinvoice.module#BulkInvoicePageModule' },
-  { path: "edit", loadChildren: "./edit/scheduleedit.module#ChildSceduleEditPageModule" }
+  { path: "edit", loadChildren: "./edit/scheduleedit.module#ChildSceduleEditPageModule" },
+  { path: "edit2", loadChildren: "./edit2/scheduleedit2.module#ChildSceduleEditPageModule2" }
 ];
 
 @NgModule({

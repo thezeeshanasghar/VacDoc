@@ -90,7 +90,7 @@ export class SchedulePage implements OnInit {
 
     for (let i = 0; i < this.doses.length; i++) {
     
-      if (!this.fg.get(this.doses[i].Dose.Name).value) { // Check if dose is selected
+      if (this.doses[i].IsActive==true) { // Check if dose is selected
         var1.push({
           Id: this.doses[i].Id,
           DoseId: this.doses[i].DoseId,
