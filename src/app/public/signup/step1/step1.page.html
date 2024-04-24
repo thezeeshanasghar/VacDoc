@@ -26,9 +26,13 @@
             <ion-item >
               <ion-radio  slot="start" value="D"
                 (click)="setValueAndShowSpeciality('D','checked');opendrop();"></ion-radio>
-              <ion-label color="primary">Other speciality</ion-label>
-              <ion-select #speciality name = speciality multiple formControlName="Speciality" (click)="setValueAndShowSpeciality('D', 'checked')" >
-                <ion-select-option value="Cardiac Surgeon">Cardiac Surgeon</ion-select-option>
+              <ion-label color="primary">Other Speciality</ion-label>
+              <!-- <ion-select #speciality name = speciality multiple formControlName="Speciality" (click)="setValueAndShowSpeciality('D', 'checked')" > -->
+                <ion-select #speciality name="speciality" multiple formControlName="Speciality" (click)="setValueAndShowSpeciality('D', 'checked')">
+                  <!-- Display sorted options -->
+                  <ion-select-option *ngFor="let option of Speciality" [value]="option">{{ option }}</ion-select-option>
+                </ion-select>
+                <!-- <ion-select-option value="Cardiac Surgeon">Cardiac Surgeon</ion-select-option>
                 <ion-select-option value="Dentist">Dentist</ion-select-option>
                 <ion-select-option value="Dermatologist">Dermatologist</ion-select-option>
                 <ion-select-option value="ENT Specialist
@@ -130,7 +134,7 @@
                 <ion-select-option value="Vascular Surgeon">Vascular Surgeon</ion-select-option>
                 <ion-select-option value="Infectious Disease Specialist">Infectious Disease Specialist
                 </ion-select-option>
-              </ion-select>
+              </ion-select> -->
             </ion-item>
 
 
@@ -156,11 +160,11 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">Design Your Letterpad</ion-label>
-      <ion-textarea type="text" formControlName="DesignYourLetterpad" class="ion-text-capitalize"></ion-textarea>
+      <ion-textarea type="text" formControlName="AdditionalInfo" class="ion-text-capitalize"></ion-textarea>
     </ion-item>
     <div class="validation-errors">
-      <ng-container *ngFor="let validation of validation_messages.DesignYourletterpad">
-        <div class="error-message" *ngIf="fg.get('DesignYourLetterpad').hasError(validation.type) && (fg.get('DesignYourLetterpad').dirty || fg.get('DesignYourLetterpad').touched)">
+      <ng-container *ngFor="let validation of validation_messages.AdditionalInfo">
+        <div class="error-message" *ngIf="fg.get('AdditionalInfo').hasError(validation.type) && (fg.get('AdditionalInfo').dirty || fg.get('AdditionalInfo').touched)">
           <ion-icon name="information-circle-outline"></ion-icon> {{validation.message }}
         </div>
       </ng-container>
@@ -224,7 +228,7 @@
         <ion-label color="primary" position="floating">Country Code</ion-label>
         <ion-select formControlName="CountryCode">
           <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
-            ({{ country.code }}){{ country.name }} 
+            (+{{ country.code }}){{ country.name }} 
           </ion-select-option>
         </ion-select>
       </ion-item>

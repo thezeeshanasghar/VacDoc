@@ -65,6 +65,7 @@ export class ProfilePage implements OnInit {
           )
         ])
       ),
+      IsApproved: ['true'],
       MobileNumber: new FormControl(
         "",
         Validators.compose([
@@ -193,6 +194,7 @@ export class ProfilePage implements OnInit {
           this.fg.controls["Qualification"].setValue(this.doctorData.Qualification);
           // this.fg.controls["SignatureImage"].setValue(this.doctorData.SignatureImage);
           this.fg.controls["ProfileImage"].setValue(this.doctorData.ProfileImage);
+          this.fg.controls["IsApproved"].setValue(this.doctorData.IsApproved);
           this.profileImagePath = this.doctorData.ProfileImage;
           // this.signatureImagePath = this.doctorData.SignatureImage;
 

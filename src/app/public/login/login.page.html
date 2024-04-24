@@ -13,10 +13,18 @@
       <form [formGroup]="fg">
 
         <ion-label color="primary" position="floating" class="ion-margin-top">
+          Country Code
+        </ion-label>
+            <ion-select formControlName="CountryCode">
+              <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
+                (+{{ country.code }}) {{ country.name }} 
+              </ion-select-option>
+            </ion-select>
+            <ion-label color="primary" position="floating" class="ion-margin-top">
           <ion-icon name="mail" class="ion-item-start"></ion-icon>
           Mobile Number
         </ion-label>
-        <ion-input type="email" formControlName="MobileNumber"></ion-input>
+        <ion-input type="Number" formControlName="MobileNumber"></ion-input>
 
 
         <ion-label color="primary" position="floating" class="ion-margin-top" >
