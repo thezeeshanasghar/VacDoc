@@ -47,7 +47,6 @@
 
     <ion-card-content>
       <p>Consultation Fee: {{ clinic.ConsultationFee }}</p>
-      <!-- <p>Off Days: {{ clinic.OffDays }}</p> -->
       <p *ngIf="clinic.ClinicTimings && clinic.ClinicTimings.length">
         Timings:
         <span *ngFor="let timing of clinic.ClinicTimings">

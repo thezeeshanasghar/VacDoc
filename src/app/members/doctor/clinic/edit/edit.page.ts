@@ -81,7 +81,6 @@ export class EditPage implements OnInit {
           Validators.pattern("^(0|[1-9][0-9]*)$")
         ])
       ),
-      OffDays: ["sunday"],
       ClinicTimings: [null],
       Lat: [null],
       Long: [null],
