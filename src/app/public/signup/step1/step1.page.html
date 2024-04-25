@@ -160,7 +160,7 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">Design Your Letterpad</ion-label>
-      <ion-textarea type="text" formControlName="AdditionalInfo" class="ion-text-capitalize"></ion-textarea>
+      <ion-textarea type="text" formControlName="AdditionalInfo" class="ion-text-capitalize" [autoGrow]="true"></ion-textarea>
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.AdditionalInfo">
