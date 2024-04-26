@@ -1,9 +1,9 @@
-<ion-header>
+<!-- <ion-header>
   <ion-toolbar color="primary">
     <ion-title>Login</ion-title>
     <ion-button slot="end" routerLink="/signup">Signup</ion-button>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 
 <ion-content *ngIf = "!forgot">
 
@@ -12,19 +12,26 @@
 
       <form [formGroup]="fg">
 
-        <ion-label color="primary" position="floating" class="ion-margin-top">
+        <!-- <ion-label color="primary" position="floating" class="ion-margin-top">
           Country Code
-        </ion-label>
-            <ion-select formControlName="CountryCode">
+        </ion-label> -->
+            <!-- <ion-select formControlName="CountryCode">
               <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
                 (+{{ country.code }}) {{ country.name }} 
               </ion-select-option>
-            </ion-select>
+            </ion-select> -->
             <ion-label color="primary" position="floating" class="ion-margin-top">
           <ion-icon name="mail" class="ion-item-start"></ion-icon>
           Mobile Number
         </ion-label>
-        <ion-input type="Number" formControlName="MobileNumber"></ion-input>
+        <div style="display: flex;">
+          <ion-select formControlName="CountryCode">
+              <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
+                (+{{ country.code }}) {{ country.name }} 
+              </ion-select-option>
+            </ion-select>
+        <ion-input type="Number" formControlName="MobileNumber" class="number-input"></ion-input>
+        </div>
 
 
         <ion-label color="primary" position="floating" class="ion-margin-top" >

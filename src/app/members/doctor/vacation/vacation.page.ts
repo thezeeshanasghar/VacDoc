@@ -155,10 +155,12 @@ export class VacationPage implements OnInit {
         .subscribe(
           (response) => {
             console.log('Data patched successfully for clinic ID', clinicId, ':', response);
+            this.toastService.create("Vacation Updated Successfully")
             // Add your success handling code here
           },
           (error) => {
             console.error('Failed to patch data for clinic ID', clinicId, ':', error);
+            this.toastService.create("Cannot Update Vacation", 'danger')
             // Add your error handling code here
           }
         );
