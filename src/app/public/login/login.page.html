@@ -7,7 +7,7 @@
 
 <ion-content *ngIf = "!forgot">
 
-  <ion-card *ngIf = "fg" style="background-color: #d3cccc94;">
+  <ion-card *ngIf = "fg" style="background-color: rgba(105, 104, 107, 0.521);">
     <ion-card-content>
 
       <form [formGroup]="fg">
@@ -20,11 +20,11 @@
                 (+{{ country.code }}) {{ country.name }} 
               </ion-select-option>
             </ion-select> -->
-            <ion-label color="primary" position="floating" class="ion-margin-top">
+            <ion-label style="color: white;" position="floating" class="ion-margin-top">
           <ion-icon name="mail" class="ion-item-start"></ion-icon>
           Mobile Number
         </ion-label>
-        <div style="display: flex;">
+        <div style="display: flex; color: white;">
           <ion-select formControlName="CountryCode">
               <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
                 (+{{ country.code }}) {{ country.name }} 
@@ -34,7 +34,7 @@
         </div>
 
 
-        <ion-label color="primary" position="floating" class="ion-margin-top" >
+        <ion-label style="color: white;" position="floating" class="ion-margin-top" >
           <ion-icon name="lock-closed" class="ion-item-start" class="ion-margin-top"></ion-icon>
           Password
         </ion-label>
@@ -47,17 +47,21 @@
         </ion-button>
       </form>
 
-      <ion-text class="ion-text-right">
-        <a routerLink="/forget">
-          <h2>Forget Password</h2>
-        </a>
-      </ion-text>
 
-      <ion-text class="ion-text-right">
-        <a routerLink="/signup">
-          <h2>Signup</h2>
-        </a>
-      </ion-text>
+      <div style="display: flex; justify-content: space-between;">
+        <ion-text class="ion-text-right">
+          <a routerLink="/forget" style="text-decoration: none;">
+            <h2>Forget Password</h2>
+          </a>
+        </ion-text>
+  
+        <ion-text class="ion-text-left">
+          <a routerLink="/signup" style="text-decoration: none;">
+            <h2>Signup</h2>
+          </a>
+        </ion-text>
+      </div>
+     
 
 
     </ion-card-content>

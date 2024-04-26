@@ -7,11 +7,14 @@ ion-card{
     align-content: center;
     width: 80%;
     margin-left: 10%;
+    background-color: rgba(255, 255, 255, 0.73); 
 }
 
 ion-input{
-    border-bottom: 1px solid rgb(41, 39, 39);
+    border-bottom: 1px solid rgb(255, 255, 255);
     --padding-start: 7px;
+    background-color: transparent;
+    color: white;
 }
 
 
@@ -22,7 +25,7 @@ ion-input{
 }
 
 h2{
-    color:#0039a2;
+    color:#ffffff;
 }
 
 /* Chrome, Safari, Edge, Opera */
