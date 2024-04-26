@@ -30,7 +30,7 @@ export class Step1Page implements OnInit {
     this.fg = this.frombuilder.group({
       DoctorType: new FormControl("CS"),
       Qualification: [],
-      AdditionalInfo: ["", [Validators.required,this.fourLinesValidator,]],
+      AdditionalInfo: ["", [Validators.required,this.seventySixCharactersValidator,]],
       FirstName: [],
       LastName: [],
       DisplayName: [],
@@ -407,11 +407,10 @@ export class Step1Page implements OnInit {
     { name: 'Zimbabwe', code: '263' },
 ];
 
-  fourLinesValidator(control: FormControl) {
-    const value = control.value || "";
-    const lines = value.split('\n').filter(line => line.trim() !== '');
-    return lines.length >= 4 ? null : { insufficientLines: true };
-  }
+  seventySixCharactersValidator(control: FormControl) {
+  const value = control.value || "";
+  return value.length >= 76 ? null : { insufficientCharacters: true };
+}
 
   PasswordGenerator() {
       var length = 4,
@@ -472,8 +471,8 @@ export class Step1Page implements OnInit {
     AdditionalInfo: [
       { type: "required", message: "Design Your Letterpad is required." },
       {
-        type: "insufficientLines",
-        message: "Input must contain at least four lines.",
+        type: "insufficientCharacters",
+        message: "At least 76 Characters are required.",
       },
     ],
   };
