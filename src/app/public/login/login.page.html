@@ -24,8 +24,9 @@
           <ion-icon name="mail" class="ion-item-start"></ion-icon>
           Mobile Number
         </ion-label>
-        <div style="display: flex; color: white;">
-          <ion-select formControlName="CountryCode">
+
+        <div style="display: flex; color: white; ;">
+          <ion-select formControlName="CountryCode" style="border-bottom: 1px solid">
               <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
                 (+{{ country.code }}) {{ country.name }} 
               </ion-select-option>
