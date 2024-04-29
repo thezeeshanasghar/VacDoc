@@ -1,29 +1,30 @@
-<ion-header>
+<!-- <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="signup/step2"></ion-back-button>
     </ion-buttons>
     <ion-title>Vaccine Schedule</ion-title>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 
 <ion-content class="ion-padding" *ngIf="doses">
-  
- <form [formGroup]="fg" (ngSubmit)="onSubmit()"> 
-  
-    <ion-item *ngFor="let control of fg.controls | keyvalue; let i = index ">
-    <ion-label>{{control.key}}</ion-label>
-   
+  <ion-card style="background-color: rgba(83, 83, 83, 0.411);">
+    <ion-toolbar color = "rgba(81, 81, 81, 0.289);" style="margin-top: 10px;">
+      <ion-buttons slot="start" style="border: 1px solid rgb(255, 255, 255); border-radius: 50%; color: rgb(255, 255, 255); margin-left: 15px;">
+        <ion-back-button defaultHref="signup/step2"></ion-back-button>
+      </ion-buttons>
+      <ion-title style="text-align: center; color: white;" >Personal Information</ion-title>
+    </ion-toolbar>
+    <form [formGroup]="fg" (ngSubmit)="onSubmit()"> 
+      
+      <ion-item class="custom-item-background" *ngFor="let control of fg.controls | keyvalue; let i = index ">
+        <ion-label>{{control.key}}</ion-label>  
+        <ion-checkbox [(ngModel)] = "doses[i].IsSpecial" [ngModelOptions]="{standalone: true}"></ion-checkbox>
+      </ion-item>      
+    </form>
+  </ion-card>
 
-    <ion-checkbox [(ngModel)] = "doses[i].IsSpecial" [ngModelOptions]="{standalone: true}"></ion-checkbox>
-   
-   </ion-item>
-  
- 
-
-</form>
-
 
   
-  <ion-button (click) = "onSubmit()">Finish</ion-button> 
+  <ion-button style="display: block; margin: auto; width: 150px;"  (click) = "onSubmit()">Finish</ion-button> 
 </ion-content>

@@ -1,14 +1,20 @@
-<ion-header>
+<!-- <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="login"></ion-back-button>
     </ion-buttons>
     <ion-title>Personal Information</ion-title>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 
 <ion-content class="ion-padding">
-
+<ion-card style="background-color: rgba(81, 81, 81, 0.289);">
+  <ion-toolbar color = "rgba(81, 81, 81, 0.289);" style="margin-top: 10px;">
+    <ion-buttons slot="start" style="border: 1px solid rgb(255, 255, 255); border-radius: 50%; color: rgb(255, 255, 255); margin-left: 15px;">
+      <ion-back-button defaultHref="login"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="text-align: center; color: white;" >Personal Information</ion-title>
+  </ion-toolbar>
   <form [formGroup]="fg">
     <ion-radio-group>
 
@@ -16,17 +22,17 @@
         <ion-row>
 
           <ion-col>
-            <ion-item>
-              <ion-label color="primary">Child Specialist</ion-label>
+            <ion-item class="custom-item-background">
+              <ion-label color="white">Child Specialist</ion-label>
               <ion-radio slot="start" value="CS" (click)="setValueAndShowSpeciality('CS', '')">
               </ion-radio>
             </ion-item>
           </ion-col>
           <ion-col>
-            <ion-item >
+            <ion-item class="custom-item-background">
               <ion-radio  slot="start" value="D"
                 (click)="setValueAndShowSpeciality('D','checked');opendrop();"></ion-radio>
-              <ion-label color="primary">Other Speciality</ion-label>
+              <ion-label color="white">Other Speciality</ion-label>
               <!-- <ion-select #speciality name = speciality multiple formControlName="Speciality" (click)="setValueAndShowSpeciality('D', 'checked')" > -->
                 <ion-select #speciality name="speciality" multiple formControlName="Speciality" (click)="setValueAndShowSpeciality('D', 'checked')">
                   <!-- Display sorted options -->
@@ -144,9 +150,8 @@
     </ion-radio-group>
 
 
-
-    <ion-item>
-      <ion-label color="primary" position="floating">Qualification</ion-label>
+    <ion-item class="custom-item-background">
+      <ion-label color="white" position="floating">Qualification</ion-label>
       <ion-input type="text" formControlName="Qualification" class="ion-text-capitalize" required></ion-input>
     </ion-item>
     <div class="validation-errors">
@@ -158,8 +163,8 @@
       </ng-container>
     </div>
 
-    <ion-item>
-      <ion-label color="primary" position="floating">Design Your Letterpad</ion-label>
+    <ion-item class="custom-item-background">
+      <ion-label color="white" position="floating">Design Your Letterpad</ion-label>
       <ion-textarea type="text" formControlName="AdditionalInfo" class="ion-text-capitalize" [autoGrow]="true"></ion-textarea>
     </ion-item>
     <div class="validation-errors">
@@ -170,8 +175,8 @@
       </ng-container>
     </div>
 
-    <ion-item>
-      <ion-label color="primary" position="floating">First Name</ion-label>
+    <ion-item  class="custom-item-background">
+      <ion-label color="white" position="floating">First Name</ion-label>
       <ion-input type="text" formControlName="FirstName" class="ion-text-capitalize" required>
       </ion-input>
     </ion-item>
@@ -184,8 +189,8 @@
       </ng-container>
     </div>
 
-    <ion-item>
-      <ion-label color="primary" position="floating">Last Name</ion-label>
+    <ion-item  class="custom-item-background">
+      <ion-label color="white" position="floating">Last Name</ion-label>
       <ion-input type="text" formControlName="LastName" class="ion-text-capitalize" required></ion-input>
     </ion-item>
     <div class="validation-errors">
@@ -197,8 +202,8 @@
       </ng-container>
     </div>
 
-    <ion-item>
-      <ion-label color="primary" position="floating">Display Name</ion-label>
+    <ion-item  class="custom-item-background">
+      <ion-label color="white" position="floating">Display Name</ion-label>
       <ion-input type="text" formControlName="DisplayName" class="ion-text-capitalize" required></ion-input>
     </ion-item>
     <div class="validation-errors">
@@ -210,8 +215,8 @@
       </ng-container>
     </div>
 
-    <ion-item>
-      <ion-label color="primary" position="floating">Email</ion-label>
+    <ion-item  class="custom-item-background">
+      <ion-label color="white" position="floating">Email</ion-label>
       <ion-input type="text" formControlName="Email" required></ion-input>
     </ion-item>
     <div class="validation-errors">
@@ -223,22 +228,22 @@
       </ng-container>
     </div>
 
-    <ion-item>
-      <ion-item slot="start" lines="none">
-        <ion-label color="primary" position="floating">Country Code</ion-label>
+    <ion-item  class="custom-item-background">
+      <ion-item slot="start" lines="none"  class="custom-item-background">
+        <ion-label color="white" position="floating">Country Code</ion-label>
         <ion-select formControlName="CountryCode">
           <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
             (+{{ country.code }}){{ country.name }} 
           </ion-select-option>
         </ion-select>
       </ion-item>
-      <ion-item>
-      <ion-label color="primary" position="floating">Mobile Number</ion-label>
+    <ion-item  class="custom-item-background">
+      <ion-label color="white" position="floating">Mobile Number</ion-label>
       <ion-input type="text" formControlName="MobileNumber" required></ion-input>
     </ion-item>
-      <ion-item slot="end" lines="none">
+      <ion-item slot="end" lines="none"  class="custom-item-background">
         <ion-checkbox formControlName="ShowMobile"></ion-checkbox>
-        <ion-label color="primary">&nbsp;Public Display</ion-label>
+        <ion-label color="white">&nbsp;Public Display</ion-label>
       </ion-item>
     </ion-item>
     <div class="validation-errors">
@@ -250,12 +255,12 @@
       </ng-container>
     </div>
     
-    <ion-item>
-      <ion-label color="primary" position="floating">Phone Number</ion-label>
+    <ion-item  class="custom-item-background">
+      <ion-label color="white" position="floating">Phone Number</ion-label>
       <ion-input type="tel" formControlName="PhoneNo" required></ion-input>
-      <ion-item slot="end" lines="none">
+      <ion-item slot="end" lines="none"  class="custom-item-background">
         <ion-checkbox formControlName="ShowPhone"></ion-checkbox>
-        <ion-label color="primary">&nbsp;Public Display</ion-label>
+        <ion-label color="white">&nbsp;Public Display</ion-label>
       </ion-item>
     </ion-item>
     <div class="validation-errors">
@@ -267,8 +272,8 @@
       </ng-container>
     </div>
 
-    <ion-item>
-      <ion-label color="primary" position="floating">PMDC Number</ion-label>
+    <ion-item  class="custom-item-background">
+      <ion-label color="white" position="floating">PMDC Number</ion-label>
       <ion-input type="text" formControlName="PMDC" required></ion-input>
     </ion-item>
     <div class="validation-errors">
@@ -280,5 +285,7 @@
       </ng-container>
     </div>
   </form>
-  <ion-button (click)=nextpage() [disabled]="!fg.valid">Next step</ion-button>
+  <ion-button (click)=nextpage() [disabled]="!fg.valid" style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;">Next step</ion-button>
+</ion-card >
+
 </ion-content>
