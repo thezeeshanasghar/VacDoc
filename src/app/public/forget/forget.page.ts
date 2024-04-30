@@ -44,6 +44,7 @@ export class ForgetPage implements OnInit {
       res => {
         console.log(res);
         loading.dismiss();
+        this.toastService.create("Id and Password has been sent to you email")
         this.router.navigate(['/login']);
       },
       err => {
