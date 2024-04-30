@@ -4,6 +4,7 @@ import { LoadingController } from "@ionic/angular";
 import { environment } from "src/environments/environment";
 import { ClinicService } from "../services/clinic.service";
 import { ToastService } from "../shared/toast.service";
+import { DoctorService } from "src/app/services/doctor.service";
 
 @Component({
   selector: "app-members",
@@ -11,17 +12,60 @@ import { ToastService } from "../shared/toast.service";
   styleUrls: ["./members.page.scss"]
 })
 export class MembersPage implements OnInit {
+  doctorData: any;
   DoctorId: any;
   clinicId: any;
- 
-  public profile = [
-    {
-      title: "Profile",
-      url: "/members/doctor/profile",
-      icon: "create",
-      imageUrl: environment.RESOURCE_URL + "Resources/Images/1666458901673.jfif", // Use forward slashes in the path
-    },
-  ];  
+  profileImagePath: string;
+
+  constructor(
+    public loadingController: LoadingController,
+    private storage: Storage,
+    private clinicService: ClinicService,
+    private toastService: ToastService,
+    private doctorService: DoctorService
+  ) {}
+
+  ngOnInit() {
+    this.storage.get(environment.DOCTOR_Id).then(val => {
+      this.DoctorId = val;
+      this.getProfile();
+    });
+  }
+
+  async getProfile() {
+    const loading = await this.loadingController.create({
+      message: "Loading Profile"
+    });
+
+    await loading.present();
+    await this.doctorService.getDoctorProfile(this.DoctorId).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          this.doctorData = res.ResponseData;
+          console.log(this.doctorData);
+          this.profileImagePath = this.doctorData.ProfileImage;
+          this.profile = [
+            {
+              title: "Profile",
+              url: "/members/doctor/profile",
+              icon: "create",
+              imageUrl: environment.RESOURCE_URL + this.profileImagePath
+            }
+          ];
+          loading.dismiss();
+        } else {
+          loading.dismiss();
+          this.toastService.create(res.Message, "danger");
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, "danger");
+      }
+    );
+  }
+
+  public profile: any = [];
   public appPages = [
     {
       title: "Dashboard",
@@ -46,11 +90,6 @@ export class MembersPage implements OnInit {
       url: "/members/doctor/clinic",
       icon: "moon"
     },
-    // {
-    //   title: "Edit Profile",
-    //   url: "/members/doctor/profile",
-    //   icon: "create"
-    // },
     {
       title: "Schedule",
       url: "/members/doctor/schedule",
@@ -75,12 +114,7 @@ export class MembersPage implements OnInit {
       title: "Brand Amount",
       url: "/members/doctor/brand-amount",
       icon: "locate"
-    },
-    // {
-    //   title: "Setting",
-    //   url: "/members/doctor/sms-setting",
-    //   icon: "locate"
-    // }
+    }
   ];
 
   public childPages = [
@@ -96,18 +130,6 @@ export class MembersPage implements OnInit {
     }
   ];
 
-  constructor(
-    public loadingController: LoadingController,
-    private storage: Storage,
-    private clinicService: ClinicService,
-    private toastService: ToastService
-  ) {}
-
-  ngOnInit() {
-    this.storage.get(environment.DOCTOR_Id).then(val => {
-      this.DoctorId = val;
-    });
-  }
   clearStorage() {
     this.storage.clear();
     this.clinicService.clinics = null;

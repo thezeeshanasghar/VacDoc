@@ -75,12 +75,28 @@
 
     </ion-radio-group>
 
-    <ion-item>
+    <!-- <ion-item>
       <ion-label color="primary" position="floating">Select a City</ion-label>
       <ion-select formControlName="City"  required>
         <ion-select-option *ngFor ="let city of childService.cities" value ="{{city}}">{{city}}</ion-select-option>
        
      </ion-select>
+    </ion-item> -->
+    <ion-item>
+      <ion-label color="primary" position="floating">City</ion-label>
+    <mat-form-field class="example-full-width">
+      <input type="text"
+             aria-label="Number"
+             matInput
+             formControlName="City"
+             [matAutocomplete]="auto"
+             (ngModelChange)="filter($event)">
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let city of childService.cities" [value]="{{city}}">
+          {{city}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
     </ion-item>
 
     <ion-item>

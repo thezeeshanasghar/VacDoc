@@ -208,11 +208,11 @@
              formControlName="City"
              [matAutocomplete]="auto"
              (ngModelChange)="filter($event)">
-      <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let option of cities" [value]="option">
-          {{option}}
-        </mat-option>
-      </mat-autocomplete>
+             <mat-autocomplete #auto="matAutocomplete" class="no-indent">
+              <mat-option *ngFor="let option of cities" [value]="option">
+                {{option}}
+              </mat-option>
+            </mat-autocomplete>            
     </mat-form-field>
     </ion-item>
 

@@ -453,6 +453,7 @@ export class EditPage implements OnInit {
                 }
                 break;
             }
+            console.log(res);
           }
           loading.dismiss();
         }

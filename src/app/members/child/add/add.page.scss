@@ -28,3 +28,8 @@ ion-list-header{
 .example-full-width {
   width: 100%;
 }
+
+.no-indent .mat-option {
+  padding-left: 0;
+  margin-left: 0;
+}
