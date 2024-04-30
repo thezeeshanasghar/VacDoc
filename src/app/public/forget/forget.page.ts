@@ -40,10 +40,10 @@ export class ForgetPage implements OnInit {
     });
 
     await loading.present();
-    this.doctorservice.forgotPassword(JSON.stringify(this.Email)).subscribe(
+    await this.doctorservice.forgotPassword(JSON.stringify(this.Email)).subscribe(
       res => {
         console.log(res);
-        console.log(res.ResponseData);
+        
         if (res.IsSuccess) {
           
           loading.dismiss();
