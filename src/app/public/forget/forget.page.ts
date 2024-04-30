@@ -38,23 +38,22 @@ export class ForgetPage implements OnInit {
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
-    
-  const data = {
-  "Email": this.Email,
-  // "CountryCode": "92",
-  // "UserType": "DOCTOR"
-  }
-  console.log(data)
+
     await loading.present();
-    this.doctorservice.forgotPassword(JSON.stringify(this.Email)).subscribe(
+    await this.doctorservice.forgotPassword(JSON.stringify(this.Email)).subscribe(
       res => {
-        console.log(res.ResponseData);
+        console.log(res);
+        
         if (res.IsSuccess) {
           
           loading.dismiss();
           this.router.navigate(['/login']);
         }
-        else {
+        else if(res==null) {
+          loading.dismiss();
+          this.toastService.create(res.Message, 'danger');
+        }
+        else{
           loading.dismiss();
           this.toastService.create(res.Message, 'danger');
         }

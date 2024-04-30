@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
 import { environment } from 'src/environments/environment';
@@ -19,9 +19,12 @@ export class DoctorService extends BaseService {
   ) {
     super(http);
   }
-  forgotPassword(data): Observable<any> {
-    const url = `${this.RESOURCE_URL}forget`;
-    return this.http.post(url, data, this.httpOptions)
+  forgotPassword(email:string): Observable<any> {
+    const sanitizedEmail = email.replace(/^"|"$/g, '');
+  // Encode the email
+  const encodedEmail = encodeURIComponent(sanitizedEmail);
+  const url = `${this.RESOURCE_URL}forget/${encodedEmail}`;
+    return this.http.get(url, this.httpOptions)
       .pipe(
         catchError(this.handleError)
       );
