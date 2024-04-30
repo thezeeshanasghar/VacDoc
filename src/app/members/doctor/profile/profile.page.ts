@@ -226,6 +226,7 @@ export class ProfilePage implements OnInit {
           if (res.IsSuccess) {
             loading.dismiss();
             console.log(res.ResponseData);
+            this.getProfile();
             this.toastService.create("Profile Updated !");
           } else {
             this.toastService.create(res.Message, "danger");
