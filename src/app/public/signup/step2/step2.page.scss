@@ -1,3 +1,6 @@
+ion-content{
+  --background: #fff url('../../../../assets/signup.jpg') no-repeat center center / cover;
+}
 .error-message {
   color: red;
   font-size: 14px;
@@ -18,4 +21,20 @@
 
 }
 
+.custom-item-background {
+  --background: rgba(161, 161, 161, 0); /* Replace 'your-color' with the desired background color */
+  color: #fff;
+}
+
+
+
+.custom-item-background2 {
+  --background:rgba(161, 161, 161, 0);  /* Replace 'your-color' with the desired background color */
+  color: #fff;
+}
+
+.custom-item-background1 {
+  --background: rgba(161, 161, 161, 0.603); /* Replace 'your-color' with the desired background color */
+  color: #fff;
+}
 
