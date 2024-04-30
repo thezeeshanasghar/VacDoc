@@ -42,13 +42,18 @@ export class ForgetPage implements OnInit {
     await loading.present();
     this.doctorservice.forgotPassword(JSON.stringify(this.Email)).subscribe(
       res => {
+        console.log(res);
         console.log(res.ResponseData);
         if (res.IsSuccess) {
           
           loading.dismiss();
           this.router.navigate(['/login']);
         }
-        else {
+        else if(res==null) {
+          loading.dismiss();
+          this.toastService.create(res.Message, 'danger');
+        }
+        else{
           loading.dismiss();
           this.toastService.create(res.Message, 'danger');
         }
