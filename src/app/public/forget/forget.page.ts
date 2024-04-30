@@ -48,9 +48,9 @@ export class ForgetPage implements OnInit {
     await loading.present();
     this.doctorservice.forgotPassword(JSON.stringify(this.Email)).subscribe(
       res => {
-        console.log(res.ResponseData);
+        
         if (res.IsSuccess) {
-          
+          console.log(res.ResponseData);
           loading.dismiss();
           this.router.navigate(['/login']);
         }
