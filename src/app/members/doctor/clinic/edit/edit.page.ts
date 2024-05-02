@@ -514,13 +514,16 @@ export class EditPage implements OnInit {
           this.fg2.value.Mend,
           this.DATE_TIME_FORMAT
         ).format("HH:mm");
+        const toggleValue = this.fg2.value.MondayS1;
+        console.log('Toggle Value:', toggleValue);
         let obj = {
           Day: "Monday",
           StartTime: this.fg2.value.Mstart,
           EndTime: this.fg2.value.Mend,
           IsOpen: true,
           Session: 1,
-          Id: this.fg2.value.M1Id,
+          // Id: this.fg2.value.M1Id,
+          ...(this.fg2.value.M1Id != null ? { Id: this.fg2.value.M1Id } : {})
         };
         ct.push(obj);
       }
@@ -540,7 +543,8 @@ export class EditPage implements OnInit {
           EndTime: this.fg2.value.Mend2,
           IsOpen: true,
           Session: 2,
-          Id: this.fg2.value.M2Id,
+          // Id: this.fg2.value.M2Id,
+          ...(this.fg2.value.M2Id != null ? { Id: this.fg2.value.M2Id } : {})
         };
         ct.push(obj1);
       }
@@ -562,7 +566,8 @@ export class EditPage implements OnInit {
           EndTime: this.fg2.value.Tuend,
           IsOpen: true,
           Session: 1,
-          Id: this.fg2.value.Tu1Id,
+          // Id: this.fg2.value.Tu1Id,
+          ...(this.fg2.value.Tu1Id != null ? { Id: this.fg2.value.Tu1Id } : {})
         };
         ct.push(obj);
       }
@@ -582,7 +587,8 @@ export class EditPage implements OnInit {
           EndTime: this.fg2.value.Tuend2,
           IsOpen: true,
           Session: 2,
-          Id: this.fg2.value.Tu2Id,
+          // Id: this.fg2.value.Tu2Id,
+          ...(this.fg2.value.Tu2Id != null ? { Id: this.fg2.value.Tu2Id } : {})
         };
         ct.push(obj);
       }
@@ -604,7 +610,8 @@ export class EditPage implements OnInit {
           EndTime: this.fg2.value.Wend,
           IsOpen: true,
           Session: 1,
-          Id: this.fg2.value.W1Id,
+          // Id: this.fg2.value.W1Id,
+          ...(this.fg2.value.W1Id != null ? { Id: this.fg2.value.W1Id } : {})
         };
         ct.push(obj);
       }
@@ -624,7 +631,8 @@ export class EditPage implements OnInit {
           EndTime: this.fg2.value.Wend2,
           IsOpen: true,
           Session: 2,
-          Id: this.fg2.value.W2Id,
+          // Id: this.fg2.value.W2Id,
+          ...(this.fg2.value.W2Id != null ? { Id: this.fg2.value.W2Id } : {})
         };
         ct.push(obj);
       }
@@ -646,7 +654,8 @@ export class EditPage implements OnInit {
           EndTime: this.fg2.value.Thend,
           IsOpen: true,
           Session: 1,
-          Id: this.fg2.value.Th1Id, // Use Th1Id in the object
+          // Id: this.fg2.value.Th1Id, // Use Th1Id in the object
+          ...(this.fg2.value.Th1Id != null ? { Id: this.fg2.value.Th1Id } : {})
         };
         ct.push(obj);
       }
@@ -666,7 +675,8 @@ export class EditPage implements OnInit {
           EndTime: this.fg2.value.Thend2,
           IsOpen: true,
           Session: 2,
-          Id: this.fg2.value.Th2Id,
+          // Id: this.fg2.value.Th2Id,
+          ...(this.fg2.value.Th2Id != null ? { Id: this.fg2.value.Th2Id } : {})
         };
         ct.push(obj);
       }
@@ -688,7 +698,8 @@ export class EditPage implements OnInit {
           EndTime: this.fg2.value.Fend,
           IsOpen: true,
           Session: 1,
-          Id: this.fg2.value.F1Id,
+          // Id: this.fg2.value.F1Id,
+          ...(this.fg2.value.F1Id != null ? { Id: this.fg2.value.F1Id } : {})
         };
         ct.push(obj);
       }
@@ -708,7 +719,8 @@ export class EditPage implements OnInit {
           EndTime: this.fg2.value.Fend2,
           IsOpen: true,
           Session: 2,
-          Id: this.fg2.value.F2Id,
+          // Id: this.fg2.value.F2Id,
+          ...(this.fg2.value.F2Id != null ? { Id: this.fg2.value.F2Id } : {})
         };
         ct.push(obj);
       }
@@ -730,7 +742,8 @@ export class EditPage implements OnInit {
           EndTime: this.fg2.value.Saend,
           IsOpen: true,
           Session: 1,
-          Id: this.fg2.value.Sa1Id,
+          // Id: this.fg2.value.Sa1Id,
+          ...(this.fg2.value.Sa1Id != null ? { Id: this.fg2.value.Sa1Id } : {})
         };
         ct.push(obj);
       }
@@ -749,7 +762,8 @@ export class EditPage implements OnInit {
           EndTime: this.fg2.value.Saend2,
           IsOpen: true,
           Session: 2,
-          Id: this.fg2.value.Sa2Id,
+          // Id: this.fg2.value.Sa2Id,
+          ...(this.fg2.value.Sa2Id != null ? { Id: this.fg2.value.Sa2Id } : {})
         };
         ct.push(obj);
       }
@@ -771,7 +785,7 @@ export class EditPage implements OnInit {
           EndTime: this.fg2.value.Suend,
           IsOpen: true,
           Session: 1,
-          Id: this.fg2.value.Su1Id,
+          ...(this.fg2.value.Su1Id != null ? { Id: this.fg2.value.Su1Id } : {})
         };
         ct.push(obj);
       }
@@ -790,7 +804,7 @@ export class EditPage implements OnInit {
           EndTime: this.fg2.value.Suend2,
           IsOpen: true,
           Session: 2,
-          Id: this.fg2.value.Su2Id,
+          ...(this.fg2.value.Su2Id != null ? { Id: this.fg2.value.Su2Id } : {})
         };
         ct.push(obj);
       }
