@@ -96,6 +96,8 @@ export class EditPage implements OnInit {
       Mstart2: [null],
       Mend: [null],
       Mend2: [null],
+      M1Id: [null],
+      M2Id: [null],
 
       Tuesday: [false],
       TuesdayS1: [false],
@@ -104,6 +106,8 @@ export class EditPage implements OnInit {
       Tustart2: [null],
       Tuend: [null],
       Tuend2: [null],
+      Tu1Id: [null],
+      TU2Id: [null],
 
       Wednesday: [false],
       WednesdayS1: [false],
@@ -112,6 +116,8 @@ export class EditPage implements OnInit {
       Wstart2: [null],
       Wend: [null],
       Wend2: [null],
+      W1Id: [null],
+      W2Id: [null],
 
       Thursday: [false],
       ThursdayS1: [false],
@@ -120,6 +126,8 @@ export class EditPage implements OnInit {
       Thstart2: [null],
       Thend: [null],
       Thend2: [null],
+      Th1Id: [null],
+      Th2Id: [null],
 
       Friday: [false],
       FridayS1: [false],
@@ -128,6 +136,8 @@ export class EditPage implements OnInit {
       Fstart2: [null],
       Fend: [null],
       Fend2: [null],
+      F1Id: [null],
+      F2Id: [null],
 
       Saturday: [false],
       SaturdayS1: [false],
@@ -136,6 +146,8 @@ export class EditPage implements OnInit {
       Sastart2: [null],
       Saend: [null],
       Saend2: [null],
+      Sa1Id: [null],
+      Sa2Id: [null],
 
       Sunday: [false],
       SundayS1: [false],
@@ -143,7 +155,9 @@ export class EditPage implements OnInit {
       Sustart: [null],
       Sustart2: [null],
       Suend: [null],
-      Suend2: [null]
+      Suend2: [null],
+      Su1Id: [null],
+      Su2Id: [null],
     });
     this.clinicId = this.route.snapshot.paramMap.get("id");
     this.storage.get(environment.DOCTOR_Id).then(val => {
@@ -256,6 +270,7 @@ export class EditPage implements OnInit {
                       this.DATE_TIME_FORMAT
                     )
                   );
+                  this.fg2.controls["M1Id"].setValue(clinicTiming.Id);
                 }
                 if (clinicTiming.Session == 2) {
                   this.fg2.controls["MondayS2"].setValue(true);
@@ -269,6 +284,7 @@ export class EditPage implements OnInit {
                       this.DATE_TIME_FORMAT
                     )
                   );
+                  this.fg2.controls["M2Id"].setValue(clinicTiming.Id);
                 }
                 break;
 
@@ -286,6 +302,7 @@ export class EditPage implements OnInit {
                       this.DATE_TIME_FORMAT
                     )
                   );
+                  this.fg2.controls["Tu1Id"].setValue(clinicTiming.Id);
                 }
                 if (clinicTiming.Session == 2) {
                   this.fg2.controls["TuesdayS2"].setValue(true);
@@ -299,6 +316,7 @@ export class EditPage implements OnInit {
                       this.DATE_TIME_FORMAT
                     )
                   );
+                  this.fg2.controls["Tu2Id"].setValue(clinicTiming.Id);
                 }
                 break;
 
@@ -316,6 +334,7 @@ export class EditPage implements OnInit {
                       this.DATE_TIME_FORMAT
                     )
                   );
+                  this.fg2.controls["W1Id"].setValue(clinicTiming.Id);
                 }
                 if (clinicTiming.Session == 2) {
                   this.fg2.controls["WednesdayS2"].setValue(true);
@@ -329,6 +348,7 @@ export class EditPage implements OnInit {
                       this.DATE_TIME_FORMAT
                     )
                   );
+                  this.fg2.controls["W2Id"].setValue(clinicTiming.Id);
                 }
                 break;
 
@@ -346,6 +366,8 @@ export class EditPage implements OnInit {
                       this.DATE_TIME_FORMAT
                     )
                   );
+                  console.log(clinicTiming.Id);
+                  this.fg2.controls["Th1Id"].setValue(clinicTiming.Id);
                 }
                 if (clinicTiming.Session == 2) {
                   this.fg2.controls["ThursdayS2"].setValue(true);
@@ -359,6 +381,7 @@ export class EditPage implements OnInit {
                       this.DATE_TIME_FORMAT
                     )
                   );
+                  this.fg2.controls["Th2Id"].setValue(clinicTiming.Id);
                 }
                 break;
 
@@ -376,6 +399,7 @@ export class EditPage implements OnInit {
                       this.DATE_TIME_FORMAT
                     )
                   );
+                  this.fg2.controls["F1Id"].setValue(clinicTiming.Id);
                 }
                 if (clinicTiming.Session == 2) {
                   this.fg2.controls["FridayS2"].setValue(true);
@@ -389,8 +413,8 @@ export class EditPage implements OnInit {
                       this.DATE_TIME_FORMAT
                     )
                   );
+                  this.fg2.controls["F2Id"].setValue(clinicTiming.Id);
                 }
-
                 break;
 
               case "Saturday":
@@ -407,6 +431,7 @@ export class EditPage implements OnInit {
                       this.DATE_TIME_FORMAT
                     )
                   );
+                  this.fg2.controls["Sa1Id"].setValue(clinicTiming.Id);
                 }
                 if (clinicTiming.Session == 2) {
                   this.fg2.controls["SaturdayS2"].setValue(true);
@@ -420,6 +445,7 @@ export class EditPage implements OnInit {
                       this.DATE_TIME_FORMAT
                     )
                   );
+                  this.fg2.controls["Sa2Id"].setValue(clinicTiming.Id);
                 }
                 break;
 
@@ -437,6 +463,7 @@ export class EditPage implements OnInit {
                       this.DATE_TIME_FORMAT
                     )
                   );
+                  this.fg2.controls["Su1Id"].setValue(clinicTiming.Id);
                 }
                 if (clinicTiming.Session == 2) {
                   this.fg2.controls["SundayS2"].setValue(true);
@@ -450,6 +477,7 @@ export class EditPage implements OnInit {
                       this.DATE_TIME_FORMAT
                     )
                   );
+                  this.fg2.controls["Su2Id"].setValue(clinicTiming.Id);
                 }
                 break;
             }
@@ -491,7 +519,8 @@ export class EditPage implements OnInit {
           StartTime: this.fg2.value.Mstart,
           EndTime: this.fg2.value.Mend,
           IsOpen: true,
-          Session: 1
+          Session: 1,
+          Id: this.fg2.value.M1Id,
         };
         ct.push(obj);
       }
@@ -510,7 +539,8 @@ export class EditPage implements OnInit {
           StartTime: this.fg2.value.Mstart2,
           EndTime: this.fg2.value.Mend2,
           IsOpen: true,
-          Session: 2
+          Session: 2,
+          Id: this.fg2.value.M2Id,
         };
         ct.push(obj1);
       }
@@ -531,7 +561,8 @@ export class EditPage implements OnInit {
           StartTime: this.fg2.value.Tustart,
           EndTime: this.fg2.value.Tuend,
           IsOpen: true,
-          Session: 1
+          Session: 1,
+          Id: this.fg2.value.Tu1Id,
         };
         ct.push(obj);
       }
@@ -550,7 +581,8 @@ export class EditPage implements OnInit {
           StartTime: this.fg2.value.Tustart2,
           EndTime: this.fg2.value.Tuend2,
           IsOpen: true,
-          Session: 2
+          Session: 2,
+          Id: this.fg2.value.Tu2Id,
         };
         ct.push(obj);
       }
@@ -571,7 +603,8 @@ export class EditPage implements OnInit {
           StartTime: this.fg2.value.Wstart,
           EndTime: this.fg2.value.Wend,
           IsOpen: true,
-          Session: 1
+          Session: 1,
+          Id: this.fg2.value.W1Id,
         };
         ct.push(obj);
       }
@@ -590,7 +623,8 @@ export class EditPage implements OnInit {
           StartTime: this.fg2.value.Wstart2,
           EndTime: this.fg2.value.Wend2,
           IsOpen: true,
-          Session: 2
+          Session: 2,
+          Id: this.fg2.value.W2Id,
         };
         ct.push(obj);
       }
@@ -611,7 +645,8 @@ export class EditPage implements OnInit {
           StartTime: this.fg2.value.Thstart,
           EndTime: this.fg2.value.Thend,
           IsOpen: true,
-          Session: 1
+          Session: 1,
+          Id: this.fg2.value.Th1Id, // Use Th1Id in the object
         };
         ct.push(obj);
       }
@@ -630,7 +665,8 @@ export class EditPage implements OnInit {
           StartTime: this.fg2.value.Thstart2,
           EndTime: this.fg2.value.Thend2,
           IsOpen: true,
-          Session: 2
+          Session: 2,
+          Id: this.fg2.value.Th2Id,
         };
         ct.push(obj);
       }
@@ -651,7 +687,8 @@ export class EditPage implements OnInit {
           StartTime: this.fg2.value.Fstart,
           EndTime: this.fg2.value.Fend,
           IsOpen: true,
-          Session: 1
+          Session: 1,
+          Id: this.fg2.value.F1Id,
         };
         ct.push(obj);
       }
@@ -670,7 +707,8 @@ export class EditPage implements OnInit {
           StartTime: this.fg2.value.Fstart2,
           EndTime: this.fg2.value.Fend2,
           IsOpen: true,
-          Session: 2
+          Session: 2,
+          Id: this.fg2.value.F2Id,
         };
         ct.push(obj);
       }
@@ -691,7 +729,8 @@ export class EditPage implements OnInit {
           StartTime: this.fg2.value.Sastart,
           EndTime: this.fg2.value.Saend,
           IsOpen: true,
-          Session: 1
+          Session: 1,
+          Id: this.fg2.value.Sa1Id,
         };
         ct.push(obj);
       }
@@ -709,7 +748,8 @@ export class EditPage implements OnInit {
           StartTime: this.fg2.value.Sastart2,
           EndTime: this.fg2.value.Saend2,
           IsOpen: true,
-          Session: 2
+          Session: 2,
+          Id: this.fg2.value.Sa2Id,
         };
         ct.push(obj);
       }
@@ -730,7 +770,8 @@ export class EditPage implements OnInit {
           StartTime: this.fg2.value.Sustart,
           EndTime: this.fg2.value.Suend,
           IsOpen: true,
-          Session: 1
+          Session: 1,
+          Id: this.fg2.value.Su1Id,
         };
         ct.push(obj);
       }
@@ -748,7 +789,8 @@ export class EditPage implements OnInit {
           StartTime: this.fg2.value.Sustart2,
           EndTime: this.fg2.value.Suend2,
           IsOpen: true,
-          Session: 2
+          Session: 2,
+          Id: this.fg2.value.Su2Id,
         };
         ct.push(obj);
       }
@@ -781,11 +823,11 @@ export class EditPage implements OnInit {
       });
       await loading.present();
 
-      await this.clinicService.putClinic(this.clinicId, data).subscribe(
+      this.clinicService.UpdateClinicAndTimings(this.clinicId, data).subscribe(
         res => {
           console.log(this.clinicId);
           console.log(data);
-          if (res.IsSuccess) {
+          if (res) {
             this.storage.get('Clinics').then((val) => {
               this.updateClinic = val.filter(x => x.Id == this.clinicId);
               console.log(this.updateClinic);
@@ -794,20 +836,20 @@ export class EditPage implements OnInit {
                   val[i].Name = this.fg1.value.Name;
                   val[i].ConsultationFee = this.fg1.value.ConsultationFee;
                   val[i].PhoneNumber = this.fg1.value.PhoneNumber;
-                  val[i].IsOnline = this.fg1.value.IsOnline;
+                  // val[i].IsOnline = this.fg1.value.IsOnline;
                   val[i].Address = this.fg1.value.Address;
                   val[i].MonogramImage = this.fg1.value.MonogramImage;
                 }
               }
               this.storage.set('Clinics', val);
               console.log(val);
+              loading.dismiss();
+              this.toastService.create("successfully updated clinic");
+              this.router.navigate(["/members/doctor/clinic"]);
             });
-            loading.dismiss();
-            this.toastService.create("successfully updated clinic");
-            // this.router.navigate(["/members/doctor/clinic"]);
           } else {
             loading.dismiss();
-            this.toastService.create(res.Message, "danger");
+            this.toastService.create("hello", "danger");
           }
         },
         err => {
