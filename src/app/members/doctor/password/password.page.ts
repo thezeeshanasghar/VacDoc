@@ -63,8 +63,8 @@ export class PasswordPage implements OnInit {
     .subscribe(res => {
       if (res.IsSuccess) {
         loading.dismiss();
-        this.clearStorage(); // Call clearStorage function
         this.toastService.create('Successfully Updated');
+        this.endSession(); 
         this.router.navigate(['/login']);
       } else {
         loading.dismiss();
@@ -74,6 +74,9 @@ export class PasswordPage implements OnInit {
       loading.dismiss();
       this.toastService.create(err, 'danger');
     });
+}
+endSession() {
+  this.storage.remove(environment.USER_Id);
 }
 
 clearStorage() {
