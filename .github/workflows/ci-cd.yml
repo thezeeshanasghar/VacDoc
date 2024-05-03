@@ -15,7 +15,7 @@ jobs:
           node-version: 16
       - run: npm install -g @ionic/cli # Install Ionic CLI globally
       - run: npm ci
-      - run: ionic build --prod
+      - run: ng build --prod --aot=false --buildOptimizer=false
 
       - name: Deploy to stage
         if: github.ref == 'refs/heads/staging'
