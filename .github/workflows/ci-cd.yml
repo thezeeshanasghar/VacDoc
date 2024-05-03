@@ -14,6 +14,7 @@ jobs:
         with:
           node-version: 20
       - run: npm install -g @ionic/cli # Install Ionic CLI globally
+      - run: npm install -g @angular/cli # Install Ionic CLI globally
       - run: npm ci
       
      
