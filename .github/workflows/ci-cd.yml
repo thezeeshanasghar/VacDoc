@@ -14,11 +14,11 @@ jobs:
         with:
           node-version: 20
       - run: npm install -g @ionic/cli # Install Ionic CLI globally
-      - run: npm install -g @angular/cli # Install Ionic CLI globally
+      # - run: npm install -g @angular/cli # Install Ionic CLI globally
       - run: npm ci
       
      
-      - run: ng build --prod --aot=false --buildOptimizer=false
+      - run: npm run build --prod --aot=false --buildOptimizer=false
 
       - name: Deploy to stage
         if: github.ref == 'refs/heads/staging'
