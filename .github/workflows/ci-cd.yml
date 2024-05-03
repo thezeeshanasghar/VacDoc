@@ -12,13 +12,12 @@ jobs:
       - name: Use Node.js 16
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 16
       - run: npm install -g @ionic/cli # Install Ionic CLI globally
-      # - run: npm install -g @angular/cli # Install Ionic CLI globally
       - run: npm ci
       
      
-      - run: npm run build --prod --aot=false --buildOptimizer=false
+      - run: ionic build --prod --bail=false
 
       - name: Deploy to stage
         if: github.ref == 'refs/heads/staging'
