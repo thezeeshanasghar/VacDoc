@@ -28,9 +28,8 @@ export class ClinicPage {
     private alertService: AlertService
   ) {
     router.events.subscribe((val) => {
-      this.storage.get(environment.CLINICS).then(clinics => {
-        this.Clinics = clinics;
-      });
+     
+        this.Clinics = this.Clinics;
     })
   }
 
@@ -39,15 +38,21 @@ export class ClinicPage {
     await this.storage.get(environment.DOCTOR_Id).then(docId => {
       this.doctorId = docId;
     });
-    await this.storage.get(environment.CLINIC_Id).then(clinicId => {
-      this.clinicId = clinicId;
-    });
-    await this.storage.get(environment.CLINICS).then(clinics => {
-      this.Clinics = clinics;
-    });
+    // await this.storage.get(environment.CLINIC_Id).then(clinicId => {
+    //   this.clinicId = clinicId;
+    // });
+    // await this.storage.get(environment.CLINICS).then(clinics => {
+    //   this.Clinics = clinics;
+    // });
     console.log(this.Clinics);
     console.log(this.doctorId);
     if (!this.Clinics) {
+      this.getClinics();
+    }
+    if (this.Clinics) {
+      this.Clinics = this.Clinics;
+    } else {
+      // Fetch clinics only if they haven't been fetched before
       this.getClinics();
     }
   }
@@ -74,21 +79,21 @@ export class ClinicPage {
               }
             }
           }
-          this.storage.set(environment.CLINICS, this.Clinics);
-          for (let i = 0; i < this.Clinics.length; i++) {
-            if (this.Clinics[i].IsOnline) {
-              this.storage.set(
-                environment.CLINIC_Id,
-                this.Clinics[i].Id
-              );
-              this.storage.set(
-                environment.ON_CLINIC,
-                this.Clinics[i]
-              );
-              this.clinicService.updateClinic(this.Clinics[i])
-            }
-          }
-          //  this.ngOnInit();
+          // this.storage.set(environment.CLINICS, this.Clinics);
+          // for (let i = 0; i < this.Clinics.length; i++) {
+          //   if (this.Clinics[i].IsOnline) {
+          //     this.storage.set(
+          //       environment.CLINIC_Id,
+          //       this.Clinics[i].Id
+          //     );
+          //     this.storage.set(
+          //       environment.ON_CLINIC,
+          //       this.Clinics[i]
+          //     );
+          //     this.clinicService.updateClinic(this.Clinics[i])
+          //   }
+          // }
+           this.ngOnInit();
         } else {
           loading.dismiss();
           this.toastService.create(res.Message, "danger");

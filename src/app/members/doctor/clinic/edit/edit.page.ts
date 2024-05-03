@@ -1150,6 +1150,9 @@ export class EditPage implements OnInit {
         message: "Your Consultation Fee must contain positive number"
       }
     ],
+    MonogramImage:[
+      { type: "required", message: "Monogram Image is required." },
+    ],
     Mstart2: [{ type: "required", message: "Session 2 Must Start after Session 1" }],
     Mstart: [
       { type: "required", message: "End Time Must be after Start Time" }

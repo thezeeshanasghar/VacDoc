@@ -3,7 +3,7 @@
       <ion-buttons slot="start">
           <ion-back-button defaultHref="signup/step1"></ion-back-button>
       </ion-buttons>
-      <ion-title>Clinic Information</ion-title>
+      <ion-title>Add Clinic</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -64,10 +64,18 @@
 
       <ion-item>
         <ion-label color="primary">Upload Monogram</ion-label>
-        <ion-img *ngIf="fg1.value.MonogramImage" class="preview-image" [src]="fg1.value.MonogramImage1" alt="Uploaded Monogram"></ion-img>
-        <div *ngIf="!fg1.value.MonogramImage" class="placeholder">No Image</div>
-        <input type="file" (change)="SelectMonogramImage($event.target.files)" accept=".png, .jpg, .jpeg" />
+        <!-- <ion-img *ngIf="fg1.value.MonogramImage" class="preview-image" [src]="fg1.value.MonogramImage1" alt="Uploaded Monogram" required></ion-img> -->
+        <!-- <div *ngIf="!fg1.value.MonogramImage" class="placeholder">No Image</div> -->
+        <input type="file" (change)="SelectMonogramImage($event.target.files)" accept=".png, .jpg, .jpeg" required />
     </ion-item>
+    <div class="validation-errors">
+        <ng-container *ngFor="let validation of validation_messages.MonogramImage">
+            <div class="error-message"
+                *ngIf="fg1.get('MonogramImage').hasError(validation.type) && (fg1.get('MonogramImage').dirty || fg1.get('MonogramImage').touched)">
+                <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+            </div>
+        </ng-container>
+    </div>
       <!-- <ion-item *ngIf="fg1.value.MonogramImage">
           <p *ngIf="uploading">Uploading Monogram...</p>
           <ion-img *ngIf="fg1.value.MonogramImage" [src]="resourceURL + fg1.value.MonogramImage" alt="Monogram Image">
@@ -554,7 +562,7 @@
           <div #mapElement class="map" style="min-height: 300px;"></div>
       </ion-item>
 
-      <ion-button [disabled]="(!fg1.valid || !fg2.valid)" (click)="getdata()">Next Step</ion-button>
+      <ion-button [disabled]="!fg1.valid " (click)="getdata()">Next Step</ion-button>
   </form>
 
 

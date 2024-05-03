@@ -47,14 +47,16 @@
 
     <ion-card-content>
       <p>Consultation Fee: {{ clinic.ConsultationFee }}</p>
-      <p *ngIf="clinic.ClinicTimings && clinic.ClinicTimings.length">
+      <p>Phone Number: {{ clinic.PhoneNumber }}</p>
+      <p>Address: {{ clinic.Address }}</p>
+      <!-- <p *ngIf="clinic.ClinicTimings && clinic.ClinicTimings.length">
         Timings:
         <span *ngFor="let timing of clinic.ClinicTimings">
           {{timing.Day}}
           {{ timing.StartTime }} - {{ timing.EndTime }}<br>
         </span>
       </p>
-      <p *ngIf="!clinic.ClinicTimings || !clinic.ClinicTimings.length">No timings available</p>
+      <p *ngIf="!clinic.ClinicTimings || !clinic.ClinicTimings.length">No timings available</p> -->
       <ion-button size="small" fill="outline" color="tertiary" routerLink="/vaccine/{{clinic.Id}}/dose">
         Patients &nbsp;<ion-badge size="small" color="primary">{{clinic.childrenCount}}</ion-badge>
       </ion-button>

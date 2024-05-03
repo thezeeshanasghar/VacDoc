@@ -88,7 +88,7 @@ export class AddPage implements OnInit {
           Validators.pattern("^(0|[1-9][0-9]*)$")
         ])
       ),
-      MonogramImage: [null],
+      MonogramImage: [""],
       ClinicTimings: [null],
       Lat: [null],
       Long: [null],
@@ -950,6 +950,9 @@ export class AddPage implements OnInit {
         type: "pattern",
         message: "Your Consultation Fee must contain positive number"
       }
+    ],
+    MonogramImage:[
+      { type: "required", message: "Monogram Image is required." },
     ],
     Mstart2: [
       { type: "required", message: "Session 2 Must Start after Session 1" }
