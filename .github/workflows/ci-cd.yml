@@ -17,7 +17,7 @@ jobs:
       - run: npm ci
       
      
-      - run: ionic build --prod || true
+      - run: ionic build --prod
 
       - name: Deploy to stage
         if: github.ref == 'refs/heads/staging'
