@@ -16,6 +16,7 @@ export class MembersPage implements OnInit {
   DoctorId: any;
   clinicId: any;
   profileImagePath: string;
+  Name: any;
 
   constructor(
     public loadingController: LoadingController,
@@ -44,9 +45,10 @@ export class MembersPage implements OnInit {
           this.doctorData = res.ResponseData;
           console.log(this.doctorData);
           this.profileImagePath = this.doctorData.ProfileImage;
+          this.Name=this.doctorData.DisplayName
           this.profile = [
             {
-              title: "Profile",
+              title: this.Name,
               url: "/members/doctor/profile",
               icon: "create",
               imageUrl: environment.RESOURCE_URL + this.profileImagePath
