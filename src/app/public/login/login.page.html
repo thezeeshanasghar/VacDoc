@@ -31,26 +31,38 @@
                 (+{{ country.code }}) {{ country.name }} 
               </ion-select-option>
             </ion-select>
-        <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
+            <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
+        </div>
         <div *ngIf="fg.get('MobileNumber').invalid && (fg.get('MobileNumber').dirty || fg.get('MobileNumber').touched)">
           <div *ngIf="fg.get('MobileNumber').errors">
+            <div style="color: red;" *ngIf="fg.get('MobileNumber').errors.required">
+              Mobile number is required.
+            </div>
             <div style="color: red;" *ngIf="fg.get('MobileNumber').errors.onlyNumbers">
               Please enter only numbers.
             </div>
-            <!-- <div *ngIf="!fg.get('MobileNumber').errors.onlyNumbers">
-              Other validation errors: {{ fg.get('MobileNumber').errors | json }}
-            </div> -->
+
           </div>
         </div>
-        </div>
 
 
-        <ion-label style="color: white;" position="floating" class="ion-margin-top" >
-          <ion-icon name="lock-closed" class="ion-item-start" class="ion-margin-top"></ion-icon>
+        <ion-label style="color: white;" position="floating" class="ion-margin-top">
+          <ion-icon name="lock-closed" class="ion-item-start"></ion-icon>
           Password
         </ion-label>
-        <ion-input type="password" formControlName="Password" ></ion-input>
-
+        <ion-input type="password" formControlName="Password" [class.invalid-input]="fg.get('Password').invalid && (fg.get('Password').dirty || fg.get('Password').touched)"></ion-input>
+        
+        <div *ngIf="fg.get('Password').invalid && (fg.get('Password').dirty || fg.get('Password').touched)">
+          <div *ngIf="fg.get('Password').errors">
+            <div style="color: red;" *ngIf="fg.get('Password').errors.required">
+              Password is required.
+            </div>
+            <div style="color: red;" *ngIf="fg.get('Password').errors.minlength">
+              Password must be at least 4 characters long.
+            </div>
+          </div>
+        </div>
+        
 
         <ion-button class="ion-margin-top" expand="full" color="tertiary" (click)="login()" [disabled]="isFormInvalid()">
           <ion-icon name="log-in"></ion-icon>&nbsp;

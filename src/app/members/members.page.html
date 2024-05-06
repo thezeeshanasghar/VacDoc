@@ -28,11 +28,11 @@
           </ion-item>
         </ion-menu-toggle>
 
-        <ion-item-divider color="light">
+        <!-- <ion-item-divider color="light">
           <ion-label color="primary">
             Doctor
           </ion-label>
-        </ion-item-divider>
+        </ion-item-divider> -->
         <ion-menu-toggle auto-hide="false" *ngFor="let p of doctorPages">
           <ion-item color="light" [routerDirection]="'root'" [routerLink]="[p.url]">
             <ion-icon color="primary" slot="start" [name]="p.icon"></ion-icon>
@@ -42,11 +42,11 @@
           </ion-item>
         </ion-menu-toggle>
 
-        <ion-item-divider color="light">
+        <!-- <ion-item-divider color="light">
           <ion-label color="primary">
             Child
           </ion-label>
-        </ion-item-divider>
+        </ion-item-divider> -->
         <ion-menu-toggle auto-hide="false" *ngFor="let p of childPages">
           <ion-item color="light" [routerDirection]="'root'" [routerLink]="[p.url]">
             <ion-icon color="primary" slot="start" [name]="p.icon"></ion-icon>

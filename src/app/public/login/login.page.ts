@@ -49,11 +49,11 @@ export class LoginPage implements OnInit {
     this.loginservice.changeState(false);
     this.fg = this.formBuilder.group({
       'MobileNumber':  [null, [Validators.required, this.onlyNumbersValidator()]],
-      'Password': [null, Validators.required],
-      'CountryCode': ['92'],
+      'Password': [null, [Validators.required, this.passwordValidator()]],      'CountryCode': ['92'],
       'UserType': ['DOCTOR']
     });
   }
+  
   onlyNumbersValidator(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
       const forbidden = /\D/.test(control.value); // Regular expression to test for non-digit characters
@@ -61,8 +61,19 @@ export class LoginPage implements OnInit {
     };
   }
 
-  isFormInvalid(): boolean {
+    isFormInvalid(): boolean {
     return this.fg.invalid && (this.fg.dirty || this.fg.touched);
+  }
+
+  // password
+  passwordValidator(): ValidatorFn {
+    return (control) => {
+      const password = control.value;
+      if (password && password.length != 4) {
+        return { minlength: true };
+      }
+      return null;
+    };
   }
 
   countryCodes = [
@@ -318,6 +329,8 @@ export class LoginPage implements OnInit {
     });
   }
 
+
+
   async login() {
 
     const loading = await this.loadingController.create({
@@ -390,6 +403,4 @@ let data = {
       }
     );
       }
-
-
 }
