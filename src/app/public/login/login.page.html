@@ -31,7 +31,17 @@
                 (+{{ country.code }}) {{ country.name }} 
               </ion-select-option>
             </ion-select>
-        <ion-input type="tel" formControlName="MobileNumber" class="number-input"></ion-input>
+        <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
+        <div *ngIf="fg.get('MobileNumber').invalid && (fg.get('MobileNumber').dirty || fg.get('MobileNumber').touched)">
+          <div *ngIf="fg.get('MobileNumber').errors">
+            <div style="color: red;" *ngIf="fg.get('MobileNumber').errors.onlyNumbers">
+              Please enter only numbers.
+            </div>
+            <!-- <div *ngIf="!fg.get('MobileNumber').errors.onlyNumbers">
+              Other validation errors: {{ fg.get('MobileNumber').errors | json }}
+            </div> -->
+          </div>
+        </div>
         </div>
 
 
@@ -42,10 +52,11 @@
         <ion-input type="password" formControlName="Password" ></ion-input>
 
 
-        <ion-button class="ion-margin-top" expand="full" color="tertiary" (click)="login()">
+        <ion-button class="ion-margin-top" expand="full" color="tertiary" (click)="login()" [disabled]="isFormInvalid()">
           <ion-icon name="log-in"></ion-icon>&nbsp;
           Login
         </ion-button>
+        
       </form>
 
 

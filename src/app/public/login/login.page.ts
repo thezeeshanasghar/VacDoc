@@ -9,6 +9,8 @@ import { environment } from 'src/environments/environment';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { IonRouterOutlet, Platform } from '@ionic/angular';
 import { Plugins } from '@capacitor/core';
+import { AbstractControl, ValidatorFn } from '@angular/forms';
+
 const { App } = Plugins;
 
 
@@ -46,12 +48,23 @@ export class LoginPage implements OnInit {
     this.skipLoginIfAlreadyLoggedIn();
     this.loginservice.changeState(false);
     this.fg = this.formBuilder.group({
-      'MobileNumber': [null, Validators.required],
+      'MobileNumber':  [null, [Validators.required, this.onlyNumbersValidator()]],
       'Password': [null, Validators.required],
       'CountryCode': ['92'],
       'UserType': ['DOCTOR']
     });
   }
+  onlyNumbersValidator(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const forbidden = /\D/.test(control.value); // Regular expression to test for non-digit characters
+      return forbidden ? { 'onlyNumbers': { value: control.value } } : null;
+    };
+  }
+
+  isFormInvalid(): boolean {
+    return this.fg.invalid && (this.fg.dirty || this.fg.touched);
+  }
+
   countryCodes = [
     { name: 'Afghanistan', code: '93' },
     { name: 'Albania', code: '355' },
