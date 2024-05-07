@@ -59,13 +59,13 @@ export class ChildSceduleEditPage2 implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.doses = res.ResponseData;
-          console.log(res.ResponseData)
+          console.log("res",res.ResponseData)
           // if (this.doses.length == 0)
           // {
           //   this.NewDoses = false;
           // }
           this.doses.forEach(dose => {
-            console.log(dose)
+            console.log("dose",dose)
             let value = dose.MinAge == null ? 0 : dose.MinAge;
           this.fg.addControl(
             dose.Dose.Name,

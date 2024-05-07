@@ -1,15 +1,15 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <!-- <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <!-- <ion-menu-button></ion-menu-button> -->
+      <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Add Patient</ion-title>
     <ion-title *ngIf="clinicService.OnlineClinic" slot="end">
       {{clinicService.OnlineClinic.Name}}
     </ion-title>
-  </ion-toolbar>
+  </ion-toolbar> -->
 
-  <ion-toolbar color="primary" >
+  <ion-toolbar  class="custom-item-background3" >
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
       <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
@@ -20,12 +20,13 @@
 
 </ion-header>
 
-<ion-content *ngIf="fg1" class="ion-padding">
-
+<ion-content *ngIf="fg1" class="ion-padding" >
+  <h1 style="text-align: center; color: white;">Add Patient</h1>
+  <ion-card class="custom-item-background1">
   <!-- 1st Step of Add Child -->
   <form [formGroup]="fg1">
-    <ion-item>
-      <ion-label color="primary" position="floating">Patient Name</ion-label>
+    <ion-item class="custom-item-background1">
+      <ion-label color="white" position="floating">Patient Name</ion-label>
       <ion-input type="text" formControlName="Name" required [(ngModel)]="fg1.value.Name"  class="ion-text-capitalize">
 </ion-input>
     </ion-item>
@@ -56,8 +57,8 @@
         </ion-row>    
       </ion-grid>
     </ion-radio-group> -->
-    <ion-item>
-      <ion-label color="primary" position="floating">Guardian's Name</ion-label>
+    <ion-item class="custom-item-background1">
+      <ion-label color="white" position="floating">Guardian's Name</ion-label>
       <ion-input type="text" formControlName="FatherName" required [(ngModel)]="fg1.value.FatherName"  class="ion-text-capitalize">
 </ion-input>
     </ion-item>
@@ -69,23 +70,23 @@
         </div>
       </ng-container>
     </div>
-    <ion-radio-group formControlName="Gender">
-      <ion-list-header>    
+    <ion-radio-group formControlName="Gender" color ="white">
+      <ion-list-header style="color: white;">    
         Gender
       </ion-list-header>
       <ion-grid>
         <ion-row>
           <ion-col>
-            <ion-item>
-              <ion-label color="primary">Male</ion-label>
-              <ion-radio slot="start" value="Boy" ></ion-radio> 
+            <ion-item class="custom-item-background1">
+              <ion-label color="white">Male</ion-label>
+              <ion-radio slot="start" value="Boy"></ion-radio> 
               <!-- (click)="updateGender('Boy')" -->
             </ion-item>
           </ion-col>
 
           <ion-col>
-            <ion-item>
-              <ion-label color="primary">Female</ion-label>
+            <ion-item class="custom-item-background1">
+              <ion-label color="white">Female</ion-label>
               <ion-radio slot="start" value="Girl"></ion-radio>
             </ion-item>
           </ion-col>
@@ -94,21 +95,21 @@
     </ion-radio-group>
 
     <ion-radio-group formControlName="Type">
-      <ion-list-header >    
+      <ion-list-header style="color: white;">    
         Schedule Type
       </ion-list-header>
       <ion-grid>
         <ion-row>
           <ion-col>
-            <ion-item>
-              <ion-label color="primary">Regular</ion-label>
+            <ion-item class="custom-item-background1">
+              <ion-label color="white">Regular</ion-label>
               <ion-radio slot="start" value="regular" ></ion-radio> 
             </ion-item>
           </ion-col>
 
           <ion-col>
-            <ion-item>
-              <ion-label color="primary">Special</ion-label>
+            <ion-item class="custom-item-background1">
+              <ion-label color="white">Special</ion-label>
               <ion-radio slot="start" value="special"></ion-radio>
             </ion-item>
           </ion-col>
@@ -117,13 +118,13 @@
     </ion-radio-group>
 
     
-      <ion-item *ngIf = "fg1.value.Type === 'regular'">
-        <ion-label color="primary">Skip UnActive Doses</ion-label>
+      <ion-item *ngIf = "fg1.value.Type === 'regular'" class="custom-item-background1">
+        <ion-label color="white">Skip UnActive Doses</ion-label>
         <ion-checkbox slot="start" formControlName="IsSkip"></ion-checkbox>
       </ion-item>
     
 
-      <ion-label id="dob" color="primary" position="floating" style="margin-left: 1.5%;">Date of Birth</ion-label>
+      <ion-label id="dob" color="white" position="floating" style="margin-left: 1.5%;">Date of Birth</ion-label>
       <input formControlName="DOB" slot="end" matInput [matDatepicker]="picker" disabled  max="{{todaydate}}" (click)="picker.open()" (dateChange)="checkEpi()">
       <mat-datepicker-toggle slot="end" matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker slot="end" #picker disabled="false"></mat-datepicker>
@@ -138,8 +139,8 @@
     </div>
   
 
-    <ion-item>
-      <ion-label color="primary" position="floating">Email</ion-label>
+    <ion-item class="custom-item-background1">
+      <ion-label color="white" position="floating">Email</ion-label>
       <ion-input type="text" formControlName="Email" required ></ion-input>
     </ion-item>
     <div class="validation-errors">
@@ -151,13 +152,13 @@
       </ng-container>
     </div>
 
-    <ion-item>
-      <ion-label color="primary" position="floating">CNIC/Passport No.</ion-label>
+    <ion-item class="custom-item-background1">
+      <ion-label color="white" position="floating">CNIC/Passport No.</ion-label>
       <ion-input type="text" formControlName="CNIC" ></ion-input>
     </ion-item>
 
-    <ion-item>
-      <ion-label color="primary" position="floating">Mobile Number</ion-label>
+    <ion-item class="custom-item-background1">
+      <ion-label color="white" position="floating">Mobile Number</ion-label>
       <div style="display: flex ;">
         <ion-select formControlName="CountryCode" >
             <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
@@ -176,8 +177,8 @@
       </ng-container>
     </div>
 
-    <ion-item>
-      <ion-label color="primary" position="floating">Preferred Day of week</ion-label>
+    <ion-item class="custom-item-background1">
+      <ion-label color="white" position="floating">Preferred Day of week</ion-label>
       <ion-select formControlName="PreferredDayOfWeek"(ionChange)="uncheckany()"  multiple="true" [(ngModel)]="fg1.value.PreferredDayOfWeek" >
         <ion-select-option value="Any">Any</ion-select-option>
         <ion-select-option value="Monday">Monday</ion-select-option>
@@ -189,8 +190,8 @@
         <ion-select-option value="Sunday">Sunday</ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-item>
-      <ion-label color="primary" position="floating">Preferred Day of Reminder</ion-label>
+    <ion-item class="custom-item-background1">
+      <ion-label color="white" position="floating">Preferred Day of Reminder</ion-label>
       <ion-select formControlName="PreferredDayOfReminder" value ='0'>
         <ion-select-option value="0">On Due Day</ion-select-option>
         <ion-select-option value="1">Due day + 1 Day before</ion-select-option>
@@ -206,8 +207,8 @@
          <option *ngFor ="let city of cities" value ="{{city}}">{{city}}</option>    
       </select>
     </ion-item> -->
-    <ion-item>
-      <ion-label color="primary" position="floating">City</ion-label>
+    <ion-item class="custom-item-background1">
+      <ion-label color="white" position="floating">City</ion-label>
     <mat-form-field class="example-full-width">
       <input type="text"
              aria-label="Number"
@@ -242,22 +243,22 @@
       <ion-row>
 
         <ion-col>
-          <ion-item>
-            <ion-label color="primary">Is EPI Done</ion-label>
+          <ion-item class="custom-item-background1">
+            <ion-label color="white">Is EPI Done</ion-label>
             <ion-checkbox [disabled]="!epiDone" slot="start" formControlName="IsEPIDone"></ion-checkbox>
           </ion-item>
         </ion-col>
 
         <ion-col>
-          <ion-item>
-            <ion-label color="primary">Verified</ion-label>
+          <ion-item class="custom-item-background1">
+            <ion-label color="white">Verified</ion-label>
             <ion-checkbox slot="start" formControlName="IsVerified" [disabled]="!epiDone"></ion-checkbox>
           </ion-item>
         </ion-col>
 
       </ion-row>
     </ion-grid>
-    <ion-button [disabled]="!fg1.valid" (click)="moveNextStep()">Submit</ion-button>
+    <ion-button [disabled]="!fg1.valid" (click)="moveNextStep()" style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;">Submit</ion-button>
   </form>
 
   <!-- 2nd step of Add Child -->
@@ -277,5 +278,5 @@
       <ion-button (click)="getChildVaccinefromUser()">Save</ion-button>
     </form>
   </div> -->
+</ion-card>
 </ion-content>
-
