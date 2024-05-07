@@ -276,6 +276,7 @@ export class AddPage implements OnInit {
     var ct = [];
     if (this.fg2.value.Monday) {
       if (this.fg2.value.MondayS1) {
+        if (this.fg2.value.Mstart && this.fg2.value.Mend) {
         this.fg2.value.Mstart = moment(
           this.fg2.value.Mstart,
           "YYYY-MM-DD HH:mm"
@@ -293,8 +294,10 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
       // For Session 2
       if (this.fg2.value.MondayS2) {
+        if (this.fg2.value.Mstart2 && this.fg2.value.Mend2) {
         this.fg2.value.Mstart2 = moment(
           this.fg2.value.Mstart2,
           "YYYY-MM-DD HH:mm"
@@ -311,11 +314,13 @@ export class AddPage implements OnInit {
           Session: 2
         };
         ct.push(obj1);
+        }
       }
     }
 
     if (this.fg2.value.Tuesday) {
       if (this.fg2.value.TuesdayS1) {
+        if (this.fg2.value.Tustart && this.fg2.value.Tuend) {
         this.fg2.value.Tustart = moment(
           this.fg2.value.Tustart,
           "YYYY-MM-DD HH:mm"
@@ -333,8 +338,10 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
       // session 2
       if (this.fg2.value.TuesdayS2) {
+        if (this.fg2.value.Tustart2 && this.fg2.value.Tuend2) {
         this.fg2.value.Tustart2 = moment(
           this.fg2.value.Tustart2,
           "YYYY-MM-DD HH:mm"
@@ -352,10 +359,12 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
     }
 
     if (this.fg2.value.Wednesday) {
       if (this.fg2.value.WednesdayS1) {
+        if (this.fg2.value.Wstart && this.fg2.value.Wend) {
         this.fg2.value.Wstart = moment(
           this.fg2.value.Wstart,
           "YYYY-MM-DD HH:mm"
@@ -373,8 +382,10 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
       // session 2
       if (this.fg2.value.WednesdayS2) {
+        if (this.fg2.value.Wstart2 && this.fg2.value.Wend2) {
         this.fg2.value.Wstart2 = moment(
           this.fg2.value.Wstart2,
           "YYYY-MM-DD HH:mm"
@@ -392,10 +403,12 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
     }
 
     if (this.fg2.value.Thursday) {
       if (this.fg2.value.ThursdayS1) {
+        if (this.fg2.value.Thstart && this.fg2.value.Thend) {
         this.fg2.value.Thstart = moment(
           this.fg2.value.Thstart,
           "YYYY-MM-DD HH:mm"
@@ -413,8 +426,10 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
       // session 2
       if (this.fg2.value.ThursdayS2) {
+        if (this.fg2.value.Thstart2 && this.fg2.value.Thend2) {
         this.fg2.value.Thstart2 = moment(
           this.fg2.value.Thstart2,
           "YYYY-MM-DD HH:mm"
@@ -432,9 +447,11 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
     }
     if (this.fg2.value.Friday) {
       if (this.fg2.value.FridayS1) {
+        if (this.fg2.value.Fstart && this.fg2.value.Fend) {
         this.fg2.value.Fstart = moment(
           this.fg2.value.Fstart,
           "YYYY-MM-DD HH:mm"
@@ -452,7 +469,9 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
       if (this.fg2.value.FridayS2) {
+        if (this.fg2.value.Fstart2 && this.fg2.value.Fend2) {
         this.fg2.value.Fstart2 = moment(
           this.fg2.value.Fstart2,
           "YYYY-MM-DD HH:mm"
@@ -470,9 +489,11 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
     }
     if (this.fg2.value.Saturday) {
       if (this.fg2.value.SaturdayS1) {
+        if (this.fg2.value.Sastart && this.fg2.value.Saend) {
         this.fg2.value.Sastart = moment(
           this.fg2.value.Sastart,
           "YYYY-MM-DD HH:mm"
@@ -490,7 +511,9 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
       if (this.fg2.value.SaturdayS2) {
+        if (this.fg2.value.Sastart2 && this.fg2.value.Saend2) {
         this.fg2.value.Sastart2 = moment(
           this.fg2.value.Sastart2,
           "YYYY-MM-DD HH:mm"
@@ -508,9 +531,11 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
     }
     if (this.fg2.value.Sunday) {
       if (this.fg2.value.SundayS1) {
+        if (this.fg2.value.Sustart && this.fg2.value.Suend) {
         this.fg2.value.Sustart = moment(
           this.fg2.value.Sustart,
           "YYYY-MM-DD HH:mm"
@@ -528,7 +553,9 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
       if (this.fg2.value.SundayS2) {
+        if (this.fg2.value.Sustart2 && this.fg2.value.Suend2) {
         this.fg2.value.Sustart2 = moment(
           this.fg2.value.Sustart2,
           "YYYY-MM-DD HH:mm"
@@ -545,6 +572,7 @@ export class AddPage implements OnInit {
           Session: 2
         };
         ct.push(obj);
+      }
       }
     }
     this.fg1.value.ClinicTimings = ct;
