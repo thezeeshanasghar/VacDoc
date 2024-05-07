@@ -32,7 +32,14 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">Mobile Number</ion-label>
-      <ion-input type="text" formControlName="MobileNumber" required></ion-input>
+      <div style="display: flex ;">
+        <ion-select formControlName="CountryCode" >
+            <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
+              (+{{ country.code }}) {{ country.name }} 
+            </ion-select-option>
+          </ion-select>
+          <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
+      </div>
     </ion-item>
 
     <ion-item>
