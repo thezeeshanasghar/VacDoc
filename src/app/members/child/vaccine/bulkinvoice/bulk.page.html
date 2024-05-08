@@ -21,17 +21,29 @@
         </ion-select>
         </ion-item>
         <ion-item >
-          <b style="padding-right:10%">Amount</b> <ion-input [(ngModel)]="bulk.Amount" placeholder="Enter Amount" position="end" type = "text" [ngModelOptions]="{standalone: true}"></ion-input>
-          </ion-item>
+          <b style="padding-right:10%">Amount</b>
+          <ion-input [(ngModel)]="bulk.Amount" 
+                     placeholder="Enter Amount" 
+                     position="end" 
+                     type="text" 
+                     [ngModelOptions]="{standalone: true}" 
+                     (input)="validateInput($event)">
+          </ion-input>
+          <div *ngIf="!isValidInput" style="color: red;">Please enter only numbers.</div>
+          
+                    </ion-item>
       </ion-card>
      
       <ion-item style="padding:10px 0 10px" >
         <b style="padding-right:10%">Consultation Fee</b>
-         <ion-input formControlName="ConsultationFee" placeholder="Enter Amount" position="end" type = "number"></ion-input>
-         <ion-checkbox formControlName="IsConsultationFee"></ion-checkbox>
+        <ion-input formControlName="ConsultationFee" placeholder="Enter Amount" position="end" type="text"></ion-input>
+        <div *ngIf="fg.get('ConsultationFee').hasError('invalidNumber') && (fg.get('ConsultationFee').dirty || fg.get('ConsultationFee').touched)">
+          <ion-text color="danger">Please enter only numbers.</ion-text>
+        </div>
+          <ion-checkbox formControlName="IsConsultationFee"></ion-checkbox>
         </ion-item>
         <!-- <ion-button type="submit">Save</ion-button>  -->
-        <ion-button (click)= saveanddownload()>Download</ion-button>
+        <ion-button [disabled]="hasActiveValidations()" (click)="saveanddownload()">Download</ion-button>
         
   </form>
 </ion-content>
