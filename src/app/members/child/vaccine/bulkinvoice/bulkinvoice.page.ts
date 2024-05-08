@@ -58,6 +58,7 @@ export class BulkInvoicePage implements OnInit {
     });
   }
 
+  
   async getBulk() {
     let data = { ChildId: this.childId, Date: this.currentDate1 };
     const loading = await this.loadingController.create({
@@ -157,9 +158,13 @@ export class BulkInvoicePage implements OnInit {
   }
 
   download(id, date, fee) {
-
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-indexed
+    const day = today.getDate().toString().padStart(2, '0');
+    const todayDate = `${year}-${month}-${day}`;
     if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
-      const url = `${this.API_VACCINE}child/${id}/${date}/${fee}/Download-Invoice-PDF`;
+      const url = `${this.API_VACCINE}child/${id}/${date}/${todayDate}/${fee}/Download-Invoice-PDF`;
       window.open(url);
     }
     else {
