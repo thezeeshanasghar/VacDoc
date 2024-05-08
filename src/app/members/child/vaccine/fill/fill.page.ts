@@ -224,4 +224,8 @@ export class FillPage implements OnInit {
     return myDate;
   }
 
+  isBrandFilled(): boolean{
+    return this.fg.get('BrandId').value !== null;
+  }
+
 }

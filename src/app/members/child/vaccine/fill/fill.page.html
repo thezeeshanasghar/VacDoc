@@ -63,6 +63,8 @@
       <!-- </mat-form-field> -->
     </ion-item>
 
-    <ion-button (click)="fillVaccine()">Submit</ion-button>
+    <!-- <ion-button (click)="fillVaccine()">Submit</ion-button> -->
+
+    <ion-button [disabled]="!isBrandFilled()" (click)="fillVaccine()"></ion-button>
   </form>
 </ion-content>
