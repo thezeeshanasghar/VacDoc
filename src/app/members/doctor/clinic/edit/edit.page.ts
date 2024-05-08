@@ -258,7 +258,7 @@ export class EditPage implements OnInit {
             switch (clinicTiming.Day) {
               case "Monday":
                 this.fg2.controls["Monday"].setValue(true);
-                if (clinicTiming.Session == 1) {
+                if (clinicTiming.Session == 1 && clinicTiming.IsOpen == true) {
                   this.fg2.controls["MondayS1"].setValue(true);
                   this.fg2.controls["Mstart"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -272,7 +272,7 @@ export class EditPage implements OnInit {
                   );
                   this.fg2.controls["M1Id"].setValue(clinicTiming.Id);
                 }
-                if (clinicTiming.Session == 2) {
+                if (clinicTiming.Session == 2 && clinicTiming.IsOpen == true) {
                   this.fg2.controls["MondayS2"].setValue(true);
                   this.fg2.controls["Mstart2"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -290,7 +290,7 @@ export class EditPage implements OnInit {
 
               case "Tuesday":
                 this.fg2.controls["Tuesday"].setValue(true);
-                if (clinicTiming.Session == 1) {
+                if (clinicTiming.Session == 1 && clinicTiming.IsOpen == true) {
                   this.fg2.controls["TuesdayS1"].setValue(true);
                   this.fg2.controls["Tustart"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -304,7 +304,7 @@ export class EditPage implements OnInit {
                   );
                   this.fg2.controls["Tu1Id"].setValue(clinicTiming.Id);
                 }
-                if (clinicTiming.Session == 2) {
+                if (clinicTiming.Session == 2 && clinicTiming.IsOpen == true) {
                   this.fg2.controls["TuesdayS2"].setValue(true);
                   this.fg2.controls["Tustart2"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -322,7 +322,7 @@ export class EditPage implements OnInit {
 
               case "Wednesday":
                 this.fg2.controls["Wednesday"].setValue(true);
-                if (clinicTiming.Session == 1) {
+                if (clinicTiming.Session == 1 && clinicTiming.IsOpen == true) {
                   this.fg2.controls["WednesdayS1"].setValue(true);
                   this.fg2.controls["Wstart"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -336,7 +336,7 @@ export class EditPage implements OnInit {
                   );
                   this.fg2.controls["W1Id"].setValue(clinicTiming.Id);
                 }
-                if (clinicTiming.Session == 2) {
+                if (clinicTiming.Session == 2 && clinicTiming.IsOpen == true) {
                   this.fg2.controls["WednesdayS2"].setValue(true);
                   this.fg2.controls["Wstart2"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -354,7 +354,7 @@ export class EditPage implements OnInit {
 
               case "Thursday":
                 this.fg2.controls["Thursday"].setValue(true);
-                if (clinicTiming.Session == 1) {
+                if (clinicTiming.Session == 1 && clinicTiming.IsOpen == true) {
                   this.fg2.controls["ThursdayS1"].setValue(true);
                   this.fg2.controls["Thstart"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -369,7 +369,7 @@ export class EditPage implements OnInit {
                   console.log(clinicTiming.Id);
                   this.fg2.controls["Th1Id"].setValue(clinicTiming.Id);
                 }
-                if (clinicTiming.Session == 2) {
+                if (clinicTiming.Session == 2 && clinicTiming.IsOpen == true) {
                   this.fg2.controls["ThursdayS2"].setValue(true);
                   this.fg2.controls["Thstart2"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -387,7 +387,7 @@ export class EditPage implements OnInit {
 
               case "Friday":
                 this.fg2.controls["Friday"].setValue(true);
-                if (clinicTiming.Session == 1) {
+                if (clinicTiming.Session == 1 && clinicTiming.IsOpen == true) {
                   this.fg2.controls["FridayS1"].setValue(true);
                   this.fg2.controls["Fstart"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -401,7 +401,7 @@ export class EditPage implements OnInit {
                   );
                   this.fg2.controls["F1Id"].setValue(clinicTiming.Id);
                 }
-                if (clinicTiming.Session == 2) {
+                if (clinicTiming.Session == 2 && clinicTiming.IsOpen == true) {
                   this.fg2.controls["FridayS2"].setValue(true);
                   this.fg2.controls["Fstart2"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -419,7 +419,7 @@ export class EditPage implements OnInit {
 
               case "Saturday":
                 this.fg2.controls["Saturday"].setValue(true);
-                if (clinicTiming.Session == 1) {
+                if (clinicTiming.Session == 1 && clinicTiming.IsOpen == true) {
                   this.fg2.controls["SaturdayS1"].setValue(true);
                   this.fg2.controls["Sastart"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -433,7 +433,7 @@ export class EditPage implements OnInit {
                   );
                   this.fg2.controls["Sa1Id"].setValue(clinicTiming.Id);
                 }
-                if (clinicTiming.Session == 2) {
+                if (clinicTiming.Session == 2 && clinicTiming.IsOpen == true) {
                   this.fg2.controls["SaturdayS2"].setValue(true);
                   this.fg2.controls["Sastart2"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -451,7 +451,7 @@ export class EditPage implements OnInit {
 
               case "Sunday":
                 this.fg2.controls["Sunday"].setValue(true);
-                if (clinicTiming.Session == 1) {
+                if (clinicTiming.Session == 1 && clinicTiming.IsOpen == true) {
                   this.fg2.controls["SundayS1"].setValue(true);
                   this.fg2.controls["Sustart"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -465,7 +465,7 @@ export class EditPage implements OnInit {
                   );
                   this.fg2.controls["Su1Id"].setValue(clinicTiming.Id);
                 }
-                if (clinicTiming.Session == 2) {
+                if (clinicTiming.Session == 2 && clinicTiming.IsOpen == true) {
                   this.fg2.controls["SundayS2"].setValue(true);
                   this.fg2.controls["Sustart2"].setValue(
                     moment(clinicTiming.StartTime, "HH:mm").format(
@@ -548,7 +548,25 @@ export class EditPage implements OnInit {
         };
         ct.push(obj1);
       }
-    }
+    }else if (this.fg2.value.M1Id) {
+        let obj = {
+          Day: "Mondayu",
+          IsOpen: 0,
+          Session: 1,
+          Id: this.fg2.value.M1Id
+        };
+        ct.push(obj);
+      }
+     else if (this.fg2.value.M2Id) {
+        let obj = {
+          Day: "Mondayu",
+          IsOpen: 0,
+          Session: 2,
+          Id: this.fg2.value.M2Id
+        };
+        ct.push(obj);
+      }
+    
 
     if (this.fg2.value.Tuesday) {
       if (this.fg2.value.TuesdayS1) {
@@ -592,7 +610,24 @@ export class EditPage implements OnInit {
         };
         ct.push(obj);
       }
-    }
+    }else if (this.fg2.value.Tu1Id) {
+        let obj = {
+          Day: "Tuesdayu",
+          IsOpen: 0,
+          Session: 1,
+          Id: this.fg2.value.Tu1Id
+        };
+        ct.push(obj);
+      }else if (this.fg2.value.Tu2Id) {
+        let obj = {
+          Day: "Tuesdayu",
+          IsOpen: 0,
+          Session: 2,
+          Id: this.fg2.value.Tu2Id
+        };
+        ct.push(obj);
+      }
+    
 
     if (this.fg2.value.Wednesday) {
       if (this.fg2.value.WednesdayS1) {
@@ -636,7 +671,25 @@ export class EditPage implements OnInit {
         };
         ct.push(obj);
       }
-    }
+    }else if (this.fg2.value.W1Id) {
+        let obj = {
+          Day: "Wednesdayu",
+          IsOpen: 0,
+          Session: 1,
+          Id: this.fg2.value.W1Id
+        };
+        ct.push(obj);
+      }
+      else if (this.fg2.value.W2Id) {
+        let obj = {
+          Day: "Wednesdayu",
+          IsOpen: 0,
+          Session: 2,
+          Id: this.fg2.value.W2Id
+        };
+        ct.push(obj);
+      }
+    
 
     if (this.fg2.value.Thursday) {
       if (this.fg2.value.ThursdayS1) {
@@ -680,7 +733,24 @@ export class EditPage implements OnInit {
         };
         ct.push(obj);
       }
-    }
+    }else if (this.fg2.value.Th1Id) {
+        let obj = {
+          Day: "Thursdayu",
+          IsOpen: 0,
+          Session: 1,
+          Id: this.fg2.value.Th1Id
+        };
+        ct.push(obj);
+      }else if (this.fg2.value.Th2Id) {
+        let obj = {
+          Day: "Thursdayu",
+          IsOpen: 0,
+          Session: 2,
+          Id: this.fg2.value.Th2Id
+        };
+        ct.push(obj);
+      }
+    
 
     if (this.fg2.value.Friday) {
       if (this.fg2.value.FridayS1) {
@@ -724,7 +794,23 @@ export class EditPage implements OnInit {
         };
         ct.push(obj);
       }
-    }
+    }else if (this.fg2.value.F1Id) {
+        let obj = {
+          Day: "Fridayu",
+          IsOpen: 0,
+          Session: 1,
+          Id: this.fg2.value.F1Id
+        };
+        ct.push(obj);
+      }else if (this.fg2.value.F2Id) {
+        let obj = {
+          Day: "Fridayu",
+          IsOpen: 0,
+          Session: 2,
+          Id: this.fg2.value.F2Id
+        };
+        ct.push(obj);
+      }
 
     if (this.fg2.value.Saturday) {
       if (this.fg2.value.SaturdayS1) {
@@ -767,7 +853,24 @@ export class EditPage implements OnInit {
         };
         ct.push(obj);
       }
-    }
+    }else if (this.fg2.value.Sa1Id) {
+        let obj = {
+          Day: "Saturdayu",
+          IsOpen: 0,
+          Session: 1,
+          Id: this.fg2.value.Sa1Id
+        };
+        ct.push(obj);
+      }else if (this.fg2.value.Sa2Id) {
+        let obj = {
+          Day: "Saturdayu",
+          IsOpen: 0,
+          Session: 2,
+          Id: this.fg2.value.Sa2Id
+        };
+        ct.push(obj);
+      }
+    
 
     if (this.fg2.value.Sunday) {
       if (this.fg2.value.SundayS1) {
@@ -805,6 +908,25 @@ export class EditPage implements OnInit {
           IsOpen: true,
           Session: 2,
           ...(this.fg2.value.Su2Id != null ? { Id: this.fg2.value.Su2Id } : {})
+        };
+        ct.push(obj);
+      }
+    }else{
+      if (this.fg2.value.Su1Id) {
+        let obj = {
+          Day: "Sundayu",
+          IsOpen: 0,
+          Session: 1,
+          Id: this.fg2.value.Su1Id
+        };
+        ct.push(obj);
+      }
+      if (this.fg2.value.Su2Id) {
+        let obj = {
+          Day: "Sundayu",
+          IsOpen: 0,
+          Session: 2,
+          Id: this.fg2.value.Su2Id
         };
         ct.push(obj);
       }
