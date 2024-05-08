@@ -17,9 +17,9 @@
     </ion-toolbar>
     <form [formGroup]="fg" (ngSubmit)="onSubmit()"> 
       
-      <ion-item class="custom-item-background" *ngFor="let control of fg.controls | keyvalue; let i = index ">
-        <ion-label>{{control.key}}</ion-label>  
-        <ion-checkbox [(ngModel)] = "doses[i].IsSpecial" [ngModelOptions]="{standalone: true}"></ion-checkbox>
+      <ion-item class="custom-item-background" *ngFor="let dose of doses let i = index">
+        <ion-label>{{dose.Name}}</ion-label>  
+        <ion-checkbox [(ngModel)] = "dose.IsSpecial" [ngModelOptions]="{standalone: true}"></ion-checkbox>
       </ion-item>      
     </form>
   </ion-card>
