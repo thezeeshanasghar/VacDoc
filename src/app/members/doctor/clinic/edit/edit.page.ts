@@ -550,7 +550,7 @@ export class EditPage implements OnInit {
       }
     }else if (this.fg2.value.M1Id) {
         let obj = {
-          Day: "Mondayu",
+          Day: "Monday",
           IsOpen: 0,
           Session: 1,
           Id: this.fg2.value.M1Id
@@ -559,7 +559,7 @@ export class EditPage implements OnInit {
       }
      else if (this.fg2.value.M2Id) {
         let obj = {
-          Day: "Mondayu",
+          Day: "Monday",
           IsOpen: 0,
           Session: 2,
           Id: this.fg2.value.M2Id
@@ -612,7 +612,7 @@ export class EditPage implements OnInit {
       }
     }else if (this.fg2.value.Tu1Id) {
         let obj = {
-          Day: "Tuesdayu",
+          Day: "Tuesday",
           IsOpen: 0,
           Session: 1,
           Id: this.fg2.value.Tu1Id
@@ -620,7 +620,7 @@ export class EditPage implements OnInit {
         ct.push(obj);
       }else if (this.fg2.value.Tu2Id) {
         let obj = {
-          Day: "Tuesdayu",
+          Day: "Tuesday",
           IsOpen: 0,
           Session: 2,
           Id: this.fg2.value.Tu2Id
@@ -673,7 +673,7 @@ export class EditPage implements OnInit {
       }
     }else if (this.fg2.value.W1Id) {
         let obj = {
-          Day: "Wednesdayu",
+          Day: "Wednesday",
           IsOpen: 0,
           Session: 1,
           Id: this.fg2.value.W1Id
@@ -682,7 +682,7 @@ export class EditPage implements OnInit {
       }
       else if (this.fg2.value.W2Id) {
         let obj = {
-          Day: "Wednesdayu",
+          Day: "Wednesday",
           IsOpen: 0,
           Session: 2,
           Id: this.fg2.value.W2Id
@@ -735,7 +735,7 @@ export class EditPage implements OnInit {
       }
     }else if (this.fg2.value.Th1Id) {
         let obj = {
-          Day: "Thursdayu",
+          Day: "Thursday",
           IsOpen: 0,
           Session: 1,
           Id: this.fg2.value.Th1Id
@@ -743,7 +743,7 @@ export class EditPage implements OnInit {
         ct.push(obj);
       }else if (this.fg2.value.Th2Id) {
         let obj = {
-          Day: "Thursdayu",
+          Day: "Thursday",
           IsOpen: 0,
           Session: 2,
           Id: this.fg2.value.Th2Id
@@ -796,7 +796,7 @@ export class EditPage implements OnInit {
       }
     }else if (this.fg2.value.F1Id) {
         let obj = {
-          Day: "Fridayu",
+          Day: "Friday",
           IsOpen: 0,
           Session: 1,
           Id: this.fg2.value.F1Id
@@ -804,7 +804,7 @@ export class EditPage implements OnInit {
         ct.push(obj);
       }else if (this.fg2.value.F2Id) {
         let obj = {
-          Day: "Fridayu",
+          Day: "Friday",
           IsOpen: 0,
           Session: 2,
           Id: this.fg2.value.F2Id
@@ -855,7 +855,7 @@ export class EditPage implements OnInit {
       }
     }else if (this.fg2.value.Sa1Id) {
         let obj = {
-          Day: "Saturdayu",
+          Day: "Saturday",
           IsOpen: 0,
           Session: 1,
           Id: this.fg2.value.Sa1Id
@@ -863,7 +863,7 @@ export class EditPage implements OnInit {
         ct.push(obj);
       }else if (this.fg2.value.Sa2Id) {
         let obj = {
-          Day: "Saturdayu",
+          Day: "Saturday",
           IsOpen: 0,
           Session: 2,
           Id: this.fg2.value.Sa2Id
@@ -914,7 +914,7 @@ export class EditPage implements OnInit {
     }else{
       if (this.fg2.value.Su1Id) {
         let obj = {
-          Day: "Sundayu",
+          Day: "Sunday",
           IsOpen: 0,
           Session: 1,
           Id: this.fg2.value.Su1Id
@@ -923,7 +923,7 @@ export class EditPage implements OnInit {
       }
       if (this.fg2.value.Su2Id) {
         let obj = {
-          Day: "Sundayu",
+          Day: "Sunday",
           IsOpen: 0,
           Session: 2,
           Id: this.fg2.value.Su2Id
