@@ -194,7 +194,8 @@ export class BulkPage implements OnInit {
 
   }
 
- 
+
+
   addDays(date, days) {
     console.log("date");
     console.log(date);
@@ -207,5 +208,14 @@ export class BulkPage implements OnInit {
     return myDate;
   }
 
-
+  isSubmitDisabled(): boolean {
+    for (let brandId of this.BrandIds) {
+      if (brandId) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
+  
 }

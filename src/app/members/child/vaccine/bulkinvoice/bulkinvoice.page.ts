@@ -38,7 +38,24 @@ export class BulkInvoicePage implements OnInit {
     public alertController: AlertController,
     private downloader: Downloader,
     public platform: Platform
+
+    
   ) { }
+
+  hasActiveValidations(): boolean {
+    return (this.fg.get('ConsultationFee').invalid && (this.fg.get('ConsultationFee').dirty || this.fg.get('ConsultationFee').touched)) ||
+           (this.bulkData && Array.isArray(this.bulkData) && this.bulkData.some(bulk => isNaN(Number(bulk.Amount))));
+  }
+  
+  
+ // Validations on amount
+  bulk = { Amount: '' };
+  isValidInput = true;
+
+  validateInput(event: any) {
+    const inputValue: string = event.target.value;
+    this.isValidInput = /^\d*$/.test(inputValue);
+  }
 
   ngOnInit() {
     this.storage.get(environment.DOCTOR_Id).then(val => {
@@ -50,14 +67,16 @@ export class BulkInvoicePage implements OnInit {
     this.getBulk();
     this.fg = this.formBuilder.group({
       IsConsultationFee: false,
-      ConsultationFee: null
+      ConsultationFee: [null, Validators.pattern('^[0-9]*$')] // Add Validators.pattern to allow only numbers
     });
+    
     this.storage.get(environment.ON_CLINIC).then(val => {
       this.fg.controls['ConsultationFee'].setValue(val.ConsultationFee);
       // this.fg.value.ConsultationFee = val.ConsultationFee;
     });
   }
 
+  
   async getBulk() {
     let data = { ChildId: this.childId, Date: this.currentDate1 };
     const loading = await this.loadingController.create({
@@ -157,9 +176,13 @@ export class BulkInvoicePage implements OnInit {
   }
 
   download(id, date, fee) {
-
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-indexed
+    const day = today.getDate().toString().padStart(2, '0');
+    const todayDate = `${year}-${month}-${day}`;
     if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
-      const url = `${this.API_VACCINE}child/${id}/${date}/${fee}/Download-Invoice-PDF`;
+      const url = `${this.API_VACCINE}child/${id}/${date}/${todayDate}/${fee}/Download-Invoice-PDF`;
       window.open(url);
     }
     else {
@@ -183,5 +206,7 @@ export class BulkInvoicePage implements OnInit {
         .catch((error: any) => console.error(error));
     }
 
+
+    
   }
 }
