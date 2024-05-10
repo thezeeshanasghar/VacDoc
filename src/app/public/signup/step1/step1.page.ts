@@ -30,7 +30,7 @@ export class Step1Page implements OnInit {
     this.fg = this.frombuilder.group({
       DoctorType: new FormControl("CS"),
       Qualification: [],
-      AdditionalInfo: ["", [Validators.required,this.seventySixCharactersValidator,]],
+      AdditionalInfo: ["", [Validators.required,this.OneLineValidator,]],
       FirstName: [],
       LastName: [],
       DisplayName: [],
@@ -58,7 +58,7 @@ export class Step1Page implements OnInit {
         "",
         Validators.compose([
           Validators.required,
-          Validators.minLength(7),
+          Validators.minLength(8),
           Validators.maxLength(11),
           Validators.pattern("^([0-9]*)$")
         ])
@@ -407,9 +407,10 @@ export class Step1Page implements OnInit {
     { name: 'Zimbabwe', code: '263' },
 ];
 
-  seventySixCharactersValidator(control: FormControl) {
+OneLineValidator(control: FormControl) {
   const value = control.value || "";
-  return value.length >= 76 ? null : { insufficientCharacters: true };
+  const lines = value.split('\n').filter(line => line.trim() !== '');
+  return lines.length >= 1 ? null : { insufficientLines: true };
 }
 
   PasswordGenerator() {
@@ -449,19 +450,19 @@ export class Step1Page implements OnInit {
       { type: "pattern", message: "Please enter a valid email." }
     ],
     mobileNumber: [
-      { type: "required", message: "MobileNumber is required." },
-      { type: "pattern", message: "Mobile number is required like 3331231231" }
+      { type: "required", message: "MobileNumber With Whatsapp is required." },
+      // { type: "pattern", message: "Mobile number  is required like 3331231231" }
     ],
     phoneNumber: [
-      { type: "required", message: "Phone number is required" },
+      { type: "required", message: "Appointment number is required" },
       {
         type: "minlength",
-        message: "Phone Number must be at least 7 Digits long."
+        message: "Appointment Number must be at least 8 Digits long."
       },
-      {
-        type: "maxlength",
-        message: "Phone Number must be at least 11 Digits long."
-      },
+      // {
+      //   type: "maxlength",
+      //   message: "Phone Number must be at least 11 Digits long."
+      // },
       { type: "pattern", message: "Enter Must be Number" }
     ],
     PMDC: [
@@ -472,7 +473,7 @@ export class Step1Page implements OnInit {
       { type: "required", message: "Design Your Letterpad is required." },
       {
         type: "insufficientCharacters",
-        message: "At least 76 Characters are required.",
+        message: "At least 1 line required.",
       },
     ],
   };
