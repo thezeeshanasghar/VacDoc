@@ -4,7 +4,7 @@ import { ClinicService } from "src/app/services/clinic.service";
 import { ToastService } from "src/app/shared/toast.service";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
-import { Router } from "@angular/router";
+import { NavigationEnd, Router } from "@angular/router";
 import { AlertService } from "src/app/shared/alert.service";
 
 @Component({
@@ -27,10 +27,12 @@ export class ClinicPage {
     private router: Router,
     private alertService: AlertService
   ) {
-    router.events.subscribe((val) => {
-     
-        this.Clinics = this.Clinics;
-    })
+    this.router.events.subscribe((val) => {
+      // Check if redirected from another page
+      if (val instanceof NavigationEnd) {
+        this.getClinics();
+      }
+    });
   }
 
   async ngOnInit() {
