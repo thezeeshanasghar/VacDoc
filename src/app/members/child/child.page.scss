@@ -1,7 +1,6 @@
 ion-content{
     // --background: #fff url('../../../assets/signup.jpg') no-repeat center center / cover;
     --background: radial-gradient(circle at top, #738abf , #9ebbff)
-
 }
 
 .girl {
@@ -18,7 +17,7 @@ ion-content{
 
 .custom-item-background {
     --background: rgba(0, 0, 0, 0.155); /* Replace 'your-color' with the desired background color */
-    border-radius: 2px;
+    border-radius: 7px;
     color: #fff;
 }
 
@@ -33,3 +32,17 @@ ion-content{
     border-radius: 2px;
     color: #fff;
 }
+
+.gender-image {
+    width: 100px; /* Adjust width as needed */
+    height: auto; /* Maintain aspect ratio */
+  }
+  
+  .gender-image path {
+    fill: blue; /* Default color for male */
+  }
+  
+  .gender-image.girl path {
+    fill: pink; /* Color for female */
+  }
+  

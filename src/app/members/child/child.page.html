@@ -30,7 +30,7 @@
   <ion-card *ngFor="let child of childs" [ngClass]="child.Gender=='Girl' ? 'girl' : 'boy'" class="custom-item-background">
   <ion-item class="custom-item-background2">
       <ion-thumbnail slot="start">
-        <ion-img [src]="child.Gender=='Girl' ? '../../assets/female.png' : '../../assets/male.png'"></ion-img>
+        <ion-img [src]="child.Gender=='Girl' ? '../../assets/female.png' : '../../assets/male.png'" class="{{child.Gender=='Girl' ? 'female-image' : 'male-image'}}"></ion-img>
       </ion-thumbnail>
       <ion-label>{{child.Name}}</ion-label>
   </ion-item>

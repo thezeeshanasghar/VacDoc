@@ -20,6 +20,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
+import { ReactiveFormsModule } from '@angular/forms';
 //import {MatDatepickerModule} from '@angular/material/datepicker';
 // import { MatFormFieldModule , MatInputModule } from '@angular/material';
 //import { MatMomentDateModule } from "@angular/material-moment-adapter";
@@ -49,6 +50,7 @@ export const MY_FORMATS = {
     NoopAnimationsModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    ReactiveFormsModule,
     // MatFormFieldModule,
     // MatInputModule
   ],

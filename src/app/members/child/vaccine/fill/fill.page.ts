@@ -4,7 +4,7 @@ import { VaccineService } from 'src/app/services/vaccine.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { LoadingController } from '@ionic/angular';
 import * as moment from 'moment';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
 
@@ -32,6 +32,7 @@ export class FillPage implements OnInit {
 
   fgAddData: FormGroup;
 
+  
   constructor(
     public loadingController: LoadingController,
     private formBuilder: FormBuilder,
@@ -45,6 +46,7 @@ export class FillPage implements OnInit {
 
   }
 
+  
 
   ngOnInit() {
     this.storage.get(environment.DOCTOR_Id).then((val) => {
@@ -62,9 +64,9 @@ export class FillPage implements OnInit {
       'DoctorId': [''],
       'Id': [null],
       'IsDone': [null],
-      'Weight': [null],
-      'Height': [null],
-      'Circle': [null],
+      Weight: new FormControl('', [Validators.required, Validators.pattern('^[0-9]*$')]),
+      Height: new FormControl('', [Validators.required, Validators.pattern('^[0-9]*$')]),
+      Circle: new FormControl('', [Validators.required, Validators.pattern('^[0-9]*$')]),
       'BrandId': [null],
       'GivenDate': [null],
       'IsDisease': [false],
@@ -225,7 +227,8 @@ export class FillPage implements OnInit {
   }
 
   isBrandFilled(): boolean{
-    return this.fg.get('BrandId').value !== null;
+    return this.fg.get('BrandId').value !== null; 
   }
+  
 
 }
