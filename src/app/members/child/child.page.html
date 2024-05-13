@@ -1,11 +1,11 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
+<ion-header id="bg-header">
+  <!-- <ion-toolbar color="primary">
+    <ion-buttons slot="start"> -->
       <!-- <ion-menu-button></ion-menu-button> -->
-    </ion-buttons>
-    <ion-title>Patients</ion-title>
-  </ion-toolbar>
-  <ion-toolbar color="primary" >
+    <!-- </ion-buttons> -->
+    <!-- <ion-title>Patients</ion-title> -->
+  <!-- </ion-toolbar> -->
+  <ion-toolbar color="dark">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
       <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
@@ -18,51 +18,56 @@
 <ion-content class="ion-padding">
   <!-- <ion-searchbar type="tel"></ion-searchbar> -->
 
-  <form [formGroup]="fg">
-    <ion-item>
+  <form [formGroup]="fg" class="custom-item-background">
+    <ion-item class="custom-item-background">
       <ion-input type="text" placeholder="search" formControlName="Name" (keyup.Enter)="getChlidbyUser(true)" required></ion-input>
-      <ion-button [disabled]="false" (click)="getChlidbyUser(true)">search</ion-button>
+      <ion-button [disabled]="false" (click)="getChlidbyUser(true)" color="dark">search</ion-button>
       <ion-button *ngIf = "search" (click)="getChlidByClinic(true)" >clear</ion-button>
     </ion-item>
 
   </form>
 
-  <ion-card *ngFor="let child of childs" [ngClass]="child.Gender=='Girl' ? 'girl' : 'boy'">
-  <ion-item>
+  <ion-card *ngFor="let child of childs" [ngClass]="child.Gender=='Girl' ? 'girl' : 'boy'" class="custom-item-background">
+  <ion-item class="custom-item-background2">
       <ion-thumbnail slot="start">
         <ion-img [src]="child.Gender=='Girl' ? '../../assets/female.png' : '../../assets/male.png'"></ion-img>
       </ion-thumbnail>
       <ion-label>{{child.Name}}</ion-label>
   </ion-item>
-  <ion-item class="ion-justify-content-center">
-      <ion-icon class="iconchild" slot="start" color="primary" name="create" routerLink="/members/child/edit/{{child.Id}}"></ion-icon>
-      <ion-icon class="iconchild" slot="start" color="primary" name="trash" (click)="alertforDeleteChild(child.Id)"></ion-icon>
-      <ion-icon class="iconchild" slot="start" color="primary" name="mail" routerLink="/members/child/cmsg/{{child.Id}}"></ion-icon>
-      <ion-icon class="iconchild" slot="start" color="primary" name="call"(click)="callFunction(child.User.MobileNumber)"></ion-icon>
+  <ion-item class="ion-justify-content-center custom-item-background2">
+      <ion-icon class="iconchild" slot="start" color="white" name="create" routerLink="/members/child/edit/{{child.Id}}"></ion-icon>
+      <ion-icon class="iconchild" slot="start" color="white" name="trash" (click)="alertforDeleteChild(child.Id)"></ion-icon>
+      <ion-icon class="iconchild" slot="start" color="white" name="mail" routerLink="/members/child/cmsg/{{child.Id}}"></ion-icon>
+      <ion-icon class="iconchild" slot="start" color="white" name="call"(click)="callFunction(child.User.MobileNumber)"></ion-icon>
     </ion-item> 
 
     <ion-card-content>
       <!-- <p> -->
-        <ion-icon color="primary" name="person"></ion-icon>
+        <ion-icon color="white" name="person"></ion-icon>
         {{child.FatherName}}
       <!-- </p> -->
+      &nbsp; &nbsp;
+
       <!-- <p> -->
-        <ion-icon color="primary" name="calendar"></ion-icon>
+        <ion-icon color="white" name="calendar"></ion-icon>
         {{child.DOB}}
       <!-- </p> -->
+      &nbsp; &nbsp;
       <!-- <p> -->
-        <ion-icon color="primary" name="call"></ion-icon>
+        <ion-icon color="white" name="call"></ion-icon>
         {{child.MobileNumber}}
       <!-- </p> -->
 <br>
-      <ion-button disabled="false" size="small" fill="outline" color="tertiary"
+      <ion-button disabled="false" size="small" fill="outline" color="dark"
         routerLink="/members/child/vaccine/{{child.Id}}">
         Vaccine
       </ion-button>
-      <ion-button size="small" fill="outline" color="tertiary" routerLink="/members/child/followup/{{child.Id}}">
+      &nbsp; &nbsp;
+      <ion-button size="small" fill="outline" color="dark" routerLink="/members/child/followup/{{child.Id}}">
         Follow Up
       </ion-button>
-      <ion-button disabled size="small" fill="outline" color="tertiary" routerLink="/members/child/invoice/{{child.Id}}">
+      &nbsp; &nbsp;
+      <ion-button disabled size="small" fill="outline" color="dark" routerLink="/members/child/invoice/{{child.Id}}">
         Invoice
       </ion-button>
     </ion-card-content>

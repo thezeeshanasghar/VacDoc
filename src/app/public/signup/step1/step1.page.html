@@ -175,19 +175,18 @@
       </ng-container>
     </div>
 
-    <ion-item  class="custom-item-background">
+    <ion-item class="custom-item-background">
       <ion-label color="white" position="floating">First Name</ion-label>
-      <ion-input type="text" formControlName="FirstName" class="ion-text-capitalize" required>
-      </ion-input>
+      <ion-input type="text" formControlName="FirstName" class="ion-text-capitalize" required></ion-input>
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.FirstName">
-        <div class="error-message"
-          *ngIf="fg.get('FirstName').hasError(validation.type) && (fg.get('FirstName').dirty || fg.get('FirstName').touched)">
+        <div class="error-message" *ngIf="fg.get('FirstName').hasError(validation.type) && (fg.get('FirstName').dirty || fg.get('FirstName').touched)">
           <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
         </div>
       </ng-container>
     </div>
+    
 
     <ion-item  class="custom-item-background">
       <ion-label color="white" position="floating">Last Name</ion-label>

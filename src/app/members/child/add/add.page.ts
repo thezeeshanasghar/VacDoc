@@ -75,9 +75,18 @@ export class AddPage implements OnInit {
     // this.getVaccine();
     this.fg1 = this.formBuilder.group({
       ClinicId: [""],
-      Name: new FormControl("", Validators.required),
-      Guardian: "Guardian",
-      FatherName: new FormControl("", Validators.required),
+      Name: ['', Validators.compose([
+        Validators.required,
+        Validators.pattern(/^[^\d]+$/)
+      ])],
+
+      Guardian: ["Guardian"],
+
+      FatherName: new FormControl("", Validators.compose([
+        Validators.required,
+        Validators.pattern(/^[^\d]+$/)
+      ])),      
+      
       Email: new FormControl(
         "",
         Validators.compose([
@@ -96,13 +105,13 @@ export class AddPage implements OnInit {
           Validators.pattern("^[0-9]+$")
         ])
       ),
-      PreferredDayOfWeek: 'Any',
+      // PreferredDayOfWeek: 'Any',
       Gender: [null,Validators.required],
       Type: [null,Validators.required],
       City: [null],
       CNIC:[""],
-      PreferredDayOfReminder: 0,
-      PreferredSchedule: [null],
+      // PreferredDayOfReminder: 0,
+      // PreferredSchedule: [null],
       IsEPIDone: [false],
       IsSkip: [true],
       IsVerified: [false],
@@ -424,8 +433,8 @@ export class AddPage implements OnInit {
       message: "loading"
     });
     await loading.present();
-    let str = this.fg1.value.PreferredDayOfWeek;
-    this.fg1.value.PreferredDayOfWeek = str.toString();
+    // let str = this.fg1.value.PreferredDayOfWeek;
+    // this.fg1.value.PreferredDayOfWeek = str.toString();
     this.fg1.value.ClinicId = this.clinic.Id;
     await this.childService.addChild(data).subscribe(
       async res => {
@@ -532,10 +541,10 @@ export class AddPage implements OnInit {
     this.storage.set(environment.CITY, city);
   }
 
-  uncheckany() {
-    if (this.fg1.value.PreferredDayOfWeek.length > 1)
-      this.fg1.value.PreferredDayOfWeek = this.fg1.value.PreferredDayOfWeek.filter(x => (x !== 'Any'));
-  }
+  // uncheckany() {
+  //   if (this.fg1.value.PreferredDayOfWeek.length > 1)
+  //     this.fg1.value.PreferredDayOfWeek = this.fg1.value.PreferredDayOfWeek.filter(x => (x !== 'Any'));
+  // }
   
   async checkEpi() {
     let days = await this.calculateDiff(this.fg1.value.DOB);
@@ -588,8 +597,11 @@ export class AddPage implements OnInit {
   // }
 
   validation_messages = {
-    name: [{ type: "required", message: "Name is required." }],
-    fatherName: [{ type: "required", message: "Guardian name is required." }],
+    name: [{ type: "required", message: "Name is required." },
+    { type: 'pattern', message: 'PLease Enter Only Charecters in First Name.' }],
+
+    fatherName: [{ type: "required", message: "Guardian name is required." },
+    { type: 'pattern', message: 'Only letters, spaces, commas, and hyphens are allowed in Guardian.' }],
     email: [
       { type: "required", message: "Email is required." },
       { type: "pattern", message: "Please enter a valid email." }
@@ -606,6 +618,8 @@ export class AddPage implements OnInit {
     gender: [{ type: "required", message: "Gender is required." }]
   };
   //cities = ['Islamabad', 'Rawalpindi', 'Multan', 'Other']
+
+  
 }
 
 ///

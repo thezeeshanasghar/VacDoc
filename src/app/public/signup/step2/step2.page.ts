@@ -71,7 +71,10 @@ export class Step2Page implements OnInit {
     // });
     this.fg1 = this.formbuilder.group({
       DoctorId: [null],
-      Name: [null],
+      Name: ['', Validators.compose([
+        Validators.required,
+        Validators.pattern(/^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/)
+      ])],
       PhoneNumber: new FormControl(
         "",
         Validators.compose([
@@ -1108,8 +1111,11 @@ export class Step2Page implements OnInit {
     }
   }
   validation_messages = {
-    Name: [{ type: "required", message: "Name is required." }],
-    Address: [{ type: "required", message: "Address is required." }],
+    Name: [{ type: "required", message: "Name is required." },
+    { type: 'pattern', message: 'Please Enter Only Charecters in First Name.' }
+    ],
+    Address: [{ type: "required", message: "Address is required." }
+    ],
     phoneNumber: [
       { type: "required", message: "Phone number is required" },
 
