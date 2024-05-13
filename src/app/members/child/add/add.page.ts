@@ -452,45 +452,26 @@ export class AddPage implements OnInit {
           sms1 += "\nClinic Phone Number: " + this.clinic.PhoneNumber;
           sms1 += "\nWeb Link:  https://vaccine.pk/";
           console.log(sms1);
-          // const ChildId=res.ResponseData.Id
-          // if (data.Type === 'regular') {
-          //   try {
-          //     const apiUrl = `${environment.BASE_URL}/Schedule/regular?DoctorId=${this.doctorId}&ChildId=${ChildId}`; // Replace this with your API endpoint
-          //     console.log(apiUrl)
-          
-          //     const response = await fetch(apiUrl, {
-          //       method: 'POST', // Specify your HTTP method (POST, GET, etc.)
-          //       headers: {
-          //         'Content-Type': 'application/json', // Set your request content type if needed
-          //         // Add any other headers if required
-          //       },
-               
-          //     });
-          
-          //     if (response.ok) {
-          //       const responseData = await response.json(); // Parse JSON response if needed
-          //       console.log('API Response:', responseData);
-          //       // Handle API response as needed
-          //     } else {
-          //       console.error('API Error:', response.statusText);
-          //       // Handle API error if needed
-          //     }
-          //   } catch (error) {
-          //     console.error('Error calling API:', error);
-          //     // Handle error if API call fails
-          //   }
-           
-          // }
+          const ChildId=res.ResponseData.Id
+          console.log('child id',ChildId)
+         
           loading.dismiss();
           this.toastService.create("successfully added");
-          const loading1 = await this.loadingController.create({
-            message: "sending Message"
-          });
-          await loading1.present();
+          if (data.Type === 'special'){
+            this.router.navigate([`/members/child/special/${ChildId}`]);
+          }
+      
+          // const loading1 = await this.loadingController.create({
+          //   message: "sending Message"
+          // });
+          // await loading1.present();
           // sendsms 1
-          await this.sendsms(res.ResponseData.MobileNumber, sms1);
-          loading1.dismiss();
-          this.router.navigate(["/members/child"]);
+          // await this.sendsms(res.ResponseData.MobileNumber, sms1);
+          // loading1.dismiss();
+          else{
+            this.router.navigate(["/members/child"]);
+          }
+          
         } else {
           loading.dismiss();
           this.formcontroll = false;

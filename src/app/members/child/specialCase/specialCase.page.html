@@ -1,0 +1,20 @@
+
+<ion-content class="ion-padding" *ngIf="doses">
+  <ion-card style="background-color: rgba(83, 83, 83, 0.411);">
+    <ion-toolbar color = "rgba(81, 81, 81, 0.289);" style="margin-top: 10px;">
+    
+      <ion-title style="text-align: center; color: white;" >Doses</ion-title>
+    </ion-toolbar>
+    <form [formGroup]="fg" (ngSubmit)="onSubmit()"> 
+      
+      <ion-item class="custom-item-background" *ngFor="let dose of doses let i = index">
+        <ion-label>{{dose.Name}}</ion-label>  
+        <ion-checkbox [(ngModel)] = "dose.IsSpecial" [ngModelOptions]="{standalone: true}"></ion-checkbox>
+      </ion-item>      
+    </form>
+  </ion-card>
+
+
+  
+  <ion-button style="display: block; margin: auto; width: 150px;"  (click)="getdoses()">Finish</ion-button> 
+</ion-content>
