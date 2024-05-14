@@ -53,9 +53,9 @@ export class BulkPage implements OnInit {
     this.fg = this.formBuilder.group({
       DoctorId: [""],
       Id: [null],
-      Weight: [null],
-      Height: [null],
-      Circle: [null],
+      Weight: ['', [Validators.required, Validators.pattern('^[0-9.]*$')]],
+      Height: ['', [Validators.required, Validators.pattern('^[0-9.]*$')]],
+      Circle: ['', [Validators.required, Validators.pattern('^[0-9.]*$')]],
       BrandId0: [null],
       BrandId1: [null],
       BrandId2: [null],
