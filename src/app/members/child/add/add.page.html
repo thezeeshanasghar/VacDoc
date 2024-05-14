@@ -133,21 +133,22 @@
       </ion-item>
 
 
-      <ion-label id="dob" color="white" position="floating" style="margin-left: 1.5%;">Date of Birth</ion-label>
+      <ion-label id="dob" color="white" position="floating" style="margin-left: 1.5%; margin-bottom: 20px;">Date of Birth</ion-label>
       <input formControlName="DOB" slot="end" matInput [matDatepicker]="picker" disabled max="{{todaydate}}"
         (click)="picker.open()" (dateChange)="checkEpi()">
-      <mat-datepicker-toggle slot="end" matSuffix [for]="picker"></mat-datepicker-toggle>
+      <img src="../../../../assets/calendar.png" (click)="picker.open()" style="cursor: pointer; height: 30px; margin-bottom: -10px;">
       <mat-datepicker slot="end" #picker disabled="false"></mat-datepicker>
-
-      <div class="validation-errors">
+      
+      <div class="validation-errors" style="margin-bottom: 20px;">
         <ng-container *ngFor="let validation of validation_messages.DOB">
           <div class="error-message"
             *ngIf="fg1.get('DOB').hasError(validation.type) && (fg1.get('DOB').dirty || fg1.get('DOB').touched)">
-            <ion-icon name="information-circle-outline" style="color: white;" ></ion-icon>
+            <ion-icon name="information-circle-outline" style="color: rgb(255, 0, 0); margin-bottom: -2px;"></ion-icon>
             {{ validation.message }}
           </div>
         </ng-container>
       </div>
+      
 
 
       <ion-item class="custom-item-background1">
