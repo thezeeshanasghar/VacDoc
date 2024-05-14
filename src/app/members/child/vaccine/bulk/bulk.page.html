@@ -10,7 +10,7 @@
 <ion-content padding>
 
   <form [formGroup]="fg" (ngSubmit)="onSubmit()">
-     <ion-item>
+    <ion-item>
       <ion-label color="primary" position="floating">Weight</ion-label>
       <ion-input type="text" placeholder="Weight" formControlName="Weight"></ion-input>
       <ion-text color="danger" *ngIf="fg.get('Weight').invalid && (fg.get('Weight').dirty || fg.get('Weight').touched || fg.get('Weight').submitted)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
@@ -22,8 +22,9 @@
         </ng-container>
       </ion-text>
       <ion-text color="success" *ngIf="fg.get('Weight').valid && (fg.get('Weight').dirty || fg.get('Weight').touched || fg.get('Weight').submitted)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-        Perfect
+        <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon> <!-- Use the name of the desired icon -->
       </ion-text>
+      
     </ion-item>
     
     <ion-item>
@@ -38,7 +39,7 @@
         </ng-container>
       </ion-text>
       <ion-text color="success" *ngIf="fg.get('Height').valid && (fg.get('Height').dirty || fg.get('Height').touched || fg.get('Height').submitted)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-        Perfect
+        <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon> <!-- Use the name of the desired icon -->
       </ion-text>
     </ion-item>
     
@@ -54,9 +55,10 @@
         </ng-container>
       </ion-text>
       <ion-text color="success" *ngIf="fg.get('Circle').valid && (fg.get('Circle').dirty || fg.get('Circle').touched || fg.get('Circle').submitted)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-        Perfect
+        <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon> <!-- Use the name of the desired icon -->
       </ion-text>
     </ion-item>
+    
     <!-- <ion-item>
       <ion-label color="primary" position="floating">Disease</ion-label>
       <ion-input type="text" placeholder="Disease"></ion-input>
