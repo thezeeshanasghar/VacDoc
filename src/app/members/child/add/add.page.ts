@@ -23,6 +23,8 @@ import { AlertController } from '@ionic/angular';
 import { env } from 'process';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 
 @Component({
   selector: "app-add",
@@ -61,7 +63,8 @@ export class AddPage implements OnInit {
     private androidPermissions: AndroidPermissions,
     private sms: SMS,
     private titlecasePipe: TitleCasePipe,
-    public alertCtrl: AlertController
+    public alertCtrl: AlertController,
+    private http: HttpClient
   ) { }
 
   ngOnInit() {}
@@ -390,7 +393,38 @@ export class AddPage implements OnInit {
     { name: 'Zambia', code: '260' },
     { name: 'Zimbabwe', code: '263' },
 ];
+sendMessage(sms1: string): void {
+  const url = 'https://graph.facebook.com/v19.0/331514553372468/messages';
+  const accessToken = 'EAANxUIaDgugBO5XJ4tQLZBHcRQgF7l9znlMHTl1QXgjx4WXmMjF1J7hqAnFdQxUOOgsc7YMhj7FvBRWG60QdMNitVTeaZAI49YidLNZB2dtfKRDyBYOY28hQUYkvxg2hvqCrOvupbAGPfcC3ZBDSejZAv8ZBxts3qTjsh1tN8TCiqEwKYqGuaMPKA4wPkCzUzteXjbCSCOvgP5gdN2rC8ZD';
 
+  // Set the headers
+  const headers = new HttpHeaders({
+    'Authorization': `Bearer ${accessToken}`,
+    'Content-Type': 'application/json'
+  });
+
+  // Set the data to be sent
+  const data = {
+    "messaging_product": "whatsapp",
+    "recipient_type":"individual",
+    "to": "whatsapp:+923259944582",
+    "type": "text",
+    "text":{
+      "body":sms1
+    } 
+  };
+
+  // Make the POST request
+  this.http.post(url, data, { headers })
+    .subscribe(
+      (response) => {
+        console.log('Message sent successfully:', response);
+      },
+      (error) => {
+        console.error('Error sending message:', error);
+      }
+    );
+}
   async moveNextStep() {
     this.fg1.value.DOB = await moment(this.fg1.value.DOB, "YYYY-MM-DD").format("DD-MM-YYYY");
     // this.formcontroll = true;
@@ -457,6 +491,7 @@ export class AddPage implements OnInit {
          
           loading.dismiss();
           this.toastService.create("successfully added");
+          // this.sendMessage(sms1)
           if (data.Type === 'special'){
             this.router.navigate([`/members/child/special/${ChildId}`]);
           }
