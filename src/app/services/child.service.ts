@@ -9,6 +9,10 @@ import { catchError, map } from 'rxjs/operators'
   providedIn: 'root'
 })
 export class ChildService extends BaseService {
+  add: any;
+  checkIfMobileExist(MobileNumber: any) {
+    throw new Error("Method not implemented.");
+  }
   private readonly API_CHILD = `${environment.BASE_URL}`
   constructor(
     protected http: HttpClient

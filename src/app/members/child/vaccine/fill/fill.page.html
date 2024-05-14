@@ -81,8 +81,8 @@
     
     <ion-item *ngIf="!fg.value.IsDisease">
       <ion-label color="primary">Brands</ion-label>
-      <ion-select (ionChange)="updateBrand($event.detail.value)" [interfaceOptions]="selectInterfaceOptions">
-        <ion-select-option *ngFor="let user of brandName" [value]="user.Id">{{ user.Name }}</ion-select-option>
+      <ion-select formControlName="BrandId">
+        <ion-select-option *ngFor="let user of brandName" [value]="user.Id">{{user.Name}}</ion-select-option>
       </ion-select>
     </ion-item>
     
