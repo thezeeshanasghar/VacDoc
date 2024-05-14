@@ -25,6 +25,10 @@ export class BulkPage implements OnInit {
   fg: FormGroup;
   todaydate: any;
   BrandIds = [];
+  customActionSheetOptions: any = {
+    header: 'Select Brand',
+    cssClass: 'action-sheet-class'
+  };
   constructor(
     private loadingController: LoadingController,
     private activatedRoute: ActivatedRoute,

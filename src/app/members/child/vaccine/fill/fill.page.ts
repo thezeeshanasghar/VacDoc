@@ -16,6 +16,10 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./fill.page.scss'],
 })
 export class FillPage implements OnInit {
+  customActionSheetOptions: any = {
+    header: 'Select Brand',
+    cssClass: 'action-sheet-class'
+  };
 
   fg: FormGroup;
   doctorId: any;
