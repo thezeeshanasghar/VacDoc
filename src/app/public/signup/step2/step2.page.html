@@ -71,15 +71,14 @@
         </div>
 
         <ion-item class="custom-item-background">
-            <!-- <ion-button slot="end" (click)="uploadMonogram()">Upload Monogram</ion-button> -->
             <ion-label color="white">Upload Monogram</ion-label>
-            <input type="file" (change)="uploadMonogram($event)" accept=".png, .jpg, .jpeg" />
+            <input type="file" (change)="onFileSelected($event)" accept=".png, .jpg, .jpeg" />
         </ion-item>
-        <!-- <ion-item *ngIf="fg1.value.MonogramImage">
-            <p *ngIf="uploading">Uploading Monogram...</p>
-            <ion-img *ngIf="fg1.value.MonogramImage" [src]="resourceURL + fg1.value.MonogramImage" alt="Monogram Image">
-            </ion-img>
-        </ion-item> -->
+        
+        <ion-item *ngIf="fileTooLarge" class="custom-item-background">
+            <ion-label color="danger">File size should not exceed 100 KB</ion-label>
+        </ion-item>
+
 
 
 

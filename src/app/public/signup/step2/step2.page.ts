@@ -1110,6 +1110,23 @@ export class Step2Page implements OnInit {
       }
     }
   }
+  fileTooLarge = false;
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+
+    if (file) {
+      const fileSizeInKB = file.size / 1024;
+      if (fileSizeInKB > 100) {
+        this.fileTooLarge = true;
+        event.target.value = '';
+      } else {
+        this.fileTooLarge = false;
+        this.uploadMonogram(file);
+      }
+    }
+  }
+
   validation_messages = {
     Name: [{ type: "required", message: "Name is required." },
     { type: 'pattern', message: 'Please Enter Only Charecters in First Name.' }
