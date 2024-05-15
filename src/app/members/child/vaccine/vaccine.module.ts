@@ -20,7 +20,6 @@ const routes: Routes = [
   { path: 'bulk/:childId', loadChildren: './bulk/bulk.module#BulkPageModule' },
   { path: 'bulkinvoice/:childId', loadChildren: './bulkinvoice/bulkinvoice.module#BulkInvoicePageModule' },
   { path: "edit", loadChildren: "./edit/scheduleedit.module#ChildSceduleEditPageModule" },
-  { path: "edit2", loadChildren: "./edit2/scheduleedit2.module#ChildSceduleEditPageModule2" }
 ];
 
 @NgModule({

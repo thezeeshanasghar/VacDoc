@@ -55,7 +55,8 @@ export class ChildSceduleEditPage implements OnInit {
       message: "Loading"
     });
     await loading.present();
-    await this.doseService.getDosesSpecial().subscribe(
+    
+    await this.doseService.getDosesChild(this.ChildId).subscribe(
       res => {
         if (res.IsSuccess) {
           this.doses = res.ResponseData;

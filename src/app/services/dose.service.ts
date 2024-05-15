@@ -56,6 +56,13 @@ export class DoseService extends BaseService {
       catchError(this.handleError)
     );
   }
+  getDosesChild(id): Observable<any> {
+    const url = `${this.API_DOSE}/doses/${id}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
 
   addScheduleDose(data): Observable<any> {
     const url = `${this.API_schedule}`;
