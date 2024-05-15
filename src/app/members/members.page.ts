@@ -72,7 +72,7 @@ export class MembersPage implements OnInit {
     {
       title: "Dashboard",
       url: "/members/dashboard",
-      icon: "home"
+      icon: "home-outline"
     },
     {
       title: "Alerts",
@@ -82,7 +82,7 @@ export class MembersPage implements OnInit {
     {
       title: "Messages",
       url: "/members/message",
-      icon: "mail"
+      icon: "mail-unread-outline"
     }
   ];
 
@@ -90,12 +90,12 @@ export class MembersPage implements OnInit {
     {
       title: "Clinic",
       url: "/members/doctor/clinic",
-      icon: "moon"
+      icon: "moon-outline"
     },
     {
       title: "Schedule",
       url: "/members/doctor/schedule",
-      icon: "recording"
+      icon: "recording-outline"
     },
     {
       title: "Vacation",
@@ -105,17 +105,17 @@ export class MembersPage implements OnInit {
     {
       title: "Change Password",
       url: "/members/doctor/password",
-      icon: "moon"
+      icon: "key-outline"
     },
     {
       title: "Brand Inventory",
       url: "/members/doctor/brand-inventory",
-      icon: "locate"
+      icon: "clipboard-outline"
     },
     {
       title: "Brand Amount",
       url: "/members/doctor/brand-amount",
-      icon: "locate"
+      icon: "wallet-outline"
     }
   ];
 
@@ -123,12 +123,12 @@ export class MembersPage implements OnInit {
     {
       title: "Patients",
       url: "/members/child",
-      icon: "man"
+      icon: "accessibility-outline"
     },
     {
       title: "Add",
       url: "/members/child/add",
-      icon: "person-add"
+      icon: "person-add-outline"
     }
   ];
 
