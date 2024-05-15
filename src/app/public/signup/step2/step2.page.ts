@@ -1110,7 +1110,11 @@ export class Step2Page implements OnInit {
       }
     }
   }
+  monogramUrl: string | ArrayBuffer | null = null;
   fileTooLarge = false;
+  dimensionsExceeded = false;
+  imageWidth = 1200;
+  imageHeight = 340;
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
@@ -1119,11 +1123,30 @@ export class Step2Page implements OnInit {
       const fileSizeInKB = file.size / 1024;
       if (fileSizeInKB > 100) {
         this.fileTooLarge = true;
+        this.dimensionsExceeded = false;
         event.target.value = '';
+        return;
       } else {
         this.fileTooLarge = false;
-        this.uploadMonogram(file);
       }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          if (img.width > this.imageWidth || img.height > this.imageHeight) {
+            this.dimensionsExceeded = true;
+            this.monogramUrl = null;
+            event.target.value = '';
+          } else {
+            this.dimensionsExceeded = false;
+            this.monogramUrl = reader.result;
+            this.uploadMonogram(file);
+          }
+        };
+        img.src = reader.result as string;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
