@@ -110,7 +110,6 @@ export class AddPage implements OnInit {
       ),
       // PreferredDayOfWeek: 'Any',
       Gender: [null,Validators.required],
-      Type: [null,Validators.required],
       City: [null],
       CNIC:[""],
       // PreferredDayOfReminder: 0,
@@ -492,9 +491,7 @@ sendMessage(sms1: string): void {
           loading.dismiss();
           this.toastService.create("successfully added");
           // this.sendMessage(sms1)
-          if (data.Type === 'special'){
-            this.router.navigate([`/members/child/special/${ChildId}`]);
-          }
+          
       
           // const loading1 = await this.loadingController.create({
           //   message: "sending Message"
@@ -503,9 +500,8 @@ sendMessage(sms1: string): void {
           // sendsms 1
           // await this.sendsms(res.ResponseData.MobileNumber, sms1);
           // loading1.dismiss();
-          else{
-            this.router.navigate(["/members/child"]);
-          }
+          
+          this.router.navigate(["/members/child"]);
           
         } else {
           loading.dismiss();
