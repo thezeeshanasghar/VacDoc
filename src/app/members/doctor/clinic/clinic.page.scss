@@ -1,3 +1,6 @@
+ion-content{
+  --background: radial-gradient(circle at top, #a1b8ef , #a1b8ef)
+}
 .timing-info {
     display: block;
     padding: 5px; /* Adjust as needed */
@@ -6,4 +9,13 @@
   .timing-details {
     display: block;
     padding: 5px; /* Adjust as needed */
+  }
+  .header{
+    background-color: black;
+  }
+
+  .custom-item-background {
+    --background: rgba(8, 8, 8, 0); /* Replace 'your-color' with the desired background color */
+    border-radius: 2px;
+    color: #fff;
   }

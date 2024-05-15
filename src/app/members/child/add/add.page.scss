@@ -1,5 +1,5 @@
 ion-content{
-  --background: radial-gradient(circle at top, #738abf, #738abf)
+  --background: radial-gradient(circle at top, #a1b8ef , #a1b8ef)
 }
 
 .error-message {
@@ -38,27 +38,22 @@ ion-list-header{
   margin-left: 0;
 }
 
-.custom-item-background2 {
-  --background:rgba(161, 161, 161, 0);  /* Replace 'your-color' with the desired background color */
-  color: #fff;
-}
-
-.custom-item-background {
-  --background: rgba(161, 161, 161, 0); /* Replace 'your-color' with the desired background color */
-  color: #fff;
-}
-
-
 .custom-item-background1 {
-  --background: rgba(161, 161, 161, 0.26); /* Replace 'your-color' with the desired background color */
+  --background: rgba(8, 8, 8, 0.162); /* Replace 'your-color' with the desired background color */
   color: #fff;
 }
 
+
+.custom-item-background2 {
+  --background: rgba(8, 8, 8, 0); /* Replace 'your-color' with the desired background color */
+  color: #fff;
+}
 
 .custom-item-background3 {
   --background: rgb(0, 0, 0); /* Replace 'your-color' with the desired background color */
   color: #fff;
 }
+
 
 #EPI{
   height: auto;

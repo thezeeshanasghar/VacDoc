@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="dark">
     <ion-buttons slot="start">
       <!-- <ion-menu-button></ion-menu-button> -->
     </ion-buttons>
@@ -17,14 +17,14 @@
       <ion-item slot="end" color="primary">
           <ion-icon slot="end" name="medkit" size="large" > </ion-icon>
         </ion-item> -->
-        <ion-item routerLink="/members/doctor/clinic/add" slot="end" color="primary">
-            <ion-icon  name="add" slot="end" color="light"></ion-icon>
+        <ion-item routerLink="/members/doctor/clinic/add" slot="end" color="dark">
+            <ion-icon  name="add" slot="end" color="light" style="background-color: black;"></ion-icon>
           </ion-item>
           <!-- <ion-item slot="end" color="primary">
               <ion-menu-button></ion-menu-button>
             </ion-item> -->
   </ion-toolbar>
-  <ion-toolbar color="primary" >
+  <ion-toolbar color="dark">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
       <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
@@ -37,12 +37,12 @@
 
 
 <ion-content *ngIf="Clinics">
-  <ion-card *ngFor="let clinic of Clinics">
-    <ion-item> 
-      <ion-label>{{clinic.Name}}</ion-label>
-      <ion-icon slot="end" routerLink="/members/doctor/clinic/edit/{{clinic.Id}}" color="primary" name="create">
+  <ion-card *ngFor="let clinic of Clinics"  style="background-color: rgba(81, 81, 81, 0.2); color: white;">
+    <ion-item color="meduim"> 
+      <ion-label color="light">{{clinic.Name}}</ion-label>
+      <ion-icon slot="end" routerLink="/members/doctor/clinic/edit/{{clinic.Id}}" color="light" name="create">
       </ion-icon>
-      <ion-icon slot="end" (click)="alertDeleteClinic(clinic.Id)" color="primary" name="trash"></ion-icon>
+      <ion-icon slot="end" (click)="alertDeleteClinic(clinic.Id)" color="light" name="trash"></ion-icon>
     </ion-item>
 
     <ion-card-content>
@@ -57,8 +57,8 @@
         </span>
       </p>
       <p *ngIf="!clinic.ClinicTimings || !clinic.ClinicTimings.length">No timings available</p> -->
-      <ion-button size="small" fill="outline" color="tertiary" routerLink="/vaccine/{{clinic.Id}}/dose">
-        Patients &nbsp;<ion-badge size="small" color="primary">{{clinic.childrenCount}}</ion-badge>
+      <ion-button size="small" fill="outline" color="dark" routerLink="/vaccine/{{clinic.Id}}/dose">
+        Patients &nbsp;<ion-badge size="small" color="dark">{{clinic.childrenCount}}</ion-badge>
       </ion-button>
       <ion-button *ngIf="!clinic.IsOnline" size="small" fill="outline" color="tertiary"
         (click)="setOnlineClinic(clinic.Id)">

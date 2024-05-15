@@ -6,7 +6,7 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content color="light">
+    <ion-content color="medium">
       <ion-list class="menu">
         <ion-menu-toggle auto-hide="false" *ngFor="let p of profile">
           <ion-item color="medium" [routerDirection]="'root'" [routerLink]="[p.url]">
@@ -20,7 +20,7 @@
           </ion-item>
         </ion-menu-toggle>
         <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
-          <ion-item color="medium" [routerDirection]="'root'" [routerLink]="[p.url]">
+          <ion-item lines="none" color="medium" [routerDirection]="'root'" [routerLink]="[p.url]">
             <ion-icon [name]="p.icon" [color]="p.title === 'Alerts' ? 'warning' : 'dark'" slot="start"></ion-icon>
             <ion-label>
               {{p.title}}
@@ -35,7 +35,7 @@
           </ion-label>
         </ion-item-divider> -->
         <ion-menu-toggle auto-hide="false" *ngFor="let p of doctorPages">
-          <ion-item color="medium" [routerDirection]="'root'" [routerLink]="[p.url]">
+          <ion-item lines="none" color="medium" [routerDirection]="'root'" [routerLink]="[p.url]">
             <ion-icon color="dark" slot="start" [name]="p.icon"></ion-icon>
             <ion-label>
               {{p.title}}
@@ -49,7 +49,7 @@
           </ion-label>
         </ion-item-divider> -->
         <ion-menu-toggle auto-hide="false" *ngFor="let p of childPages">
-          <ion-item color="medium" [routerDirection]="'root'" [routerLink]="[p.url]">
+          <ion-item lines="none" color="medium" [routerDirection]="'root'" [routerLink]="[p.url]">
             <ion-icon color="dark" slot="start" [name]="p.icon"></ion-icon>
             <ion-label>
               {{p.title}}
@@ -57,7 +57,7 @@
           </ion-item>
         </ion-menu-toggle>
 
-        <ion-item color="medium" routerLink="/login" (click)="clearStorage()">
+        <ion-item lines="none" color="medium" routerLink="/login" (click)="clearStorage()">
           <ion-icon color="dark" slot="start" name="power"></ion-icon>
           <ion-label>Logout</ion-label>
         </ion-item>
