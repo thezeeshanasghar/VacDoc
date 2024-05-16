@@ -1,11 +1,11 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="dark">
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title>Vaccine Schedule</ion-title>
   </ion-toolbar>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="dark">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
       <ion-icon style="margin-left: 10%" routerLink="/members/child/add" name="person-add" size="large"> </ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/alert" name="alert" size="large"> </ion-icon>
@@ -17,7 +17,7 @@
 
 <ion-content class="ion-padding" *ngIf="doses">
   <form [formGroup]="fg">
-    <ion-item *ngFor="let control of fg.controls | keyvalue : returnZero; let i = index ">
+    <ion-item color="medium" *ngFor="let control of fg.controls | keyvalue : returnZero; let i = index ">
       <ion-checkbox [(ngModel)]="doses[i].IsActive" [ngModelOptions]="{standalone: true}" slot="start"></ion-checkbox>
       <ion-label>{{control.key}}</ion-label>
       <ion-select [formControlName]="control.key" value="{{control.value.value}}">
@@ -117,12 +117,12 @@
       </ion-select>
     </ion-item>
 
-    <ion-button (click)="onSubmit()">Save</ion-button>
+    <ion-button (click)="onSubmit()" color="dark">Save</ion-button>
 
   </form>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button routerLink="edit">
-      <ion-icon name="add"></ion-icon>
+    <ion-fab-button routerLink="edit" color="dark">
+      <ion-icon name="add" color="light"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 </ion-content>

@@ -1,11 +1,11 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="dark">
     <ion-buttons slot="start">
       <!-- <ion-menu-button></ion-menu-button> -->
     </ion-buttons>
     <ion-title>Brand Inventory</ion-title>
   </ion-toolbar>
-  <ion-toolbar color="primary" >
+  <ion-toolbar color="dark" >
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
       <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
@@ -19,7 +19,7 @@
 
   <form>
     <ion-grid>
-      <ion-row style="background: lightblue;">
+      <ion-row style="background: rgb(0, 0, 0); color: white;">
         <ion-col>Vaccine Name</ion-col>
         <ion-col>Brand Name</ion-col>
         <ion-col>Inventory</ion-col>
@@ -33,6 +33,6 @@
       </ion-row>
     </ion-grid>
     <!-- <ion-button disabled="true" (click)="setOnlineClinic(b.ID)">Update Inventory</ion-button> -->
-    <ion-button (click)="updateBrandInventory()">Update Inventory</ion-button>
+    <ion-button (click)="updateBrandInventory()" color="dark">Update Inventory</ion-button>
   </form>
 </ion-content>

@@ -159,7 +159,7 @@
 
       <ion-item class="custom-item-background2">
         <div style="display: flex ;">
-          <ion-label color="white" position="floating" style="font-size: 20px; float: left;">Mobile Number</ion-label>
+          <ion-label color="white" position="floating" style="font-size: 20px; float: left; margin-top: -10px;">Mobile Number</ion-label>
           <ion-select formControlName="CountryCode" style="padding-top: 25px;">
             <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
               (+{{ country.code }}) {{ country.name }}
