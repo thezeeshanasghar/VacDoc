@@ -39,6 +39,7 @@ export class Step2Page implements OnInit {
   uploading;
   resourceURL = environment.RESOURCE_URL;
   @ViewChild("mapElement", { static: true }) mapElement;
+  @ViewChild('fileInput',{ static: true }) fileInput: any;
   DoctorId: any;
   latitude: any = 33.6328532;
   longitude: any = 72.93583679;
@@ -157,6 +158,7 @@ export class Step2Page implements OnInit {
     });
     this.ionViewDidEnte();
   }
+  
 
   async uploadMonogram(event: Event) {
     if(this.isWeb){
@@ -167,8 +169,9 @@ export class Step2Page implements OnInit {
 
 
       const file = fileInput.files[0];
+      
       console.log('Selected File:', file);
-      if (file.size < 100000) {
+      if (file.size < 100000 ) {
         try {
           const formData = new FormData();
           formData.append('file', file);
@@ -186,9 +189,11 @@ export class Step2Page implements OnInit {
         } catch (error) {
           console.error('Error uploading file:', error);
           this.toastService.create('Error uploading file', 'danger');
+          this.fileInput.nativeElement.value = '';
         }
       } else {
         this.toastService.create('File size must be less than 100 KB', 'danger');
+        this.fileInput.nativeElement.value = '';
       }
     } 
     else{
@@ -220,11 +225,14 @@ export class Step2Page implements OnInit {
                     console.log('this.fg1.value.MonogramImage',this.fg1.value.MonogramImage);
                   }, (err) => {
                     console.log(err)
+                    
                     // error
                   })
               }
               else
                 this.toastService.create("File size must be less than 100 kb", "danger");
+                this.fileInput.nativeElement.value = '';
+                
             });
           }, err => {
             console.log(err);
@@ -1110,45 +1118,7 @@ export class Step2Page implements OnInit {
       }
     }
   }
-  monogramUrl: string | ArrayBuffer | null = null;
-  fileTooLarge = false;
-  dimensionsExceeded = false;
-  imageWidth = 1200;
-  imageHeight = 340;
-
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
-
-    if (file) {
-      const fileSizeInKB = file.size / 1024;
-      if (fileSizeInKB > 100) {
-        this.fileTooLarge = true;
-        this.dimensionsExceeded = false;
-        event.target.value = '';
-        return;
-      } else {
-        this.fileTooLarge = false;
-      }
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          if (img.width > this.imageWidth || img.height > this.imageHeight) {
-            this.dimensionsExceeded = true;
-            this.monogramUrl = null;
-            event.target.value = '';
-          } else {
-            this.dimensionsExceeded = false;
-            this.monogramUrl = reader.result;
-            this.uploadMonogram(file);
-          }
-        };
-        img.src = reader.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
+ 
 
   validation_messages = {
     Name: [{ type: "required", message: "Name is required." },

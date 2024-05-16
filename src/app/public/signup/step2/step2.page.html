@@ -72,15 +72,15 @@
 
         <ion-item class="custom-item-background">
             <ion-label color="white">Upload Monogram</ion-label>
-            <input type="file" (change)="onFileSelected($event)" accept=".png, .jpg, .jpeg" />
+            <input #fileInput type="file" (change)="uploadMonogram($event)" accept=".png, .jpg, .jpeg"  />
           </ion-item>
           
-          <ion-item *ngIf="fileTooLarge || dimensionsExceeded" class="custom-item-background">
+          <!-- <ion-item *ngIf="fileTooLarge || dimensionsExceeded" class="custom-item-background">
             <ion-label color="danger" *ngIf="fileTooLarge">File size should not exceed 100 KB</ion-label>
             <ion-label color="danger" *ngIf="dimensionsExceeded">Image dimensions should not exceed 1200x340 px</ion-label>
           </ion-item>
           
-          <img *ngIf="monogramUrl && !fileTooLarge && !dimensionsExceeded" [src]="monogramUrl" class="image-size" />
+          <img *ngIf="monogramUrl && !fileTooLarge && !dimensionsExceeded" [src]="monogramUrl" class="image-size" /> -->
           
 
 
