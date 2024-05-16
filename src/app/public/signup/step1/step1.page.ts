@@ -58,7 +58,7 @@ export class Step1Page implements OnInit {
         "",
         Validators.compose([
           Validators.required,
-          Validators.pattern("[0-9]{10}$"),
+          Validators.pattern(/^\d{10,}$/)
         ])
       ),
       ShowMobile: [true],
