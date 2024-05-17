@@ -169,9 +169,20 @@ export class Step2Page implements OnInit {
 
 
       const file = fileInput.files[0];
+      const img = new Image();
+      // Create a URL for the file
+      const fileURL = URL.createObjectURL(file);
+  
+      // Set the Image object's src to the file URL
+      img.src = fileURL;
+      console.log(fileURL);
       
-      console.log('Selected File:', file);
-      if (file.size < 100000 ) {
+      img.onload = async () =>{
+        console.log('Image Width:', img.naturalWidth);
+        console.log('Image Height:', img.naturalHeight);
+        console.log('Selected File:', file);
+     
+      if (file.size < 100000 && img.naturalHeight == 339 && img.naturalWidth == 1200) {
         try {
           const formData = new FormData();
           formData.append('file', file);
@@ -194,6 +205,7 @@ export class Step2Page implements OnInit {
       } else {
         this.toastService.create('File size must be less than 100 KB', 'danger');
         this.fileInput.nativeElement.value = '';
+      }
       }
     } 
     else{
