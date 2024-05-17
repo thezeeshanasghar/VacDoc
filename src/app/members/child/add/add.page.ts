@@ -110,7 +110,7 @@ export class AddPage implements OnInit {
       ),
       // PreferredDayOfWeek: 'Any',
       Gender: [null,Validators.required],
-      City: [null],
+      city: ['', Validators.required],
       CNIC:[""],
       // PreferredDayOfReminder: 0,
       // PreferredSchedule: [null],

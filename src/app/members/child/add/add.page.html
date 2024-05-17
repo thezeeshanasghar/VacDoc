@@ -24,7 +24,7 @@
   <h1 style="text-align: center; color: white;">Add Patient</h1>
   <ion-card class="custom-item-background1">
     <!-- 1st Step of Add Child -->
-    <form [formGroup]="fg1">
+    <form [formGroup]="fg1" (ngSubmit)="moveNextStep()">
       <ion-item class="custom-item-background2">
         <ion-label color="white" position="floating">Patient Name</ion-label>
         <ion-input type="text" formControlName="Name" required [(ngModel)]="fg1.value.Name" class="ion-text-capitalize">
@@ -180,8 +180,8 @@
   
         <ion-label color="white" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">City</ion-label>
         <mat-form-field class="example-full-width">
-          <input type="text" aria-label="Number" matInput formControlName="City" [matAutocomplete]="auto"
-            (ngModelChange)="filter($event)">
+          <input type="text" aria-label="Number" matInput formControlName="city" [matAutocomplete]="auto"
+            (ngModelChange)="filter($event)"  style="font-size: 15px;">
           <mat-autocomplete #auto="matAutocomplete" class="no-indent">
             <mat-option *ngFor="let option of cities" [value]="option">
               {{option}}
@@ -189,8 +189,8 @@
           </mat-autocomplete>
         </mat-form-field>
 
-      <ion-button [disabled]="!fg1.valid" (click)="moveNextStep()"
-        style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;" color="dark">Submit</ion-button>
+        <ion-button type="submit" [disabled]="!fg1.valid" style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;" color="dark">Submit</ion-button>
+
     </form>
 
   </ion-card>
