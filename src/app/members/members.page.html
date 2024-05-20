@@ -1,15 +1,15 @@
 <ion-split-pane contentId="main">
   <ion-menu contentId="main" type="overlay">
     <ion-header>
-      <ion-toolbar color="dark">
+      <ion-toolbar color="primary">
         <ion-title>Menu</ion-title>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content color="medium">
+    <ion-content>
       <ion-list class="menu">
         <ion-menu-toggle auto-hide="false" *ngFor="let p of profile">
-          <ion-item color="medium" [routerDirection]="'root'" [routerLink]="[p.url]">
+          <ion-item [routerDirection]="'root'" [routerLink]="[p.url]">
             <ion-avatar slot="start"> <!-- Use ion-avatar for displaying profile images -->
               <img [src]="p.imageUrl" *ngIf="p.imageUrl" /> <!-- Display image if URL exists -->
               <ion-icon color="primary" *ngIf="!p.imageUrl" [name]="p.icon"></ion-icon> <!-- Display icon if no image URL -->
@@ -20,8 +20,8 @@
           </ion-item>
         </ion-menu-toggle>
         <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
-          <ion-item lines="none" color="medium" [routerDirection]="'root'" [routerLink]="[p.url]">
-            <ion-icon [name]="p.icon" [color]="p.title === 'Alerts' ? 'warning' : 'dark'" slot="start"></ion-icon>
+          <ion-item lines="none" [routerDirection]="'root'" [routerLink]="[p.url]">
+            <ion-icon [name]="p.icon" [color]="p.title === 'Alerts' ? 'danger' : 'primary'" slot="start"></ion-icon>
             <ion-label>
               {{p.title}}
             </ion-label>
@@ -35,8 +35,8 @@
           </ion-label>
         </ion-item-divider> -->
         <ion-menu-toggle auto-hide="false" *ngFor="let p of doctorPages">
-          <ion-item lines="none" color="medium" [routerDirection]="'root'" [routerLink]="[p.url]">
-            <ion-icon color="dark" slot="start" [name]="p.icon"></ion-icon>
+          <ion-item lines="none" [routerDirection]="'root'" [routerLink]="[p.url]">
+            <ion-icon color="primary" slot="start" [name]="p.icon"></ion-icon>
             <ion-label>
               {{p.title}}
             </ion-label>
@@ -49,16 +49,16 @@
           </ion-label>
         </ion-item-divider> -->
         <ion-menu-toggle auto-hide="false" *ngFor="let p of childPages">
-          <ion-item lines="none" color="medium" [routerDirection]="'root'" [routerLink]="[p.url]">
-            <ion-icon color="dark" slot="start" [name]="p.icon"></ion-icon>
+          <ion-item lines="none" [routerDirection]="'root'" [routerLink]="[p.url]">
+            <ion-icon color="primary" slot="start" [name]="p.icon"></ion-icon>
             <ion-label>
               {{p.title}}
             </ion-label>
           </ion-item>
         </ion-menu-toggle>
 
-        <ion-item lines="none" color="medium" routerLink="/login" (click)="clearStorage()">
-          <ion-icon color="dark" slot="start" name="power"></ion-icon>
+        <ion-item lines="none" routerLink="/login" (click)="clearStorage()">
+          <ion-icon color="primary" slot="start" name="power"></ion-icon>
           <ion-label>Logout</ion-label>
         </ion-item>
 

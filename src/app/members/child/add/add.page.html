@@ -1,5 +1,5 @@
 <ion-header>
-  <!-- <ion-toolbar color="primary">
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -7,9 +7,9 @@
     <ion-title *ngIf="clinicService.OnlineClinic" slot="end">
       {{clinicService.OnlineClinic.Name}}
     </ion-title>
-  </ion-toolbar> -->
+  </ion-toolbar>
 
-  <ion-toolbar class="custom-item-background3">
+  <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
       <ion-icon style="margin-left: 10%" routerLink="/members/child/add" name="person-add" size="large"> </ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/alert" name="alert" size="large"> </ion-icon>
@@ -21,12 +21,11 @@
 </ion-header>
 
 <ion-content *ngIf="fg1" class="ion-padding">
-  <h1 style="text-align: center; color: white;">Add Patient</h1>
-  <ion-card class="custom-item-background1">
+  <ion-card>
     <!-- 1st Step of Add Child -->
     <form [formGroup]="fg1" (ngSubmit)="moveNextStep()">
-      <ion-item class="custom-item-background2">
-        <ion-label color="white" position="floating">Patient Name</ion-label>
+      <ion-item>
+        <ion-label color="primary" position="floating">Patient Name</ion-label>
         <ion-input type="text" formControlName="Name" required [(ngModel)]="fg1.value.Name" class="ion-text-capitalize">
         </ion-input>
       </ion-item>
@@ -57,8 +56,8 @@
         </ion-row>    
       </ion-grid>
     </ion-radio-group> -->
-      <ion-item class="custom-item-background2">
-        <ion-label color="white" position="floating">Guardian's Name</ion-label>
+      <ion-item>
+        <ion-label color="primary" position="floating">Guardian's Name</ion-label>
         <ion-input type="text" formControlName="FatherName" required [(ngModel)]="fg1.value.FatherName"
           class="ion-text-capitalize">
         </ion-input>
@@ -71,24 +70,24 @@
           </div>
         </ng-container>
       </div>
-      <ion-radio-group formControlName="Gender" color="white" class="custom-item-background2">
-        <ion-list-header style="color: white;">
+      <ion-radio-group formControlName="Gender">
+        <ion-list-header>
           Gender
         </ion-list-header>
         <ion-grid>
           <ion-row>
             <ion-col>
-              <ion-item class="custom-item-background2">
-                <ion-label color="white">Male</ion-label>
-                <ion-radio color="light" slot="start" value="Boy"></ion-radio>
+              <ion-item>
+                <ion-label color="primary">Male</ion-label>
+                <ion-radio slot="start" value="Boy"></ion-radio>
                 <!-- (click)="updateGender('Boy')" -->
               </ion-item>
             </ion-col>
 
             <ion-col>
-              <ion-item class="custom-item-background2">
-                <ion-label color="white">Female</ion-label>
-                <ion-radio color="light" slot="start" value="Girl"></ion-radio>
+              <ion-item>
+                <ion-label color="primary">Female</ion-label>
+                <ion-radio slot="start" value="Girl"></ion-radio>
               </ion-item>
             </ion-col>
           </ion-row>
@@ -102,8 +101,8 @@
            
         
             <ion-col>
-              <ion-item class="custom-item-background2" style="height: 88%; display: flex;">
-                <ion-label color="white">EPI Plus</ion-label>
+              <ion-item style="height: 88%; display: flex;">
+                <ion-label color="dark">EPI Plus</ion-label>
                 <ion-checkbox [disabled]="!epiDone" slot="start" formControlName="IsEPIDone" id="EPI"></ion-checkbox>
               </ion-item>
             </ion-col>
@@ -115,16 +114,15 @@
       </ion-radio-group>
 
 
-      <ion-item *ngIf="fg1.value.Type === 'regular'" class="custom-item-background2">
-        <ion-label color="white">Skip UnActive Doses</ion-label>
+      <ion-item *ngIf="fg1.value.Type === 'regular'">
+        <ion-label color="primary">Skip UnActive Doses</ion-label>
         <ion-checkbox slot="start" formControlName="IsSkip"></ion-checkbox>
       </ion-item>
 
 
-      <ion-label id="dob" color="white" position="floating" style="margin-left: 1.5%; margin-bottom: 20px;">Date of Birth</ion-label>
-      <input formControlName="DOB" slot="end" matInput [matDatepicker]="picker" disabled max="{{todaydate}}"
-        (click)="picker.open()" (dateChange)="checkEpi()">
-      <img src="../../../../assets/calendar.png" (click)="picker.open()" style="cursor: pointer; height: 30px; margin-bottom: -10px;">
+      <ion-label id="dob" color="primary" position="floating" style="margin-left: 1.5%; margin-bottom: 20px;">Date of Birth</ion-label>
+      <input formControlName="DOB" slot="end" matInput [matDatepicker]="picker" disabled  max="{{todaydate}}" (click)="picker.open()" (dateChange)="checkEpi()">
+      <mat-datepicker-toggle slot="end" matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker slot="end" #picker disabled="false"></mat-datepicker>
       
       <div class="validation-errors" style="margin-bottom: 20px;">
@@ -139,8 +137,8 @@
       
 
 
-      <ion-item class="custom-item-background2">
-        <ion-label color="white" position="floating">Email</ion-label>
+      <ion-item>
+        <ion-label color="primary" position="floating">Email</ion-label>
         <ion-input type="text" formControlName="Email"></ion-input>
     </ion-item> 
       <div class="validation-errors">
@@ -152,14 +150,14 @@
         </ng-container>
       </div>
 
-      <ion-item class="custom-item-background2">
-        <ion-label color="white" position="floating">CNIC/Passport No.</ion-label>
+      <ion-item>
+        <ion-label color="primary" position="floating">CNIC/Passport No.</ion-label>
         <ion-input type="text" formControlName="CNIC"></ion-input>
       </ion-item>
 
-      <ion-item class="custom-item-background2">
+      <ion-item>
         <div style="display: flex ;">
-          <ion-label color="white" position="floating" style="font-size: 20px; float: left; margin-top: -10px;">Mobile Number</ion-label>
+          <ion-label color="primary" position="floating" style="font-size: 20px; float: left; margin-top: -10px;">Mobile Number</ion-label>
           <ion-select formControlName="CountryCode" style="padding-top: 25px;">
             <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
               (+{{ country.code }}) {{ country.name }}
@@ -178,7 +176,7 @@
       </div>
 
   
-        <ion-label color="white" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">City</ion-label>
+        <ion-label color="primary" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">City</ion-label>
         <mat-form-field class="example-full-width">
           <input type="text" aria-label="Number" matInput formControlName="city" [matAutocomplete]="auto"
             (ngModelChange)="filter($event)"  style="font-size: 15px;">
@@ -189,7 +187,7 @@
           </mat-autocomplete>
         </mat-form-field>
 
-        <ion-button type="submit" [disabled]="!fg1.valid" style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;" color="dark">Submit</ion-button>
+        <ion-button type="submit" [disabled]="!fg1.valid" style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;" color="primary">Submit</ion-button>
 
     </form>
 

@@ -1,7 +1,4 @@
-ion-content{
-    // --background: #fff url('../../../assets/signup.jpg') no-repeat center center / cover;
-    --background: radial-gradient(circle at top, #a1b8ef , #a1b8ef)
-}
+
 
 .girl {
     border: rgb(245, 12, 167) 2px solid
@@ -12,19 +9,6 @@ ion-content{
 }
 .iconchild {
     margin-left: 6%;
-}
-
-
-.custom-item-background {
-    --background: rgba(0, 0, 0, 0.155); /* Replace 'your-color' with the desired background color */
-    border-radius: 7px;
-    color: #fff;
-}
-
-.custom-item-background2 {
-    --background: rgba(0, 0, 0, 0); /* Replace 'your-color' with the desired background color */
-    border-radius: 2px;
-    color: #fff;
 }
 
 .icons{

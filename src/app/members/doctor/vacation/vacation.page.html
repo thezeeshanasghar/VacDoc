@@ -1,11 +1,11 @@
 <ion-header>
-  <ion-toolbar color="dark">
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <!-- <ion-menu-button></ion-menu-button> -->
     </ion-buttons>
     <ion-title>Vacation</ion-title>
   </ion-toolbar>
-  <ion-toolbar color="dark" >
+  <ion-toolbar color="primary" >
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
       <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
@@ -19,28 +19,28 @@
 
   <form [formGroup]="fg2">
   
-
-    <ion-item color="medium"> 
-      <ion-label color="light">From Date</ion-label>
-      <input style="color: rgb(255, 255, 255); background-color: #a1b8ef;" formControlName="formDate" matInput [matDatepicker]="fromPicker" value="{{todaydate}}">
-      <img src="../../../../assets/calendar.png" (click)="fromPicker.open()" style="cursor: pointer; height: 30px; margin-bottom: -10px;">
-      <mat-datepicker #fromPicker disabled="false"></mat-datepicker>
+    <ion-item (click)="picker.open()"> 
+      <ion-label color="primary" >From Date</ion-label>
+       <input formControlName="formDate" matInput [matDatepicker]="picker" value="{{todaydate}}">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker disabled="false"></mat-datepicker>
     </ion-item>
 
-    <ion-item color="medium"> 
-      <ion-label color="light">To Date</ion-label>
-      <input style="color: rgb(255, 255, 255); background-color: #a1b8ef;" disabled formControlName="ToDate" matInput [matDatepicker]="toPicker" value="{{todaydate}}">
-      <img src="../../../../assets/calendar.png" (click)="toPicker.open()" style="cursor: pointer; height: 30px; margin-bottom: -10px;">
-      <mat-datepicker #toPicker disabled="false"></mat-datepicker>
+    <ion-item (click)="picker.open()"> 
+      <ion-label color="primary" >To Date</ion-label>
+       <input disabled formControlName="ToDate" matInput [matDatepicker]="picker1" value="{{todaydate}}">
+      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+      <mat-datepicker #picker1 disabled="false"></mat-datepicker>
     </ion-item>
+  
 
     
     <h1>Clinics</h1>
-    <ion-item formArrayName="clinics" *ngFor="let a of fg2.get('clinics')['controls']; let i = index" color="medium">
-      <ion-label color="light"> {{clinics[i].Name}}</ion-label>
+    <ion-item formArrayName="clinics" *ngFor="let a of fg2.get('clinics')['controls']; let i = index">
+      <ion-label> {{clinics[i].Name}}</ion-label>
       <ion-checkbox slot="start" required [formControlName]="i"></ion-checkbox>
     </ion-item>
 
-    <ion-button (click)="getChildVaccinefromUser()" color="dark">Go</ion-button>
+    <ion-button (click)="getChildVaccinefromUser()">Go</ion-button>
   </form>
 </ion-content>

@@ -1,11 +1,11 @@
 <ion-header>
-  <ion-toolbar color="dark">
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <!-- <ion-menu-button></ion-menu-button> -->
     </ion-buttons>
     <ion-title>Brand Amount</ion-title>
   </ion-toolbar>
-  <ion-toolbar color="dark" >
+  <ion-toolbar color="primary" >
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
       <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
@@ -19,7 +19,7 @@
 
   <form>
     <ion-grid>
-      <ion-row style="background: rgb(0, 0, 0); color: white;">
+      <ion-row>
         <ion-col>Vaccine Name</ion-col>
         <ion-col>Brand Name</ion-col>
         <ion-col>Price</ion-col>
@@ -32,7 +32,7 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-    <ion-button disabled="false" (click)="updateBrandAmount()" color="dark">Update Amount</ion-button>
+    <ion-button disabled="false" (click)="updateBrandAmount()">Update Amount</ion-button>
   </form>
 
 </ion-content>

@@ -1,23 +1,17 @@
-<!-- <ion-header>
+<ion-header>
     <ion-toolbar color="primary">
         <ion-buttons slot="start">
             <ion-back-button defaultHref="signup/step1"></ion-back-button>
         </ion-buttons>
         <ion-title>Clinic Information</ion-title>
     </ion-toolbar>
-</ion-header> -->
+</ion-header>
 
 <ion-content class="ion-padding">
-    <ion-toolbar color = "rgba(81, 81, 81, 0.289);" style="margin-top: 10px;">
-        <ion-buttons slot="start" style="border: 1px solid rgb(255, 255, 255); border-radius: 50%; color: rgb(255, 255, 255); margin-left: 15px;">
-          <ion-back-button defaultHref="login"></ion-back-button>
-        </ion-buttons>
-        <ion-title style="text-align: center; color: white;" >Personal Information</ion-title>
-      </ion-toolbar>
-    <ion-card class="custom-item-background">
+    <ion-card>
     <form [formGroup]="fg1">
-        <ion-item class="custom-item-background">
-            <ion-label color="white" position="floating">Name</ion-label>
+        <ion-item>
+            <ion-label color="primary" position="floating">Name</ion-label>
             <ion-input type="text" formControlName="Name" class="ion-text-capitalize" required></ion-input>
         </ion-item>
         <div class="validation-errors">
@@ -29,8 +23,8 @@
             </ng-container>
         </div>
 
-        <ion-item class="custom-item-background">
-            <ion-label color="white" position="floating">Phone Number</ion-label>
+        <ion-item>
+            <ion-label color="primary" position="floating">Phone Number</ion-label>
             <ion-input type="text" formControlName="PhoneNumber" required></ion-input>
         </ion-item>
         <div class="validation-errors">
@@ -42,8 +36,8 @@
             </ng-container>
         </div>
 
-        <ion-item class="custom-item-background">
-            <ion-label color="white" position="floating">Address</ion-label>
+        <ion-item>
+            <ion-label color="primary" position="floating">Address</ion-label>
             <ion-textarea type="text" formControlName="Address" class="ion-text-capitalize" required></ion-textarea>
         </ion-item>
         <div class="validation-errors">
@@ -55,8 +49,8 @@
             </ng-container>
         </div>
 
-        <ion-item class="custom-item-background">
-            <ion-label color="white" position="floating">Consultation Fee</ion-label>
+        <ion-item>
+            <ion-label color="primary" position="floating">Consultation Fee</ion-label>
             <ion-input type="text" formControlName="ConsultationFee" required></ion-input>
             
         </ion-item>
@@ -70,8 +64,8 @@
             </ng-container>
         </div>
 
-        <ion-item class="custom-item-background">
-            <ion-label color="white">Upload Monogram</ion-label>
+        <ion-item>
+            <ion-label color="primary">Upload Monogram</ion-label>
             <input #fileInput type="file" (change)="uploadMonogram($event)" accept=".png, .jpg, .jpeg"  />
           </ion-item>
           
@@ -88,9 +82,9 @@
 
         <form [formGroup]="fg2">
 
-            <ion-card class="custom-item-background1">
-                <ion-item class="custom-item-background2">
-                    <ion-card-title style="color: white;">Monday</ion-card-title>
+            <ion-card>
+                <ion-item>
+                    <ion-card-title style="color: primary;">Monday</ion-card-title>
                     <ion-toggle #Monday id="Monday" name="Monday" slot="end" color="primary" formControlName="Monday">
                     </ion-toggle>
                 </ion-item>
@@ -101,15 +95,15 @@
                         slot="end" color="primary" formControlName="MondayS1"></ion-toggle>
                     <ion-item *ngIf="MondayS1.checked==true" lines="none" class="custom-item-background2 ion-no-padding">
 
-                        <ion-item lines="none" class="custom-item-background2 ion-no-padding" >
-                            <ion-label color="white" position="floating">Start Time</ion-label>
+                        <ion-item lines="none" class="ion-no-padding" >
+                            <ion-label color="primary" position="floating">Start Time</ion-label>
                             <ion-datetime formControlName="Mstart" display-format="h:mm a"
                                 (ionChange)="setTimeValidators()">
                             </ion-datetime>
                         </ion-item>
 
-                        <ion-item slot="end" lines="none" class="custom-item-background2 ion-no-padding">
-                            <ion-label color="white" position="floating">End Time</ion-label>
+                        <ion-item slot="end" lines="none" class="ion-no-padding">
+                            <ion-label color="primary" position="floating">End Time</ion-label>
                             <ion-datetime formControlName="Mend" display-format="h:mm a"
                                 (ionChange)="setTimeValidators()">
                             </ion-datetime>
@@ -119,17 +113,17 @@
                     <ion-label class="VerticalAlignMiddle">Session:2 </ion-label>
                     <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #MondayS2 id="MondayS2" name="MondayS2" slot="end" color="primary"
                         formControlName="MondayS2"></ion-toggle>
-                    <ion-item *ngIf="MondayS2.checked==true" lines="none" class="custom-item-background2 ion-no-padding">
+                    <ion-item *ngIf="MondayS2.checked==true" lines="none" class="ion-no-padding">
 
-                        <ion-item lines="none" class="custom-item-background2 ion-no-padding">
-                            <ion-label color="white" position="floating">Start Time</ion-label>
+                        <ion-item lines="none" class="ion-no-padding">
+                            <ion-label color="primary" position="floating">Start Time</ion-label>
                             <ion-datetime formControlName="Mstart2" display-format="h:mm a"
                                 (ionChange)="setTimeValidators()">
                             </ion-datetime>
                         </ion-item>
 
-                        <ion-item slot="end" lines="none" class="custom-item-background2 ion-no-padding">
-                            <ion-label color="white" position="floating">End Time</ion-label>
+                        <ion-item slot="end" lines="none" class="ion-no-padding">
+                            <ion-label color="primary" position="floating">End Time</ion-label>
                             <ion-datetime formControlName="Mend2" display-format="h:mm a"
                                 (ionChange)="setTimeValidators()">
                             </ion-datetime>
@@ -157,7 +151,7 @@
             </ion-card>
 
             <ion-card class="custom-item-background1">
-                <ion-item class="custom-item-background2">
+                <ion-item>
                     <ion-card-title style="color: white;">Tuesday</ion-card-title>
                     <ion-toggle #Tuesday id="Tuesday" name="Tuesday" slot="end" color="primary"
                         formControlName="Tuesday">

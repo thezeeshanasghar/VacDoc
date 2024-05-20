@@ -1,6 +1,4 @@
-ion-content{
-  --background: #fff url('../../../../assets/signup.jpg') no-repeat center center / cover;
-}
+
 .error-message {
   color: red;
   font-size: 14px;
@@ -15,8 +13,3 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-.custom-item-background {
-  --background: rgba(161, 161, 161, 0); /* Replace 'your-color' with the desired background color */
-  border-radius: 2px;
-  color: #fff;
-}
