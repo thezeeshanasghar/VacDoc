@@ -108,12 +108,10 @@ export class AddPage implements OnInit {
           Validators.pattern("^[0-9]+$")
         ])
       ),
-      // PreferredDayOfWeek: 'Any',
       Gender: [null,Validators.required],
+      Type: [null,Validators.required],
       city: ['', Validators.required],
       CNIC:[""],
-      // PreferredDayOfReminder: 0,
-      // PreferredSchedule: [null],
       IsEPIDone: [false],
       IsSkip: [true],
       IsVerified: [false],
@@ -490,6 +488,7 @@ sendMessage(sms1: string): void {
          
           loading.dismiss();
           this.toastService.create("successfully added");
+          
           // this.sendMessage(sms1)
           
       

@@ -98,7 +98,12 @@
        
         <ion-grid>
           <ion-row>
-           
+            <ion-col>
+              <ion-item style="height: 100%;">
+                <ion-label color="white">Regular</ion-label>
+                <ion-radio slot="start" value="regular"></ion-radio>
+              </ion-item>
+            </ion-col>
         
             <ion-col>
               <ion-item style="height: 88%; display: flex;">
@@ -106,7 +111,12 @@
                 <ion-checkbox [disabled]="!epiDone" slot="start" formControlName="IsEPIDone" id="EPI"></ion-checkbox>
               </ion-item>
             </ion-col>
-        
+            <ion-col>
+              <ion-item c style="height: 100%;">
+                <ion-label color="white">Special</ion-label>
+                <ion-radio slot="start" value="special"></ion-radio>
+              </ion-item>
+            </ion-col>
             
           </ion-row>
         </ion-grid>
