@@ -35,7 +35,7 @@ export class VacationPage implements OnInit {
     private http: HttpClient
 
   ) {
-    this.todaydate = new Date();
+    this.todaydate = new Date().toISOString().slice(0, 10);
     //this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format('YYYY-MM-DD');
     this.fg2 = this.formBuilder.group({
       clinics: new FormArray([]),

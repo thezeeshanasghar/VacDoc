@@ -21,14 +21,14 @@
   
     <ion-item (click)="picker.open()"> 
       <ion-label color="primary" >From Date</ion-label>
-       <input formControlName="formDate" matInput [matDatepicker]="picker" value="{{todaydate}}">
+       <input formControlName="formDate" matInput [matDatepicker]="picker" value="{{todaydate}}"  [min]="todaydate" [max]="todaydate">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker disabled="false"></mat-datepicker>
     </ion-item>
 
     <ion-item (click)="picker.open()"> 
       <ion-label color="primary" >To Date</ion-label>
-       <input disabled formControlName="ToDate" matInput [matDatepicker]="picker1" value="{{todaydate}}">
+       <input disabled formControlName="ToDate" matInput [matDatepicker]="picker1" value="{{todaydate}}"  [min]="todaydate" [max]="todaydate">
       <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
       <mat-datepicker #picker1 disabled="false"></mat-datepicker>
     </ion-item>
