@@ -100,7 +100,7 @@
              
              >
       <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let city of childService.cities" [value]="city">
+        <mat-option *ngFor="let city of cityService.cities" [value]="city">
           {{city}}
         </mat-option>
       </mat-autocomplete>
