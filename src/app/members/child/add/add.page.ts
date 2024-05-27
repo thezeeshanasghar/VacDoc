@@ -633,7 +633,7 @@ sendMessage(sms1: string): void {
   validation_messages = {
     name: [{ type: "required", message: "Name is required." },
     { type: 'pattern', message: 'PLease Enter Only Charecters in First Name.' }],
-    city2: [
+    City2: [
     { type: 'pattern', message: 'PLease Enter Only Charecters in City.' }],
 
     fatherName: [{ type: "required", message: "Guardian name is required." },
