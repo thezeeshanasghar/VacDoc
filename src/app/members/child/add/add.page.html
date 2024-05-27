@@ -37,25 +37,6 @@
           </div>
         </ng-container>
       </div>
-
-      <!-- <ion-radio-group formControlName="Guardian">
-      <ion-grid>
-        <ion-row>
-          <ion-col>
-            <ion-item lines="none">
-              <ion-label color="primary">Father's name</ion-label>
-              <ion-radio slot="start" value="Father" ></ion-radio> 
-            </ion-item>
-          </ion-col>
-          <ion-col>
-            <ion-item lines="none">
-              <ion-label color="primary">Husband's name</ion-label>
-              <ion-radio slot="start" value="Husband"></ion-radio>
-            </ion-item>
-          </ion-col>
-        </ion-row>    
-      </ion-grid>
-    </ion-radio-group> -->
       <ion-item>
         <ion-label color="primary" position="floating">Guardian's Name</ion-label>
         <ion-input type="text" formControlName="FatherName" required [(ngModel)]="fg1.value.FatherName"
@@ -98,7 +79,12 @@
        
         <ion-grid>
           <ion-row>
-           
+            <ion-col>
+              <ion-item style="height: 100%;">
+                <ion-label color="white">Regular</ion-label>
+                <ion-radio slot="start" value="regular"></ion-radio>
+              </ion-item>
+            </ion-col>
         
             <ion-col>
               <ion-item style="height: 88%; display: flex;">
@@ -106,7 +92,12 @@
                 <ion-checkbox [disabled]="!epiDone" slot="start" formControlName="IsEPIDone" id="EPI"></ion-checkbox>
               </ion-item>
             </ion-col>
-        
+            <ion-col>
+              <ion-item c style="height: 100%;">
+                <ion-label color="white">Special</ion-label>
+                <ion-radio slot="start" value="special"></ion-radio>
+              </ion-item>
+            </ion-col>
             
           </ion-row>
         </ion-grid>
@@ -175,7 +166,7 @@
         </ng-container>
       </div>
 
-  
+        <div class="city">
         <ion-label color="primary" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">City</ion-label>
         <mat-form-field class="example-full-width">
           <input type="text" aria-label="Number" matInput formControlName="city" [matAutocomplete]="auto"
@@ -186,7 +177,33 @@
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
-
+     
+       
+   
+        <ion-item>
+          <ion-label color="primary" position="floating">Add New City</ion-label>
+          <ion-input
+            type="text"
+            formControlName="City2"
+            required
+            class="ion-text-capitalize"
+            [(ngModel)]="fg1.value.City2"
+            [disabled]="fg1.get('city')?.value !== '' ">
+          </ion-input>
+        </ion-item>
+        <div class="validation-errors">
+          <ng-container *ngFor="let validation of validation_messages.City2">
+            <div class="error-message"
+              *ngIf="fg1.get('City2')?.hasError(validation.type) && (fg1.get('City2')?.dirty || fg1.get('City2')?.touched)">
+              <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+            </div>
+          </ng-container>
+        </div>
+      </div>
+        
+        
+        
+        
         <ion-button type="submit" [disabled]="!fg1.valid" style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;" color="primary">Submit</ion-button>
 
     </form>

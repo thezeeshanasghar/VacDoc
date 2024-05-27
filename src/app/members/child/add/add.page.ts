@@ -24,6 +24,7 @@ import { env } from 'process';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { CityService } from "src/app/services/city.service";
 
 
 @Component({
@@ -42,11 +43,13 @@ export class AddPage implements OnInit {
   todaydate: any;
   gender: any;
   City: any;
+  City2: any;
   CNIC: any;
   Doctor: any;
   epiDone = false;
   Messages:any = [];
   cities: string[];
+  originalCities: string[];
   filteredOptions: Observable<string[]>;
   //cities: any;
 
@@ -54,6 +57,7 @@ export class AddPage implements OnInit {
     public loadingController: LoadingController,
     private formBuilder: FormBuilder,
     private vaccineService: VaccineService,
+    private cityService:CityService,
     public childService: ChildService,
     private toastService: ToastService,
     private router: Router,
@@ -67,11 +71,23 @@ export class AddPage implements OnInit {
     private http: HttpClient
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.loadCities();
+  }
+  loadCities(): void {
+    this.cityService.getCities().subscribe(
+      (cities: any) => {
+        this.cities = cities;
+        this.originalCities = [...cities];
+        console.log('load',cities)
+      },
+      (error: any) => {
+        console.error('Error loading cities', error);
+      }
+    );
+  }
   ionViewWillEnter()//ngAfterContentInit() 
   {
-    // let obj = {'toNumber':'+923143041544' , 'message': 'this is test message' , 'created': Date.now(), 'status':false};
-    // this.Messages.push(obj); this.Messages.push(obj); this.Messages.push(obj);
     this.storage.set(environment.MESSAGES , this.Messages);
     this.todaydate = new Date();
     this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format("YYYY-MM-DD");
@@ -108,19 +124,19 @@ export class AddPage implements OnInit {
           Validators.pattern("^[0-9]+$")
         ])
       ),
-      // PreferredDayOfWeek: 'Any',
+      City2: [{ value: '', disabled: true }, Validators.compose([
+        
+      ])],
       Gender: [null,Validators.required],
-      city: ['', Validators.required],
+      Type: [null,Validators.required],
+      city: [''],
       CNIC:[""],
-      // PreferredDayOfReminder: 0,
-      // PreferredSchedule: [null],
       IsEPIDone: [false],
       IsSkip: [true],
       IsVerified: [false],
       Password: [null],
       ChildVaccines: [null]
     });
-
 
     
     this.storage.get(environment.DOCTOR_Id).then(val => {
@@ -132,7 +148,10 @@ export class AddPage implements OnInit {
     });
 
     this.storage.get(environment.CITY).then(val => {
+     
       val == null? "": this.fg1.controls['City'].setValue(val);
+  
+      
     });
 
      this.storage.get(environment.DOCTOR).then(doc => {
@@ -142,12 +161,19 @@ export class AddPage implements OnInit {
      this.storage.get(environment.MESSAGES).then(messages => {messages==null?"": this.Messages = messages;
     });
 
-    this.cities = this.childService.cities;
+    this.cities = this.cities;
    
   }
 
   public filter(value: string) {
-    this.cities =  this.childService.cities.filter(option => (option.toLowerCase().includes(value) || option.includes(value)));
+    if (!value.trim()) {
+      this.cities = [...this.originalCities]; // Restore the original list of cities
+    } else {
+      this.cities = this.originalCities.filter(option => (
+        option.toLowerCase().includes(value.toLowerCase()) || option.includes(value)
+      ));
+    }
+    this.fg1.get('City2').setValue('');
   }
 
   countryCodes = [
@@ -425,6 +451,7 @@ sendMessage(sms1: string): void {
     );
 }
   async moveNextStep() {
+    console.log('Form Group Value:', this.fg1.value);
     this.fg1.value.DOB = await moment(this.fg1.value.DOB, "YYYY-MM-DD").format("DD-MM-YYYY");
     // this.formcontroll = true;
     //this.fg1.value.Gender = this.gender;
@@ -445,23 +472,16 @@ sendMessage(sms1: string): void {
     }
     this.fg1.value.Password = retVal;
   }
-  capitalizePatientName = (input: string) => {
-    return input
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-};
- capitalizeGuardianName = (input: string) => {
-  return input
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-};
 
 
 
   async addNewChild(data) {
-  //  console.log(data);
+    console.log('City2 value:', this.fg1.value.City2);
+    if(data.city===""){
+      data.city=this.fg1.value.City2;
+      console.log('city2 data')
+    }
+   console.log(data);
     const loading = await this.loadingController.create({
       message: "loading"
     });
@@ -469,6 +489,7 @@ sendMessage(sms1: string): void {
     // let str = this.fg1.value.PreferredDayOfWeek;
     // this.fg1.value.PreferredDayOfWeek = str.toString();
     this.fg1.value.ClinicId = this.clinic.Id;
+
     await this.childService.addChild(data).subscribe(
       async res => {
         this.setCity(this.fg1.value.City);
@@ -483,13 +504,14 @@ sendMessage(sms1: string): void {
           sms1 += " has been registered Succesfully at Vaccine.pk";
           sms1 += "\nId: " + res.ResponseData.MobileNumber + " \nPassword: " + res.ResponseData.Password;
           sms1 += "\nClinic Phone Number: " + this.clinic.PhoneNumber;
-          sms1 += "\nWeb Link:  https://vaccine.pk/";
+          sms1 += "\nWeb Link:  https://child.skintechno.com/";
           console.log(sms1);
           const ChildId=res.ResponseData.Id
           console.log('child id',ChildId)
          
           loading.dismiss();
           this.toastService.create("successfully added");
+          
           // this.sendMessage(sms1)
           
       
@@ -595,7 +617,7 @@ sendMessage(sms1: string): void {
           text: 'ok',
           handler: data => {
             if (data.cityname) {
-              this.childService.cities.push(data.cityname);
+              this.cityService.cities.push(data.cityname);
               this.City = data.cityname;
             }
           }
@@ -611,6 +633,8 @@ sendMessage(sms1: string): void {
   validation_messages = {
     name: [{ type: "required", message: "Name is required." },
     { type: 'pattern', message: 'PLease Enter Only Charecters in First Name.' }],
+    City2: [
+    { type: 'pattern', message: 'PLease Enter Only Charecters in City.' }],
 
     fatherName: [{ type: "required", message: "Guardian name is required." },
     { type: 'pattern', message: 'Only letters, spaces, commas, and hyphens are allowed in Guardian.' }],

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CityService } from 'src/app/services/city.service';
 import { ChildService } from 'src/app/services/child.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { LoadingController } from '@ionic/angular';
@@ -19,7 +20,8 @@ export class EditPage implements OnInit {
     public router: Router,
     public route: ActivatedRoute,
     private formBuilder: FormBuilder,
-    public childService: ChildService,
+    public cityService: CityService,
+    public childService:ChildService,
     private toastService: ToastService,
   ) {
   }
