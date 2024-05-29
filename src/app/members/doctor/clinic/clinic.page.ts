@@ -30,7 +30,7 @@ export class ClinicPage {
     this.router.events.subscribe((val) => {
       // Check if redirected from another page
       if (val instanceof NavigationEnd) {
-        this.getClinics();
+        // this.getClinics();
       }
     });
   }
@@ -46,8 +46,8 @@ export class ClinicPage {
     // await this.storage.get(environment.CLINICS).then(clinics => {
     //   this.Clinics = clinics;
     // });
-    console.log(this.Clinics);
-    console.log(this.doctorId);
+    // console.log(this.Clinics);
+    // console.log(this.doctorId);
     if (!this.Clinics) {
       this.getClinics();
     }
@@ -66,7 +66,7 @@ export class ClinicPage {
       res => {
         loading.dismiss();
         if (res.IsSuccess) {
-          console.log(res);
+          // console.log(res);
           this.Clinics = res.ResponseData;
           for (let i = 0; i < this.Clinics.length; i++) {
             const clinic = this.Clinics[i];
@@ -77,7 +77,7 @@ export class ClinicPage {
                 const timing = clinic.ClinicTimings[j];
 
                 // Process timing as needed
-                console.log(timing);
+                // console.log(timing);
               }
             }
           }
@@ -111,21 +111,45 @@ export class ClinicPage {
   async setOnlineClinic(clinicId) {
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
+  
     let data = { 'DoctorId': this.doctorId, 'Id': clinicId, 'IsOnline': 'true' }
+    console.log('data', data)
+  
     await this.clinicService.changeOnlineClinic(data)
       .subscribe(res => {
         if (res.IsSuccess) {
           loading.dismiss();
+  
+          // Update the storage with the new clinicId
+          this.storage.set(environment.CLINIC_Id, data.Id).then(() => {
+            console.log('ClinicId stored:', data.Id);
+          });
+  
+          // Set the selected clinic as the current clinic
+          this.storage.get(environment.CLINICS).then((clinics) => {
+            const selectedClinic = clinics.find((clinic) => clinic.Id === data.Id);
+            this.storage.set(environment.ON_CLINIC, selectedClinic).then(() => {
+              console.log('Selected clinic stored:', selectedClinic);
+            });
+          });
+  
           this.getClinics();
           // this.router.navigate(['/members/doctor/clinic']);
         }
         else {
           this.toastService.create(res.Message)
         }
-
+  
+        // Retrieve the updated clinicId from storage
+        this.storage.get(environment.CLINIC_Id).then(val => {
+          this.clinicId = val;
+          console.log('clinicId:', this.clinicId);
+        });
+  
       }, (err) => {
         this.toastService.create(err);
       });
+  
     loading.dismiss();
   }
   // }

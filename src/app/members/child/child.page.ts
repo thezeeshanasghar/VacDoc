@@ -54,8 +54,22 @@ export class ChildPage {
     this.childs = [];
    // console.log(this.clinicService.OnlineClinic.Id);
     this.getChlidByClinic(false);
-  }
 
+    this.storage.keys().then((keys) => {
+      keys.forEach((key) => {
+        this.storage.get(key).then((value) => {
+          console.log(`Key: ${key}, Value: ${this.getStringValue(value)}`);
+        });
+      });
+    });
+  }
+  getStringValue(value: any): string {
+    if (typeof value === 'object') {
+      return JSON.stringify(value);
+    } else {
+      return value.toString();
+    }
+  }
   loadData(){
     if (this.search)
     this.getChlidbyUser(false);
