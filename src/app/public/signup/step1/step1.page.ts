@@ -19,6 +19,7 @@ export class Step1Page implements OnInit {
   fg: FormGroup;
   checkedVal: any;
   @ViewChild("speciality", { static: false }) selectPop: IonSelect;
+  toastService: any;
   constructor(
     private frombuilder: FormBuilder,
     private router: Router,
@@ -431,12 +432,42 @@ OneLineValidator(control: FormControl) {
     return retVal;
   }
 
-  nextpage() {
+  async nextpage() {
     this.fg.value.Password = this.PasswordGenerator();
     this.signupService.personalData = this.fg.value;
     console.log(this.fg.value);
-    this.router.navigate(["/signup/step2"]);
+    await this.signupService.addDoctor().toPromise().then(
+      res => {
+        if (res.IsSuccess) {
+          this.toastService.create("successfully added");
+          this.router.navigate(["/login"]);
+        } else {
+          this.toastService.create(res.Message, "danger");
+        }
+      },
+      err => {
+        this.toastService.create(err, "danger");
+      }
+    );
   }
+  
+  // async addDoctorSchedule(id) {
+  //   this.signupService.vaccineData = this.fg.value;
+  //   this.signupService.vaccineData2 = this.doses;
+  //   await this.signupService.addDoctor().subscribe(
+  //     res => {
+  //       if (res.IsSuccess) {
+  //         this.toastService.create("successfully added");
+  //         this.router.navigate(["/login"]);
+  //       } else {
+  //         this.toastService.create(res.Message, "danger");
+  //       }
+  //     },
+  //     err => {
+  //       this.toastService.create(err, "danger");
+  //     }
+  //   );
+  // }
 
   setValueAndShowSpeciality(value: String, checkedVal) {
     this.fg.value.DoctorType = value;

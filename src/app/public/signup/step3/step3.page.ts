@@ -84,9 +84,9 @@ export class Step3Page implements OnInit {
     );
   }
 
-  onSubmit() {
-    this.addNewClinic();
-  }
+  // onSubmit() {
+  //   this.addNewClinic();
+  // }
 
 
   async addNewClinic() {

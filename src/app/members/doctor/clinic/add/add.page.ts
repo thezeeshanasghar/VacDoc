@@ -976,7 +976,7 @@ export class AddPage implements OnInit {
       { type: "required", message: "Consultation Fee is required." },
       {
         type: "pattern",
-        message: "Your Consultation Fee must contain positive number"
+        message: "Your Consultation Fee must contain number"
       }
     ],
     MonogramImage:[
