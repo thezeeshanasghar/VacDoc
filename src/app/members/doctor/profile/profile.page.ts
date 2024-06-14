@@ -91,7 +91,10 @@ export class ProfilePage implements OnInit {
           Validators.pattern("^[0-9-\\+]*-[A-Z]$")
         ])
       ),
-      AdditionalInfo:["", [Validators.required,this.fourLinesValidator,]],
+      AdditionalInfo:["",
+       [Validators.required,
+        // this.fourLinesValidator,
+      ]],
       Qualification:[null],
       // SignatureImage: new FormControl([null]),
       ProfileImage: new FormControl([null])
@@ -266,10 +269,10 @@ export class ProfilePage implements OnInit {
     ],
     AdditionalInfo: [
       { type: "required", message: "Additional Info is required." },
-      {
-        type: "insufficientLines",
-        message: "Input must contain at least four lines.",
-      },
+      // {
+      //   type: "insufficientLines",
+      //   message: "Input must contain at least four lines.",
+      // },
     ],
   };
 }
