@@ -8,6 +8,7 @@ import {
 } from "@angular/forms";
 import { Router } from "@angular/router";
 import { SignupService } from "src/app/services/signup.service";
+import { ToastService } from "src/app/shared/toast.service";
 // import { Ng2TelInputModule } from 'ng2-tel-input';
 
 @Component({
@@ -19,11 +20,12 @@ export class Step1Page implements OnInit {
   fg: FormGroup;
   checkedVal: any;
   @ViewChild("speciality", { static: false }) selectPop: IonSelect;
-  toastService: any;
+  // toastService: any;
   constructor(
     private frombuilder: FormBuilder,
     private router: Router,
-    private signupService: SignupService
+    private signupService: SignupService,
+    private toastService: ToastService,
   ) {}
 
   ngOnInit() {
