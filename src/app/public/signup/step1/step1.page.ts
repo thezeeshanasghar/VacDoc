@@ -443,7 +443,7 @@ OneLineValidator(control: FormControl) {
       res => {
         if (res.IsSuccess) {
           this.router.navigate(["/login"]);
-          this.toastService.create("Successfully added");
+          this.toastService.create("Successfully Signup");
         } else {
           this.toastService.create(res.Message, "danger");
         }
