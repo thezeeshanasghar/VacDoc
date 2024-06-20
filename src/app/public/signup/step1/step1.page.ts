@@ -433,24 +433,31 @@ OneLineValidator(control: FormControl) {
   }
 
   async nextpage() {
-    this.fg.value.Password = this.PasswordGenerator();
-    this.signupService.personalData = this.fg.value;
-    console.log(this.fg.value);
+    try {
+      this.fg.value.Password = this.PasswordGenerator();
+      this.signupService.personalData = this.fg.value;
+      console.log(this.fg.value);
   
-    this.signupService.addDoctor().subscribe(
-      res => {
-        if (res.IsSuccess) {
-          this.toastService.create("Successfully added");
-          this.router.navigate(["/login"]);
-        } else {
-          this.toastService.create(res.Message, "danger");
+      this.signupService.addDoctor().subscribe(
+        res => {
+          if (res.IsSuccess) {
+            this.toastService.create("Successfully added");
+            this.router.navigate(["/login"]);
+          } else {
+            this.toastService.create(res.Message || "An error occurred", "danger");
+          }
+        },
+        err => {
+          console.error("Error during signup: ", err);
+          this.toastService.create("An error occurred. Please try again.", "danger");
         }
-      },
-      err => {
-        this.toastService.create(err, "danger");
-      }
-    );
+      );
+    } catch (error) {
+      console.error("Error in nextpage method: ", error);
+      this.toastService.create("An unexpected error occurred. Please try again.", "danger");
+    }
   }
+  
   
   // async addDoctorSchedule(id) {
   //   this.signupService.vaccineData = this.fg.value;
