@@ -436,10 +436,11 @@ OneLineValidator(control: FormControl) {
     this.fg.value.Password = this.PasswordGenerator();
     this.signupService.personalData = this.fg.value;
     console.log(this.fg.value);
-    await this.signupService.addDoctor().subscribe(
+  
+    this.signupService.addDoctor().subscribe(
       res => {
         if (res.IsSuccess) {
-          this.toastService.create("successfully added");
+          this.toastService.create("Successfully added");
           this.router.navigate(["/login"]);
         } else {
           this.toastService.create(res.Message, "danger");
