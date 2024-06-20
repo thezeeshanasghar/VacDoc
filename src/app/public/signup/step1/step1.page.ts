@@ -440,7 +440,7 @@ OneLineValidator(control: FormControl) {
   
       this.signupService.addDoctor().subscribe(
         res => {
-          if (res.IsSuccess) {
+          if (res.IsSuccess==true) {
             this.toastService.create("Successfully added");
             this.router.navigate(["/login"]);
           } else {
