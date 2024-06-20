@@ -138,6 +138,10 @@ export class Step3Page implements OnInit {
       }
     );
   }
+  onSubmit() {
+    
+  }
+
 
 
 //   checkScheduleValidity(minage,key) {
