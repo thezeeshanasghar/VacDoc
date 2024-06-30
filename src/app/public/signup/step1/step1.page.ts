@@ -1,10 +1,14 @@
 import { Component, ViewChild, OnInit } from "@angular/core";
+// import { Component, OnInit } from '@angular/core';
+// import { FormBuilder, FormGroup, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
 import { IonSelect } from "@ionic/angular";
 import {
   FormGroup,
   FormBuilder,
   FormControl,
   Validators,
+  AbstractControl,
+   ValidatorFn
 } from "@angular/forms";
 import { Router } from "@angular/router";
 import { SignupService } from "src/app/services/signup.service";
@@ -61,7 +65,8 @@ export class Step1Page implements OnInit {
         "",
         Validators.compose([
           Validators.required,
-          Validators.pattern(/^\d{10,}$/)
+          Validators.pattern(/^\d{10,}$/),
+          this.mobileNumberLengthValidator('CountryCode')
         ])
       ),
       ShowMobile: [true],
@@ -83,6 +88,25 @@ export class Step1Page implements OnInit {
         ])
       ),
     });
+  }
+  mobileNumberLengthValidator(countryCodeControlName: string): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const formGroup = control.parent;
+      if (!formGroup) {
+        return null;
+      }
+      const countryCodeControl = formGroup.get(countryCodeControlName);
+      if (!countryCodeControl) {
+        return null;
+      }
+      const countryCode = countryCodeControl.value;
+      const mobileNumber = control.value;
+
+      if (countryCode === '92' && mobileNumber.length>10 && mobileNumber.length !== 10) {
+        return { 'invalidMobileNumberLength': true };
+      }
+      return null;
+    };
   }
   Speciality = [
     "Acupuncturist",
@@ -503,6 +527,8 @@ OneLineValidator(control: FormControl) {
     mobileNumber: [
       { type: "required", message: "MobileNumber With Whatsapp is required." },
       // { type: "pattern", message: "Mobile number  is required like 3331231231" }
+      { type: "pattern", message: "Mobile number must be at least 10 digits." },
+      { type: "invalidMobileNumberLength", message: "Mobile number must be 10 digits long for country code 92." }
     ],
     phoneNumber: [
       { type: "required", message: "Appointment number is required" },

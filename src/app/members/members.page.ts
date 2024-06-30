@@ -17,7 +17,7 @@ export class MembersPage implements OnInit {
   profileImagePath: string;
   Name: any;
   hasClinics: boolean = false; // Flag to check if clinics are available
-
+  defaultImageUrl: string = 'assets/male.png';
   constructor(
     public loadingController: LoadingController,
     private storage: Storage,
@@ -57,7 +57,7 @@ export class MembersPage implements OnInit {
               title: this.Name,
               url: "/members/doctor/profile",
               icon: "create",
-              imageUrl: environment.RESOURCE_URL + this.profileImagePath
+              imageUrl: this.profileImagePath ? environment.RESOURCE_URL + this.profileImagePath : this.defaultImageUrl
             }
           ];
 
