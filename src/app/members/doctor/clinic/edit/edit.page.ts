@@ -107,7 +107,7 @@ export class EditPage implements OnInit {
       Tuend: [null],
       Tuend2: [null],
       Tu1Id: [null],
-      TU2Id: [null],
+      Tu2Id: [null],
 
       Wednesday: [false],
       WednesdayS1: [false],
