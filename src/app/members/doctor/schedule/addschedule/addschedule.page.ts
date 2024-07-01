@@ -67,7 +67,7 @@ export class AddschedulePage implements OnInit {
               dose.Name,
               new FormControl(value, Validators.required)
             );
-            dose.IsSpecial = false;
+            dose.IsSpecial = true;
             // changes in old copy
           });
 
