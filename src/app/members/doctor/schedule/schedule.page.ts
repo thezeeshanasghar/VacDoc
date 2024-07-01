@@ -4,7 +4,7 @@ import { LoadingController } from "@ionic/angular";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { ToastService } from "src/app/shared/toast.service";
-import { Router } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import {
   FormGroup,
   FormBuilder,
@@ -123,6 +123,10 @@ export class SchedulePage implements OnInit {
         this.toastService.create(err, "danger");
       }
     );
+  }
+
+  async AddSchedule(){
+    this.router.navigate(["/addschedule"]);
   }
 }
 

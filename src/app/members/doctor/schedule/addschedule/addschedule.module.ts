@@ -5,15 +5,13 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { SchedulePage } from './schedule.page';
+import {AddschedulePage } from './addschedule.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: SchedulePage
-  },
-  { path: "edit", loadChildren: "./edit/scheduleeditdoctor.module#SceduleEditPageModule" },
-  { path: "addschedule", loadChildren: "./addschedule/addschedule.module#AddschedulePageModule" }
+    component: AddschedulePage
+  }
 ];
 
 @NgModule({
@@ -24,6 +22,6 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     ReactiveFormsModule
   ],
-  declarations: [SchedulePage]
+  declarations: [AddschedulePage]
 })
-export class SchedulePageModule {}
+export class AddschedulePageModule {}

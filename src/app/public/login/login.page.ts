@@ -347,6 +347,7 @@ export class LoginPage implements OnInit {
           this.loginservice.changeState(state);
           this.getdoctorprofile(res.ResponseData.Id);
           this.router.navigate(['/members']);
+          localStorage.setItem('docid',res.ResponseData.DoctorId)
           loading.dismiss();
         }
         else {
