@@ -4,7 +4,7 @@ import { ClinicService } from "src/app/services/clinic.service";
 import { ToastService } from "src/app/shared/toast.service";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
-import { NavigationEnd, Router } from "@angular/router";
+import { NavigationEnd, Router, Route, ActivatedRoute } from "@angular/router";
 import { AlertService } from "src/app/shared/alert.service";
 
 @Component({
@@ -18,6 +18,7 @@ export class ClinicPage {
   doctorId: number;
   clinicId: any;
   onlineclinic: any;
+  
 
   constructor(
     public loadingController: LoadingController,
@@ -25,7 +26,8 @@ export class ClinicPage {
     private toastService: ToastService,
     private storage: Storage,
     private router: Router,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private route: ActivatedRoute
   ) {
     this.router.events.subscribe((val) => {
       // Check if redirected from another page
@@ -40,6 +42,7 @@ export class ClinicPage {
     await this.storage.get(environment.DOCTOR_Id).then(docId => {
       this.doctorId = docId;
     });
+
     // await this.storage.get(environment.CLINIC_Id).then(clinicId => {
     //   this.clinicId = clinicId;
     // });
@@ -48,17 +51,27 @@ export class ClinicPage {
     // });
     // console.log(this.Clinics);
     // console.log(this.doctorId);
-    if (!this.Clinics) {
-      this.getClinics();
-    }
-    if (this.Clinics) {
-      this.Clinics = this.Clinics;
-    } else {
-      // Fetch clinics only if they haven't been fetched before
-      this.getClinics();
-    }
+    this.route.queryParams.subscribe(params => {
+      if (params.refresh) {
+        // Fetch clinics again
+        this.getClinics();
+        this.clearRefreshFlag();
+      } else {
+        // Check if clinics are already available
+        if (!this.Clinics) {
+          this.getClinics();
+        } else {
+          this.Clinics = this.Clinics;
+        }
+      }
+    });
   }
-
+  clearRefreshFlag() {
+    this.router.navigate([], {
+      queryParams: { refresh: null },
+      queryParamsHandling: 'merge'
+    });
+  }
   async getClinics() {
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();

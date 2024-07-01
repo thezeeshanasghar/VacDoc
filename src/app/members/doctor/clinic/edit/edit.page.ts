@@ -981,7 +981,7 @@ export class EditPage implements OnInit {
               console.log(val);
               loading.dismiss();
               this.toastService.create("successfully updated clinic");
-              this.router.navigate(["/members/doctor/clinic"]);
+              this.router.navigate(["/members/doctor/clinic"], { queryParams: { refresh: true } });
             });
           } else {
             loading.dismiss();
