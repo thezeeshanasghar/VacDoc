@@ -57,7 +57,7 @@
         </span>
       </p>
       <p *ngIf="!clinic.ClinicTimings || !clinic.ClinicTimings.length">No timings available</p> -->
-      <ion-button size="small" fill="outline" color="primary" routerLink="/vaccine/{{clinic.Id}}/dose">
+      <ion-button size="small" fill="outline" color="primary" routerLink="/members/child">
         Patients &nbsp;<ion-badge size="small" color="primary">{{clinic.childrenCount}}</ion-badge>
       </ion-button>
       <ion-button *ngIf="!clinic.IsOnline" size="small" fill="outline" color="primary"
