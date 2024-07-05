@@ -138,6 +138,11 @@ export class MembersPage implements OnInit {
                 url: "/members/doctor/clinic",
                 icon: "moon-outline"
               },
+              {
+                title: "Change Password",
+                url: "/members/doctor/password",
+                icon: "key-outline"
+              },
             ];
             this.appPages = [];
             this.childPages = [];
