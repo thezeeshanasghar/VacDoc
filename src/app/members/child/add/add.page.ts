@@ -21,8 +21,8 @@ import { SMS } from '@ionic-native/sms/ngx';
 import { TitleCasePipe } from '@angular/common';
 import { AlertController } from '@ionic/angular';
 import { env } from 'process';
-import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CityService } from "src/app/services/city.service";
 
@@ -47,7 +47,7 @@ export class AddPage implements OnInit {
   CNIC: any;
   Doctor: any;
   epiDone = false;
-  Messages:any = [];
+  Messages: any = [];
   cities: string[];
   originalCities: string[];
   filteredOptions: Observable<string[]>;
@@ -57,7 +57,7 @@ export class AddPage implements OnInit {
     public loadingController: LoadingController,
     private formBuilder: FormBuilder,
     private vaccineService: VaccineService,
-    private cityService:CityService,
+    private cityService: CityService,
     public childService: ChildService,
     private toastService: ToastService,
     private router: Router,
@@ -79,7 +79,7 @@ export class AddPage implements OnInit {
       (cities: any) => {
         this.cities = cities;
         this.originalCities = [...cities];
-        console.log('load',cities)
+        console.log('load', cities)
       },
       (error: any) => {
         console.error('Error loading cities', error);
@@ -88,7 +88,7 @@ export class AddPage implements OnInit {
   }
   ionViewWillEnter()//ngAfterContentInit() 
   {
-    this.storage.set(environment.MESSAGES , this.Messages);
+    this.storage.set(environment.MESSAGES, this.Messages);
     this.todaydate = new Date();
     this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format("YYYY-MM-DD");
     // this.getVaccine();
@@ -104,8 +104,8 @@ export class AddPage implements OnInit {
       FatherName: new FormControl("", Validators.compose([
         Validators.required,
         Validators.pattern(/^[^\d]+$/)
-      ])),      
-      
+      ])),
+
       Email: new FormControl(
         "",
         Validators.compose([
@@ -125,12 +125,12 @@ export class AddPage implements OnInit {
         ])
       ),
       City2: [{ value: '', disabled: true }, Validators.compose([
-        
+
       ])],
-      Gender: [null,Validators.required],
-      Type: [null,Validators.required],
+      Gender: [null, Validators.required],
+      Type: [null, Validators.required],
       city: [''],
-      CNIC:[""],
+      CNIC: [""],
       IsEPIDone: [false],
       IsSkip: [true],
       IsVerified: [false],
@@ -138,7 +138,7 @@ export class AddPage implements OnInit {
       ChildVaccines: [null]
     });
 
-    
+
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
     });
@@ -148,21 +148,22 @@ export class AddPage implements OnInit {
     });
 
     this.storage.get(environment.CITY).then(val => {
-     
-      val == null? "": this.fg1.controls['City'].setValue(val);
-  
-      
+
+      val == null ? "" : this.fg1.controls['City'].setValue(val);
+
+
     });
 
-     this.storage.get(environment.DOCTOR).then(doc => {
+    this.storage.get(environment.DOCTOR).then(doc => {
       this.Doctor = doc;
     });
-    
-     this.storage.get(environment.MESSAGES).then(messages => {messages==null?"": this.Messages = messages;
+
+    this.storage.get(environment.MESSAGES).then(messages => {
+      messages == null ? "" : this.Messages = messages;
     });
 
     this.cities = this.cities;
-   
+
   }
 
   public filter(value: string) {
@@ -417,39 +418,39 @@ export class AddPage implements OnInit {
     { name: 'Yemen', code: '967' },
     { name: 'Zambia', code: '260' },
     { name: 'Zimbabwe', code: '263' },
-];
-sendMessage(sms1: string): void {
-  const url = 'https://graph.facebook.com/v19.0/331514553372468/messages';
-  const accessToken = 'EAANxUIaDgugBO5XJ4tQLZBHcRQgF7l9znlMHTl1QXgjx4WXmMjF1J7hqAnFdQxUOOgsc7YMhj7FvBRWG60QdMNitVTeaZAI49YidLNZB2dtfKRDyBYOY28hQUYkvxg2hvqCrOvupbAGPfcC3ZBDSejZAv8ZBxts3qTjsh1tN8TCiqEwKYqGuaMPKA4wPkCzUzteXjbCSCOvgP5gdN2rC8ZD';
+  ];
+  sendMessage(sms1: string): void {
+    const url = 'https://graph.facebook.com/v19.0/331514553372468/messages';
+    const accessToken = 'EAANxUIaDgugBO5XJ4tQLZBHcRQgF7l9znlMHTl1QXgjx4WXmMjF1J7hqAnFdQxUOOgsc7YMhj7FvBRWG60QdMNitVTeaZAI49YidLNZB2dtfKRDyBYOY28hQUYkvxg2hvqCrOvupbAGPfcC3ZBDSejZAv8ZBxts3qTjsh1tN8TCiqEwKYqGuaMPKA4wPkCzUzteXjbCSCOvgP5gdN2rC8ZD';
 
-  // Set the headers
-  const headers = new HttpHeaders({
-    'Authorization': `Bearer ${accessToken}`,
-    'Content-Type': 'application/json'
-  });
+    // Set the headers
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    });
 
-  // Set the data to be sent
-  const data = {
-    "messaging_product": "whatsapp",
-    "recipient_type":"individual",
-    "to": "whatsapp:+923259944582",
-    "type": "text",
-    "text":{
-      "body":sms1
-    } 
-  };
-
-  // Make the POST request
-  this.http.post(url, data, { headers })
-    .subscribe(
-      (response) => {
-        console.log('Message sent successfully:', response);
-      },
-      (error) => {
-        console.error('Error sending message:', error);
+    // Set the data to be sent
+    const data = {
+      "messaging_product": "whatsapp",
+      "recipient_type": "individual",
+      "to": "whatsapp:+923259944582",
+      "type": "text",
+      "text": {
+        "body": sms1
       }
-    );
-}
+    };
+
+    // Make the POST request
+    this.http.post(url, data, { headers })
+      .subscribe(
+        (response) => {
+          console.log('Message sent successfully:', response);
+        },
+        (error) => {
+          console.error('Error sending message:', error);
+        }
+      );
+  }
   async moveNextStep() {
     console.log('Form Group Value:', this.fg1.value);
     this.fg1.value.DOB = await moment(this.fg1.value.DOB, "YYYY-MM-DD").format("DD-MM-YYYY");
@@ -477,11 +478,11 @@ sendMessage(sms1: string): void {
 
   async addNewChild(data) {
     console.log('City2 value:', this.fg1.value.City2);
-    if(data.city===""){
-      data.city=this.fg1.value.City2;
+    if (data.city === "") {
+      data.city = this.fg1.value.City2;
       console.log('city2 data')
     }
-   console.log(data);
+    console.log(data);
     const loading = await this.loadingController.create({
       message: "loading"
     });
@@ -490,6 +491,8 @@ sendMessage(sms1: string): void {
     // this.fg1.value.PreferredDayOfWeek = str.toString();
     this.fg1.value.ClinicId = this.clinic.Id;
 
+    console.log( "data" , data);
+    
     await this.childService.addChild(data).subscribe(
       async res => {
         this.setCity(this.fg1.value.City);
@@ -506,15 +509,15 @@ sendMessage(sms1: string): void {
           sms1 += "\nClinic Phone Number: " + this.clinic.PhoneNumber;
           sms1 += "\nWeb Link:  https://child.skintechno.com/";
           console.log(sms1);
-          const ChildId=res.ResponseData.Id
-          console.log('child id',ChildId)
-         
+          const ChildId = res.ResponseData.Id
+          console.log('child id', ChildId)
+
           loading.dismiss();
           this.toastService.create("successfully added");
-          
+
           // this.sendMessage(sms1)
-          
-      
+
+
           // const loading1 = await this.loadingController.create({
           //   message: "sending Message"
           // });
@@ -522,9 +525,9 @@ sendMessage(sms1: string): void {
           // sendsms 1
           // await this.sendsms(res.ResponseData.MobileNumber, sms1);
           // loading1.dismiss();
-          
+
           this.router.navigate(["/members/child"]);
-          
+
         } else {
           loading.dismiss();
           this.formcontroll = false;
@@ -547,15 +550,15 @@ sendMessage(sms1: string): void {
         if (result.hasPermission) {
           this.sms.send('+92' + number, message)
             .then(() => {
-              let obj = {'toNumber':'+92' + number , 'message': message , 'created': Date.now(), 'status':true};
+              let obj = { 'toNumber': '+92' + number, 'message': message, 'created': Date.now(), 'status': true };
               this.toastService.create("Message Sent Successful");
               this.Messages.push(obj);
-              this.storage.set(environment.MESSAGES , this.Messages);
+              this.storage.set(environment.MESSAGES, this.Messages);
             }).catch((error) => {
-              let obj = {'toNumber':'+92' + number , 'message': message , 'created': Date.now(), 'status':false};
+              let obj = { 'toNumber': '+92' + number, 'message': message, 'created': Date.now(), 'status': false };
               this.Messages.push(obj);
-              this.storage.set(environment.MESSAGES , this.Messages);
-              this.toastService.create("Message Sent Failed" , "danger");
+              this.storage.set(environment.MESSAGES, this.Messages);
+              this.toastService.create("Message Sent Failed", "danger");
             });
         }
         else {
@@ -579,7 +582,7 @@ sendMessage(sms1: string): void {
   //   if (this.fg1.value.PreferredDayOfWeek.length > 1)
   //     this.fg1.value.PreferredDayOfWeek = this.fg1.value.PreferredDayOfWeek.filter(x => (x !== 'Any'));
   // }
-  
+
   async checkEpi() {
     let days = await this.calculateDiff(this.fg1.value.DOB);
     console.log(days);
@@ -634,7 +637,7 @@ sendMessage(sms1: string): void {
     name: [{ type: "required", message: "Name is required." },
     { type: 'pattern', message: 'PLease Enter Only Charecters in First Name.' }],
     City2: [
-    { type: 'pattern', message: 'PLease Enter Only Charecters in City.' }],
+      { type: 'pattern', message: 'PLease Enter Only Charecters in City.' }],
 
     fatherName: [{ type: "required", message: "Guardian name is required." },
     { type: 'pattern', message: 'Only letters, spaces, commas, and hyphens are allowed in Guardian.' }],
@@ -655,7 +658,7 @@ sendMessage(sms1: string): void {
   };
   //cities = ['Islamabad', 'Rawalpindi', 'Multan', 'Other']
 
-  
+
 }
 
 ///
