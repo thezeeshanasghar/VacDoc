@@ -113,7 +113,7 @@ export class VaccinePage {
             loading.dismiss();
 
           } else {
-            this.toastService.create("Error: failed to get vaccines");
+            this.toastService.create("Vaccines Not Found ! Please Add vaccines");
             loading.dismiss();
           }
         },

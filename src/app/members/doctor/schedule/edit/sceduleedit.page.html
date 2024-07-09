@@ -8,15 +8,16 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6" *ngFor="let dose of doses; let i = index">
+        <ion-item>
+          <ion-checkbox [(ngModel)]="dose.IsSpecial" slot="start"></ion-checkbox>
+          <ion-label>{{ dose.Name }}</ion-label>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
   
-
-  <ion-item *ngFor ="let dose of doses let i = index">
-    <!-- <ion-checkbox [(ngModel)]="dose.IsSpecial" slot="start"></ion-checkbox> -->
-    <ion-checkbox [(ngModel)]="dose.IsSpecial" slot="start"></ion-checkbox>
-    <ion-label>{{dose.Name}}</ion-label>
-  </ion-item>
-  
-  <ion-button (click)="getdoses()" type="submit">Finish</ion-button> 
-
-
+  <ion-button (click)="getdoses()" expand="block">Finish</ion-button>
 </ion-content>

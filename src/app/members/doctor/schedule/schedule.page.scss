@@ -1,0 +1,12 @@
+.schedule-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  
+  .schedule-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
