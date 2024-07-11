@@ -522,17 +522,6 @@ export class AddPage implements OnInit {
 
         } 
 
-
-          // this.sendMessage(sms1)
-
-
-          // const loading1 = await this.loadingController.create({
-          //   message: "sending Message"
-          // });
-          // await loading1.present();
-          // sendsms 1
-          // await this.sendsms(res.ResponseData.MobileNumber, sms1);
-          // loading1.dismiss();
         else{
           this.router.navigate(["/members/child"]);
         }
