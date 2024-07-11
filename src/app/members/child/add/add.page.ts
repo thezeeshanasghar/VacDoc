@@ -497,6 +497,7 @@ export class AddPage implements OnInit {
       async res => {
         this.setCity(this.fg1.value.City);
         if (res.IsSuccess) {
+          console.log("res", res.ResponseData)
           var sms1 = "";
           if (res.ResponseData.Gender == "Boy")
             sms1 += ("Mr. " + this.titlecasePipe.transform(res.ResponseData.Name));
@@ -515,6 +516,13 @@ export class AddPage implements OnInit {
           loading.dismiss();
           this.toastService.create("successfully added");
 
+           if (res.ResponseData.Type == "special" ){
+            this.router.navigate([`/members/child/vaccine/${ChildId}/edit`]);
+
+
+        } 
+
+
           // this.sendMessage(sms1)
 
 
@@ -525,10 +533,14 @@ export class AddPage implements OnInit {
           // sendsms 1
           // await this.sendsms(res.ResponseData.MobileNumber, sms1);
           // loading1.dismiss();
-
+        else{
           this.router.navigate(["/members/child"]);
+        }
 
-        } else {
+        }
+
+        
+        else {
           loading.dismiss();
           this.formcontroll = false;
           this.toastService.create(res.Message, "danger");

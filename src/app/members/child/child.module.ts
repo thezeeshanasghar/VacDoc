@@ -14,6 +14,7 @@ const routes: Routes = [
   },
   { path: 'add', loadChildren: './add/add.module#AddPageModule' },
   { path: 'edit/:id', loadChildren: './edit/edit.module#EditPageModule' },
+  { path: 'schedule', loadChildren: './schedule/schedule.module#SchedulePageModule' },
   { path: 'vaccine/:id', loadChildren: './vaccine/vaccine.module#VaccinePageModule' },
   { path: 'followup/:id', loadChildren: './followup/followup.module#FollowupPageModule' },
   { path: 'growth', loadChildren: './growth/growth.module#GrowthPageModule' },
