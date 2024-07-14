@@ -54,52 +54,55 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-
     <ion-card>
       <ion-card-content>
         <div *ngFor="let v of item.value">
-          <ion-item lines="none">
-
-            <ion-label style="display: flex; align-items: center;">
+          <ion-item lines="none" style="display: flex; align-items: center;">
+    
+            <ion-label style="flex: 1; display: flex; align-items: center;">
               {{v.Dose.Name}}
-              <span *ngIf="v.BrandId" style="display: inline;"> &nbsp;({{v.Brand.Name}})</span>
             </ion-label>
-            <p *ngIf="v.Due2EPI==true" style="color:rgb(55, 231, 10);">EPI</p>
-
-            <ion-img *ngIf="v.Due2EPI==true" style="height: 30px;" src="../../assets/injectionFilled.png">
-            </ion-img>
-
-            <p *ngIf="v.IsDone==true && v.Due2EPI==false && (v.IsDisease==false || v.IsDisease==null)"
-              style="color:rgb(55, 231, 10);">{{v.GivenDate | date }} </p>
-
-            <p *ngIf="v.IsDone==true && v.Due2EPI==false && v.IsDisease==true" style="color:rgb(55, 231, 10);"
-              routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}">Disease Year: {{v.DiseaseYear}}</p>
-
-            <ion-icon *ngIf="v.IsDone==false && v.Due2EPI==false && v.IsSkip != true" color="primary" name="calendar"
-              (click)="picker.open()">
-
+            <div style="flex: 1; display: flex; justify-content: center;">
+              <span *ngIf="v.BrandId; else noBrand" style="color: rgb(55, 231, 10);">
+                ({{v.Brand.Name}})
+              </span>
+            </div>
+    
+            <p *ngIf="v.Due2EPI" style="color: rgb(55, 231, 10);">EPI</p>
+    
+            <ion-img *ngIf="v.Due2EPI" style="height: 30px;" src="../../assets/injectionFilled.png"></ion-img>
+    
+            <p *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null)" style="color: rgb(55, 231, 10);">
+              {{v.GivenDate | date }}
+            </p>
+    
+            <p *ngIf="v.IsDone && !v.Due2EPI && v.IsDisease" style="color: rgb(55, 231, 10);" routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}">
+              Disease Year: {{v.DiseaseYear}}
+            </p>
+    
+            <ion-icon *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip" color="primary" name="calendar" (click)="picker.open()">
               <input [matDatepicker]="picker" value="{{v.Date}}" (dateChange)="updateDate($event, v.Id)">
               <mat-datepicker #picker></mat-datepicker>
             </ion-icon>
-
-            <ion-img *ngIf="(v.IsDone==false) && v.Due2EPI==false && (v.IsSkip!=true)" style="height: 30px;"
-              src="../../assets/injectionEmpty.png" routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}">
+    
+            <ion-img *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip" style="height: 30px;" src="../../assets/injectionEmpty.png" routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}">
             </ion-img>
-
-            <ion-img
-              *ngIf="v.IsDone==true && v.Due2EPI==false && (v.IsDisease==false || v.IsDisease==null) && v.IsSkip!=true"
-              style="height: 30px;" src="../../assets/injectionFilled.png" (click)="UnfillVaccine(v.Id)">
+    
+            <ion-img *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip" style="height: 30px;" src="../../assets/injectionFilled.png" (click)="UnfillVaccine(v.Id)">
             </ion-img>
-
-            <ion-button *ngIf="v.IsDone==false && v.Due2EPI==false && (v.IsSkip==null ||v.IsSkip==false)"
-              (click)="SkipVaccine(v.Id, v.Dose.Name)">skip</ion-button>
-
-            <ion-button color="danger" *ngIf="(v.IsDone==false && v.IsSkip==true && v.Due2EPI==false)"
-              (click)="UnSkipVaccine(v.Id, v.Dose.Name)">UnSkip</ion-button>
+    
+            <ion-button *ngIf="!v.IsDone && !v.Due2EPI && (v.IsSkip == null || !v.IsSkip)" (click)="SkipVaccine(v.Id, v.Dose.Name)">
+              skip
+            </ion-button>
+    
+            <ion-button color="danger" *ngIf="!v.IsDone && v.IsSkip && !v.Due2EPI" (click)="UnSkipVaccine(v.Id, v.Dose.Name)">
+              UnSkip
+            </ion-button>
           </ion-item>
         </div>
       </ion-card-content>
     </ion-card>
+    
   </div>
 
 
