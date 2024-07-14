@@ -62,10 +62,13 @@
             <ion-label style="flex: 1; display: flex; align-items: center;">
               {{v.Dose.Name}}
             </ion-label>
-            <div style="flex: 1; display: flex; justify-content: center;">
+            <div style="flex: 1; display: flex;">
               <span *ngIf="v.BrandId; else noBrand" style="color: rgb(55, 231, 10);">
                 ({{v.Brand.Name}})
               </span>
+              <ng-template #noBrand>
+                <span *ngIf="v.IsDone" style="color: rgb(55, 231, 10);">(OHF)</span>
+              </ng-template>
             </div>
     
             <p *ngIf="v.Due2EPI" style="color: rgb(55, 231, 10);">EPI</p>
