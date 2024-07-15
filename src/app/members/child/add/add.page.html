@@ -75,42 +75,6 @@
         </ion-grid>
       </ion-radio-group>
 
-      <ion-radio-group formControlName="Type">
-       
-        <ion-grid>
-          <ion-row>
-            <ion-col>
-              <ion-item style="height: 100%;">
-                <ion-label color="white">Regular</ion-label>
-                <ion-radio slot="start" value="regular"></ion-radio>
-              </ion-item>
-            </ion-col>
-        
-            <ion-col>
-              <ion-item style="height: 88%; display: flex;">
-                <ion-label color="dark">EPI Plus</ion-label>
-                <ion-checkbox slot="start" formControlName="IsEPIDone" id="EPI"></ion-checkbox>
-              </ion-item>
-            </ion-col>
-            <ion-col>
-              <ion-item c style="height: 100%;">
-                <ion-label color="white">Customize</ion-label>
-                <ion-radio slot="start" value="special"></ion-radio>
-              </ion-item>
-            </ion-col>
-            
-          </ion-row>
-        </ion-grid>
-        
-      </ion-radio-group>
-
-
-      <!-- <ion-item *ngIf="fg1.value.Type === 'regular'">
-        <ion-label color="primary">Skip UnActive Doses</ion-label>
-        <ion-checkbox slot="start" formControlName="IsSkip"></ion-checkbox>
-      </ion-item> -->
-
-
       <ion-label id="dob" color="primary" position="floating" style="margin-left: 1.5%; margin-bottom: 20px;">Date of Birth</ion-label>
       <input formControlName="DOB" slot="end" matInput [matDatepicker]="picker" disabled  max="{{todaydate}}" (click)="picker.open()" (dateChange)="checkEpi()">
       <mat-datepicker-toggle slot="end" matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -126,6 +90,42 @@
         </ng-container>
       </div>
       
+      
+      <ion-radio-group formControlName="Type">
+       
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-item style="height: 100%;">
+                <ion-label color="white">Regular</ion-label>
+                <ion-radio slot="start" value="regular"></ion-radio>
+              </ion-item>
+            </ion-col>
+        
+            <ion-col>
+              <ion-item style="height: 100%;">
+                <ion-label color="white">EPI Plus</ion-label>
+                <ion-radio slot="start" value="IsEPIDone" (ionChange)="checkEpi()" [disabled]="isRadioDisabled"></ion-radio>
+              </ion-item>
+            </ion-col>
+            
+            <ion-col>
+              <ion-item c style="height: 88%;">
+                <ion-label color="white">Customize</ion-label>
+                <ion-radio slot="start" value="special"></ion-radio>
+              </ion-item>
+            </ion-col>
+            
+          </ion-row>
+        </ion-grid>
+        
+      </ion-radio-group>
+
+
+      <!-- <ion-item *ngIf="fg1.value.Type === 'regular'">
+        <ion-label color="primary">Skip UnActive Doses</ion-label>
+        <ion-checkbox slot="start" formControlName="IsSkip"></ion-checkbox>
+      </ion-item> -->
 
 
       <ion-item>

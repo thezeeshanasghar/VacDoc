@@ -33,6 +33,7 @@ import { CityService } from "src/app/services/city.service";
   styleUrls: ["./add.page.scss"]
 })
 export class AddPage implements OnInit {
+  isRadioDisabled: boolean = true; 
   fg1: FormGroup;
   fg2: FormGroup;
   formcontroll: boolean = false;
@@ -587,12 +588,9 @@ export class AddPage implements OnInit {
   async checkEpi() {
     let days = await this.calculateDiff(this.fg1.value.DOB);
     console.log(days);
-    if (days > 272)
-      this.epiDone = true;
-    else
-      this.epiDone = false;
+    this.epiDone = days > 272;
+    this.isRadioDisabled = !this.epiDone; // Disable the radio button if epiDone is false
   }
-
   calculateDiff(dateSent) {
     let currentDate = new Date();
     dateSent = new Date(dateSent);
