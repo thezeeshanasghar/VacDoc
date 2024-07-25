@@ -19,3 +19,21 @@ ion-img{
 span{
         float: right;
 }
+
+ion-toolbar {
+    --padding-start: 0;
+    --padding-end: 0;
+  }
+  
+  ion-title {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    
+  }
+  
+  ion-buttons {
+    display: flex;
+    align-items: center;
+  }
+  
