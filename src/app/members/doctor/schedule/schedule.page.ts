@@ -23,6 +23,7 @@ export class SchedulePage implements OnInit {
   fg: FormGroup;
   doses: any;
   vaccines: any;
+  alphabetically: any;
   IsActive = true;
   constructor(
     public loadingcontroller: LoadingController,
