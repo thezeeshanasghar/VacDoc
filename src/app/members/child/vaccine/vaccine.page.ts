@@ -25,6 +25,7 @@ export class VaccinePage {
   dataGrouping: any[] = [];
   vaccinesData = [];
   childId: any;
+  alphabetically: any;
   Pneum2Date: any;
   BirthYear: any;
   ChildName: string;
@@ -82,6 +83,7 @@ export class VaccinePage {
     }
     return isdone;
   }
+  
 
   async getVaccination() {
     const loading = await this.loadingController.create({
