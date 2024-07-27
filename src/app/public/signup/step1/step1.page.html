@@ -221,24 +221,38 @@
       </ng-container>
     </div>
 
-    <ion-item  class="custom-item-background">
-      <ion-item slot="start" lines="none"  class="custom-item-background">
-        <ion-label color="primary" position="floating">Country Code</ion-label>
-        <ion-select formControlName="CountryCode">
-          <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
-            (+{{ country.code }}){{ country.name }} 
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
-    <ion-item  class="custom-item-background">
-      <ion-label color="primary" position="floating">Mobile Number With WhatsApp</ion-label>
-      <ion-input type="text" formControlName="MobileNumber" required></ion-input>
-    </ion-item>
-      <ion-item slot="end" lines="none"  class="custom-item-background">
-        <ion-checkbox formControlName="ShowMobile"></ion-checkbox>
-        <ion-label color="primary">&nbsp;Public Display</ion-label>
-      </ion-item>
-    </ion-item>
+    <ion-grid>
+      <ion-row class="form-row">
+        <ion-col size="12" size-md="4">
+          <ion-item class="custom-item-background">
+            <ion-label color="primary" position="floating">Country Code</ion-label>
+            <ion-select formControlName="CountryCode">
+              <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
+                (+{{ country.code }}) {{ country.name }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+    
+        <ion-col size="12" size-md="6">
+          <ion-item class="custom-item-background">
+            <ion-label color="primary" position="floating">Mobile Number With WhatsApp</ion-label>
+            <ion-input type="text" formControlName="MobileNumber" required></ion-input>
+          </ion-item>
+        </ion-col>
+    
+        <ion-col size="12" size-md="2" class="checkbox-col">
+          <ion-item class="custom-item-background end-item">
+            <ion-checkbox formControlName="ShowMobile"></ion-checkbox>
+            <ion-label color="primary" class="checkbox-label">&nbsp;Public Display</ion-label>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    
+    
+    
+
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.mobileNumber">
         <div class="error-message"
