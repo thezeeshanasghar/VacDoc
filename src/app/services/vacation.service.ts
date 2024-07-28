@@ -23,8 +23,9 @@ export class VacationService extends BaseService {
         catchError(this.handleError)
       );
   }
+
   patchChildIdsWithSchedules(clinicId: number, fromDate: string, toDate: string) {
-    const url = `https://localhost:5001/api/Schedule/${clinicId}?fromDate=${fromDate}&toDate=${toDate}`;
+    const url = `${environment.BASE_URL}api/Schedule/${clinicId}?fromDate=${fromDate}&toDate=${toDate}`;
     return this.http.patch(url, {});
   }
 
