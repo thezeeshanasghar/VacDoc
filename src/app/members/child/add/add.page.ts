@@ -518,7 +518,7 @@ export class AddPage implements OnInit {
           this.toastService.create("successfully added");
 
            if (res.ResponseData.Type == "special" ){
-            this.router.navigate([`/members/child/vaccine/${ChildId}/edit`]);
+            this.router.navigate([`/members/child/vaccine/${ChildId}`]);
 
 
         } 
