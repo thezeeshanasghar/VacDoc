@@ -73,6 +73,18 @@ export class VaccinePage {
 
   }
 
+  handleSkipClick(event: Event, id: number, doseName: string) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.SkipVaccine(id, doseName);
+  }
+  
+  handleUnSkipClick(event: Event, id: number, doseName: string) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.UnSkipVaccine(id, doseName);
+  }
+  
   checkVaccineIsDon(data): boolean {
     var isdone: boolean = true;
     for (let i = 0; i < data.length; i++) {
