@@ -23,7 +23,7 @@ export class SchedulePage implements OnInit {
   fg: FormGroup;
   doses: any;
   vaccines: any;
-  alphabetically: any;
+  // alphabetically: any;
   IsActive = true;
   constructor(
     public loadingcontroller: LoadingController,
@@ -89,6 +89,7 @@ export class SchedulePage implements OnInit {
   }
   async addCustomSchedule() {
     let var1 = [];
+    let var2=[]
 
     for (let i = 0; i < this.doses.length; i++) {
     
@@ -101,6 +102,18 @@ export class SchedulePage implements OnInit {
           IsActive: this.doses[i].IsActive
         });
       }
+      else if (this.doses[i].IsActive==false) { // Check if dose is selected
+        var2.push({
+          Id: this.doses[i].Id,
+          DoseId: this.doses[i].DoseId,
+          DoctorId: this.doses[i].DoctorId,
+          GapInDays: parseInt(this.fg.value[this.doses[i].Dose.Name]),
+          IsActive: this.doses[i].IsActive
+        });
+      }
+      else{
+        console.log('hello else called')
+      }
     }
     const loading = await this.loadingcontroller.create({
       message: "Loading"
@@ -108,16 +121,30 @@ export class SchedulePage implements OnInit {
 
     await loading.present();
     console.log('var1',var1)
+    console.log('var2',var2)
     loading.dismiss();
     await this.scheduleService.putDoctorSchedule(var1).subscribe(
       res => {
         if (res.IsSuccess) {
           loading.dismiss();
-          this.router.navigate(['/members/dashboard']);
+          this.router.navigate(['/members/schedule']);
           this.toastService.create("successfully updated");
         } else {
           loading.dismiss();
           this.toastService.create(res.Message, "danger");
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, "danger");
+      }
+    );
+    await this.scheduleService.putDoctorSchedule(var2).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          console.log('2nd success')
+        } else {
+          console.log('2nd fail')
         }
       },
       err => {

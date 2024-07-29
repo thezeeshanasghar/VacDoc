@@ -19,7 +19,7 @@
 <ion-content class="ion-padding" *ngIf="doses">
   <form [formGroup]="fg">
     <div class="schedule-container">
-      <ion-item *ngFor="let control of fg.controls | keyvalue : alphabetically; let i = index" class="schedule-item">
+      <ion-item *ngFor="let control of fg.controls | keyvalue : returnZero; let i = index" class="schedule-item">
         <ion-checkbox [(ngModel)]="doses[i].IsActive" [ngModelOptions]="{standalone: true}" slot="start"></ion-checkbox>
         <ion-label>{{control.key}}</ion-label>
         <ion-select [formControlName]="control.key" value="{{control.value.value}}">
