@@ -75,11 +75,13 @@
         </ion-grid>
       </ion-radio-group>
 
-      <ion-label id="dob" color="primary" position="floating" style="margin-left: 1.5%; margin-bottom: 20px;">Date of Birth</ion-label>
-      <input formControlName="DOB" slot="end" matInput [matDatepicker]="picker" disabled  max="{{todaydate}}" (click)="picker.open()" (dateChange)="checkEpi()">
+      <ion-label id="dob" color="primary" position="floating" style="margin-left: 1.5%; margin-bottom: 20px;">Date of
+        Birth</ion-label>
+      <input formControlName="DOB" slot="end" matInput [matDatepicker]="picker" disabled max="{{todaydate}}"
+        (click)="picker.open()" (dateChange)="checkEpi()">
       <mat-datepicker-toggle slot="end" matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker slot="end" #picker disabled="false"></mat-datepicker>
-      
+
       <div class="validation-errors" style="margin-bottom: 20px;">
         <ng-container *ngFor="let validation of validation_messages.DOB">
           <div class="error-message"
@@ -89,10 +91,10 @@
           </div>
         </ng-container>
       </div>
-      
-      
+
+
       <ion-radio-group formControlName="Type">
-       
+
         <ion-grid>
           <ion-row>
             <ion-col>
@@ -101,24 +103,24 @@
                 <ion-radio slot="start" value="regular"></ion-radio>
               </ion-item>
             </ion-col>
-        
+
             <ion-col>
               <ion-item style="height: 100%;">
                 <ion-label color="white">EPI Plus</ion-label>
                 <ion-checkbox slot="start" value="IsEPIDone" (ionChange)="checkEpi()"></ion-checkbox>
               </ion-item>
             </ion-col>
-            
+
             <ion-col>
               <ion-item c style="height: 88%;">
                 <ion-label color="white">Customize</ion-label>
                 <ion-radio slot="start" value="special"></ion-radio>
               </ion-item>
             </ion-col>
-            
+
           </ion-row>
         </ion-grid>
-        
+
       </ion-radio-group>
 
 
@@ -131,7 +133,7 @@
       <ion-item>
         <ion-label color="primary" position="floating">Email</ion-label>
         <ion-input type="text" formControlName="Email"></ion-input>
-    </ion-item> 
+      </ion-item>
       <div class="validation-errors">
         <ng-container *ngFor="let validation of validation_messages.email">
           <div class="error-message"
@@ -147,16 +149,23 @@
       </ion-item>
 
       <ion-item>
-        <div style="display: flex ;">
-          <ion-label color="primary" position="floating" style="font-size: 20px; float: left; margin-top: -10px;">Mobile Number</ion-label>
-          <ion-select formControlName="CountryCode" style="padding-top: 25px;">
-            <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
-              (+{{ country.code }}) {{ country.name }}
-            </ion-select-option>
-          </ion-select>
-          <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
+        <div style="display: flex; flex-direction: column; width: 100%;">
+          <ion-label color="primary" position="floating" style="font-size: 20px; margin-bottom: 10px;">
+            Mobile Number
+          </ion-label>
+          <div style="display: flex; align-items: center;">
+            <ion-select formControlName="CountryCode" style="flex: 0 0 auto; width: 100px; margin-right: 10px;">
+              <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
+                (+{{ country.code }}) {{ country.name }}
+              </ion-select-option>
+            </ion-select>
+            <ion-input type="text" formControlName="MobileNumber" class="number-input"
+              style="flex: 1 1 auto;"></ion-input>
+          </div>
         </div>
       </ion-item>
+
+
       <div class="validation-errors">
         <ng-container *ngFor="let validation of validation_messages.mobileNumber">
           <div class="error-message"
@@ -166,11 +175,12 @@
         </ng-container>
       </div>
 
-        <div class="city">
-        <ion-label color="primary" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">City</ion-label>
+      <div class="city">
+        <ion-label color="primary" position="floating"
+          style="font-size: 16px; display: flex; padding-left: 15px;">City</ion-label>
         <mat-form-field class="example-full-width">
           <input type="text" aria-label="Number" matInput formControlName="city" [matAutocomplete]="auto"
-            (ngModelChange)="filter($event)"  style="font-size: 15px;">
+            (ngModelChange)="filter($event)" style="font-size: 15px;">
           <mat-autocomplete #auto="matAutocomplete" class="no-indent">
             <mat-option *ngFor="let option of cities" [value]="option">
               {{option}}
@@ -179,13 +189,8 @@
         </mat-form-field>
         <ion-item>
           <ion-label color="primary" position="floating">Add New City</ion-label>
-          <ion-input
-            type="text"
-            formControlName="City2"
-            required
-            class="ion-text-capitalize"
-            [(ngModel)]="fg1.value.City2"
-            [disabled]="fg1.get('city')?.value !== '' ">
+          <ion-input type="text" formControlName="City2" required class="ion-text-capitalize"
+            [(ngModel)]="fg1.value.City2" [disabled]="fg1.get('city')?.value !== '' ">
           </ion-input>
         </ion-item>
         <div class="validation-errors">
@@ -197,11 +202,13 @@
           </ng-container>
         </div>
       </div>
-        
-        
-        
-        
-        <ion-button type="submit" [disabled]="!fg1.valid" style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;" color="primary" >Submit</ion-button>
+
+
+
+
+      <ion-button type="submit" [disabled]="!fg1.valid"
+        style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;"
+        color="primary">Submit</ion-button>
 
     </form>
 
