@@ -134,6 +134,7 @@
         <ion-label color="primary" position="floating">Email</ion-label>
         <ion-input type="text" formControlName="Email"></ion-input>
       </ion-item>
+      
       <div class="validation-errors">
         <ng-container *ngFor="let validation of validation_messages.email">
           <div class="error-message"
@@ -143,6 +144,10 @@
         </ng-container>
       </div>
 
+      <ion-item>
+        <ion-label color="primary" position="floating">CNIC/Passport No.</ion-label>
+        <ion-input type="text" formControlName="CNIC"></ion-input>
+      </ion-item>
       <ion-item>
         <div style="width: 100%;">
           <ion-label color="primary" position="stacked" style="font-size: 14px; margin-bottom: 5px;">
