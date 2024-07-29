@@ -10,7 +10,7 @@
 <ion-content class="ion-padding" *ngIf="NewDoses">
   <ion-grid>
     <ion-row>
-      <ion-col size="12" size-sm="6" *ngFor="let dose of doses; let i = index">
+      <ion-col size="12" *ngFor="let dose of doses; let i = index">
         <ion-item>
           <ion-checkbox [(ngModel)]="dose.IsSpecial" slot="start"></ion-checkbox>
           <ion-label>{{dose.Name}}</ion-label>
