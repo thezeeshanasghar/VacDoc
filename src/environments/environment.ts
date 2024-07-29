@@ -8,12 +8,12 @@ export const environment = {
   // RESOURCE_URL: "https://stage.skintechno.com/",
 
   // for using web server
-  // BASE_URL: "https://skintechno.com/api/",
-  // RESOURCE_URL: "https://skintechno.com/",
+  BASE_URL: "https://myapi.skintechno.com/api/",
+  RESOURCE_URL: "https://myapi.skintechno.com/",
 
   // for local server
-  BASE_URL: "https://localhost:5001/api/",
-  RESOURCE_URL: "https://localhost:5001/",
+  // BASE_URL: "https://localhost:5001/api/",
+  // RESOURCE_URL: "https://localhost:5001/",
 
 
 
