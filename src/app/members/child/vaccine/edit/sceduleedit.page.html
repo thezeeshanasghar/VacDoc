@@ -18,7 +18,15 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-button (click)="getdoses()" type="submit">Finish</ion-button>
+  <!-- <ion-button (click)="getdoses()" type="submit">Finish</ion-button> -->
+
+  
+  <ion-fab horizontal="end" vertical="bottom" slot="fixed" style="margin-right: 20px;">
+    <ion-fab-button (click)="getdoses()" type="submit" color="primary">
+      <ion-icon name="checkmark"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  
 </ion-content>
 
 
