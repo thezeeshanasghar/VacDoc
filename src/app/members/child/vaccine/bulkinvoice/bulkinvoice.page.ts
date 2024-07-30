@@ -39,16 +39,16 @@ export class BulkInvoicePage implements OnInit {
     private downloader: Downloader,
     public platform: Platform
 
-    
+
   ) { }
 
   hasActiveValidations(): boolean {
     return (this.fg.get('ConsultationFee').invalid && (this.fg.get('ConsultationFee').dirty || this.fg.get('ConsultationFee').touched)) ||
-           (this.bulkData && Array.isArray(this.bulkData) && this.bulkData.some(bulk => isNaN(Number(bulk.Amount))));
+      (this.bulkData && Array.isArray(this.bulkData) && this.bulkData.some(bulk => isNaN(Number(bulk.Amount))));
   }
-  
-  
- // Validations on amount
+
+
+  // Validations on amount
   bulk = { Amount: '' };
   isValidInput = true;
 
@@ -69,14 +69,14 @@ export class BulkInvoicePage implements OnInit {
       IsConsultationFee: false,
       ConsultationFee: [null, Validators.pattern('^[0-9]*$')] // Add Validators.pattern to allow only numbers
     });
-    
+
     this.storage.get(environment.ON_CLINIC).then(val => {
       this.fg.controls['ConsultationFee'].setValue(val.ConsultationFee);
       // this.fg.value.ConsultationFee = val.ConsultationFee;
     });
   }
 
-  
+
   async getBulk() {
     let data = { ChildId: this.childId, Date: this.currentDate1 };
     const loading = await this.loadingController.create({
@@ -176,37 +176,31 @@ export class BulkInvoicePage implements OnInit {
   }
 
   download(id, date, fee) {
-    const today = new Date();
+    const today = new Date(date); // Use the provided date instead of today's date
     const year = today.getFullYear();
     const month = (today.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-indexed
     const day = today.getDate().toString().padStart(2, '0');
-    const todayDate = `${year}-${month}-${day}`;
-    if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
-      const url = `${this.API_VACCINE}child/${id}/${date}/${todayDate}/${fee}/Download-Invoice-PDF`;
-      window.open(url);
-    }
-    else {
+    const formattedDate = `${year}-${month}-${day}`;
 
+    if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
+      const url = `${this.API_VACCINE}child/${id}/${formattedDate}/${formattedDate}/${fee}/Download-Invoice-PDF`;
+      window.open(url);
+    } else {
       var request: DownloadRequest = {
-        uri: `${this.API_VACCINE}child/${id}/${date}/${fee}/Download-Invoice-PDF`,
+        uri: `${this.API_VACCINE}child/${id}/${formattedDate}/${fee}/Download-Invoice-PDF`,
         title: 'Invoice',
         description: '',
         mimeType: '',
         visibleInDownloadsUi: true,
         notificationVisibility: NotificationVisibility.VisibleNotifyCompleted,
-        // notificationVisibility: 0,
         destinationInExternalFilesDir: {
           dirType: 'Downloads',
           subPath: 'Invoice.pdf'
         }
       };
-      // console.log(request.uri);
       this.downloader.download(request)
         .then((location: string) => console.log('File downloaded at:' + location))
         .catch((error: any) => console.error(error));
     }
-
-
-    
   }
 }
