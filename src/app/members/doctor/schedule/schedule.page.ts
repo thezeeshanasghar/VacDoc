@@ -127,7 +127,7 @@ export class SchedulePage implements OnInit {
       res => {
         if (res.IsSuccess) {
           loading.dismiss();
-          this.router.navigate(['/members/schedule']);
+          this.router.navigate(['/members/doctor/schedule']);
           this.toastService.create("successfully updated");
         } else {
           loading.dismiss();

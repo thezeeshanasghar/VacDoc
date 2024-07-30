@@ -134,7 +134,7 @@
         <ion-label color="primary" position="floating">Email</ion-label>
         <ion-input type="text" formControlName="Email"></ion-input>
       </ion-item>
-      
+
       <div class="validation-errors">
         <ng-container *ngFor="let validation of validation_messages.email">
           <div class="error-message"
@@ -158,14 +158,15 @@
               (+{{ country.code }}) {{ country.name }}
             </ion-select-option>
           </ion-select>
-      
+
           <ion-label color="primary" position="stacked" style="font-size: 20px; margin-bottom: 5px;">
             Mobile Number
           </ion-label>
-          <ion-input type="text" formControlName="MobileNumber" class="number-input" style="flex: 1 1 auto;"></ion-input>
+          <ion-input type="text" formControlName="MobileNumber" class="number-input"
+            style="flex: 1 1 auto;"></ion-input>
         </div>
       </ion-item>
-      
+
       <div class="validation-errors">
         <ng-container *ngFor="let validation of validation_messages.mobileNumber">
           <div class="error-message"
@@ -202,15 +203,10 @@
           </ng-container>
         </div>
       </div>
-
-
-
-
       <ion-button type="submit" [disabled]="!fg1.valid"
         style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;"
-        color="primary">Submit</ion-button>
-
+        color="primary">Submit
+      </ion-button>
     </form>
-
   </ion-card>
 </ion-content>

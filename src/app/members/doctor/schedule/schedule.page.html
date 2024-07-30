@@ -119,11 +119,17 @@
         </ion-select>
       </ion-item>
     </div>
-    <ion-button (click)="onSubmit()" color="primary">Save</ion-button>
+    <!-- <ion-button (click)="onSubmit()" color="primary">Save</ion-button> -->
   </form>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button routerLink="edit" color="primary">
       <ion-icon name="add" color="light"></ion-icon>
     </ion-fab-button>
+    <br>
+
+    <ion-fab-button (click)="onSubmit()" color="primary">
+      <ion-icon name="checkmark" color=""></ion-icon>
+    </ion-fab-button>
+
   </ion-fab>
 </ion-content>
