@@ -32,6 +32,15 @@ export class AlertService extends BaseService {
     );
   }
 
+  sendEmailToAll(numOfDays: number, clinicID: number): Observable<any> {
+    const url = `${this.API_ALERT
+      }alert2/${numOfDays}/${clinicID}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
   sendIndividualAlertMsg(numOfDays: number, Id: String): Observable<any> {
     const url = `${this.API_ALERT
       }alert/individual-sms-alert/${numOfDays}/${Id}`;

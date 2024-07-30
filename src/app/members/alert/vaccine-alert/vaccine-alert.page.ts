@@ -91,7 +91,7 @@ export class VaccineAlertPage implements OnInit {
       message: "sending emails"
     });
     await loading.present();
-    await this.alertService.sendAlertMsgToAll(this.numOfDays, this.clinicId).subscribe(
+    await this.alertService.sendEmailToAll(this.numOfDays, this.clinicId).subscribe(
       res => {
         if (res.IsSuccess) {
           loading.dismiss();
