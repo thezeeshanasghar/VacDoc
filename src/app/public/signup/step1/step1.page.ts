@@ -8,7 +8,7 @@ import {
   FormControl,
   Validators,
   AbstractControl,
-   ValidatorFn
+  ValidatorFn
 } from "@angular/forms";
 import { Router } from "@angular/router";
 import { SignupService } from "src/app/services/signup.service";
@@ -30,13 +30,13 @@ export class Step1Page implements OnInit {
     private router: Router,
     private signupService: SignupService,
     private toastService: ToastService,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.fg = this.frombuilder.group({
       DoctorType: new FormControl("CS"),
       Qualification: [],
-      AdditionalInfo: ["", [Validators.required,this.OneLineValidator,]],
+      AdditionalInfo: ["", [Validators.required, this.OneLineValidator,]],
       FirstName: ['', Validators.compose([
         Validators.required,
         Validators.pattern(/^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/)
@@ -102,7 +102,7 @@ export class Step1Page implements OnInit {
       const countryCode = countryCodeControl.value;
       const mobileNumber = control.value;
 
-      if (countryCode === '92' && mobileNumber.length>10 && mobileNumber.length !== 10) {
+      if (countryCode === '92' && mobileNumber.length > 10 && mobileNumber.length !== 10) {
         return { 'invalidMobileNumberLength': true };
       }
       return null;
@@ -442,19 +442,38 @@ export class Step1Page implements OnInit {
     { name: "Zimbabwe", code: "263" },
   ];
 
-OneLineValidator(control: FormControl) {
-  const value = control.value || "";
-  const lines = value.split('\n').filter(line => line.trim() !== '');
-  return lines.length >= 1 ? null : { insufficientLines: true };
-}
+  OneLineValidator(control: FormControl) {
+    const value = control.value || "";
+    const lines = value.split('\n').filter(line => line.trim() !== '');
+    return lines.length >= 1 ? null : { insufficientLines: true };
+  }
 
-  PasswordGenerator() {
-    var length = 4,
-      charset = "0123456789",
-      retVal = "";
-    for (var i = 0, n = charset.length; i < length; ++i) {
-      retVal += charset.charAt(Math.floor(Math.random() * n));
+   PasswordGenerator(minLength = 6, maxLength = 9) {
+    // Define the character sets
+    var charset = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var numbers = "0123456789";
+    var letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    
+    if (minLength < 6) {
+      minLength = 6;
     }
+    if (maxLength < minLength) {
+      maxLength = minLength;
+    }
+    
+    var length = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
+  
+    var retVal = "";
+  
+    retVal += numbers.charAt(Math.floor(Math.random() * numbers.length));
+    retVal += letters.charAt(Math.floor(Math.random() * letters.length));
+  
+    for (var i = 2; i < length; ++i) {
+      retVal += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+ 
+    retVal = retVal.split('').sort(() => Math.random() - 0.5).join('');
+  
     return retVal;
   }
 
@@ -462,7 +481,7 @@ OneLineValidator(control: FormControl) {
     this.fg.value.Password = this.PasswordGenerator();
     this.signupService.personalData = this.fg.value;
     console.log(this.fg.value);
-  
+
     this.signupService.addDoctor().subscribe(
       res => {
         if (res.IsSuccess) {
@@ -477,7 +496,7 @@ OneLineValidator(control: FormControl) {
       }
     );
   }
-  
+
   // async addDoctorSchedule(id) {
   //   this.signupService.vaccineData = this.fg.value;
   //   this.signupService.vaccineData2 = this.doses;
@@ -509,9 +528,9 @@ OneLineValidator(control: FormControl) {
     qualification: [
       { type: "required", message: "Qualification is required." },
     ],
-      FirstName: [
-        { type: 'required', message: 'First Name is required.' },
-        { type: 'pattern', message: 'PLeaseEnter Only Charecters in First Name.' }
+    FirstName: [
+      { type: 'required', message: 'First Name is required.' },
+      { type: 'pattern', message: 'PLeaseEnter Only Charecters in First Name.' }
     ],
 
     lastName: [{ type: "required", message: "LastName is required." },
