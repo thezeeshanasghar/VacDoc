@@ -18,15 +18,14 @@
   <!-- childs -->
   <h1 *ngIf="Childs == 0" style="color: red;">No alert found</h1>
   <ion-grid *ngFor="let child of Childs">
-    <ion-row routerLink="/members/child/vaccine/{{child.Child.Id}}">
+    <ion-row> <!--routerLink="/members/child/vaccine/{{child.Child.Id}}" -->
       <ion-col>
         <ion-item>
           <ion-label>{{child.Child.Name}}</ion-label>
-          <ion-icon slot="end" color="primary" name="call" (click)="callFunction(child.Child.User.MobileNumber)">
-          </ion-icon>
-          <ion-icon slot="end" color="primary" name="mail" (click)="sendSMS([child])">
-          </ion-icon>
-        </ion-item>
+          <ion-icon slot="end" color="primary" name="call" (click)="callFunction(child.Child.User.MobileNumber)"></ion-icon>
+          <ion-icon slot="end" color="primary" name="mail" (click)="sendSMS([child])"></ion-icon>
+          <ion-icon slot="end" color="primary" name="logo-whatsapp" (click)="openWhatsApp(child.Child.User.MobileNumber)"></ion-icon>
+        </ion-item>        
       </ion-col>
     </ion-row>
   </ion-grid>

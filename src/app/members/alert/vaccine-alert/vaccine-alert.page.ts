@@ -230,12 +230,15 @@ export class VaccineAlertPage implements OnInit {
       });
   }
 
-  callFunction(celnumber) {
-    // console.log(celnumber);
-    this.callNumber.callNumber(0 + celnumber, true)
+  callFunction(celnumber: string) {
+    // Ensure the phone number is in the correct format
+    const formattedNumber = celnumber.startsWith('0') ? celnumber : `0${celnumber}`;
+    
+    this.callNumber.callNumber(formattedNumber, true)
       .then(res => console.log('Launched dialer!', res))
       .catch(err => console.log('Error launching dialer', err));
   }
+  
 
   // checkSmsPermission(): any {
   //   this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS)
@@ -308,5 +311,11 @@ export class VaccineAlertPage implements OnInit {
     loading.dismiss();
 
   }
+
+  openWhatsApp(mobileNumber: string) {
+    const formattedNumber = mobileNumber.startsWith('+') ? mobileNumber : `+${mobileNumber}`;
+    window.open(`https://wa.me/${formattedNumber}`, '_blank');
+  }
+  
 
 }
