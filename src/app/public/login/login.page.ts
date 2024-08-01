@@ -69,7 +69,7 @@ export class LoginPage implements OnInit {
   passwordValidator(): ValidatorFn {
     return (control) => {
       const password = control.value;
-      if (password && password.length == 4) {
+      if (password && password.length == 0) {
         return { minlength: true };
       }
       return null;
