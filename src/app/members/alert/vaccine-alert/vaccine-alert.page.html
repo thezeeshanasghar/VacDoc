@@ -1,15 +1,20 @@
 <ion-content class="ion-padding">
 
   <ion-segment>
-    <ion-segment-button (click)="getChlid(-5)">
+    <!-- <ion-segment-button (click)="getChlid(-5)">
       <ion-label>Last 5 Days</ion-label>
-    </ion-segment-button>
-    <ion-segment-button (click)="getChlid(0)" checked>
-      <ion-label>Today</ion-label>
-    </ion-segment-button>
-    <ion-segment-button (click)="getChlid(5)">
+    </ion-segment-button> -->
+    <ion-item>
+      <ion-label>Select Date</ion-label>
+      <ion-datetime 
+        presentation="date" 
+        [(ngModel)]="selectedDate" 
+        (ionChange)="onDateChange($event)">
+      </ion-datetime>
+    </ion-item>
+    <!-- <ion-segment-button (click)="getChlid(5)">
       <ion-label>Next 5 Days</ion-label>
-    </ion-segment-button>
+    </ion-segment-button> -->
   </ion-segment>
 
   <ion-button fill="outline" [disabled]="Childs == 0" (click)="sendMsgsThroughList()">SMS</ion-button>

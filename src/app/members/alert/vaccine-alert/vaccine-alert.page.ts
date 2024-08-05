@@ -10,6 +10,7 @@ import { TitleCasePipe } from '@angular/common';
 import { SMS } from '@ionic-native/sms/ngx';
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 import { Platform } from '@ionic/angular';
+import { formattedError } from "@angular/compiler";
 //declare var SMS: any;
 @Component({
   selector: "app-vaccine-alert",
@@ -21,10 +22,13 @@ export class VaccineAlertPage implements OnInit {
   doctorId: any;
   clinicId: any;
   SMSKey: any;
+  formattedDate: string;
   Childs: any;
   private readonly API_VACCINE = `${environment.BASE_URL}`;
   Messages = [];
   numOfDays: number = 0; // 0 means get alert for today, 5 means get alert for next five days, same as for -5
+  selectedDate: string = new Date().toISOString();
+
 
 
   constructor(
@@ -46,6 +50,7 @@ export class VaccineAlertPage implements OnInit {
 
 
   async ngOnInit() {
+    this.getAlerts(this.selectedDate);
     await this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
     });
@@ -56,22 +61,35 @@ export class VaccineAlertPage implements OnInit {
       this.SMSKey = val;
     });
     this.storage.get(environment.MESSAGES).then(messages => { messages == null ? '' : this.Messages = messages });
-    await this.getChlid(this.numOfDays);
+    const formattedDate = this.formatDateToString(this.selectedDate);
+    this.getAlerts(formattedDate);
+    // ... other initializations ...
+    await this.getChlid(this.numOfDays, formattedDate);
   }
 
   // Get childs get from server
-  async getChlid(numOfDays: number) {
+  async getChlid(numOfDays: number,formattedDate:string) {
     console.log(numOfDays)
+    console.log("Hello Date " + formattedDate);
+    
     this.numOfDays = numOfDays;
+    this.formattedDate = formattedDate;
     const loading = await this.loadingController.create({
       message: "Loading"
     });
     await loading.present();
-    await this.alertService.getChild(this.numOfDays, this.clinicId).subscribe(
+   
+    
+    await this.alertService.getChild(this.formattedDate, this.numOfDays, this.clinicId).subscribe(
       res => {
+        console.log("res "+res);
+        
         if (res.IsSuccess) {
           this.Childs = "";
           this.Childs = res.ResponseData;
+          console.log("Hello ");
+          console.log('ChildData ' + this.Childs);
+          
 
           loading.dismiss();
         } else {
@@ -316,6 +334,25 @@ export class VaccineAlertPage implements OnInit {
     const formattedNumber = mobileNumber.startsWith('+') ? mobileNumber : `+${mobileNumber}`;
     window.open(`https://wa.me/${formattedNumber}`, '_blank');
   }
-  
+
+  formatDateToString(date: string | Date): string {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);  // Months are 0-based
+    const day = ('0' + d.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  }
+
+  onDateChange(event: any) {
+    this.selectedDate = event.detail.value;
+    console.log('Selected Date:', this.selectedDate);
+    this.getAlerts(this.selectedDate);
+  }
+  getAlerts(date: string) {
+    // Convert the date to a more readable format for logging
+    const formattedDate = this.formatDateToString(date);
+  console.log('Getting alerts for date:', formattedDate);
+  this.getChlid(0, formattedDate);
+  }
 
 }
