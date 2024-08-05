@@ -76,25 +76,24 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">City</ion-label>
-    <mat-form-field class="example-full-width">
-      <input type="text"
-             aria-label="Number"
-             matInput
-             formControlName="City"
-             [matAutocomplete]="auto"
-             
-             >
-      <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let city of cityService.cities" [value]="city">
-          {{city}}
-        </mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <input type="text"
+               aria-label="Number"
+               matInput
+               formControlName="City"
+               [matAutocomplete]="auto"
+               (ngModelChange)="filterCities($event)">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let city of filteredCities" [value]="city">
+            {{city}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
     </ion-item>
 
 
 
-    <ion-grid>
+    <!-- <ion-grid>
       <ion-row>
 
         <ion-col>
@@ -112,9 +111,9 @@
         </ion-col>
 
       </ion-row>
-    </ion-grid>
+    </ion-grid> -->
 
-    <ion-button (click)='editChild()'>Update</ion-button>
-    <ion-button routerLink="/members/child/">Cancel</ion-button>
+    <ion-button (click)='editChild()' style="margin-top: 20px;">Update</ion-button>
+    <ion-button routerLink="/members/child/" style="margin-top: 20px;">Cancel</ion-button>
   </form>
 </ion-content>

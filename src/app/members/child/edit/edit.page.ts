@@ -12,16 +12,28 @@ import { FormGroup, FormBuilder } from '@angular/forms';
   styleUrls: ['./edit.page.scss'],
 })
 export class EditPage implements OnInit {
-//random commit
+  //random commit
   child: any;
+
+  cities: string[] = [
+    'Karachi', 'Lahore', 'Faisalabad', 'Rawalpindi', 'Gujranwala',
+    'Peshawar', 'Multan', 'Hyderabad', 'Islamabad', 'Quetta',
+    'Bahawalpur', 'Sargodha', 'Sialkot', 'Sukkur', 'Larkana',
+    'Sheikhupura', 'Rahim Yar Khan', 'Jhang', 'Dera Ghazi Khan', 'Gujrat',
+    'Sahiwal', 'Wah Cantonment', 'Mardan', 'Kasur', 'Okara',
+    'Mingora', 'Nawabshah', 'Chiniot', 'Kotri', 'Kāmoke',
+    'Hafizabad', 'Sadiqabad', 'Mirpur Khas', 'Burewala', 'Kohat'
+  ];
+  filteredCities: string[];
   fg: FormGroup;
+
   constructor(
     public loadingController: LoadingController,
     public router: Router,
     public route: ActivatedRoute,
     private formBuilder: FormBuilder,
     public cityService: CityService,
-    public childService:ChildService,
+    public childService: ChildService,
     private toastService: ToastService,
   ) {
   }
@@ -332,7 +344,7 @@ export class EditPage implements OnInit {
     { name: 'Yemen', code: '967' },
     { name: 'Zambia', code: '260' },
     { name: 'Zimbabwe', code: '263' },
-];
+  ];
 
   async editChild() {
     const loading = await this.loadingController.create({
@@ -340,7 +352,7 @@ export class EditPage implements OnInit {
     });
 
     await loading.present();
-console.log(this.fg.value.Gender);
+    console.log(this.fg.value.Gender);
     await this.childService.editChild(this.fg.value)
       .subscribe(res => {
         if (res.IsSuccess) {
@@ -357,5 +369,12 @@ console.log(this.fg.value.Gender);
         loading.dismiss();
         this.toastService.create(err, 'danger')
       });
+  }
+
+  filterCities(event: any) {
+    const searchTerm = event.toLowerCase();
+    this.filteredCities = this.cities.filter(city =>
+      city.toLowerCase().includes(searchTerm)
+    );
   }
 }
