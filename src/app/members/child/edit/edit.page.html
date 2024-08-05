@@ -42,21 +42,7 @@
       </div>
     </ion-item>
 
-    <ion-item>
-      <ion-label color="primary" position="floating">Preferred Day of week</ion-label>
-      <ion-select formControlName="PreferredDayOfWeek" required>
-        <ion-select-option value="Any">Any</ion-select-option>
-        <ion-select-option value="Monday">Monday</ion-select-option>
-        <ion-select-option value="Tuesday">Tuesday</ion-select-option>
-        <ion-select-option value="Wednesday">Wednesday</ion-select-option>
-        <ion-select-option value="Thursday">Thursday</ion-select-option>
-        <ion-select-option value="Friday">Friday</ion-select-option>
-        <ion-select-option value="Saturday">Saturday</ion-select-option>
-        <ion-select-option value="Sunday">Sunday</ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-radio-group *ngIf ="child" value="{{child.Gender}}">
+    <ion-radio-group *ngIf ="child" formControlName="Gender" value="{{child.Gender}}">
       <ion-list-header>
         Gender
       </ion-list-header>
@@ -107,7 +93,7 @@
     </mat-form-field>
     </ion-item>
 
-    <ion-item>
+    <!-- <ion-item>
       <ion-label color="primary" position="floating">Preferred Day of Reminder</ion-label>
       <ion-select formControlName="PreferredDayOfReminder" required>
         <ion-select-option value="0">Preferred day of reminder - On Due Day</ion-select-option>
@@ -115,7 +101,7 @@
         <ion-select-option value="2">Due day + 2 Day before</ion-select-option>
         <ion-select-option value="3">Due day + 3 Day before</ion-select-option>
       </ion-select>
-    </ion-item>
+    </ion-item> -->
 
     <ion-grid>
       <ion-row>

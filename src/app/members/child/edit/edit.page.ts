@@ -339,7 +339,7 @@ export class EditPage implements OnInit {
     });
 
     await loading.present();
-console.log(this.fg.value);
+console.log(this.fg.value.Gender);
     await this.childService.editChild(this.fg.value)
       .subscribe(res => {
         if (res.IsSuccess) {
