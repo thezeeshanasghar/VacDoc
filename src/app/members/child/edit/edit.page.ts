@@ -39,6 +39,7 @@ export class EditPage implements OnInit {
       'PreferredDayOfWeek': [null],
       'Gender': [null],
       'City': [null],
+      'CNIC': [''],
       'PreferredDayOfReminder': 0,
       'IsEPIDone': [null],
       'IsVerified': [null],

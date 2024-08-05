@@ -42,6 +42,11 @@
       </div>
     </ion-item>
 
+    <ion-item>
+      <ion-label color="primary" position="floating">CNIC/Passport No.</ion-label>
+      <ion-input type="text" formControlName="CNIC"></ion-input>
+    </ion-item>
+
     <ion-radio-group *ngIf ="child" formControlName="Gender" value="{{child.Gender}}">
       <ion-list-header>
         Gender
@@ -61,20 +66,14 @@
             <ion-item>
               <ion-label color="primary">Girl</ion-label>
               <ion-radio slot="start" value="Girl" (ionSelect)="updateGender('Girl')" Checked></ion-radio>
-            </ion-item>
+            </ion-item> 
           </ion-col>
         </ion-row>
       </ion-grid>
 
     </ion-radio-group>
 
-    <!-- <ion-item>
-      <ion-label color="primary" position="floating">Select a City</ion-label>
-      <ion-select formControlName="City"  required>
-        <ion-select-option *ngFor ="let city of childService.cities" value ="{{city}}">{{city}}</ion-select-option>
-       
-     </ion-select>
-    </ion-item> -->
+
     <ion-item>
       <ion-label color="primary" position="floating">City</ion-label>
     <mat-form-field class="example-full-width">
@@ -93,15 +92,7 @@
     </mat-form-field>
     </ion-item>
 
-    <!-- <ion-item>
-      <ion-label color="primary" position="floating">Preferred Day of Reminder</ion-label>
-      <ion-select formControlName="PreferredDayOfReminder" required>
-        <ion-select-option value="0">Preferred day of reminder - On Due Day</ion-select-option>
-        <ion-select-option value="1">Due day + 1 Day before</ion-select-option>
-        <ion-select-option value="2">Due day + 2 Day before</ion-select-option>
-        <ion-select-option value="3">Due day + 3 Day before</ion-select-option>
-      </ion-select>
-    </ion-item> -->
+
 
     <ion-grid>
       <ion-row>
