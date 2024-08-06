@@ -355,4 +355,9 @@ export class VaccineAlertPage implements OnInit {
   this.getChlid(0, formattedDate);
   }
 
+  async openDatePicker() {
+    const dateTimeElement = document.querySelector('ion-datetime');
+    await dateTimeElement.open();
+  }
+
 }
