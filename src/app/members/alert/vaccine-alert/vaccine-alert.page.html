@@ -23,7 +23,7 @@
       <ion-col>
         <ion-item>
           <ion-label>{{child.Child.Name}}</ion-label>
-          <ion-icon slot="end" color="primary" name="calendar" [routerLink]="'/members/child/vaccine/' + child.Child.Id"></ion-icon>
+          <ion-icon slot="end" color="primary" name="today" [routerLink]="'/members/child/vaccine/' + child.Child.Id"></ion-icon>
           <ion-icon slot="end" color="primary" name="call" (click)="callFunction(child.Child.User.MobileNumber)"></ion-icon>
           <ion-icon slot="end" color="primary" name="mail" (click)="sendSMS([child])"></ion-icon>
           <ion-icon slot="end" color="primary" name="logo-whatsapp" (click)="openWhatsApp(child.Child.User.MobileNumber)"></ion-icon>
