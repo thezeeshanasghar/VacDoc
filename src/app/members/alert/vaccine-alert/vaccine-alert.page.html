@@ -23,10 +23,11 @@
       <ion-col>
         <ion-item>
           <ion-label>{{child.Child.Name}}</ion-label>
+
           <ion-icon slot="end" color="primary" name="today" [routerLink]="'/members/child/vaccine/' + child.Child.Id" style="cursor: pointer;"></ion-icon>
           <ion-icon slot="end" color="primary" name="call" (click)="callFunction(child.Child.User.MobileNumber)"  style="cursor: pointer;"></ion-icon>
           <ion-icon slot="end" color="primary" name="mail" (click)="sendSMS([child])" style="cursor: pointer;"></ion-icon>
-          <ion-icon slot="end" color="primary" name="logo-whatsapp" (click)="openWhatsApp(child.Child.User.MobileNumber)" style="cursor: pointer;"></ion-icon>
+          <ion-icon slot="end" color="primary" name="logo-whatsapp" (click)="openWhatsApp(child.Child.User.MobileNumber, child.Child.Name, child.Dose.Name)" style="cursor: pointer;"></ion-icon>
         </ion-item>        
       </ion-col>
     </ion-row>
