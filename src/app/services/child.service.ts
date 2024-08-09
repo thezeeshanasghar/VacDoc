@@ -73,6 +73,13 @@ export class ChildService extends BaseService {
       catchError(this.handleError)
     );
   }
+  toggleChildActiveStatus(childId: number): Observable<any> {
+    const apiUrl = `${this.API_CHILD}child/${childId}/toggle-active`;
+    return this.http.put<any>(apiUrl, {}, this.httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   // othercity = false;
   // cities=["Abbottabad",
   // "Adezai",

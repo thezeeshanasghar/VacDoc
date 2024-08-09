@@ -178,12 +178,42 @@ export class ChildPage {
     )
   }
 
-
-
   callFunction(celnumber)
   {
     this.callNumber.callNumber(0 + celnumber, true)
     .then(res => console.log('Launched dialer!', res))
     .catch(err => console.log('Error launching dialer', err));
+  }
+  
+  async toggleChildActiveStatus(childId: number) {
+    const loading = await this.loadingController.create({
+      message: 'Updating status...'
+    });
+    await loading.present();
+
+    this.childService.toggleChildActiveStatus(childId).subscribe(
+      (res) => {
+        loading.dismiss();
+        if (res.IsSuccess) {
+          // this.toastService.create(res.Message);
+          // Refresh the child list or update the specific child's status in the UI
+          this.refreshPage();
+        } else {
+          this.toastService.create(res.Message, 'danger');
+        }
+      },
+      (err) => {
+        loading.dismiss();
+        this.toastService.create('An error occurred while updating status', 'danger');
+      }
+    );
+  }
+
+  refreshPage() {
+    this.page = 0;
+    this.childs = [];
+    this.search = false;
+    this.fg.controls['Name'].setValue(null);
+    this.getChlidByClinic(false);
   }
 }
