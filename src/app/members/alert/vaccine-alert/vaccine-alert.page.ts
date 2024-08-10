@@ -425,7 +425,7 @@ export class VaccineAlertPage implements OnInit {
 
   openWhatsApp(mobileNumber: string, childName: string, doseName: string) {
     const formattedNumber = mobileNumber.startsWith('+') ? mobileNumber.substring(1) : mobileNumber;
-    const message = encodeURIComponent(`Reminder: ${doseName} Vaccination  of ${childName}'s  is due. Please confirm your appointment.Thanks!\n${this.displayName}\n${this.clinicName}\n${this.clinicPhoneNumber}\nhttps://vaccine.pk/\nhttps://child.skintechno.com/`);
+    const message = encodeURIComponent(`Reminder: Vaccination ${doseName} of ${childName}'s is due. Please confirm your appointment.Thanks!\n${this.displayName}, ${this.clinicName}\nPhone Number ${this.clinicPhoneNumber}\nhttps://vaccine.pk/\nhttps://child.skintechno.com/`);
     
     let whatsappUrl: string;
 
