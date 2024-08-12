@@ -424,18 +424,23 @@ export class VaccineAlertPage implements OnInit {
   }
 
   openWhatsApp(mobileNumber: string, childName: string, doseName: string) {
-    const formattedNumber = mobileNumber.startsWith('+') ? mobileNumber.substring(1) : mobileNumber;
-    const message = encodeURIComponent(`Reminder: Vaccination ${doseName} of ${childName}'s is due. Please confirm your appointment.Thanks!\n${this.displayName}, ${this.clinicName}\nPhone Number ${this.clinicPhoneNumber}\nhttps://vaccine.pk/\nhttps://child.skintechno.com/`);
+    // Ensure the patient's number starts with the country code
+    const formattedPatientNumber = mobileNumber.startsWith('+92') ? mobileNumber : `+92${mobileNumber.replace(/^0/, '')}`;
+    
+    // Format the clinic's phone number
+    const formattedClinicNumber = this.clinicPhoneNumber.startsWith('+92') ? this.clinicPhoneNumber : `+92${this.clinicPhoneNumber.replace(/^0/, '')}`;
+
+    const message = encodeURIComponent(`Reminder: Vaccination ${doseName} of ${childName}'s is due. Please confirm your appointment.Thanks!\n${this.displayName}, ${this.clinicName}\nPhone Number ${formattedClinicNumber}\nhttps://vaccine.pk/\nhttps://child.skintechno.com/`);
     
     let whatsappUrl: string;
 
     if (this.platform.is('android') || this.platform.is('ios')) {
-      whatsappUrl = `whatsapp://send?phone=${formattedNumber}&text=${message}`;
+      whatsappUrl = `whatsapp://send?phone=${formattedPatientNumber}&text=${message}`;
     } else {
-      whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedNumber}&text=${message}`;
+      whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPatientNumber}&text=${message}`;
     }
 
-    window.open(whatsappUrl, '_blank');
+    window.open(whatsappUrl, '_system');
   }
 
   formatDateToString(date: string | Date): string {
