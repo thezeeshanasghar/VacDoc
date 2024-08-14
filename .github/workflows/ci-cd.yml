@@ -2,7 +2,7 @@ name: Angular CI/CD (FTP Deployment)
 
 on:
   push:
-    branches: [staging, master]
+    branches: [demo, master]
 
 jobs:
   build-and-deploy:
@@ -20,7 +20,7 @@ jobs:
       - run: ionic build --prod
 
       - name: Deploy to stage
-        if: github.ref == 'refs/heads/staging'
+        if: github.ref == 'refs/heads/dmeo'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: "${{ secrets.STAGING_FTP_SERVER }}"
