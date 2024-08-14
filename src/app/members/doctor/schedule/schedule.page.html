@@ -15,114 +15,121 @@
   </ion-toolbar>
 </ion-header>
 
+<!-- <ion-button routerLink="addschedule" style="width: 7%; margin: 12px;">Add</ion-button> -->
 <ion-content class="ion-padding" *ngIf="doses">
   <form [formGroup]="fg">
-    <ion-item *ngFor="let control of fg.controls | keyvalue : returnZero; let i = index ">
-      <ion-checkbox [(ngModel)]="doses[i].IsActive" [ngModelOptions]="{standalone: true}" slot="start"></ion-checkbox>
-      <ion-label>{{control.key}}</ion-label>
-      <ion-select [formControlName]="control.key" value="{{control.value.value}}">
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 0" value="0">At Birth</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 7" value="7">1 Week</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 14" value="14">2 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 21" value="21">3 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 28" value="28">4 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 35" value="35">5 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 42" value="42">6 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 49" value="49">7 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 56" value="56">8 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 63" value="63">9 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 70" value="70">10 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 77" value="77">11 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 84" value="84">3 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 91" value="91">13 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 98" value="98">14 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 105" value="105">15 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 112" value="112">16 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 119" value="119">17 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 126" value="126">18 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 133" value="133">19 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 140" value="140">20 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 147" value="147">21 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 154" value="154">22 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 161" value="161">23 Weeks</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 168" value="168">6 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 212" value="212">7 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 243" value="243">8 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 274" value="274">9 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 304" value="304">10 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 334" value="334">11 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 365" value="365">1 Year</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 395" value="395">13 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 426" value="426">14 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 456" value="456">15 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 486" value="486">16 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 517" value="517">17 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 547" value="547">18 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 578" value="578">19 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 608" value="608">20 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 639" value="639">21 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 669" value="669">22 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 699" value="699">23 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 730" value="730">2 Years</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 760" value="760">25 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 791" value="791">26 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 821" value="821">27 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 851" value="851">28 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 882" value="882">29 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 912" value="912">30 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 943" value="943">31 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 973" value="973">32 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1004" value="1004">33 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1034" value="1034">34 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1064" value="1064">35 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1095" value="1095">3 Years</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1125" value="1125">37 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1156" value="1156">38 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1186" value="1186">39 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1216" value="1216">40 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1247" value="1247">41 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1277" value="1277">42 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1308" value="1308">43 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1338" value="1338">44 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1369" value="1369">45 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1399" value="1399">46 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1429" value="1429">47 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1460" value="1460">4 Years</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1490" value="1490">49 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1521" value="1521">50 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1551" value="1551">51 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1582" value="1582">52 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1612" value="1612">53 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1642" value="1642">54 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1673" value="1673">55 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1703" value="1703">56 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1734" value="1734">57 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1764" value="1764">58 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1795" value="1795">59 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 1825" value="1825">5 Years</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 2190" value="2190">6 Years</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 2555" value="2555">7 Years</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 2920" value="2920">8 Years</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 3285" value="3285">9 Years</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 3315" value="3315">9 Year 1 Month</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 3650" value="3650">10 Years</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 3833" value="3833">10 Year 6 Months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 4015" value="4015">11 Years</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 4380" value="4380">12 Years</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 4745" value="4745">13 Years</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 5110" value="5110">14 Years</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 5475" value="5475">15 Years</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 5505" value="5505">15 Years 1 months</ion-select-option>
-        <ion-select-option [disabled]="doses[i].Dose.MinAge > 5655" value="5655">15 Years 6 months</ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-button (click)="onSubmit()">Save</ion-button>
-
+    <div class="schedule-container">
+      <ion-item *ngFor="let control of fg.controls | keyvalue : returnZero; let i = index" class="schedule-item">
+        <ion-checkbox [(ngModel)]="doses[i].IsActive" [ngModelOptions]="{standalone: true}" slot="start"></ion-checkbox>
+        <ion-label>{{control.key}}</ion-label>
+        <ion-select [formControlName]="control.key" value="{{control.value.value}}">
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 0" value="0">At Birth</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 7" value="7">1 Week</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 14" value="14">2 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 21" value="21">3 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 28" value="28">4 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 35" value="35">5 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 42" value="42">6 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 49" value="49">7 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 56" value="56">8 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 63" value="63">9 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 70" value="70">10 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 77" value="77">11 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 84" value="84">3 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 91" value="91">13 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 98" value="98">14 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 105" value="105">15 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 112" value="112">16 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 119" value="119">17 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 126" value="126">18 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 133" value="133">19 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 140" value="140">20 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 147" value="147">21 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 154" value="154">22 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 161" value="161">23 Weeks</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 168" value="168">6 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 212" value="212">7 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 243" value="243">8 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 274" value="274">9 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 304" value="304">10 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 334" value="334">11 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 365" value="365">1 Year</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 395" value="395">13 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 426" value="426">14 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 456" value="456">15 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 486" value="486">16 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 517" value="517">17 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 547" value="547">18 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 578" value="578">19 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 608" value="608">20 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 639" value="639">21 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 669" value="669">22 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 699" value="699">23 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 730" value="730">2 Years</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 760" value="760">25 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 791" value="791">26 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 821" value="821">27 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 851" value="851">28 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 882" value="882">29 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 912" value="912">30 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 943" value="943">31 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 973" value="973">32 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1004" value="1004">33 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1034" value="1034">34 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1064" value="1064">35 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1095" value="1095">3 Years</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1125" value="1125">37 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1156" value="1156">38 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1186" value="1186">39 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1216" value="1216">40 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1247" value="1247">41 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1277" value="1277">42 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1308" value="1308">43 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1338" value="1338">44 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1369" value="1369">45 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1399" value="1399">46 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1429" value="1429">47 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1460" value="1460">4 Years</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1490" value="1490">49 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1521" value="1521">50 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1551" value="1551">51 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1582" value="1582">52 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1612" value="1612">53 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1642" value="1642">54 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1673" value="1673">55 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1703" value="1703">56 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1734" value="1734">57 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1764" value="1764">58 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1795" value="1795">59 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 1825" value="1825">5 Years</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 2190" value="2190">6 Years</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 2555" value="2555">7 Years</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 2920" value="2920">8 Years</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 3285" value="3285">9 Years</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 3315" value="3315">9 Year 1 Month</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 3650" value="3650">10 Years</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 3833" value="3833">10 Year 6 Months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 4015" value="4015">11 Years</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 4380" value="4380">12 Years</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 4745" value="4745">13 Years</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 5110" value="5110">14 Years</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 5475" value="5475">15 Years</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 5505" value="5505">15 Years 1 months</ion-select-option>
+          <ion-select-option [disabled]="doses[i].Dose.MinAge > 5655" value="5655">15 Years 6 months</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </div>
+    <!-- <ion-button (click)="onSubmit()" color="primary">Save</ion-button> -->
   </form>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button routerLink="edit">
-      <ion-icon name="add"></ion-icon>
+    <ion-fab-button routerLink="edit" color="primary">
+      <ion-icon name="add" color="light"></ion-icon>
     </ion-fab-button>
+    <br>
+
+    <ion-fab-button (click)="onSubmit()" color="primary">
+      <ion-icon name="checkmark" color=""></ion-icon>
+    </ion-fab-button>
+
   </ion-fab>
 </ion-content>

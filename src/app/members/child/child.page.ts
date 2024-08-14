@@ -54,8 +54,22 @@ export class ChildPage {
     this.childs = [];
    // console.log(this.clinicService.OnlineClinic.Id);
     this.getChlidByClinic(false);
-  }
 
+    this.storage.keys().then((keys) => {
+      keys.forEach((key) => {
+        this.storage.get(key).then((value) => {
+          console.log(`Key: ${key}, Value: ${this.getStringValue(value)}`);
+        });
+      });
+    });
+  }
+  getStringValue(value: any): string {
+    if (typeof value === 'object') {
+      return JSON.stringify(value);
+    } else {
+      return value.toString();
+    }
+  }
   loadData(){
     if (this.search)
     this.getChlidbyUser(false);
@@ -164,12 +178,42 @@ export class ChildPage {
     )
   }
 
-
-
   callFunction(celnumber)
   {
     this.callNumber.callNumber(0 + celnumber, true)
     .then(res => console.log('Launched dialer!', res))
     .catch(err => console.log('Error launching dialer', err));
+  }
+  
+  async toggleChildActiveStatus(childId: number) {
+    const loading = await this.loadingController.create({
+      message: 'Updating status...'
+    });
+    await loading.present();
+
+    this.childService.toggleChildActiveStatus(childId).subscribe(
+      (res) => {
+        loading.dismiss();
+        if (res.IsSuccess) {
+          // this.toastService.create(res.Message);
+          // Refresh the child list or update the specific child's status in the UI
+          this.refreshPage();
+        } else {
+          this.toastService.create(res.Message, 'danger');
+        }
+      },
+      (err) => {
+        loading.dismiss();
+        this.toastService.create('An error occurred while updating status', 'danger');
+      }
+    );
+  }
+
+  refreshPage() {
+    this.page = 0;
+    this.childs = [];
+    this.search = false;
+    this.fg.controls['Name'].setValue(null);
+    this.getChlidByClinic(false);
   }
 }

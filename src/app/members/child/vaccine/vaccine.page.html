@@ -7,92 +7,96 @@
   </ion-toolbar>
 </ion-header>
 
+
+<ion-toolbar color="primary">
+  <ion-buttons slot="start" style="background-color: black; border-radius: 6px; ">
+    <ion-button routerLink="edit">
+      Add Vaccines
+    </ion-button>
+  </ion-buttons>
+
+  <ion-title>
+    <h3 *ngIf="ChildName" style="text-align: center; margin-right: 8rem;">
+      {{ChildName}}
+    </h3>
+  </ion-title>
+
+  <ion-buttons slot="end" style="font-size: 25px;">
+    <ion-icon (click)="printdata()" style="cursor: pointer" name="print-outline" size="medium"></ion-icon>
+  </ion-buttons>
+</ion-toolbar>
+
 <ion-content class="ion-padding">
-  <ion-button (click)="printdata()">Print</ion-button>
-  <span *ngIf="ChildName">{{ChildName}}</span>
-
   <div *ngFor="let item of dataGrouping | keyvalue; let i=index">
+    <ion-card>
+      <ion-card-content>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+          <span>{{item.key | date}}</span>
 
-    <ion-grid>
-      <ion-row>
-        <ion-col style="text-align: center">
-          {{item.key | date}}
-
-          <ion-img *ngIf="checkVaccineIsDon(item.value)" style="height: 15px;display: inline-block;"
+          <ion-img *ngIf="checkVaccineIsDon(item.value)" style="height: 20px; display: inline-block;"
             src="../../assets/injectionEmpty.png" routerLink="/members/child/vaccine/{{childId}}/bulk/{{item.key}}">
           </ion-img>
+          <ion-img *ngIf="!checkVaccineIsDon(item.value)" style="height: 20px; display: inline-block;"
+            src="../../assets/injectionFilled.png">
+          </ion-img>
 
-          <ion-img *ngIf="!checkVaccineIsDon(item.value)" style="height: 15px;display: inline-block;"
-            src="../../assets/injectionFilled.png"></ion-img>
-
-          <ion-icon style="margin-right:10px" *ngIf="!checkVaccineIsDon(item.value)" size="small"
+          <ion-icon style="margin-right: 10px" *ngIf="!checkVaccineIsDon(item.value)" size="small"
             routerLink="/members/child/vaccine/{{childId}}/bulkinvoice/{{item.key}}" color="primary"
-            name="document-text-outline"></ion-icon>
+            name="document-text-outline">
+          </ion-icon>
 
-          <ion-icon color="primary" name="calendar" (click)="picker.open()">
+          <ion-icon color="primary" name="calendar" (click)="picker.open()" size="small">
             <input [matDatepicker]="picker" value="{{item.key}}"
               (dateChange)="updateBulkDate($event, item.value[0].Id)">
             <mat-datepicker #picker></mat-datepicker>
           </ion-icon>
 
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-
-    <ion-card>
-      <ion-card-content>
+        </div>
         <div *ngFor="let v of item.value">
-          <ion-item lines="none">
-
-            <ion-label>{{v.Dose.Name}}</ion-label>
-            <p *ngIf="v.Due2EPI==true" style="color:rgb(55, 231, 10);">EPI</p>
-
-            <ion-img *ngIf="v.Due2EPI==true" style="height: 30px;" src="../../assets/injectionFilled.png">
-            </ion-img>
-
-            <p *ngIf="v.IsDone==true && v.Due2EPI==false && (v.IsDisease==false || v.IsDisease==null)"
-              style="color:rgb(55, 231, 10);">{{v.GivenDate | date }} </p>
-
-            <p *ngIf="v.IsDone==true && v.Due2EPI==false && v.IsDisease==true" style="color:rgb(55, 231, 10);"
-              routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}">Disease Year: {{v.DiseaseYear}}</p>
-
-            <ion-icon *ngIf="v.IsDone==false && v.Due2EPI==false && v.IsSkip != true" color="primary" name="calendar"
+          <ion-item lines="none" style="display: flex; align-items: center; margin: -2px 0; padding: -5px 0;">
+            <ion-label style="flex: 1; display: flex; align-items: center;">
+              {{v.Dose.Name}}
+            </ion-label>
+            <div style="flex: 1; display: flex;">
+              <span *ngIf="v.BrandId; else noBrand" style="color: rgb(55, 231, 10);">
+                ({{v.Brand.Name}})
+              </span>
+              <ng-template #noBrand>
+                <span *ngIf="v.IsDone" style="color: rgb(55, 231, 10);">(OHF)</span>
+              </ng-template>
+            </div>
+            <p *ngIf="v.Due2EPI" style="color: rgb(55, 231, 10);">EPI</p>
+            <ion-img *ngIf="v.Due2EPI" style="height: 30px;" src="../../assets/injectionFilled.png"></ion-img>
+            <p *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null)" style="color: rgb(55, 231, 10);">
+              {{v.GivenDate | date }}
+            </p>
+            <p *ngIf="v.IsDone && !v.Due2EPI && v.IsDisease" style="color: rgb(55, 231, 10);"
+              routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}">
+              Disease Year: {{v.DiseaseYear}}
+            </p>
+            <ion-icon *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip" color="primary" name="calendar"
               (click)="picker.open()">
-
-              <!-- <ion-datetime #picker picker-format="DD-MM-YYYY" value="{{v.Date}}"
-                (ionChange)="updateDate($event, v.Id)"></ion-datetime> -->
-
               <input [matDatepicker]="picker" value="{{v.Date}}" (dateChange)="updateDate($event, v.Id)">
               <mat-datepicker #picker></mat-datepicker>
             </ion-icon>
-
-            <ion-img *ngIf="(v.IsDone==false) && v.Due2EPI==false && (v.IsSkip!=true)" style="height: 30px;"
+            <ion-img *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip" style="height: 30px;"
               src="../../assets/injectionEmpty.png" routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}">
             </ion-img>
-
-            <!-- routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}" -->
-            <!-- (click)="checkforpnemococal(v.Dose.Name,v.Child.DOB , v.Id)" -->
-
-            <ion-img
-              *ngIf="v.IsDone==true && v.Due2EPI==false && (v.IsDisease==false || v.IsDisease==null) && v.IsSkip!=true"
+            <ion-img *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip"
               style="height: 30px;" src="../../assets/injectionFilled.png" (click)="UnfillVaccine(v.Id)">
             </ion-img>
+            <ion-button *ngIf="!v.IsDone && !v.Due2EPI && (v.IsSkip == null || !v.IsSkip)"
+              (click)="handleSkipClick($event, v.Id, v.Dose.Name)">
+              Skip
+            </ion-button>
+            <ion-button color="danger" *ngIf="!v.IsDone && v.IsSkip && !v.Due2EPI"
+              (click)="handleUnSkipClick($event, v.Id, v.Dose.Name)">
+              Unskip
+            </ion-button>
 
-            <ion-button *ngIf="v.IsDone==false && v.Due2EPI==false && (v.IsSkip==null ||v.IsSkip==false)"
-              (click)="SkipVaccine(v.Id, v.Dose.Name)">skip</ion-button>
-
-            <ion-button color="danger" *ngIf="(v.IsDone==false && v.IsSkip==true && v.Due2EPI==false)"
-              (click)="UnSkipVaccine(v.Id, v.Dose.Name)">UnSkip</ion-button>
           </ion-item>
-          <p style="text-align: center;" *ngIf="v.BrandId">Brand: {{v.Brand.Name}}</p>
         </div>
       </ion-card-content>
     </ion-card>
   </div>
-
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button routerLink="edit">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
 </ion-content>

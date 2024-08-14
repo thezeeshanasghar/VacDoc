@@ -4,7 +4,7 @@ import { LoadingController } from "@ionic/angular";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { ToastService } from "src/app/shared/toast.service";
-import { Router } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import {
   FormGroup,
   FormBuilder,
@@ -23,6 +23,7 @@ export class SchedulePage implements OnInit {
   fg: FormGroup;
   doses: any;
   vaccines: any;
+  // alphabetically: any;
   IsActive = true;
   constructor(
     public loadingcontroller: LoadingController,
@@ -40,10 +41,10 @@ export class SchedulePage implements OnInit {
 
   }
 
-  ionViewDidEnter() {
-    this.fg = this.formBuilder.group({});
-    this.storage.get(environment.DOCTOR_Id).then(val => {
-      this.getSchedule(val);
+  async ionViewDidEnter() {
+    this.fg = this.formBuilder.group({}); // Initialize the form group
+    await this.storage.get(environment.DOCTOR_Id).then(val => {
+      this.getSchedule(val); // Fetch data and initialize form controls
     });
   }
 
@@ -65,7 +66,7 @@ export class SchedulePage implements OnInit {
           this.doses.forEach(dose => {
             let value = dose.GapInDays == null ? 0 : dose.GapInDays;
             this.fg.addControl(
-              dose.Dose.Name + ' ( ' + dose.Dose.Vaccine.Name + ' )',
+              dose.Dose.Name,
               new FormControl(value, Validators.required)
             );
           });
@@ -73,7 +74,8 @@ export class SchedulePage implements OnInit {
 
         } else {
           loading.dismiss();
-          this.toastService.create(res.Message, "danger");
+          // this.toastService.create(res.Message, "danger");
+          this.router.navigate(["./members/doctor/schedule/addschedule"]);
         }
       },
       err => {
@@ -87,26 +89,45 @@ export class SchedulePage implements OnInit {
   }
   async addCustomSchedule() {
     let var1 = [];
+    let var2=[]
 
     for (let i = 0; i < this.doses.length; i++) {
-      var1.push({
-        Id: this.doses[i].Id,
-        DoseId: this.doses[i].DoseId,
-        DoctorId: this.doses[i].DoctorId,
-        GapInDays: parseInt(this.fg.value[this.doses[i].Dose.Name]),
-        IsActive: this.doses[i].IsActive
-      });
+    
+      if (this.doses[i].IsActive==true) { // Check if dose is selected
+        var1.push({
+          Id: this.doses[i].Id,
+          DoseId: this.doses[i].DoseId,
+          DoctorId: this.doses[i].DoctorId,
+          GapInDays: parseInt(this.fg.value[this.doses[i].Dose.Name]),
+          IsActive: this.doses[i].IsActive
+        });
+      }
+      else if (this.doses[i].IsActive==false) { // Check if dose is selected
+        var2.push({
+          Id: this.doses[i].Id,
+          DoseId: this.doses[i].DoseId,
+          DoctorId: this.doses[i].DoctorId,
+          GapInDays: parseInt(this.fg.value[this.doses[i].Dose.Name]),
+          IsActive: this.doses[i].IsActive
+        });
+      }
+      else{
+        console.log('hello else called')
+      }
     }
     const loading = await this.loadingcontroller.create({
       message: "Loading"
     });
 
     await loading.present();
+    console.log('var1',var1)
+    console.log('var2',var2)
+    loading.dismiss();
     await this.scheduleService.putDoctorSchedule(var1).subscribe(
       res => {
         if (res.IsSuccess) {
           loading.dismiss();
-          this.router.navigate(['/members/dashboard']);
+          this.router.navigate(['/members/doctor/schedule']);
           this.toastService.create("successfully updated");
         } else {
           loading.dismiss();
@@ -118,6 +139,23 @@ export class SchedulePage implements OnInit {
         this.toastService.create(err, "danger");
       }
     );
+    await this.scheduleService.putDoctorSchedule(var2).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          console.log('2nd success')
+        } else {
+          console.log('2nd fail')
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, "danger");
+      }
+    );
+  }
+
+  async AddSchedule(){
+    this.router.navigate(["/addschedule"]);
   }
 }
 

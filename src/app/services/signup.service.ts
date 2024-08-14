@@ -22,18 +22,17 @@ export class SignupService extends BaseService {
   addDoctor(): Observable<any> {
     let var1 = {
       AdditionalInfo: this.personalData.AdditionalInfo,
-      ClinicDTO: {
-        Name: this.clinicData.Name,
-        PhoneNumber: this.clinicData.PhoneNumber,
-        Address: this.clinicData.Address,
-        ConsultationFee: this.clinicData.ConsultationFee,
-        ClinicTimings: this.clinicData.ClinicTimings,
-        Lat: this.clinicData.latitude,
-        Long: this.clinicData.Longitude,
-        MonogramImage:localStorage.getItem('dbpath'),
-        SignatureImage:null,
-        ProfileImage:null,
-      },
+      // ClinicDTO: {
+      //   Name: this.clinicData.Name,
+      //   PhoneNumber: this.clinicData.PhoneNumber,
+      //   Address: this.clinicData.Address,
+      //   ConsultationFee: this.clinicData.ConsultationFee,
+      //   ClinicTimings: this.clinicData.ClinicTimings,
+      //   Lat: this.clinicData.latitude,
+      //   Long: this.clinicData.Longitude,
+      //   MonogramImage:localStorage.getItem('dbPath'),
+      //   ProfileImage:"",
+      // },
       CountryCode: this.personalData.CountryCode,
       DisplayName: this.personalData.DisplayName,
       DoctorType: this.personalData.DoctorType,
@@ -49,7 +48,7 @@ export class SignupService extends BaseService {
       ShowPhone: this.personalData.ShowPhone,
       Speciality: this.personalData.Speciality
     };
-    localStorage.removeItem('dbpath')
+    localStorage.removeItem('dbPath')
     const url = `${this.API_Doctor}`;
     return this.http
       .post(url, var1, this.httpOptions)

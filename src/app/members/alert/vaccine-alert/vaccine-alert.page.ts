@@ -10,6 +10,9 @@ import { TitleCasePipe } from '@angular/common';
 import { SMS } from '@ionic-native/sms/ngx';
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 import { Platform } from '@ionic/angular';
+import { formattedError } from "@angular/compiler";
+import { DoctorService } from "src/app/services/doctor.service";
+
 //declare var SMS: any;
 @Component({
   selector: "app-vaccine-alert",
@@ -21,15 +24,22 @@ export class VaccineAlertPage implements OnInit {
   doctorId: any;
   clinicId: any;
   SMSKey: any;
+  displayName: any;
+  clinicName: any;
+  clinicPhoneNumber: any;
+  formattedDate: string;
   Childs: any;
   private readonly API_VACCINE = `${environment.BASE_URL}`;
   Messages = [];
   numOfDays: number = 0; // 0 means get alert for today, 5 means get alert for next five days, same as for -5
+  selectedDate: string = new Date().toISOString();
+
 
 
   constructor(
     public loadingController: LoadingController,
     private alertService: AlertService,
+    private doctorService: DoctorService,
     private toastService: ToastService,
     private storage: Storage,
     private androidPermissions: AndroidPermissions,
@@ -46,9 +56,15 @@ export class VaccineAlertPage implements OnInit {
 
 
   async ngOnInit() {
+   
+  
+    this.getAlerts(this.selectedDate);
     await this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
     });
+    
+    
+
     await this.storage.get(environment.CLINIC_Id).then(clinicId => {
       this.clinicId = clinicId;
     });
@@ -56,33 +72,117 @@ export class VaccineAlertPage implements OnInit {
       this.SMSKey = val;
     });
     this.storage.get(environment.MESSAGES).then(messages => { messages == null ? '' : this.Messages = messages });
-    await this.getChlid(this.numOfDays);
-
-    // if (!this.checkSmsPermission()) {
-    //   this.toastService.create('check function body')
-    //   this.requestSmsPermissions();
-    // }
-
+    const formattedDate = this.formatDateToString(this.selectedDate);
+    this.getAlerts(formattedDate);
+    // ... other initializations ...
+    await this.getChlid(this.numOfDays, formattedDate);
+    await this.getdoctor();
   }
 
+  // async getdoctor (){
+  //   const doctorId = localStorage.getItem('docid');
+  //   await this.doctorService.getDoctorProfile(this.doctorId).subscribe(
+  //     res => {
+  //       if (res.IsSuccess) {
+  //           const doctorData = res.ResponseData;
+  //           console.log("Doctor Data is ", res.ResponseData);
+  //           console.log('Doctor ID:', doctorData.Id);
+  //           const displayName = this.displayName;
+  //           this.displayName = doctorData.DisplayName;
+
+   
+
+  //           console.log('Doctor Name:', doctorData.DisplayName);
+  //           console.log('Doctor Email:', doctorData.Email);
+  //           console.log('Doctor Phone:', doctorData.Phone);
+  //           console.log('Doctor Specialization:', doctorData.Specialization);
+  //           console.log('Doctor Address:', doctorData.Address);
+  //           console.log('Doctor Address:', doctorData.Clinics.Name);
+
+
+           
+  //       }
+  //     },
+  //     err => {
+  //       this.toastService.create(err, "danger");
+  //     }
+  //   );
+  // }
+
+  async getdoctor() {
+    const doctorId = localStorage.getItem('docid');
+    await this.doctorService.getDoctorProfile(this.doctorId).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          const doctorData = res.ResponseData;
+          console.log("Doctor Data is ", res.ResponseData);
+          
+          // Doctor Information
+          console.log('Doctor ID:', doctorData.Id);
+          console.log('Doctor Name:', doctorData.DisplayName);
+          console.log('Doctor Email:', doctorData.Email);
+          console.log('Doctor Phone:', doctorData.Phone);
+          console.log('Doctor Specialization:', doctorData.Specialization);
+          console.log('Doctor Address:', doctorData.Address);
+  
+          this.displayName = doctorData.DisplayName;
+  
+          // Clinic Information
+          if (doctorData.Clinics && doctorData.Clinics.length > 0) {
+            doctorData.Clinics.forEach((clinic, index) => {
+              console.log(`Clinic ${index + 1} Data:`);
+              console.log('Clinic ID:', clinic.Id);
+              console.log('Clinic Name:', clinic.Name);
+              console.log('Clinic Address:', clinic.Address);
+              console.log('Clinic Phone:', clinic.PhoneNumber);
+              console.log('Clinic Email:', clinic.Email);
+              
+              if (clinic.Staff && clinic.Staff.length > 0) {
+                console.log(`Clinic ${index + 1} Staff:`);
+                clinic.Staff.forEach((staff, staffIndex) => {
+                  console.log(`Staff Member ${staffIndex + 1}:`, staff.Name);
+                });
+              }
+  
+              console.log('-------------------'); // Separator between clinics
+            });
+  
+            // Store the first clinic's name (or adjust as needed)
+            this.clinicName = doctorData.Clinics[0].Name;
+            this.clinicPhoneNumber = doctorData.Clinics[0].PhoneNumber;
+          } else {
+            console.log('No clinic data available');
+          }
+        } else {
+          console.log("Failed to get doctor data");
+        }
+      },
+      err => {
+        console.error('Error fetching doctor data:', err);
+        this.toastService.create(err, "danger");
+      }
+    );
+  }
   // Get childs get from server
-  async getChlid(numOfDays: number) {
-    console.log(numOfDays)
+  async getChlid(numOfDays: number,formattedDate:string) {  
+      
     this.numOfDays = numOfDays;
+    this.formattedDate = formattedDate;
     const loading = await this.loadingController.create({
       message: "Loading"
     });
     await loading.present();
-    await this.alertService.getChild(this.numOfDays, this.clinicId).subscribe(
+   
+    
+    await this.alertService.getChild(this.formattedDate, this.numOfDays, this.clinicId).subscribe(
       res => {
+       
+        
         if (res.IsSuccess) {
           this.Childs = "";
           this.Childs = res.ResponseData;
-
-          // console.log("Childs Saved in this.Childs");
-          // console.log(res.ResponseData);
-
-          //console.log(this.Childs.map(x=>x.Child.Id));
+    
+          
 
           loading.dismiss();
         } else {
@@ -102,7 +202,7 @@ export class VaccineAlertPage implements OnInit {
       message: "sending emails"
     });
     await loading.present();
-    await this.alertService.sendAlertMsgToAll(this.numOfDays, this.clinicId).subscribe(
+    await this.alertService.sendEmailToAll(this.numOfDays, this.clinicId).subscribe(
       res => {
         if (res.IsSuccess) {
           loading.dismiss();
@@ -156,11 +256,7 @@ export class VaccineAlertPage implements OnInit {
     await loading.present();
 
     for (let i = 0; i < child.length; i++) {
-      // console.log("");
-      // console.log("message No = " + (i + 1));
       let message = this.generateSMS(child[i]);
-
-      // await this.sendAlertMsg(child[i].ChildId, child[i].Child.User.MobileNumber, message);
     }
     loading.dismiss();
   }
@@ -169,16 +265,12 @@ export class VaccineAlertPage implements OnInit {
     var sms1 = 'Reminder: Vaccination for ';
     sms1 += schedule.Child.Name + ' is due on ' + schedule.Date;
     sms1 += ' (' + schedule.Dose.Name + ' )';
-
-    // console.log("message => Id = " + schedule.Id);
-    // console.log(sms1);
-
     return sms1;
   }
 
   // send Alert Msg to childs
   async sendAlertMsg(id, childMobile, message) {
-    console.log(message);
+   
     if (this.SMSKey == 0) {
       await this.alertService
         .sendIndividualAlertMsg(this.numOfDays, id)
@@ -186,7 +278,6 @@ export class VaccineAlertPage implements OnInit {
           res => {
             if (res.IsSuccess) {
               //loading.dismiss();
-
               this.toastService.create("Alerts has been sent successfully");
             } else {
               //loading.dismiss();
@@ -250,12 +341,15 @@ export class VaccineAlertPage implements OnInit {
       });
   }
 
-  callFunction(celnumber) {
-    // console.log(celnumber);
-    this.callNumber.callNumber(0 + celnumber, true)
+  callFunction(celnumber: string) {
+    // Ensure the phone number is in the correct format
+    const formattedNumber = celnumber.startsWith('0') ? celnumber : `0${celnumber}`;
+    
+    this.callNumber.callNumber(formattedNumber, true)
       .then(res => console.log('Launched dialer!', res))
       .catch(err => console.log('Error launching dialer', err));
   }
+  
 
   // checkSmsPermission(): any {
   //   this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS)
@@ -327,6 +421,50 @@ export class VaccineAlertPage implements OnInit {
 
     loading.dismiss();
 
+  }
+
+  openWhatsApp(mobileNumber: string, childName: string, doseName: string) {
+    // Ensure the patient's number starts with the country code
+    const formattedPatientNumber = mobileNumber.startsWith('+92') ? mobileNumber : `+92${mobileNumber.replace(/^0/, '')}`;
+    
+    // Format the clinic's phone number
+    const formattedClinicNumber = this.clinicPhoneNumber.startsWith('+92') ? this.clinicPhoneNumber : `+92${this.clinicPhoneNumber.replace(/^0/, '')}`;
+
+    const message = encodeURIComponent(`Reminder: Vaccination ${doseName} of ${childName}'s is due. Please confirm your appointment.Thanks!\n${this.displayName}, ${this.clinicName}\nPhone Number ${formattedClinicNumber}\nhttps://vaccine.pk/\nhttps://child.skintechno.com/`);
+    
+    let whatsappUrl: string;
+
+    if (this.platform.is('android') || this.platform.is('ios')) {
+      whatsappUrl = `whatsapp://send?phone=${formattedPatientNumber}&text=${message}`;
+    } else {
+      whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPatientNumber}&text=${message}`;
+    }
+
+    window.open(whatsappUrl, '_system');
+  }
+
+  formatDateToString(date: string | Date): string {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);  // Months are 0-based
+    const day = ('0' + d.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  }
+
+  onDateChange(event: any) {
+    this.selectedDate = event.detail.value;
+    console.log('Selected Date:', this.selectedDate);
+    this.getAlerts(this.selectedDate);
+  }
+  getAlerts(date: string) {
+    const formattedDate = this.formatDateToString(date);
+
+  this.getChlid(0, formattedDate);
+  }
+
+  async openDatePicker() {
+    const dateTimeElement = document.querySelector('ion-datetime');
+    await dateTimeElement.open();
   }
 
 }

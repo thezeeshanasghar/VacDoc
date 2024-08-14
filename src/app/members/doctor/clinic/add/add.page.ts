@@ -19,6 +19,7 @@ import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { File , FileEntry } from '@ionic-native/file/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { UploadService } from 'src/app/services/upload.service';
 declare var google;
 
 @Component({
@@ -39,6 +40,8 @@ export class AddPage implements OnInit {
   latitude: any = 33.6328532;
   longitude: any = 72.93583679;
   resourceURL = environment.RESOURCE_URL;
+  isWeb: any;
+  http: any;
   constructor(
     private formbuilder: FormBuilder,
     private router: Router,
@@ -46,6 +49,7 @@ export class AddPage implements OnInit {
     private clinicService: ClinicService,
     private toastService: ToastService,
     private signupService: SignupService,
+    private uploadService: UploadService,
     private storage: Storage,
     private geolocation: Geolocation,
     private cdr: ChangeDetectorRef,
@@ -68,12 +72,12 @@ export class AddPage implements OnInit {
     this.fg1 = this.formbuilder.group({
       DoctorId: [null],
       Name: [null],
-      PhoneNumber: new FormControl(
+    PhoneNumber: new FormControl(
         "",
         Validators.compose([
           Validators.required,
-          Validators.minLength(7),
-          Validators.pattern("^(0|[1-9][0-9]*)$")
+          Validators.minLength(10),
+          Validators.pattern("^([0-9]*)$")
         ])
       ),
       Address: [null],
@@ -84,13 +88,13 @@ export class AddPage implements OnInit {
           Validators.pattern("^(0|[1-9][0-9]*)$")
         ])
       ),
-      MonogramImage: [null],
-      OffDays: [null],
+      MonogramImage: [""],
       ClinicTimings: [null],
       Lat: [null],
       Long: [null],
       IsOnline: false,
-      childrenCount: 0
+      childrenCount: 0,
+      
     });
 
     this.fg2 = this.formbuilder.group({
@@ -186,6 +190,39 @@ export class AddPage implements OnInit {
         console.log("Error getting location", error);
       });
   }
+  
+  private previewMonogramImage(file: FileList) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.fg1.value.MonogramImage1 = reader.result as string;
+    };
+    reader.readAsDataURL(file.item(0));
+  }
+  
+  async SelectMonogramImage(monogramFile: FileList) {
+    this.previewMonogramImage(monogramFile);
+  
+    const loading = await this.loadingController.create({
+      message: "Uploading Monogram Image"
+    });
+    await loading.present();
+  
+    const monogramData = new FormData();
+    monogramData.append("MonogramImage", monogramFile.item(0));
+  
+    await this.uploadService.uploadImage(monogramData).subscribe(res => {
+      if (res) {
+        let mImage = res.dbPath;
+        this.fg1.value.MonogramImage = mImage;
+        console.log("MonogramImage = " + this.fg1.value.MonogramImage);
+        loading.dismiss();
+      } else {
+        console.log("Error: Try Again! Failed to upload MonogramImage");
+        this.toastService.create("Error: Try Again! Failed to upload MonogramImage.");
+        loading.dismiss();
+      }
+    });
+  }
   setAllDaysValueStrat1() {
     this.fg2.controls["Tustart"].setValue(this.fg2.value.Mstart);
     this.fg2.controls["Wstart"].setValue(this.fg2.value.Mstart);
@@ -234,12 +271,12 @@ export class AddPage implements OnInit {
   getdata() {
     //this.fg2.controls["Tuend"].setValue(this.fg2.value.Mend);
     this.fg1.value.DoctorId = this.DoctorId;
-    //this.fg1.value.OffDays = "Sunday";
     this.fg1.value.Lat = 33.63207;
     this.fg1.value.Long = 72.935488;
     var ct = [];
     if (this.fg2.value.Monday) {
       if (this.fg2.value.MondayS1) {
+        if (this.fg2.value.Mstart && this.fg2.value.Mend) {
         this.fg2.value.Mstart = moment(
           this.fg2.value.Mstart,
           "YYYY-MM-DD HH:mm"
@@ -257,8 +294,10 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
       // For Session 2
       if (this.fg2.value.MondayS2) {
+        if (this.fg2.value.Mstart2 && this.fg2.value.Mend2) {
         this.fg2.value.Mstart2 = moment(
           this.fg2.value.Mstart2,
           "YYYY-MM-DD HH:mm"
@@ -275,11 +314,13 @@ export class AddPage implements OnInit {
           Session: 2
         };
         ct.push(obj1);
+        }
       }
     }
 
     if (this.fg2.value.Tuesday) {
       if (this.fg2.value.TuesdayS1) {
+        if (this.fg2.value.Tustart && this.fg2.value.Tuend) {
         this.fg2.value.Tustart = moment(
           this.fg2.value.Tustart,
           "YYYY-MM-DD HH:mm"
@@ -297,8 +338,10 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
       // session 2
       if (this.fg2.value.TuesdayS2) {
+        if (this.fg2.value.Tustart2 && this.fg2.value.Tuend2) {
         this.fg2.value.Tustart2 = moment(
           this.fg2.value.Tustart2,
           "YYYY-MM-DD HH:mm"
@@ -316,10 +359,12 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
     }
 
     if (this.fg2.value.Wednesday) {
       if (this.fg2.value.WednesdayS1) {
+        if (this.fg2.value.Wstart && this.fg2.value.Wend) {
         this.fg2.value.Wstart = moment(
           this.fg2.value.Wstart,
           "YYYY-MM-DD HH:mm"
@@ -337,8 +382,10 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
       // session 2
       if (this.fg2.value.WednesdayS2) {
+        if (this.fg2.value.Wstart2 && this.fg2.value.Wend2) {
         this.fg2.value.Wstart2 = moment(
           this.fg2.value.Wstart2,
           "YYYY-MM-DD HH:mm"
@@ -356,10 +403,12 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
     }
 
     if (this.fg2.value.Thursday) {
       if (this.fg2.value.ThursdayS1) {
+        if (this.fg2.value.Thstart && this.fg2.value.Thend) {
         this.fg2.value.Thstart = moment(
           this.fg2.value.Thstart,
           "YYYY-MM-DD HH:mm"
@@ -377,8 +426,10 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
       // session 2
       if (this.fg2.value.ThursdayS2) {
+        if (this.fg2.value.Thstart2 && this.fg2.value.Thend2) {
         this.fg2.value.Thstart2 = moment(
           this.fg2.value.Thstart2,
           "YYYY-MM-DD HH:mm"
@@ -396,10 +447,11 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
     }
-
     if (this.fg2.value.Friday) {
       if (this.fg2.value.FridayS1) {
+        if (this.fg2.value.Fstart && this.fg2.value.Fend) {
         this.fg2.value.Fstart = moment(
           this.fg2.value.Fstart,
           "YYYY-MM-DD HH:mm"
@@ -417,8 +469,9 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
-      // session
+      }
       if (this.fg2.value.FridayS2) {
+        if (this.fg2.value.Fstart2 && this.fg2.value.Fend2) {
         this.fg2.value.Fstart2 = moment(
           this.fg2.value.Fstart2,
           "YYYY-MM-DD HH:mm"
@@ -436,10 +489,11 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
     }
-
     if (this.fg2.value.Saturday) {
       if (this.fg2.value.SaturdayS1) {
+        if (this.fg2.value.Sastart && this.fg2.value.Saend) {
         this.fg2.value.Sastart = moment(
           this.fg2.value.Sastart,
           "YYYY-MM-DD HH:mm"
@@ -457,7 +511,9 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
       if (this.fg2.value.SaturdayS2) {
+        if (this.fg2.value.Sastart2 && this.fg2.value.Saend2) {
         this.fg2.value.Sastart2 = moment(
           this.fg2.value.Sastart2,
           "YYYY-MM-DD HH:mm"
@@ -475,10 +531,11 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
     }
-
     if (this.fg2.value.Sunday) {
       if (this.fg2.value.SundayS1) {
+        if (this.fg2.value.Sustart && this.fg2.value.Suend) {
         this.fg2.value.Sustart = moment(
           this.fg2.value.Sustart,
           "YYYY-MM-DD HH:mm"
@@ -496,7 +553,9 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
       if (this.fg2.value.SundayS2) {
+        if (this.fg2.value.Sustart2 && this.fg2.value.Suend2) {
         this.fg2.value.Sustart2 = moment(
           this.fg2.value.Sustart2,
           "YYYY-MM-DD HH:mm"
@@ -514,68 +573,11 @@ export class AddPage implements OnInit {
         };
         ct.push(obj);
       }
+      }
     }
     this.fg1.value.ClinicTimings = ct;
-
     this.addNewClinic(this.fg1.value);
   }
-
-  uploadMonogram() {
-    
-    this.fileChooser.open().then(async uri =>
-      {
-        console.log(uri);
-       await  this.filePath.resolveNativePath(uri).then(filePath =>
-          {
-            //this.filesPath = filePath;
-            this.uploading = true;
-            this.file.resolveLocalFilesystemUrl(filePath).then(fileInfo =>
-              {
-                let files = fileInfo as FileEntry;
-                files.file(async success =>
-                  {
-                    if (success.size < 100000) {
-                    let filesName  = success.name;
-                    console.log(filesName);
-                    let options: FileUploadOptions = {
-                      fileName: filesName
-                    }
-                    const fileTransfer: FileTransferObject = this.transfer.create();
-                  await  fileTransfer.upload(uri, 'http://13.233.255.96:5002/api/upload', options)
-                    .then((data) => {
-                      // success
-                      console.log(data);
-                      this.toastService.create("successfully Uploaded");
-                      this.uploading = false;
-                      let dbpath = JSON.parse(data.response)
-                      this.fg1.value.MonogramImage = dbpath.dbPath;
-                      console.log(this.fg1.value.MonogramImage);
-                    }, (err) => {
-                      console.log(err)
-                      // error
-                    })
-                  }
-                  else
-                  this.toastService.create("File size must be less than 100 kb", "danger");
-                  });
-              },err =>
-              {
-                console.log(err);
-                throw err;
-              });
-          },err =>
-          {
-            console.log(err);
-            throw err;
-          });
-      },err =>
-      {
-        console.log(err);
-        throw err;
-      });
-  
-  }
-
   async addNewClinic(data) {
     {
       const loading = await this.loadingController.create({
@@ -587,8 +589,9 @@ export class AddPage implements OnInit {
         res => {
           if (res.IsSuccess) {
             loading.dismiss();
-            this.toastService.create("successfully added");
-            this.router.navigate(["/members/doctor/clinic"]);
+            this.toastService.create("successfully added Clinic");
+            this.router.navigate(["/members/doctor/clinic"], { queryParams: { refresh: true } });
+            window.location.reload();
           } else {
             loading.dismiss();
             this.toastService.create(res.Message, "danger");
@@ -616,7 +619,6 @@ export class AddPage implements OnInit {
       } else {
         this.fg2.controls["Mstart2"].setErrors(null);
       }
-
       if (this.fg2.value.MondayS1) {
         const MStart1 = await Date.parse(this.fg2.value.Mstart);
         const MEnd1 = await Date.parse(this.fg2.value.Mend);
@@ -634,7 +636,6 @@ export class AddPage implements OnInit {
         this.fg2.controls["Mstart"].setErrors(null);
         this.fg2.controls["Mstart2"].setErrors(null);
       }
-
       if (this.fg2.value.MondayS2) {
         const MStart2 = await Date.parse(this.fg2.value.Mstart2);
         const MEnd2 = await Date.parse(this.fg2.value.Mend2);
@@ -673,7 +674,6 @@ export class AddPage implements OnInit {
       } else {
         this.fg2.controls["Tustart2"].setErrors(null);
       }
-
       if (this.fg2.value.TuesdayS1) {
         const MStart1 = Date.parse(this.fg2.value.Tustart);
         const MEnd1 = Date.parse(this.fg2.value.Tuend);
@@ -687,7 +687,6 @@ export class AddPage implements OnInit {
         this.fg2.controls["Tustart"].setErrors(null);
         this.fg2.controls["Tustart2"].setErrors(null);
       }
-
       if (this.fg2.value.TuesdayS2) {
         const MStart2 = Date.parse(this.fg2.value.Tustart2);
         const MEnd2 = Date.parse(this.fg2.value.Tuend2);
@@ -738,7 +737,6 @@ export class AddPage implements OnInit {
         this.fg2.controls["Wstart"].setErrors(null);
         this.fg2.controls["Wstart2"].setErrors(null);
       }
-
       if (this.fg2.value.WednesdayS2) {
         const MStart2 = Date.parse(this.fg2.value.Wstart2);
         const MEnd2 = Date.parse(this.fg2.value.Wend2);
@@ -842,7 +840,6 @@ export class AddPage implements OnInit {
         this.fg2.controls["Fstart"].setErrors(null);
         this.fg2.controls["Fstart2"].setErrors(null);
       }
-
       if (this.fg2.value.FridayS2) {
         const MStart2 = Date.parse(this.fg2.value.Fstart2);
         const MEnd2 = Date.parse(this.fg2.value.Fend2);
@@ -879,7 +876,6 @@ export class AddPage implements OnInit {
       } else {
         this.fg2.controls["Sastart2"].setErrors(null);
       }
-
       if (this.fg2.value.SaturdayS1) {
         const MStart1 = Date.parse(this.fg2.value.Sastart);
         const MEnd1 = Date.parse(this.fg2.value.Saend);
@@ -894,7 +890,6 @@ export class AddPage implements OnInit {
         this.fg2.controls["Sastart"].setErrors(null);
         this.fg2.controls["Sastart2"].setErrors(null);
       }
-
       if (this.fg2.value.SaturdayS2) {
         const MStart2 = Date.parse(this.fg2.value.Sastart2);
         const MEnd2 = Date.parse(this.fg2.value.Saend2);
@@ -966,7 +961,6 @@ export class AddPage implements OnInit {
       this.fg2.controls["Sustart"].setErrors(null);
     }
   }
-
   validation_messages = {
     Name: [{ type: "required", message: "Name is required." }],
     phoneNumber: [
@@ -974,7 +968,7 @@ export class AddPage implements OnInit {
 
       {
         type: "minlength",
-        message: "Phone Number must be at least 7 Digits long."
+        message: "Phone Number must be at least 10 Digits long."
       },
       { type: "pattern", message: "Enter Must be Number" }
     ],
@@ -983,8 +977,11 @@ export class AddPage implements OnInit {
       { type: "required", message: "Consultation Fee is required." },
       {
         type: "pattern",
-        message: "Your Consultation Fee must contain positive number"
+        message: "Your Consultation Fee must contain number"
       }
+    ],
+    MonogramImage:[
+      { type: "required", message: "Monogram Image is required." },
     ],
     Mstart2: [
       { type: "required", message: "Session 2 Must Start after Session 1" }
@@ -992,6 +989,60 @@ export class AddPage implements OnInit {
     Mstart: [
       { type: "required", message: "End Time Must be after Start Time" }
     ],
-    Mend: [{ type: "required", message: "End Time Must be after Start Time" }]
+    Mend: [{ type: "required", message: "End Time Must be after Start Time" }],
+    Tustart2: [
+      { type: "required", message: "Session 2 Must Start after Session 1" }
+    ],
+    Tustart: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Tuend: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Wstart2: [
+      { type: "required", message: "Session 2 Must Start after Session 1" }
+    ],
+    Wstart: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Wend: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Thstart2: [
+      { type: "required", message: "Session 2 Must Start after Session 1" }
+    ],
+    Thstart: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Thend: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Fstart2: [
+      { type: "required", message: "Session 2 Must Start after Session 1" }
+    ],
+    Fstart: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Fend: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Sastart2: [
+      { type: "required", message: "Session 2 Must Start after Session 1" }
+    ],
+    Sastart: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Saend: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Sustart2: [
+      { type: "required", message: "Session 2 Must Start after Session 1" }
+    ],
+    Sustart: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
+    Suend: [
+      { type: "required", message: "End Time Must be after Start Time" }
+    ],
   };
 }

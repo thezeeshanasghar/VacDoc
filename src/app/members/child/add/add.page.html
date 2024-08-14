@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <!-- <ion-menu-button></ion-menu-button> -->
+      <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Add Patient</ion-title>
     <ion-title *ngIf="clinicService.OnlineClinic" slot="end">
@@ -9,11 +9,11 @@
     </ion-title>
   </ion-toolbar>
 
-  <ion-toolbar color="primary" >
+  <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
-      <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/clinic" name="medkit" size="large" > </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/child/add" name="person-add" size="large"> </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/alert" name="alert" size="large"> </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/clinic" name="medkit" size="large"> </ion-icon>
       <ion-menu-button style="margin-left: 10%"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
@@ -21,257 +21,192 @@
 </ion-header>
 
 <ion-content *ngIf="fg1" class="ion-padding">
+  <ion-card>
+    <!-- 1st Step of Add Child -->
+    <form [formGroup]="fg1" (ngSubmit)="moveNextStep()">
+      <ion-item>
+        <ion-label color="primary" position="floating">Patient Name</ion-label>
+        <ion-input type="text" formControlName="Name" required [(ngModel)]="fg1.value.Name" class="ion-text-capitalize">
+        </ion-input>
+      </ion-item>
+      <div class="validation-errors">
+        <ng-container *ngFor="let validation of validation_messages.name">
+          <div class="error-message"
+            *ngIf="fg1.get('Name').hasError(validation.type) && (fg1.get('Name').dirty || fg1.get('Name').touched)">
+            <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+          </div>
+        </ng-container>
+      </div>
+      <ion-item>
+        <ion-label color="primary" position="floating">Guardian's Name</ion-label>
+        <ion-input type="text" formControlName="FatherName" required [(ngModel)]="fg1.value.FatherName"
+          class="ion-text-capitalize">
+        </ion-input>
+      </ion-item>
+      <div class="validation-errors">
+        <ng-container *ngFor="let validation of validation_messages.fatherName">
+          <div class="error-message"
+            *ngIf="fg1.get('FatherName').hasError(validation.type) && (fg1.get('FatherName').dirty || fg1.get('FatherName').touched)">
+            <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+          </div>
+        </ng-container>
+      </div>
+      <ion-radio-group formControlName="Gender">
+        <ion-list-header>
+          Gender
+        </ion-list-header>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-item>
+                <ion-label color="primary">Male</ion-label>
+                <ion-radio slot="start" value="Boy"></ion-radio>
+                <!-- (click)="updateGender('Boy')" -->
+              </ion-item>
+            </ion-col>
 
-  <!-- 1st Step of Add Child -->
-  <form [formGroup]="fg1">
-    <ion-item>
-      <ion-label color="primary" position="floating">Patient Name</ion-label>
-      <ion-input type="text" formControlName="Name" required></ion-input>
-    </ion-item>
-    <div class="validation-errors">
-      <ng-container *ngFor="let validation of validation_messages.name">
-        <div class="error-message"
-          *ngIf="fg1.get('Name').hasError(validation.type) && (fg1.get('Name').dirty || fg1.get('Name').touched)">
-          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
-        </div>
-      </ng-container>
-    </div>
+            <ion-col>
+              <ion-item>
+                <ion-label color="primary">Female</ion-label>
+                <ion-radio slot="start" value="Girl"></ion-radio>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-radio-group>
 
-    <ion-radio-group formControlName="Guardian">
-      <ion-grid>
-        <ion-row>
-          <ion-col>
-            <ion-item lines="none">
-              <ion-label color="primary">Father's name</ion-label>
-              <ion-radio slot="start" value="Father" ></ion-radio> 
-            </ion-item>
-          </ion-col>
-          <ion-col>
-            <ion-item lines="none">
-              <ion-label color="primary">Husband's name</ion-label>
-              <ion-radio slot="start" value="Husband"></ion-radio>
-            </ion-item>
-          </ion-col>
-        </ion-row>    
-      </ion-grid>
-    </ion-radio-group>
-    <ion-item>
-      <!-- <ion-label color="primary" position="floating">Father's Name</ion-label> -->
-      <ion-input type="text" formControlName="FatherName" required></ion-input>
-    </ion-item>
-    <div class="validation-errors">
-      <ng-container *ngFor="let validation of validation_messages.fatherName">
-        <div class="error-message"
-          *ngIf="fg1.get('FatherName').hasError(validation.type) && (fg1.get('FatherName').dirty || fg1.get('FatherName').touched)">
-          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
-        </div>
-      </ng-container>
-    </div>
-    <ion-radio-group formControlName="Gender">
-      <ion-list-header>    
-        Gender
-      </ion-list-header>
-      <ion-grid>
-        <ion-row>
-          <ion-col>
-            <ion-item>
-              <ion-label color="primary">Male</ion-label>
-              <ion-radio slot="start" value="Boy" ></ion-radio> 
-              <!-- (click)="updateGender('Boy')" -->
-            </ion-item>
-          </ion-col>
+      <ion-label id="dob" color="primary" position="floating" style="margin-left: 1.5%; margin-bottom: 20px;">Date of
+        Birth</ion-label>
+      <input formControlName="DOB" slot="end" matInput [matDatepicker]="picker" disabled max="{{todaydate}}"
+        (click)="picker.open()" (dateChange)="checkEpi()">
+      <mat-datepicker-toggle slot="end" matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker slot="end" #picker disabled="false"></mat-datepicker>
 
-          <ion-col>
-            <ion-item>
-              <ion-label color="primary">Female</ion-label>
-              <ion-radio slot="start" value="Girl"></ion-radio>
-            </ion-item>
-          </ion-col>
-        </ion-row>    
-      </ion-grid>
-    </ion-radio-group>
+      <div class="validation-errors" style="margin-bottom: 20px;">
+        <ng-container *ngFor="let validation of validation_messages.DOB">
+          <div class="error-message"
+            *ngIf="fg1.get('DOB').hasError(validation.type) && (fg1.get('DOB').dirty || fg1.get('DOB').touched)">
+            <ion-icon name="information-circle-outline" style="color: rgb(255, 0, 0); margin-bottom: -2px;"></ion-icon>
+            {{ validation.message }}
+          </div>
+        </ng-container>
+      </div>
 
-    <ion-radio-group formControlName="Type">
-      <ion-list-header >    
-        Schedule Type
-      </ion-list-header>
-      <ion-grid>
-        <ion-row>
-          <ion-col>
-            <ion-item>
-              <ion-label color="primary">Regular</ion-label>
-              <ion-radio slot="start" value="regular" ></ion-radio> 
-            </ion-item>
-          </ion-col>
 
-          <ion-col>
-            <ion-item>
-              <ion-label color="primary">Special</ion-label>
-              <ion-radio slot="start" value="special"></ion-radio>
-            </ion-item>
-          </ion-col>
-        </ion-row>    
-      </ion-grid>
-    </ion-radio-group>
+      <ion-radio-group formControlName="Type">
 
-    
-      <ion-item *ngIf = "fg1.value.Type === 'regular'">
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-item style="height: 100%;">
+                <ion-label color="white">Regular</ion-label>
+                <ion-radio slot="start" value="regular"></ion-radio>
+              </ion-item>
+            </ion-col>
+
+            <ion-col>
+              <ion-item style="height: 100%;">
+                <ion-label color="white">EPI Plus</ion-label>
+                <ion-radio slot="start" value="IsEPIDone" (ionChange)="checkEpi()"></ion-radio>
+              </ion-item>
+            </ion-col>
+
+            <ion-col>
+              <ion-item c style="height: 100%;">   <!--change by fatyma-->
+                <ion-label color="white">Customize</ion-label>
+                <ion-radio slot="start" value="special"></ion-radio>
+              </ion-item>
+            </ion-col>
+
+          </ion-row>
+        </ion-grid>
+
+      </ion-radio-group>
+
+
+      <!-- <ion-item *ngIf="fg1.value.Type === 'regular'">
         <ion-label color="primary">Skip UnActive Doses</ion-label>
         <ion-checkbox slot="start" formControlName="IsSkip"></ion-checkbox>
+      </ion-item> -->
+
+
+      <ion-item>
+        <ion-label color="primary" position="floating">Email</ion-label>
+        <ion-input type="text" formControlName="Email"></ion-input>
       </ion-item>
-    
 
-    <!-- <ion-item> -->
-       <ion-label id="dob" color="primary" position="floating">Date of Birth</ion-label>
-      <!-- <ion-datetime displayFormat="DD-MM-YYYY" picker-format="DD-MM-YYYY" formControlName="DOB" max = "{{todaydate}}" (ionChange) = "checkEpi()"></ion-datetime> -->
-       <!-- <mat-form-field appearance="fill"> -->
-        <!-- <mat-label>Choose a date</mat-label> -->
-        <input formControlName="DOB"  matInput [matDatepicker]="picker" disabled  max = "{{todaydate}}" (click)="picker.open()" (dateChange) = "checkEpi()">
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker disabled="false"></mat-datepicker>
-       <!-- </mat-form-field> -->
-    <!-- </ion-item> -->
-    <div class="validation-errors">
-      <ng-container *ngFor="let validation of validation_messages.DOB">
-        <div class="error-message"
-          *ngIf="fg1.get('DOB').hasError(validation.type) && (fg1.get('DOB').dirty || fg1.get('DOB').touched)">
-          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+      <div class="validation-errors">
+        <ng-container *ngFor="let validation of validation_messages.email">
+          <div class="error-message"
+            *ngIf="fg1.get('Email').hasError(validation.type) && (fg1.get('Email').dirty || fg1.get('Email').touched)">
+            <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+          </div>
+        </ng-container>
+      </div>
+
+      <ion-item>
+        <ion-label color="primary" position="floating">CNIC/Passport No.</ion-label>
+        <ion-input type="text" formControlName="CNIC"></ion-input>
+      </ion-item>
+      <ion-item>
+        <div style="width: 37%;">
+          <ion-label color="primary" position="stacked" style="font-size: 20px; margin-bottom: 5px;">
+            Country Code
+          </ion-label>
+          <ion-select formControlName="CountryCode" class="country-code-select" style="margin-bottom: 10px;">
+            <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
+              (+{{ country.code }}) {{ country.name }}
+            </ion-select-option>
+          </ion-select>
+
+          <ion-label color="primary" position="stacked" style="font-size: 20px; margin-bottom: 5px;">
+            Mobile Number
+          </ion-label>
+          <ion-input type="text" formControlName="MobileNumber" class="number-input"
+            style="flex: 1 1 auto;"></ion-input>
         </div>
-      </ng-container>
-    </div>
-  
+      </ion-item>
 
-    <ion-item>
-      <ion-label color="primary" position="floating">Email</ion-label>
-      <ion-input type="text" formControlName="Email"></ion-input>
-    </ion-item>
-    <!-- <div class="validation-errors">
-      <ng-container *ngFor="let validation of validation_messages.email">
-        <div class="error-message"
-          *ngIf="fg1.get('Email').hasError(validation.type) && (fg1.get('Email').dirty || fg1.get('Email').touched)">
-          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+      <div class="validation-errors">
+        <ng-container *ngFor="let validation of validation_messages.mobileNumber">
+          <div class="error-message"
+            *ngIf="fg1.get('MobileNumber').hasError(validation.type) && (fg1.get('MobileNumber').dirty || fg1.get('MobileNumber').touched)">
+            <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="city">
+        <ion-label color="primary" position="floating"
+          style="font-size: 16px; display: flex; padding-left: 15px;">City</ion-label>
+        <mat-form-field class="example-full-width">
+          <input type="text" aria-label="Number" matInput formControlName="city" [matAutocomplete]="auto"
+            (ngModelChange)="filter($event)" style="font-size: 15px;">
+          <mat-autocomplete #auto="matAutocomplete" class="no-indent">
+            <mat-option *ngFor="let option of cities" [value]="option">
+              {{option}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+        <ion-item>
+          <ion-label color="primary" position="floating">Add New City</ion-label>
+          <ion-input type="text" formControlName="City2" required class="ion-text-capitalize"
+            [(ngModel)]="fg1.value.City2" [disabled]="fg1.get('city')?.value !== '' ">
+          </ion-input>
+        </ion-item>
+        <div class="validation-errors">
+          <ng-container *ngFor="let validation of validation_messages.City2">
+            <div class="error-message"
+              *ngIf="fg1.get('City2')?.hasError(validation.type) && (fg1.get('City2')?.dirty || fg1.get('City2')?.touched)">
+              <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+            </div>
+          </ng-container>
         </div>
-      </ng-container>
-    </div> -->
-
-    <ion-item>
-      <ion-label color="primary" position="floating">CNIC/Passport No.</ion-label>
-      <ion-input type="text" formControlName="CNIC" required></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label color="primary" position="floating">Mobile Number</ion-label>
-      <ion-input type="text" formControlName="MobileNumber" required></ion-input>
-    </ion-item>
-    <div class="validation-errors">
-      <ng-container *ngFor="let validation of validation_messages.mobileNumber">
-        <div class="error-message"
-          *ngIf="fg1.get('MobileNumber').hasError(validation.type) && (fg1.get('MobileNumber').dirty || fg1.get('MobileNumber').touched)">
-          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
-        </div>
-      </ng-container>
-    </div>
-
-    <ion-item>
-      <ion-label color="primary" position="floating">Preferred Day of week</ion-label>
-      <ion-select formControlName="PreferredDayOfWeek"(ionChange)="uncheckany()"  multiple="true" [(ngModel)]="fg1.value.PreferredDayOfWeek" >
-        <ion-select-option value="Any">Any</ion-select-option>
-        <ion-select-option value="Monday">Monday</ion-select-option>
-        <ion-select-option value="Tuesday">Tuesday</ion-select-option>
-        <ion-select-option value="Wednesday">Wednesday</ion-select-option>
-        <ion-select-option value="Thrusday">Thrusday</ion-select-option>
-        <ion-select-option value="Friday">Friday</ion-select-option>
-        <ion-select-option value="Saturday">Saturday</ion-select-option>
-        <ion-select-option value="Sunday">Sunday</ion-select-option>
-      </ion-select>
-    </ion-item>
-    <ion-item>
-      <ion-label color="primary" position="floating">Preferred Day of Reminder</ion-label>
-      <ion-select formControlName="PreferredDayOfReminder" value ='0'>
-        <ion-select-option value="0">On Due Day</ion-select-option>
-        <ion-select-option value="1">Due day + 1 Day before</ion-select-option>
-        <ion-select-option value="2">Due day + 2 Day before</ion-select-option>
-        <ion-select-option value="3">Due day + 3 Day before</ion-select-option>
-      </ion-select>
-    </ion-item>
-
-   
-    <!-- <ion-item>
-      <ion-label color="primary" position="">City</ion-label>
-      <select formControlName="City" [(ngModel)]="City" (ionChange)='setCity(City)' required>
-         <option *ngFor ="let city of cities" value ="{{city}}">{{city}}</option>    
-      </select>
-    </ion-item> -->
-    <ion-item>
-      <ion-label color="primary" position="floating">City</ion-label>
-    <mat-form-field class="example-full-width">
-      <input type="text"
-             aria-label="Number"
-             matInput
-             formControlName="City"
-             [matAutocomplete]="auto"
-             (ngModelChange)="filter($event)">
-      <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let option of cities" [value]="option">
-          {{option}}
-        </mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
-    </ion-item>
-
-    
-
-    <!-- <ion-item>
-      <ion-label color="primary" position="floating">Preferred Day of Reminder</ion-label>
-      <ion-select formControlName="PreferredDayOfReminder" value='On Due Day'>
-        <ion-select-option value="On Due Day">On Due Day</ion-select-option>
-        <ion-select-option value="Due day + 1 Day before">Due day + 1 Day before</ion-select-option>
-        <ion-select-option value="Due day + 2 Day before">Due day + 2 Day before</ion-select-option>
-        <ion-select-option value="Due day + 3 Day before">Due day + 3 Day before</ion-select-option>
-      </ion-select>
-    </ion-item> -->
-
-       
-
-
-    <ion-grid>
-      <ion-row>
-
-        <ion-col>
-          <ion-item>
-            <ion-label color="primary">Is EPI Done</ion-label>
-            <ion-checkbox [disabled]="!epiDone" slot="start" formControlName="IsEPIDone"></ion-checkbox>
-          </ion-item>
-        </ion-col>
-
-        <ion-col>
-          <ion-item>
-            <ion-label color="primary">Verified</ion-label>
-            <ion-checkbox slot="start" formControlName="IsVerified" [disabled]="!epiDone"></ion-checkbox>
-          </ion-item>
-        </ion-col>
-
-      </ion-row>
-    </ion-grid>
-    <ion-button [disabled]="!fg1.valid" (click)="moveNextStep()">Submit</ion-button>
-  </form>
-
-  <!-- 2nd step of Add Child -->
-  <!-- <div>
-    <form [formGroup]="fg2" *ngIf="formcontroll == true">
-      <ion-list>
-        <ion-row>
-          <ion-col>
-            <ion-item formArrayName="ChildVaccines"
-              *ngFor="let order of fg2.controls.ChildVaccines.controls; let i = index">
-              <ion-label color="primary"> {{vaccines[i].Name}}</ion-label>
-              <ion-checkbox slot="start" required [formControlName]="i"></ion-checkbox>
-            </ion-item>
-          </ion-col>
-        </ion-row>
-      </ion-list>
-      <ion-button (click)="getChildVaccinefromUser()">Save</ion-button>
+      </div>
+      <ion-button type="submit" [disabled]="!fg1.valid"
+        style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;"
+        color="primary">Submit
+      </ion-button>
     </form>
-  </div> -->
+  </ion-card>
 </ion-content>
-

@@ -6,7 +6,8 @@ import { LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
 import { PasswordValidator } from './password_validators';
-
+import { Router } from "@angular/router";
+import { ClinicService } from "../../../services/clinic.service";
 @Component({
   selector: 'app-password',
   templateUrl: './password.page.html',
@@ -17,12 +18,15 @@ export class PasswordPage implements OnInit {
   fg: FormGroup;
   matching_passwords_group: FormGroup;
   userId: any;
+  clinicService: any;
+  // router: any;
   constructor(
     private formBuilder: FormBuilder,
     public loadingController: LoadingController,
     private storage: Storage,
     private loginService: LoginService,
     private toastService: ToastService,
+    private router: Router 
   ) { }
 
   ngOnInit() {
@@ -56,21 +60,37 @@ export class PasswordPage implements OnInit {
 
     console.log(this.fg.value);
     await this.loginService.ChangePassword(this.fg.value)
-      .subscribe(res => {
-        if (res.IsSuccess) {
-          loading.dismiss();
-          this.toastService.create('successfully Updated');
-        }
-        else {
-          loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
-        }
-      }, (err) => {
+    .subscribe(res => {
+      if (res.IsSuccess) {
         loading.dismiss();
-        this.toastService.create(err, 'danger')
-      });
-  }
-  validation_messages = {
+        this.toastService.create('Successfully Updated');
+        this.endSession(); 
+        this.router.navigate(['/login']);
+      } else {
+        loading.dismiss();
+        this.toastService.create(res.Message, 'danger');
+      }
+    }, (err) => {
+      loading.dismiss();
+      this.toastService.create(err, 'danger');
+    });
+}
+endSession() {
+  this.storage.remove(environment.USER_Id);
+}
+
+clearStorage() {
+  this.storage.clear().then(() => {
+    this.clinicService.clinics = null;
+    this.clinicService.doctorId = null;
+    this.clinicService.OnlineClinicId = null;
+    
+  }).catch((error) => {
+    console.error('Error clearing storage:', error);
+  });
+}
+
+   validation_messages = {
     'old_password': [
       { type: 'required', message: 'Old password is required.' }
     ],
@@ -85,4 +105,6 @@ export class PasswordPage implements OnInit {
       { type: 'areEqual', message: 'Password mismatch.' }
     ],
   };
+
 }
+

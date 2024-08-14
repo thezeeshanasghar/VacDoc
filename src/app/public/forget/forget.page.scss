@@ -10,13 +10,14 @@ ion-card{
 }
 
 ion-input{
-    border-bottom: 1px solid rgb(41, 39, 39);
+    border-bottom: 1px solid rgb(255, 255, 255);
     --padding-start: 7px;
+    color: white;
 }
 
 
 .item.item-trns {
-	border-color: rgba(0, 0, 0, 0);
+	border-color: rgba(255, 255, 255, 0);
 	background-color: rgba(0, 0, 0, 0);
 	color: white; 
 }
@@ -30,4 +31,10 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.arrow{
+    border: 1px solid;
+    border-radius: 50%;
+    color: rgb(255, 255, 255);
 }

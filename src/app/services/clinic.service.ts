@@ -73,13 +73,13 @@ export class ClinicService extends BaseService {
       .pipe(catchError(this.handleError));
   }
 
-  putClinic(id: number, data): Observable<any> {
-    const url = `${this.API_CLINIC}${id}`;
+  UpdateClinicAndTimings(id: number, data): Observable<any> {
+    const url = `${environment.BASE_URL}ClinicTiming/api/clinic/update?clinicId=${id}`;
     return this.http
       .put(url, data, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
-
+  // https://localhost:5001/api/ClinicTiming/api/clinic/update?clinicId=32
   deleteClinic(id: string): Observable<any> {
     const url = `${this.API_CLINIC}${id}`;
     return this.http

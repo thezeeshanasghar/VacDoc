@@ -1,48 +1,90 @@
-<ion-header>
+<!-- <ion-header>
   <ion-toolbar color="primary">
     <ion-title>Login</ion-title>
     <ion-button slot="end" routerLink="/signup">Signup</ion-button>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 
 <ion-content *ngIf = "!forgot">
 
-  <ion-card *ngIf = "fg" style="background-color: #d3cccc94;">
+  <ion-card *ngIf = "fg" style="background-color: rgba(105, 104, 107, 0.521);">
     <ion-card-content>
 
       <form [formGroup]="fg">
 
-        <ion-label color="primary" position="floating" class="ion-margin-top">
+        <!-- <ion-label color="primary" position="floating" class="ion-margin-top">
+          Country Code
+        </ion-label> -->
+            <!-- <ion-select formControlName="CountryCode">
+              <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
+                (+{{ country.code }}) {{ country.name }} 
+              </ion-select-option>
+            </ion-select> -->
+            <ion-label style="color: white;" position="floating" class="ion-margin-top">
           <ion-icon name="mail" class="ion-item-start"></ion-icon>
           Mobile Number
         </ion-label>
-        <ion-input type="email" formControlName="MobileNumber"></ion-input>
+
+        <div style="display: flex; color: white; ;">
+          <ion-select formControlName="CountryCode" style="border-bottom: 1px solid">
+              <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
+                (+{{ country.code }}) {{ country.name }} 
+              </ion-select-option>
+            </ion-select>
+            <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
+        </div>
+        <div *ngIf="fg.get('MobileNumber').invalid && (fg.get('MobileNumber').dirty || fg.get('MobileNumber').touched)">
+          <div *ngIf="fg.get('MobileNumber').errors">
+            <div style="color: red;" *ngIf="fg.get('MobileNumber').errors.required">
+              Mobile number is required.
+            </div>
+            <div style="color: red;" *ngIf="fg.get('MobileNumber').errors.onlyNumbers">
+              Please enter only numbers.
+            </div>
+
+          </div>
+        </div>
 
 
-        <ion-label color="primary" position="floating" class="ion-margin-top" >
-          <ion-icon name="lock-closed" class="ion-item-start" class="ion-margin-top"></ion-icon>
+        <ion-label style="color: white;" position="floating" class="ion-margin-top">
+          <ion-icon name="lock-closed" class="ion-item-start"></ion-icon>
           Password
         </ion-label>
-        <ion-input type="password" formControlName="Password" ></ion-input>
+        <ion-input type="password" formControlName="Password" [class.invalid-input]="fg.get('Password').invalid && (fg.get('Password').dirty || fg.get('Password').touched)"></ion-input>
+        
+        <div *ngIf="fg.get('Password').invalid && (fg.get('Password').dirty || fg.get('Password').touched)">
+          <div *ngIf="fg.get('Password').errors">
+            <div style="color: red;" *ngIf="fg.get('Password').errors.required">
+              Password is required.
+            </div>
+            <div style="color: red;" *ngIf="fg.get('Password').errors.minlength">
+            </div>
+          </div>
+        </div>
+        
 
-
-        <ion-button class="ion-margin-top" expand="full" color="tertiary" (click)="login()">
+        <ion-button class="ion-margin-top" expand="full" color="tertiary" (click)="login()" [disabled]="isFormInvalid()">
           <ion-icon name="log-in"></ion-icon>&nbsp;
           Login
         </ion-button>
+        
       </form>
 
-      <ion-text class="ion-text-right">
-        <a routerLink="/forget">
-          <h2>Forget Password</h2>
-        </a>
-      </ion-text>
 
-      <ion-text class="ion-text-right">
-        <a routerLink="/signup">
-          <h2>Signup</h2>
-        </a>
-      </ion-text>
+      <div style="display: flex; justify-content: space-between;">
+        <ion-text class="ion-text-right">
+          <a routerLink="/forget" style="text-decoration: none;">
+            <h2>Forget Password</h2>
+          </a>
+        </ion-text>
+  
+        <ion-text class="ion-text-left">
+          <a routerLink="/signup" style="text-decoration: none;">
+            <h2>Signup</h2>
+          </a>
+        </ion-text>
+      </div>
+     
 
 
     </ion-card-content>

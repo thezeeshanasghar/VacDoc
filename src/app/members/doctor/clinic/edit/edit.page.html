@@ -60,17 +60,35 @@
         </div>
       </ng-container>
     </div>
+    <ion-item>
+      <div>
+        <label for="file">Profile Image</label>
+        <input type="file" (change)="SelectMonogramImage($event.target.files)">
+      </div>
+      <ion-item>
+        <ion-img class="preview-image" [src]="fg1.value.MonogramImage2" alt="No image"></ion-img>
+      </ion-item>
+    </ion-item>
+    <ion-item>
+      <ion-img class="preview-image" [src]="resourceURL+fg1.value.MonogramImage" alt="No image"></ion-img>
+    </ion-item>
+    <!-- <ion-item>
+      <div>
+        <label for="file">Profile Image</label>
+        <input type="file" (change)="SelectMonogramImage($event.target.files)" />
+      </div>
+    </ion-item>
 
-  <!-- <ion-item>
-      <p *ngIf="uploading">Uploading Monogram...</p>
-       <img *ngIf="fg1.value.MonogramImage" [src]="resourceURL + fg1.value.MonogramImage" alt="Monogram Image">
-       <ion-button slot="end" (click) = "uploadMonogram()">Upload Monogram</ion-button>
+    <ion-item>
+      <ion-img *ngIf="fg1.value.MonogramImage" class="preview-image" [src]="fg1.value.MonogramImage" alt="Uploaded Monogram"></ion-img>
     </ion-item> -->
-        <ion-item>
-            <ion-label color="primary">Upload Monogram</ion-label>
-            <ion-img class="preview-image" [src]="resourceURL+ fg1.value.MonogramImage" alt="No Image"></ion-img>
-            <input type="file" (change)="uploadMonogram($event)" accept=".png, .jpg, .jpeg" />
-        </ion-item>
+    <!-- <ion-item>
+      <ion-label color="primary">Upload Monogram</ion-label>
+      <ion-img *ngIf="fg1.value.MonogramImage" class="preview-image" [src]="fg1.value.MonogramImage" alt="Uploaded Monogram"></ion-img>
+      <div *ngIf="!fg1.value.MonogramImage" class="placeholder">No Image</div>
+      <input type="file" (change)="SelectMonogramImage($event.target.files)" accept=".png, .jpg, .jpeg" />
+  </ion-item> -->
+  
     <form [formGroup]="fg2">
       <ion-card>
         <ion-item>
@@ -85,32 +103,36 @@
 
             <ion-item lines="none" no-padding>
               <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Mstart" display-format="h:mm a" (ionChange)="setAllDaysValueStrat1();setTimeValidatorsMonday()">
+              <ion-datetime formControlName="Mstart" display-format="h:mm a" (ionChange)="setTimeValidatorsMonday()">
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
               <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Mend" display-format="h:mm a" (ionChange)="setAllDaysValueEnd1();setTimeValidatorsMonday()">
+              <ion-datetime formControlName="Mend" display-format="h:mm a" (ionChange)="setTimeValidatorsMonday()">
               </ion-datetime>
             </ion-item>
+            <input type="hidden" formControlName="M1Id">
           </ion-item>
+          <div > <ion-button (click)="setAllDaysValueStrat1();setAllDaysValueEnd1();">Apply Session:1 to All</ion-button></div>
           <ion-label class="VerticalAlignMiddle">Session:2 </ion-label>
           <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #MondayS2 id="MondayS2" name="MondayS2" slot="end" color="primary" formControlName="MondayS2"></ion-toggle>
           <ion-item *ngIf="MondayS2.checked==true" lines="none" no-padding>
 
             <ion-item lines="none" no-padding>
               <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Mstart2" display-format="h:mm a" (ionChange)="setAllDaysValueStrat2();setTimeValidatorsMonday()">
+              <ion-datetime formControlName="Mstart2" display-format="h:mm a" (ionChange)="setTimeValidatorsMonday()">
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
               <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Mend2" display-format="h:mm a" (ionChange)="setAllDaysValueEnd2();setTimeValidatorsMonday()">
+              <ion-datetime formControlName="Mend2" display-format="h:mm a" (ionChange)="setTimeValidatorsMonday()">
               </ion-datetime>
             </ion-item>
+            <input type="hidden" formControlName="M2Id">
           </ion-item>
+          <div><ion-button (click)="setAllDaysValueStrat2();setAllDaysValueEnd2();">Apply Session:2 to All</ion-button></div>
           <div class="validation-errors">
             <ng-container *ngFor="let validation of validation_messages.Mstart2">
               <div class="error-message"
@@ -156,6 +178,7 @@
               <ion-datetime formControlName="Tuend" display-format="h:mm a" (ionChange)='setTimeValidatorsTuesday()'>
               </ion-datetime>
             </ion-item>
+            <input type="hidden" formControlName="Tu1Id">
           </ion-item>
           <ion-label class="VerticalAlignMiddle">Session:2 </ion-label>
           <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #TuesdayS2 id="TuesdayS2" name="TuesdayS2" slot="end" color="primary" formControlName="TuesdayS2"></ion-toggle>
@@ -172,6 +195,7 @@
               <ion-datetime formControlName="Tuend2" display-format="h:mm a" (ionChange)='setTimeValidatorsTuesday()'>
               </ion-datetime>
             </ion-item>
+            <input type="hidden" formControlName="Tu2Id">
           </ion-item>
           <div class="validation-errors">
             <ng-container *ngFor="let validation of validation_messages.Mstart2">
@@ -218,6 +242,7 @@
               <ion-datetime formControlName="Wend" display-format="h:mm a" (ionChange)='setTimeValidatorsWed()'>
               </ion-datetime>
             </ion-item>
+            <input type="hidden" formControlName="W1Id">
           </ion-item>
           <ion-label class="VerticalAlignMiddle">Session:2 </ion-label>
           <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #WednesdayS2 id="WednesdayS2" name="WednesdayS2" slot="end" color="primary" formControlName="WednesdayS2"></ion-toggle>
@@ -234,6 +259,7 @@
               <ion-datetime formControlName="Wend2" display-format="h:mm a" (ionChange)='setTimeValidatorsWed()'> 
               </ion-datetime>
             </ion-item>
+            <input type="hidden" formControlName="W2Id">
           </ion-item>
           <div class="validation-errors">
             <ng-container *ngFor="let validation of validation_messages.Mstart2">
@@ -280,6 +306,7 @@
               <ion-datetime formControlName="Thend" display-format="h:mm a" (ionChange)='setTimeValidatorsThu()'>
               </ion-datetime>
             </ion-item>
+            <input type="hidden" formControlName="Th1Id">
           </ion-item>
           <ion-label class="VerticalAlignMiddle">Session:2 </ion-label>
           <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #ThursdayS2 id="ThursdayS2" name="ThursdayS2" slot="end" color="primary" formControlName="ThursdayS2"></ion-toggle>
@@ -296,6 +323,7 @@
               <ion-datetime formControlName="Thend2" display-format="h:mm a" (ionChange)='setTimeValidatorsThu()'>
               </ion-datetime>
             </ion-item>
+            <input type="hidden" formControlName="Th2Id">
           </ion-item>
           <div class="validation-errors">
             <ng-container *ngFor="let validation of validation_messages.Mstart2">
@@ -342,6 +370,7 @@
               <ion-datetime formControlName="Fend" display-format="h:mm a" (ionChange)='setTimeValidatorsFri()'>
               </ion-datetime>
             </ion-item>
+            <input type="hidden" formControlName="F1Id">
           </ion-item>
           <ion-label class="VerticalAlignMiddle">Session:2 </ion-label>
           <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #FridayS2 id="FridayS2" name="FridayS2" slot="end" color="primary" formControlName="FridayS2"></ion-toggle>
@@ -358,6 +387,7 @@
               <ion-datetime formControlName="Fend2" display-format="h:mm a" (ionChange)='setTimeValidatorsFri()'>
               </ion-datetime>
             </ion-item>
+            <input type="hidden" formControlName="F2Id">
           </ion-item>
           <div class="validation-errors">
             <ng-container *ngFor="let validation of validation_messages.Mstart2">
@@ -404,6 +434,7 @@
               <ion-datetime formControlName="Saend" display-format="h:mm a" (ionChange)='setTimeValidatorsSat()'>
               </ion-datetime>
             </ion-item>
+            <input type="hidden" formControlName="Sa1Id">
           </ion-item>
           <ion-label class="VerticalAlignMiddle">Session:2 </ion-label>
           <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #SaturdayS2 id="SaturdayS2" name="SaturdayS2" slot="end" color="primary" formControlName="SaturdayS2"></ion-toggle>
@@ -420,6 +451,7 @@
               <ion-datetime formControlName="Saend2" display-format="h:mm a" (ionChange)='setTimeValidatorsSat()'>
               </ion-datetime>
             </ion-item>
+            <input type="hidden" formControlName="Sa2Id">
           </ion-item>
           <div class="validation-errors">
             <ng-container *ngFor="let validation of validation_messages.Mstart2">
@@ -466,6 +498,7 @@
               <ion-datetime formControlName="Suend" display-format="h:mm a" (ionChange)="setTimeValidatorsSun()">
               </ion-datetime>
             </ion-item>
+            <input type="hidden" formControlName="Su1Id">
           </ion-item>
           <ion-label class="VerticalAlignMiddle">Session:2 </ion-label>
           <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #SundayS2 id="SundayS2" name="SundayS2" slot="end" color="primary" formControlName="SundayS2"></ion-toggle>
@@ -482,6 +515,7 @@
               <ion-datetime formControlName="Suend2" display-format="h:mm a" (ionChange)="setTimeValidatorsSun()">
               </ion-datetime>
             </ion-item>
+            <input type="hidden" formControlName="Su1Id">
           </ion-item>
           <div class="validation-errors">
             <ng-container *ngFor="let validation of validation_messages.Mstart2">
@@ -507,7 +541,7 @@
       </ion-card>
     </form>
 
-    <ion-button [disabled]="!fg1.valid" (click)="getdata()">submit</ion-button>
+    <ion-button [disabled]="!fg1.valid" (click)="getdata()">Update</ion-button>
   </form>
 
 </ion-content>

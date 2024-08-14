@@ -1,3 +1,5 @@
+
+
 .girl {
     border: rgb(245, 12, 167) 2px solid
 }
@@ -8,3 +10,23 @@
 .iconchild {
     margin-left: 6%;
 }
+
+.icons{
+    --background: rgb(0, 0, 0, 0.155); /* Replace 'your-color' with the desired background color */
+    border-radius: 2px;
+    color: #fff;
+}
+
+.gender-image {
+    width: 100px; /* Adjust width as needed */
+    height: auto; /* Maintain aspect ratio */
+  }
+  
+  .gender-image path {
+    fill: blue; /* Default color for male */
+  }
+  
+  .gender-image.girl path {
+    fill: pink; /* Color for female */
+  }
+  

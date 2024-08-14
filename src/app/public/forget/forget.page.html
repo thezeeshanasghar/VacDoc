@@ -1,20 +1,28 @@
-<ion-header>
+<!-- <ion-header>
   <ion-toolbar color="primary">
     <ion-title>Forget Password</ion-title>
     <ion-back-button  color="light" defaultHref="/" slot="start"> </ion-back-button>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 
 <ion-content >
 
-  <ion-card style="background-color: #d3cccc94;">
+  <ion-card style="background-color:  #6b686873;">
+
     <ion-card-content>
 
-        <ion-label color="primary" position="floating" class="ion-margin-top">
-          <ion-icon name="mail" class="ion-item-start"></ion-icon>
-          Mobile Number
+      <div style="color: rgb(255, 255, 255); height: 100px; display: flex; align-items: center;">
+        <ion-back-button class="arrow" color="white" defaultHref="/" slot="start" style="align-self: flex-start;"></ion-back-button>
+        <h1 style="flex: 1; text-align: center; font-weight: 500; font-size: 25px; margin-bottom: 50px;">Forget Password ?</h1>
+    </div>
+    
+    
+
+      <ion-label color="primary" position="floating" class="ion-margin-top" style="color: white;">
+          <ion-icon name="mail" class="ion-item-start" style="color: white;"></ion-icon>
+          Email
         </ion-label>
-        <ion-input type="text" [(ngModel)] = "MobileNumber"></ion-input>
+        <ion-input type="text" [(ngModel)] = "Email"></ion-input>
 
 
         <ion-button class="ion-margin-top" expand="full" color="tertiary" (click)="sendPassword()">

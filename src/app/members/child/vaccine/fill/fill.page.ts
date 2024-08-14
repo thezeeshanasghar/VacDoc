@@ -4,7 +4,7 @@ import { VaccineService } from 'src/app/services/vaccine.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { LoadingController } from '@ionic/angular';
 import * as moment from 'moment';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
 
@@ -16,6 +16,10 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./fill.page.scss'],
 })
 export class FillPage implements OnInit {
+  customActionSheetOptions: any = {
+    header: 'Select Brand',
+    cssClass: 'action-sheet-class'
+  };
 
   fg: FormGroup;
   doctorId: any;
@@ -32,6 +36,7 @@ export class FillPage implements OnInit {
 
   fgAddData: FormGroup;
 
+  
   constructor(
     public loadingController: LoadingController,
     private formBuilder: FormBuilder,
@@ -45,6 +50,7 @@ export class FillPage implements OnInit {
 
   }
 
+  
 
   ngOnInit() {
     this.storage.get(environment.DOCTOR_Id).then((val) => {
@@ -62,10 +68,10 @@ export class FillPage implements OnInit {
       'DoctorId': [''],
       'Id': [null],
       'IsDone': [null],
-      'Weight': [null],
-      'Height': [null],
-      'Circle': [null],
-      'BrandId': [null],
+      Weight: new FormControl('', ),
+      Height: new FormControl('', ),
+      Circle: new FormControl('', ),
+      'BrandId': new FormControl('', ),
       'GivenDate': [null],
       'IsDisease': [false],
       'DiseaseYear': ['2019'],
@@ -223,5 +229,10 @@ export class FillPage implements OnInit {
     console.log(myDate);
     return myDate;
   }
+
+  isBrandFilled(): boolean{
+    return this.fg.get('BrandId').value !== null;
+  }
+  
 
 }

@@ -32,24 +32,22 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">Mobile Number</ion-label>
-      <ion-input type="text" formControlName="MobileNumber" required></ion-input>
+      <div style="display: flex ;">
+        <ion-select formControlName="CountryCode" >
+            <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
+              (+{{ country.code }}) {{ country.name }} 
+            </ion-select-option>
+          </ion-select>
+          <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
+      </div>
     </ion-item>
 
     <ion-item>
-      <ion-label color="primary" position="floating">Preferred Day of week</ion-label>
-      <ion-select formControlName="PreferredDayOfWeek" required>
-        <ion-select-option value="Any">Any</ion-select-option>
-        <ion-select-option value="Monday">Monday</ion-select-option>
-        <ion-select-option value="Tuesday">Tuesday</ion-select-option>
-        <ion-select-option value="Wednesday">Wednesday</ion-select-option>
-        <ion-select-option value="Thrusday">Thrusday</ion-select-option>
-        <ion-select-option value="Friday">Friday</ion-select-option>
-        <ion-select-option value="Saturday">Saturday</ion-select-option>
-        <ion-select-option value="Sunday">Sunday</ion-select-option>
-      </ion-select>
+      <ion-label color="primary" position="floating">CNIC/Passport No.</ion-label>
+      <ion-input type="text" formControlName="CNIC"></ion-input>
     </ion-item>
 
-    <ion-radio-group *ngIf ="child" value="{{child.Gender}}">
+    <ion-radio-group *ngIf ="child" formControlName="Gender" value="{{child.Gender}}">
       <ion-list-header>
         Gender
       </ion-list-header>
@@ -68,32 +66,34 @@
             <ion-item>
               <ion-label color="primary">Girl</ion-label>
               <ion-radio slot="start" value="Girl" (ionSelect)="updateGender('Girl')" Checked></ion-radio>
-            </ion-item>
+            </ion-item> 
           </ion-col>
         </ion-row>
       </ion-grid>
 
     </ion-radio-group>
 
-    <ion-item>
-      <ion-label color="primary" position="floating">Select a City</ion-label>
-      <ion-select formControlName="City"  required>
-        <ion-select-option *ngFor ="let city of childService.cities" value ="{{city}}">{{city}}</ion-select-option>
-       
-     </ion-select>
-    </ion-item>
 
     <ion-item>
-      <ion-label color="primary" position="floating">Preferred Day of Reminder</ion-label>
-      <ion-select formControlName="PreferredDayOfReminder" required>
-        <ion-select-option value="0">Preferred day of reminder - On Due Day</ion-select-option>
-        <ion-select-option value="1">Due day + 1 Day before</ion-select-option>
-        <ion-select-option value="2">Due day + 2 Day before</ion-select-option>
-        <ion-select-option value="3">Due day + 3 Day before</ion-select-option>
-      </ion-select>
+      <ion-label color="primary" position="floating">City</ion-label>
+      <mat-form-field class="example-full-width">
+        <input type="text"
+               aria-label="Number"
+               matInput
+               formControlName="City"
+               [matAutocomplete]="auto"
+               (ngModelChange)="filterCities($event)">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let city of filteredCities" [value]="city">
+            {{city}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
     </ion-item>
 
-    <ion-grid>
+
+
+    <!-- <ion-grid>
       <ion-row>
 
         <ion-col>
@@ -111,9 +111,9 @@
         </ion-col>
 
       </ion-row>
-    </ion-grid>
+    </ion-grid> -->
 
-    <ion-button [disabled]="!fg.valid" (click)='editChild()'>Update</ion-button>
-    <ion-button routerLink="/members/child/">Cancel</ion-button>
+    <ion-button (click)='editChild()' style="margin-top: 20px;">Update</ion-button>
+    <ion-button routerLink="/members/child/" style="margin-top: 20px;">Cancel</ion-button>
   </form>
 </ion-content>

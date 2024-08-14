@@ -67,6 +67,7 @@ export class SceduleEditPage implements OnInit {
               dose.Name,
               new FormControl(value, Validators.required)
             );   
+            dose.IsSpecial=false;
 
           });
           loading.dismiss();
@@ -105,17 +106,25 @@ export class SceduleEditPage implements OnInit {
 
  
   async getdoses(){
+
    let newschedule=[]
-    this.doses.forEach(dose => {
-      if (dose.IsSpecial)
-      {
+   
+   console.log('doses',this.doses)
+   
+   this.doses.forEach(dose => {
+    
+    if (dose.IsSpecial==true ) {
+      // Check if the checkbox is checked
+    
         newschedule.push({
           DoseId: dose.Id,
           DoctorId: this.doctorId,
           GapInDays: dose.MinAge
         });
-      }
-    });
+      
+    }
+  });
+    console.log('newschedule',newschedule)
     
     const loading = await this.loadingController.create({
       message: "loading"

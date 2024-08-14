@@ -24,7 +24,7 @@
               <ion-menu-button></ion-menu-button>
             </ion-item> -->
   </ion-toolbar>
-  <ion-toolbar color="primary" >
+  <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
       <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
@@ -39,20 +39,28 @@
 <ion-content *ngIf="Clinics">
   <ion-card *ngFor="let clinic of Clinics">
     <ion-item> 
-      <ion-label>{{clinic.Name}}</ion-label>
+      <ion-label color="dark">{{clinic.Name}}</ion-label>
       <ion-icon slot="end" routerLink="/members/doctor/clinic/edit/{{clinic.Id}}" color="primary" name="create">
       </ion-icon>
       <ion-icon slot="end" (click)="alertDeleteClinic(clinic.Id)" color="primary" name="trash"></ion-icon>
     </ion-item>
 
-    <ion-card-content >
-      <p>Consultation Fee : {{clinic.ConsultationFee}}</p>
-      <p> Off Days : {{clinic.OffDays}}</p>
-      <p>Timming : {{clinic.StartTime}} - {{clinic.EndTime}} </p>
-      <ion-button size="small" fill="outline" color="tertiary" routerLink="/vaccine/{{clinic.Id}}/dose">
+    <ion-card-content color="primary">
+      <p>Consultation Fee: {{ clinic.ConsultationFee }}</p>
+      <p>Phone Number: {{ clinic.PhoneNumber }}</p>
+      <p>Address: {{ clinic.Address }}</p>
+      <!-- <p *ngIf="clinic.ClinicTimings && clinic.ClinicTimings.length">
+        Timings:
+        <span *ngFor="let timing of clinic.ClinicTimings">
+          {{timing.Day}}
+          {{ timing.StartTime }} - {{ timing.EndTime }}<br>
+        </span>
+      </p>
+      <p *ngIf="!clinic.ClinicTimings || !clinic.ClinicTimings.length">No timings available</p> -->
+      <ion-button size="small" fill="outline" color="primary" routerLink="/members/child">
         Patients &nbsp;<ion-badge size="small" color="primary">{{clinic.childrenCount}}</ion-badge>
       </ion-button>
-      <ion-button *ngIf="!clinic.IsOnline" size="small" fill="outline" color="tertiary"
+      <ion-button *ngIf="!clinic.IsOnline" size="small" fill="outline" color="primary"
         (click)="setOnlineClinic(clinic.Id)">
         Set as Online
       </ion-button>

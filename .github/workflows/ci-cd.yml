@@ -1,0 +1,49 @@
+name: Angular CI/CD (FTP Deployment)
+
+on:
+  push:
+    branches: [staging, master]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm install -g @ionic/cli # Install Ionic CLI globally
+      - run: npm ci
+      
+     
+      - run: ionic build --prod
+
+      - name: Deploy to stage
+        if: github.ref == 'refs/heads/staging'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: "${{ secrets.STAGING_FTP_SERVER }}"
+          username: "${{ secrets.STAGING_FTP_USERNAME }}"
+          password: "${{ secrets.STAGING_FTP_PASSWORD }}"
+          local-dir: www/
+          server-dir: /
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            web.config,
+      - name: Deploy for master
+        if: github.ref == 'refs/heads/master'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: "${{ secrets.PROD_FTP_SERVER }}"
+          username: "${{ secrets.PROD_FTP_USERNAME }}"
+          password: "${{ secrets.PROD_FTP_PASSWORD }}"
+          local-dir: www/
+          server-dir: /doctor
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            web.config,

@@ -88,6 +88,7 @@ export class DashboardPage implements OnInit {
         loading.dismiss();
         if (res.IsSuccess) {
           this.Clinics = res.ResponseData;
+          console.log( this.Clinics)
           this.storage.set(environment.CLINICS, this.Clinics);
           for (let i = 0; i < this.Clinics.length; i++) {
             if (this.Clinics[i].IsOnline) {

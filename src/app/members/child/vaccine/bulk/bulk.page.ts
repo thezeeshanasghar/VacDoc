@@ -25,6 +25,10 @@ export class BulkPage implements OnInit {
   fg: FormGroup;
   todaydate: any;
   BrandIds = [];
+  customActionSheetOptions: any = {
+    header: 'Select Brand',
+    cssClass: 'action-sheet-class'
+  };
   constructor(
     private loadingController: LoadingController,
     private activatedRoute: ActivatedRoute,
@@ -53,9 +57,9 @@ export class BulkPage implements OnInit {
     this.fg = this.formBuilder.group({
       DoctorId: [""],
       Id: [null],
-      Weight: [null],
-      Height: [null],
-      Circle: [null],
+      Weight: ['', [Validators.required, Validators.pattern('^[0-9.]*$')]],
+      Height: ['', [Validators.required, Validators.pattern('^[0-9.]*$')]],
+      Circle: ['', [Validators.required, Validators.pattern('^[0-9.]*$')]],
       BrandId0: [null],
       BrandId1: [null],
       BrandId2: [null],
@@ -194,7 +198,8 @@ export class BulkPage implements OnInit {
 
   }
 
- 
+
+
   addDays(date, days) {
     console.log("date");
     console.log(date);
@@ -207,5 +212,14 @@ export class BulkPage implements OnInit {
     return myDate;
   }
 
-
+  isSubmitDisabled(): boolean {
+    for (let brandId of this.BrandIds) {
+      if (brandId) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
+  
 }

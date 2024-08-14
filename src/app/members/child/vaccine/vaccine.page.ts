@@ -25,6 +25,7 @@ export class VaccinePage {
   dataGrouping: any[] = [];
   vaccinesData = [];
   childId: any;
+  alphabetically: any;
   Pneum2Date: any;
   BirthYear: any;
   ChildName: string;
@@ -72,6 +73,18 @@ export class VaccinePage {
 
   }
 
+  handleSkipClick(event: Event, id: number, doseName: string) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.SkipVaccine(id, doseName);
+  }
+  
+  handleUnSkipClick(event: Event, id: number, doseName: string) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.UnSkipVaccine(id, doseName);
+  }
+  
   checkVaccineIsDon(data): boolean {
     var isdone: boolean = true;
     for (let i = 0; i < data.length; i++) {
@@ -82,6 +95,7 @@ export class VaccinePage {
     }
     return isdone;
   }
+  
 
   async getVaccination() {
     const loading = await this.loadingController.create({
@@ -113,7 +127,7 @@ export class VaccinePage {
             loading.dismiss();
 
           } else {
-            this.toastService.create("Error: failed to get vaccines");
+            this.toastService.create("Vaccines Not Found ! Please Add vaccines");
             loading.dismiss();
           }
         },

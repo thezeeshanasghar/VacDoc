@@ -55,15 +55,28 @@ export class ChildSceduleEditPage implements OnInit {
       message: "Loading"
     });
     await loading.present();
-    await this.doseService.getNewDosesChild(id).subscribe(
+    
+    await this.doseService.getDosesChild(this.ChildId).subscribe(
       res => {
         if (res.IsSuccess) {
           this.doses = res.ResponseData;
-          if (this.doses.length == 0)
-          {
-            this.NewDoses = false;
-          }
-      
+  
+          // Sort the doses by Name
+          this.doses.sort((a, b) => {
+            if (a.Name < b.Name) return -1;
+            if (a.Name > b.Name) return 1;
+            return 0;
+          });
+  
+          this.doses.forEach(dose => {
+            let value = dose.MinAge == null ? 0 : dose.MinAge;
+            this.fg.addControl(
+              dose.Name,
+              new FormControl(value, Validators.required)
+            );
+            dose.IsSpecial = false;
+          });
+          
           loading.dismiss();
         } else {
           loading.dismiss();
@@ -76,6 +89,7 @@ export class ChildSceduleEditPage implements OnInit {
       }
     );
   }
+  
 
   onSubmit() {
     console.log(this.fg.value);
@@ -105,7 +119,7 @@ export class ChildSceduleEditPage implements OnInit {
     console.log(this.doses);
    let newschedule=[]
     this.doses.forEach(dose => {
-      if (dose.IsSpecial)
+      if (dose.IsSpecial==true)
       {
         newschedule.push({
           DoseId: dose.Id,

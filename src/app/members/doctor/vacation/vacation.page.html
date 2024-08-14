@@ -19,23 +19,25 @@
 
   <form [formGroup]="fg2">
   
-
     <ion-item (click)="picker.open()"> 
       <ion-label color="primary" >From Date</ion-label>
-       <input formControlName="formDate" matInput [matDatepicker]="picker" value="{{todaydate}}">
+       <input formControlName="formDate" matInput [matDatepicker]="picker" value="{{todaydate}}" >
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker disabled="false"></mat-datepicker>
-</ion-item>
+    </ion-item>
 
     <ion-item (click)="picker.open()"> 
       <ion-label color="primary" >To Date</ion-label>
-       <input disabled formControlName="ToDate" matInput [matDatepicker]="picker1" value="{{todaydate}}">
+       <input disabled formControlName="ToDate" matInput [matDatepicker]="picker1" value="{{todaydate}}" >
       <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
       <mat-datepicker #picker1 disabled="false"></mat-datepicker>
-</ion-item>
+    </ion-item>
+  
+
+    
     <h1>Clinics</h1>
     <ion-item formArrayName="clinics" *ngFor="let a of fg2.get('clinics')['controls']; let i = index">
-      <ion-label color="primary"> {{clinics[i].Name}}</ion-label>
+      <ion-label> {{clinics[i].Name}}</ion-label>
       <ion-checkbox slot="start" required [formControlName]="i"></ion-checkbox>
     </ion-item>
 

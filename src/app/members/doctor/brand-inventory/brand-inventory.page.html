@@ -17,9 +17,9 @@
 
 <ion-content padding>
 
-  <form>
+  <form #form="ngForm">
     <ion-grid>
-      <ion-row style="background: lightblue;">
+      <ion-row>
         <ion-col>Vaccine Name</ion-col>
         <ion-col>Brand Name</ion-col>
         <ion-col>Inventory</ion-col>
@@ -28,11 +28,15 @@
         <ion-col>{{b.VaccineName}}</ion-col>
         <ion-col>{{b.BrandName}}</ion-col>
         <ion-col>
-          <ion-input [(ngModel)]="b.Count" [ngModelOptions]="{standalone: true}" type="number"></ion-input>
+          <ion-input [(ngModel)]="b.Count" [ngModelOptions]="{standalone: true}" type="tel" required pattern="^[0-9]*$" #amountInput="ngModel"></ion-input>
+          <div *ngIf="amountInput.invalid && (amountInput.dirty || amountInput.touched)">
+            <div *ngIf="amountInput.errors?.required" class="error">Amount is required.</div>
+            <div *ngIf="amountInput.errors?.pattern" class="error">Amount must be a number.</div> 
+         </div> 
         </ion-col>
       </ion-row>
     </ion-grid>
     <!-- <ion-button disabled="true" (click)="setOnlineClinic(b.ID)">Update Inventory</ion-button> -->
-    <ion-button (click)="updateBrandInventory()">Update Inventory</ion-button>
+    <ion-button [disabled]="form.invalid" (click)="updateBrandInventory()">Update Inventory</ion-button>
   </form>
 </ion-content>

@@ -24,4 +24,9 @@ export class VacationService extends BaseService {
       );
   }
 
+  patchChildIdsWithSchedules(clinicId: number, fromDate: string, toDate: string) {
+    const url = `${environment.BASE_URL}/Schedule/${clinicId}?fromDate=${fromDate}&toDate=${toDate}`;
+    return this.http.patch(url, {});
+  }
+
 }

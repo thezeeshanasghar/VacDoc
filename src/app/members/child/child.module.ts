@@ -19,6 +19,7 @@ const routes: Routes = [
   { path: 'growth', loadChildren: './growth/growth.module#GrowthPageModule' },
   { path: 'invoice/:id', loadChildren: './invoice/invoice.module#InvoicePageModule' },
   { path: 'cmsg/:id', loadChildren: './cmsg/cmsg.module#CMsgPageModule' },
+  {path:'special/:id',loadChildren:'./specialCase/specialCase.module#SpecialCasePageModule'}
 ];
 
 @NgModule({

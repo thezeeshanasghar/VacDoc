@@ -1,11 +1,11 @@
-<ion-header>
+<ion-header id="bg-header">
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <!-- <ion-menu-button></ion-menu-button> -->
+      <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Patients</ion-title>
   </ion-toolbar>
-  <ion-toolbar color="primary" >
+  <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
       <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
@@ -30,7 +30,7 @@
   <ion-card *ngFor="let child of childs" [ngClass]="child.Gender=='Girl' ? 'girl' : 'boy'">
   <ion-item>
       <ion-thumbnail slot="start">
-        <ion-img [src]="child.Gender=='Girl' ? '../../assets/female.png' : '../../assets/male.png'"></ion-img>
+        <ion-img [src]="child.Gender=='Girl' ? '../../assets/female.png' : '../../assets/male.png'" class="{{child.Gender=='Girl' ? 'female-image' : 'male-image'}}"></ion-img>
       </ion-thumbnail>
       <ion-label>{{child.Name}}</ion-label>
   </ion-item>
@@ -43,27 +43,36 @@
 
     <ion-card-content>
       <!-- <p> -->
-        <ion-icon color="primary" name="person"></ion-icon>
+        <ion-icon color="white" name="person"></ion-icon>
         {{child.FatherName}}
       <!-- </p> -->
+      &nbsp; &nbsp;
+
       <!-- <p> -->
-        <ion-icon color="primary" name="calendar"></ion-icon>
+        <ion-icon color="white" name="calendar"></ion-icon>
         {{child.DOB}}
       <!-- </p> -->
+      &nbsp; &nbsp;
       <!-- <p> -->
-        <ion-icon color="primary" name="call"></ion-icon>
+        <ion-icon color="white" name="call"></ion-icon>
         {{child.MobileNumber}}
       <!-- </p> -->
 <br>
-      <ion-button disabled="false" size="small" fill="outline" color="tertiary"
+      <ion-button disabled="false" size="small" fill="outline" color="primary"
         routerLink="/members/child/vaccine/{{child.Id}}">
         Vaccine
       </ion-button>
-      <ion-button size="small" fill="outline" color="tertiary" routerLink="/members/child/followup/{{child.Id}}">
+      &nbsp; &nbsp;
+      <ion-button size="small" fill="outline" color="primary" routerLink="/members/child/followup/{{child.Id}}">
         Follow Up
       </ion-button>
-      <ion-button disabled size="small" fill="outline" color="tertiary" routerLink="/members/child/invoice/{{child.Id}}">
+      &nbsp; &nbsp;
+      <ion-button disabled size="small" fill="outline" color="primary" routerLink="/members/child/invoice/{{child.Id}}">
         Invoice
+      </ion-button>
+      &nbsp; &nbsp;
+      <ion-button size="small" fill="outline" [color]="child.IsInactive ? 'success' : 'danger'" (click)="toggleChildActiveStatus(child.Id)">
+        {{ child.IsInactive ? 'Activate' : 'Deactivate' }}
       </ion-button>
     </ion-card-content>
 
