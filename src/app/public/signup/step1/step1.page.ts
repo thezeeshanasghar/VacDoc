@@ -478,23 +478,53 @@ export class Step1Page implements OnInit {
   }
 
   async nextpage() {
+    // Generate the password and attach it to the form value
     this.fg.value.Password = this.PasswordGenerator();
     this.signupService.personalData = this.fg.value;
     console.log(this.fg.value);
-
+  
+    // Make the API call to add the doctor
     this.signupService.addDoctor().subscribe(
       res => {
-        if (res.IsSuccess) {
+        console.log(res.Message);
+        // Handle specific error cases first
+        if (res.Message === 'Both email and phone number are already in use. Please use different email and phone number.') {
+          // If both email and phone are in use
+          this.toastService.create('Both email and phone number are already in use. Please use different email and phone number.', 'danger');
+          this.markFieldsAsInvalid(['Email', 'MobileNumber']);
+        } else if (res.Message === 'Email already exists. Please try another email.') {
+          // If only the email is in use
+          this.toastService.create('Email is already in use. Please use a different email.', 'danger');
+          this.markFieldAsInvalid('Email');
+        } else if (res.Message === 'Phone number is already in use. Please try a different phone number.') {
+          console.log("atta");
+          // If only the phone is in use
+          this.toastService.create('Phone number is already in use. Please use a different phone number.', 'danger');
+          this.markFieldAsInvalid('MobileNumber');
+        } else if (res.IsSuccess) {
+          // If signup is successful
           this.router.navigate(["/login"]);
-          this.toastService.create("Successfully Signup");
+          this.toastService.create("Successfully Signed Up");
         } else {
+          // Handle any other generic errors
           this.toastService.create(res.Message, "danger");
         }
       },
       err => {
+        // Handle errors from the API call itself
         this.toastService.create(err, "danger");
       }
     );
+  }
+  
+  // Method to mark fields as invalid (updates the form control status)
+  markFieldsAsInvalid(fields: string[]) {
+    fields.forEach(field => this.fg.get(field).setErrors({ invalid: true }));
+  }
+  
+  // Method to mark a single field as invalid
+  markFieldAsInvalid(field: string) {
+    this.fg.get(field).setErrors({ invalid: true });
   }
 
   // async addDoctorSchedule(id) {
