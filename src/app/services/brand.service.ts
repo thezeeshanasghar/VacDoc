@@ -32,12 +32,9 @@ export class BrandService extends BaseService {
       );
   }
 
-  getBrandAmount(Id: String): Observable<any> {
-    const url = `${this.API_BRAND}brandamount/${Id}`;
-    return this.http.get(url, this.httpOptions).pipe(
-      map(this.extractData),
-      catchError(this.handleError)
-    );
+  getBrandAmount(id: string): Observable<Response<BrandAmountDTO[]>> {
+    const url = `${this.API_BRAND}brandamount/${id}`;
+    return this.http.get<Response<BrandAmountDTO[]>>(url, this.httpOptions);
   }
 
   putBrandAmount(data): Observable<any> {
@@ -48,4 +45,16 @@ export class BrandService extends BaseService {
       );
   }
 
+}
+
+interface Response<T> {
+  IsSuccess: boolean;
+  Message: string | null;
+  ResponseData: T | null;
+}
+
+interface BrandAmountDTO {
+  BrandId: number;
+  VaccineName: string;
+  // Add other properties as needed
 }

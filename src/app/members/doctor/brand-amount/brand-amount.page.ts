@@ -6,6 +6,21 @@ import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 
+interface Response<T> {
+  IsSuccess: boolean;
+  Message: string | null;
+  ResponseData: T | null;
+}
+
+interface BrandAmountDTO {
+  BrandId: number;
+  VaccineName: string;
+  BrandName: string;
+  Amount: number;
+  Count: number;
+  // Add other properties as needed
+}
+
 @Component({
   selector: 'app-brand-amount',
   templateUrl: './brand-amount.page.html',
@@ -13,7 +28,7 @@ import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 })
 export class BrandAmountPage implements OnInit {
 
-  brandAmount: any;
+  brandAmounts: BrandAmountDTO[] = [];
   fg: FormGroup
   constructor(
     public loadingController: LoadingController,
@@ -28,28 +43,28 @@ export class BrandAmountPage implements OnInit {
     });
   }
 
-  async getBrandAmount(id) {
-
+  async getBrandAmount(id: string) {
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
     await loading.present();
-    await this.brandService.getBrandAmount(id).subscribe(
-      res => {
+
+    this.brandService.getBrandAmount(id).subscribe(
+      (res: Response<BrandAmountDTO[]>) => {
+        loading.dismiss();
         if (res.IsSuccess) {
-          this.brandAmount = res.ResponseData;
-          loading.dismiss();
-        }
-        else {
-          loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
+          this.brandAmounts = res.ResponseData;
+          console.log('Brand Amounts:', this.brandAmounts);
+        } else {
+          this.toastService.create(res.Message || 'Failed to fetch brand amounts', 'danger');
         }
       },
       err => {
         loading.dismiss();
-        this.toastService.create(err, 'danger');
+        console.error('Error fetching brand amounts:', err);
+        this.toastService.create('Failed to fetch brand amounts', 'danger');
       }
-    )
+    );
   }
 
   async updateBrandAmount() {
@@ -59,7 +74,7 @@ export class BrandAmountPage implements OnInit {
 
     await loading.present();
 
-    await this.brandService.putBrandAmount(this.brandAmount)
+    await this.brandService.putBrandAmount(this.brandAmounts)
       .subscribe(res => {
         if (res.IsSuccess) {
           loading.dismiss();
