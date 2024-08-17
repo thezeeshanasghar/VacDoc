@@ -102,13 +102,13 @@ export class MembersPage implements OnInit {
                 url: "/members/doctor/password",
                 icon: "key-outline"
               },
+              // {
+              //   title: "Brand Inventory",
+              //   url: "/members/doctor/brand-inventory",
+              //   icon: "clipboard-outline"
+              // },
               {
                 title: "Brand Inventory",
-                url: "/members/doctor/brand-inventory",
-                icon: "clipboard-outline"
-              },
-              {
-                title: "Brand Amount",
                 url: "/members/doctor/brand-amount",
                 icon: "wallet-outline"
               }

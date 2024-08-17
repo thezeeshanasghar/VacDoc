@@ -23,4 +23,6 @@ input::-webkit-inner-spin-button {
 .checkbox-label {
   margin-left: 8px;
 }
-
+.custom-item-background.invalid ion-input {
+  --background: #ffcccc; /* Light red background for invalid inputs */
+}

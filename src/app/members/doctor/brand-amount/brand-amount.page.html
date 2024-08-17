@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <!-- <ion-menu-button></ion-menu-button> -->
     </ion-buttons>
-    <ion-title>Brand Amount</ion-title>
+    <ion-title>Brand Inventory</ion-title>
   </ion-toolbar>
   <ion-toolbar color="primary" >
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
@@ -22,8 +22,9 @@
         <ion-col>Vaccine Name</ion-col>
         <ion-col>Brand Name</ion-col>
         <ion-col>Price</ion-col>
+        <ion-col>Inventory</ion-col>
       </ion-row>
-      <ion-row *ngFor="let b of brandAmount">
+      <ion-row *ngFor="let b of brandAmounts">
         <ion-col>{{b.VaccineName}}</ion-col>
         <ion-col>{{b.BrandName}}</ion-col>
         <ion-col>
@@ -33,8 +34,16 @@
              <div *ngIf="amountInput.errors?.pattern" class="error">Amount must be a number.</div> 
           </div> 
         </ion-col>
+        <ion-col>
+          <ion-input [(ngModel)]="b.Count" [ngModelOptions]="{standalone: true}" type="tel" #inventoryInput="ngModel" required pattern="^[0-9]*$"></ion-input>
+           <div *ngIf="inventoryInput.invalid && (inventoryInput.dirty || inventoryInput.touched)">
+             <div *ngIf="inventoryInput.errors?.required" class="error">Inventory is required.</div>
+             <div *ngIf="inventoryInput.errors?.pattern" class="error">Inventory must be a number.</div> 
+          </div> 
+        </ion-col>
       </ion-row>
     </ion-grid>
+    <!-- <pre>{{brandAmounts | json}}</pre> -->
     <ion-button disabled="false" (click)="updateBrandAmount()">Update Amount</ion-button>
   </form>
 
