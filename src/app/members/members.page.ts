@@ -101,8 +101,7 @@ export class MembersPage implements OnInit {
                 title: "Change Password",
                 url: "/members/doctor/password",
                 icon: "key-outline"
-              },
-      
+              },      
               {
                 title: "Brand Inventory",
                 url: "/members/doctor/brand-amount",
