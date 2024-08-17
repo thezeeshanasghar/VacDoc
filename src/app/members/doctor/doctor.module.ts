@@ -26,11 +26,6 @@ const routes: Routes = [
     loadChildren: "./schedule/schedule.module#SchedulePageModule"
   },
   {
-    path: "brand-inventory",
-    loadChildren:
-      "./brand-inventory/brand-inventory.module#BrandInventoryPageModule"
-  },
-  {
     path: "brand-amount",
     loadChildren: "./brand-amount/brand-amount.module#BrandAmountPageModule"
   },
