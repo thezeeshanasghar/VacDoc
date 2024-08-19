@@ -29,4 +29,15 @@
   .gender-image.girl path {
     fill: pink; /* Color for female */
   }
-  
+  @media (max-width: 642px) { /* Adjust the breakpoint as needed */
+    .icons {
+      display: block !important;
+    font-size: 0px;
+    }
+ 
+  }
+
+  ::slotted(ion-icon) {
+    color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.54);
+    font-size: 18px;
+}

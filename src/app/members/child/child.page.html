@@ -28,18 +28,20 @@
   </form>
 
   <ion-card *ngFor="let child of childs" [ngClass]="child.Gender=='Girl' ? 'girl' : 'boy'">
-  <ion-item>
-      <ion-thumbnail slot="start">
-        <ion-img [src]="child.Gender=='Girl' ? '../../assets/female.png' : '../../assets/male.png'" class="{{child.Gender=='Girl' ? 'female-image' : 'male-image'}}"></ion-img>
-      </ion-thumbnail>
-      <ion-label>{{child.Name}}</ion-label>
-  </ion-item>
-  <ion-item class="ion-justify-content-center">
-      <ion-icon class="iconchild" slot="start" color="primary" name="create" routerLink="/members/child/edit/{{child.Id}}"></ion-icon>
-      <ion-icon class="iconchild" slot="start" color="primary" name="trash" (click)="alertforDeleteChild(child.Id)"></ion-icon>
-      <ion-icon class="iconchild" slot="start" color="primary" name="mail" routerLink="/members/child/cmsg/{{child.Id}}"></ion-icon>
-      <ion-icon class="iconchild" slot="start" color="primary" name="call"(click)="callFunction(child.User.MobileNumber)"></ion-icon>
-    </ion-item> 
+    <div class="icons" style="display: flex; justify-content: space-between; align-items: center;">
+      <ion-item>
+          <ion-thumbnail slot="start">
+            <ion-img [src]="child.Gender=='Girl' ? '../../assets/female.png' : '../../assets/male.png'" class="{{child.Gender=='Girl' ? 'female-image' : 'male-image'}}"></ion-img>
+          </ion-thumbnail>
+          <ion-label>{{child.Name}}</ion-label>
+      </ion-item>
+      <ion-item class="ion-justify-content-center">
+          <ion-icon class="iconchild" slot="start" color="primary" name="create" routerLink="/members/child/edit/{{child.Id}}" style="font-size: 40px;"></ion-icon>
+          <ion-icon class="iconchild" slot="start" color="primary" name="trash" (click)="alertforDeleteChild(child.Id)" style="font-size: 40px;"></ion-icon>
+          <ion-icon class="iconchild" slot="start" color="primary" name="mail" routerLink="/members/child/cmsg/{{child.Id}}" style="font-size: 40px;"></ion-icon>
+          <ion-icon class="iconchild" slot="start" color="primary" name="call"(click)="callFunction(child.User.MobileNumber)" style="font-size: 40px;"></ion-icon>
+        </ion-item> 
+    </div>
 
     <ion-card-content>
       <!-- <p> -->
