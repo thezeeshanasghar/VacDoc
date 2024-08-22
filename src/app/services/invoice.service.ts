@@ -1,29 +1,3 @@
-// import { Injectable } from '@angular/core';
-// import { BaseService } from './base.service';
-// import { HttpClient } from '@angular/common/http';
-// import { Observable } from 'rxjs'
-// import { catchError, map } from 'rxjs/operators'
-// import { environment } from 'src/environments/environment';
-
-// @Injectable({
-//   providedIn: 'root'
-// })
-// export class InvoiceService extends BaseService {
-
-//   private readonly API_INVOICE = `${environment.BASE_URL}child/Download-Invoice-PDF/`
-
-//   constructor(
-//     protected http: HttpClient
-//   ) { super(http); }
-
-//   // getInvoice(data): Observable<any> {
-//   //   const url = `${this.API_INVOICE}`;
-//   //   return this.http.get(url, this.httpOptions)
-//   //     .pipe(
-//   //       catchError(this.handleError)
-//   //     );
-//   // }
-// }
 import { Injectable } from "@angular/core";
 import { BaseService } from "./base.service"; // Assuming you have a base service like in the FollowupService
 import { environment } from "src/environments/environment";
@@ -52,6 +26,14 @@ export class InvoiceService extends BaseService {
     const url = `${this.API_INVOICE}invoice/${invoiceId}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
+  updateInvoiceAmount(invoiceId: string, amount: number): Observable<any> {
+    const url = `${this.API_INVOICE}/${invoiceId}/Amount`;
+    const body = { amount };
+    return this.http.put(url, body, this.httpOptions).pipe(
       catchError(this.handleError)
     );
   }
