@@ -41,7 +41,7 @@
           </ion-img>
 
           <ion-icon style="margin-right: 10px" *ngIf="!checkVaccineIsDon(item.value)" size="small"
-            routerLink="/members/child/vaccine/{{childId}}/bulkinvoice/{{item.key}}" color="primary"
+            (click)="generateInvoice(item)" color="primary"
             name="document-text-outline">
           </ion-icon>
 

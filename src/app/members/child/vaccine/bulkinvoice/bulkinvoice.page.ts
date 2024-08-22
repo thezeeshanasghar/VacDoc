@@ -11,7 +11,7 @@ import { AlertController } from '@ionic/angular';
 import { elementAt } from 'rxjs/operators';
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 import { Platform } from '@ionic/angular';
-
+import { InvoiceService } from "src/app/services/invoice.service";
 @Component({
   selector: "app-bulk",
   templateUrl: "./bulk.page.html",
@@ -27,6 +27,7 @@ export class BulkInvoicePage implements OnInit {
   consultationfee: number = 0;
   private readonly API_VACCINE = `${environment.BASE_URL}`
   BrandIds = [];
+  invoiceNumber: string;
   constructor(
     private loadingController: LoadingController,
     private activatedRoute: ActivatedRoute,
@@ -37,8 +38,8 @@ export class BulkInvoicePage implements OnInit {
     private storage: Storage,
     public alertController: AlertController,
     private downloader: Downloader,
-    public platform: Platform
-
+    public platform: Platform,
+    private invoiceService: InvoiceService
 
   ) { }
 
@@ -63,6 +64,8 @@ export class BulkInvoicePage implements OnInit {
     });
     this.childId = this.activatedRoute.snapshot.paramMap.get("id");
     this.currentDate = this.activatedRoute.snapshot.paramMap.get("childId");
+    const storedInvoiceId = localStorage.getItem('invoiceId');
+    console.log('Stored Invoice ID:', storedInvoiceId);
     this.currentDate1 = new Date(this.currentDate);
     this.getBulk();
     this.fg = this.formBuilder.group({
@@ -74,8 +77,26 @@ export class BulkInvoicePage implements OnInit {
       this.fg.controls['ConsultationFee'].setValue(val.ConsultationFee);
       // this.fg.value.ConsultationFee = val.ConsultationFee;
     });
+    this.loadInvoiceData();
   }
-
+  loadInvoiceData() {
+    const storedInvoiceId = localStorage.getItem('invoiceId');
+    if (storedInvoiceId) {
+      this.invoiceService.getInvoiceById(storedInvoiceId).subscribe(
+        (res) => {
+          if (res && res.InvoiceId) {
+            console.log(res.InvoiceId);
+            this.invoiceNumber = res.InvoiceId; // Store the invoice number
+          } else {
+          console.error('Failed to fetch invoice data.');
+        }
+      },
+      (error) => {
+        console.error('Error fetching invoice data:', error);
+      }
+    );
+  }
+}
 
   async getBulk() {
     let data = { ChildId: this.childId, Date: this.currentDate1 };
@@ -183,7 +204,7 @@ export class BulkInvoicePage implements OnInit {
     const formattedDate = `${year}-${month}-${day}`;
 
     if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
-      const url = `${this.API_VACCINE}child/${id}/${formattedDate}/${formattedDate}/${fee}/Download-Invoice-PDF`;
+      const url = `${this.API_VACCINE}child/${id}/${formattedDate}/${formattedDate}/${fee}/${this.invoiceNumber}/Download-Invoice-PDF-updated`;
       window.open(url);
     } else {
       var request: DownloadRequest = {

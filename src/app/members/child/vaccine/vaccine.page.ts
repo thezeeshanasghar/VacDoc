@@ -12,6 +12,7 @@ import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-nati
 import { Storage } from '@ionic/storage';
 import { Platform } from '@ionic/angular';
 import { FormBuilder, FormGroup } from "@angular/forms";
+import { InvoiceService } from "src/app/services/invoice.service";
 
 
 @Component({
@@ -44,7 +45,7 @@ export class VaccinePage {
     private storage: Storage,
     public platform: Platform,
     private formBuilder: FormBuilder,
-
+    private invoiceService: InvoiceService
     // private document: DocumentViewer,
   ) { }
 
@@ -84,6 +85,35 @@ export class VaccinePage {
     event.stopPropagation();
     this.UnSkipVaccine(id, doseName);
   }
+  
+  generateInvoice(item: any): void {
+    const invoiceDTO = {
+      amount: 0,
+      childId: this.childId  // Use the existing childId property
+    };
+  
+    console.log(invoiceDTO);
+    this.invoiceService.CreateInvoice(invoiceDTO).subscribe(
+      (res) => {
+        // Assuming res contains the created invoice details
+        console.log(res);
+        if (res && res.InvoiceId) {  // Adjust this check based on your actual API response structure
+          console.log("Invoice created successfully.");
+          console.log(res.Id);
+          localStorage.setItem('invoiceId', res.Id);
+          const url = `/members/child/vaccine/${this.childId}/bulkinvoice/${item.key}`;
+          this.router.navigateByUrl(url)
+        } else {
+          console.log("Failed to create invoice.");
+        }
+      },
+      (error) => {
+        console.error('Error creating invoice:', error);
+        this.toastService.create('Error creating invoice.', "danger");
+      }
+    );
+  }
+  
   
   checkVaccineIsDon(data): boolean {
     var isdone: boolean = true;
