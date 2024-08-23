@@ -8,16 +8,6 @@
 </ion-header>
 
 <ion-content>
-  <ion-card *ngIf="invoiceNumber">
-    <!-- <ion-card-header>
-      <ion-card-title>Invoice Details</ion-card-title>
-    </ion-card-header> -->
-    <ion-card-content>
-      <ion-item>
-        <b>Invoice Number:</b> {{ invoiceNumber }} <!-- Display the invoice number here -->
-      </ion-item>
-    </ion-card-content>
-  </ion-card>
   <form [formGroup]="fg" (ngSubmit)="onSubmit()">
     <ion-card *ngFor="let bulk of bulkData">
     <ion-item >
