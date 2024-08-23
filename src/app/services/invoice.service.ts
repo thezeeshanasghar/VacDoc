@@ -1,18 +1,12 @@
-<<<<<<< HEAD
-import { Injectable } from "@angular/core";
-import { BaseService } from "./base.service"; // Assuming you have a base service like in the FollowupService
-import { environment } from "src/environments/environment";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { catchError, map } from "rxjs/operators";
-=======
+
+
 import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
 import { environment } from 'src/environments/environment';
->>>>>>> parent of 132d50c (invocie fixes)
+
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +19,7 @@ export class InvoiceService extends BaseService {
     protected http: HttpClient
   ) { super(http); }
 
-<<<<<<< HEAD
+
   getInvoiceById(invoiceId: string): Observable<any> {
     const url = `${this.API_INVOICE}invoice/${invoiceId}`;
     return this.http.get(url, this.httpOptions).pipe(
@@ -54,13 +48,6 @@ export class InvoiceService extends BaseService {
   //   return this.http.delete(url, this.httpOptions).pipe(
   //     catchError(this.handleError)
   //   );
-=======
-  // getInvoice(data): Observable<any> {
-  //   const url = `${this.API_INVOICE}`;
-  //   return this.http.get(url, this.httpOptions)
-  //     .pipe(
-  //       catchError(this.handleError)
-  //     );
->>>>>>> parent of 132d50c (invocie fixes)
+
   // }
 }
