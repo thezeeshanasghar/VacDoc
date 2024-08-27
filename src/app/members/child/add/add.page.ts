@@ -509,7 +509,7 @@ export class AddPage implements OnInit {
           sms1 += " has been registered Succesfully at Vaccine.pk";
           sms1 += "\nId: " + res.ResponseData.MobileNumber + " \nPassword: " + res.ResponseData.Password;
           sms1 += "\nClinic Phone Number: " + this.clinic.PhoneNumber;
-          sms1 += "\nWeb Link:  https://child.skintechno.com/";
+          sms1 += "\nWeb Link:  https://client.vaccinationcentre.com/";
           console.log(sms1);
           const ChildId = res.ResponseData.Id
           console.log('child id', ChildId)

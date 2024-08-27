@@ -31,14 +31,14 @@
           <ion-input [(ngModel)]="b.Amount" [ngModelOptions]="{standalone: true}" type="tel" #amountInput="ngModel" required pattern="^[0-9]*$"></ion-input>
            <div *ngIf="amountInput.invalid && (amountInput.dirty || amountInput.touched)">
              <div *ngIf="amountInput.errors?.required" class="error">Amount is required.</div>
-             <div *ngIf="amountInput.errors?.pattern" class="error">Amount must be a number.</div> 
+             <!-- <div *ngIf="amountInput.errors?.pattern" class="error">Amount must be a number.</div>  -->
           </div> 
         </ion-col>
         <ion-col>
           <ion-input [(ngModel)]="b.Count" [ngModelOptions]="{standalone: true}" type="tel" #inventoryInput="ngModel" required pattern="^[0-9]*$"></ion-input>
            <div *ngIf="inventoryInput.invalid && (inventoryInput.dirty || inventoryInput.touched)">
              <div *ngIf="inventoryInput.errors?.required" class="error">Inventory is required.</div>
-             <div *ngIf="inventoryInput.errors?.pattern" class="error">Inventory must be a number.</div> 
+             <!-- <div *ngIf="inventoryInput.errors?.pattern" class="error">Inventory must be a number.</div>  -->
           </div> 
         </ion-col>
       </ion-row>

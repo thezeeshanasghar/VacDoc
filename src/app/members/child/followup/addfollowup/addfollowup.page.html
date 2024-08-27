@@ -15,7 +15,8 @@
     </ion-item>
     <ion-item>
       <ion-label color="primary" position="floating">Next Visit Date</ion-label>
-      <ion-datetime displayFormat="DD-MM-YYYY" picker-format="DD-MM-YYYY" formControlName="NextVisitDate">
+      <ion-datetime displayFormat="DD-MM-YYYY" pickerFormat="DD MM YYYY" formControlName="NextVisitDate" [min]="minDate"
+        [max]="maxDate">
       </ion-datetime>
     </ion-item>
     <ion-item>

@@ -7,7 +7,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FollowupService } from 'src/app/services/followup.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { LoadingController } from '@ionic/angular';
-//import { stringify } from '@angular/core/src/render3/util';
 
 @Component({
   selector: 'app-addfollowup',
@@ -19,6 +18,9 @@ export class AddfollowupPage implements OnInit {
   fg: FormGroup;
   doctorId: any;
   childId: any;
+  minDate: string;
+  maxDate: string;
+
   constructor(
     public router: Router,
     public route: ActivatedRoute,
@@ -27,7 +29,10 @@ export class AddfollowupPage implements OnInit {
     private followupService: FollowupService,
     private toastService: ToastService,
     private storage: Storage
-  ) { }
+  ) {
+    this.minDate = moment().format('YYYY-MM-DD');
+    this.maxDate = moment().add(20, 'years').format('YYYY-MM-DD');
+  }
 
   ngOnInit() {
     this.storage.get(environment.DOCTOR_Id).then((val) => {
@@ -37,7 +42,6 @@ export class AddfollowupPage implements OnInit {
       'DoctorId': [null],
       'ChildId': [null],
       'Disease': [null],
-     //'CurrentVisitDate': [null],
       'CurrentVisitDate': this.GetCurrentDate(),
       'NextVisitDate': [null],
       'Height': [null],
@@ -51,8 +55,9 @@ export class AddfollowupPage implements OnInit {
   async addFollowUp() {
     this.fg.value.DoctorId = this.doctorId;
     this.fg.value.ChildId = this.route.snapshot.paramMap.get('id');
-    this.fg.value.NextVisitDate = moment(this.fg.value.NextVisitDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
-    //this.fg.value.CurrentVisitDate = moment(this.fg.value.CurrentVisitDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
+    if (this.fg.value.NextVisitDate) {
+      this.fg.value.NextVisitDate = this.fg.value.NextVisitDate;
+    }
 
     const loading = await this.loadingController.create({
       message: 'loading'
@@ -74,13 +79,8 @@ export class AddfollowupPage implements OnInit {
         this.toastService.create(err)
       });
   }
-   GetCurrentDate() {
- 
- var today = new Date();
- var dd = String(today.getDate()).padStart(2, '0');
- var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
- var yyyy = today.getFullYear();
 
-    return dd + '-' + mm + '-' + yyyy; 
-}
+  GetCurrentDate() {
+    return moment().format('DD-MM-YYYY');
+  }
 }

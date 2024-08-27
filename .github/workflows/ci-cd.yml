@@ -20,7 +20,7 @@ jobs:
       - run: ionic build --prod
 
       - name: Deploy to stage
-        if: github.ref == 'refs/heads/dmeo'
+        if: github.ref == 'refs/heads/demo'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: "${{ secrets.STAGING_FTP_SERVER }}"
