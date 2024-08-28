@@ -18,14 +18,11 @@
   </ion-toolbar>
   <!-- childs -->
   <h1 *ngIf="Childs == 0" style="color: red;">No alert found</h1>
-  <ion-grid *ngFor="let child of Childs">
-    <ion-row> <!--routerLink="/members/child/vaccine/{{child.Child.Id}}" -->
+  <ion-grid>
+    <ion-row>
       <ion-col>
-        <ion-item>
-          <ion-label>{{child.Child.Name}}</ion-label>
-
-          <ion-icon slot="end" color="primary" name="today" [routerLink]="'/members/child/vaccine/' + child.Child.Id" style="cursor: pointer;"></ion-icon>
-          <ion-icon slot="end" color="primary" name="call" (click)="callFunction(child.Child.User.MobileNumber)"  style="cursor: pointer;"></ion-icon>
+        <ion-item *ngFor="let child of Childs">
+          <ion-label style="cursor: pointer;" [routerLink]="['/members/child/vaccine', child.Child.Id]">{{child.Child.Name}}</ion-label>
           <ion-icon slot="end" color="primary" name="mail" (click)="sendSMS([child])" style="cursor: pointer;"></ion-icon>
           <ion-icon slot="end" color="primary" name="logo-whatsapp" (click)="openWhatsApp(child.Child.User.MobileNumber, child.Child.Name, child.Dose.Name)" style="cursor: pointer;"></ion-icon>
         </ion-item>        
