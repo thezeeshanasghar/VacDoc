@@ -430,7 +430,7 @@ export class VaccineAlertPage implements OnInit {
     // Format the clinic's phone number
     const formattedClinicNumber = this.clinicPhoneNumber.startsWith('+92') ? this.clinicPhoneNumber : `+92${this.clinicPhoneNumber.replace(/^0/, '')}`;
 
-    const message = encodeURIComponent(`Reminder: Vaccination ${doseName} of ${childName} is due. Please confirm your appointment.Thanks!\n${this.displayName}, ${this.clinicName}\nPhone Number ${formattedClinicNumber}\nhttps://vaccine.pk/\nhttps://vaccinationcenter.com/`);
+    const message = encodeURIComponent(`Reminder: Vaccination ${doseName} of ${childName.trim()} is due. Please confirm your appointment. Thanks!\n${this.displayName}, ${this.clinicName}\nPhone Number ${formattedClinicNumber}\nLogin and check your record at https://vaccinationcentre.com`);
 
     let whatsappUrl: string;
 
