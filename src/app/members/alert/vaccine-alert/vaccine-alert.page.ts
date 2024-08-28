@@ -56,15 +56,10 @@ export class VaccineAlertPage implements OnInit {
 
 
   async ngOnInit() {
-
-
     this.getAlerts(this.selectedDate);
     await this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
     });
-
-
-
     await this.storage.get(environment.CLINIC_Id).then(clinicId => {
       this.clinicId = clinicId;
     });
@@ -90,7 +85,7 @@ export class VaccineAlertPage implements OnInit {
   //           const displayName = this.displayName;
   //           this.displayName = doctorData.DisplayName;
 
-
+   
 
   //           console.log('Doctor Name:', doctorData.DisplayName);
   //           console.log('Doctor Email:', doctorData.Email);
@@ -100,7 +95,7 @@ export class VaccineAlertPage implements OnInit {
   //           console.log('Doctor Address:', doctorData.Clinics.Name);
 
 
-
+           
   //       }
   //     },
   //     err => {
@@ -116,7 +111,7 @@ export class VaccineAlertPage implements OnInit {
         if (res.IsSuccess) {
           const doctorData = res.ResponseData;
           console.log("Doctor Data is ", res.ResponseData);
-
+          
           // Doctor Information
           console.log('Doctor ID:', doctorData.Id);
           console.log('Doctor Name:', doctorData.DisplayName);
@@ -124,9 +119,9 @@ export class VaccineAlertPage implements OnInit {
           console.log('Doctor Phone:', doctorData.Phone);
           console.log('Doctor Specialization:', doctorData.Specialization);
           console.log('Doctor Address:', doctorData.Address);
-
+  
           this.displayName = doctorData.DisplayName;
-
+  
           // Clinic Information
           if (doctorData.Clinics && doctorData.Clinics.length > 0) {
             doctorData.Clinics.forEach((clinic, index) => {
@@ -136,17 +131,17 @@ export class VaccineAlertPage implements OnInit {
               console.log('Clinic Address:', clinic.Address);
               console.log('Clinic Phone:', clinic.PhoneNumber);
               console.log('Clinic Email:', clinic.Email);
-
+              
               if (clinic.Staff && clinic.Staff.length > 0) {
                 console.log(`Clinic ${index + 1} Staff:`);
                 clinic.Staff.forEach((staff, staffIndex) => {
                   console.log(`Staff Member ${staffIndex + 1}:`, staff.Name);
                 });
               }
-
+  
               console.log('-------------------'); // Separator between clinics
             });
-
+  
             // Store the first clinic's name (or adjust as needed)
             this.clinicName = doctorData.Clinics[0].Name;
             this.clinicPhoneNumber = doctorData.Clinics[0].PhoneNumber;
@@ -164,25 +159,25 @@ export class VaccineAlertPage implements OnInit {
     );
   }
   // Get childs get from server
-  async getChlid(numOfDays: number, formattedDate: string) {
-
+  async getChlid(numOfDays: number,formattedDate:string) {  
+      
     this.numOfDays = numOfDays;
     this.formattedDate = formattedDate;
     const loading = await this.loadingController.create({
       message: "Loading"
     });
     await loading.present();
-
-
+   
+    
     await this.alertService.getChild(this.formattedDate, this.numOfDays, this.clinicId).subscribe(
       res => {
-
-
+       
+        
         if (res.IsSuccess) {
           this.Childs = "";
           this.Childs = res.ResponseData;
-
-
+    
+          
 
           loading.dismiss();
         } else {
@@ -270,7 +265,7 @@ export class VaccineAlertPage implements OnInit {
 
   // send Alert Msg to childs
   async sendAlertMsg(id, childMobile, message) {
-
+   
     if (this.SMSKey == 0) {
       await this.alertService
         .sendIndividualAlertMsg(this.numOfDays, id)
@@ -344,13 +339,11 @@ export class VaccineAlertPage implements OnInit {
   callFunction(celnumber: string) {
     // Ensure the phone number is in the correct format
     const formattedNumber = celnumber.startsWith('0') ? celnumber : `0${celnumber}`;
-
     this.callNumber.callNumber(formattedNumber, true)
       .then(res => console.log('Launched dialer!', res))
       .catch(err => console.log('Error launching dialer', err));
   }
-
-
+  
   // checkSmsPermission(): any {
   //   this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS)
   //     .then((success) => {
@@ -364,9 +357,7 @@ export class VaccineAlertPage implements OnInit {
   //         this.requestSmsPermissions();
   //       }
   //     );
-
   // }
-
   // requestSmsPermissions() {
   //   this.androidPermissions.requestPermissions(this.androidPermissions.PERMISSION.SEND_SMS)
   //     .then((success) => {
@@ -381,8 +372,6 @@ export class VaccineAlertPage implements OnInit {
   //       }
   //     );
   // }
-
-
   async sendMsgsThroughList() {
     let listMessages: any;
     const loading = await this.loadingController.create({
@@ -423,24 +412,26 @@ export class VaccineAlertPage implements OnInit {
 
   }
 
-  openWhatsApp(mobileNumber: string, childName: string, doseName: string) {
+  openWhatsApp(mobileNumber: string, childName: string, doseName: string, child: any) {
+    // Check if the message has already been sent
+    if (child.isMessageSent) {
+      alert('You have already sent the alert for this child.');
+      return;
+    }
     // Ensure the patient's number starts with the country code
     const formattedPatientNumber = mobileNumber.startsWith('+92') ? mobileNumber : `+92${mobileNumber.replace(/^0/, '')}`;
-
     // Format the clinic's phone number
     const formattedClinicNumber = this.clinicPhoneNumber.startsWith('+92') ? this.clinicPhoneNumber : `+92${this.clinicPhoneNumber.replace(/^0/, '')}`;
-
-    const message = encodeURIComponent(`Reminder: Vaccination ${doseName} of ${childName.trim()} is due. Please confirm your appointment. Thanks!\n${this.displayName}, ${this.clinicName}\nPhone Number ${formattedClinicNumber}\nLogin and check your record at https://vaccinationcentre.com`);
-
+    const message = encodeURIComponent(`Reminder: Vaccination ${doseName} of ${childName} is due. Please confirm your appointment. Thanks!\n${this.displayName}, ${this.clinicName}\nPhone Number ${formattedClinicNumber}\nhttps://vaccine.pk/\nhttps://vaccinationcentre.com/`);
     let whatsappUrl: string;
-
     if (this.platform.is('android') || this.platform.is('ios')) {
       whatsappUrl = `whatsapp://send?phone=${formattedPatientNumber}&text=${message}`;
     } else {
       whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPatientNumber}&text=${message}`;
     }
-
     window.open(whatsappUrl, '_system');
+    // Mark the message as sent
+    child.isMessageSent = true;
   }
 
   formatDateToString(date: string | Date): string {
@@ -459,7 +450,7 @@ export class VaccineAlertPage implements OnInit {
   getAlerts(date: string) {
     const formattedDate = this.formatDateToString(date);
 
-    this.getChlid(0, formattedDate);
+  this.getChlid(0, formattedDate);
   }
 
   async openDatePicker() {
