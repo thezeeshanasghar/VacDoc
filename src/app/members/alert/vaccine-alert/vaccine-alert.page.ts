@@ -56,15 +56,10 @@ export class VaccineAlertPage implements OnInit {
 
 
   async ngOnInit() {
-
-
     this.getAlerts(this.selectedDate);
     await this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
     });
-
-
-
     await this.storage.get(environment.CLINIC_Id).then(clinicId => {
       this.clinicId = clinicId;
     });
@@ -344,13 +339,10 @@ export class VaccineAlertPage implements OnInit {
   callFunction(celnumber: string) {
     // Ensure the phone number is in the correct format
     const formattedNumber = celnumber.startsWith('0') ? celnumber : `0${celnumber}`;
-
     this.callNumber.callNumber(formattedNumber, true)
       .then(res => console.log('Launched dialer!', res))
       .catch(err => console.log('Error launching dialer', err));
   }
-
-
   // checkSmsPermission(): any {
   //   this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS)
   //     .then((success) => {
@@ -364,9 +356,7 @@ export class VaccineAlertPage implements OnInit {
   //         this.requestSmsPermissions();
   //       }
   //     );
-
   // }
-
   // requestSmsPermissions() {
   //   this.androidPermissions.requestPermissions(this.androidPermissions.PERMISSION.SEND_SMS)
   //     .then((success) => {
@@ -381,8 +371,6 @@ export class VaccineAlertPage implements OnInit {
   //       }
   //     );
   // }
-
-
   async sendMsgsThroughList() {
     let listMessages: any;
     const loading = await this.loadingController.create({
@@ -423,9 +411,15 @@ export class VaccineAlertPage implements OnInit {
 
   }
 
-  openWhatsApp(mobileNumber: string, childName: string, doseName: string) {
+  openWhatsApp(mobileNumber: string, childName: string, doseName: string, child: any) {
+    // Check if the message has already been sent
+    if (child.isMessageSent) {
+      alert('You have already sent the alert for this child.');
+      return;
+    }
     // Ensure the patient's number starts with the country code
     const formattedPatientNumber = mobileNumber.startsWith('+92') ? mobileNumber : `+92${mobileNumber.replace(/^0/, '')}`;
+
 
     // Format the clinic's phone number
     const formattedClinicNumber = this.clinicPhoneNumber.startsWith('+92') ? this.clinicPhoneNumber : `+92${this.clinicPhoneNumber.replace(/^0/, '')}`;
@@ -433,14 +427,14 @@ export class VaccineAlertPage implements OnInit {
     const message = encodeURIComponent(`Reminder: Vaccination ${doseName} of ${childName.trim()} is due. Please confirm your appointment. Thanks!\n${this.displayName}, ${this.clinicName}\nPhone Number ${formattedClinicNumber}\nLogin and check your record at https://vaccinationcentre.com`);
 
     let whatsappUrl: string;
-
     if (this.platform.is('android') || this.platform.is('ios')) {
       whatsappUrl = `whatsapp://send?phone=${formattedPatientNumber}&text=${message}`;
     } else {
       whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPatientNumber}&text=${message}`;
     }
-
     window.open(whatsappUrl, '_system');
+    // Mark the message as sent
+    child.isMessageSent = true;
   }
 
   formatDateToString(date: string | Date): string {
