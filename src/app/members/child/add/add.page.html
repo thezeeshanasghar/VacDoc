@@ -149,22 +149,22 @@
         <ion-input type="text" formControlName="CNIC"></ion-input>
       </ion-item>
       <ion-item>
-        <div style="width: 37%;">
-          <ion-label color="primary" position="stacked" style="font-size: 20px; margin-bottom: 5px;">
+        <div class="country-code-container">
+          <ion-label color="primary" position="stacked" class="country-label">
             Country Code
           </ion-label>
-          <ion-select formControlName="CountryCode" class="country-code-select" style="margin-bottom: 10px;">
+          <ion-select formControlName="CountryCode" class="country-code-select">
             <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
               (+{{ country.code }}) {{ country.name }}
             </ion-select-option>
           </ion-select>
-
-          <ion-label color="primary" position="stacked" style="font-size: 20px; margin-bottom: 5px;">
+        
+          <ion-label color="primary" position="stacked" class="mobile-label">
             Mobile Number
           </ion-label>
-          <ion-input type="text" formControlName="MobileNumber" class="number-input"
-            style="flex: 1 1 auto;"></ion-input>
+          <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
         </div>
+        
       </ion-item>
 
       <div class="validation-errors">
