@@ -8,8 +8,6 @@ import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
 
-
-
 @Component({
   selector: 'app-fill',
   templateUrl: './fill.page.html',
@@ -32,11 +30,10 @@ export class FillPage implements OnInit {
   todaydate: any;
   birthYear: any;
   MinAge: any;
-  MinGap:any;
+  MinGap: any;
 
   fgAddData: FormGroup;
 
-  
   constructor(
     public loadingController: LoadingController,
     private formBuilder: FormBuilder,
@@ -46,11 +43,7 @@ export class FillPage implements OnInit {
     private toastService: ToastService,
     private router: Router,
     private ref: ChangeDetectorRef
-  ) {
-
-  }
-
-  
+  ) {}
 
   ngOnInit() {
     this.storage.get(environment.DOCTOR_Id).then((val) => {
@@ -62,43 +55,36 @@ export class FillPage implements OnInit {
 
     this.storage.get('vaccinesData').then((val) => {
       this.vaccinesData = val;
+      this.addOHFToBrands(); // Add OHF to the list of brands
     });
 
     this.fg = this.formBuilder.group({
       'DoctorId': [''],
       'Id': [null],
       'IsDone': [null],
-      Weight: new FormControl('', ),
-      Height: new FormControl('', ),
-      Circle: new FormControl('', ),
-      'BrandId': new FormControl('', ),
+      Weight: new FormControl(''),
+      Height: new FormControl(''),
+      Circle: new FormControl(''),
+      'BrandId': new FormControl(''),
       'GivenDate': [null],
       'IsDisease': [false],
       'DiseaseYear': ['2019'],
-
     });
 
     this.fgAddData = this.formBuilder.group({
       'DoctorId': [''],
       'IsDone': [null],
-      // 'Weight': [null],
-      // 'Height': [null],
-      // 'Circle': [null],
       'BrandId': [null],
-      // 'GivenDate': [null],
       'IsDisease': [false],
       'DiseaseYear': ['2019'],
       'DoseId': [null],
       'ChildId': [null],
       'Date': [null]
-
     });
-
 
     this.getVaccination();
     this.todaydate = new Date();
     this.todaydate = moment(this.todaydate, 'DD-MM-YYYY').format("YYYY-MM-DD");
-
   }
 
   async getVaccination() {
@@ -110,12 +96,10 @@ export class FillPage implements OnInit {
     await this.vaccineService.getVaccineByVaccineId(this.route.snapshot.paramMap.get('id')).subscribe(
       res => {
         if (res.IsSuccess) {
-
           this.vaccineData = res.ResponseData;
           this.MinAge = this.vaccineData.Dose.Vaccine.MinAge;
           this.MinGap = this.vaccineData.Dose.MinGap;
           console.log(this.vaccineData);
-          // console.log('Minage= ' + this.MinAge);
           this.vaccineName = this.vaccineData.Dose.Vaccine.Name;
           this.brandName = this.vaccineData.Brands;
           this.Date = this.vaccineData.Date;
@@ -127,8 +111,7 @@ export class FillPage implements OnInit {
           }
           this.ref.detectChanges();
           loading.dismiss();
-        }
-        else {
+        } else {
           loading.dismiss();
           this.toastService.create(res.Message, 'danger');
         }
@@ -147,6 +130,11 @@ export class FillPage implements OnInit {
 
     await loading.present();
     
+    // Check if the selected brand is "OHF"
+    if (this.fg.value.BrandId === 'OHF') {
+      this.fg.value.BrandId = null; // Set BrandId to null if the brand is "OHF"
+    }
+
     this.fg.value.Id = this.route.snapshot.paramMap.get('id');
     this.fg.value.DoctorId = this.doctorId;
     this.fg.value.IsDone = true;
@@ -158,15 +146,13 @@ export class FillPage implements OnInit {
     await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
       res => {
         if (res.IsSuccess) {
-          // this.toastService.create('Update successfull');
           if (this.vaccineData.Dose.Vaccine.isInfinite) {
             this.addNewVaccineInScheduleTable(scheduleDate);
           } else {
             this.router.navigate(['/members/child/vaccine/' + this.vaccineData.ChildId]);
           }
           loading.dismiss();
-        }
-        else {
+        } else {
           this.toastService.create("Error: Failed to update injection");
           loading.dismiss();
         }
@@ -194,17 +180,13 @@ export class FillPage implements OnInit {
     this.fgAddData.value.DoseId = this.vaccineData.DoseId;
     this.fgAddData.value.Date = scheduleDate;
 
-    // console.log('Added Data');
-    // console.log(this.fgAddData.value);
-
     await this.vaccineService.AddChildSchedule(this.fgAddData.value).subscribe(
       res => {
         if (res.IsSuccess) {
           console.log(res.ResponseData);
           this.router.navigate(['/members/child/vaccine/' + this.vaccineData.ChildId]);
           loading.dismiss();
-        }
-        else {
+        } else {
           loading.dismiss();
           this.toastService.create("Error: Failed to Add injection");
         }
@@ -214,10 +196,8 @@ export class FillPage implements OnInit {
         this.toastService.create("Error: Server Failure");
       }
     );
-
-
   }
- 
+
   addDays(date, days) {
     console.log("date");
     console.log(date);
@@ -230,9 +210,16 @@ export class FillPage implements OnInit {
     return myDate;
   }
 
-  isBrandFilled(): boolean{
+  isBrandFilled(): boolean {
     return this.fg.get('BrandId').value !== null;
   }
-  
 
+  addOHFToBrands() {
+    const OHFBrand = { brandId: 'OHF', name: 'OHF' };
+    const existingOHF = this.vaccinesData.find(brand => brand.brandId === 'OHF');
+    
+    if (!existingOHF) {
+      this.vaccinesData.push(OHFBrand);
+    }
+  }
 }
