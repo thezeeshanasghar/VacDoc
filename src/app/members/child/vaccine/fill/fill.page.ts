@@ -140,9 +140,8 @@ export class FillPage implements OnInit {
     this.fg.value.IsDone = true;
     this.fg.value.DiseaseYear = moment(this.fg.value.DiseaseYear, 'YYYY-MM-DD').format('YYYY');
     let givenDateOfInjection: Date = this.fg.value.GivenDate;
-    let scheduleDate: Date = this.addDays(givenDateOfInjection, this.MinGap);
-    this.fg.value.GivenDate = moment(this.fg.value.GivenDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
-
+    let scheduleDate: Date = this.addDays(givenDateOfInjection, this.MinGap, this.vaccineData.DoseId);
+  this.fg.value.GivenDate = moment(this.fg.value.GivenDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
     await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
       res => {
         if (res.IsSuccess) {
@@ -198,15 +197,13 @@ export class FillPage implements OnInit {
     );
   }
 
-  addDays(date, days) {
-    console.log("date");
-    console.log(date);
-
+  addDays(date, days, doseId) {
     var myDate = new Date(date);
-    myDate.setDate(myDate.getDate() + days);
-    
-    console.log("scheduleDate");
-    console.log(myDate);
+    if (doseId === 30 && days === 1095) {
+        myDate.setFullYear(myDate.getFullYear() + 3);
+    } else {
+        myDate.setDate(myDate.getDate() + days);
+    }
     return myDate;
   }
 
