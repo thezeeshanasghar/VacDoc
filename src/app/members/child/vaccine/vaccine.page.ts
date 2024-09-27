@@ -31,6 +31,7 @@ export class VaccinePage {
   BirthYear: any;
   ChildName: string;
   fgAddData: FormGroup;
+  today: Date = new Date();
   private readonly API_VACCINE = `${environment.BASE_URL}`
 
   constructor(
