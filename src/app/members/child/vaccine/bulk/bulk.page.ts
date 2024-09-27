@@ -162,7 +162,7 @@ export class BulkPage implements OnInit {
       message: 'Adding Infinite Vaccine'
     });
 
-    let scheduleDate: Date = this.addDays(this.fg.value.GivenDate, element.Dose.MinGap);
+    let scheduleDate: Date = this.addDays(this.fg.value.GivenDate, element.Dose.MinGap, element.Dose.Id);
 
     await loading.present();
 
@@ -182,6 +182,7 @@ export class BulkPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.router.navigate(["/members/child/vaccine/" + this.childId]);
+          window.location.reload();
           loading.dismiss();
         }
         else {
@@ -200,16 +201,24 @@ export class BulkPage implements OnInit {
 
 
 
-  addDays(date, days) {
-    console.log("date");
-    console.log(date);
-
+  addDays(date, days, doseId) {
     var myDate = new Date(date);
-    myDate.setDate(myDate.getDate() + days);
-    
-    console.log("scheduleDate");
-    console.log(myDate);
+    if (doseId === 30 && days === 1095) {
+        myDate.setFullYear(myDate.getFullYear() + 3);
+    } else {
+        myDate.setDate(myDate.getDate() + days);
+    }
+
+    // Handle leap year for future vaccines
+    if (myDate.getMonth() === 1 && myDate.getDate() === 29 && !this.isLeapYear(myDate.getFullYear())) {
+        myDate.setDate(28); // Adjust to February 28 if not a leap year
+    }
+
     return myDate;
+  }
+
+  isLeapYear(year) {
+    return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
   }
 
   isSubmitDisabled(): boolean {
