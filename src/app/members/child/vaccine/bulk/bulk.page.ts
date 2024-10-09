@@ -182,7 +182,6 @@ export class BulkPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.router.navigate(["/members/child/vaccine/" + this.childId]);
-          window.location.reload();
           loading.dismiss();
         }
         else {
