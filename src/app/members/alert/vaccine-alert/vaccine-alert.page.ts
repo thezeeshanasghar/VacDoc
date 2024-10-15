@@ -12,6 +12,7 @@ import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-nati
 import { Platform } from '@ionic/angular';
 import { formattedError } from "@angular/compiler";
 import { DoctorService } from "src/app/services/doctor.service";
+import { VaccineService } from 'src/app/services/vaccine.service'; // Import the service
 
 //declare var SMS: any;
 @Component({
@@ -47,7 +48,8 @@ export class VaccineAlertPage implements OnInit {
     private titlecasePipe: TitleCasePipe,
     private sms: SMS,
     private downloader: Downloader,
-    public platform: Platform
+    public platform: Platform,
+    private vaccineService: VaccineService
   ) {
 
   }
@@ -412,29 +414,28 @@ export class VaccineAlertPage implements OnInit {
   }
 
   openWhatsApp(mobileNumber: string, childName: string, doseName: string, child: any) {
-    // Check if the message has already been sent
-    if (child.isMessageSent) {
-      alert('You have already sent the alert for this child.');
-      return;
-    }
-    // Ensure the patient's number starts with the country code
-    const formattedPatientNumber = mobileNumber.startsWith('+92') ? mobileNumber : `+92${mobileNumber.replace(/^0/, '')}`;
+    console.log('Child ID:', child.Child.Id); // Debugging line
+    console.log('Selected Date:', this.selectedDate); // Debugging line
 
-
-    // Format the clinic's phone number
-    const formattedClinicNumber = this.clinicPhoneNumber.startsWith('+92') ? this.clinicPhoneNumber : `+92${this.clinicPhoneNumber.replace(/^0/, '')}`;
-
-    const message = encodeURIComponent(`Reminder: Vaccination ${doseName} of ${childName.trim()} is due. Please confirm your appointment. Thanks!\n${this.displayName}, ${this.clinicName}\nPhone Number ${formattedClinicNumber}\nLogin and check your record at https://vaccinationcentre.com`);
-
-    let whatsappUrl: string;
-    if (this.platform.is('android') || this.platform.is('ios')) {
-      whatsappUrl = `whatsapp://send?phone=${formattedPatientNumber}&text=${message}`;
-    } else {
-      whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPatientNumber}&text=${message}`;
-    }
-    window.open(whatsappUrl, '_system');
-    // Mark the message as sent
-    child.isMessageSent = true;
+    this.vaccineService.getDosesForChild(child.Child.Id, this.selectedDate).subscribe(response => {
+      if (response.IsSuccess && response.ResponseData) {
+        const doseNames = response.ResponseData.map(dose => dose.Name).join(', ');
+        const childName = child.Child.Name;
+        const message = encodeURIComponent(`Reminder: Vaccination ${doseNames}, of ${childName} is due. Please confirm your appointment. Thanks!\n${this.displayName}, Baby Medics\nPhone Number ${this.clinicPhoneNumber}\nLogin and check your record at https://vaccinationcenter.com`);
+        const formattedPatientNumber = mobileNumber.startsWith('+92') ? mobileNumber : `+92${mobileNumber.replace(/^0/, '')}`;
+        let whatsappUrl: string;
+        if (this.platform.is('android') || this.platform.is('ios')) {
+          whatsappUrl = `whatsapp://send?phone=${formattedPatientNumber}&text=${message}`;
+        } else {
+          whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPatientNumber}&text=${message}`;
+        }
+        window.open(whatsappUrl, '_system');
+      } else {
+        console.error('API Response Error: No doses available or ResponseData is undefined.', response); // More detailed error logging
+      }
+    }, error => {
+      console.error('Error fetching doses:', error);
+    });
   }
 
   formatDateToString(date: string | Date): string {
