@@ -416,6 +416,10 @@ export class VaccineAlertPage implements OnInit {
   openWhatsApp(mobileNumber: string, childName: string, doseName: string, child: any) {
     console.log('Child ID:', child.Child.Id); // Debugging line
     console.log('Selected Date:', this.selectedDate); // Debugging line
+    if (child.isMessageSent) {
+      alert('You have already sent the alert for this child.');
+      return;
+    }
 
     this.vaccineService.getDosesForChild(child.Child.Id, this.selectedDate).subscribe(response => {
       if (response.IsSuccess && response.ResponseData) {
@@ -436,6 +440,7 @@ export class VaccineAlertPage implements OnInit {
     }, error => {
       console.error('Error fetching doses:', error);
     });
+    child.isMessageSent = true;
   }
 
   formatDateToString(date: string | Date): string {
