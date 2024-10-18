@@ -40,7 +40,7 @@
           </ion-icon>
 
           <ion-icon color="primary" name="calendar" (click)="picker.open()" size="small">
-            <input [matDatepicker]="picker" [max]="today" value="{{item.key}}"
+            <input [matDatepicker]="picker" value="{{item.key}}"
               (dateChange)="updateBulkDate($event, item.value[0].Id)">
             <mat-datepicker #picker></mat-datepicker>
           </ion-icon>
@@ -70,7 +70,7 @@
             </p>
             <ion-icon *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip" color="primary" name="calendar"
               (click)="picker.open()" style="font-size: 18px;">
-              <input [matDatepicker]="picker" value="{{v.Date}}" [max]="today" (dateChange)="updateDate($event, v.Id)">
+              <input [matDatepicker]="picker" value="{{v.Date}}" (dateChange)="updateDate($event, v.Id)">
               <mat-datepicker #picker></mat-datepicker>
             </ion-icon>
             <ion-img *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip" style="height: 20px;"
