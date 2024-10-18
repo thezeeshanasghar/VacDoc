@@ -23,6 +23,7 @@ import { ToastService } from "src/app/shared/toast.service";
 export class Step1Page implements OnInit {
   fg: FormGroup;
   checkedVal: any;
+  isSubmitted = false;
   @ViewChild("speciality", { static: false }) selectPop: IonSelect;
   // toastService: any;
   constructor(
@@ -478,11 +479,14 @@ export class Step1Page implements OnInit {
   }
 
   async nextpage() {
-    // Generate the password and attach it to the form value
     this.fg.value.Password = this.PasswordGenerator();
     this.signupService.personalData = this.fg.value;
     console.log(this.fg.value);
-  
+
+    if (this.fg.valid && !this.isSubmitted) {
+      this.isSubmitted = true;
+    }
+    
     // Make the API call to add the doctor
     this.signupService.addDoctor().subscribe(
       res => {

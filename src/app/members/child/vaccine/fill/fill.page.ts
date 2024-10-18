@@ -141,7 +141,9 @@ export class FillPage implements OnInit {
     this.fg.value.DiseaseYear = moment(this.fg.value.DiseaseYear, 'YYYY-MM-DD').format('YYYY');
     let givenDateOfInjection: Date = this.fg.value.GivenDate;
     let scheduleDate: Date = this.addDays(givenDateOfInjection, this.MinGap, this.vaccineData.DoseId);
-  this.fg.value.GivenDate = moment(this.fg.value.GivenDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
+    console.log("givenDateOfInjection", givenDateOfInjection);
+    console.log("sdate ", this.addDays(givenDateOfInjection, this.MinGap, this.vaccineData.DoseId));
+    this.fg.value.GivenDate = moment(this.fg.value.GivenDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
     await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
       res => {
         if (res.IsSuccess) {
