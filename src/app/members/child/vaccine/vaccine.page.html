@@ -9,12 +9,6 @@
 
 
 <ion-toolbar color="primary">
-  <ion-buttons slot="start" style="background-color: black; border-radius: 6px; ">
-    <ion-button routerLink="edit">
-      Add Vaccines
-    </ion-button>
-  </ion-buttons>
-
   <ion-title>
     <h3 *ngIf="ChildName" style="text-align: center; margin-right: 8rem;">
       {{ChildName}}
@@ -46,7 +40,7 @@
           </ion-icon>
 
           <ion-icon color="primary" name="calendar" (click)="picker.open()" size="small">
-            <input [matDatepicker]="picker" value="{{item.key}}"
+            <input [matDatepicker]="picker" [max]="today" value="{{item.key}}"
               (dateChange)="updateBulkDate($event, item.value[0].Id)">
             <mat-datepicker #picker></mat-datepicker>
           </ion-icon>
@@ -76,7 +70,7 @@
             </p>
             <ion-icon *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip" color="primary" name="calendar"
               (click)="picker.open()" style="font-size: 18px;">
-              <input [matDatepicker]="picker" value="{{v.Date}}" (dateChange)="updateDate($event, v.Id)">
+              <input [matDatepicker]="picker" value="{{v.Date}}" [max]="today" (dateChange)="updateDate($event, v.Id)">
               <mat-datepicker #picker></mat-datepicker>
             </ion-icon>
             <ion-img *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip" style="height: 20px;"
@@ -99,4 +93,10 @@
       </ion-card-content>
     </ion-card>
   </div>
+
+  <ion-fab horizontal="end" vertical="bottom" slot="fixed" style="margin-right: 10px;">
+    <ion-fab-button routerLink="edit">
+      <ion-icon name="Add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

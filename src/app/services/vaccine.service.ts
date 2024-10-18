@@ -4,7 +4,20 @@ import { BaseService } from './base.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { catchError, map } from 'rxjs/operators';
+// import { ApiResponse } from 'src/app/models/dose-response.model'; // Adjust the path as necessary
+// src/app/models/dose-response.model.ts
 
+export interface DoseDTO {
+  Id: number;
+  Name: string;
+}
+
+export interface ApiResponse {
+  data: any;
+  ResponseData: DoseDTO[];
+  IsSuccess: boolean;
+  Message: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -89,6 +102,11 @@ export class VaccineService extends BaseService {
   //     catchError(this.handleError)
   //   );
   // }
-
-
+  getDosesForChild(childId: number, date: string): Observable<ApiResponse> {
+    const formattedDate = new Date(date).toISOString().split('T')[0];
+    return this.http.get<ApiResponse>(`${this.API_VACCINE}schedule/doses-for-child/${childId}?date=${formattedDate}`).pipe(
+      map((response: any) => this.extractData(response) as ApiResponse),
+      catchError((error: any) => this.handleError(error))
+    );
+  }
 }

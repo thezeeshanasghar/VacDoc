@@ -35,18 +35,18 @@ ion-list-header{
 }
 
 .custom-item-background1 {
-  --background: rgba(8, 8, 8, 0.162); /* Replace 'your-color' with the desired background color */
+  --background: rgba(8, 8, 8, 0.162);
   color: #fff;
 }
 
 
 .custom-item-background2 {
-  --background: rgba(8, 8, 8, 0); /* Replace 'your-color' with the desired background color */
+  --background: rgba(8, 8, 8, 0);
   color: #fff;
 }
 
 .custom-item-background3 {
-  --background: rgb(0, 0, 0); /* Replace 'your-color' with the desired background color */
+  --background: rgb(0, 0, 0);
   color: #fff;
 }
 
@@ -61,4 +61,21 @@ ion-list-header{
 .input-group {
   flex-direction: row;
   flex-wrap: nowrap;
+}
+.country-code-container {
+  width: 100%;
+}
+
+@media (max-width: 375px) {
+  .country-code-container {
+    width: 200%;
+  }
+
+  .country-label, .mobile-label {
+    font-size: 14px;
+  }
+  
+  .country-code-select, .number-input {
+    font-size: 14px;
+  }
 }
