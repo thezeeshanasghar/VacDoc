@@ -43,8 +43,10 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-    <!-- <pre>{{brandAmounts | json}}</pre> -->
-    <ion-button disabled="false" (click)="updateBrandAmount()">Update Amount</ion-button>
   </form>
-
+    <ion-fab horizontal="end" vertical="bottom" slot="fixed" style="margin-right: 10px;">
+    <ion-fab-button routerLink="/members/doctor/brand-amount/update" (click)="updateBrandAmount()">
+      <ion-icon name="checkmark"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
