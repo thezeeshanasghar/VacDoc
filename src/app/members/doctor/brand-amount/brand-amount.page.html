@@ -18,27 +18,25 @@
 <ion-content class="ion-padding">
   <form>
     <ion-grid>
-      <ion-row>
-        <ion-col>Vaccine Name</ion-col>
-        <ion-col>Brand Name</ion-col>
-        <ion-col>Price</ion-col>
-        <ion-col>Inventory</ion-col>
+      <ion-row class="header-row">
+        <ion-col class="header-col">Vaccine Name</ion-col>
+        <ion-col class="header-col">Brand Name</ion-col>
+        <ion-col class="header-col">Price</ion-col>
+        <ion-col class="header-col">Inventory</ion-col>
       </ion-row>
-      <ion-row *ngFor="let b of brandAmounts">
-        <ion-col>{{b.VaccineName}}</ion-col>
-        <ion-col>{{b.BrandName}}</ion-col>
-        <ion-col>
+      <ion-row *ngFor="let b of brandAmounts" class="data-row">
+        <ion-col class="center-text" style="margin-top: 10px;">{{b.VaccineName}}</ion-col>
+        <ion-col class="center-text" style="margin-top: 10px;">{{b.BrandName}}</ion-col>
+        <ion-col class="center-text">
           <ion-input [(ngModel)]="b.Amount" [ngModelOptions]="{standalone: true}" type="tel" #amountInput="ngModel" required pattern="^[0-9]*$"></ion-input>
-           <div *ngIf="amountInput.invalid && (amountInput.dirty || amountInput.touched)">
-             <div *ngIf="amountInput.errors?.required" class="error">Amount is required.</div>
-             <!-- <div *ngIf="amountInput.errors?.pattern" class="error">Amount must be a number.</div>  -->
+          <div *ngIf="amountInput.invalid && (amountInput.dirty || amountInput.touched)">
+            <div *ngIf="amountInput.errors?.required" class="error">Amount is required.</div>
           </div> 
         </ion-col>
-        <ion-col>
+        <ion-col class="center-text">
           <ion-input [(ngModel)]="b.Count" [ngModelOptions]="{standalone: true}" type="tel" #inventoryInput="ngModel" required pattern="^[0-9]*$"></ion-input>
-           <div *ngIf="inventoryInput.invalid && (inventoryInput.dirty || inventoryInput.touched)">
-             <div *ngIf="inventoryInput.errors?.required" class="error">Inventory is required.</div>
-             <!-- <div *ngIf="inventoryInput.errors?.pattern" class="error">Inventory must be a number.</div>  -->
+          <div *ngIf="inventoryInput.invalid && (inventoryInput.dirty || inventoryInput.touched)">
+            <div *ngIf="inventoryInput.errors?.required" class="error">Inventory is required.</div>
           </div> 
         </ion-col>
       </ion-row>

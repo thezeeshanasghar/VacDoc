@@ -181,8 +181,7 @@ export class BulkPage implements OnInit {
     await this.vaccineService.AddChildSchedule(VaccineData).subscribe(
       res => {
         if (res.IsSuccess) {
-          this.router.navigate(["/members/child/vaccine/" + this.childId]);
-          window.location.reload();
+          this.router.navigate(["/members/child/vaccine/" + this.childId], { queryParams: { refresh: true } });
           loading.dismiss();
         }
         else {
