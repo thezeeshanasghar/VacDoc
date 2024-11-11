@@ -54,6 +54,10 @@ export class BrandAmountPage implements OnInit {
         loading.dismiss();
         if (res.IsSuccess) {
           this.brandAmounts = res.ResponseData;
+          this.brandAmounts.sort((a, b) => {
+            const vaccineComparison = a.VaccineName.localeCompare(b.VaccineName);
+            return vaccineComparison !== 0 ? vaccineComparison : a.BrandName.localeCompare(b.BrandName);
+          });
           console.log('Brand Amounts:', this.brandAmounts);
         } else {
           this.toastService.create(res.Message || 'Failed to fetch brand amounts', 'danger');

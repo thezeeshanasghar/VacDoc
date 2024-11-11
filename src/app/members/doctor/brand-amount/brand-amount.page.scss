@@ -1,5 +1,22 @@
 .error {
     color: red;
-    font-size: 0.875em; /* Optional: Adjust the font size as needed */
+    font-size: 0.875em;
   }
   
+  .header-row {
+    background-color: #f0f0f0; 
+    font-weight: bold; 
+  }
+  .header-col, .center-text {
+    text-align: center;
+  }
+  .data-row {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .data-row:hover {
+    background-color: #f9f9f9;
+  }
+  .error {
+    color: red;
+  }
