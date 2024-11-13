@@ -608,5 +608,7 @@ export class Step1Page implements OnInit {
     ],
   };
 
-
+  hasValidationErrors(): boolean {
+    return Object.keys(this.fg.controls).some(control => this.fg.get(control).invalid);
+  }
 }

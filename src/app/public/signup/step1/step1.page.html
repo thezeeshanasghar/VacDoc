@@ -155,9 +155,9 @@
         </ng-container>
       </div>
     </form>
-    <ion-button (click)="nextpage()" [disabled]="!fg.valid || isSubmitted"
+    <ion-button (click)="nextpage()" [disabled]="!fg.valid && !isSubmitted && hasValidationErrors()"
       style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;">
-      {{ isSubmitted ? 'Processing...' : 'Sign Up' }}
+      {{ isSubmitted && fg.valid ? 'Processing...' : (fg.valid ? 'Sign Up' : 'Sign Up') }}
     </ion-button>
   </ion-card>
 
