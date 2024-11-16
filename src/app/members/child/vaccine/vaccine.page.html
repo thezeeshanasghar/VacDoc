@@ -7,7 +7,6 @@
   </ion-toolbar>
 </ion-header>
 
-
 <ion-toolbar color="primary">
   <ion-title>
     <h3 *ngIf="ChildName" style="text-align: center; margin-right: 8rem;">
@@ -31,7 +30,7 @@
             src="../../assets/injectionEmpty.png" routerLink="/members/child/vaccine/{{childId}}/bulk/{{item.key}}">
           </ion-img>
           <ion-img *ngIf="!checkVaccineIsDon(item.value)" style="height: 20px; display: inline-block;"
-            src="../../assets/injectionFilled.png">
+            src="../../assets/injectionFilled.png" (click)="UnfillAllVaccines()">
           </ion-img>
 
           <ion-icon style="margin-right: 10px" *ngIf="!checkVaccineIsDon(item.value)" size="small"
