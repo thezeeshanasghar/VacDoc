@@ -30,7 +30,7 @@
             src="../../assets/injectionEmpty.png" routerLink="/members/child/vaccine/{{childId}}/bulk/{{item.key}}">
           </ion-img>
           <ion-img *ngIf="!checkVaccineIsDon(item.value)" style="height: 20px; display: inline-block;"
-            src="../../assets/injectionFilled.png" (click)="UnfillAllVaccines()">
+            src="../../assets/injectionFilled.png">
           </ion-img>
 
           <ion-icon style="margin-right: 10px" *ngIf="!checkVaccineIsDon(item.value)" size="small"
