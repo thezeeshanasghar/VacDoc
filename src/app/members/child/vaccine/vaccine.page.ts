@@ -49,6 +49,7 @@ export class VaccinePage {
     // private invoiceService: InvoiceService
     // private document: DocumentViewer,
   ) { }
+  
 
   ionViewWillEnter() {
     this.childId = this.route.snapshot.paramMap.get("id");
@@ -608,44 +609,6 @@ export class VaccinePage {
     );
   }
 
-    // New method to unfill all vaccines
-    async UnfillAllVaccines() {
-      const loading = await this.loadingController.create({
-        message: 'Unfilling all vaccines'
-      });
-  
-      await loading.present();
-      const unfillPromises = this.vaccine.map(async (vaccine) => {
-        let data = {
-          Id: vaccine.Id,
-          IsDone: false,
-        };
-    
-        try {
-          const res = await this.vaccineService.UnfillChildVaccine(data).toPromise();
-          if (res.IsSuccess) {
-            if (res.ResponseData.Dose.Vaccine.isInfinite) {
-              const cId = res.ResponseData.ChildId;
-              const dId = res.ResponseData.Dose.Id;
-              const dSchedule = res.ResponseData.Date;
-              this.deleteFutureSchedules(cId, dId, dSchedule);
-            }
-
-          } else {
-            // this.toastService.create('Error: ' + res.Message, 'danger');
-          }
-        } catch (error) {
-          // this.toastService.create('Error: server failure', 'danger');
-        }
-      });
-      try {
-        await Promise.all(unfillPromises);
-        this.getVaccination();
-      } finally {
-        loading.dismiss();
-      }
-    }
-    
 
   addDays(date, days) {
     console.log("days");
