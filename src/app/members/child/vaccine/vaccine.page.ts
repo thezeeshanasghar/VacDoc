@@ -49,6 +49,7 @@ export class VaccinePage {
     // private invoiceService: InvoiceService
     // private document: DocumentViewer,
   ) { }
+  
 
   ionViewWillEnter() {
     this.childId = this.route.snapshot.paramMap.get("id");
