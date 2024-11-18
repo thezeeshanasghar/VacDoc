@@ -29,7 +29,7 @@
           <ion-img *ngIf="checkVaccineIsDon(item.value)" style="height: 20px; display: inline-block;"
             src="../../assets/injectionEmpty.png" routerLink="/members/child/vaccine/{{childId}}/bulk/{{item.key}}">
           </ion-img>
-          <ion-img *ngIf="!checkVaccineIsDon(item.value)" style="height: 20px; display: inline-block;"
+          <ion-img *ngIf="!checkVaccineIsDon(item.value)" style="height: 20px; display: inline-block;" (click) = "unfillbulk(item)"
             src="../../assets/injectionFilled.png">
           </ion-img>
 

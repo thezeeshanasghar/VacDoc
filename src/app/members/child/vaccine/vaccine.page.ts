@@ -425,15 +425,41 @@ export class VaccinePage {
 
   }
 
-  async UnfillVaccine(id) {
+  async unfillbulk(item : any){
+    console.log(item);
+    let data = []
+    for (const element of item.value) {
+      let tempdata = {
+        Id: element.Id,
+        IsDone: element.isdone ? false : false,
+
+      } 
+      data.push(tempdata);
+    }
     const loading = await this.loadingController.create({
       message: 'Unfilling vaccine'
     });
 
-    await loading.present();
+    for (const d of data) {
+      await this.UnfillVaccine(d.Id, d)
+    }
+    
+  }
+
+  async UnfillVaccine(id, Data = null) {
+    const loading = await this.loadingController.create({
+      message: 'Unfilling vaccine'
+    });
+    if (!Data) {
+      await loading.present();
+    }
+
     let data = {
       Id: id,
       IsDone: false,
+    }
+    if (Data) {
+      data = Data;
     }
 
     await this.vaccineService.UnfillChildVaccine(data)
@@ -608,6 +634,9 @@ export class VaccinePage {
       }
     );
   }
+
+    // New method to unfill all vaccines
+   
 
   addDays(date, days) {
     console.log("days");
