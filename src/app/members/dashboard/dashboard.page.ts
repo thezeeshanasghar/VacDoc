@@ -120,7 +120,6 @@ export class DashboardPage implements OnInit {
    
     
   }
-<<<<<<< HEAD
   async getChildren() {
     console.log("Fetching children for the current month...");
     const loading = await this.loadingController.create({ message: "Loading Children..." });
@@ -147,6 +146,5 @@ export class DashboardPage implements OnInit {
     );
   }
   }
-=======
 }
->>>>>>> parent of 6a72733 (design changes in dashboard)
+
