@@ -154,8 +154,4 @@ export class DashboardPage implements OnInit {
       }
     );
   }
-  
-
-  
-  // ... rest of your existing methods
   }
