@@ -25,15 +25,32 @@
     <ion-card-header>
       <ion-card-title>Welcome to Doctor Dashboard</ion-card-title>
     </ion-card-header>
-    <ion-card-content>
-      <p>Childhood vaccines are one of the great triumphs of modern medicine. Indeed, parents whose children are
-        vaccinated no longer have to worry about their child’s death or disability from whooping cough, polio,
-        diphtheria, hepatitis, or a host of other infections.
-        Vaccines are a miracle; they’re fantastic. Anything that makes people hesitate to give their children these
-        vaccines according to the recommended schedule creates risk. Risk for the children who don’t get vaccinated and
-        risk for children, some of whom don’t have an immune system, so they’re benefiting from the fact that the
-        community protection means the disease doesn’t get to them..</p>
-    </ion-card-content>
+    <div *ngIf="clinicCount > 0; else noClinics">
+      <p>The doctor is associated with {{ clinicCount }} clinic(s).</p>
+      <ion-card-content>
+        <p>
+          Childhood vaccines are one of the great triumphs of modern medicine. Indeed, parents whose children are
+          vaccinated no longer have to worry about their child’s death or disability from whooping cough, polio,
+          diphtheria, hepatitis, or a host of other infections.
+          Vaccines are a miracle; they’re fantastic. Anything that makes people hesitate to give their children these
+          vaccines according to the recommended schedule creates risk. Risk for the children who don’t get vaccinated and
+          risk for children, some of whom don’t have an immune system, so they’re benefiting from the fact that the
+          community protection means the disease doesn’t get to them.
+        </p>
+      </ion-card-content>
+    </div>
+    
+    <ng-template #noClinics>
+      <p class="large-font"><a href="/members/doctor/clinic" class="no-underline">Please add clinic to proceed.</a></p>
+    </ng-template>
   </ion-card>
+  <ion-card class="small-card">
+    <ion-card-header>
+        <ion-card-title>No Of Child’s This Month</ion-card-title>
+    </ion-card-header>
 
+    <ion-card-content>
+    {{Children}}
+    </ion-card-content>
+</ion-card>
 </ion-content>
