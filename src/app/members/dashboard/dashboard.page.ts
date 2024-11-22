@@ -1,7 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { LoadingController, ToastController } from "@ionic/angular";
 import { ClinicService } from "src/app/services/clinic.service";
-import { DashboardService } from "src/app/services/dashboard.service"; 
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { ToastService } from "src/app/shared/toast.service";
@@ -23,9 +22,6 @@ export class DashboardPage implements OnInit {
   NewClinics: any = [];
   DelClinics: any = [];
   Messages: any = [];
-  DashboardService: any;
-  Children: any;
-  clinicCount: any; 
   constructor(
     private loadingController: LoadingController,
     public clinicService: ClinicService,
@@ -33,8 +29,7 @@ export class DashboardPage implements OnInit {
     private storage: Storage,
     private androidPermissions: AndroidPermissions,
     public platform: Platform,
-    private routerOutlet: IonRouterOutlet,
-    public dashboardService: DashboardService
+    private routerOutlet: IonRouterOutlet
   ) { }
 
  async ngOnInit() {
@@ -63,8 +58,6 @@ export class DashboardPage implements OnInit {
     //    this.Messages = this.Messages.filter(x=> (this.datediff(x.created , today) < 30));  //2505600000
     //    this.storage.set(environment.MESSAGES , this.Messages);
     //  }
-    await this.getChildren();
-   
   }
   async ionViewDidEnter(){
    // console.log(this.clinicService.clinics);  
@@ -90,15 +83,13 @@ export class DashboardPage implements OnInit {
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
 
-    this.clinicService.getClinics(this.doctorId).subscribe(
+    await this.clinicService.getClinics(this.doctorId).subscribe(
       res => {
         loading.dismiss();
         if (res.IsSuccess) {
           this.Clinics = res.ResponseData;
-          console.log(this.Clinics);
-          console.log(this.Clinics.length);
-          this.clinicCount =this.Clinics.length;
-            this.storage.set(environment.CLINICS, this.Clinics);
+          console.log( this.Clinics)
+          this.storage.set(environment.CLINICS, this.Clinics);
           for (let i = 0; i < this.Clinics.length; i++) {
             if (this.Clinics[i].IsOnline) {
               this.storage.set(
@@ -109,7 +100,7 @@ export class DashboardPage implements OnInit {
                 environment.ON_CLINIC,
                 this.Clinics[i]
               );
-              this.clinicService.updateClinic(this.Clinics[i]);
+              this.clinicService.updateClinic(this.Clinics[i])
             }
           }
           //  this.ngOnInit();
@@ -129,6 +120,7 @@ export class DashboardPage implements OnInit {
    
     
   }
+<<<<<<< HEAD
   async getChildren() {
     console.log("Fetching children for the current month...");
     const loading = await this.loadingController.create({ message: "Loading Children..." });
@@ -155,3 +147,6 @@ export class DashboardPage implements OnInit {
     );
   }
   }
+=======
+}
+>>>>>>> parent of 6a72733 (design changes in dashboard)
