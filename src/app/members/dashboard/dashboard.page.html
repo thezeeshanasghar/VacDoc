@@ -26,6 +26,7 @@
       <ion-card-title>Welcome to Doctor Dashboard</ion-card-title>
     </ion-card-header>
     <div *ngIf="clinicCount > 0; else noClinics">
+      <p>The doctor is associated with {{ clinicCount }} clinic(s).</p>
       <ion-card-content>
         <p>
           Childhood vaccines are one of the great triumphs of modern medicine. Indeed, parents whose children are
