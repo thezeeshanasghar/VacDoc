@@ -7,6 +7,8 @@ import { ToastService } from "src/app/shared/toast.service";
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import {IonRouterOutlet, Platform } from '@ionic/angular';
 import { Plugins } from '@capacitor/core';
+import { DashboardService } from "src/app/services/dashboard.service";
+
 const { App } = Plugins;
 
 
@@ -22,10 +24,14 @@ export class DashboardPage implements OnInit {
   NewClinics: any = [];
   DelClinics: any = [];
   Messages: any = [];
+  Children: any;
+  DashboardService: any;
+  clinicCount: any; 
   constructor(
     private loadingController: LoadingController,
     public clinicService: ClinicService,
     private toastService: ToastService,
+    private dashboardService: DashboardService,
     private storage: Storage,
     private androidPermissions: AndroidPermissions,
     public platform: Platform,
@@ -58,6 +64,7 @@ export class DashboardPage implements OnInit {
     //    this.Messages = this.Messages.filter(x=> (this.datediff(x.created , today) < 30));  //2505600000
     //    this.storage.set(environment.MESSAGES , this.Messages);
     //  }
+    await this.getChildren();
   }
   async ionViewDidEnter(){
    // console.log(this.clinicService.clinics);  
@@ -89,6 +96,9 @@ export class DashboardPage implements OnInit {
         if (res.IsSuccess) {
           this.Clinics = res.ResponseData;
           console.log( this.Clinics)
+          console.log(this.Clinics);
+          console.log(this.Clinics.length);
+          this.clinicCount =this.Clinics.length;
           this.storage.set(environment.CLINICS, this.Clinics);
           for (let i = 0; i < this.Clinics.length; i++) {
             if (this.Clinics[i].IsOnline) {
@@ -120,4 +130,29 @@ export class DashboardPage implements OnInit {
    
     
   }
-}
+  async getChildren() {
+    console.log("Fetching children for the current month...");
+    const loading = await this.loadingController.create({ message: "Loading Children..." });
+    await loading.present();
+
+    this.dashboardService.getThisMonthChild().subscribe(
+      res => {
+        loading.dismiss();
+        if (res && res.CurrentMonthChildCount !== undefined) {
+          console.log("Response received:", res);
+          this.Children = res.CurrentMonthChildCount;
+          console.log("Current Month Child Count:", this.Children);
+        }
+         else {
+          console.error("Unexpected response format:", res);
+          this.toastService.create("Failed to fetch child data", "danger");
+        }
+      },
+      err => {
+        loading.dismiss();
+        console.error("Error while fetching data:", err);
+        this.toastService.create("Error fetching child data", "danger");
+      }
+    );
+  }
+  }
