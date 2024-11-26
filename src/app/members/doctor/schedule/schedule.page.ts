@@ -75,7 +75,7 @@ export class SchedulePage implements OnInit {
         } else {
           loading.dismiss();
           // this.toastService.create(res.Message, "danger");
-          this.router.navigate(["./members/doctor/schedule/addschedule"]);
+          // this.router.navigate(["./members/doctor/schedule/addschedule"]);
         }
       },
       err => {
