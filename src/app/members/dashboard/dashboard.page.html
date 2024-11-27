@@ -20,35 +20,90 @@
 </ion-header>
 
 <ion-content>
+  <!-- Welcome Card Section -->
   <ion-card class="welcome-card">
-    <ion-img src="/assets/vaccinepk.jpg"></ion-img>
+    <ion-img src="/assets/vaccinepk.jpg" class="header-img"></ion-img>
     <ion-card-header>
-      <ion-card-title>Welcome to Doctor Dashboard</ion-card-title>
+      <ion-card-title class="text-center">Welcome to Doctor Dashboard</ion-card-title>
     </ion-card-header>
-    <div *ngIf="clinicCount > 0; else noClinics">
-      <p>The doctor is associated with {{ clinicCount }} clinic(s).</p>
+    <ion-card *ngIf="!clinicsExist" class="no-clinics-card">
       <ion-card-content>
-        <p>
-          Childhood vaccines are one of the great triumphs of modern medicine. Indeed, parents whose children are
-          vaccinated no longer have to worry about their child’s death or disability from whooping cough, polio,
-          diphtheria, hepatitis, or a host of other infections.
-          Vaccines are a miracle; they’re fantastic. Anything that makes people hesitate to give their children these
-          vaccines according to the recommended schedule creates risk. Risk for the children who don’t get vaccinated and
-          risk for children, some of whom don’t have an immune system, so they’re benefiting from the fact that the
-          community protection means the disease doesn’t get to them.
+        <p class="no-clinics-text text-center">
+          <a href="/members/doctor/clinic" class="no-underline">
+            Please add a clinic to proceed.
+          </a>
         </p>
       </ion-card-content>
-    </div>
-
-    <ng-template #noClinics>
-      <p class="large-font"><a href="/members/doctor/clinic" class="no-underline">Please add clinic to proceed.</a></p>
-    </ng-template>
+    </ion-card>
   </ion-card>
-  <ion-card class="small-card">
-    <ion-card-header>
-        <ion-card-title>No Of Child’s This Month</ion-card-title>
-    </ion-card-header>
-    {{Children}}
-  </ion-card>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+        <ion-card class="summary-card single-line-card">
+          <ion-card-header>
+            <ion-card-title class="text-center">Children Count This Month</ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="text-center card-content-highlight">
+            <h2>{{ Children }}</h2>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+  
+      <ion-col size="6">
+        <ion-card class="summary-card single-line-card">
+          <ion-card-header>
+            <ion-card-title class="text-center">Total Children Count</ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="text-center card-content-highlight">
+            <h2>{{ totalChildCount }}</h2>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
 
+      <ion-col size="6">
+        <ion-card class="summary-card single-line-card">
+          <ion-card-header>
+            <ion-card-title class="text-center">Past Alerts of This Month</ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="text-center card-content-highlight">
+            <h2>{{ totalAlertsCount }}</h2>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6">
+        <ion-card class="summary-card single-line-card">
+          <ion-card-header>
+            <ion-card-title class="text-center">Future Alerts Count</ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="text-center card-content-highlight">
+            <h2>{{ futureAlertsCount }}</h2>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6">
+        <ion-card class="summary-card single-line-card">
+          <ion-card-header>
+            <ion-card-title class="text-center">Doses Given This Month</ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="text-center card-content-highlight">
+            <h2>{{ currentMonthGivenDosesCount }}</h2>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6">
+        <ion-card class="summary-card single-line-card">
+          <ion-card-header>
+            <ion-card-title class="text-center">Revenue This Month</ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="text-center card-content-highlight">
+            <h2>{{ totalRevenue | number }}</h2>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  
 </ion-content>
