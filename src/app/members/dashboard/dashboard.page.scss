@@ -29,3 +29,38 @@
   text-decoration: none; /* Removes the underline */
   color: inherit; /* Optional: Keeps the text color the same as surrounding text */
 }
+.single-line-card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+  transition: transform 0.3s ease-in-out;
+  margin: 15px 10px;
+}
+
+.single-line-card:hover {
+  transform: scale(1.05);
+}
+
+.summary-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f3f4f7 100%);
+}
+
+.card-content-highlight {
+  color: #007bff;
+  font-weight: bold;
+}
+
+.text-center {
+  text-align: center;
+}
+
+ion-card-title {
+  font-size: 1.2em;
+  font-weight: 600;
+  color: #333333;
+}
+
+ion-card-header {
+  background: #e0f7fa;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}

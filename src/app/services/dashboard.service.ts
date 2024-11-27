@@ -23,4 +23,49 @@ export class DashboardService extends BaseService {
         catchError(this.handleError)
       );
   }
+
+  getTotalChildren(doctorId: number): Observable<any> {
+    const url = `${this.API_DASHBOARD}/doctor/${doctorId}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
+  // NEW: Method to get total alerts count for the current month
+  getDoctorAlerts(doctorId: number): Observable<any> {
+    const url = `${this.API_DASHBOARD}/alerts?doctorId=${doctorId}`;
+    console.log('API URL for Alerts:', url);
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
+  getFutureAlerts(doctorId: number): Observable<any> {
+    const url = `${this.API_DASHBOARD}/future-alerts?doctorId=${doctorId}`;
+    console.log('API URL (Future Alerts):', url);
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
+  getCurrentMonthGivenDoses(doctorId: number): Observable<any> {
+    const url = `${this.API_DASHBOARD}/current-month-given-doses/${doctorId}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
+  getCurrentMonthRevenue(doctorId: number): Observable<any> {
+    const url = `${this.API_DASHBOARD}/current-month-revenue/${doctorId}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+  
+  
 }
