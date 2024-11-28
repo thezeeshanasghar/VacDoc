@@ -24,7 +24,7 @@
   <ion-card class="welcome-card">
     <ion-img src="/assets/vaccinepk.jpg" class="header-img"></ion-img>
     <ion-card-header>
-      <ion-card-title class="text-center">Welcome to Doctor Dashboard</ion-card-title>
+      <ion-card-title class="text-center">Welcome to Dashboard</ion-card-title>
     </ion-card-header>
     <ion-card *ngIf="!clinicsExist" class="no-clinics-card">
       <ion-card-content>
@@ -41,7 +41,7 @@
       <ion-col size="6">
         <ion-card class="summary-card single-line-card">
           <ion-card-header>
-            <ion-card-title class="text-center">Children Count This Month</ion-card-title>
+            <ion-card-title class="text-center">This Month Patients</ion-card-title>
           </ion-card-header>
           <ion-card-content class="text-center card-content-highlight">
             <h2>{{ Children }}</h2>
@@ -52,7 +52,7 @@
       <ion-col size="6">
         <ion-card class="summary-card single-line-card">
           <ion-card-header>
-            <ion-card-title class="text-center">Total Children Count</ion-card-title>
+            <ion-card-title class="text-center">Total Patients</ion-card-title>
           </ion-card-header>
           <ion-card-content class="text-center card-content-highlight">
             <h2>{{ totalChildCount }}</h2>
@@ -63,7 +63,7 @@
       <ion-col size="6">
         <ion-card class="summary-card single-line-card">
           <ion-card-header>
-            <ion-card-title class="text-center">Past Alerts of This Month</ion-card-title>
+            <ion-card-title class="text-center">Previous Alerts (Current Month)</ion-card-title>
           </ion-card-header>
           <ion-card-content class="text-center card-content-highlight">
             <h2>{{ totalAlertsCount }}</h2>
@@ -74,7 +74,7 @@
       <ion-col size="6">
         <ion-card class="summary-card single-line-card">
           <ion-card-header>
-            <ion-card-title class="text-center">Future Alerts Count</ion-card-title>
+            <ion-card-title class="text-center">Future Alerts (Current Month)</ion-card-title>
           </ion-card-header>
           <ion-card-content class="text-center card-content-highlight">
             <h2>{{ futureAlertsCount }}</h2>
@@ -85,7 +85,7 @@
       <ion-col size="6">
         <ion-card class="summary-card single-line-card">
           <ion-card-header>
-            <ion-card-title class="text-center">Doses Given This Month</ion-card-title>
+            <ion-card-title class="text-center">Doses Given (Current Month)</ion-card-title>
           </ion-card-header>
           <ion-card-content class="text-center card-content-highlight">
             <h2>{{ currentMonthGivenDosesCount }}</h2>
@@ -96,7 +96,7 @@
       <ion-col size="6">
         <ion-card class="summary-card single-line-card">
           <ion-card-header>
-            <ion-card-title class="text-center">Revenue This Month</ion-card-title>
+            <ion-card-title class="text-center">Revenue (Current Month)</ion-card-title>
           </ion-card-header>
           <ion-card-content class="text-center card-content-highlight">
             <h2>{{ totalRevenue | number }}</h2>
