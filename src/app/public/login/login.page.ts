@@ -45,12 +45,19 @@ export class LoginPage implements OnInit {
 }
   ngOnInit(){}
   ionViewWillEnter() {
-    this.skipLoginIfAlreadyLoggedIn();
-    this.loginservice.changeState(false);
-    this.fg = this.formBuilder.group({
-      'MobileNumber':  [null, [Validators.required, this.onlyNumbersValidator()]],
-      'Password': [null, [Validators.required, this.passwordValidator()]],      'CountryCode': ['92'],
-      'UserType': ['DOCTOR']
+    this.storage.get(environment.DOCTOR_Id).then(value => {
+      if (value) {
+        this.router.navigate(['/members']);
+      } else {
+        this.skipLoginIfAlreadyLoggedIn();
+        this.loginservice.changeState(false);
+        this.fg = this.formBuilder.group({
+          'MobileNumber':  [null, [Validators.required, this.onlyNumbersValidator()]],
+          'Password': [null, [Validators.required, this.passwordValidator()]],      
+          'CountryCode': ['92'],
+          'UserType': ['DOCTOR']
+        });
+      }
     });
   }
   
@@ -346,7 +353,9 @@ export class LoginPage implements OnInit {
           let state = true;
           this.loginservice.changeState(state);
           this.getdoctorprofile(res.ResponseData.Id);
-          this.router.navigate(['/members']);
+          this.router.navigate(['/members']).then(() => {
+            window.location.reload();
+          });
           localStorage.setItem('docid',res.ResponseData.DoctorId)
           loading.dismiss();
         }
