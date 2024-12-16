@@ -8,18 +8,19 @@ import { catchError, map } from "rxjs/operators";
 @Injectable({
   providedIn: "root"
 })
-export class FollowupService extends BaseService {
+export class BirthdayService extends BaseService {
   private readonly API_ALERT = `${environment.BASE_URL}`;
 
   constructor(protected http: HttpClient) {
     super(http);
   }
-
-  getFollowupByChild(data): Observable<any> {
-    const url = `${this.API_ALERT}child/followup`;
-    return this.http
-      .post(url, data, this.httpOptions)
-      .pipe(catchError(this.handleError));
+  getBirthdayAlert(date: String ,numOfDays: number, Id: any): Observable<any> {
+    const url = `${this.API_ALERT}birthday/${Id}?inputDate=${date}`;
+    console.log('API URL:', url);
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
   }
 
   addFollowupByChild(data): Observable<any> {
