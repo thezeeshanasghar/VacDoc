@@ -101,4 +101,25 @@ export class BirthdayAlertPage implements OnInit {
     const dateTimeElement = document.querySelector('ion-datetime');
     await dateTimeElement.open();
   }
+  callFunction(mobileNumber: string) {
+    this.callNumber.callNumber(mobileNumber, true)
+      .then(res => console.log('Launched dialer!', res))
+      .catch(err => console.log('Error launching dialer', err));
+  }
+  sendSMS(child: any) {
+    this.sms.send(child.MobileNumber, this.SMSKey)
+      .then(res => console.log('SMS sent!', res))
+      .catch(err => console.log('Error sending SMS', err));
+  }
+  sendEmail() {
+    // this.email.sendEmail(child.Email, this.SMSKey)
+    //   .then(res => console.log('Email sent!', res))
+    //   .catch(err => console.log('Error sending Email', err));
+  }
+  sendEmails() {}
+  downloadCSV() {
+    // this.csv.downloadCSV(child.Email, this.SMSKey)
+    //   .then(res => console.log('CSV downloaded!', res))
+    //   .catch(err => console.log('Error downloading CSV', err));
+  }
 }
