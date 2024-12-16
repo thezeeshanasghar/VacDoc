@@ -1,5 +1,21 @@
 <ion-content class="ion-padding">
-  <ion-segment>
+  <ion-toolbar>
+    <!-- <ion-buttons slot="start">
+      <ion-button fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button>
+      <ion-button fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button>
+    </ion-buttons> -->
+    <ion-buttons slot="end">
+      <ion-datetime 
+        presentation="date" 
+        [(ngModel)]="selectedDate" 
+        (ionChange)="onDateChange($event)">
+      </ion-datetime>
+      <ion-button fill="clear" (click)="openDatePicker()">
+        <ion-icon name="calendar" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <!-- <ion-segment>
     <ion-segment-button (click)="getFollowupChild(-5)">
       <ion-label>Last 5 Days</ion-label>
     </ion-segment-button>
@@ -9,7 +25,7 @@
     <ion-segment-button (click)="getFollowupChild(5)">
       <ion-label>Next 5 Days</ion-label>
     </ion-segment-button>
-  </ion-segment>
+  </ion-segment> -->
 
   <ion-button fill="outline" [disabled]="followUpChild == 0" (click)="sendSMS(followUpChild)">SMS</ion-button>
   <!-- <ion-button fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button> -->

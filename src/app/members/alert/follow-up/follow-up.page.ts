@@ -22,6 +22,8 @@ export class FollowUpPage implements OnInit {
   SMSKey: any;
   clinicId:any;
   Messages:any = [];
+  selectedDate: string = new Date().toISOString(); 
+  formattedDate: string;
   constructor(
     public loadingController: LoadingController,
     private followupService: FollowupService,
@@ -44,18 +46,18 @@ export class FollowUpPage implements OnInit {
       this.clinicId = clinicId;
     });
     this.storage.get(environment.MESSAGES).then(messages=> {this.Messages = messages});
-    this.getFollowupChild(this.numOfDays);
+    this.getFollowupChild(this.numOfDays,this.selectedDate);
   }
 
   // get childs from server
-  async getFollowupChild(numOfDays: number) {
+  async getFollowupChild(numOfDays: number, formattedDate: string) {
     this.numOfDays = numOfDays;
     const loading = await this.loadingController.create({
       message: "Loading"
     });
     await loading.present();
     await this.followupService
-      .getFollowupChild(this.numOfDays, this.clinicId)
+      .getFollowupChild(this.numOfDays, this.clinicId,formattedDate)
       .subscribe(
         res => {
           if (res.IsSuccess) {
@@ -179,6 +181,13 @@ export class FollowUpPage implements OnInit {
     .then(res => console.log('Launched dialer!', res))
     .catch(err => console.log('Error launching dialer', err));
   }
+  formatDateToString(date: string | Date): string {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);  
+    const day = ('0' + d.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  }
 
   // async sendAlertMsgToAll() {
   //   const loading = await this.loadingController.create({
@@ -226,4 +235,20 @@ export class FollowUpPage implements OnInit {
   //     }
   //   );
   // }
+  onDateChange(event: any) {
+    this.selectedDate = event.detail.value;
+    console.log('Selected Date:', this.selectedDate);
+    this.getFollowups(this.selectedDate);
+  }
+  
+  async openDatePicker() {
+    const dateTimeElement = document.querySelector('ion-datetime');
+    await dateTimeElement.open();
+  }
+  getFollowups(date: string) {
+    const formattedDate = this.formatDateToString(date);
+
+    this.getFollowupChild(0, formattedDate);
+  }
+  
 }
