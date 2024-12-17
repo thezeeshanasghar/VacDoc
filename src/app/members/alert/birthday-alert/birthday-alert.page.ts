@@ -8,6 +8,8 @@ import { AndroidPermissions } from "@ionic-native/android-permissions/ngx";
 import { TitleCasePipe } from '@angular/common';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { SMS } from '@ionic-native/sms/ngx';
+import { Platform } from '@ionic/angular';
+
 @Component({
   selector: 'app-birthday-alert',
   templateUrl: './birthday-alert.page.html',
@@ -30,6 +32,7 @@ export class BirthdayAlertPage implements OnInit {
     private androidPermissions: AndroidPermissions,
     private titlecasePipe: TitleCasePipe,
     private sms: SMS,
+     public platform: Platform,
     private callNumber: CallNumber
   ) { }
 
@@ -122,4 +125,40 @@ export class BirthdayAlertPage implements OnInit {
     //   .then(res => console.log('CSV downloaded!', res))
     //   .catch(err => console.log('Error downloading CSV', err));
   }
+  openWhatsApp(mobileNumber: string, childName: string, birthDate: string) {
+    console.log('Child Name:', childName); // Debugging line
+    console.log('Birth Date:', birthDate); // Debugging line
+  
+    // Prevent invalid or empty numbers
+    if (mobileNumber.trim() === '') {
+      alert('Invalid mobile number. Please provide a valid number.');
+      return;
+    }
+  
+    // Create a Happy Birthday message
+    const message = encodeURIComponent(
+      `🎉 Happy Birthday, ${childName}! 🎂\n` +
+      `Wishing you a day filled with joy, laughter, and special moments.\n` +
+      `Stay happy and healthy! 🎈\n\n` +
+      `Best wishes,\n, Baby Medics\n` 
+      // `Phone Number: ${this.clinicPhoneNumber}`
+    );
+  
+    // Format phone number for WhatsApp
+    const formattedPatientNumber = mobileNumber.startsWith('+92')
+      ? mobileNumber
+      : `+92${mobileNumber.replace(/^0/, '')}`;
+  
+    // Create WhatsApp URL based on platform
+    let whatsappUrl: string;
+    if (this.platform.is('android') || this.platform.is('ios')) {
+      whatsappUrl = `whatsapp://send?phone=${formattedPatientNumber}&text=${message}`;
+    } else {
+      whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPatientNumber}&text=${message}`;
+    }
+  
+    // Open WhatsApp
+    window.open(whatsappUrl, '_system');
+  }
+  
 }
