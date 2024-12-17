@@ -2,8 +2,8 @@
 
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button>
-      <ion-button fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button>
+      <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button>
+      <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-datetime 
@@ -12,7 +12,7 @@
         (ionChange)="onDateChange($event)">
       </ion-datetime>
       <ion-button fill="clear" (click)="openDatePicker()">
-        <ion-icon name="calendar" slot="icon-only"></ion-icon>
+        <ion-icon color="primary" name="calendar" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

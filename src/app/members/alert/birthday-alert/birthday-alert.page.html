@@ -1,5 +1,9 @@
 <ion-content class="ion-padding">
   <ion-toolbar>
+    <!-- <ion-buttons slot="start">
+      <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button>
+      <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button>
+    </ion-buttons> -->
     <ion-buttons slot="end">
       <ion-datetime 
         presentation="date" 
@@ -7,11 +11,11 @@
         (ionChange)="onDateChange($event)">
       </ion-datetime>
       <ion-button fill="clear" (click)="openDatePicker()">
-        <ion-icon name="calendar" slot="icon-only"></ion-icon>
+        <ion-icon color="primary" name="calendar" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
-  <div class="action-buttons">
+  <!-- <div class="action-buttons">
     <ion-button 
       fill="outline" 
       [disabled]="birthdayChild?.length === 0" 
@@ -30,7 +34,7 @@
       (click)="downloadCSV()">
       Sheet
     </ion-button>
-  </div>
+  </div> -->
   <div *ngIf="birthdayChild.length === 0" class="no-birthday-alert">
     <h1 style="color: red;">No birthday alert for today.</h1>
   </div>
@@ -39,18 +43,25 @@
       <ion-col>
         <ion-item>
           <ion-label>{{ child.Name }}</ion-label>
-          <ion-icon 
+          <!-- <ion-icon 
             slot="end" 
             color="primary" 
             name="call" 
             (click)="callFunction(child.MobileNumber)">
-          </ion-icon>
+          </ion-icon> -->
           <ion-icon 
             slot="end" 
             color="primary" 
             name="mail" 
             (click)="sendSMS([child])">
           </ion-icon>
+          <ion-icon 
+          slot="end" 
+          [color]="child.isMessageSent ? 'primary' : 'success'" 
+          name="logo-whatsapp" 
+          (click)="openWhatsApp(child.User.MobileNumber, child.Name, child.DOB)" 
+          style="cursor: pointer;">
+        </ion-icon>
         </ion-item>
       </ion-col>
     </ion-row>

@@ -8,6 +8,7 @@ import { AndroidPermissions } from "@ionic-native/android-permissions/ngx";
 import { TitleCasePipe } from '@angular/common';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { SMS } from '@ionic-native/sms/ngx';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: "app-follow-up",
@@ -31,6 +32,7 @@ export class FollowUpPage implements OnInit {
     private storage: Storage,
     private androidPermissions: AndroidPermissions,
     private titlecasePipe: TitleCasePipe,
+    public platform: Platform,
     private sms: SMS,
     private callNumber: CallNumber
   ) {}
@@ -250,5 +252,41 @@ export class FollowUpPage implements OnInit {
 
     this.getFollowupChild(0, formattedDate);
   }
+
+openWhatsApp(mobileNumber: string, childName: string, nextVisitDate: string) {
+  console.log('Child Name:', childName); // Debugging line
+  console.log('Next Visit Date:', nextVisitDate); // Debugging line
+
+  // Prevent multiple alerts
+  if (mobileNumber.trim() === '') {
+    alert('Invalid mobile number. Please provide a valid number.');
+    return;
+  }
+
+  // Create a follow-up message
+  const message = encodeURIComponent(
+    `Reminder: Follow-up visit for ${childName} is scheduled on ${nextVisitDate}.\n` +
+    `Please confirm your appointment. Thanks!\natta rehman, Baby Medics\n` +
+    `Phone Number:03145553423\n` +
+    `Login and check your record at https://vaccinationcentre.com`
+  );
+
+  // Format phone number for WhatsApp
+  const formattedPatientNumber = mobileNumber.startsWith('+92')
+    ? mobileNumber
+    : `+92${mobileNumber.replace(/^0/, '')}`;
+
+  // Create WhatsApp URL based on platform
+  let whatsappUrl: string;
+  if (this.platform.is('android') || this.platform.is('ios')) {
+    whatsappUrl = `whatsapp://send?phone=${formattedPatientNumber}&text=${message}`;
+  } else {
+    whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPatientNumber}&text=${message}`;
+  }
+
+  // Open WhatsApp
+  window.open(whatsappUrl, '_system');
+}
+
   
 }

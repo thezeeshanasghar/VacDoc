@@ -1,8 +1,8 @@
 <ion-content class="ion-padding">
   <ion-toolbar>
     <!-- <ion-buttons slot="start">
-      <ion-button fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button>
-      <ion-button fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button>
+      <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button>
+      <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button>
     </ion-buttons> -->
     <ion-buttons slot="end">
       <ion-datetime 
@@ -11,7 +11,7 @@
         (ionChange)="onDateChange($event)">
       </ion-datetime>
       <ion-button fill="clear" (click)="openDatePicker()">
-        <ion-icon name="calendar" slot="icon-only"></ion-icon>
+        <ion-icon color="primary" name="calendar" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -27,7 +27,7 @@
     </ion-segment-button>
   </ion-segment> -->
 
-  <ion-button fill="outline" [disabled]="followUpChild == 0" (click)="sendSMS(followUpChild)">SMS</ion-button>
+  <!-- <ion-button fill="outline" [disabled]="followUpChild == 0" (click)="sendSMS(followUpChild)">SMS</ion-button> -->
   <!-- <ion-button fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button> -->
   <!-- <ion-button fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button> -->
 
@@ -38,10 +38,17 @@
 
         <ion-col>
           <ion-item>
-            <ion-label>{{child.Child.Name}}</ion-label>
-            <ion-icon slot="end" color="primary" name="call" (click)="callFunction(child.Child.User.MobileNumber)"></ion-icon>
+            <ion-label >{{child.Child.Name}}</ion-label>
+            <!-- <ion-icon slot="end" color="primary" name="call" (click)="callFunction(child.Child.User.MobileNumber)"></ion-icon> -->
             <ion-icon slot="end" color="primary" name="mail" (click)="sendSMS([child])">
             </ion-icon>
+            <ion-icon 
+            slot="end" 
+            [color]="child.isMessageSent ? 'primary' : 'success'" 
+            name="logo-whatsapp" 
+            (click)="openWhatsApp(child.Child.User.MobileNumber, child.Child.Name, child.NextVisitDate)" 
+            style="cursor: pointer;">
+          </ion-icon>
           </ion-item>
         </ion-col>
 
