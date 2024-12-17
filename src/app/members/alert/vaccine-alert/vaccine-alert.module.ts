@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
 
 import { VaccineAlertPage } from './vaccine-alert.page';
 import { Downloader} from '@ionic-native/downloader/ngx';
@@ -20,7 +23,10 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    MatDatepickerModule,
+    MatInputModule,
+    MatNativeDateModule,
   ],
   declarations: [VaccineAlertPage],
   providers: [

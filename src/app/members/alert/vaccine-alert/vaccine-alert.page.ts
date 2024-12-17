@@ -10,15 +10,12 @@ import { TitleCasePipe } from '@angular/common';
 import { SMS } from '@ionic-native/sms/ngx';
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 import { Platform } from '@ionic/angular';
-import { formattedError } from "@angular/compiler";
 import { DoctorService } from "src/app/services/doctor.service";
 import { VaccineService } from 'src/app/services/vaccine.service'; // Import the service
 
-//declare var SMS: any;
 @Component({
   selector: "app-vaccine-alert",
   templateUrl: "./vaccine-alert.page.html",
-  styleUrls: ["./vaccine-alert.page.scss"],
   providers: [AndroidPermissions]
 })
 export class VaccineAlertPage implements OnInit {
@@ -71,40 +68,9 @@ export class VaccineAlertPage implements OnInit {
     this.storage.get(environment.MESSAGES).then(messages => { messages == null ? '' : this.Messages = messages });
     const formattedDate = this.formatDateToString(this.selectedDate);
     this.getAlerts(formattedDate);
-    // ... other initializations ...
     await this.getChlid(this.numOfDays, formattedDate);
     await this.getdoctor();
   }
-
-  // async getdoctor (){
-  //   const doctorId = localStorage.getItem('docid');
-  //   await this.doctorService.getDoctorProfile(this.doctorId).subscribe(
-  //     res => {
-  //       if (res.IsSuccess) {
-  //           const doctorData = res.ResponseData;
-  //           console.log("Doctor Data is ", res.ResponseData);
-  //           console.log('Doctor ID:', doctorData.Id);
-  //           const displayName = this.displayName;
-  //           this.displayName = doctorData.DisplayName;
-
-
-
-  //           console.log('Doctor Name:', doctorData.DisplayName);
-  //           console.log('Doctor Email:', doctorData.Email);
-  //           console.log('Doctor Phone:', doctorData.Phone);
-  //           console.log('Doctor Specialization:', doctorData.Specialization);
-  //           console.log('Doctor Address:', doctorData.Address);
-  //           console.log('Doctor Address:', doctorData.Clinics.Name);
-
-
-
-  //       }
-  //     },
-  //     err => {
-  //       this.toastService.create(err, "danger");
-  //     }
-  //   );
-  // }
 
   async getdoctor() {
     const doctorId = localStorage.getItem('docid');
@@ -345,34 +311,7 @@ export class VaccineAlertPage implements OnInit {
       .then(res => console.log('Launched dialer!', res))
       .catch(err => console.log('Error launching dialer', err));
   }
-  // checkSmsPermission(): any {
-  //   this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS)
-  //     .then((success) => {
-  //       if (success.hasPermission) {
-  //         return true;
-  //       } else {
-  //         return false;
-  //       }
-  //     },
-  //       err => {
-  //         this.requestSmsPermissions();
-  //       }
-  //     );
-  // }
-  // requestSmsPermissions() {
-  //   this.androidPermissions.requestPermissions(this.androidPermissions.PERMISSION.SEND_SMS)
-  //     .then((success) => {
-  //       if (success.hasPermission) {
-  //         // return true;
-  //       } else {
-  //         // return false;
-  //       }
-  //     },
-  //       err => {
-  //         this.toastService.create('Error: ' + err.message)
-  //       }
-  //     );
-  // }
+
   async sendMsgsThroughList() {
     let listMessages: any;
     const loading = await this.loadingController.create({
@@ -452,19 +391,13 @@ export class VaccineAlertPage implements OnInit {
   }
 
   onDateChange(event: any) {
-    this.selectedDate = event.detail.value;
+    this.selectedDate = event.value;
     console.log('Selected Date:', this.selectedDate);
     this.getAlerts(this.selectedDate);
   }
+
   getAlerts(date: string) {
     const formattedDate = this.formatDateToString(date);
-
     this.getChlid(0, formattedDate);
   }
-
-  async openDatePicker() {
-    const dateTimeElement = document.querySelector('ion-datetime');
-    await dateTimeElement.open();
-  }
-
 }
