@@ -56,7 +56,10 @@ export class AddfollowupPage implements OnInit {
     this.fg.value.DoctorId = this.doctorId;
     this.fg.value.ChildId = this.route.snapshot.paramMap.get('id');
     if (this.fg.value.NextVisitDate) {
-      this.fg.value.NextVisitDate = this.fg.value.NextVisitDate;
+      // Append 00:00:00 to NextVisitDate
+      this.fg.value.NextVisitDate = moment(this.fg.value.NextVisitDate)
+        .set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
+        .format('YYYY-MM-DDTHH:mm:ss');
     }
 
     const loading = await this.loadingController.create({
