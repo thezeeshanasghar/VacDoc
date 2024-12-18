@@ -1,9 +1,5 @@
 <ion-content class="ion-padding">
   <ion-toolbar>
-    <!-- <ion-buttons slot="start">
-      <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button>
-      <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button>
-    </ion-buttons> -->
     <ion-buttons slot="end">
       <ion-item (click)="picker.open()">
         <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChange($event)">
@@ -12,26 +8,6 @@
       </ion-item>
     </ion-buttons>
   </ion-toolbar>
-  <!-- <div class="action-buttons">
-    <ion-button 
-      fill="outline" 
-      [disabled]="birthdayChild?.length === 0" 
-      (click)="sendSMS(birthdayChild)">
-      SMS
-    </ion-button>
-    <ion-button 
-      fill="outline" 
-      [disabled]="birthdayChild?.length === 0" 
-      (click)="sendEmails()">
-      Email
-    </ion-button>
-    <ion-button 
-      fill="outline" 
-      [disabled]="birthdayChild?.length === 0" 
-      (click)="downloadCSV()">
-      Sheet
-    </ion-button>
-  </div> -->
   <div *ngIf="birthdayChild.length === 0" class="no-birthday-alert">
     <h1 style="color: red;">No birthday alert for today.</h1>
   </div>
@@ -40,17 +16,10 @@
       <ion-col>
         <ion-item *ngFor="let child of birthdayChild">
           <ion-label>{{ child.Name }}</ion-label>
-          <!-- <ion-icon 
-            slot="end" 
-            color="primary" 
-            name="call" 
-            (click)="callFunction(child.MobileNumber)">
-          </ion-icon> -->
           <ion-icon 
             slot="end" 
             color="primary" 
             name="mail" 
-            
             >
           </ion-icon>
           <ion-icon 

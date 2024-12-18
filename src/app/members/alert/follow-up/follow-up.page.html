@@ -1,9 +1,5 @@
 <ion-content class="ion-padding">
   <ion-toolbar>
-    <!-- <ion-buttons slot="start">
-      <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button>
-      <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button>
-    </ion-buttons> -->
     <ion-buttons slot="end">
       <ion-item (click)="picker.open()">
         <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChange($event)">
@@ -12,23 +8,6 @@
       </ion-item>
     </ion-buttons>
   </ion-toolbar>
-  <!-- <ion-segment>
-    <ion-segment-button (click)="getFollowupChild(-5)">
-      <ion-label>Last 5 Days</ion-label>
-    </ion-segment-button>
-    <ion-segment-button (click)="getFollowupChild(0)" checked>
-      <ion-label>Today</ion-label>
-    </ion-segment-button>
-    <ion-segment-button (click)="getFollowupChild(5)">
-      <ion-label>Next 5 Days</ion-label>
-    </ion-segment-button>
-  </ion-segment> -->
-
-  <!-- <ion-button fill="outline" [disabled]="followUpChild == 0" (click)="sendSMS(followUpChild)">SMS</ion-button> -->
-  <!-- <ion-button fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button> -->
-  <!-- <ion-button fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button> -->
-
-
     <h1 *ngIf="followUpChild == 0" style="color: red;">No alert for today.</h1>
     <ion-grid >
       <ion-row>
@@ -47,5 +26,4 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-  
 </ion-content>

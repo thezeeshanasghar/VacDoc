@@ -4,12 +4,7 @@ import { ToastService } from "src/app/shared/toast.service";
 import { environment } from "src/environments/environment";
 import { Storage } from "@ionic/storage";
 import { BirthdayService } from "src/app/services/birthday.service";
-import { AndroidPermissions } from "@ionic-native/android-permissions/ngx";
-import { TitleCasePipe } from '@angular/common';
-import { CallNumber } from '@ionic-native/call-number/ngx';
-import { SMS } from '@ionic-native/sms/ngx';
 import { Platform } from '@ionic/angular';
-
 @Component({
   selector: 'app-birthday-alert',
   templateUrl: './birthday-alert.page.html',
@@ -17,39 +12,24 @@ import { Platform } from '@ionic/angular';
 export class BirthdayAlertPage implements OnInit {
   selectedDate: string = new Date().toISOString(); 
   formattedDate: string;
-  numOfDays: number;
   Childs: string;
   doctorId: any;
-  Messages:any = [];
-  SMSKey: any;
   birthdayChild: any=[];
   constructor(
     public loadingController: LoadingController,
     private birthdayService: BirthdayService,
     private toastService: ToastService,
     private storage: Storage,
-    private androidPermissions: AndroidPermissions,
-    private titlecasePipe: TitleCasePipe,
-    private sms: SMS,
-     public platform: Platform,
-    private callNumber: CallNumber
+    public platform: Platform,
   ) { }
-
   ngOnInit() {
      this.storage.get(environment.DOCTOR_Id).then(val => {
           this.doctorId = val;
         });
-        // this.storage.get(environment.SMS).then(val => {
-        //   this.SMSKey = val;
-        // });
-        //  this.storage.get(environment.CLINIC_Id).then(clinicId => {
-        //   this.clinicId = clinicId;
-        // });
-        this.storage.get(environment.MESSAGES).then(messages=> {this.Messages = messages});
-        this.getBirthdayChild(this.numOfDays,this.selectedDate);
+        this.getBirthdayChild(this.selectedDate);
   }
-  async getBirthdayChild(numOfDays: number, formattedDate: string): Promise<void> {
-    this.numOfDays = numOfDays;
+  async getBirthdayChild( formattedDate: string): Promise<void> {
+
     this.formattedDate = formattedDate;
   
    
@@ -75,10 +55,6 @@ export class BirthdayAlertPage implements OnInit {
       }
     );
   }
-  
-  clinicId(formattedDate: string, numOfDays: number, clinicId: any) {
-    throw new Error('Method not implemented.');
-  }
   formatDateToString(date: string | Date): string {
     const d = new Date(date);
     const year = d.getFullYear();
@@ -94,57 +70,28 @@ export class BirthdayAlertPage implements OnInit {
   getAlerts(date: string) {
     const formattedDate = this.formatDateToString(date);
 
-    this.getBirthdayChild(0, formattedDate);
+    this.getBirthdayChild(formattedDate);
   }
-
   async openDatePicker() {
     const dateTimeElement = document.querySelector('ion-datetime');
     await dateTimeElement.open();
   }
-  // callFunction(mobileNumber: string) {
-  //   this.callNumber.callNumber(mobileNumber, true)
-  //     .then(res => console.log('Launched dialer!', res))
-  //     .catch(err => console.log('Error launching dialer', err));
-  // }
-  // sendSMS(child: any) {
-  //   this.sms.send(child.MobileNumber, this.SMSKey)
-  //     .then(res => console.log('SMS sent!', res))
-  //     .catch(err => console.log('Error sending SMS', err));
-  // }
-  // sendEmail() {
-  //   // this.email.sendEmail(child.Email, this.SMSKey)
-  //   //   .then(res => console.log('Email sent!', res))
-  //   //   .catch(err => console.log('Error sending Email', err));
-  // }
-  // sendEmails() {}
-  // downloadCSV() {
-  //   // this.csv.downloadCSV(child.Email, this.SMSKey)
-  //   //   .then(res => console.log('CSV downloaded!', res))
-  //   //   .catch(err => console.log('Error downloading CSV', err));
-  // }
   openWhatsApp(mobileNumber: string, childName: string, birthDate: string) {
-    console.log('Child Name:', childName); // Debugging line
-    console.log('Birth Date:', birthDate); // Debugging line
-  
-    // Prevent invalid or empty numbers
+    console.log('Child Name:', childName); 
+    console.log('Birth Date:', birthDate); 
     if (mobileNumber.trim() === '') {
       alert('Invalid mobile number. Please provide a valid number.');
       return;
     }
-  
-    // Create a Happy Birthday message
     const message = encodeURIComponent(
       `🎉 Happy Birthday, ${childName}! 🎂\n` +
       `Wishing you a day filled with joy, laughter, and special moments.\n` +
       `Stay happy and healthy! 🎈\n\n` +
       `Best wishes,\n\n` 
     );
-  
-
     const formattedPatientNumber = mobileNumber.startsWith('+92')
       ? mobileNumber
       : `+92${mobileNumber.replace(/^0/, '')}`;
-
     let whatsappUrl: string;
     if (this.platform.is('android') || this.platform.is('ios')) {
       whatsappUrl = `whatsapp://send?phone=${formattedPatientNumber}&text=${message}`;
@@ -153,5 +100,4 @@ export class BirthdayAlertPage implements OnInit {
     }
     window.open(whatsappUrl, '_system');
   }
-  
 }
