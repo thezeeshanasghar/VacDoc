@@ -15,8 +15,8 @@ export class FollowUpPage implements OnInit {
   doctorId: any;
   followUpChild: any;
   numOfDays: number = 0;
-  clinicId:any;
-  selectedDate: string = new Date().toISOString(); 
+  clinicId: any;
+  selectedDate: string = new Date().toISOString();
   formattedDate: string;
   constructor(
     public loadingController: LoadingController,
@@ -24,13 +24,15 @@ export class FollowUpPage implements OnInit {
     private toastService: ToastService,
     private storage: Storage,
     public platform: Platform,
-  ) {}
+  ) { }
+  
   ngOnInit() {
-     this.storage.get(environment.CLINIC_Id).then(clinicId => {
+    this.storage.get(environment.CLINIC_Id).then(clinicId => {
       this.clinicId = clinicId;
     });
-    this.getFollowupChild(this.numOfDays,this.selectedDate);
+    this.getFollowupChild(this.numOfDays, this.selectedDate);
   }
+  
   async getFollowupChild(numOfDays: number, formattedDate: string) {
     this.numOfDays = numOfDays;
     const loading = await this.loadingController.create({
@@ -38,7 +40,7 @@ export class FollowUpPage implements OnInit {
     });
     await loading.present();
     await this.followupService
-      .getFollowupChild(this.numOfDays, this.clinicId,formattedDate)
+      .getFollowupChild(this.numOfDays, this.clinicId, formattedDate)
       .subscribe(
         res => {
           if (res.IsSuccess) {
@@ -55,19 +57,21 @@ export class FollowUpPage implements OnInit {
         }
       );
   }
+
   formatDateToString(date: string | Date): string {
     const d = new Date(date);
     const year = d.getFullYear();
-    const month = ('0' + (d.getMonth() + 1)).slice(-2);  
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);
     const day = ('0' + d.getDate()).slice(-2);
     return `${year}-${month}-${day}`;
   }
+
   onDateChange(event: any) {
     this.selectedDate = event.value;
     console.log('Selected Date:', this.selectedDate);
     this.getFollowups(this.selectedDate);
   }
-  
+
   async openDatePicker() {
     const dateTimeElement = document.querySelector('ion-datetime');
     await dateTimeElement.open();
@@ -77,28 +81,28 @@ export class FollowUpPage implements OnInit {
 
     this.getFollowupChild(0, formattedDate);
   }
-openWhatsApp(mobileNumber: string, childName: string, nextVisitDate: string) {
-  console.log('Child Name:', childName); 
-  console.log('Next Visit Date:', nextVisitDate); 
-  if (mobileNumber.trim() === '') {
-    alert('Invalid mobile number. Please provide a valid number.');
-    return;
+  openWhatsApp(mobileNumber: string, childName: string, nextVisitDate: string) {
+    console.log('Child Name:', childName);
+    console.log('Next Visit Date:', nextVisitDate);
+    if (mobileNumber.trim() === '') {
+      alert('Invalid mobile number. Please provide a valid number.');
+      return;
+    }
+    const message = encodeURIComponent(
+      `Reminder: Follow-up visit for ${childName} is scheduled on ${nextVisitDate}.\n` +
+      `Please confirm your appointment. Thanks!\natta rehman, Baby Medics\n` +
+      `Phone Number:03145553423\n` +
+      `Login and check your record at https://vaccinationcentre.com`
+    );
+    const formattedPatientNumber = mobileNumber.startsWith('+92')
+      ? mobileNumber
+      : `+92${mobileNumber.replace(/^0/, '')}`;
+    let whatsappUrl: string;
+    if (this.platform.is('android') || this.platform.is('ios')) {
+      whatsappUrl = `whatsapp://send?phone=${formattedPatientNumber}&text=${message}`;
+    } else {
+      whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPatientNumber}&text=${message}`;
+    }
+    window.open(whatsappUrl, '_system');
   }
-  const message = encodeURIComponent(
-    `Reminder: Follow-up visit for ${childName} is scheduled on ${nextVisitDate}.\n` +
-    `Please confirm your appointment. Thanks!\natta rehman, Baby Medics\n` +
-    `Phone Number:03145553423\n` +
-    `Login and check your record at https://vaccinationcentre.com`
-  );
-  const formattedPatientNumber = mobileNumber.startsWith('+92')
-    ? mobileNumber
-    : `+92${mobileNumber.replace(/^0/, '')}`;
-  let whatsappUrl: string;
-  if (this.platform.is('android') || this.platform.is('ios')) {
-    whatsappUrl = `whatsapp://send?phone=${formattedPatientNumber}&text=${message}`;
-  } else {
-    whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPatientNumber}&text=${message}`;
-  }
-  window.open(whatsappUrl, '_system');
-}
 }
