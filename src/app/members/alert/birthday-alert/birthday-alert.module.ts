@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
-
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
 import { BirthdayAlertPage } from './birthday-alert.page';
 
 const routes: Routes = [
@@ -19,6 +21,9 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
+    MatDatepickerModule,
+    MatInputModule,
+    MatNativeDateModule,
     ReactiveFormsModule
   ],
   declarations: [BirthdayAlertPage]

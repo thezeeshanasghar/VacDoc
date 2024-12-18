@@ -14,7 +14,7 @@ export class BirthdayService extends BaseService {
   constructor(protected http: HttpClient) {
     super(http);
   }
-  getBirthdayAlert(date: String ,numOfDays: number, Id: any): Observable<any> {
+  getBirthdayAlert(date: String , Id: any): Observable<any> {
     const url = `${this.API_ALERT}birthday/${Id}?inputDate=${date}`;
     console.log('API URL:', url);
     return this.http.get(url, this.httpOptions).pipe(
