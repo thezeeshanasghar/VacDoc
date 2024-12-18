@@ -58,8 +58,6 @@ export class BirthdayAlertPage implements OnInit {
       spinner: "circles", 
     });
     await loading.present();
-  
-    
     this.birthdayService.getBirthdayAlert(this.formattedDate, this.doctorId).subscribe(
       async (res) => {
         await loading.dismiss(); 
