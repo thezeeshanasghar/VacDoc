@@ -53,4 +53,16 @@ export class FollowupService extends BaseService {
       catchError(this.handleError)
     );
   }
+  updateFollowupById(id: number, data: any): Observable<any> {
+    const url = `${this.API_ALERT}followup/${id}`;
+    return this.http
+      .put(url, data, this.httpOptions)
+      .pipe(catchError(this.handleError));
+  }  
+  deleteFollowupById(id: number): Observable<any> {
+    const url = `${this.API_ALERT}followup/${id}`;
+    return this.http
+      .delete(url, this.httpOptions)
+      .pipe(catchError(this.handleError));
+  }  
 }
