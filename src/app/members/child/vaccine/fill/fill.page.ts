@@ -141,6 +141,14 @@ export class FillPage implements OnInit {
     this.fg.value.DiseaseYear = moment(this.fg.value.DiseaseYear, 'YYYY-MM-DD').format('YYYY');
     let givenDateOfInjection: Date = this.fg.value.GivenDate;
     let scheduleDate: Date = this.addDays(givenDateOfInjection, this.MinGap, this.vaccineData.DoseId);
+    
+    // New check: if scheduleDate is greater than today, do not update
+    if (scheduleDate > new Date() && scheduleDate.toDateString() !== new Date().toDateString()) {
+      this.toastService.create("Schedule date is in the future. Cannot update injection.", 'danger');
+      loading.dismiss();
+      return;
+    }
+
     console.log("givenDateOfInjection", givenDateOfInjection);
     console.log("sdate ", this.addDays(givenDateOfInjection, this.MinGap, this.vaccineData.DoseId));
     this.fg.value.GivenDate = moment(this.fg.value.GivenDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
