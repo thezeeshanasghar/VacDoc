@@ -123,13 +123,20 @@ export class BulkPage implements OnInit {
     });
 
     await loading.present();
+
+    const givenDate = new Date(this.fg.value.GivenDate);
+    if (givenDate.toDateString() !== new Date().toDateString()) {
+      this.toastService.create("Given date is not today. Cannot update injection.", 'danger');
+      loading.dismiss();
+      return;
+    }
+
     await this.bulkService.updateVaccine(data).subscribe(
       res => {
         if (res.IsSuccess) {
           this.toastService.create("Succfully Update");
           this.validationOfInfiniteVaccine();
           loading.dismiss();
-
         } else {
           this.toastService.create("Error: failed to fill vaccine");
           loading.dismiss();
