@@ -12,8 +12,7 @@ const routes: Routes = [
     path: '',
     component: FollowupPage
   },
-  { path: 'addfollowup', loadChildren: './addfollowup/addfollowup.module#AddfollowupPageModule' },
-  { path: 'editfollowup/:id', loadChildren: './editfollowup/editfollowup.module#EditfollowupPageModule' },
+  { path: 'addfollowup', loadChildren: () => import('./addfollowup/addfollowup.module').then(m => m.AddfollowupPageModule) }
 ];
 
 @NgModule({

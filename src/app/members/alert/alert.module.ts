@@ -13,9 +13,18 @@ const routes: Routes = [
     component: AlertPage,
     children: [
       { path: '', redirectTo: 'vaccine-alert', pathMatch: 'full' },
-      { path: 'follow-up', loadChildren: './follow-up/follow-up.module#FollowUpPageModule' },
-      { path: 'vaccine-alert', loadChildren: './vaccine-alert/vaccine-alert.module#VaccineAlertPageModule' },
-      { path: 'birthday-alert', loadChildren: './birthday-alert/birthday-alert.module#BirthdayAlertPageModule'}
+      { 
+        path: 'follow-up', 
+        loadChildren: () => import('./follow-up/follow-up.module').then(m => m.FollowUpPageModule) 
+      },
+      { 
+        path: 'vaccine-alert', 
+        loadChildren: () => import('./vaccine-alert/vaccine-alert.module').then(m => m.VaccineAlertPageModule) 
+      },
+      { 
+        path: 'birthday-alert', 
+        loadChildren: () => import('./birthday-alert/birthday-alert.module').then(m => m.BirthdayAlertPageModule)
+      }
     ]
   }
 ];
