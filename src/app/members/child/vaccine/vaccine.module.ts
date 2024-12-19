@@ -16,10 +16,10 @@ const routes: Routes = [
     path: '',
     component: VaccinePage
   },
-  { path: 'fill/:id', loadChildren: './fill/fill.module#FillPageModule' },
-  { path: 'bulk/:childId', loadChildren: './bulk/bulk.module#BulkPageModule' },
-  { path: 'bulkinvoice/:childId', loadChildren: './bulkinvoice/bulkinvoice.module#BulkInvoicePageModule' },
-  { path: "edit", loadChildren: "./edit/scheduleedit.module#ChildSceduleEditPageModule" },
+  { path: 'fill/:id', loadChildren: () => import('./fill/fill.module').then(m => m.FillPageModule) },
+  { path: 'bulk/:childId', loadChildren: () => import('./bulk/bulk.module').then(m => m.BulkPageModule) },
+  { path: 'bulkinvoice/:childId', loadChildren: () => import('./bulkinvoice/bulkinvoice.module').then(m => m.BulkInvoicePageModule) },
+  { path: "edit", loadChildren: () => import('./edit/scheduleedit.module').then(m => m.ChildSceduleEditPageModule) },
 ];
 
 @NgModule({

@@ -11,8 +11,6 @@ import { File } from '@ionic-native/file/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { FileTransfer} from '@ionic-native/file-transfer/ngx';
 
-//import { FileUploadModule } from 'ng2-file-upload';
-
 const routes: Routes = [
   {
     path: '',

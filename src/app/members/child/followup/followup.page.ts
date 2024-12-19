@@ -8,8 +8,7 @@ import { LoadingController } from '@ionic/angular';
 import { AlertService } from 'src/app/shared/alert.service';
 @Component({
   selector: 'app-followup',
-  templateUrl: './followup.page.html',
-  styleUrls: ['./followup.page.scss'],
+  templateUrl: './followup.page.html'
 })
 export class FollowupPage implements OnInit {
 

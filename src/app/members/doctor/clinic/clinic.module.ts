@@ -12,9 +12,14 @@ const routes: Routes = [
     path: '',
     component: ClinicPage
   },
-  { path: 'add', loadChildren: 'src/app/members/doctor/clinic/add/add.module#AddPageModule' },
-  { path: 'edit/:id', loadChildren: 'src/app/members/doctor/clinic/edit/edit.module#EditPageModule' }
-
+  { 
+    path: 'add', 
+    loadChildren: () => import('./add/add.module').then(m => m.AddPageModule) 
+  },
+  { 
+    path: 'edit/:id', 
+    loadChildren: () => import('./edit/edit.module').then(m => m.EditPageModule) 
+  }
 ];
 
 @NgModule({
