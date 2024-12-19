@@ -15,7 +15,6 @@
         <div class="icons" style="display: flex; justify-content: space-between; align-items: center;">
         <ion-card-title>{{child.Child.Name}}</ion-card-title>
         <ion-item class="ion-justify-content-center">
-          <ion-icon slot="end" color="primary" name="create" routerLink="/members/child/followup/{{childId}}/editfollowup/{{child.Id}}" style="font-size: 25px;"></ion-icon>
           <ion-icon slot="end" color="primary" name="trash" (click)="alertforDeleteFollowup(child.Id)" style="font-size: 25px;"></ion-icon>
         </ion-item> 
         </div>
