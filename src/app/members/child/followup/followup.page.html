@@ -1,11 +1,9 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/members/dashboard"></ion-back-button>
+      <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title>Follow up</ion-title>
-    <!-- <ion-icon slot="end" size="large" name="add" color="light"
-      routerLink="/members/child/followup/{{childId}}/addfollowup"></ion-icon> -->
   </ion-toolbar>
 </ion-header>
 <ion-content padding>
@@ -15,7 +13,6 @@
         <div class="icons" style="display: flex; justify-content: space-between; align-items: center;">
         <ion-card-title>{{child.Child.Name}}</ion-card-title>
         <ion-item class="ion-justify-content-center">
-          <ion-icon slot="end" color="primary" name="create" routerLink="/members/child/followup/{{childId}}/editfollowup/{{child.Id}}" style="font-size: 25px;"></ion-icon>
           <ion-icon slot="end" color="primary" name="trash" (click)="alertforDeleteFollowup(child.Id)" style="font-size: 25px;"></ion-icon>
         </ion-item> 
         </div>
@@ -33,9 +30,5 @@
     <ion-fab-button routerLink="edit" color="primary">
       <ion-icon name="add" color="light" routerLink="/members/child/followup/{{childId}}/addfollowup"></ion-icon>
     </ion-fab-button>
-    <!-- <br> -->
-    <!-- <ion-fab-button (click)="onSubmit()" color="primary">
-      <ion-icon name="checkmark" color=""></ion-icon>
-    </ion-fab-button> -->
   </ion-fab>
 </ion-content>

@@ -14,7 +14,7 @@
         <ion-col>
           <ion-item *ngFor="let child of followUpChild">
             <ion-label >{{child.Child.Name}}</ion-label>
-            <ion-icon slot="end" color="primary" name="mail"></ion-icon>
+            <ion-icon slot="end" color="primary" name="mail" style="cursor: pointer;"></ion-icon>
             <ion-icon 
             slot="end" 
             [color]="child.isMessageSent ? 'primary' : 'success'" 

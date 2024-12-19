@@ -36,9 +36,9 @@ export class BirthdayAlertPage implements OnInit {
     await loading.present();
     this.birthdayService.getBirthdayAlert(this.formattedDate, this.doctorId).subscribe(
       async (res) => {
-        await loading.dismiss();
         if (res) {
           this.birthdayChild = res.ResponseData || [];
+          await loading.dismiss();
         } else {
           this.toastService.create(res.Message || "An error occurred.", "danger");
         }
