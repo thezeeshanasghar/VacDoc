@@ -145,6 +145,19 @@ export class FillPage implements OnInit {
 
     await loading.present();
 
+    const givenDate = new Date(this.fg.value.GivenDate);
+    const currentDate = new Date();
+    
+    // Reset time portions to compare just the dates
+    givenDate.setHours(0, 0, 0, 0);
+    currentDate.setHours(0, 0, 0, 0);
+
+    if (givenDate > currentDate) {
+      this.toastService.create("Given date is not today. Cannot update injection.", 'danger');
+      loading.dismiss();
+      return;
+    }
+
     // Check if the selected brand is "OHF"
     if (this.fg.value.BrandId === 'OHF') {
       this.fg.value.BrandId = null; // Set BrandId to null if the brand is "OHF"
@@ -156,13 +169,6 @@ export class FillPage implements OnInit {
     this.fg.value.DiseaseYear = moment(this.fg.value.DiseaseYear, 'YYYY-MM-DD').format('YYYY');
     let givenDateOfInjection: Date = this.fg.value.GivenDate;
     let scheduleDate: Date = this.addDays(givenDateOfInjection, this.MinGap, this.vaccineData.DoseId);
-
-    const givenDate = new Date(this.fg.value.GivenDate);
-    if (givenDate.toDateString() > new Date().toDateString()) {
-      this.toastService.create("Given date is not today. Cannot update injection.", 'danger');
-      loading.dismiss();
-      return;
-    }
 
     console.log("givenDateOfInjection", givenDateOfInjection);
     console.log("sdate ", this.addDays(givenDateOfInjection, this.MinGap, this.vaccineData.DoseId));

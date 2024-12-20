@@ -125,7 +125,13 @@ export class BulkPage implements OnInit {
     await loading.present();
 
     const givenDate = new Date(this.fg.value.GivenDate);
-    if (givenDate.toDateString() > new Date().toDateString()) {
+    const currentDate = new Date();
+    
+    // Reset time portions to compare just the dates
+    givenDate.setHours(0, 0, 0, 0);
+    currentDate.setHours(0, 0, 0, 0);
+
+    if (givenDate > currentDate) {
       this.toastService.create("Given date is not today. Cannot update injection.", 'danger');
       loading.dismiss();
       return;
