@@ -31,8 +31,10 @@ export class FillPage implements OnInit {
   birthYear: any;
   MinAge: any;
   MinGap: any;
-
+  todayDate: string = new Date().toISOString().split('T')[0];
   fgAddData: FormGroup;
+  scheduleDate: string = '';  // Bind this to the ion-datetime value
+  isScheduleDateInvalid: boolean = false;
 
   constructor(
     public loadingController: LoadingController,
@@ -57,11 +59,12 @@ export class FillPage implements OnInit {
       this.vaccinesData = val;
       this.addOHFToBrands(); // Add OHF to the list of brands
     });
-
+   
     this.fg = this.formBuilder.group({
       'DoctorId': [''],
       'Id': [null],
       'IsDone': [null],
+      ScheduleDate: [''],
       Weight: new FormControl(''),
       Height: new FormControl(''),
       Circle: new FormControl(''),
@@ -81,11 +84,17 @@ export class FillPage implements OnInit {
       'ChildId': [null],
       'Date': [null]
     });
-
     this.getVaccination();
     this.todaydate = new Date();
     this.todaydate = moment(this.todaydate, 'DD-MM-YYYY').format("YYYY-MM-DD");
   }
+  // checkDate() {
+  //   const today = new Date();
+  //   const selectedDate = new Date(this.scheduleDate);
+
+  //   // Compare both year, month, and day
+  //   this.isScheduleDateInvalid = Date > today;
+  // }
 
   async getVaccination() {
     const loading = await this.loadingController.create({
@@ -104,6 +113,7 @@ export class FillPage implements OnInit {
           this.brandName = this.vaccineData.Brands;
           this.Date = this.vaccineData.Date;
           this.Date = moment(this.Date, 'DD-MM-YYYY').format('YYYY-MM-DD');
+          // this.isScheduleDateValid(this.Date);
           this.fg.controls.GivenDate.setValue(this.Date);
           var brand = this.vaccinesData.filter(x => x.vaccineId == res.ResponseData.Dose.VaccineId);
           if (brand[0].brandId != null) {
@@ -122,7 +132,12 @@ export class FillPage implements OnInit {
       }
     );
   }
-
+  isScheduleDateValid(): boolean {
+    const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+    const givenDate = this.fg.get('GivenDate').value; // Get the GivenDate value from the form
+    
+    return givenDate > today; // Return true if the GivenDate is greater than today's date
+  }  
   async fillVaccine() {
     const loading = await this.loadingController.create({
       message: 'Updating'

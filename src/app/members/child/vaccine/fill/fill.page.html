@@ -113,6 +113,6 @@
 
     <!-- <ion-button (click)="fillVaccine()">Submit</ion-button> -->
 
-    <ion-button [disabled]="!isBrandFilled()" (click)="fillVaccine()">Submit</ion-button>
+    <ion-button [disabled]="!isBrandFilled() || isScheduleDateValid()" (click)="fillVaccine()">Submit</ion-button>
   </form>
 </ion-content>
