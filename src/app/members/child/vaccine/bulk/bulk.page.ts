@@ -125,7 +125,13 @@ export class BulkPage implements OnInit {
     await loading.present();
 
     const givenDate = new Date(this.fg.value.GivenDate);
-    if (givenDate.toDateString() > new Date().toDateString()) {
+    const currentDate = new Date();
+
+    // Reset time portions to compare just the dates
+    givenDate.setHours(0, 0, 0, 0);
+    currentDate.setHours(0, 0, 0, 0);
+
+    if (givenDate > currentDate) {
       this.toastService.create("Given date is not today. Cannot update injection.", 'danger');
       loading.dismiss();
       return;
@@ -210,14 +216,14 @@ export class BulkPage implements OnInit {
   addDays(date, days, doseId) {
     var myDate = new Date(date);
     if (doseId === 30 && days === 1095) {
-        myDate.setFullYear(myDate.getFullYear() + 3);
+      myDate.setFullYear(myDate.getFullYear() + 3);
     } else {
-        myDate.setDate(myDate.getDate() + days);
+      myDate.setDate(myDate.getDate() + days);
     }
 
     // Handle leap year for future vaccines
     if (myDate.getMonth() === 1 && myDate.getDate() === 29 && !this.isLeapYear(myDate.getFullYear())) {
-        myDate.setDate(28); // Adjust to February 28 if not a leap year
+      myDate.setDate(28); // Adjust to February 28 if not a leap year
     }
 
     return myDate;
@@ -235,6 +241,6 @@ export class BulkPage implements OnInit {
     }
     return true;
   }
-  
-  
+
+
 }
