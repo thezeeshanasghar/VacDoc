@@ -6,44 +6,37 @@
     <ion-title>Vaccinations</ion-title>
   </ion-toolbar>
 </ion-header>
-
 <ion-toolbar color="primary">
   <ion-title>
     <h3 *ngIf="ChildName" style="text-align: center; margin-right: 8rem;">
       {{ChildName}}
     </h3>
   </ion-title>
-
   <ion-buttons slot="end" style="font-size: 25px; margin-right: 25px;">
     <ion-icon (click)="printdata()" style="cursor: pointer" name="print-outline" size="medium"></ion-icon>
   </ion-buttons>
 </ion-toolbar>
-
 <ion-content class="ion-padding">
   <div *ngFor="let item of dataGrouping | keyvalue; let i=index">
     <ion-card style="margin-bottom: -7px;">
       <ion-card-content>
         <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
           <span>{{item.key | date}}</span>
-
           <ion-img *ngIf="checkVaccineIsDon(item.value)" style="height: 20px; display: inline-block;"
             src="../../assets/injectionEmpty.png" routerLink="/members/child/vaccine/{{childId}}/bulk/{{item.key}}">
           </ion-img>
           <ion-img *ngIf="!checkVaccineIsDon(item.value)" style="height: 20px; display: inline-block;" (click) = "unfillbulk(item)"
             src="../../assets/injectionFilled.png">
           </ion-img>
-
           <ion-icon style="margin-right: 10px" *ngIf="!checkVaccineIsDon(item.value)" size="small"
           routerLink="/members/child/vaccine/{{childId}}/bulkinvoice/{{item.key}}" color="primary"
             name="document-text-outline">
           </ion-icon>
-
           <ion-icon color="primary" name="calendar" (click)="picker.open()" size="small">
             <input [matDatepicker]="picker" value="{{item.key}}"
               (dateChange)="updateBulkDate($event, item.value[0].Id)">
             <mat-datepicker #picker></mat-datepicker>
           </ion-icon>
-
         </div>
         <div *ngFor="let v of item.value" style="margin-bottom: -10px;">
           <ion-item lines="none" style="display: flex; align-items: center; margin: -2px 0; padding: -5px 0;">
@@ -86,13 +79,11 @@
               (click)="handleUnSkipClick($event, v.Id, v.Dose.Name)" style="font-size: 10px; height: 20px;">
               Unskip
             </ion-button>
-
           </ion-item>
         </div>
       </ion-card-content>
     </ion-card>
   </div>
-
   <ion-fab horizontal="end" vertical="bottom" slot="fixed" style="margin-right: 10px;">
     <ion-fab-button routerLink="edit">
       <ion-icon name="Add"></ion-icon>
