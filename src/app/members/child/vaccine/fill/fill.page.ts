@@ -45,7 +45,7 @@ export class FillPage implements OnInit {
     private toastService: ToastService,
     private router: Router,
     private ref: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.storage.get(environment.DOCTOR_Id).then((val) => {
@@ -59,7 +59,7 @@ export class FillPage implements OnInit {
       this.vaccinesData = val;
       this.addOHFToBrands(); // Add OHF to the list of brands
     });
-   
+
     this.fg = this.formBuilder.group({
       'DoctorId': [''],
       'Id': [null],
@@ -135,16 +135,16 @@ export class FillPage implements OnInit {
   isScheduleDateValid(): boolean {
     const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
     const givenDate = this.fg.get('GivenDate').value; // Get the GivenDate value from the form
-    
+
     return givenDate > today; // Return true if the GivenDate is greater than today's date
-  }  
+  }
   async fillVaccine() {
     const loading = await this.loadingController.create({
       message: 'Updating'
     });
 
     await loading.present();
-    
+
     // Check if the selected brand is "OHF"
     if (this.fg.value.BrandId === 'OHF') {
       this.fg.value.BrandId = null; // Set BrandId to null if the brand is "OHF"
@@ -156,9 +156,9 @@ export class FillPage implements OnInit {
     this.fg.value.DiseaseYear = moment(this.fg.value.DiseaseYear, 'YYYY-MM-DD').format('YYYY');
     let givenDateOfInjection: Date = this.fg.value.GivenDate;
     let scheduleDate: Date = this.addDays(givenDateOfInjection, this.MinGap, this.vaccineData.DoseId);
-    
-     const givenDate = new Date(this.fg.value.GivenDate);
-     if (givenDate.toDateString() !== new Date().toDateString()) {
+
+    const givenDate = new Date(this.fg.value.GivenDate);
+    if (givenDate.toDateString() > new Date().toDateString()) {
       this.toastService.create("Given date is not today. Cannot update injection.", 'danger');
       loading.dismiss();
       return;
@@ -225,9 +225,9 @@ export class FillPage implements OnInit {
   addDays(date, days, doseId) {
     var myDate = new Date(date);
     if (doseId === 30 && days === 1095) {
-        myDate.setFullYear(myDate.getFullYear() + 3);
+      myDate.setFullYear(myDate.getFullYear() + 3);
     } else {
-        myDate.setDate(myDate.getDate() + days);
+      myDate.setDate(myDate.getDate() + days);
     }
     return myDate;
   }
@@ -239,7 +239,7 @@ export class FillPage implements OnInit {
   addOHFToBrands() {
     const OHFBrand = { brandId: 'OHF', name: 'OHF' };
     const existingOHF = this.vaccinesData.find(brand => brand.brandId === 'OHF');
-    
+
     if (!existingOHF) {
       this.vaccinesData.push(OHFBrand);
     }
