@@ -12,8 +12,8 @@ const routes: Routes = [
     path: '',
     component: SchedulePage
   },
-  { path: "edit", loadChildren: "./edit/scheduleeditdoctor.module#SceduleEditPageModule" },
-  { path: "addschedule", loadChildren: "./addschedule/addschedule.module#AddschedulePageModule" }
+  { path: "edit", loadChildren: () => import('./edit/scheduleeditdoctor.module').then(m => m.SceduleEditPageModule) },
+  { path: "addschedule", loadChildren: () => import('./addschedule/addschedule.module').then(m => m.AddschedulePageModule) }
 ];
 
 @NgModule({

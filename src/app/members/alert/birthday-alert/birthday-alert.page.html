@@ -9,7 +9,7 @@
     </ion-buttons>
   </ion-toolbar>
   <div *ngIf="birthdayChild.length === 0" class="no-birthday-alert">
-    <h1 style="color: red;">No birthday alert for today.</h1>
+    <h1 style="color: red">No birthday alert for today.</h1>
   </div>
   <ion-grid *ngIf="birthdayChild.length > 0">
     <ion-row>
@@ -21,14 +21,14 @@
             color="primary" 
             name="mail" 
             >
+          <ion-icon
+            slot="end"
+            [color]="child.isMessageSent ? 'primary' : 'success'"
+            name="logo-whatsapp"
+            (click)="openWhatsApp(child.User.MobileNumber, child.Name, child.DOB)"
+            style="cursor: pointer"
+          >
           </ion-icon>
-          <ion-icon 
-          slot="end" 
-          [color]="child.isMessageSent ? 'primary' : 'success'" 
-          name="logo-whatsapp" 
-          (click)="openWhatsApp(child.User.MobileNumber, child.Name, child.DOB)" 
-          style="cursor: pointer;">
-        </ion-icon>
         </ion-item>
       </ion-col>
     </ion-row>

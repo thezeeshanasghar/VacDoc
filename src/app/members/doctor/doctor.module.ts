@@ -2,9 +2,7 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Routes, RouterModule } from "@angular/router";
-
 import { IonicModule } from "@ionic/angular";
-
 import { DoctorPage } from "./doctor.page";
 
 const routes: Routes = [
@@ -12,30 +10,33 @@ const routes: Routes = [
     path: "",
     component: DoctorPage
   },
-  { path: "clinic", loadChildren: "./clinic/clinic.module#ClinicPageModule" },
+  { 
+    path: "clinic", 
+    loadChildren: () => import('./clinic/clinic.module').then(m => m.ClinicPageModule) 
+  },
   {
     path: "profile",
-    loadChildren: "./profile/profile.module#ProfilePageModule"
+    loadChildren: () => import('./profile/profile.module').then(m => m.ProfilePageModule)
   },
   {
     path: "vacation",
-    loadChildren: "./vacation/vacation.module#VacationPageModule"
+    loadChildren: () => import('./vacation/vacation.module').then(m => m.VacationPageModule)
   },
   {
     path: "schedule",
-    loadChildren: "./schedule/schedule.module#SchedulePageModule"
+    loadChildren: () => import('./schedule/schedule.module').then(m => m.SchedulePageModule)
   },
   {
     path: "brand-amount",
-    loadChildren: "./brand-amount/brand-amount.module#BrandAmountPageModule"
+    loadChildren: () => import('./brand-amount/brand-amount.module').then(m => m.BrandAmountPageModule)
   },
   {
     path: "password",
-    loadChildren: "./password/password.module#PasswordPageModule"
+    loadChildren: () => import('./password/password.module').then(m => m.PasswordPageModule)
   },
   {
     path: "sms-setting",
-    loadChildren: "./sms-setting/sms-setting.module#SMSSettingPageModule"
+    loadChildren: () => import('./sms-setting/sms-setting.module').then(m => m.SMSSettingPageModule)
   }
 ];
 

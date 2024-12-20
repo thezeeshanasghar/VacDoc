@@ -8,16 +8,29 @@ const routes: Routes = [
     component: MembersPage,
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', loadChildren: './dashboard/dashboard.module#DashboardPageModule' },
-      { path: 'alert', loadChildren: './alert/alert.module#AlertPageModule' },
-      { path: 'doctor', loadChildren: './doctor/doctor.module#DoctorPageModule' },
-      { path: 'child', loadChildren: './child/child.module#ChildPageModule' },
-      { path: 'message', loadChildren: './message/message.module#MessagePageModule' }
+      { 
+        path: 'dashboard', 
+        loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardPageModule) 
+      },
+      { 
+        path: 'alert', 
+        loadChildren: () => import('./alert/alert.module').then(m => m.AlertPageModule) 
+      },
+      { 
+        path: 'doctor', 
+        loadChildren: () => import('./doctor/doctor.module').then(m => m.DoctorPageModule) 
+      },
+      { 
+        path: 'child', 
+        loadChildren: () => import('./child/child.module').then(m => m.ChildPageModule) 
+      },
+      { 
+        path: 'message', 
+        loadChildren: () => import('./message/message.module').then(m => m.MessagePageModule) 
+      }
     ]
   },
 ];
-
-
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

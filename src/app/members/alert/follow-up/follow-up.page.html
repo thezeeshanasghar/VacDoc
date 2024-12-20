@@ -8,22 +8,23 @@
       </ion-item>
     </ion-buttons>
   </ion-toolbar>
-    <h1 *ngIf="followUpChild == 0" style="color: red;">No alert for today.</h1>
-    <ion-grid >
-      <ion-row>
-        <ion-col>
-          <ion-item *ngFor="let child of followUpChild">
-            <ion-label >{{child.Child.Name}}</ion-label>
-            <ion-icon slot="end" color="primary" name="mail" style="cursor: pointer;"></ion-icon>
-            <ion-icon 
-            slot="end" 
-            [color]="child.isMessageSent ? 'primary' : 'success'" 
-            name="logo-whatsapp" 
-            (click)="openWhatsApp(child.Child.User.MobileNumber, child.Child.Name, child.NextVisitDate)" 
-            style="cursor: pointer;">
+  <h1 *ngIf="followUpChild == 0" style="color: red">No alert for today.</h1>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-item *ngFor="let child of followUpChild">
+          <ion-label>{{child.Child.Name}}</ion-label>
+          <ion-icon slot="end" color="primary" name="mail"></ion-icon>
+          <ion-icon
+            slot="end"
+            [color]="child.isMessageSent ? 'primary' : 'success'"
+            name="logo-whatsapp"
+            (click)="openWhatsApp(child.Child.User.MobileNumber, child.Child.Name, child.NextVisitDate)"
+            style="cursor: pointer"
+          >
           </ion-icon>
-          </ion-item>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

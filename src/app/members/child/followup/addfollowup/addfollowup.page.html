@@ -7,28 +7,43 @@
   </ion-toolbar>
 </ion-header>
 <ion-content padding>
-  <form [formGroup]='fg'>
+  <form [formGroup]="fg">
     <ion-item>
       <ion-label color="primary" position="floating">Diagnosis</ion-label>
       <ion-input type="text" formControlName="Disease" required></ion-input>
     </ion-item>
     <ion-item>
       <ion-label color="primary" position="floating">Next Visit Date</ion-label>
-      <ion-datetime displayFormat="DD-MM-YYYY" pickerFormat="DD MM YYYY" formControlName="NextVisitDate" [min]="minDate"
-        [max]="maxDate">
-      </ion-datetime>
+      <mat-form-field>
+        <input matInput [matDatepicker]="picker" formControlName="NextVisitDate" 
+          [min]="minDate" [max]="maxDate" placeholder="Choose a date">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
     </ion-item>
     <ion-item>
       <ion-label color="primary" position="floating">weight</ion-label>
-      <ion-input type="number" placeholder="Weight" formControlName="Weight"></ion-input>
+      <ion-input
+        type="number"
+        placeholder="Weight"
+        formControlName="Weight"
+      ></ion-input>
     </ion-item>
     <ion-item>
       <ion-label color="primary" position="floating">Height</ion-label>
-      <ion-input type="number" placeholder="Height" formControlName="Height"></ion-input>
+      <ion-input
+        type="number"
+        placeholder="Height"
+        formControlName="Height"
+      ></ion-input>
     </ion-item>
     <ion-item>
       <ion-label color="primary" position="floating">OFC</ion-label>
-      <ion-input type="number" placeholder="OFC" formControlName="OFC"></ion-input>
+      <ion-input
+        type="number"
+        placeholder="OFC"
+        formControlName="OFC"
+      ></ion-input>
     </ion-item>
 
     <ion-button (click)="addFollowUp()">Submit</ion-button>

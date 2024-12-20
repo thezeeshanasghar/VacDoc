@@ -12,14 +12,38 @@ const routes: Routes = [
     path: '',
     component: ChildPage
   },
-  { path: 'add', loadChildren: './add/add.module#AddPageModule' },
-  { path: 'edit/:id', loadChildren: './edit/edit.module#EditPageModule' },
-  { path: 'vaccine/:id', loadChildren: './vaccine/vaccine.module#VaccinePageModule' },
-  { path: 'followup/:id', loadChildren: './followup/followup.module#FollowupPageModule' },
-  { path: 'growth', loadChildren: './growth/growth.module#GrowthPageModule' },
-  { path: 'invoice/:id', loadChildren: './invoice/invoice.module#InvoicePageModule' },
-  { path: 'cmsg/:id', loadChildren: './cmsg/cmsg.module#CMsgPageModule' },
-  {path:'special/:id',loadChildren:'./specialCase/specialCase.module#SpecialCasePageModule'}
+  { 
+    path: 'add', 
+    loadChildren: () => import('./add/add.module').then(m => m.AddPageModule) 
+  },
+  { 
+    path: 'edit/:id', 
+    loadChildren: () => import('./edit/edit.module').then(m => m.EditPageModule) 
+  },
+  { 
+    path: 'vaccine/:id', 
+    loadChildren: () => import('./vaccine/vaccine.module').then(m => m.VaccinePageModule) 
+  },
+  { 
+    path: 'followup/:id', 
+    loadChildren: () => import('./followup/followup.module').then(m => m.FollowupPageModule) 
+  },
+  { 
+    path: 'growth', 
+    loadChildren: () => import('./growth/growth.module').then(m => m.GrowthPageModule) 
+  },
+  { 
+    path: 'invoice/:id', 
+    loadChildren: () => import('./invoice/invoice.module').then(m => m.InvoicePageModule) 
+  },
+  { 
+    path: 'cmsg/:id', 
+    loadChildren: () => import('./cmsg/cmsg.module').then(m => m.CMsgPageModule) 
+  },
+  {
+    path: 'special/:id',
+    loadChildren: () => import('./specialCase/specialCase.module').then(m => m.SpecialCasePageModule)
+  }
 ];
 
 @NgModule({

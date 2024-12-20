@@ -10,8 +10,7 @@ import { LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-addfollowup',
-  templateUrl: './addfollowup.page.html',
-  styleUrls: ['./addfollowup.page.scss'],
+  templateUrl: './addfollowup.page.html'
 })
 export class AddfollowupPage implements OnInit {
 
