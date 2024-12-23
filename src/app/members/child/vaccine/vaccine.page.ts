@@ -381,12 +381,10 @@ export class VaccinePage {
       //       const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
       let firstDate = new Date(DOB);
       const secondDate = new Date(this.Pneum2Date);
-
       // const diffDays = Math.round(Math.abs((firstDate - secondDate) / oneDay));
       var diff = Math.abs(firstDate.getTime() - secondDate.getTime());
       var diffDays = Math.ceil(diff / (1000 * 3600 * 24));
       console.log(diffDays); console.log(firstDate); console.log(secondDate);
-
     }
     else {
       this.router.navigate(["/members/child/vaccine/" + this.childId + "/fill/" + Id]);
@@ -422,7 +420,6 @@ export class VaccinePage {
     this.downloader.download(request)
       .then((location: string) => console.log('File downloaded at:' + location))
       .catch((error: any) => console.error(error));
-
   }
 
   async unfillbulk(item : any){
@@ -432,7 +429,6 @@ export class VaccinePage {
       let tempdata = {
         Id: element.Id,
         IsDone: element.isdone ? false : false,
-
       } 
       data.push(tempdata);
     }
@@ -443,7 +439,6 @@ export class VaccinePage {
     for (const d of data) {
       await this.UnfillVaccine(d.Id, d)
     }
-    
   }
 
   async UnfillVaccine(id, Data = null) {
@@ -453,7 +448,6 @@ export class VaccinePage {
     if (!Data) {
       await loading.present();
     }
-
     let data = {
       Id: id,
       IsDone: false,
@@ -461,7 +455,6 @@ export class VaccinePage {
     if (Data) {
       data = Data;
     }
-
     await this.vaccineService.UnfillChildVaccine(data)
       .subscribe(
         res => {
@@ -477,7 +470,6 @@ export class VaccinePage {
               this.getVaccination();
               loading.dismiss();
             }
-
           }
           else {
             loading.dismiss();
@@ -495,8 +487,8 @@ export class VaccinePage {
     const loading = await this.loadingController.create({
       message: 'Deleting Doses'
     });
-
     await loading.present();
+    console.log("hello",date);
     await this.vaccineService.DeleteVaccineByChildidDoseidDate(ChildId, DoseId, date)
       .subscribe(
         (result) => {
@@ -510,13 +502,11 @@ export class VaccinePage {
             this.toastService.create('Error: Try again\nFailed to delete future doses', 'danger', false, 7000);
             loading.dismiss();
           }
-
         }, err => {
           this.toastService.create('Error: Try Again\nServer failure', 'danger', false, 3000);
           loading.dismiss();
         }
       );
-
   }
 
   async SkipVaccine(id, doseName) {
@@ -528,7 +518,6 @@ export class VaccinePage {
       Id: id,
       IsSkip: true,
     }
- 
     await this.vaccineService.UnfillChildVaccine(data).subscribe(
       res => {
         if (res.IsSuccess) {
@@ -558,9 +547,7 @@ export class VaccinePage {
     const loading = await this.loadingController.create({
       message: 'Updating Schedule'
     });
-
     await loading.present();
-
     this.fgAddData.value.DoctorId = unfillData.DoctorId;
     this.fgAddData.value.IsDone = false;
     this.fgAddData.value.BrandId = unfillData.BrandId;
@@ -569,7 +556,6 @@ export class VaccinePage {
     this.fgAddData.value.ChildId = unfillData.ChildId;
     this.fgAddData.value.DoseId = unfillData.DoseId;
     this.fgAddData.value.Date = scheduleDate;
-
     await this.vaccineService.AddChildSchedule(this.fgAddData.value).subscribe(
       res => {
         if (res.IsSuccess) {
@@ -589,23 +575,17 @@ export class VaccinePage {
         loading.dismiss();
       }
     );
-
-
   }
-
 
   async UnSkipVaccine(id, doseName) {
     const loading = await this.loadingController.create({
       message: 'Unskipping ' + doseName
     });
-
     await loading.present();
     let data = {
       Id: id,
       IsSkip: false,
     }
-
-
     await this.vaccineService.UnfillChildVaccine(data).subscribe(
       res => {
         if (res.IsSuccess) {
@@ -634,27 +614,18 @@ export class VaccinePage {
       }
     );
   }
-
     // New method to unfill all vaccines
-   
-
   addDays(date, days) {
-    console.log("days");
-    console.log(days);
-    console.log("date");
-    console.log(date);
-
+    // console.log("days");
+    // console.log(days);
+    // console.log("date");
+    // console.log(date);
     let momentVariable = moment(date, 'DD-MM-YYYY');
     var stringvalue = momentVariable.format('YYYY-MM-DD');
     var myDate = new Date(stringvalue);
     myDate.setDate(myDate.getDate() + days);
-
-    console.log("schedule date")
-    console.log(myDate)
-
+    // console.log("schedule date")
+    // console.log(myDate)
     return myDate;
   }
-
 }
-
-// https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-a-array-of-objects
