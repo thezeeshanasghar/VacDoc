@@ -31,6 +31,10 @@ export class FollowUpPage implements OnInit {
       this.clinicId = clinicId;
     });
     this.getFollowupChild(this.numOfDays, this.selectedDate);
+    this.getFollowupChild(this.numOfDays, this.selectedDate);
+    this.storage.get(environment.DOCTOR_Id).then(val => {
+      this.doctorId = val;
+    });
   }
   
   async getFollowupChild(numOfDays: number, formattedDate: string) {
@@ -40,7 +44,7 @@ export class FollowUpPage implements OnInit {
     });
     await loading.present();
     await this.followupService
-      .getFollowupChild(this.numOfDays, this.clinicId, formattedDate)
+      .getFollowupChild1( this.doctorId, formattedDate)
       .subscribe(
         res => {
           if (res.IsSuccess) {

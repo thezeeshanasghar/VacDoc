@@ -21,7 +21,13 @@ export class FollowupService extends BaseService {
       .post(url, data, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
-
+  getFollowupChild1(Id: number,date:string): Observable<any> {
+    const url = `${this.API_ALERT}followup/doctor/${Id}?inputDate=${date}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
   addFollowupByChild(data): Observable<any> {
     const url = `${this.API_ALERT}followup`;
     return this.http
