@@ -30,17 +30,19 @@ export class FollowUpPage implements OnInit {
     this.storage.get(environment.CLINIC_Id).then(clinicId => {
       this.clinicId = clinicId;
     });
-    this.getFollowupChild(this.numOfDays, this.selectedDate);
+    this.getFollowupChild( this.selectedDate);
+    this.storage.get(environment.DOCTOR_Id).then(val => {
+      this.doctorId = val;
+    });
   }
   
-  async getFollowupChild(numOfDays: number, formattedDate: string) {
-    this.numOfDays = numOfDays;
+  async getFollowupChild( formattedDate: string) {
     const loading = await this.loadingController.create({
       message: "Loading"
     });
     await loading.present();
     await this.followupService
-      .getFollowupChild(this.numOfDays, this.clinicId, formattedDate)
+    .getFollowupChild1( this.doctorId, formattedDate)
       .subscribe(
         res => {
           if (res.IsSuccess) {
@@ -79,7 +81,7 @@ export class FollowUpPage implements OnInit {
   getFollowups(date: string) {
     const formattedDate = this.formatDateToString(date);
 
-    this.getFollowupChild(0, formattedDate);
+    this.getFollowupChild(formattedDate);
   }
   openWhatsApp(mobileNumber: string, childName: string, nextVisitDate: string) {
     console.log('Child Name:', childName);
