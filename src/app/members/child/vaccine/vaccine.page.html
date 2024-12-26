@@ -33,10 +33,11 @@
             name="document-text-outline">
           </ion-icon>
           <ion-icon color="primary" name="calendar" (click)="picker.open()" size="small">
-            <input [matDatepicker]="picker" value="{{item.key}}"
-              (dateChange)="updateBulkDate($event, item.value[0].Id)">
-            <mat-datepicker #picker></mat-datepicker>
           </ion-icon>
+          <input [matDatepicker]="picker" value="{{item.key}}"
+              (dateChange)="updateBulkDate($event, item.value[0].Id)"
+              style="border: none; outline: none; background: transparent;color: white;" >
+            <mat-datepicker #picker></mat-datepicker>
         </div>
         <div *ngFor="let v of item.value" style="margin-bottom: -10px;">
           <ion-item lines="none" style="display: flex; align-items: center; margin: -2px 0; padding: -5px 0;">
@@ -60,11 +61,23 @@
               routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}">
               Disease Year: {{v.DiseaseYear}}
             </p>
-            <ion-icon *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip" color="primary" name="calendar"
-              (click)="picker.open()" style="font-size: 18px;">
-              <input [matDatepicker]="picker" value="{{v.Date}}" (dateChange)="updateDate($event, v.Id)">
-              <mat-datepicker #picker></mat-datepicker>
-            </ion-icon>
+            <div>
+            <input [matDatepicker]="picker" 
+            (dateChange)="updateDate($event, v.Id)" 
+            style="border: none; outline: none; background: transparent;color: white;" 
+            [(ngModel)]="v.Date" 
+            *ngIf="!v.IsDone && !v.Due2EPI && (v.IsSkip == null || !v.IsSkip)">
+     
+     <ion-icon *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip" 
+                color="primary" 
+                name="calendar" 
+                (click)="picker.open()" 
+                style="font-size: 18px;">
+     </ion-icon>
+     
+     <mat-datepicker #picker></mat-datepicker>
+    </div>
+     
             <ion-img *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip" style="height: 20px;"
               src="../../assets/injectionEmpty.png" routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}">
             </ion-img>
