@@ -36,7 +36,13 @@ export class ClinicService extends BaseService {
       catchError(this.handleError)
     );
   }
-
+  getDoctorById(id: number): Observable<any> {
+    const url = `${this.API_DOC}${id}/doctor`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
   // getClinics(id: number): Observable<any> {
   //   const url = `${this.API_DOC}${id}/clinics`;
   //   var cli = this.http.get(url, this.httpOptions);

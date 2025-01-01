@@ -29,7 +29,13 @@ export class DoctorService extends BaseService {
         catchError(this.handleError)
       );
   }
-
+  getAllDoctors(): Observable<any> {
+    const url = `${this.API_DOCTOR}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
   getDoctorProfile(docId: number): Observable<any> {
     const url = `${this.API_DOCTOR}/${docId}`;
     return this.http.get(url, this.httpOptions).pipe(

@@ -79,7 +79,12 @@ export class ChildService extends BaseService {
       catchError(this.handleError)
     );
   }
-
+  updateChildClinicId(doctorDisplayName: string, childId: number): Observable<any> {
+    const url = `${this.API_CHILD}clinic/update-clinic-id?doctorDisplayName=${doctorDisplayName}&childId=${childId}`;
+    return this.http.patch<any>(url, {}, this.httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
   // othercity = false;
   // cities=["Abbottabad",
   // "Adezai",

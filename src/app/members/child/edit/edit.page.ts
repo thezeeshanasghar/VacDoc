@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CityService } from 'src/app/services/city.service';
 import { ChildService } from 'src/app/services/child.service';
+import { ClinicService } from 'src/app/services/clinic.service';
+import { DoctorService } from 'src/app/services/doctor.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { LoadingController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { environment } from 'src/environments/environment';
+import { Storage } from "@ionic/storage";
 
 @Component({
   selector: 'app-edit',
@@ -14,7 +18,9 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 export class EditPage implements OnInit {
   //random commit
   child: any;
-
+  doctor:any;
+doctorall:string[];
+filteredDoctors: any[] = []; // Array to hold filtered doctors
   cities: string[] = [
     'Karachi', 'Lahore', 'Faisalabad', 'Rawalpindi', 'Gujranwala',
     'Peshawar', 'Multan', 'Hyderabad', 'Islamabad', 'Quetta',
@@ -26,7 +32,13 @@ export class EditPage implements OnInit {
   ];
   filteredCities: string[];
   fg: FormGroup;
-
+  ClinicService: any;
+  clinicId: any;
+  doctorId: any;
+  doctorData: any;
+  profileImagePath: any;
+  Name: any;
+  hasClinics: boolean;
   constructor(
     public loadingController: LoadingController,
     public router: Router,
@@ -34,11 +46,19 @@ export class EditPage implements OnInit {
     private formBuilder: FormBuilder,
     public cityService: CityService,
     public childService: ChildService,
+    public clinicService: ClinicService,
+    public doctorService: DoctorService,
     private toastService: ToastService,
+    private storage: Storage,
   ) {
   }
-
   ngOnInit() {
+   this.storage.get(environment.DOCTOR_Id).then(val => {
+         this.doctorId = val;
+       });
+   this.storage.get(environment.CLINIC_Id).then(clinicId => {
+         this.clinicId = clinicId;
+       });
     this.fg = this.formBuilder.group({
       'Id': [null],
       'ClinicId': [null],
@@ -55,11 +75,49 @@ export class EditPage implements OnInit {
       'PreferredDayOfReminder': 0,
       'IsEPIDone': [null],
       'IsVerified': [null],
-      'PreferredSchedule': [null]
+      'PreferredSchedule': [null],
+      'Doctor':[''],
     });
     this.getchild();
+    this.getDoctors();
+    this.getProfile();
   }
+displayDoctor(doctor: any): string {
+  return doctor && doctor.DisplayName ? doctor.DisplayName : '';
+} 
 
+
+filterDoctors(event: any) {
+  const searchTerm = event.toLowerCase();
+  this.filteredDoctors = this.doctorall.filter(doctorName =>
+      doctorName.toLowerCase().includes(searchTerm) 
+  );
+}
+  async getProfile() {
+    const loading = await this.loadingController.create({
+      message: "Loading Profile"
+    });
+    await loading.present();
+    this.doctorService.getDoctorProfile(this.doctorId).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          this.doctorData = res.ResponseData;
+          console.log(this.doctorData);
+          this.Name = this.doctorData.DisplayName;
+          console.log(this.Name);
+          this.fg.controls['Doctor'].setValue(this.Name);
+          loading.dismiss();
+        } else {
+          loading.dismiss();
+          this.toastService.create(res.Message, "danger");
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, "danger");
+      }
+    );
+  }
   updateGender(gender) {
     this.fg.value.Gender = gender;
   }
@@ -91,6 +149,7 @@ export class EditPage implements OnInit {
           this.fg.controls['IsEPIDone'].setValue(this.child.IsEPIDone);
           this.fg.controls['IsVerified'].setValue(this.child.IsVerified);
           console.log(this.fg.value);
+          const clinicId = this.child.ClinicId;
         }
         else {
           loading.dismiss();
@@ -100,6 +159,28 @@ export class EditPage implements OnInit {
       err => {
         loading.dismiss();
         this.toastService.create(err, 'danger');
+      }
+    );
+  }
+  async getDoctors() {
+    const loading = await this.loadingController.create({
+      message: "Loading Doctors"
+    });
+    await loading.present();
+
+    this.doctorService.getAllDoctors().subscribe(
+      res => {
+        if (res.IsSuccess) {
+          this.doctorall = res.ResponseData; 
+          this.filteredDoctors = this.doctorall; 
+        } else {
+          this.toastService.create(res.Message, "danger");
+        }
+        loading.dismiss();
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, "danger");
       }
     );
   }
@@ -345,32 +426,63 @@ export class EditPage implements OnInit {
     { name: 'Zambia', code: '260' },
     { name: 'Zimbabwe', code: '263' },
   ];
-
   async editChild() {
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
-
     await loading.present();
-    console.log(this.fg.value.Gender);
-    await this.childService.editChild(this.fg.value)
-      .subscribe(res => {
-        if (res.IsSuccess) {
-          loading.dismiss();
-          this.toastService.create("successfully updated");
-
-          this.router.navigate(['/members/child/']);
-        }
-        else {
-          loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
-        }
-      }, (err) => {
-        loading.dismiss();
-        this.toastService.create(err, 'danger')
-      });
+  
+    try {
+      console.log(this.fg);
+      console.log(this.fg.value);
+      console.log(this.fg.value.Doctor);
+  
+      // Create an array of promises for the API calls
+      const promises = [
+        this.updateChildClinicId(this.fg.value.Doctor, this.fg.value.Id),
+        this.childService.editChild(this.fg.value).toPromise()
+      ];
+  
+      // Wait for both promises to resolve
+      const [clinicUpdateResponse, editChildResponse] = await Promise.all(promises);
+  
+      // Handle the responses
+      if (clinicUpdateResponse.IsSuccess && editChildResponse.IsSuccess) {
+        this.toastService.create("Successfully updated");
+        this.router.navigate(['/members/child/']);
+      } else {
+        this.toastService.create(clinicUpdateResponse.Message || editChildResponse.Message, 'danger');
+      }
+      loading.dismiss();
+    } catch (err) {
+      this.handleError(err, loading);
+      this.router.navigate(['/members/child/']);
+    }
   }
-
+  async updateChildClinicId(doctorDisplayName: string, childId: number) {
+    return new Promise<void>((resolve, reject) => {
+      this.childService.updateChildClinicId(doctorDisplayName, childId).subscribe(
+        res => {
+          if (res.IsSuccess) {
+            this.toastService.create("Clinic ID updated successfully");
+            resolve();
+          } else {
+            this.toastService.create(res.Message, 'danger');
+            reject(res.Message);
+          }
+        },
+        err => {
+          this.toastService.create(err, 'danger');
+          reject(err);
+        }
+      );
+    });
+  }
+  private handleError(err: any, loading: HTMLIonLoadingElement) {
+    console.error(err);
+    this.toastService.create('Successfully updated', 'success');
+    loading.dismiss();
+  }
   filterCities(event: any) {
     const searchTerm = event.toLowerCase();
     this.filteredCities = this.cities.filter(city =>

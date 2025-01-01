@@ -90,7 +90,24 @@
         </mat-autocomplete>
       </mat-form-field>
     </ion-item>
-
+    <ion-item>
+      <ion-label color="primary" position="floating">Doctor</ion-label>
+      <mat-form-field class="example-full-width">
+          <input type="text"
+                 aria-label="text"
+                 matInput
+                 formControlName="Doctor"
+                 [matAutocomplete]="auto"
+                 (ngModelChange)="filterDoctors($event)">
+                 <!-- <input type="text" aria-label="Number" matInput formControlName="city" [matAutocomplete]="auto"
+                 (ngModelChange)="filter($event)" style="font-size: 15px;"> -->
+          <mat-autocomplete #auto="matAutocomplete">
+              <mat-option *ngFor="let doctor of filteredDoctors" [value]="doctor.DisplayName">
+                  {{ doctor.DisplayName }} <!-- Display the doctor's name in the dropdown -->
+              </mat-option>
+          </mat-autocomplete>
+      </mat-form-field>
+  </ion-item>
 
 
     <!-- <ion-grid>
