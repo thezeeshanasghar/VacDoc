@@ -55,6 +55,7 @@ filteredDoctors: any[] = []; // Array to hold filtered doctors
   ngOnInit() {
    this.storage.get(environment.DOCTOR_Id).then(val => {
          this.doctorId = val;
+        //  this.fg.controls['DoctorId'].setValue(this.doctorId);
        });
    this.storage.get(environment.CLINIC_Id).then(clinicId => {
          this.clinicId = clinicId;
@@ -76,7 +77,8 @@ filteredDoctors: any[] = []; // Array to hold filtered doctors
       'IsEPIDone': [null],
       'IsVerified': [null],
       'PreferredSchedule': [null],
-      'Doctor':[''],
+      'DoctorDisplayName':[null],
+      'DoctorId': [null]
     });
     this.getchild();
     this.getDoctors();
@@ -105,7 +107,7 @@ filterDoctors(event: any) {
           console.log(this.doctorData);
           this.Name = this.doctorData.DisplayName;
           console.log(this.Name);
-          this.fg.controls['Doctor'].setValue(this.Name);
+          this.fg.controls['DoctorDisplayName'].setValue(this.Name);
           loading.dismiss();
         } else {
           loading.dismiss();
@@ -118,14 +120,51 @@ filterDoctors(event: any) {
       }
     );
   }
+
   updateGender(gender) {
     this.fg.value.Gender = gender;
   }
+
+  async onDoctorSelected(selectedDoctor: any) {
+    // Check if selectedDoctor is defined and has the necessary properties
+    console.log('DoctorId:', selectedDoctor);
+    if (selectedDoctor) {
+        // Patch the form with the selected doctor's ID
+        this.fg.patchValue({
+            DoctorId: selectedDoctor // Use selectedDoctor.value to get the ID
+        });
+
+        // Log the DoctorId to the console for debugging
+        console.log('DoctorId:', selectedDoctor);
+        const loading = await this.loadingController.create({
+          message: 'Loading Doctor'
+        });
+        await loading.present();
+    
+        this.doctorService.getDoctorByDisplayName(selectedDoctor).subscribe(
+          res => {
+            if (res) {
+              this.doctorId = res.ResponseData.Id; 
+              console.log('Doctor ID:', this.doctorId);
+              this.fg.controls['DoctorId'].setValue(this.doctorId);
+              // this.toastService.create('Doctor ID fetched successfully');
+            } else {
+              this.toastService.create('Doctor not found', 'danger');
+            }
+            loading.dismiss();
+          },
+          err => {
+            loading.dismiss();
+            this.toastService.create('An error occurred', 'danger');
+          }
+        );
+    }
+}
+
   async getchild() {
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
-
     await loading.present();
 
     await this.childService.getChildById(this.route.snapshot.paramMap.get('id')).subscribe(
@@ -162,6 +201,7 @@ filterDoctors(event: any) {
       }
     );
   }
+
   async getDoctors() {
     const loading = await this.loadingController.create({
       message: "Loading Doctors"
@@ -170,9 +210,9 @@ filterDoctors(event: any) {
 
     this.doctorService.getAllDoctors().subscribe(
       res => {
-        if (res.IsSuccess) {
-          this.doctorall = res.ResponseData; 
-          this.filteredDoctors = this.doctorall; 
+        if (res.IsSuccess) { 
+          this.filteredDoctors = res.ResponseData; 
+          console.log(this.filteredDoctors);
         } else {
           this.toastService.create(res.Message, "danger");
         }
@@ -184,6 +224,7 @@ filterDoctors(event: any) {
       }
     );
   }
+
   countryCodes = [
     { name: 'Afghanistan', code: '93' },
     { name: 'Albania', code: '355' },
@@ -435,18 +476,12 @@ filterDoctors(event: any) {
     try {
       console.log(this.fg);
       console.log(this.fg.value);
-      console.log(this.fg.value.Doctor);
-  
-      // Create an array of promises for the API calls
+      console.log(this.fg.value.DoctorId);
       const promises = [
-        this.updateChildClinicId(this.fg.value.Doctor, this.fg.value.Id),
+        this.updateChildClinicId(this.fg.value.DoctorId, this.fg.value.Id),
         this.childService.editChild(this.fg.value).toPromise()
       ];
-  
-      // Wait for both promises to resolve
       const [clinicUpdateResponse, editChildResponse] = await Promise.all(promises);
-  
-      // Handle the responses
       if (clinicUpdateResponse.IsSuccess && editChildResponse.IsSuccess) {
         this.toastService.create("Successfully updated");
         this.router.navigate(['/members/child/']);
@@ -459,9 +494,9 @@ filterDoctors(event: any) {
       this.router.navigate(['/members/child/']);
     }
   }
-  async updateChildClinicId(doctorDisplayName: string, childId: number) {
+  async updateChildClinicId(doctorId: number, childId: number) {
     return new Promise<void>((resolve, reject) => {
-      this.childService.updateChildClinicId(doctorDisplayName, childId).subscribe(
+      this.childService.updateChildClinicId(doctorId, childId).subscribe(
         res => {
           if (res.IsSuccess) {
             this.toastService.create("Clinic ID updated successfully");
