@@ -415,6 +415,7 @@ onDoctorSelected(selectedDoctor: any) {
     { name: 'Zambia', code: '260' },
     { name: 'Zimbabwe', code: '263' },
   ];
+
   async editChild() {
     const loading = await this.loadingController.create({
       message: 'Loading'
@@ -442,6 +443,7 @@ onDoctorSelected(selectedDoctor: any) {
       this.router.navigate(['/members/child/']);
     }
   }
+
   async updateChildClinicId(doctorId: number, childId: number) {
     return new Promise<void>((resolve, reject) => {
       this.childService.updateChildClinicId(doctorId, childId).subscribe(
@@ -461,11 +463,13 @@ onDoctorSelected(selectedDoctor: any) {
       );
     });
   }
+
   private handleError(err: any, loading: HTMLIonLoadingElement) {
     console.error(err);
     this.toastService.create('Successfully updated', 'success');
     loading.dismiss();
   }
+  
   filterCities(event: any) {
     const searchTerm = event.toLowerCase();
     this.filteredCities = this.cities.filter(city =>
