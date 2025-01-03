@@ -100,12 +100,11 @@
                [matAutocomplete]="auto"
                (ngModelChange)="filterDoctors($event)">
         <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onDoctorSelected($event.option.value)">
-          <mat-option *ngFor="let doctor of filteredDoctors" [value]="doctor.DisplayName"> <!-- Hidden input to store the DoctorId -->
+          <mat-option *ngFor="let doctor of filteredDoctors" [value]="doctor">
             {{ doctor.DisplayName }} <!-- Display the doctor's name in the dropdown -->
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
-      <!-- Hidden input to store the DoctorId -->
     </ion-item>
 
 

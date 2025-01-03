@@ -15,12 +15,12 @@ import { Storage } from "@ionic/storage";
   templateUrl: './edit.page.html',
   styleUrls: ['./edit.page.scss'],
 })
+
 export class EditPage implements OnInit {
-  //random commit
   child: any;
   doctor:any;
-doctorall:string[];
-filteredDoctors: any[] = []; // Array to hold filtered doctors
+  doctorall:string[];
+  filteredDoctors: any[] = []; 
   cities: string[] = [
     'Karachi', 'Lahore', 'Faisalabad', 'Rawalpindi', 'Gujranwala',
     'Peshawar', 'Multan', 'Hyderabad', 'Islamabad', 'Quetta',
@@ -39,6 +39,7 @@ filteredDoctors: any[] = []; // Array to hold filtered doctors
   profileImagePath: any;
   Name: any;
   hasClinics: boolean;
+
   constructor(
     public loadingController: LoadingController,
     public router: Router,
@@ -50,12 +51,11 @@ filteredDoctors: any[] = []; // Array to hold filtered doctors
     public doctorService: DoctorService,
     private toastService: ToastService,
     private storage: Storage,
-  ) {
-  }
+  ) {}
+
   ngOnInit() {
    this.storage.get(environment.DOCTOR_Id).then(val => {
          this.doctorId = val;
-        //  this.fg.controls['DoctorId'].setValue(this.doctorId);
        });
    this.storage.get(environment.CLINIC_Id).then(clinicId => {
          this.clinicId = clinicId;
@@ -82,12 +82,11 @@ filteredDoctors: any[] = []; // Array to hold filtered doctors
     });
     this.getchild();
     this.getDoctors();
-    this.getProfile();
   }
+
 displayDoctor(doctor: any): string {
   return doctor && doctor.DisplayName ? doctor.DisplayName : '';
 } 
-
 
 filterDoctors(event: any) {
   const searchTerm = event.toLowerCase();
@@ -95,70 +94,19 @@ filterDoctors(event: any) {
       doctorName.toLowerCase().includes(searchTerm) 
   );
 }
-  async getProfile() {
-    const loading = await this.loadingController.create({
-      message: "Loading Profile"
-    });
-    await loading.present();
-    this.doctorService.getDoctorProfile(this.doctorId).subscribe(
-      res => {
-        if (res.IsSuccess) {
-          this.doctorData = res.ResponseData;
-          console.log(this.doctorData);
-          this.Name = this.doctorData.DisplayName;
-          console.log(this.Name);
-          this.fg.controls['DoctorDisplayName'].setValue(this.Name);
-          loading.dismiss();
-        } else {
-          loading.dismiss();
-          this.toastService.create(res.Message, "danger");
-        }
-      },
-      err => {
-        loading.dismiss();
-        this.toastService.create(err, "danger");
-      }
-    );
-  }
 
   updateGender(gender) {
     this.fg.value.Gender = gender;
   }
 
-  async onDoctorSelected(selectedDoctor: any) {
-    // Check if selectedDoctor is defined and has the necessary properties
-    console.log('DoctorId:', selectedDoctor);
-    if (selectedDoctor) {
-        // Patch the form with the selected doctor's ID
-        this.fg.patchValue({
-            DoctorId: selectedDoctor // Use selectedDoctor.value to get the ID
-        });
-
-        // Log the DoctorId to the console for debugging
-        console.log('DoctorId:', selectedDoctor);
-        const loading = await this.loadingController.create({
-          message: 'Loading Doctor'
-        });
-        await loading.present();
-    
-        this.doctorService.getDoctorByDisplayName(selectedDoctor).subscribe(
-          res => {
-            if (res) {
-              this.doctorId = res.ResponseData.Id; 
-              console.log('Doctor ID:', this.doctorId);
-              this.fg.controls['DoctorId'].setValue(this.doctorId);
-              // this.toastService.create('Doctor ID fetched successfully');
-            } else {
-              this.toastService.create('Doctor not found', 'danger');
-            }
-            loading.dismiss();
-          },
-          err => {
-            loading.dismiss();
-            this.toastService.create('An error occurred', 'danger');
-          }
-        );
-    }
+onDoctorSelected(selectedDoctor: any) {
+  if (selectedDoctor) {
+      this.fg.patchValue({
+          DoctorId: selectedDoctor.Id, 
+          DoctorDisplayName: selectedDoctor.DisplayName 
+      });
+      console.log('DoctorId:', selectedDoctor.Id);
+  }
 }
 
   async getchild() {
