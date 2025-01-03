@@ -44,13 +44,6 @@ export class DoctorService extends BaseService {
     );
   }
 
-  getDoctorByDisplayName(displayName: string): Observable<any> {
-    const url = `${this.API_DOCTOR}/GetDoctorByDisplayName?displayName=${displayName}`;
-    return this.http.get(url, this.httpOptions).pipe(
-      map(this.extractData),
-      catchError(this.handleError)
-    );
-  }
   updateDoctorProfile(docId: number, newDate: String): any {
     const url = `${this.API_DOCTOR}/${docId}`;
     return this.http.put(url, newDate, this.httpOptions)
