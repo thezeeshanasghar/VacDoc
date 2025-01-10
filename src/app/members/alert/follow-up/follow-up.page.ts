@@ -92,8 +92,7 @@ export class FollowUpPage implements OnInit {
     }
     const message = encodeURIComponent(
       `Reminder: Follow-up visit for ${childName} is scheduled on ${nextVisitDate}.\n` +
-      `Please confirm your appointment. Thanks!\natta rehman, Baby Medics\n` +
-      `Phone Number:03145553423\n` +
+      `Please confirm your appointment. Thanks!\nBaby Medics\n` +
       `Login and check your record at https://vaccinationcentre.com`
     );
     const formattedPatientNumber = mobileNumber.startsWith('+92')
