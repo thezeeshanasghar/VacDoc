@@ -360,7 +360,7 @@ export class VaccineAlertPage implements OnInit {
       return;
     }
 
-    this.vaccineService.getDosesForChild(child.Child.Id, this.selectedDate).subscribe(response => {
+    this.vaccineService.getDosesForChild(child.Child.Id, this.formatDateToString(this.selectedDate)).subscribe(response => {
       if (response.IsSuccess && response.ResponseData) {
         const doseNames = response.ResponseData.map(dose => dose.Name).join(', ');
         const childName = child.Child.Name;
