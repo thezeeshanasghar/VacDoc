@@ -285,6 +285,21 @@ export class Number2WeekPipe implements PipeTransform {
         case 5475:
             day = '15 Years';
             break;
+        case 5505:
+            day = '15 Years 1 months';
+            break;
+        case 5655:
+            day = '15 Years 6 months';
+            break;
+        case 5840:
+            day = '16 Years';
+            break;
+        case 6205:
+            day = '17 Years';
+            break;
+        case 6570:
+            day = '18 Years';
+            break;
 
     }
     return day;
