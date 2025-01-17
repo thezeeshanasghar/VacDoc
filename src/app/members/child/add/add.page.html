@@ -93,12 +93,11 @@
       </div>
 
 
-      <ion-radio-group formControlName="Type">
-
+      <ion-radio-group formControlName="Type" (ionChange)="onTravelChange($event)">
         <ion-grid>
           <ion-row>
             <ion-col>
-              <ion-item style="height: 100%;">
+              <ion-item>
                 <ion-label color="white">Regular</ion-label>
                 <ion-radio slot="start" value="regular"></ion-radio>
               </ion-item>
@@ -107,7 +106,7 @@
             <ion-col>
               <ion-item style="height: 100%;">
                 <ion-label color="white">EPI Plus</ion-label>
-                <ion-radio slot="start" value="IsEPIDone" (ionChange)="checkEpi()"></ion-radio>
+                <ion-radio slot="start" value="IsEPIDone" (ionChange)="checkEpi($event)"></ion-radio>
               </ion-item>
             </ion-col>
 
@@ -117,10 +116,15 @@
                 <ion-radio slot="start" value="special"></ion-radio>
               </ion-item>
             </ion-col>
-
+    
+            <ion-col>
+              <ion-item>
+                <ion-label color="white">Travel</ion-label>
+                <ion-radio slot="start" value="travel" ></ion-radio>
+              </ion-item>
+            </ion-col>
           </ion-row>
         </ion-grid>
-
       </ion-radio-group>
 
 
@@ -143,11 +147,13 @@
           </div>
         </ng-container>
       </div>
-
       <ion-item>
         <ion-label color="primary" position="floating">CNIC/Passport No.</ion-label>
-        <ion-input type="text" formControlName="CNIC"></ion-input>
+        <ion-input type="text" formControlName="CNIC" ></ion-input>
       </ion-item>
+      <div *ngIf="isCnicRequired && fg1.get('CNIC').hasError('required')" style="color: red;">
+        CNIC number is required when traveling.
+      </div>
       <ion-item>
         <div class="country-code-container">
           <ion-label color="primary" position="stacked" class="country-label">
@@ -203,7 +209,7 @@
           </ng-container>
         </div>
       </div>
-      <ion-button type="submit" [disabled]="!fg1.valid"
+      <ion-button type="submit" [disabled]="!fg1.valid&&isCnicRequired "
         style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;"
         color="primary">Submit
       </ion-button>
