@@ -53,7 +53,7 @@ export class AddPage implements OnInit {
   originalCities: string[];
   filteredOptions: Observable<string[]>;
   travel: [false];
-  isCnicRequired: boolean=false;
+  isCnicRequired: boolean=true;
   //cities: any;
 
   constructor(
@@ -71,11 +71,13 @@ export class AddPage implements OnInit {
     private sms: SMS,
     private titlecasePipe: TitleCasePipe,
     public alertCtrl: AlertController,
-    private http: HttpClient
+    private http: HttpClient,
+   
   ) { }
 
   ngOnInit() {
     this.loadCities();
+ // Corrected the declaration and assignment
   }
   loadCities(): void {
     this.cityService.getCities().subscribe(
@@ -139,9 +141,10 @@ export class AddPage implements OnInit {
       IsSkip: [true],
       IsVerified: [false],
       Password: [null],
-      ChildVaccines: [null]
+      ChildVaccines: [null],
     });
 
+    
 
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
@@ -168,7 +171,14 @@ export class AddPage implements OnInit {
 
     this.cities = this.cities;
 
+    // this.onTypeChange();  
   }
+
+  // isTravelSelected: boolean = false;
+
+  // onTravelChange(event: any) {
+  //   this.fg1.get('CNIC').setValidators([Validators.required]);
+  // }
 
   public filter(value: string) {
     if (!value.trim()) {
@@ -464,7 +474,7 @@ export class AddPage implements OnInit {
     //console.log(this.fg1.value);
     await this.addNewChild(this.fg1.value);
   }
-  updateGender(g) {
+  updateGender(g: any) {
     this.fg1.controls['Gender'].setValue(g);
   }
 
@@ -480,7 +490,7 @@ export class AddPage implements OnInit {
 
 
 
-  async addNewChild(data) {
+  async addNewChild(data: { city: string; }) {
     console.log('City2 value:', this.fg1.value.City2);
     if (data.city === "") {
       data.city = this.fg1.value.City2;
@@ -547,7 +557,7 @@ export class AddPage implements OnInit {
     );
   }
 
-  sendsms(number, message) {
+  sendsms(number: string, message: string) {
     console.log(number + message);
     this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS).then(
       result => {
@@ -576,7 +586,7 @@ export class AddPage implements OnInit {
     console.log('success');
   }
 
-  async setCity(city) {
+  async setCity(city: any) {
     // if (city == 'Other')
     //   await this.otherCityAlert();
     // this.childService.othercity = true;
@@ -600,9 +610,6 @@ export class AddPage implements OnInit {
       this.fg1.get('CNIC').clearValidators();
     }
     this.fg1.get('CNIC').updateValueAndValidity(); 
-      // this.isCnicRequired = false ;
-      // this.fg1.get('CNIC').setValidators([Validators.required]);
-    // this.fg1.get('CNIC').updateValueAndValidity();
   }
   
   async checkEpi() {
@@ -611,7 +618,7 @@ export class AddPage implements OnInit {
     this.epiDone = days > 272;
     this.isRadioDisabled = !this.epiDone; // Disable the radio button if epiDone is false
   }
-  calculateDiff(dateSent) {
+  calculateDiff(dateSent: string | number | Date) {
     let currentDate = new Date();
     dateSent = new Date(dateSent);
     return Math.floor((Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()) - Date.UTC(dateSent.getFullYear(), dateSent.getMonth(), dateSent.getDate())) / (1000 * 60 * 60 * 24));
