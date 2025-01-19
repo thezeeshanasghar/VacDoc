@@ -80,6 +80,12 @@ export class ChildService extends BaseService {
     );
   }
 
+  downloadPdf(childId: number) {
+    debugger
+    const apiUrl = `${this.API_CHILD}Child/PID/${childId}`;
+    return this.http.get(apiUrl, { responseType: 'blob' });
+  }
+
   // othercity = false;
   // cities=["Abbottabad",
   // "Adezai",

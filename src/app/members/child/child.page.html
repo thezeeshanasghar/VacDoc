@@ -76,6 +76,10 @@
       <ion-button size="small" fill="outline" [color]="child.IsInactive ? 'success' : 'danger'" (click)="toggleChildActiveStatus(child.Id)">
         {{ child.IsInactive ? 'Activate' : 'Deactivate' }}
       </ion-button>
+      &nbsp; &nbsp;
+      <ion-button size="small" fill="outline" color="primary" (click)="downloadPdf(child.Id)">
+        PID
+      </ion-button>
     </ion-card-content>
 
   </ion-card>
