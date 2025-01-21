@@ -10,6 +10,7 @@ import { AlertService } from 'src/app/shared/alert.service';
 import { Router } from '@angular/router';
 import { FormGroup, FormBuilder , Validators } from '@angular/forms';
 import { CallNumber } from '@ionic-native/call-number/ngx';
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
@@ -36,6 +37,7 @@ export class ChildPage {
     private storage: Storage,
     private alertService: AlertService,
     private callNumber: CallNumber,
+    private http: HttpClient,
   
   ) {
     this.fg = this.formBuilder.group({
@@ -215,5 +217,18 @@ export class ChildPage {
     this.search = false;
     this.fg.controls['Name'].setValue(null);
     this.getChlidByClinic(false);
+  }
+
+  downloadPdf(childId: number) {
+    debugger
+    this.childService.downloadPdf(childId).subscribe((response) => {
+      const blob = new Blob([response], { type: 'application/pdf' });
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = 'Patient-ID.pdf';
+      link.click();
+    }, error => {
+      console.error('Error downloading the PDF', error);
+    });
   }
 }
