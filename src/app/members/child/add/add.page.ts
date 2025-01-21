@@ -598,19 +598,7 @@ export class AddPage implements OnInit {
   //     this.fg1.value.PreferredDayOfWeek = this.fg1.value.PreferredDayOfWeek.filter(x => (x !== 'Any'));
   // }
 
-  onTravelChange(event: any) {
-    const selectedValue = event.detail.value; // Get the selected value
-    console.log('Selected Type:', selectedValue);
-    // This will toggle the CNIC requirement based on the selected type
-    if (selectedValue === 'travel') {
-      this.isCnicRequired = true;
-      this.fg1.get('CNIC').setValidators([Validators.required]);
-    } else {
-      this.isCnicRequired = false;
-      this.fg1.get('CNIC').clearValidators();
-    }
-    this.fg1.get('CNIC').updateValueAndValidity(); 
-  }
+
   async checkEpi() {
     let days = await this.calculateDiff(this.fg1.value.DOB);
     console.log(days);
