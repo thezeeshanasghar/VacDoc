@@ -6,8 +6,8 @@ export const environment = {
   // RESOURCE_URL: "https://skintechno.com/",
 
   // for staging API
-  BASE_URL: "https://myapi.ewarenet.com:5001/api/",
-  RESOURCE_URL: "https://myapi.ewarenet.com:5001/",
+  BASE_URL: "https://myapi.ewarenet.com/api/",
+  RESOURCE_URL: "https://myapi.ewarenet.com/",
   
 
   USER: 'User',
