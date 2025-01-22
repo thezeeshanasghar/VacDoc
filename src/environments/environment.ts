@@ -9,10 +9,10 @@ export const environment = {
   
 
   // for using web server
-  BASE_URL: "https://myapi.skintechno.com/api/",
-  RESOURCE_URL: "https://myapi.skintechno.com/",
+  BASE_URL: "https://myapi.ewarenet.com:5001/api/",
+  RESOURCE_URL: "https://myapi.ewarenet.com:5001/",
   
-  // // for local server
+  // // // for local server
   // BASE_URL: "https://localhost:5001/api/",
   // RESOURCE_URL: "https://localhost:5001/",
 
