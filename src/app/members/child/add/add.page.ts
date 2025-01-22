@@ -604,11 +604,12 @@ export class AddPage implements OnInit {
     console.log(days);
     this.epiDone = days > 272;
     this.isRadioDisabled = !this.epiDone; 
+
     if (this.isRadioDisabled) {
       
       this.fg1.get('IsEPIDone').setValue(false);
   }
-  
+r
 }
 onTravelChange(event: any) {
     const selectedValue = event.detail.value; 
@@ -622,6 +623,7 @@ onTravelChange(event: any) {
     }
     this.fg1.get('CNIC').updateValueAndValidity(); 
     this.isRadioDisabled = this.isCnicRequired && !this.epiDone;
+
     this.checkEpi()
 }
   calculateDiff(dateSent: string | number | Date) {
