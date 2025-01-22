@@ -609,6 +609,7 @@ export class AddPage implements OnInit {
       this.fg1.get('IsEPIDone').setValue(false);
   }
   
+
 }
 onTravelChange(event: any) {
     const selectedValue = event.detail.value; 
@@ -622,7 +623,9 @@ onTravelChange(event: any) {
     }
     this.fg1.get('CNIC').updateValueAndValidity(); 
     this.isRadioDisabled = this.isCnicRequired && !this.epiDone;
+
     this.checkEpi()
+
 }
   calculateDiff(dateSent: string | number | Date) {
     let currentDate = new Date();
