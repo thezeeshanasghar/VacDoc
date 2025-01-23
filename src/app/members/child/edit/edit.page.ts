@@ -74,6 +74,7 @@ export class EditPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.child = res.ResponseData;
+          console.log(this.child);
           loading.dismiss();
           this.fg.controls['Id'].setValue(this.child.Id);
           this.fg.controls['ClinicId'].setValue(this.child.ClinicId);
@@ -90,6 +91,7 @@ export class EditPage implements OnInit {
           this.fg.controls['PreferredSchedule'].setValue(this.child.PreferredSchedule);
           this.fg.controls['IsEPIDone'].setValue(this.child.IsEPIDone);
           this.fg.controls['IsVerified'].setValue(this.child.IsVerified);
+          this.fg.controls['CNIC'].setValue(this.child.CNIC);
           console.log(this.fg.value);
         }
         else {
