@@ -12,9 +12,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
   styleUrls: ['./edit.page.scss'],
 })
 export class EditPage implements OnInit {
-  //random commit
   child: any;
-
   cities: string[] = [
     'Karachi', 'Lahore', 'Faisalabad', 'Rawalpindi', 'Gujranwala',
     'Peshawar', 'Multan', 'Hyderabad', 'Islamabad', 'Quetta',
@@ -67,9 +65,7 @@ export class EditPage implements OnInit {
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
-
     await loading.present();
-
     await this.childService.getChildById(this.route.snapshot.paramMap.get('id')).subscribe(
       res => {
         if (res.IsSuccess) {
@@ -90,7 +86,7 @@ export class EditPage implements OnInit {
           this.fg.controls['PreferredSchedule'].setValue(this.child.PreferredSchedule);
           this.fg.controls['IsEPIDone'].setValue(this.child.IsEPIDone);
           this.fg.controls['IsVerified'].setValue(this.child.IsVerified);
-          console.log(this.fg.value);
+          this.fg.controls['CNIC'].setValue(this.child.CNIC);
         }
         else {
           loading.dismiss();
@@ -350,7 +346,6 @@ export class EditPage implements OnInit {
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
-
     await loading.present();
     console.log(this.fg.value.Gender);
     await this.childService.editChild(this.fg.value)
@@ -358,7 +353,6 @@ export class EditPage implements OnInit {
         if (res.IsSuccess) {
           loading.dismiss();
           this.toastService.create("successfully updated");
-
           this.router.navigate(['/members/child/']);
         }
         else {
