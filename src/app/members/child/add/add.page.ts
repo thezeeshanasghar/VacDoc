@@ -25,7 +25,7 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CityService } from "src/app/services/city.service";
-
+import { AgentService } from "src/app/services/agent.service";
 
 @Component({
   selector: "app-add",
@@ -45,15 +45,22 @@ export class AddPage implements OnInit {
   gender: any;
   City: any;
   City2: any;
+  Agent: any;
+  Agent2: any;
   CNIC: any;
   Doctor: any;
   epiDone = false;
   Messages: any = [];
-  cities: string[];
+  // cities: string[];
   originalCities: string[];
   filteredOptions: Observable<string[]>;
   travel: [false];
   isCnicRequired: boolean=true;
+  // agents: any;
+  originalAgents: any[];
+  cities: string[] = [];
+  agents: string[] = [];
+  // agentService: any;
   //cities: any;
 
   constructor(
@@ -62,6 +69,7 @@ export class AddPage implements OnInit {
     private vaccineService: VaccineService,
     private cityService: CityService,
     public childService: ChildService,
+    public agentService: AgentService,
     private toastService: ToastService,
     private router: Router,
     private storage: Storage,
@@ -77,20 +85,34 @@ export class AddPage implements OnInit {
 
   ngOnInit() {
     this.loadCities();
- // Corrected the declaration and assignment
-  }
-  loadCities(): void {
+    this.loadAgent();
+}
+
+loadCities(): void {
     this.cityService.getCities().subscribe(
-      (cities: any) => {
-        this.cities = cities;
-        this.originalCities = [...cities];
-        console.log('load', cities)
-      },
-      (error: any) => {
-        console.error('Error loading cities', error);
-      }
+        (cities: any) => {
+            this.cities = cities;
+            this.originalCities = [...cities];
+            console.log('Cities loaded:', cities); // Check the output here
+        },
+        (error: any) => {
+            console.error('Error loading cities', error);
+        }
     );
-  }
+}
+
+loadAgent(): void {
+    this.agentService.getAgents().subscribe(
+        (agents: any) => {
+            this.agents = agents;
+            this.originalAgents = [...agents];
+            console.log('Agents loaded:', agents); // Check the output here
+        },
+        (error: any) => {
+            console.error('Error loading agents', error);
+        }
+    );
+}
   ionViewWillEnter()//ngAfterContentInit() 
   {
     this.storage.set(environment.MESSAGES, this.Messages);
@@ -132,9 +154,13 @@ export class AddPage implements OnInit {
       City2: [{ value: '', disabled: true }, Validators.compose([
 
       ])],
+      Agent2: [{ value: '', disabled: true }, Validators.compose([
+
+      ])],
       Gender: [null, Validators.required],
       Type: [null, Validators.required],
       city: [''],
+      agent:[''],
       travel: [false],
       CNIC: ['',[]],
       IsEPIDone: [false],
