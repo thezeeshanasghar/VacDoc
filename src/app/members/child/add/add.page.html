@@ -209,6 +209,33 @@
           </ng-container>
         </div>
       </div>
+      <div class="agent">
+        <ion-label color="primary" position="floating"
+          style="font-size: 16px; display: flex; padding-left: 15px;">Agent</ion-label>
+        <mat-form-field class="example-full-width">
+          <input type="text" aria-label="Number" matInput formControlName="agent" [matAutocomplete]="auto"
+            (ngModelChange)="filter($event)" style="font-size: 15px;">
+          <mat-autocomplete #auto="matAutocomplete" class="no-indent">
+            <mat-option *ngFor="let option of agents" [value]="option">
+              {{option}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+        <ion-item>
+          <ion-label color="primary" position="floating">Add New Agent</ion-label>
+          <ion-input type="text" formControlName="Agent2" required class="ion-text-capitalize"
+            [(ngModel)]="fg1.value.Agent2" [disabled]="fg1.get('agent')?.value !== '' ">
+          </ion-input>
+        </ion-item>
+        <div class="validation-errors">
+          <ng-container *ngFor="let validation of validation_messages.Agent2">
+            <div class="error-message"
+              *ngIf="fg1.get('Agent2')?.hasError(validation.type) && (fg1.get('Agent2')?.dirty || fg1.get('Agent2')?.touched)">
+              <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+            </div>
+          </ng-container>
+        </div>
+      </div>
       <ion-button type="submit" [disabled]="!fg1.valid&&isCnicRequired "
         style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;"
         color="primary">Submit
