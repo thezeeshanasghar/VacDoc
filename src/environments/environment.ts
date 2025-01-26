@@ -9,12 +9,12 @@ export const environment = {
   
 
   // for using web server
-  // BASE_URL: "https://myapi.ewarenet.com/api/",
-  // RESOURCE_URL: "https://myapi.ewarenet.com/",
+  BASE_URL: "https://myapi.ewarenet.com/api/",
+  RESOURCE_URL: "https://myapi.ewarenet.com/",
   
   // // for local server
-  BASE_URL: "https://localhost:5001/api/",
-  RESOURCE_URL: "https://localhost:5001/",
+  // BASE_URL: "https://localhost:5001/api/",
+  // RESOURCE_URL: "https://localhost:5001/",
 
 
 
