@@ -655,6 +655,22 @@ export class VaccinePage {
     return myDate;
   }
 
+  // Method to download the travel PDF
+  downloadTravelPdf() {
+    debugger
+    this.vaccineService.generateTravelPdf(this.childId).subscribe((response: Blob) => {
+      const blob = new Blob([response], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Immunization-Record.pdf';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }, error => {
+      console.error('Error downloading PDF:', error);
+    });
+  }
+
 }
 
 // https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-a-array-of-objects
