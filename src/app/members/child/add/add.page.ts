@@ -55,7 +55,7 @@ export class AddPage implements OnInit {
   originalCities: string[];
   filteredOptions: Observable<string[]>;
   travel: [false];
-  isCnicRequired: boolean=true;
+  isCnicRequired: boolean=false;
   // agents: any;
   originalAgents: any[];
   cities: string[] = [];
@@ -514,10 +514,13 @@ loadAgent(): void {
     this.fg1.value.Password = retVal;
   }
 
-
-
-  async addNewChild(data: { city: string; }) {
+  async addNewChild(data: {agent: string; city: string; }) {
     console.log('City2 value:', this.fg1.value.City2);
+    console.log('City2 value:', this.fg1.value.Agent2);
+    if (data.agent === "") {
+      data.agent = this.fg1.value.Agent2;
+      console.log('city2 data',data.agent)
+    }
     if (data.city === "") {
       data.city = this.fg1.value.City2;
       console.log('city2 data')
@@ -552,24 +555,14 @@ loadAgent(): void {
           console.log(sms1);
           const ChildId = res.ResponseData.Id
           console.log('child id', ChildId)
-
           loading.dismiss();
           this.toastService.create("successfully added");
-
-           if (res.ResponseData.Type == "special" ){
+        if (res.ResponseData.Type == "special" ){
             this.router.navigate([`/members/child/vaccine/${ChildId}`]);
-
-
-        } 
-
-        else{
+        } else{
           this.router.navigate(["/members/child"]);
         }
-
-        }
-
-        
-        else {
+        } else {
           loading.dismiss();
           this.formcontroll = false;
           this.toastService.create(res.Message, "danger");

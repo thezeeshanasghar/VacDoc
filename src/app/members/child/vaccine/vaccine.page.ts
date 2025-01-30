@@ -156,6 +156,7 @@ export class VaccinePage {
             this.storage.set("vaccinesData", this.vaccinesData);
 
             this.dataGrouping = this.groupBy(this.vaccine, "Date");
+            console.log(this.dataGrouping);
             loading.dismiss();
 
           } else {
@@ -397,6 +398,7 @@ export class VaccinePage {
   }
 
   printdata() {
+
     if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
       const url = `${this.API_VACCINE}child/${this.childId}/Download-Schedule-PDF`;
       window.open(url);
@@ -477,7 +479,6 @@ export class VaccinePage {
               this.getVaccination();
               loading.dismiss();
             }
-
           }
           else {
             loading.dismiss();
