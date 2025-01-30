@@ -257,7 +257,7 @@ export class FillPage implements OnInit {
       loading.dismiss();
       return;
     }
-
+    loading.dismiss();
     console.log("givenDateOfInjection", givenDateOfInjection);
     console.log("sdate ", this.addDays(givenDateOfInjection, this.MinGap, this.vaccineData.DoseId));
     this.fg.value.GivenDate = moment(this.fg.value.GivenDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
@@ -268,6 +268,7 @@ export class FillPage implements OnInit {
             loading.dismiss();
             this.addNewVaccineInScheduleTable(scheduleDate);
           } else {
+            loading.dismiss();
             this.router.navigate(['/members/child/vaccine/' + this.vaccineData.ChildId]);
           }
           loading.dismiss();
