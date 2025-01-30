@@ -10,6 +10,7 @@
 <ion-content class=ion-padding>
 
   <form [formGroup]="fg">
+    <div *ngIf="Type!=='travel'">
     <ion-item>
       <ion-label color="primary" position="floating">Weight</ion-label>
       <ion-input type="text" placeholder="Weight" formControlName="Weight"></ion-input>
@@ -26,7 +27,6 @@
       </ion-text>
       
     </ion-item>
-    
     <ion-item>
       <ion-label color="primary" position="floating">Height</ion-label>
       <ion-input type="text" placeholder="Height" formControlName="Height"></ion-input>
@@ -42,7 +42,6 @@
         <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon> <!-- Use the name of the desired icon -->
       </ion-text>
     </ion-item>
-    
     <ion-item>
       <ion-label color="primary" position="floating">OFC</ion-label>
       <ion-input type="text" placeholder="OFC" formControlName="Circle"></ion-input>
@@ -58,7 +57,60 @@
         <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon> <!-- Use the name of the desired icon -->
       </ion-text>
     </ion-item>
+  </div>
+  <div *ngIf="Type === 'travel'">
+    <ion-item>
+      <ion-label color="primary" position="floating">Manufacturer</ion-label>
+      <ion-input type="text" placeholder="Manufacturer" formControlName="Manufacturer"></ion-input>
+      <ion-text color="danger" *ngIf="fg.get('Manufacturer').invalid && (fg.get('Manufacturer').dirty || fg.get('Manufacturer').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+        <ng-container *ngIf="fg.get('Manufacturer').errors.required">
+          Manufacturer is required
+        </ng-container>
+      </ion-text>
+      <ion-text color="success" *ngIf="fg.get('Manufacturer').valid && (fg.get('Manufacturer').dirty || fg.get('Manufacturer').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+        <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon>
+      </ion-text>
+    </ion-item>
+  
+    <ion-item>
+      <ion-label color="primary" position="floating">Batch/Lot</ion-label>
+      <ion-input type="text" placeholder="Lot" formControlName="Lot"></ion-input>
+      <ion-text color="danger" *ngIf="fg.get('Lot').invalid && (fg.get('Lot').dirty || fg.get('Lot').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+        <ng-container *ngIf="fg.get('Lot').errors.required">
+          Batch/Lot is required
+        </ng-container>
+      </ion-text>
+      <ion-text color="success" *ngIf="fg.get('Lot').valid && (fg.get('Lot').dirty || fg.get('Lot').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+        <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon>
+      </ion-text>
+    </ion-item>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Expiry</ion-label>
+      <ion-input type="text" placeholder="Expiry" formControlName="Expiry"></ion-input>
+      <ion-text color="danger" *ngIf="fg.get('Expiry')?.invalid && (fg.get('Expiry').dirty || fg.get('Expiry').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+        <ng-container *ngIf="fg.get('Expiry')?.errors.required">
+          Expiry is required
+        </ng-container>
+      </ion-text>
+      <ion-text color="success" *ngIf="fg.get('Expiry')?.valid && (fg.get('Expiry').dirty || fg.get('Expiry').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+        <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon>
+      </ion-text>
+    </ion-item>
     
+    <ion-item>
+      <ion-label color="primary" position="floating">Validity</ion-label>
+      <ion-input type="text" placeholder="Validity" formControlName="Validity"></ion-input>
+      <ion-text color="danger" *ngIf="fg.get('Validity')?.invalid && (fg.get('Validity').dirty || fg.get('Validity').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+        <ng-container *ngIf="fg.get('Validity')?.errors.required">
+          Validity is required
+        </ng-container>
+      </ion-text>
+      <ion-text color="success" *ngIf="fg.get('Validity')?.valid && (fg.get('Validity').dirty || fg.get('Validity').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+        <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon>
+      </ion-text>
+    </ion-item>
+  </div>
       
     
     

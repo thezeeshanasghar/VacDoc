@@ -140,6 +140,7 @@ export class VaccinePage {
     });
 
     await loading.present();
+
     this.vaccineService
         .getVaccinationById(this.route.snapshot.paramMap.get("id"))
         .subscribe(
@@ -182,6 +183,7 @@ hello(Type: any) {
   console.log("Type set in hello:", this.type); // Log the type after setting
   return this.type; 
 }
+
 
     groupBy(objectArray, property) {
     return objectArray.reduce(
@@ -411,6 +413,7 @@ hello(Type: any) {
 
 
   printdata() {
+
     console.log("Type before calling hello:", this.type); 
     const typeValue = this.hello(this.type); 
     console.log("Type after calling hello:", typeValue);
