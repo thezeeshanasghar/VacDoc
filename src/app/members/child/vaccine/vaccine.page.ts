@@ -33,6 +33,8 @@ export class VaccinePage {
   fgAddData: FormGroup;
   today: Date = new Date();
   private readonly API_VACCINE = `${environment.BASE_URL}`
+  Type: string;
+  type:string
 
   constructor(
     public loadingController: LoadingController,
@@ -46,9 +48,12 @@ export class VaccinePage {
     private storage: Storage,
     public platform: Platform,
     private formBuilder: FormBuilder,
+    
     // private invoiceService: InvoiceService
     // private document: DocumentViewer,
-  ) { }
+  ) {
+    this.type = '';
+   }
   
 
   ionViewWillEnter() {
@@ -128,50 +133,59 @@ export class VaccinePage {
     return isdone;
   }
   
-
+  
   async getVaccination() {
     const loading = await this.loadingController.create({
-      message: "Loading Vaccines"
+        message: "Loading Vaccines"
     });
 
     await loading.present();
-    await this.vaccineService
-      .getVaccinationById(this.route.snapshot.paramMap.get("id"))
-      .subscribe(
-        res => {
-          if (res.IsSuccess && res.ResponseData.length > 0) {
-            this.BirthYear = res.ResponseData[0].Child.DOB;
-            this.storage.set('BirthYear', this.BirthYear);
 
-            //original code
-            this.vaccine = res.ResponseData;
-            this.ChildName = this.vaccine[0].Child.Name;
-            this.vaccine.forEach(doc => {
-              doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
-              if (doc.GivenDate)
-                doc.GivenDate = moment(doc.GivenDate, "DD-MM-YYYY").format("YYYY-MM-DD");
-              this.vaccinesData.push({ childId: doc.Child.Id, vaccineId: doc.Dose.VaccineId, brandId: doc.BrandId });
-            });
+    this.vaccineService
+        .getVaccinationById(this.route.snapshot.paramMap.get("id"))
+        .subscribe(
+            res => {
+                if (res.IsSuccess && res.ResponseData.length > 0) {
+                    this.BirthYear = res.ResponseData[0].Child.DOB;
+                    this.storage.set('BirthYear', this.BirthYear);
+                    this.vaccine = res.ResponseData;
+                    console.log(this.vaccine);
+                    this.ChildName = this.vaccine[0].Child.Name;
+                    this.Type = this.vaccine[0].Child.Type;
+                    console.log("Type from vaccination data:", this.Type); // Log the Type
+                    this.type = this.hello(this.Type); // Set this.type using hello
+                    console.log("Type after hello:", this.type); // Log the type after calling hello
+                    this.vaccine.forEach(doc => {
+                        doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
+                        if (doc.GivenDate)
+                            doc.GivenDate = moment(doc.GivenDate, "DD-MM-YYYY").format("YYYY-MM-DD");
+                        this.vaccinesData.push({ childId: doc.Child.Id, vaccineId: doc.Dose.VaccineId, brandId: doc.BrandId });
+                    });
+                    this.storage.set("vaccinesData", this.vaccinesData);
+                    this.dataGrouping = this.groupBy(this.vaccine, "Date");
+                    console.log(this.dataGrouping);
+                    loading.dismiss();
+                } else {
+                    this.toastService.create("Vaccines Not Found! Please Add vaccines");
+                    loading.dismiss();
+                }
+            },
+            err => {
+                this.toastService.create("Error: server failure");
+                loading.dismiss();
+            }
+        );
+}
+    
+hello(Type: any) {
+  console.log("Type received in hello:", Type); // Log the received Type
+  this.type = Type; // Assign the value to the class property
+  console.log("Type set in hello:", this.type); // Log the type after setting
+  return this.type; 
+}
 
-            this.storage.set("vaccinesData", this.vaccinesData);
 
-            this.dataGrouping = this.groupBy(this.vaccine, "Date");
-            console.log(this.dataGrouping);
-            loading.dismiss();
-
-          } else {
-            this.toastService.create("Vaccines Not Found ! Please Add vaccines");
-            loading.dismiss();
-          }
-        },
-        err => {
-          this.toastService.create("Error: server failure");
-          loading.dismiss();
-        }
-      );
-  }
-
-  groupBy(objectArray, property) {
+    groupBy(objectArray, property) {
     return objectArray.reduce(
       function (acc, obj) {
         var key = obj[property];
@@ -397,15 +411,24 @@ export class VaccinePage {
     console.log(this.Pneum2Date);
   }
 
+
   printdata() {
 
-    if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
-      const url = `${this.API_VACCINE}child/${this.childId}/Download-Schedule-PDF`;
-      window.open(url);
+    console.log("Type before calling hello:", this.type); 
+    const typeValue = this.hello(this.type); 
+    console.log("Type after calling hello:", typeValue);
+
+    if (this.type === 'travel') {
+        this.downloadTravelPdf(); 
+    } else {
+        if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
+            const url = `${this.API_VACCINE}child/${this.childId}/Download-Schedule-PDF`;
+            window.open(url);
+        } else {
+            this.download(this.childId);
+        }
     }
-    else
-      this.download(this.childId);
-  }
+}
 
   download(id) {
     var request: DownloadRequest = {
@@ -424,7 +447,6 @@ export class VaccinePage {
     this.downloader.download(request)
       .then((location: string) => console.log('File downloaded at:' + location))
       .catch((error: any) => console.error(error));
-
   }
 
   async unfillbulk(item : any){
@@ -434,7 +456,6 @@ export class VaccinePage {
       let tempdata = {
         Id: element.Id,
         IsDone: element.isdone ? false : false,
-
       } 
       data.push(tempdata);
     }
@@ -445,7 +466,6 @@ export class VaccinePage {
     for (const d of data) {
       await this.UnfillVaccine(d.Id, d)
     }
-    
   }
 
   async UnfillVaccine(id, Data = null) {
@@ -517,7 +537,6 @@ export class VaccinePage {
           loading.dismiss();
         }
       );
-
   }
 
   async SkipVaccine(id, doseName) {
@@ -559,9 +578,7 @@ export class VaccinePage {
     const loading = await this.loadingController.create({
       message: 'Updating Schedule'
     });
-
     await loading.present();
-
     this.fgAddData.value.DoctorId = unfillData.DoctorId;
     this.fgAddData.value.IsDone = false;
     this.fgAddData.value.BrandId = unfillData.BrandId;
@@ -590,10 +607,7 @@ export class VaccinePage {
         loading.dismiss();
       }
     );
-
-
   }
-
 
   async UnSkipVaccine(id, doseName) {
     const loading = await this.loadingController.create({
@@ -605,7 +619,6 @@ export class VaccinePage {
       Id: id,
       IsSkip: false,
     }
-
 
     await this.vaccineService.UnfillChildVaccine(data).subscribe(
       res => {
@@ -637,8 +650,6 @@ export class VaccinePage {
   }
 
     // New method to unfill all vaccines
-   
-
   addDays(date, days) {
     console.log("days");
     console.log(days);
@@ -673,5 +684,4 @@ export class VaccinePage {
   }
 
 }
-
 // https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-a-array-of-objects
