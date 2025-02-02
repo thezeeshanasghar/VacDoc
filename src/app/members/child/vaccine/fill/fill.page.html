@@ -85,31 +85,34 @@
       </ion-text>
     </ion-item>
 
-    <ion-item>
-      <ion-label color="primary" position="floating">Expiry</ion-label>
-      <ion-input type="text" placeholder="Expiry" formControlName="Expiry"></ion-input>
-      <ion-text color="danger" *ngIf="fg.get('Expiry')?.invalid && (fg.get('Expiry').dirty || fg.get('Expiry').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+    <ion-item (click)="expiryPicker.open()">
+      <ion-label color="primary">Expiry</ion-label>
+      <input formControlName="Expiry" matInput [matDatepicker]="expiryPicker" [value]="todaydate">
+      <mat-datepicker-toggle matSuffix [for]="expiryPicker"></mat-datepicker-toggle>
+      <mat-datepicker #expiryPicker></mat-datepicker>
+      <ion-text color="danger"
+        *ngIf="fg.get('Expiry')?.invalid && (fg.get('Expiry').dirty || fg.get('Expiry').touched)"
+        style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
         <ng-container *ngIf="fg.get('Expiry')?.errors.required">
           Expiry is required
         </ng-container>
       </ion-text>
-      <ion-text color="success" *ngIf="fg.get('Expiry')?.valid && (fg.get('Expiry').dirty || fg.get('Expiry').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-        <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon>
-      </ion-text>
     </ion-item>
     
-    <ion-item>
-      <ion-label color="primary" position="floating">Validity</ion-label>
-      <ion-input type="text" placeholder="Validity" formControlName="Validity"></ion-input>
-      <ion-text color="danger" *ngIf="fg.get('Validity')?.invalid && (fg.get('Validity').dirty || fg.get('Validity').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+    <ion-item (click)="validityPicker.open()">
+      <ion-label color="primary">Validity</ion-label>
+      <input formControlName="Validity" matInput [matDatepicker]="validityPicker" [value]="todaydate">
+      <mat-datepicker-toggle matSuffix [for]="validityPicker"></mat-datepicker-toggle>
+      <mat-datepicker #validityPicker></mat-datepicker>
+      <ion-text color="danger"
+        *ngIf="fg.get('Validity')?.invalid && (fg.get('Validity').dirty || fg.get('Validity').touched)"
+        style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
         <ng-container *ngIf="fg.get('Validity')?.errors.required">
           Validity is required
         </ng-container>
       </ion-text>
-      <ion-text color="success" *ngIf="fg.get('Validity')?.valid && (fg.get('Validity').dirty || fg.get('Validity').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-        <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon>
-      </ion-text>
     </ion-item>
+    
   </div>
       
     
