@@ -689,10 +689,9 @@ onTravelChange(event: any) {
 
   validation_messages = {
     name: [{ type: "required", message: "Name is required." },
-    { type: 'pattern', message: 'PLease Enter Only Charecters in First Name.' }],
+    { type: 'pattern', message: 'Please enter only characters in the first name.' }],
     City2: [
-      { type: 'pattern', message: 'PLease Enter Only Charecters in City.' }],
-
+      { type: 'pattern', message: 'Please enter only characters in the city.' }],
     fatherName: [{ type: "required", message: "Guardian name is required." },
     { type: 'pattern', message: 'Only letters, spaces, commas, and hyphens are allowed in Guardian.' }],
     email: [
@@ -700,7 +699,6 @@ onTravelChange(event: any) {
       { type: "pattern", message: "Please enter a valid email." }
     ],
     DOB: [{ type: "required", message: "Date of Birth is required." }],
-
     mobileNumber: [
       {
         type: "required",
@@ -708,7 +706,10 @@ onTravelChange(event: any) {
       },
       // { type: "pattern", message: "Mobile number is required like 3331231231" }
     ],
-    gender: [{ type: "required", message: "Gender is required." }]
+    gender: [{ type: "required", message: "Gender is required." }],
+    Agent2: [
+      { type: "required", message: "Agent is required." }
+    ]
   };
   //cities = ['Islamabad', 'Rawalpindi', 'Multan', 'Other']
 
