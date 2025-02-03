@@ -129,6 +129,7 @@ export class FillPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.vaccineData = res.ResponseData;
+          console.log(this.vaccineData);
           this.MinAge = this.vaccineData.Dose.Vaccine.MinAge;
           this.MinGap = this.vaccineData.Dose.MinGap;
           console.log(this.vaccineData);
@@ -195,7 +196,7 @@ export class FillPage implements OnInit {
           // this.MinGap = this.vaccineData.Dose.MinGap;
           // console.log(this.vaccineData);
           // console.log(this.vaccineData.ChildId);
-          this.childId = this.vaccineData.ChildId; // Assuming ChildId is the correct property to use
+          this.childId = this.vaccineData.Id; // Assuming ChildId is the correct property to use
           console.log('Child ID:', this.childId); 
           this.Type = this.vaccineData.Type; // Retaining this line as it seems necessary
           // this.vaccineName = this.vaccineData.Dose.Vaccine.Name;
@@ -264,13 +265,14 @@ export class FillPage implements OnInit {
     await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
       res => {
         if (res.IsSuccess) {
-          if (this.vaccineData.Dose.Vaccine.isInfinite) {
+          loading.dismiss();
+          this.router.navigate(['/members/child/vaccine/' + this.childId]);
+          console.log(res.ResponseData);
+         if (res.ResponseData.Dose && res.Dose.Vaccine && res.Dose.Vaccine.isInfinite) {
             loading.dismiss();
             this.addNewVaccineInScheduleTable(scheduleDate);
-          } else {
-            loading.dismiss();
-            this.router.navigate(['/members/child/vaccine/' + this.vaccineData.ChildId]);
-          }
+          } 
+          
           loading.dismiss();
         } else {
           this.toastService.create("Error: Failed to update injection");
@@ -304,7 +306,7 @@ export class FillPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           console.log(res.ResponseData);
-          loading.dismiss();
+          console.log(this.vaccineData.ChildId);
           this.router.navigate(['/members/child/vaccine/' + this.vaccineData.ChildId]);
           loading.dismiss();
         } else {
