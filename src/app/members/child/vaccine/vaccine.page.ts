@@ -34,7 +34,7 @@ export class VaccinePage {
   today: Date = new Date();
   private readonly API_VACCINE = `${environment.BASE_URL}`
   Type: string;
-  type:string
+  type: string
 
   constructor(
     public loadingController: LoadingController,
@@ -48,13 +48,13 @@ export class VaccinePage {
     private storage: Storage,
     public platform: Platform,
     private formBuilder: FormBuilder,
-    
+
     // private invoiceService: InvoiceService
     // private document: DocumentViewer,
   ) {
     this.type = '';
-   }
-  
+  }
+
 
   ionViewWillEnter() {
     this.childId = this.route.snapshot.paramMap.get("id");
@@ -86,19 +86,19 @@ export class VaccinePage {
     event.stopPropagation();
     this.SkipVaccine(id, doseName);
   }
-  
+
   handleUnSkipClick(event: Event, id: number, doseName: string) {
     event.preventDefault();
     event.stopPropagation();
     this.UnSkipVaccine(id, doseName);
   }
-  
+
   // generateInvoice(item: any): void {
   //   const invoiceDTO = {
   //     amount: 0,
   //     childId: this.childId  // Use the existing childId property
   //   };
-  
+
   //   console.log(invoiceDTO);
   //   this.invoiceService.CreateInvoice(invoiceDTO).subscribe(
   //     (res) => {
@@ -120,8 +120,8 @@ export class VaccinePage {
   //     }
   //   );
   // }
-  
-  
+
+
   checkVaccineIsDon(data): boolean {
     var isdone: boolean = true;
     for (let i = 0; i < data.length; i++) {
@@ -132,60 +132,60 @@ export class VaccinePage {
     }
     return isdone;
   }
-  
-  
+
+
   async getVaccination() {
     const loading = await this.loadingController.create({
-        message: "Loading Vaccines"
+      message: "Loading Vaccines"
     });
 
     await loading.present();
 
     this.vaccineService
-        .getVaccinationById(this.route.snapshot.paramMap.get("id"))
-        .subscribe(
-            res => {
-                if (res.IsSuccess && res.ResponseData.length > 0) {
-                    this.BirthYear = res.ResponseData[0].Child.DOB;
-                    this.storage.set('BirthYear', this.BirthYear);
-                    this.vaccine = res.ResponseData;
-                    console.log(this.vaccine);
-                    this.ChildName = this.vaccine[0].Child.Name;
-                    this.Type = this.vaccine[0].Child.Type;
-                    console.log("Type from vaccination data:", this.Type); // Log the Type
-                    this.type = this.hello(this.Type); // Set this.type using hello
-                    console.log("Type after hello:", this.type); // Log the type after calling hello
-                    this.vaccine.forEach(doc => {
-                        doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
-                        if (doc.GivenDate)
-                            doc.GivenDate = moment(doc.GivenDate, "DD-MM-YYYY").format("YYYY-MM-DD");
-                        this.vaccinesData.push({ childId: doc.Child.Id, vaccineId: doc.Dose.VaccineId, brandId: doc.BrandId });
-                    });
-                    this.storage.set("vaccinesData", this.vaccinesData);
-                    this.dataGrouping = this.groupBy(this.vaccine, "Date");
-                    console.log(this.dataGrouping);
-                    loading.dismiss();
-                } else {
-                    this.toastService.create("Vaccines Not Found! Please Add vaccines");
-                    loading.dismiss();
-                }
-            },
-            err => {
-                this.toastService.create("Error: server failure");
-                loading.dismiss();
-            }
-        );
-}
-    
-hello(Type: any) {
-  console.log("Type received in hello:", Type); // Log the received Type
-  this.type = Type; // Assign the value to the class property
-  console.log("Type set in hello:", this.type); // Log the type after setting
-  return this.type; 
-}
+      .getVaccinationById(this.route.snapshot.paramMap.get("id"))
+      .subscribe(
+        res => {
+          if (res.IsSuccess && res.ResponseData.length > 0) {
+            this.BirthYear = res.ResponseData[0].Child.DOB;
+            this.storage.set('BirthYear', this.BirthYear);
+            this.vaccine = res.ResponseData;
+            console.log(this.vaccine);
+            this.ChildName = this.vaccine[0].Child.Name;
+            this.Type = this.vaccine[0].Child.Type;
+            console.log("Type from vaccination data:", this.Type); // Log the Type
+            this.type = this.hello(this.Type); // Set this.type using hello
+            console.log("Type after hello:", this.type); // Log the type after calling hello
+            this.vaccine.forEach(doc => {
+              doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
+              if (doc.GivenDate)
+                doc.GivenDate = moment(doc.GivenDate, "DD-MM-YYYY").format("YYYY-MM-DD");
+              this.vaccinesData.push({ childId: doc.Child.Id, vaccineId: doc.Dose.VaccineId, brandId: doc.BrandId });
+            });
+            this.storage.set("vaccinesData", this.vaccinesData);
+            this.dataGrouping = this.groupBy(this.vaccine, "Date");
+            console.log(this.dataGrouping);
+            loading.dismiss();
+          } else {
+            this.toastService.create("Vaccines Not Found! Please Add vaccines");
+            loading.dismiss();
+          }
+        },
+        err => {
+          this.toastService.create("Error: server failure");
+          loading.dismiss();
+        }
+      );
+  }
+
+  hello(Type: any) {
+    console.log("Type received in hello:", Type); // Log the received Type
+    this.type = Type; // Assign the value to the class property
+    console.log("Type set in hello:", this.type); // Log the type after setting
+    return this.type;
+  }
 
 
-    groupBy(objectArray, property) {
+  groupBy(objectArray, property) {
     return objectArray.reduce(
       function (acc, obj) {
         var key = obj[property];
@@ -414,21 +414,21 @@ hello(Type: any) {
 
   printdata() {
 
-    console.log("Type before calling hello:", this.type); 
-    const typeValue = this.hello(this.type); 
+    console.log("Type before calling hello:", this.type);
+    const typeValue = this.hello(this.type);
     console.log("Type after calling hello:", typeValue);
 
     if (this.type === 'travel') {
-        this.downloadTravelPdf(); 
+      this.downloadTravelPdf();
     } else {
-        if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
-            const url = `${this.API_VACCINE}child/${this.childId}/Download-Schedule-PDF`;
-            window.open(url);
-        } else {
-            this.download(this.childId);
-        }
+      if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
+        const url = `${this.API_VACCINE}child/${this.childId}/Download-Schedule-PDF`;
+        window.open(url);
+      } else {
+        this.download(this.childId);
+      }
     }
-}
+  }
 
   download(id) {
     var request: DownloadRequest = {
@@ -449,14 +449,14 @@ hello(Type: any) {
       .catch((error: any) => console.error(error));
   }
 
-  async unfillbulk(item : any){
+  async unfillbulk(item: any) {
     console.log(item);
     let data = []
     for (const element of item.value) {
       let tempdata = {
         Id: element.Id,
         IsDone: element.isdone ? false : false,
-      } 
+      }
       data.push(tempdata);
     }
     const loading = await this.loadingController.create({
@@ -548,7 +548,7 @@ hello(Type: any) {
       Id: id,
       IsSkip: true,
     }
- 
+
     await this.vaccineService.UnfillChildVaccine(data).subscribe(
       res => {
         if (res.IsSuccess) {
@@ -649,7 +649,7 @@ hello(Type: any) {
     );
   }
 
-    // New method to unfill all vaccines
+  // New method to unfill all vaccines
   addDays(date, days) {
     console.log("days");
     console.log(days);

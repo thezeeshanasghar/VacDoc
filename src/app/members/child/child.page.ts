@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild} from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { IonInfiniteScroll } from '@ionic/angular';
 import { LoadingController } from '@ionic/angular';
 import { ChildService } from 'src/app/services/child.service';
@@ -8,9 +8,9 @@ import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment.prod';
 import { AlertService } from 'src/app/shared/alert.service';
 import { Router } from '@angular/router';
-import { FormGroup, FormBuilder , Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CallNumber } from '@ionic-native/call-number/ngx';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 
 
 @Component({
@@ -19,14 +19,14 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./child.page.scss'],
 })
 export class ChildPage {
-  @ViewChild (IonInfiniteScroll, {static: false}) infiniteScroll: IonInfiniteScroll;
+  @ViewChild(IonInfiniteScroll, { static: false }) infiniteScroll: IonInfiniteScroll;
   fg: FormGroup;
   childs: any = [];
   userId: any;
   doctorId: number;
   page: number;
   search: boolean;
-  clinic:any;
+  clinic: any;
   constructor(
     public router: Router,
     public loadingController: LoadingController,
@@ -38,10 +38,10 @@ export class ChildPage {
     private alertService: AlertService,
     private callNumber: CallNumber,
     private http: HttpClient,
-  
+
   ) {
     this.fg = this.formBuilder.group({
-      Name: ["" , Validators.required],
+      Name: ["", Validators.required],
     });
   }
   ionViewWillEnter() {
@@ -54,17 +54,9 @@ export class ChildPage {
     this.page = 0;
     this.search = false;
     this.childs = [];
-   // console.log(this.clinicService.OnlineClinic.Id);
     this.getChlidByClinic(false);
-
-    this.storage.keys().then((keys) => {
-      keys.forEach((key) => {
-        this.storage.get(key).then((value) => {
-          console.log(`Key: ${key}, Value: ${this.getStringValue(value)}`);
-        });
-      });
-    });
   }
+
   getStringValue(value: any): string {
     if (typeof value === 'object') {
       return JSON.stringify(value);
@@ -72,11 +64,12 @@ export class ChildPage {
       return value.toString();
     }
   }
-  loadData(){
+
+  loadData() {
     if (this.search)
-    this.getChlidbyUser(false);
+      this.getChlidbyUser(false);
     else
-    this.getChlidByClinic(false);
+      this.getChlidByClinic(false);
   }
 
   // Alert Msg Show for deletion of Child
@@ -119,20 +112,20 @@ export class ChildPage {
       message: 'Loading'
     });
     await loading.present();
-    if(keypress) {
+    if (keypress) {
       this.search = true;
       this.page = 0;
       this.childs = [];
       this.infiniteScroll.disabled = false;
-      }
-    await this.childService.getChildByUserSearch(this.doctorId , this.page , this.fg.value.Name).subscribe(
+    }
+    await this.childService.getChildByUserSearch(this.doctorId, this.page, this.fg.value.Name).subscribe(
       res => {
         if (res.IsSuccess) {
-          if(res.ResponseData.length < 15)
-          this.infiniteScroll.disabled = true;
-            this.childs =  (this.childs.concat(res.ResponseData));
-            this.page += 1;
-            this.infiniteScroll.complete();
+          if (res.ResponseData.length < 15)
+            this.infiniteScroll.disabled = true;
+          this.childs = (this.childs.concat(res.ResponseData));
+          this.page += 1;
+          this.infiniteScroll.complete();
           loading.dismiss();
         }
         else {
@@ -152,19 +145,19 @@ export class ChildPage {
       message: 'Loading'
     });
     await loading.present();
-    if(isdelete) {
+    if (isdelete) {
       this.page = 0;
       this.childs = [];
       this.search = false;
       this.fg.controls['Name'].setValue(null);
-      }
-    await this.childService.getChildByClinic(this.clinic.Id , this.page).subscribe(
+    }
+    await this.childService.getChildByClinic(this.clinic.Id, this.page).subscribe(
       res => {
         if (res.IsSuccess) {
-          if(res.ResponseData.length < 10)
-          this.infiniteScroll.disabled = true;
+          if (res.ResponseData.length < 10)
+            this.infiniteScroll.disabled = true;
           this.childs = this.childs.concat(res.ResponseData);
-          this.page += 1 ;
+          this.page += 1;
           loading.dismiss();
           this.infiniteScroll.complete();
         }
@@ -180,13 +173,12 @@ export class ChildPage {
     )
   }
 
-  callFunction(celnumber)
-  {
+  callFunction(celnumber) {
     this.callNumber.callNumber(0 + celnumber, true)
-    .then(res => console.log('Launched dialer!', res))
-    .catch(err => console.log('Error launching dialer', err));
+      .then(res => console.log('Launched dialer!', res))
+      .catch(err => console.log('Error launching dialer', err));
   }
-  
+
   async toggleChildActiveStatus(childId: number) {
     const loading = await this.loadingController.create({
       message: 'Updating status...'
@@ -220,13 +212,29 @@ export class ChildPage {
   }
 
   downloadPdf(childId: number) {
-    debugger
-    this.childService.downloadPdf(childId).subscribe((response) => {
-      const blob = new Blob([response], { type: 'application/pdf' });
+    this.childService.downloadPdf(childId, { observe: 'response', responseType: 'blob' }).subscribe((response: HttpResponse<Blob>) => {
+      console.log(response.headers);
+      const blob = new Blob([response.body], { type: 'application/pdf' });
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
-      link.download = 'Patient-ID.pdf';
+
+      const contentDisposition = response.headers.get('Content-Disposition');
+      console.log('Content-Disposition:', contentDisposition);
+      let filename = 'Patient-ID.pdf'; // Default filename
+
+      if (contentDisposition) {
+        // Try to get filename from the attachment; filename= part
+        let matches = /filename=(.*?)(;|$)/.exec(contentDisposition);
+
+        if (matches && matches[1]) {
+          // Remove quotes if present
+          filename = matches[1].replace(/["']/g, '');
+        }
+      }
+
+      link.download = filename;
       link.click();
+      window.URL.revokeObjectURL(link.href);
     }, error => {
       console.error('Error downloading the PDF', error);
     });
