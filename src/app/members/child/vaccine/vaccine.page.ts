@@ -33,8 +33,7 @@ export class VaccinePage {
   fgAddData: FormGroup;
   today: Date = new Date();
   private readonly API_VACCINE = `${environment.BASE_URL}`
-  Type: string;
-  type: string
+  type: string;
 
   constructor(
     public loadingController: LoadingController,
@@ -149,12 +148,8 @@ export class VaccinePage {
             this.BirthYear = res.ResponseData[0].Child.DOB;
             this.storage.set('BirthYear', this.BirthYear);
             this.vaccine = res.ResponseData;
-            console.log(this.vaccine);
             this.ChildName = this.vaccine[0].Child.Name;
-            this.Type = this.vaccine[0].Child.Type;
-            console.log("Type from vaccination data:", this.Type); // Log the Type
-            this.type = this.hello(this.Type); // Set this.type using hello
-            console.log("Type after hello:", this.type); // Log the type after calling hello
+            this.type = this.vaccine[0].Child.Type;
             this.vaccine.forEach(doc => {
               doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
               if (doc.GivenDate)
@@ -176,14 +171,6 @@ export class VaccinePage {
         }
       );
   }
-
-  hello(Type: any) {
-    console.log("Type received in hello:", Type); // Log the received Type
-    this.type = Type; // Assign the value to the class property
-    console.log("Type set in hello:", this.type); // Log the type after setting
-    return this.type;
-  }
-
 
   groupBy(objectArray, property) {
     return objectArray.reduce(
@@ -413,11 +400,6 @@ export class VaccinePage {
 
 
   printdata() {
-
-    console.log("Type before calling hello:", this.type);
-    const typeValue = this.hello(this.type);
-    console.log("Type after calling hello:", typeValue);
-
     if (this.type === 'travel') {
       this.downloadTravelPdf();
     } else {

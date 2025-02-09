@@ -213,13 +213,11 @@ export class ChildPage {
 
   downloadPdf(childId: number) {
     this.childService.downloadPdf(childId, { observe: 'response', responseType: 'blob' }).subscribe((response: HttpResponse<Blob>) => {
-      console.log(response.headers);
       const blob = new Blob([response.body], { type: 'application/pdf' });
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
 
       const contentDisposition = response.headers.get('Content-Disposition');
-      console.log('Content-Disposition:', contentDisposition);
       let filename = 'Patient-ID.pdf'; // Default filename
 
       if (contentDisposition) {
