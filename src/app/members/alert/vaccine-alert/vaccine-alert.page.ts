@@ -12,6 +12,7 @@ import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-nati
 import { Platform } from '@ionic/angular';
 import { DoctorService } from "src/app/services/doctor.service";
 import { VaccineService } from 'src/app/services/vaccine.service'; // Import the service
+import { Console } from "console";
 
 @Component({
   selector: "app-vaccine-alert",
@@ -128,25 +129,17 @@ export class VaccineAlertPage implements OnInit {
   }
   // Get childs get from server
   async getChlid(numOfDays: number, formattedDate: string) {
-
     this.numOfDays = numOfDays;
     this.formattedDate = formattedDate;
     const loading = await this.loadingController.create({
       message: "Loading"
     });
     await loading.present();
-
-
     await this.alertService.getChild(this.formattedDate, this.numOfDays, this.clinicId).subscribe(
       res => {
-
-
         if (res.IsSuccess) {
           this.Childs = "";
           this.Childs = res.ResponseData;
-
-
-
           loading.dismiss();
         } else {
           loading.dismiss();
@@ -181,7 +174,29 @@ export class VaccineAlertPage implements OnInit {
       }
     );
   }
-
+  async sendemail(child: any) {
+    console.log(child);
+    console.log(child[0].ChildId);
+    const loading = await this.loadingController.create({
+      message: "sending email"
+    });
+    await loading.present();
+    await this.alertService.sendEmailSingle(child[0].ChildId).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          loading.dismiss();
+          this.toastService.create("email sent successfully", "success");
+        } else {
+          loading.dismiss();
+          this.toastService.create(res.Message, "danger");
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, "danger");
+      }
+    );
+  }
   downloadcsv() {
     let query = "";
     this.Childs.map(x => x.Child.Id).forEach(id => {
@@ -217,7 +232,6 @@ export class VaccineAlertPage implements OnInit {
       message: "Loading"
     });
     await loading.present();
-
     for (let i = 0; i < child.length; i++) {
       let message = this.generateSMS(child[i]);
     }
@@ -233,7 +247,6 @@ export class VaccineAlertPage implements OnInit {
 
   // send Alert Msg to childs
   async sendAlertMsg(id, childMobile, message) {
-
     if (this.SMSKey == 0) {
       await this.alertService
         .sendIndividualAlertMsg(this.numOfDays, id)

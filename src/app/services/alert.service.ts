@@ -42,6 +42,14 @@ export class AlertService extends BaseService {
     );
   }
 
+  sendEmailSingle(childId: number): Observable<any> {
+    const url = `${this.API_ALERT}alertone/${childId}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
   sendIndividualAlertMsg(numOfDays: number, Id: String): Observable<any> {
     const url = `${this.API_ALERT
       }alert/individual-sms-alert/${numOfDays}/${Id}`;
