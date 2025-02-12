@@ -12,7 +12,7 @@ import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-nati
 import { Platform } from '@ionic/angular';
 import { DoctorService } from "src/app/services/doctor.service";
 import { VaccineService } from 'src/app/services/vaccine.service'; // Import the service
-import { Console } from "console";
+
 
 @Component({
   selector: "app-vaccine-alert",
