@@ -50,7 +50,12 @@
           <ion-icon name="lock-closed" class="ion-item-start"></ion-icon>
           Password
         </ion-label>
-        <ion-input type="password" formControlName="Password" [class.invalid-input]="fg.get('Password').invalid && (fg.get('Password').dirty || fg.get('Password').touched)"></ion-input>
+        <div style="display: flex; align-items: center;">
+          <ion-input [type]="showPassword ? 'text' : 'password'" formControlName="Password" [class.invalid-input]="fg.get('Password').invalid && (fg.get('Password').dirty || fg.get('Password').touched)"></ion-input>
+          <ion-button fill="clear" (click)="togglePasswordVisibility()">
+            <ion-icon [name]="showPassword ? 'eye-off' : 'eye'"></ion-icon>
+          </ion-button>
+        </div>
         
         <div *ngIf="fg.get('Password').invalid && (fg.get('Password').dirty || fg.get('Password').touched)">
           <div *ngIf="fg.get('Password').errors">
