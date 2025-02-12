@@ -20,8 +20,7 @@ const { App } = Plugins;
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-
-
+  showPassword = false;
   fg: FormGroup;
   obj:any;
   forgot = false;
@@ -66,6 +65,10 @@ export class LoginPage implements OnInit {
       const forbidden = /\D/.test(control.value); // Regular expression to test for non-digit characters
       return forbidden ? { 'onlyNumbers': { value: control.value } } : null;
     };
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
   }
 
     isFormInvalid(): boolean {
