@@ -629,6 +629,7 @@ onTravelChange(event: any) {
     if (selectedValue === 'travel') {
         this.isCnicRequired = true;
         this.fg1.get('CNIC').setValidators([Validators.required]);
+        this.fg1.get('agent').setValidators([Validators.required]);
     } else {
         this.isCnicRequired = false;
         this.fg1.get('CNIC').clearValidators();
