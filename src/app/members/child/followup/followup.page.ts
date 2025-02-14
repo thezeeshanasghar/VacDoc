@@ -109,4 +109,18 @@ export class FollowupPage implements OnInit {
     
   }
   
+  downloadFollowUpPdf(childId) {
+    debugger
+    childId = this.childId; 
+    this.followupService.downloadFollowUpPdf(childId).subscribe(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Follow-Up.pdf';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }, error => {
+      console.error('Error downloading PDF', error);
+    });
+  }
 }
