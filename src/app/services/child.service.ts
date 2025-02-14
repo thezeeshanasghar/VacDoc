@@ -81,7 +81,7 @@ export class ChildService extends BaseService {
   }
 
   downloadPdf(childId: number, options: any): Observable<HttpResponse<Blob>> {
-    const apiUrl = `${this.API_CHILD}Child/PID/${childId}`;
+    const apiUrl = `${this.API_CHILD}Child/PIDPDF/${childId}`;
     return this.http.get(apiUrl, {
       responseType: 'blob',
       observe: 'response',
