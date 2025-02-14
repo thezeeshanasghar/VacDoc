@@ -238,7 +238,7 @@
         </div>
       </div>
     </div>
-      <ion-button type="submit" [disabled]="!fg1.valid&&isCnicRequired"
+      <ion-button type="submit" [disabled]="!fg1.valid || (isCnicRequired && !fg1.get('CNIC').value)"
         style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;"
         color="primary">Submit
       </ion-button>

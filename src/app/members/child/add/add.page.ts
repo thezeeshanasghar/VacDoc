@@ -125,25 +125,22 @@ loadAgent(): void {
         Validators.required,
         Validators.pattern(/^[^\d]+$/)
       ])],
-
-      Guardian: ["Guardian"],
-
+      Guardian: ["Guardian", Validators.required],
       FatherName: new FormControl("", Validators.compose([
         Validators.required,
         Validators.pattern(/^[^\d]+$/)
       ])),
-
       Email: new FormControl(
         "",
         Validators.compose([
-          // Validators.required,
+          Validators.required,
           Validators.pattern(
             "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
           )
         ])
       ),
       DOB: new FormControl('', Validators.required),
-      CountryCode: ["92"],
+      CountryCode: ["92", Validators.required],
       MobileNumber: new FormControl(
         "",
         Validators.compose([
@@ -151,18 +148,14 @@ loadAgent(): void {
           Validators.pattern("^[0-9]+$")
         ])
       ),
-      City2: [{ value: '', disabled: true }, Validators.compose([
-
-      ])],
-      Agent2: [{ value: '', disabled: true }, Validators.compose([
-
-      ])],
+      City2: [{ value: '', disabled: true }, Validators.compose([])],
+      Agent2: [{ value: '', disabled: true }, Validators.compose([])],
       Gender: [null, Validators.required],
       Type: [null, Validators.required],
-      city: [''],
-      agent:[''],
+      city: ['', Validators.required],
+      agent: [''],
       travel: [false],
-      CNIC: ['',[]],
+      CNIC: [''],
       IsEPIDone: [false],
       IsSkip: [true],
       IsVerified: [false],
@@ -636,6 +629,7 @@ onTravelChange(event: any) {
     if (selectedValue === 'travel') {
         this.isCnicRequired = true;
         this.fg1.get('CNIC').setValidators([Validators.required]);
+        this.fg1.get('agent').setValidators([Validators.required]);
     } else {
         this.isCnicRequired = false;
         this.fg1.get('CNIC').clearValidators();
