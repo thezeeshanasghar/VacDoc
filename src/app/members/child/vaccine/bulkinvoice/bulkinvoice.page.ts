@@ -204,7 +204,7 @@ export class BulkInvoicePage implements OnInit {
     const formattedDate = `${year}-${month}-${day}`;
 
     if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
-      const url = `${this.API_VACCINE}child/${id}/${formattedDate}/${formattedDate}/${fee}/Download-Invoice-PDF`;
+      const url = `${this.API_VACCINE}child/${id}/${formattedDate}/${formattedDate}/${fee}/Verify-Invoice-PDF`;
       window.open(url);
     } else {
       var request: DownloadRequest = {
