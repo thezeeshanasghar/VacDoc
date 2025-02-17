@@ -404,7 +404,7 @@ export class VaccinePage {
       this.downloadTravelPdf();
     } else {
       if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
-        const url = `${this.API_VACCINE}child/${this.childId}/Download-Schedule-PDF`;
+        const url = `${this.API_VACCINE}child/${this.childId}/ScheduleVerify`;
         window.open(url);
       } else {
         this.download(this.childId);
