@@ -112,6 +112,6 @@ export class VaccineService extends BaseService {
 
   // Method to call the GenerateTravelPdf API
   generateTravelPdf(childId: number): Observable<Blob> {
-    return this.http.get(`${this.API_VACCINE}Child/Travel-PDF-Download/atta?childId=${childId}`, { responseType: 'blob' });
+    return this.http.get(`${this.API_VACCINE}Child/Travel-PDF-Download/${childId}`, { responseType: 'blob' });
   }
 }
