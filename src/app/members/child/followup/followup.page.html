@@ -4,6 +4,9 @@
       <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title>Follow up</ion-title>
+    <ion-buttons slot="end" style="margin-right: 24px;">
+      <ion-icon color="light" name="download" (click)="downloadFollowUpPdf(childId)" style="font-size: 25px;"></ion-icon>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content padding>
@@ -14,7 +17,6 @@
         <ion-card-title>{{child.Child.Name}}</ion-card-title>
         <ion-item class="ion-justify-content-center">
           <ion-icon slot="end" color="primary" name="trash" (click)="alertforDeleteFollowup(child.Id)" style="font-size: 25px;"></ion-icon>
-          <ion-icon slot="end" color="primary" name="download" (click)="downloadFollowUpPdf(child.Id)" style="font-size: 25px;"></ion-icon>
         </ion-item> 
         </div>
       </ion-card-header>
