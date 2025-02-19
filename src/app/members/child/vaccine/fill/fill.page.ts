@@ -44,6 +44,8 @@ export class FillPage implements OnInit {
   Lot:any;
   Expiry:any;
   Validity:any;
+  vaccine: any;
+  doseId: any;
 
   constructor(
     public loadingController: LoadingController,
@@ -55,18 +57,22 @@ export class FillPage implements OnInit {
     private router: Router,
     private ref: ChangeDetectorRef,
     private childService: ChildService,
+    private activatedRoute: ActivatedRoute,
   ) { }
 
   ngOnInit() {
+    // console.log(this.vaccineData.Dose.Vaccine.isInfinite);
     this.storage.get(environment.DOCTOR_Id).then((val) => {
       this.doctorId = val;
     });
     this.storage.get('BirthYear').then((val) => {
       this.birthYear = moment(val, "DD-MM-YYYY").format("YYYY-MM-DD");
     });
-
+    this.childId = parseInt(this.activatedRoute.snapshot.paramMap.get("childId"));
+    console.log(this.childId);
     this.storage.get('vaccinesData').then((val) => {
       this.vaccinesData = val;
+      console.log(this.vaccinesData);
       this.addOHFToBrands(); // Add OHF to the list of brands
     });
 
@@ -110,6 +116,7 @@ export class FillPage implements OnInit {
     // });
     // console.log( this.childId )
     // this.getChildData(this.childId)
+    console.log(this.vaccineData);
   }
   // checkDate() {
   //   const today = new Date();
@@ -132,10 +139,12 @@ export class FillPage implements OnInit {
           console.log(this.vaccineData);
           this.MinAge = this.vaccineData.Dose.Vaccine.MinAge;
           this.MinGap = this.vaccineData.Dose.MinGap;
-          console.log(this.vaccineData);
+          this.vaccine=this.vaccineData.Dose.Vaccine.isInfinite;
+          console.log(this.vaccine);
           console.log(this.vaccineData.ChildId);
           this.childId=this.vaccineData.ChildId;
-          console.log('Child ID:', this.childId); 
+          this.doseId=this.vaccineData.DoseId;
+          console.log('Child ID:', this.doseId); 
           this.getChildData(this.childId)
           this.vaccineName = this.vaccineData.Dose.Vaccine.Name;
           this.brandName = this.vaccineData.Brands;
@@ -154,6 +163,7 @@ export class FillPage implements OnInit {
           this.toastService.create(res.Message, 'danger');
         }
       },
+      
       err => {
         loading.dismiss();
         this.toastService.create(err, 'danger');
@@ -191,6 +201,7 @@ export class FillPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.vaccineData = res.ResponseData;
+
           console.log(this.vaccineData);
           // this.MinAge = this.vaccineData.Dose.Vaccine.MinAge;
           // this.MinGap = this.vaccineData.Dose.MinGap;
@@ -228,6 +239,7 @@ export class FillPage implements OnInit {
 
     return givenDate > today; // Return true if the GivenDate is greater than today's date
   }
+
   async fillVaccine() {
     const loading = await this.loadingController.create({
       message: 'Updating'
@@ -252,7 +264,7 @@ export class FillPage implements OnInit {
 
     givenDate.setHours(0, 0, 0, 0);
     currentDate.setHours(0, 0, 0, 0);
-
+    console.log("givenDate",this.vaccineData.ChildId);
     if (givenDate > currentDate) {
       this.toastService.create("Given date is not today. Cannot update injection.", 'danger');
       loading.dismiss();
@@ -265,14 +277,14 @@ export class FillPage implements OnInit {
     await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
       res => {
         if (res.IsSuccess) {
-          loading.dismiss();
-          this.router.navigate(['/members/child/vaccine/' + this.childId]);
-          console.log(res.ResponseData);
-         if (res.ResponseData.Dose && res.Dose.Vaccine && res.Dose.Vaccine.isInfinite) {
+          console.log(this.vaccine);
+          if (this.vaccine) {
             loading.dismiss();
             this.addNewVaccineInScheduleTable(scheduleDate);
-          } 
-          
+          } else {
+            loading.dismiss();
+            this.router.navigate(['/members/child/vaccine/' + this.childId]);
+          }
           loading.dismiss();
         } else {
           this.toastService.create("Error: Failed to update injection");
@@ -292,22 +304,30 @@ export class FillPage implements OnInit {
     });
 
     await loading.present();
+    console.log(this.childId);
+    console.log("scheduleDate",this.vaccineData.DoseId);
 
-    this.fgAddData.value.DoctorId = this.fg.value.DoctorId;
-    this.fgAddData.value.IsDone = false;
-    this.fgAddData.value.BrandId = this.fg.value.BrandId;
-    this.fgAddData.value.IsDisease = this.fg.value.IsDisease;
-    this.fgAddData.value.DiseaseYear = this.fg.value.DiseaseYear;
-    this.fgAddData.value.ChildId = this.vaccineData.ChildId;
-    this.fgAddData.value.DoseId = this.vaccineData.DoseId;
-    this.fgAddData.value.Date = scheduleDate;
-
-    await this.vaccineService.AddChildSchedule(this.fgAddData.value).subscribe(
+    let VaccineData = {
+    DoctorId : this.fg.value.DoctorId,
+    IsDone : false,
+    BrandId : this.fg.value.BrandId,
+    ChildId : this.childId,
+    DoseId : this.doseId,
+    Date : scheduleDate,
+    GivenDate:this.fg.value.GivenDate,
+    Height:this.fg.value.Height,
+    Weight: this.fg.value.Weight,
+    IsSkip: false
+    };
+   
+    await this.vaccineService.AddChildSchedule(VaccineData).subscribe(
       res => {
+        console.log(res);
+        console.log(VaccineData);
         if (res.IsSuccess) {
           console.log(res.ResponseData);
           console.log(this.vaccineData.ChildId);
-          this.router.navigate(['/members/child/vaccine/' + this.vaccineData.ChildId]);
+          this.router.navigate(['/members/child/vaccine/' + this.childId]);
           loading.dismiss();
         } else {
           loading.dismiss();
