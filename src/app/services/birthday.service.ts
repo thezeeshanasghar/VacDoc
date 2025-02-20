@@ -10,6 +10,7 @@ import { catchError, map } from "rxjs/operators";
 })
 export class BirthdayService extends BaseService {
   private readonly API_ALERT = `${environment.BASE_URL}`;
+  private readonly API_DOCTOR = `${environment.BASE_URL}doctor`
 
   constructor(protected http: HttpClient) {
     super(http);
@@ -22,6 +23,14 @@ export class BirthdayService extends BaseService {
     );
   }
 
+  loadDoctorDetails(docId: number): Observable<any> {
+    const url = `${this.API_DOCTOR}/${docId}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+  
   // addFollowupByChild(data): Observable<any> {
   //   const url = `${this.API_ALERT}followup`;
   //   return this.http
