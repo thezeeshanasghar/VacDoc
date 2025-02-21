@@ -187,7 +187,7 @@
           style="font-size: 16px; display: flex; padding-left: 15px;">City</ion-label>
         <mat-form-field class="example-full-width">
           <input type="text" aria-label="Number" matInput formControlName="city" [matAutocomplete]="auto"
-            (ngModelChange)="filter($event)" style="font-size: 15px;">
+            (ngModelChange)="filter($event)" style="font-size: 15px;" (ionChange)="onCityChange()" [disabled]="fg1.get('City2')?.value !== '' ">
           <mat-autocomplete #auto="matAutocomplete" class="no-indent">
             <mat-option *ngFor="let option of cities" [value]="option">
               {{option}}
@@ -197,7 +197,7 @@
         <ion-item>
           <ion-label color="primary" position="floating">Add New City</ion-label>
           <ion-input type="text" formControlName="City2" required class="ion-text-capitalize"
-            [(ngModel)]="fg1.value.City2" [disabled]="fg1.get('city')?.value !== '' ">
+            [(ngModel)]="fg1.value.City2" [disabled]="fg1.get('city')?.value !== '' " (ionChange)="onCityChange()">
           </ion-input>
         </ion-item>
         <div class="validation-errors">
