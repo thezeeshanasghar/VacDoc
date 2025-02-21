@@ -60,6 +60,7 @@ export class AddPage implements OnInit {
   originalAgents: any[];
   cities: string[] = [];
   agents: string[] = [];
+  isButtonEnabled: boolean;
   // agentService: any;
   //cities: any;
 
@@ -113,12 +114,11 @@ loadAgent(): void {
         }
     );
 }
-  ionViewWillEnter()//ngAfterContentInit() 
-  {
+  ionViewWillEnter() {
     this.storage.set(environment.MESSAGES, this.Messages);
     this.todaydate = new Date();
     this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format("YYYY-MM-DD");
-    // this.getVaccine();
+
     this.fg1 = this.formBuilder.group({
       ClinicId: [""],
       Name: ['', Validators.compose([
@@ -148,11 +148,15 @@ loadAgent(): void {
           Validators.pattern("^[0-9]+$")
         ])
       ),
-      City2: [{ value: '', disabled: true }, Validators.compose([])],
+      city: ['', Validators.compose([
+        Validators.required
+      ])],
+      City2: [{ value: '', disabled: true }, Validators.compose([
+        Validators.required
+      ])],
       Agent2: [{ value: '', disabled: true }, Validators.compose([])],
       Gender: [null, Validators.required],
       Type: [null, Validators.required],
-      city: ['', Validators.required],
       agent: [''],
       travel: [false],
       CNIC: [''],
@@ -163,8 +167,6 @@ loadAgent(): void {
       ChildVaccines: [null],
     });
 
-    
-
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
     });
@@ -174,10 +176,7 @@ loadAgent(): void {
     });
 
     this.storage.get(environment.CITY).then(val => {
-
       val == null ? "" : this.fg1.controls['City'].setValue(val);
-
-
     });
 
     this.storage.get(environment.DOCTOR).then(doc => {
@@ -189,8 +188,6 @@ loadAgent(): void {
     });
 
     this.cities = this.cities;
-
-    // this.onTypeChange();  
   }
 
   // isTravelSelected: boolean = false;
@@ -640,6 +637,33 @@ onTravelChange(event: any) {
     this.checkEpi()
 
 }
+
+  onCityChange() {
+    const cityValue = this.fg1.get('city').value;
+    const city2Value = this.fg1.get('City2').value;
+
+    console.log('City:', cityValue);
+    console.log('City2:', city2Value);
+
+    if (cityValue) {
+      this.fg1.get('City2').clearValidators();
+      this.fg1.get('City2').updateValueAndValidity();
+      this.fg1.get('city').setValidators([Validators.required]);
+    }
+    else if (city2Value) {
+      this.fg1.get('city').clearValidators();
+      this.fg1.get('city').updateValueAndValidity();
+      this.fg1.get('City2').setValidators([Validators.required]);
+    }
+    else {
+      this.fg1.get('city').setValidators([Validators.required]);
+      this.fg1.get('City2').setValidators([Validators.required]);
+    }
+
+    this.fg1.get('city').updateValueAndValidity();
+    this.fg1.get('City2').updateValueAndValidity();
+  }
+
   calculateDiff(dateSent: string | number | Date) {
     let currentDate = new Date();
     dateSent = new Date(dateSent);
