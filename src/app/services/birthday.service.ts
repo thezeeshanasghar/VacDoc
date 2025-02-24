@@ -23,6 +23,14 @@ export class BirthdayService extends BaseService {
     );
   }
 
+  sendBirthdayMails(Id: number): Observable<any> {
+    const url = `${this.API_ALERT}Birthday/birthdaymail/${Id}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
   loadDoctorDetails(docId: number): Observable<any> {
     const url = `${this.API_DOCTOR}/${docId}`;
     return this.http.get(url, this.httpOptions).pipe(
@@ -31,35 +39,4 @@ export class BirthdayService extends BaseService {
     );
   }
   
-  // addFollowupByChild(data): Observable<any> {
-  //   const url = `${this.API_ALERT}followup`;
-  //   return this.http
-  //     .post(url, data, this.httpOptions)
-  //     .pipe(catchError(this.handleError));
-  // }
-
-  // getFollowupChild(followupId: number, Id: number,date:string): Observable<any> {
-  //   const url = `${this.API_ALERT}followup/alert/${followupId}/${Id}?inputDate=${date}`;
-  //   return this.http.get(url, this.httpOptions).pipe(
-  //     map(this.extractData),
-  //     catchError(this.handleError)
-  //   );
-  // }
-
-  // sendAlertMsgToAll(numOfDays: number, doctorId: number): Observable<any> {
-  //   const url = `${
-  //     this.API_ALERT
-  //   }schedule/bulk-sms-alert/${numOfDays}/${doctorId}`;
-  //   return this.http.get(url, this.httpOptions).pipe(
-  //     map(this.extractData),
-  //     catchError(this.handleError)
-  //   );
-  // }
-  // sendFollowupAlertMsgIndividual(Id: String): Observable<any> {
-  //   const url = `${this.API_ALERT}followup/sms-alert/${Id}`;
-  //   return this.http.get(url, this.httpOptions).pipe(
-  //     map(this.extractData),
-  //     catchError(this.handleError)
-  //   );
-  // }
 }
