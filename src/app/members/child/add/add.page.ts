@@ -614,12 +614,10 @@ loadAgent(): void {
     this.epiDone = days > 272;
     this.isRadioDisabled = !this.epiDone; 
     if (this.isRadioDisabled) {
-      
       this.fg1.get('IsEPIDone').setValue(false);
   }
-  
-
 }
+
 onTravelChange(event: any) {
     const selectedValue = event.detail.value; 
     console.log('Selected Type:', selectedValue);
@@ -627,24 +625,21 @@ onTravelChange(event: any) {
         this.isCnicRequired = true;
         this.fg1.get('CNIC').setValidators([Validators.required]);
         this.fg1.get('agent').setValidators([Validators.required]);
+        this.onAgentChange();
     } else {
         this.isCnicRequired = false;
         this.fg1.get('CNIC').clearValidators();
     }
     this.fg1.get('CNIC').updateValueAndValidity(); 
     this.isRadioDisabled = this.isCnicRequired && !this.epiDone;
-
     this.checkEpi()
-
 }
 
   onCityChange() {
     const cityValue = this.fg1.get('city').value;
     const city2Value = this.fg1.get('City2').value;
-
     console.log('City:', cityValue);
     console.log('City2:', city2Value);
-
     if (cityValue) {
       this.fg1.get('City2').clearValidators();
       this.fg1.get('City2').updateValueAndValidity();
@@ -659,9 +654,31 @@ onTravelChange(event: any) {
       this.fg1.get('city').setValidators([Validators.required]);
       this.fg1.get('City2').setValidators([Validators.required]);
     }
-
     this.fg1.get('city').updateValueAndValidity();
     this.fg1.get('City2').updateValueAndValidity();
+  }
+
+  onAgentChange() {
+    const agentValue = this.fg1.get('agent').value;
+    const agent2Value = this.fg1.get('Agent2').value;
+    console.log('Agent:', agentValue);
+    console.log('Agent2:', agent2Value);
+    if (agentValue) {
+      this.fg1.get('Agent2').clearValidators();
+      this.fg1.get('Agent2').updateValueAndValidity();
+      this.fg1.get('agent').setValidators([Validators.required]);
+    }
+    else if (agent2Value) {
+      this.fg1.get('agent').clearValidators();
+      this.fg1.get('agent').updateValueAndValidity();
+      this.fg1.get('Agent2').setValidators([Validators.required]);
+    }
+    else {
+      this.fg1.get('agent').setValidators([Validators.required]);
+      this.fg1.get('Agent2').setValidators([Validators.required]);
+    }
+    this.fg1.get('agent').updateValueAndValidity();
+    this.fg1.get('Agent2').updateValueAndValidity
   }
 
   calculateDiff(dateSent: string | number | Date) {
