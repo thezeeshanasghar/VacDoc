@@ -78,11 +78,37 @@ export class FollowUpPage implements OnInit {
     const dateTimeElement = document.querySelector('ion-datetime');
     await dateTimeElement.open();
   }
+
+  async sendemail(child: any) {
+    console.log(child);
+    console.log(child[0].ChildId);
+    const loading = await this.loadingController.create({
+      message: "sending email"
+    });
+    await loading.present();
+    await this.followupService.sendFollowupMails(child[0].ChildId).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          loading.dismiss();
+          this.toastService.create("email sent successfully", "success");
+        } else {
+          loading.dismiss();
+          this.toastService.create(res.Message, "danger");
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, "danger");
+      }
+    );
+  }
+
   getFollowups(date: string) {
     const formattedDate = this.formatDateToString(date);
 
     this.getFollowupChild(formattedDate);
   }
+
   openWhatsApp(mobileNumber: string, childName: string, nextVisitDate: string) {
     console.log('Child Name:', childName);
     console.log('Next Visit Date:', nextVisitDate);

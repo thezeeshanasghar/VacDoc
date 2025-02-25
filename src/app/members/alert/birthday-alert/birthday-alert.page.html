@@ -21,7 +21,10 @@
           <ion-icon 
             slot="end" 
             color="primary" 
-            name="mail">
+            name="mail"
+            (click)="sendemail([child])"
+            style="cursor: pointer"
+            >
           </ion-icon>
           <ion-icon
             slot="end"

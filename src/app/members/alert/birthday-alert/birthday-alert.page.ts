@@ -51,6 +51,7 @@ export class BirthdayAlertPage implements OnInit {
       async (res) => {
         if (res) {
           this.birthdayChild = res.ResponseData || [];
+          console.log("Birthday Child List:", this.birthdayChild);
           await loading.dismiss();
         } else {
           this.toastService.create(res.Message || "An error occurred.", "danger");
@@ -121,6 +122,30 @@ export class BirthdayAlertPage implements OnInit {
     );
   }
 
+  async sendemail(child: any) {
+    console.log(child);
+    console.log(child[0].Id);
+    const loading = await this.loadingController.create({
+      message: "sending email"
+    });
+    await loading.present();
+    await this.birthdayService.sendBirthdayMails(child[0].Id).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          loading.dismiss();
+          this.toastService.create("email sent successfully", "success");
+        } else {
+          loading.dismiss();
+          this.toastService.create(res.Message, "danger");
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, "danger");
+      }
+    );
+  }
+
   openWhatsApp(mobileNumber: string, childName: string, birthDate: string) {
     if (mobileNumber.trim() === '') {
       alert('Invalid mobile number. Please provide a valid number.');
@@ -133,7 +158,7 @@ export class BirthdayAlertPage implements OnInit {
       `🎁 *Date of Birth:* ${birthDate}\n` +
       `🏥 *Clinic:* ${this.clinic}\n\n` +
       `Best wishes,\n` +
-      `👨‍⚕️ Dr. ${this.docname}`
+      `👨‍⚕️ ${this.docname}`
     );
     const formattedPatientNumber = mobileNumber.startsWith('+92')? mobileNumber: `+92${mobileNumber.replace(/^0/, '')}`;
     let whatsappUrl: string;
