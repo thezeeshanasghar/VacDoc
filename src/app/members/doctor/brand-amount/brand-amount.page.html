@@ -23,6 +23,9 @@
         <ion-col class="header-col">Brand Name</ion-col>
         <ion-col class="header-col">Price</ion-col>
         <ion-col class="header-col">Inventory</ion-col>
+        <ion-col class="header-col">Purchase</ion-col>
+        <ion-col class="header-col">Supplier</ion-col>
+        <ion-col class="header-col">Paid/Unpaid</ion-col>
       </ion-row>
       <ion-row *ngFor="let b of brandAmounts" class="data-row">
         <ion-col class="center-text" style="margin-top: 10px;">{{b.VaccineName}}</ion-col>
@@ -39,6 +42,21 @@
             <div *ngIf="inventoryInput.errors?.required" class="error">Inventory is required.</div>
           </div> 
         </ion-col>
+        <ion-col class="center-text">
+          <ion-input [(ngModel)]="b.PurchasedAmt" [ngModelOptions]="{standalone: true}" type="tel" #purchaseInput="ngModel" required pattern="^[0-9]*$"></ion-input>
+          <div *ngIf="purchaseInput.invalid && (purchaseInput.dirty || purchaseInput.touched)">
+            <div *ngIf="purchaseInput.errors?.required" class="error">Purchase amount is required.</div>
+          </div> 
+        </ion-col>
+        <ion-col class="center-text">
+          <ion-input [(ngModel)]="b.SupName" [ngModelOptions]="{standalone: true}" type="text" #supplierInput="ngModel" required pattern="^[a-zA-Z\s]*$"></ion-input>
+          <div *ngIf="supplierInput.invalid && (supplierInput.dirty || supplierInput.touched)">
+            <div *ngIf="supplierInput.errors?.required" class="error">Supplier is required.</div>
+          </div> 
+        </ion-col>
+        <ion-col class="center-text">
+          <ion-checkbox [(ngModel)]="b.IsPaid" [ngModelOptions]="{standalone: true}"></ion-checkbox>
+        </ion-col>        
       </ion-row>
     </ion-grid>
   </form>
