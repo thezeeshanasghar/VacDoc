@@ -15,57 +15,13 @@ export class DashboardService extends BaseService {
     super(http);
   }
 
-  getThisMonthChild(): Observable<any> {
-    const url = `${this.API_DASHBOARD}`;
-    console.log('API URL:', url);
-    return this.http.get(url, this.httpOptions).pipe(
-        map(this.extractData),
-        catchError(this.handleError)
-      );
-  }
-
-  getTotalChildren(doctorId: number): Observable<any> {
-    const url = `${this.API_DASHBOARD}/doctor/${doctorId}`;
+  getCombinedDashboardData(doctorId: number): Observable<any> {
+    debugger
+    const url = `${this.API_DASHBOARD}/combined-data/${doctorId}`;
+    console.log('API URL (Combined Dashboard Data):', url);
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
     );
   }
-
-  // NEW: Method to get total alerts count for the current month
-  getDoctorAlerts(doctorId: number): Observable<any> {
-    const url = `${this.API_DASHBOARD}/alerts?doctorId=${doctorId}`;
-    console.log('API URL for Alerts:', url);
-    return this.http.get(url, this.httpOptions).pipe(
-      map(this.extractData),
-      catchError(this.handleError)
-    );
-  }
-
-  getFutureAlerts(doctorId: number): Observable<any> {
-    const url = `${this.API_DASHBOARD}/future-alerts?doctorId=${doctorId}`;
-    console.log('API URL (Future Alerts):', url);
-    return this.http.get(url, this.httpOptions).pipe(
-      map(this.extractData),
-      catchError(this.handleError)
-    );
-  }
-
-  getCurrentMonthGivenDoses(doctorId: number): Observable<any> {
-    const url = `${this.API_DASHBOARD}/current-month-given-doses/${doctorId}`;
-    return this.http.get(url, this.httpOptions).pipe(
-      map(this.extractData),
-      catchError(this.handleError)
-    );
-  }
-
-  getCurrentMonthRevenue(doctorId: number): Observable<any> {
-    const url = `${this.API_DASHBOARD}/current-month-revenue/${doctorId}`;
-    return this.http.get(url, this.httpOptions).pipe(
-      map(this.extractData),
-      catchError(this.handleError)
-    );
-  }
-  
-  
 }

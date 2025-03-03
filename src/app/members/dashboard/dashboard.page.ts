@@ -49,20 +49,12 @@ export class DashboardPage implements OnInit {
       this.doctorId = docId;
     });
 
-    // Use a single loading indicator for all operations
     const loading = await this.loadingController.create({ message: "Loading ..." });
     await loading.present();
 
     try {
-      await Promise.all([
-        this.getClinics(),
-        this.getChildren(),
-        this.getTotalChildCount(),
-        this.getTotalAlerts(),
-        this.getFutureAlertsCount(),
-        this.getCurrentMonthGivenDoses(),
-        this.getCurrentMonthRevenue() 
-      ]);
+      await this.getCombinedDashboardData();
+      await this.getClinics();
     } catch (error) {
       console.error("Error while loading dashboard data:", error);
       this.toastService.create("Error loading dashboard data", "danger");
@@ -125,117 +117,30 @@ export class DashboardPage implements OnInit {
     });
   }
 
-  async getChildren() {
+  async getCombinedDashboardData() {
+    debugger
     return new Promise<void>((resolve, reject) => {
-      this.dashboardService.getThisMonthChild().subscribe(
+      this.dashboardService.getCombinedDashboardData(this.doctorId).subscribe(
         res => {
-          if (res && res.CurrentMonthChildCount !== undefined) {
+          if (res) {
+            debugger
             this.Children = res.CurrentMonthChildCount;
-            resolve();
-          } else {
-            this.toastService.create("Failed to fetch child data", "danger");
-            reject("Unexpected response format");
-          }
-        },
-        err => {
-          this.toastService.create("Error fetching child data", "danger");
-          reject(err);
-        }
-      );
-    });
-  }
-
-  async getTotalChildCount() {
-    return new Promise<void>((resolve, reject) => {
-      this.dashboardService.getTotalChildren(this.doctorId).subscribe(
-        res => {
-          if (res && res.TotalChildCount !== undefined) {
             this.totalChildCount = res.TotalChildCount;
-            resolve();
-          } else {
-            this.toastService.create("Failed to fetch total child count", "danger");
-            reject("Unexpected response format");
-          }
-        },
-        err => {
-          this.toastService.create("Error fetching total child count", "danger");
-          reject(err);
-        }
-      );
-    });
-  }
-
-  async getTotalAlerts() {
-    return new Promise<void>((resolve, reject) => {
-      this.dashboardService.getDoctorAlerts(this.doctorId).subscribe(
-        res => {
-          if (res && res.TotalAlertsCount !== undefined) {
             this.totalAlertsCount = res.TotalAlertsCount;
-            resolve();
-          } else {
-            this.toastService.create("Failed to fetch alerts data", "danger");
-            reject("Unexpected response format");
-          }
-        },
-        err => {
-          this.toastService.create("Error fetching alerts data", "danger");
-          reject(err);
-        }
-      );
-    });
-  }
-
-  async getFutureAlertsCount() {
-    return new Promise<void>((resolve, reject) => {
-      this.dashboardService.getFutureAlerts(this.doctorId).subscribe(
-        res => {
-          if (res && res.FutureAlertsCount !== undefined) {
             this.futureAlertsCount = res.FutureAlertsCount;
+            this.currentMonthGivenDosesCount = res.GivenDosesCount;
+            this.totalRevenue = res.TotalRevenue;
             resolve();
           } else {
-            this.toastService.create("Failed to fetch future alerts count", "danger");
+            this.toastService.create("Failed to fetch combined dashboard data", "danger");
             reject("Unexpected response format");
           }
         },
         err => {
-          this.toastService.create("Error fetching future alerts count", "danger");
+          this.toastService.create("Error fetching combined dashboard data", "danger");
           reject(err);
         }
       );
     });
   }
-
-  async getCurrentMonthGivenDoses() {
-    this.dashboardService.getCurrentMonthGivenDoses(this.doctorId).subscribe(
-      (res) => {
-        if (res && res.GivenDosesCount !== undefined) {
-          this.currentMonthGivenDosesCount = res.GivenDosesCount;
-        } else {
-          this.toastService.create("Failed to fetch given doses count for the current month", "danger");
-        }
-      },
-      (err) => {
-        console.error("Error fetching given doses count:", err);
-        this.toastService.create("Error fetching given doses count for the current month", "danger");
-      }
-    );
-  }
-
-  async getCurrentMonthRevenue() {
-    this.dashboardService.getCurrentMonthRevenue(this.doctorId).subscribe(
-      (res) => {
-        if (res && res.TotalRevenue !== undefined) {
-          this.totalRevenue = res.TotalRevenue;
-        } else {
-          this.toastService.create("Failed to fetch revenue for the current month", "danger");
-        }
-      },
-      (err) => {
-        console.error("Error fetching revenue:", err);
-        this.toastService.create("Error fetching revenue for the current month", "danger");
-      }
-    );
-  }
-  
-  
 }
