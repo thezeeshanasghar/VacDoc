@@ -37,7 +37,7 @@ jobs:
         with:
           server: "198.54.114.164"
           username: "vacdoc@doctor.vaccinationcentre.com"
-          password: "{{ secrets.PROD_FTP_PASSWORD }}"
+          password: ${{ secrets.PROD_FTP_PASSWORD }}
           port: 21
           protocol: ftps
           local-dir: www/
