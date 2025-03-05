@@ -36,7 +36,7 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: "198.54.114.164"
-          username: "vacdoc@client.vaccinationcentre.com"
+          username: "echoytac@doctor.vaccinationcentre.com"
           password: "{{ secrets.PROD_FTP_PASSWORD }}"
           port: 21
           protocol: ftps
