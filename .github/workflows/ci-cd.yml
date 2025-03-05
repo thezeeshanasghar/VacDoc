@@ -37,13 +37,12 @@ jobs:
         with:
           server: "198.54.114.164"
           username: "vacdoc@client.vaccinationcentre.com"
-          password: "G7#kLp9!qZ2@wX4$"
+          password: "{{ secrets.PROD_FTP_PASSWORD }}"
           port: 21
           protocol: ftps
           local-dir: www/
           server-dir: /
           state-name: "ftp-deploy-sync-state.json"
-          dangerous-clean-slate: true
           timeout: 120000
           exclude: |
             **/.git*
