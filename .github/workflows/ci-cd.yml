@@ -14,34 +14,38 @@ jobs:
         with:
           node-version: 16
       - run: npm install -g @ionic/cli # Install Ionic CLI globally
-      - run: npm ci
+      - run: npm install
       - run: ionic build --prod
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts
+          name: build-output
           path: www/
+          retention-days: 1
 
   deploy:
-    runs-on: ubuntu-latest
     needs: build
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
       - name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: build-artifacts
-      - name: Deploy for master
-        if: github.ref == 'refs/heads/master'
+          name: build-output
+          path: www/
+      - name: Deploy to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: "ftp.clinicaudio.com"
-          username: "echoytac@doctor.vaccinationcentre.com"
-          password: "ZS,o.khSZk]$"
+          server: "198.54.114.164"
+          username: "vacdoc@client.vaccinationcentre.com"
+          password: "{{ secrets.PROD_FTP_PASSWORD }}"
+          port: 21
+          protocol: ftps
           local-dir: www/
           server-dir: /
+          state-name: "ftp-deploy-sync-state.json"
+          timeout: 120000
           exclude: |
             **/.git*
             **/.git*/**
             **/node_modules/**
-            web.config,
+            web.config
