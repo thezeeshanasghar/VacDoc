@@ -8,6 +8,7 @@ import { catchError, map } from 'rxjs/operators';
 // src/app/models/dose-response.model.ts
 
 export interface DoseDTO {
+  Clinic: any;
   Id: number;
   Name: string;
 }
