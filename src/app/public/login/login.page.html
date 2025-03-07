@@ -5,9 +5,9 @@
   </ion-toolbar>
 </ion-header> -->
 
-<ion-content *ngIf = "!forgot">
+<ion-content *ngIf="!forgot">
 
-  <ion-card *ngIf = "fg" style="background-color: rgba(105, 104, 107, 0.521);">
+  <ion-card *ngIf="fg" style="background-color: rgba(105, 104, 107, 0.521);">
     <ion-card-content>
 
       <form [formGroup]="fg">
@@ -15,23 +15,23 @@
         <!-- <ion-label color="primary" position="floating" class="ion-margin-top">
           Country Code
         </ion-label> -->
-            <!-- <ion-select formControlName="CountryCode">
+        <!-- <ion-select formControlName="CountryCode">
               <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
                 (+{{ country.code }}) {{ country.name }} 
               </ion-select-option>
             </ion-select> -->
-            <ion-label style="color: white;" position="floating" class="ion-margin-top">
+        <ion-label style="color: white;" position="floating" class="ion-margin-top">
           <ion-icon name="mail" class="ion-item-start"></ion-icon>
           Mobile Number
         </ion-label>
 
         <div style="display: flex; color: white; ;">
           <ion-select formControlName="CountryCode" style="border-bottom: 1px solid">
-              <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
-                (+{{ country.code }}) {{ country.name }} 
-              </ion-select-option>
-            </ion-select>
-            <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
+            <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
+              (+{{ country.code }}) {{ country.name }}
+            </ion-select-option>
+          </ion-select>
+          <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
         </div>
         <div *ngIf="fg.get('MobileNumber').invalid && (fg.get('MobileNumber').dirty || fg.get('MobileNumber').touched)">
           <div *ngIf="fg.get('MobileNumber').errors">
@@ -51,12 +51,15 @@
           Password
         </ion-label>
         <div style="display: flex; align-items: center;">
-          <ion-input [type]="showPassword ? 'text' : 'password'" formControlName="Password" [class.invalid-input]="fg.get('Password').invalid && (fg.get('Password').dirty || fg.get('Password').touched)"></ion-input>
-          <ion-button fill="clear" (click)="togglePasswordVisibility()">
+          <ion-input [type]="showPassword ? 'text' : 'password'" formControlName="Password"
+            [class.invalid-input]="fg.get('Password').invalid && (fg.get('Password').dirty || fg.get('Password').touched)"
+            style="flex: 1; margin-right: -11px;" (ionInput)="onInputChange($event)"></ion-input>
+          <ion-button fill="clear" (click)="togglePasswordVisibility()" style="margin-left: -40px; z-index: 2;"
+            [ngClass]="{'icon-filled': fg.get('Password').value}">
             <ion-icon [name]="showPassword ? 'eye-off' : 'eye'"></ion-icon>
           </ion-button>
         </div>
-        
+
         <div *ngIf="fg.get('Password').invalid && (fg.get('Password').dirty || fg.get('Password').touched)">
           <div *ngIf="fg.get('Password').errors">
             <div style="color: red;" *ngIf="fg.get('Password').errors.required">
@@ -66,13 +69,14 @@
             </div>
           </div>
         </div>
-        
 
-        <ion-button class="ion-margin-top" expand="full" color="tertiary" (click)="login()" [disabled]="isFormInvalid()">
+
+        <ion-button class="ion-margin-top" expand="full" color="tertiary" (click)="login()"
+          [disabled]="isFormInvalid()">
           <ion-icon name="log-in"></ion-icon>&nbsp;
           Login
         </ion-button>
-        
+
       </form>
 
 
@@ -82,14 +86,14 @@
             <h2>Forget Password</h2>
           </a>
         </ion-text>
-  
+
         <ion-text class="ion-text-left">
           <a routerLink="/signup" style="text-decoration: none;">
             <h2>Signup</h2>
           </a>
         </ion-text>
       </div>
-     
+
 
 
     </ion-card-content>
@@ -97,24 +101,24 @@
 
 </ion-content>
 
-<ion-content *ngIf = "forgot">
+<ion-content *ngIf="forgot">
 
   <ion-card style="background-color: #d3cccc94;">
     <ion-card-content>
 
-        <ion-label color="primary" position="floating" class="ion-margin-top">
-          <ion-icon name="mail" class="ion-item-start"></ion-icon>
-          Mobile Number
-        </ion-label>
-        <ion-input type="text" [(ngModel)] = "MobileNumber"></ion-input>
+      <ion-label color="primary" position="floating" class="ion-margin-top">
+        <ion-icon name="mail" class="ion-item-start"></ion-icon>
+        Mobile Number
+      </ion-label>
+      <ion-input type="text" [(ngModel)]="MobileNumber"></ion-input>
 
 
-        <ion-button class="ion-margin-top" expand="full" color="tertiary" (click)="sendPassword()">
-          <ion-icon name="log-in"></ion-icon>&nbsp;
-          Send Password
-        </ion-button>
+      <ion-button class="ion-margin-top" expand="full" color="tertiary" (click)="sendPassword()">
+        <ion-icon name="log-in"></ion-icon>&nbsp;
+        Send Password
+      </ion-button>
 
-      
+
     </ion-card-content>
   </ion-card>
 
