@@ -3,13 +3,13 @@
     <ion-buttons slot="start">
       <!-- <ion-menu-button></ion-menu-button> -->
     </ion-buttons>
-    <ion-title>Brand Inventory</ion-title>
+    <ion-title>Brand Management</ion-title>
   </ion-toolbar>
   <ion-toolbar color="primary" >
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
       <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/clinic" name="medkit" size="large" > </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/child" name="accessibility-outline" size="large" > </ion-icon>
       <ion-menu-button style="margin-left: 10%"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
@@ -19,51 +19,57 @@
   <form>
     <ion-grid>
       <ion-row class="header-row">
-        <ion-col class="header-col">Vaccine Name</ion-col>
+        <!-- <ion-col class="header-col">Vaccine Name</ion-col> -->
         <ion-col class="header-col">Brand Name</ion-col>
-        <ion-col class="header-col">Price</ion-col>
         <ion-col class="header-col">Inventory</ion-col>
-        <ion-col class="header-col">Purchase</ion-col>
-        <ion-col class="header-col">Supplier</ion-col>
-        <ion-col class="header-col">Paid/Unpaid</ion-col>
+        <ion-col class="header-col">Purchase Price</ion-col>
+        <ion-col class="header-col">Purchase value</ion-col>
+        <ion-col class="header-col">Sale Price</ion-col>
+        <ion-col class="header-col">Sale Value</ion-col>
+        <!-- <ion-col class="header-col">Paid/Unpaid</ion-col> -->
       </ion-row>
       <ion-row *ngFor="let b of brandAmounts" class="data-row">
-        <ion-col class="center-text" style="margin-top: 10px;">{{b.VaccineName}}</ion-col>
+        <!-- <ion-col class="center-text" style="margin-top: 10px;">{{b.VaccineName}}</ion-col> -->
         <ion-col class="center-text" style="margin-top: 10px;">{{b.BrandName}}</ion-col>
-        <ion-col class="center-text">
-          <ion-input [(ngModel)]="b.Amount" [ngModelOptions]="{standalone: true}" type="tel" #amountInput="ngModel" required pattern="^[0-9]*$"></ion-input>
-          <div *ngIf="amountInput.invalid && (amountInput.dirty || amountInput.touched)">
-            <div *ngIf="amountInput.errors?.required" class="error">Amount is required.</div>
-          </div> 
-        </ion-col>
-        <ion-col class="center-text">
+        <!-- <ion-col class="center-text">
           <ion-input [(ngModel)]="b.Count" [ngModelOptions]="{standalone: true}" type="tel" #inventoryInput="ngModel" required pattern="^[0-9]*$"></ion-input>
           <div *ngIf="inventoryInput.invalid && (inventoryInput.dirty || inventoryInput.touched)">
             <div *ngIf="inventoryInput.errors?.required" class="error">Inventory is required.</div>
           </div> 
-        </ion-col>
-        <ion-col class="center-text">
+        </ion-col> -->
+        <ion-col class="center-text" style="margin-top: 10px;">{{b.Count}}</ion-col>
+        <!-- <ion-col class="center-text">
+          <ion-input [(ngModel)]="b.Amount" [ngModelOptions]="{standalone: true}" type="tel" #amountInput="ngModel" required pattern="^[0-9]*$"></ion-input>
+          <div *ngIf="amountInput.invalid && (amountInput.dirty || amountInput.touched)">
+            <div *ngIf="amountInput.errors?.required" class="error">Amount is required.</div>
+          </div> 
+        </ion-col> -->
+        <ion-col class="center-text" style="margin-top: 10px;">{{b.Amount}}</ion-col>	
+        <!-- <ion-col class="center-text">
           <ion-input [(ngModel)]="b.PurchasedAmt" [ngModelOptions]="{standalone: true}" type="tel" #purchaseInput="ngModel" required pattern="^[0-9]*$"></ion-input>
           <div *ngIf="purchaseInput.invalid && (purchaseInput.dirty || purchaseInput.touched)">
             <div *ngIf="purchaseInput.errors?.required" class="error">Purchase amount is required.</div>
           </div> 
-        </ion-col>
-        <ion-col class="center-text">
+        </ion-col> -->
+        <ion-col class="center-text" style="margin-top: 10px;">{{b.Count * b.Amount}}</ion-col>
+        <!-- <ion-col class="center-text">
           <ion-input [(ngModel)]="b.SupName" [ngModelOptions]="{standalone: true}" type="text" #supplierInput="ngModel" required pattern="^[a-zA-Z\s]*$"></ion-input>
           <div *ngIf="supplierInput.invalid && (supplierInput.dirty || supplierInput.touched)">
             <div *ngIf="supplierInput.errors?.required" class="error">Supplier is required.</div>
           </div> 
-        </ion-col>
-        <ion-col class="center-text">
+        </ion-col> -->
+        <!-- <ion-col class="center-text">
           <ion-checkbox [(ngModel)]="b.IsPaid" [ngModelOptions]="{standalone: true}"></ion-checkbox>
-        </ion-col>        
+        </ion-col>         -->
+        <ion-col class="center-text" style="margin-top: 10px;">{{b.PurchasedAmt}}</ion-col>	
+        <ion-col class="center-text" style="margin-top: 10px;">{{b.Count * b.PurchasedAmt}}</ion-col>
       </ion-row>
     </ion-grid>
   </form>
-    <ion-fab horizontal="end" vertical="bottom" slot="fixed" style="margin-right: 10px;">
+    <!-- <ion-fab horizontal="end" vertical="bottom" slot="fixed" style="margin-right: 10px;">
     <ion-fab-button routerLink="/members/doctor/brand-amount/update" (click)="updateBrandAmount()">
       <ion-icon name="checkmark"></ion-icon>
     </ion-fab-button>
-  </ion-fab>
+  </ion-fab> -->
 </ion-content>
 

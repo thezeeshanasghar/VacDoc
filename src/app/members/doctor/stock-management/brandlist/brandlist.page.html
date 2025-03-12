@@ -1,0 +1,42 @@
+<ion-header>
+    <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/members/doctor/stock-management"></ion-back-button>
+      </ion-buttons>
+      <ion-title>{{brandName}} Details</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content class="ion-padding">
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <!-- <th>Bill No.</th> -->
+            <!-- <th>Date</th> -->
+            <!-- <th>Supplier</th> -->
+             <th>Brand Name</th>
+            <th>Quantity</th>
+            <th>Purchase Price</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- <tr *ngFor="let bill of brandBills"> -->
+            <tr>
+            <!-- <td>{{bill.BillNo}}</td>
+            <td>{{bill.Date | date:'dd/MM/yyyy'}}</td>
+            <td>{{bill.SupName}}</td> -->
+            <td>BCG</td>
+            <td>12</td>
+            <td>1200 Rs</td>
+            <td>
+              <ion-badge [color]="success">
+                Paid
+              </ion-badge>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ion-content>
