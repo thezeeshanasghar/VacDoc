@@ -23,6 +23,13 @@ export class BrandService extends BaseService {
       catchError(this.handleError)
     );
   }
+  getBrands(): Observable<any> {
+    const url = `${this.API_BRAND}brand`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
 
   putBrandInventory(data): Observable<any> {
     const url = `${this.API_BRAND}brandinventory`;

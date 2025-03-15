@@ -38,12 +38,46 @@
           </ion-label>
         </ion-item-divider> -->
         <ion-menu-toggle auto-hide="false" *ngFor="let p of doctorPages">
-          <ion-item lines="none" [routerDirection]="'root'" [routerLink]="[p.url]">
-            <ion-icon color="primary" slot="start" [name]="p.icon"></ion-icon>
-            <ion-label>
-              {{p.title}}
-            </ion-label>
+          <!-- Regular menu items without children -->
+          <ion-item lines="none" *ngIf="!p.children" [routerDirection]="'root'" [routerLink]="[p.url]">
+            <ion-icon slot="start" [name]="p.icon" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
+            <ion-label>{{p.title}}</ion-label>
           </ion-item>
+        
+          <!-- Parent items with children -->
+          <ion-item lines="none" *ngIf="p.children" (click)="p.isOpen = !p.isOpen" detail="false">
+            <ion-icon slot="start" [name]="p.icon" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
+            <ion-label>{{p.title}}</ion-label>
+            <ion-icon slot="end" [name]="p.isOpen ? 'chevron-down' : 'chevron-forward'"></ion-icon>
+          </ion-item>
+        
+          <!-- First level children -->
+          <ion-list *ngIf="p.isOpen" class="sub-menu">
+            <ion-menu-toggle auto-hide="false" *ngFor="let sub of p.children">
+              <!-- Sub-items without children -->
+              <ion-item lines="none" *ngIf="!sub.children" class="sub-item" [routerDirection]="'root'" [routerLink]="[sub.url]">
+                <ion-icon slot="start" [name]="sub.icon" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
+                <ion-label>{{sub.title}}</ion-label>
+              </ion-item>
+        
+              <!-- Sub-items with children -->
+              <ion-item lines="none" *ngIf="sub.children" class="sub-item" (click)="sub.isOpen = !sub.isOpen" detail="false">
+                <ion-icon slot="start" [name]="sub.icon" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
+                <ion-label>{{sub.title}}</ion-label>
+                <ion-icon slot="end" [name]="sub.isOpen ? 'chevron-down' : 'chevron-forward'"></ion-icon>
+              </ion-item>
+        
+              <!-- Second level children -->
+              <ion-list *ngIf="sub.isOpen" class="sub-sub-menu">
+                <ion-menu-toggle auto-hide="false" *ngFor="let subSub of sub.children">
+                  <ion-item lines="none" class="sub-sub-item" [routerDirection]="'root'" [routerLink]="[subSub.url]">
+                    <ion-icon slot="start" [name]="subSub.icon" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
+                    <ion-label>{{subSub.title}}</ion-label>
+                  </ion-item>
+                </ion-menu-toggle>
+              </ion-list>
+            </ion-menu-toggle>
+          </ion-list>
         </ion-menu-toggle>
 
         <!-- <ion-item-divider color="light">
