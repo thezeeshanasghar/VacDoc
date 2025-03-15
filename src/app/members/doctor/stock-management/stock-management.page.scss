@@ -1,0 +1,109 @@
+.inventory-card {
+    margin: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    height: 100%;  // Makes all cards take full height of their container
+    display: flex;
+    flex-direction: column;
+    
+    ion-card-header {
+      flex-shrink: 0;  // Prevents header from shrinking
+      
+      ion-card-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: white;
+        padding: 10px;
+      }
+    }
+  
+    ion-card-content {
+      flex: 1;  // Takes remaining space
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 16px;
+    }
+  
+    ion-list {
+      width: 100%;
+    }
+  
+    ion-item {
+      --padding-start: 0;
+      margin-bottom: 8px;
+      width: 100%;
+  
+      h3 {
+        font-weight: 500;
+        margin-bottom: 4px;
+        color: var(--ion-color-medium);
+      }
+  
+      p {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: var(--ion-color-dark);
+      }
+    }
+  
+    ion-badge {
+      padding: 8px 12px;
+      border-radius: 4px;
+    }
+  }
+  
+  // Add these to ensure grid columns are equal
+  ion-grid {
+    ion-row {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  
+    ion-col {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+  // .card-header-with-button {
+  //   display: flex;
+  //   justify-content: space-between;
+  //   align-items: center;
+  //   padding: 12px;
+  
+  //   ion-card-title {
+  //     margin: 0;
+  //     font-size: 1.2rem;
+  //     color: white;
+  //   }
+  
+  //   ion-button {
+  //     --padding-start: 8px;
+  //     --padding-end: 8px;
+  //     margin: 0;
+  //   }
+  // }
+  ion-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+  
+    ion-button {
+      margin: 0;
+      --padding-start: 4px;
+      --padding-end: 4px;
+      
+      ion-card-title {
+        color: white;
+        font-size: 1.2rem;
+        margin: 0;
+        text-align: left;
+      }
+  
+      &:first-child {
+        flex: 1;
+        justify-content: flex-start;
+      }
+    }
+  }

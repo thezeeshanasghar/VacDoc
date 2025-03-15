@@ -101,11 +101,59 @@ export class MembersPage implements OnInit {
                 title: "Change Password",
                 url: "/members/doctor/password",
                 icon: "key-outline"
-              },      
+              },
               {
-                title: "Brand Inventory",
+                title: "Brand Management",
                 url: "/members/doctor/brand-amount",
                 icon: "wallet-outline"
+              },
+              {
+                title: "Stock Management",
+                icon: "cube-outline",
+                children: [
+                  {
+                    title: "Stock In Hand",
+                    url: "/members/doctor/stock-management/report",
+                    icon: "bar-chart-outline"  // Changed to bar chart for stock levels
+                  },
+                  {
+                    title: "Purchase Bill",
+                    icon: "cart-outline",
+                    children: [
+                      {
+                        title: "Add Bill",
+                        url: "/members/doctor/stock-management/add",
+                        icon: "add-circle-outline"  // Keep add icon for new bills
+                      },
+                      {
+                        title: "Purchase History",
+                        url: "/members/doctor/stock-management",
+                        icon: "document-text-outline"  // Changed to document for history
+                      },
+                      // {
+                      //   title: "Purchase Pending",
+                      //   url: "/members/doctor/stock-management/total",
+                      //   icon: "time-outline"  // Changed to time/clock for pending items
+                      // },
+                      {
+                        title: "Purchase Report",
+                        url: "/members/doctor/stock-management/total",
+                        icon: "stats-chart-outline"  // Changed to stats for reports
+                      }
+                    ]
+                  },
+                  {
+                    title: "Adjust Stock",
+                    url: "/members/doctor/stock-management/adjust",
+                    icon: "sync-outline"  // Changed to sync for stock adjustment
+                  },
+                  {
+                    title: "Sales Report",
+                    url: "/members/doctor/stock-management/report",
+                    icon: "trending-up-outline"  // Changed to trending up for sales
+                  }
+                ],
+                isOpen: false
               }
             ];
 

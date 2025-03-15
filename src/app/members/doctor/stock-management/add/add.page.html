@@ -1,0 +1,124 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/members/doctor/stock-management"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Add Stock</ion-title>
+    </ion-toolbar>
+</ion-header>
+  
+<ion-content class="ion-padding">
+    <ion-list>
+        <ion-item>
+            <ion-label position="floating">Bill No.</ion-label>
+            <ion-input type="text" [(ngModel)]="bill" required></ion-input>
+        </ion-item>
+        <ion-item>
+            <ion-label position="floating">Supplier</ion-label>
+            <ion-input type="text" [(ngModel)]="supplierName" required></ion-input>
+        </ion-item>
+        <ion-item>
+            <ion-label position="floating">Date</ion-label>
+            <ion-datetime 
+                [(ngModel)]="purchaseDate"
+                displayFormat="DD/MM/YYYY"
+                min="2020"
+                max="2025"
+                [value]="defaultDate"
+                required>
+            </ion-datetime>
+        </ion-item>
+        <ion-item>
+            <ion-label>Payment Status</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="isPaid" name="paymentStatus"></ion-checkbox>
+        </ion-item>
+            <ion-button expand="block" (click)="addNewRow()" color="primary" class="ion-margin-bottom">
+                <ion-icon name="add" slot="start"></ion-icon>
+                Add New Item
+            </ion-button>
+        
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Brand Name</th>
+                            <th>Quantity</th>
+                            <th>Purchase Price</th>
+                            <th>Purchase Value</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of stockItems; let i = index">
+                            <td>
+                                <mat-form-field class="example-full-width">
+                                    <input type="text" 
+                                        aria-label="Brand" 
+                                        matInput 
+                                        [(ngModel)]="item.brandName"
+                                        [matAutocomplete]="auto"
+                                        (ngModelChange)="filterBrands($event)" 
+                                        style="font-size: 15px;">
+                                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectBrand($event, item)">
+                                        <mat-option *ngFor="let brand of filteredBrands" [value]="brand.name">
+                                            {{brand.name}}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </mat-form-field>
+                            </td>
+                            <td>
+                                <ion-input 
+                                    type="tel" 
+                                    [(ngModel)]="item.quantity" 
+                                    placeholder="Enter quantity"
+                                    #quantityInput="ngModel"
+                                    required
+                                    pattern="^[0-9]*$">
+                                </ion-input>
+                                <div *ngIf="quantityInput.invalid && (quantityInput.dirty || quantityInput.touched)" class="error-message">
+                                    <small *ngIf="quantityInput.errors?.required">Quantity is required</small>
+                                    <small *ngIf="quantityInput.errors?.pattern">Only numbers allowed</small>
+                                </div>
+                            </td>
+                            <td>
+                                <ion-input 
+                                    type="tel" 
+                                    [(ngModel)]="item.price" 
+                                    placeholder="Enter price"
+                                    #priceInput="ngModel"
+                                    required
+                                    pattern="^[0-9]*$">
+                                </ion-input>
+                                <div *ngIf="priceInput.invalid && (priceInput.dirty || priceInput.touched)" class="error-message">
+                                    <small *ngIf="priceInput.errors?.required">Price is required</small>
+                                    <small *ngIf="priceInput.errors?.pattern">Only numbers allowed</small>
+                                </div>
+                            </td>
+                            <td style="text-align: center" class="ion-margin-top">
+                                <ion-text slot="end">Rs {{item.quantity * item.price}}</ion-text>
+                            </td>
+                            <td>
+                                <ion-button fill="clear" color="danger" (click)="removeRow(i)">
+                                    <ion-icon name="trash"></ion-icon>
+                                </ion-button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="total-section ion-margin-top">
+                <ion-item lines="none">
+                    <ion-label>
+                        <h2>Total Amount</h2>
+                    </ion-label>
+                    <ion-text slot="end" color="primary">
+                        <h2>Rs {{calculateTotal()}}</h2>
+                    </ion-text>
+                </ion-item>
+            </div>
+            <ion-button expand="block" class="ion-margin-top" (click)="saveStock()" [disabled]="!stockItems.length">
+                <ion-icon name="save" slot="start"></ion-icon>
+                Save Stock
+            </ion-button>
+    </ion-list>     
+</ion-content>
