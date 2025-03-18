@@ -7,9 +7,10 @@
   </ion-toolbar>
   <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
-      <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/child" name="accessibility-outline" size="large" color="light"> </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/child/add" name="person-add" size="large"> </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/alert" name="alert" size="large"> </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/child" name="accessibility-outline" size="large"
+        color="light"> </ion-icon>
       <ion-menu-button style="margin-left: 10%"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
@@ -20,9 +21,10 @@
 
   <form [formGroup]="fg">
     <ion-item>
-      <ion-input type="text" placeholder="search" formControlName="Name" (keyup.Enter)="getChlidbyUser(true)" required></ion-input>
+      <ion-input type="text" placeholder="search" formControlName="Name" (keyup.Enter)="getChlidbyUser(true)"
+        required></ion-input>
       <ion-button [disabled]="false" (click)="getChlidbyUser(true)">search</ion-button>
-      <ion-button *ngIf = "search" (click)="getChlidByClinic(true)" >clear</ion-button>
+      <ion-button *ngIf="search" (click)="getChlidByClinic(true)">clear</ion-button>
     </ion-item>
 
   </form>
@@ -30,36 +32,41 @@
   <ion-card *ngFor="let child of childs" [ngClass]="child.Gender=='Girl' ? 'girl' : 'boy'">
     <div class="icons" style="display: flex; justify-content: space-between; align-items: center;">
       <ion-item>
-          <ion-thumbnail slot="start">
-            <ion-img [src]="child.Gender=='Girl' ? '../../assets/female.png' : '../../assets/male.png'" class="{{child.Gender=='Girl' ? 'female-image' : 'male-image'}}"></ion-img>
-          </ion-thumbnail>
-          <ion-label>{{child.Name}}</ion-label>
+        <ion-thumbnail slot="start">
+          <ion-img [src]="child.Gender=='Girl' ? '../../assets/female.png' : '../../assets/male.png'"
+            class="{{child.Gender=='Girl' ? 'female-image' : 'male-image'}}"></ion-img>
+        </ion-thumbnail>
+        <ion-label>{{child.Name}}</ion-label>
       </ion-item>
       <ion-item class="ion-justify-content-center">
-          <ion-icon class="iconchild" slot="start" color="primary" name="create" routerLink="/members/child/edit/{{child.Id}}" style="font-size: 40px;"></ion-icon>
-          <ion-icon class="iconchild" slot="start" color="primary" name="trash" (click)="alertforDeleteChild(child.Id)" style="font-size: 40px;"></ion-icon>
-          <ion-icon class="iconchild" slot="start" color="primary" name="mail" routerLink="/members/child/cmsg/{{child.Id}}" style="font-size: 40px;"></ion-icon>
-          <ion-icon class="iconchild" slot="start" color="primary" name="call"(click)="callFunction(child.User.MobileNumber)" style="font-size: 40px;"></ion-icon>
-        </ion-item> 
+        <ion-icon class="iconchild" slot="start" color="primary" name="create"
+          routerLink="/members/child/edit/{{child.Id}}" style="font-size: 40px;"></ion-icon>
+        <ion-icon class="iconchild" slot="start" color="primary" name="trash" (click)="alertforDeleteChild(child.Id)"
+          style="font-size: 40px;"></ion-icon>
+        <ion-icon class="iconchild" slot="start" color="primary" name="mail"
+          routerLink="/members/child/cmsg/{{child.Id}}" style="font-size: 40px;"></ion-icon>
+        <ion-icon class="iconchild" slot="start" color="primary" name="call"
+          (click)="callFunction(child.User.MobileNumber)" style="font-size: 40px;"></ion-icon>
+      </ion-item>
     </div>
 
     <ion-card-content>
       <!-- <p> -->
-        <ion-icon color="white" name="person"></ion-icon>
-        {{child.FatherName}}
+      <ion-icon color="white" name="person"></ion-icon>
+      {{child.FatherName}}
       <!-- </p> -->
       &nbsp; &nbsp;
 
       <!-- <p> -->
-        <ion-icon color="white" name="calendar"></ion-icon>
-        {{child.DOB}}
+      <ion-icon color="white" name="calendar"></ion-icon>
+      {{child.DOB}}
       <!-- </p> -->
       &nbsp; &nbsp;
       <!-- <p> -->
-        <ion-icon color="white" name="call"></ion-icon>
-        {{child.MobileNumber}}
+      <ion-icon color="white" name="call"></ion-icon>
+      {{child.MobileNumber}}
       <!-- </p> -->
-<br>
+      <br>
       <ion-button disabled="false" size="small" fill="outline" color="primary"
         routerLink="/members/child/vaccine/{{child.Id}}">
         Vaccine
@@ -73,7 +80,8 @@
         Invoice
       </ion-button>
       &nbsp; &nbsp;
-      <ion-button size="small" fill="outline" [color]="child.IsInactive ? 'success' : 'danger'" (click)="toggleChildActiveStatus(child.Id)">
+      <ion-button size="small" fill="outline" [color]="child.IsInactive ? 'success' : 'danger'"
+        (click)="toggleChildActiveStatus(child.Id)">
         {{ child.IsInactive ? 'Activate' : 'Deactivate' }}
       </ion-button>
       &nbsp; &nbsp;
@@ -85,9 +93,7 @@
   </ion-card>
 
   <ion-infinite-scroll threshold="100%" (ionInfinite)="loadData()">
-    <ion-infinite-scroll-content
-      loadingSpinner="bubbles"
-      loadingText="Loading more data...">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
 

@@ -22,7 +22,7 @@ const { App } = Plugins;
 export class LoginPage implements OnInit {
   showPassword = false;
   fg: FormGroup;
-  obj:any;
+  obj: any;
   forgot = false;
   MobileNumber: number;
   constructor(
@@ -35,14 +35,14 @@ export class LoginPage implements OnInit {
     private loadingController: LoadingController,
     private platform: Platform,
     private routerOutlet: IonRouterOutlet
-  ) {   
+  ) {
     this.platform.backButton.subscribeWithPriority(-1, () => {
-    if (!this.routerOutlet.canGoBack()) {
-      App.exitApp();
-    }
-  }); 
-}
-  ngOnInit(){}
+      if (!this.routerOutlet.canGoBack()) {
+        App.exitApp();
+      }
+    });
+  }
+  ngOnInit() { }
   ionViewWillEnter() {
     this.storage.get(environment.DOCTOR_Id).then(value => {
       if (value) {
@@ -51,15 +51,15 @@ export class LoginPage implements OnInit {
         this.skipLoginIfAlreadyLoggedIn();
         this.loginservice.changeState(false);
         this.fg = this.formBuilder.group({
-          'MobileNumber':  [null, [Validators.required, this.onlyNumbersValidator()]],
-          'Password': [null, [Validators.required, this.passwordValidator()]],      
+          'MobileNumber': [null, [Validators.required, this.onlyNumbersValidator()]],
+          'Password': [null, [Validators.required, this.passwordValidator()]],
           'CountryCode': ['92'],
           'UserType': ['DOCTOR']
         });
       }
     });
   }
-  
+
   onlyNumbersValidator(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
       const forbidden = /\D/.test(control.value); // Regular expression to test for non-digit characters
@@ -71,7 +71,7 @@ export class LoginPage implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
-    isFormInvalid(): boolean {
+  isFormInvalid(): boolean {
     return this.fg.invalid && (this.fg.dirty || this.fg.touched);
   }
 
@@ -327,7 +327,7 @@ export class LoginPage implements OnInit {
     { name: 'Yemen', code: '967' },
     { name: 'Zambia', code: '260' },
     { name: 'Zimbabwe', code: '263' },
-];
+  ];
 
   skipLoginIfAlreadyLoggedIn() {
     this.storage.get(environment.DOCTOR_Id).then(value => {
@@ -359,7 +359,7 @@ export class LoginPage implements OnInit {
           this.router.navigate(['/members']).then(() => {
             window.location.reload();
           });
-          localStorage.setItem('docid',res.ResponseData.DoctorId)
+          localStorage.setItem('docid', res.ResponseData.DoctorId)
           loading.dismiss();
         }
         else {
@@ -372,31 +372,29 @@ export class LoginPage implements OnInit {
         this.toastService.create(err, 'danger');
       });
   }
-  async getdoctorprofile(id){
-await this.loginservice.getDoctorProfile(id).subscribe(res => 
-  {
-    if (res.IsSuccess)
-    {
-      this.storage.set(environment.DOCTOR, res.ResponseData);
-    }
-});
+  async getdoctorprofile(id) {
+    await this.loginservice.getDoctorProfile(id).subscribe(res => {
+      if (res.IsSuccess) {
+        this.storage.set(environment.DOCTOR, res.ResponseData);
+      }
+    });
 
   }
 
   async forgotPasswordAlert() {
-this.forgot = true;
+    this.forgot = true;
   }
 
- 
+
   async sendPassword() {
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
-let data = {
-  "MobileNumber": this.MobileNumber,
-  "CountryCode": "92",
-  "UserType": "DOCTOR"
-}
+    let data = {
+      "MobileNumber": this.MobileNumber,
+      "CountryCode": "92",
+      "UserType": "DOCTOR"
+    }
     await loading.present();
     this.loginservice.forgotPassword(data).subscribe(
       res => {
@@ -415,5 +413,9 @@ let data = {
         this.toastService.create(err, 'danger');
       }
     );
-      }
+  }
+
+  onInputChange(event: any) {
+    console.log('Input changed:', event.target.value);
+  }
 }
