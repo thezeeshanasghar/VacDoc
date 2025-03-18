@@ -130,15 +130,7 @@ loadAgent(): void {
         Validators.required,
         Validators.pattern(/^[^\d]+$/)
       ])),
-      Email: new FormControl(
-        "",
-        Validators.compose([
-          Validators.required,
-          Validators.pattern(
-            "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
-          )
-        ])
-      ),
+      Email: new FormControl(""), 
       DOB: new FormControl('', Validators.required),
       CountryCode: ["92", Validators.required],
       MobileNumber: new FormControl(
@@ -718,10 +710,6 @@ onTravelChange(event: any) {
     });
     await alert.present();
   }
-  // removeSelection(){
-
-  // }
-
   validation_messages = {
     name: [{ type: "required", message: "Name is required." },
     { type: 'pattern', message: 'Please enter only characters in the first name.' }],
@@ -729,17 +717,12 @@ onTravelChange(event: any) {
       { type: 'pattern', message: 'Please enter only characters in the city.' }],
     fatherName: [{ type: "required", message: "Guardian name is required." },
     { type: 'pattern', message: 'Only letters, spaces, commas, and hyphens are allowed in Guardian.' }],
-    email: [
-      { type: "required", message: "Email is required." },
-      { type: "pattern", message: "Please enter a valid email." }
-    ],
     DOB: [{ type: "required", message: "Date of Birth is required." }],
     mobileNumber: [
       {
         type: "required",
         message: "Mobile number is required"
       },
-      // { type: "pattern", message: "Mobile number is required like 3331231231" }
     ],
     gender: [{ type: "required", message: "Gender is required." }],
     Agent2: [
