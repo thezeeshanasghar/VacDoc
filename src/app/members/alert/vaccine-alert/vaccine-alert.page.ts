@@ -377,7 +377,11 @@ export class VaccineAlertPage implements OnInit {
       if (response.IsSuccess && response.ResponseData) {
         const doseNames = response.ResponseData.map(dose => dose.Name).join(', ');
         const childName = child.Child.Name;
-        const message = encodeURIComponent(`Reminder: Vaccination ${doseNames}, of ${childName} is due. Please confirm your appointment. Thanks!\n${this.displayName}, Baby Medics\nPhone Number ${this.clinicPhoneNumber}\nLogin and check your record at https://vaccinationcentre.com`);
+        const clinicName = response.ResponseData[0] && response.ResponseData[0].Clinic ? response.ResponseData[0].Clinic.Name : 'Unknown Clinic';
+        const clinicPhoneNumber = response.ResponseData[0] && response.ResponseData[0].Clinic ? response.ResponseData[0].Clinic.PhoneNumber : 'Unknown Phone Number';
+        const message = encodeURIComponent(
+          `Reminder: Vaccination ${doseNames}, of ${childName} is due. Please confirm your appointment. Thanks!\n${this.displayName}, ${clinicName}\nPhone Number: ${clinicPhoneNumber}\nLogin and check your record at https://vaccinationcentre.com`
+        );
         const formattedPatientNumber = mobileNumber.startsWith('+92') ? mobileNumber : `+92${mobileNumber.replace(/^0/, '')}`;
         let whatsappUrl: string;
         if (this.platform.is('android') || this.platform.is('ios')) {
