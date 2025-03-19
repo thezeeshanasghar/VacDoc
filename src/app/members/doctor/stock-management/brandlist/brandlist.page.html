@@ -1,0 +1,100 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/stock-management"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{brandName}} Details</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" size-sm="6" size-md="3">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-subtitle>Purchase Date</ion-card-subtitle>
+            <ion-card-title *ngFor="let bill of data?.slice(0,1)">
+              {{bill.Date | date:'dd/MM/yyyy'}}
+            </ion-card-title>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="12" size-sm="6" size-md="3">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-subtitle>Supplier</ion-card-subtitle>
+            <ion-card-title *ngFor="let bill of data?.slice(0,1)">
+              {{bill.Supplier | titlecase}}
+            </ion-card-title>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="12" size-sm="6" size-md="3">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-subtitle>Status</ion-card-subtitle>
+            <ion-card-title *ngFor="let bill of data?.slice(0,1)" [ngStyle]="{'color': bill.IsPaid ? 'green' : 'red'}">
+              {{bill.IsPaid ? 'Paid' : 'Unpaid'}}
+            </ion-card-title>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12" size-sm="6" size-md="3">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-subtitle>Bill No.</ion-card-subtitle>
+            <ion-card-title *ngFor="let bill of data?.slice(0,1)">
+              {{bill.BillNo}}
+            </ion-card-title>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="12" size-sm="6" size-md="3">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-subtitle>Total Amount</ion-card-subtitle>
+            <ion-card-title>{{totalAmount()}}</ion-card-title>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <!-- <th>Bill No.</th> -->
+          <!-- <th>Date</th> -->
+          <!-- <th>Supplier</th> -->
+          <th>Brand Name</th>
+          <th>Quantity</th>
+          <th>Purchase Price</th>
+          <th>Purchase Value</th>
+          <!-- <th>Status</th> -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let bill of data">
+          <!-- <td>{{bill.BillNo}}</td> -->
+          <!-- <td>{{bill.Date | date:'dd/MM/yyyy'}}</td> -->
+          <!-- <td>{{bill.Supplier}}</td> -->
+          <td>{{bill.BrandName}}</td>
+          <td>{{bill.Quantity}}</td>
+          <td>Rs.{{bill.StockAmount}}</td>
+          <td>Rs.{{bill.Quantity*bill.StockAmount}}</td>
+          <!-- <td>
+            <ion-badge [color]="bill.IsPaid ? 'success' : 'warning'">
+              {{bill.IsPaid ? 'Paid' : 'Pending'}}
+            </ion-badge>
+          </td> -->
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</ion-content>

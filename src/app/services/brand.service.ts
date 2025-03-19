@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { environment } from 'src/environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators'
 
@@ -18,6 +18,13 @@ export class BrandService extends BaseService {
 
   getBrandInventory(Id: String): Observable<any> {
     const url = `${this.API_BRAND}brandinventory/${Id}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+  getBrands(): Observable<any> {
+    const url = `${this.API_BRAND}brand`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
@@ -45,6 +52,17 @@ export class BrandService extends BaseService {
       );
   }
 
+  downloadPdf(dId: number, options: any): Observable<HttpResponse<Blob>> {
+      const apiUrl = `${this.API_BRAND}BrandAmount/pdf/${dId}`;
+      return this.http.get(apiUrl, {
+        responseType: 'blob',
+        observe: 'response',
+        headers: new HttpHeaders({
+          'Accept': 'application/pdf'
+        })
+      });
+    }
+
 }
 
 interface Response<T> {
@@ -53,8 +71,12 @@ interface Response<T> {
   ResponseData: T | null;
 }
 
-interface BrandAmountDTO {
+export interface BrandAmountDTO {
+  PurchasedAmt: any;
+  Amount: any;
+  BrandName: any;
   BrandId: number;
   VaccineName: string;
+  Count: number;
   // Add other properties as needed
 }

@@ -37,6 +37,10 @@ const routes: Routes = [
   {
     path: "sms-setting",
     loadChildren: () => import('./sms-setting/sms-setting.module').then(m => m.SMSSettingPageModule)
+  },
+  {
+    path: "stock-management",
+    loadChildren: () => import('./stock-management/stock-management.module').then(m => m.StockManagementPageModule)
   }
 ];
 

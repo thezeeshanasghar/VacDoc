@@ -1,0 +1,64 @@
+.example-full-width {
+    width: 100%;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+    margin: 15px 0;
+  
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      
+      th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid var(--ion-color-light);
+      }
+  
+      th {
+        background-color: var(--ion-color-light);
+        font-weight: bold;
+      }
+  
+      tr:nth-child(even) {
+        background-color: var(--ion-color-light-shade);
+      }
+    }
+  }
+  
+  .error-message {
+    color: var(--ion-color-danger);
+    font-size: 12px;
+    margin-top: 4px;
+    padding-left: 16px;
+  }
+  
+  .total-section {
+    background: var(--ion-color-light);
+    padding: 16px;
+    border-radius: 8px;
+    
+    h2 {
+      margin: 0;
+      font-weight: bold;
+    }
+  }
+  
+  ion-datetime {
+    padding-left: 0;
+  }
+  
+  mat-form-field {
+    width: 100%;
+  }
+  
+  ::ng-deep .mat-form-field-wrapper {
+    padding-bottom: 0;
+  }
+  
+  ::ng-deep .mat-autocomplete-panel {
+    background: var(--ion-background-color);
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
