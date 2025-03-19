@@ -4,6 +4,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule, Routes } from '@angular/router';
 import { AdjustPage } from './adjust.page';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+
 
 const routes: Routes = [
   {
@@ -18,7 +22,10 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    MatAutocompleteModule,
+    MatInputModule,
+    MatFormFieldModule
   ],
   declarations: [AdjustPage]
 })

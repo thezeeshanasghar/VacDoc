@@ -26,7 +26,7 @@
           <ion-card-header>
             <ion-card-subtitle>Supplier</ion-card-subtitle>
             <ion-card-title *ngFor="let bill of data?.slice(0,1)">
-              {{bill.Supplier}}
+              {{bill.Supplier | titlecase}}
             </ion-card-title>
           </ion-card-header>
         </ion-card>
@@ -36,10 +36,8 @@
         <ion-card>
           <ion-card-header>
             <ion-card-subtitle>Status</ion-card-subtitle>
-            <ion-card-title *ngFor="let bill of data?.slice(0,1)">
-               <ion-badge [color]="bill.IsPaid ? 'success' : 'warning'">
-              {{bill.IsPaid ? 'Paid' : 'Pending'}}
-            </ion-badge>
+            <ion-card-title *ngFor="let bill of data?.slice(0,1)" [ngStyle]="{'color': bill.IsPaid ? 'green' : 'red'}">
+              {{bill.IsPaid ? 'Paid' : 'Unpaid'}}
             </ion-card-title>
           </ion-card-header>
         </ion-card>

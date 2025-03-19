@@ -5,6 +5,7 @@ import { StockService, AdjustStockDTO } from 'src/app/services/stock.service';
 import { LoadingController } from '@ionic/angular';
 
 interface StockAdjustment {
+  brandName: any;
   brandId: number;
   type: 'increase' | 'decrease';
   date: string;
@@ -22,6 +23,7 @@ export class AdjustPage implements OnInit {
     isIncrease: boolean = false;
     isDecrease: boolean = false;
   adjustment: StockAdjustment = {
+    brandName: null,
     brandId: null,
     type: null,
     date: new Date().toISOString(),
@@ -29,8 +31,8 @@ export class AdjustPage implements OnInit {
     price: null,
     reason: ''
   };
-
   brands = [];
+  filteredBrands: any[] = [];
 
   constructor(
     private brandService: BrandService,
@@ -41,6 +43,21 @@ export class AdjustPage implements OnInit {
 
   ngOnInit() {
     this.loadBrands();
+  }
+
+  filterBrands(event: string) {
+    const filterValue = event.toLowerCase();
+    this.filteredBrands = this.brands.filter(brand =>
+      brand.name.toLowerCase().includes(filterValue)
+    );
+  }
+
+  selectBrand(event: any) {
+    const selectedBrand = this.brands.find(brand => brand.name === event.option.value);
+    if (selectedBrand) {
+      this.adjustment.brandId = selectedBrand.id;
+      this.adjustment.brandName = selectedBrand.name;
+    }
   }
 
   async loadBrands() {
@@ -141,6 +158,7 @@ async onSubmit() {
 
   private resetForm() {
     this.adjustment = {
+      brandName: null,
       brandId: null,
       type: null,
       date: new Date().toISOString(),

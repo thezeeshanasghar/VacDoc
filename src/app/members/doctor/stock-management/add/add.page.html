@@ -14,8 +14,24 @@
             <ion-input type="text" [(ngModel)]="bill" required></ion-input>
         </ion-item>
         <ion-item>
-            <ion-label position="floating">Supplier</ion-label>
-            <ion-input type="text" [(ngModel)]="supplierName" required></ion-input>
+            <!-- <ion-label position="floating">Supplier</ion-label> -->
+            <mat-form-field class="example-full-width">
+                <input type="text" 
+                    aria-label="Supplier" 
+                    matInput 
+                    [(ngModel)]="supplierName"
+                    name="supplier"
+                    [matAutocomplete]="supplierAuto"
+                    (ngModelChange)="filterSuppliers($event)" 
+                    required
+                    placeholder="Select supplier"
+                    style="font-size: 15px;">
+                <mat-autocomplete #supplierAuto="matAutocomplete" (optionSelected)="selectSupplier($event)">
+                    <mat-option *ngFor="let supplier of filteredSuppliers" [value]="supplier">
+                        {{supplier}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
         </ion-item>
         <ion-item>
             <ion-label position="floating">Date</ion-label>

@@ -23,12 +23,24 @@
                 <ion-label class="ion-padding-start">Decrease Stock</ion-label>
             </ion-item>
             <ion-item>
-                <ion-label position="stacked">Brand</ion-label>
-                <ion-select [(ngModel)]="adjustment.brandId" name="brand" required>
-                    <ion-select-option *ngFor="let brand of brands" [value]="brand.id">
-                        {{brand.name}}
-                    </ion-select-option>
-                </ion-select>
+                <!-- <ion-label position="stacked">Brand</ion-label> -->
+                <mat-form-field class="example-full-width">
+                    <input type="text" 
+                        aria-label="Brand" 
+                        matInput 
+                        [(ngModel)]="adjustment.brandName"
+                        name="brandName"
+                        [matAutocomplete]="auto"
+                        (ngModelChange)="filterBrands($event)" 
+                        required
+                        placeholder="Select brand"
+                        style="font-size: 15px;">
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectBrand($event)">
+                        <mat-option *ngFor="let brand of filteredBrands" [value]="brand.name">
+                            {{brand.name}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
             </ion-item>
 
             <!-- Adjustment Type -->

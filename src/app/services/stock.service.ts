@@ -43,6 +43,11 @@ export interface Response<T> {
   ResponseData: T;
 }
 
+export interface Supplier {
+  id: number;
+  name: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -64,5 +69,9 @@ export class StockService {
   getBrandBills(id:number): Observable<Response<BillDetails[]>> {
     let url = `${this.apiUrl}stock/bill/${id}`;
     return this.http.get<Response<BillDetails[]>>(url);
+  }
+  getSuppliers(): Observable<Response<Supplier[]>> {
+    let url = `${this.apiUrl}Bill/suppliers`;
+    return this.http.get<Response<Supplier[]>>(url);
   }
 }

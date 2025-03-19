@@ -1,25 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
-import { BrandService } from 'src/app/services/brand.service';
+import { BrandService, BrandAmountDTO } from 'src/app/services/brand.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 
-interface Response<T> {
-  IsSuccess: boolean;
-  Message: string | null;
-  ResponseData: T | null;
-}
-
-interface BrandAmountDTO {
-  BrandId: number;
-  VaccineName: string;
-  BrandName: string;
-  Amount: number;
-  Count: number;
-  // Add other properties as needed
-}
+// import { Response, BrandAmountDTO } from 'src/app/models/response.model'; // adjust the import path as needed
 
 @Component({
   selector: 'app-brand-amount',
@@ -50,7 +37,7 @@ export class BrandAmountPage implements OnInit {
     await loading.present();
 
     this.brandService.getBrandAmount(id).subscribe(
-      (res: Response<BrandAmountDTO[]>) => {
+      (res: { IsSuccess: boolean, ResponseData: BrandAmountDTO[], Message: string }) => {
         loading.dismiss();
         if (res.IsSuccess) {
           this.brandAmounts = res.ResponseData;
@@ -93,4 +80,38 @@ export class BrandAmountPage implements OnInit {
         this.toastService.create(err, 'danger')
       });
   }
+  // Add to BrandAmountPage class
+async downloadPDF() {
+  try {
+    const loading = await this.loadingController.create({
+      message: 'Downloading PDF...'
+    });
+    await loading.present();
+
+    const doctorId = await this.storage.get(environment.DOCTOR_Id);
+    
+    this.brandService.downloadPdf(doctorId, { observe: 'response', responseType: 'blob' }).subscribe(
+      (response) => {
+        const blob = response.body;
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `brand-report-${new Date().toISOString().split('T')[0]}.pdf`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        loading.dismiss();
+        this.toastService.create('PDF downloaded successfully', 'success');
+      },
+      error => {
+        loading.dismiss();
+        console.error('Error downloading PDF:', error);
+        this.toastService.create('Failed to download PDF', 'danger');
+      }
+    );
+  } catch (error) {
+    console.error('Error in downloadPDF:', error);
+    this.toastService.create('An unexpected error occurred', 'danger');
+    this.loadingController.dismiss();
+  }
+}
 }

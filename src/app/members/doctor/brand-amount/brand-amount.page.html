@@ -4,6 +4,11 @@
       <!-- <ion-menu-button></ion-menu-button> -->
     </ion-buttons>
     <ion-title>Brand Management</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="downloadPDF()">
+        <img src="../../../../assets/pdf.jpg" alt="Download PDF" class="pdf-icon" />
+      </ion-button>
+    </ion-buttons>    
   </ion-toolbar>
   <ion-toolbar color="primary" >
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
@@ -38,12 +43,6 @@
           </div> 
         </ion-col> -->
         <ion-col class="center-text" style="margin-top: 10px;">{{b.Count}}</ion-col>
-        <!-- <ion-col class="center-text">
-          <ion-input [(ngModel)]="b.Amount" [ngModelOptions]="{standalone: true}" type="tel" #amountInput="ngModel" required pattern="^[0-9]*$"></ion-input>
-          <div *ngIf="amountInput.invalid && (amountInput.dirty || amountInput.touched)">
-            <div *ngIf="amountInput.errors?.required" class="error">Amount is required.</div>
-          </div> 
-        </ion-col> -->
         <ion-col class="center-text" style="margin-top: 10px;">{{b.PurchasedAmt}}</ion-col>	
         <!-- <ion-col class="center-text">
           <ion-input [(ngModel)]="b.PurchasedAmt" [ngModelOptions]="{standalone: true}" type="tel" #purchaseInput="ngModel" required pattern="^[0-9]*$"></ion-input>
@@ -61,15 +60,21 @@
         <!-- <ion-col class="center-text">
           <ion-checkbox [(ngModel)]="b.IsPaid" [ngModelOptions]="{standalone: true}"></ion-checkbox>
         </ion-col>         -->
-        <ion-col class="center-text" style="margin-top: 10px;">{{b.Amount}}</ion-col>	
+        <!-- <ion-col class="center-text" style="margin-top: 10px;">{{b.Amount}}</ion-col>	 -->
+        <ion-col class="center-text">
+          <ion-input [(ngModel)]="b.Amount" [ngModelOptions]="{standalone: true}" type="tel" #amountInput="ngModel" required pattern="^[0-9]*$"></ion-input>
+          <div *ngIf="amountInput.invalid && (amountInput.dirty || amountInput.touched)">
+            <div *ngIf="amountInput.errors?.required" class="error">Amount is required.</div>
+          </div> 
+        </ion-col>
         <ion-col class="center-text" style="margin-top: 10px;">{{b.Count * b.Amount}}</ion-col>
       </ion-row>
     </ion-grid>
   </form>
-    <!-- <ion-fab horizontal="end" vertical="bottom" slot="fixed" style="margin-right: 10px;">
+    <ion-fab horizontal="end" vertical="bottom" slot="fixed" style="margin-right: 10px;">
     <ion-fab-button routerLink="/members/doctor/brand-amount/update" (click)="updateBrandAmount()">
       <ion-icon name="checkmark"></ion-icon>
     </ion-fab-button>
-  </ion-fab> -->
+  </ion-fab>
 </ion-content>
 
