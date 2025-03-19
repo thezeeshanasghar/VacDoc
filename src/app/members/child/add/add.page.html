@@ -17,7 +17,6 @@
       <ion-menu-button style="margin-left: 10%"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
-
 </ion-header>
 
 <ion-content *ngIf="fg1" class="ion-padding">
@@ -25,7 +24,9 @@
     <!-- 1st Step of Add Child -->
     <form [formGroup]="fg1" (ngSubmit)="moveNextStep()">
       <ion-item>
-        <ion-label color="primary" position="floating">Patient Name</ion-label>
+        <ion-label color="primary" position="floating">
+          Patient Name <span class="required-asterisk">*</span>
+        </ion-label>
         <ion-input type="text" formControlName="Name" required [(ngModel)]="fg1.value.Name" class="ion-text-capitalize">
         </ion-input>
       </ion-item>
@@ -38,7 +39,9 @@
         </ng-container>
       </div>
       <ion-item>
-        <ion-label color="primary" position="floating">Guardian's Name</ion-label>
+        <ion-label color="primary" position="floating">
+          Guardian's Name <span class="required-asterisk">*</span>
+        </ion-label>
         <ion-input type="text" formControlName="FatherName" required [(ngModel)]="fg1.value.FatherName"
           class="ion-text-capitalize">
         </ion-input>
@@ -51,9 +54,11 @@
           </div>
         </ng-container>
       </div>
+
+      <!-- Gender -->
       <ion-radio-group formControlName="Gender">
         <ion-list-header>
-          Gender
+          Gender <span class="required-asterisk">*</span>
         </ion-list-header>
         <ion-grid>
           <ion-row>
@@ -61,7 +66,6 @@
               <ion-item>
                 <ion-label color="primary">Male</ion-label>
                 <ion-radio slot="start" value="Boy"></ion-radio>
-                <!-- (click)="updateGender('Boy')" -->
               </ion-item>
             </ion-col>
 
@@ -75,8 +79,9 @@
         </ion-grid>
       </ion-radio-group>
 
-      <ion-label id="dob" color="primary" position="floating" style="margin-left: 1.5%; margin-bottom: 20px;">Date of
-        Birth</ion-label>
+      <ion-label id="dob" color="primary" position="floating" style="margin-left: 1.5%; margin-bottom: 20px;">
+        Date of Birth <span class="required-asterisk">*</span>
+      </ion-label>
       <input formControlName="DOB" slot="end" matInput [matDatepicker]="picker" disabled max="{{todaydate}}"
         (click)="picker.open()" (dateChange)="checkEpi()">
       <mat-datepicker-toggle slot="end" matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -92,7 +97,6 @@
         </ng-container>
       </div>
 
-
       <ion-radio-group formControlName="Type" (ionChange)="onTravelChange($event)">
         <ion-grid>
           <ion-row>
@@ -106,17 +110,17 @@
             <ion-col>
               <ion-item style="height: 100%;">
                 <ion-label color="white">EPI Plus</ion-label>
-                <ion-radio slot="start" value="IsEPIDone" [disabled]="isRadioDisabled" ></ion-radio>
+                <ion-radio slot="start" value="IsEPIDone" [disabled]="isRadioDisabled"></ion-radio>
               </ion-item>
             </ion-col>
 
             <ion-col>
-              <ion-item c style="height: 100%;">  
+              <ion-item c style="height: 100%;">
                 <ion-label color="white">Customize</ion-label>
                 <ion-radio slot="start" value="special"></ion-radio>
               </ion-item>
             </ion-col>
-    
+
             <ion-col>
               <ion-item>
                 <ion-label color="white">Travel</ion-label>
@@ -127,67 +131,47 @@
         </ion-grid>
       </ion-radio-group>
 
-
-      <!-- <ion-item *ngIf="fg1.value.Type === 'regular'">
-        <ion-label color="primary">Skip UnActive Doses</ion-label>
-        <ion-checkbox slot="start" formControlName="IsSkip"></ion-checkbox>
-      </ion-item> -->
-
-
       <ion-item>
         <ion-label color="primary" position="floating">Email</ion-label>
         <ion-input type="text" formControlName="Email"></ion-input>
       </ion-item>
 
-      <div class="validation-errors">
-        <ng-container *ngFor="let validation of validation_messages.email">
-          <div class="error-message"
-            *ngIf="fg1.get('Email').hasError(validation.type) && (fg1.get('Email').dirty || fg1.get('Email').touched)">
-            <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
-          </div>
-        </ng-container>
-      </div>
       <ion-item>
-        <ion-label color="primary" position="floating">CNIC/Passport No.</ion-label>
-        <ion-input type="text" formControlName="CNIC" ></ion-input>
+        <ion-label color="primary" position="floating">
+          CNIC/Passport No. <span *ngIf="isCnicRequired" class="required-asterisk">*</span>
+        </ion-label>
+        <ion-input type="text" formControlName="CNIC"></ion-input>
       </ion-item>
       <div *ngIf="isCnicRequired && fg1.get('CNIC').hasError('required')" style="color: red;">
         CNIC number is required when traveling.
       </div>
+
       <ion-item>
         <div class="country-code-container">
           <ion-label color="primary" position="stacked" class="country-label">
-            Country Code
+            Country Code <span class="required-asterisk">*</span>
           </ion-label>
           <ion-select formControlName="CountryCode" class="country-code-select">
             <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
               (+{{ country.code }}) {{ country.name }}
             </ion-select-option>
           </ion-select>
-        
+
           <ion-label color="primary" position="stacked" class="mobile-label">
-            Mobile Number
+            Mobile Number <span class="required-asterisk">*</span>
           </ion-label>
           <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
         </div>
-        
       </ion-item>
 
-      <div class="validation-errors">
-        <ng-container *ngFor="let validation of validation_messages.mobileNumber">
-          <div class="error-message"
-            *ngIf="fg1.get('MobileNumber').hasError(validation.type) && (fg1.get('MobileNumber').dirty || fg1.get('MobileNumber').touched)">
-            <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
-          </div>
-        </ng-container>
-      </div>
-
       <div class="city">
-        <ion-label color="primary" position="floating"
-          style="font-size: 16px; display: flex; padding-left: 15px;">City</ion-label>
+        <ion-label color="primary" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">
+          City <span class="required-asterisk">*</span>
+        </ion-label>
         <mat-form-field class="example-full-width">
           <input type="text" aria-label="Number" matInput formControlName="city" [matAutocomplete]="auto"
-            (ngModelChange)="filter($event)" style="font-size: 15px;" (ionChange)="onCityChange()" [disabled]="fg1.get('City2')?.value !== '' ">
+            (ngModelChange)="filter($event)" style="font-size: 15px;" (ionChange)="onCityChange()"
+            [disabled]="fg1.get('City2')?.value !== ''">
           <mat-autocomplete #auto="matAutocomplete" class="no-indent">
             <mat-option *ngFor="let option of cities" [value]="option">
               {{option}}
@@ -195,9 +179,11 @@
           </mat-autocomplete>
         </mat-form-field>
         <ion-item>
-          <ion-label color="primary" position="floating">Add New City</ion-label>
+          <ion-label color="primary" position="floating">
+            Add New City
+          </ion-label>
           <ion-input type="text" formControlName="City2" required class="ion-text-capitalize"
-            [(ngModel)]="fg1.value.City2" [disabled]="fg1.get('city')?.value !== '' " (ionChange)="onCityChange()">
+            [(ngModel)]="fg1.value.City2" [disabled]="fg1.get('city')?.value !== ''" (ionChange)="onCityChange()">
           </ion-input>
         </ion-item>
         <div class="validation-errors">
@@ -209,38 +195,42 @@
           </ng-container>
         </div>
       </div>
+
       <div *ngIf="isCnicRequired">
-      <div class="agent">
-        <ion-label color="primary" position="floating"
-          style="font-size: 16px; display: flex; padding-left: 15px;">Agent</ion-label>
-        <mat-form-field class="example-full-width">
-          <input type="text" aria-label="Number" matInput formControlName="agent" [matAutocomplete]="auto"
-            (ngModelChange)="filter($event)" (ionChange)="onAgentChange()" style="font-size: 15px;">
-          <mat-autocomplete #auto="matAutocomplete" class="no-indent">
-            <mat-option *ngFor="let option of agents" [value]="option">
-              {{option}}
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-        <ion-item>
-          <ion-label color="primary" position="floating">Add New Agent</ion-label>
-          <ion-input type="text" formControlName="Agent2" required class="ion-text-capitalize"
-            [(ngModel)]="fg1.value.Agent2" [disabled]="fg1.get('agent')?.value !== '' "  (ionChange)="onAgentChange()">
-          </ion-input>
-        </ion-item>
-        <div class="validation-errors">
-          <ng-container *ngFor="let validation of validation_messages.Agent2">
-            <div class="error-message"
-              *ngIf="isCnicRequired && fg1.get('Agent2')?.hasError(validation.type) && (fg1.get('Agent2')?.dirty || fg1.get('Agent2')?.touched)">
-              <ion-icon name="information-circle-outline"></ion-icon> Agent required
-            </div>
-          </ng-container>
+        <div class="agent">
+          <ion-label color="primary" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">
+            Agent <span class="required-asterisk">*</span>
+          </ion-label>
+          <mat-form-field class="example-full-width">
+            <input type="text" aria-label="Number" matInput formControlName="agent" [matAutocomplete]="auto"
+              (ngModelChange)="filter($event)" (ionChange)="onAgentChange()" style="font-size: 15px;">
+            <mat-autocomplete #auto="matAutocomplete" class="no-indent">
+              <mat-option *ngFor="let option of agents" [value]="option">
+                {{option}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          <ion-item>
+            <ion-label color="primary" position="floating">
+              Add New Agent <span class="required-asterisk">*</span>
+            </ion-label>
+            <ion-input type="text" formControlName="Agent2" required class="ion-text-capitalize"
+              [(ngModel)]="fg1.value.Agent2" [disabled]="fg1.get('agent')?.value !== ''" (ionChange)="onAgentChange()">
+            </ion-input>
+          </ion-item>
+          <div class="validation-errors">
+            <ng-container *ngFor="let validation of validation_messages.Agent2">
+              <div class="error-message"
+                *ngIf="isCnicRequired && fg1.get('Agent2')?.hasError(validation.type) && (fg1.get('Agent2')?.dirty || fg1.get('Agent2')?.touched)">
+                <ion-icon name="information-circle-outline"></ion-icon> Agent required
+              </div>
+            </ng-container>
+          </div>
         </div>
       </div>
-    </div>
       <ion-button type="submit" [disabled]="!fg1.valid || (isCnicRequired && !fg1.get('CNIC').value)"
-        style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;"
-        color="primary">Submit
+        style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;" color="primary">
+        Submit
       </ion-button>
     </form>
   </ion-card>
