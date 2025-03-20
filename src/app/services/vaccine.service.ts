@@ -103,11 +103,14 @@ export class VaccineService extends BaseService {
   //     catchError(this.handleError)
   //   );
   // }
-  getDosesForChild(childId: number, date: string): Observable<ApiResponse> {
-    const formattedDate = new Date(date).toISOString().split('T')[0];
-    return this.http.get<ApiResponse>(`${this.API_VACCINE}schedule/doses-for-child/${childId}?date=${formattedDate}`).pipe(
-      map((response: any) => this.extractData(response) as ApiResponse),
-      catchError((error: any) => this.handleError(error))
+
+   getDosesForChild(childId: number, date: string, onlineClinicId: number): Observable<any> {
+    debugger
+    const url = `${this.API_VACCINE}schedule/doses-for-child/${childId}/${onlineClinicId}?date=${date}`;
+    console.log('API URL:', url); 
+    return this.http.get(url).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
     );
   }
 
