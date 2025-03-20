@@ -52,7 +52,7 @@ export class StockManagementPage implements OnInit {
     });
     await loading.present();
 
-    this.stockService.getBills().subscribe(
+    this.stockService.getBills(Number(id)).subscribe(
       (res: Response<BillDetails[]>) => {
         loading.dismiss();
         if (res.IsSuccess) {

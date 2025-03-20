@@ -201,29 +201,35 @@ export class AddPage implements OnInit {
 
   async saveStock() {
     try {
-      // Show loading indicator
       const loading = await this.loadingController.create({
         message: 'Saving purchase...'
       });
       await loading.present();
 
-      // Generate a unique bill number
+      const doctorId = await this.storage.get(environment.DOCTOR_Id);
+      console.log('Doctor ID:', doctorId);
+      if (!doctorId) {
+        throw new Error('Doctor ID not found');
+      }
+
+      // Convert doctorId to number since API expects it
+      const doctorIdNumber = parseInt(doctorId, 10);
+
       const billNo = `BILL-${this.bill}`;
-    
-      // Transform the data into the desired format
-      const purchaseData = this.stockItems.map(item => (
-        console.log('Purchase Data:', item),
-        {
+
+      const purchaseData = this.stockItems.map(item => ({
         BrandId: item.brandId,
         BillNo: billNo,
         Supplier: this.supplierName,
-        Date: new Date(this.purchaseDate), // Convert directly to Date object
+        Date: new Date(this.purchaseDate),
         IsPaid: this.isPaid,
         Quantity: item.quantity,
-        StockAmount: item.price 
+        StockAmount: item.price,
+        DoctorId: doctorIdNumber // Send as number instead of string
       }));
-console.log('Purchase Data:', purchaseData);
-      // Call the service to create bill
+
+      console.log('Purchase Data:', purchaseData);
+
       this.stockService.createBill(purchaseData).subscribe({
         next: (response) => {
           loading.dismiss();
@@ -244,9 +250,9 @@ console.log('Purchase Data:', purchaseData);
     } catch (error) {
       console.error('Error in saveStock:', error);
       this.toastService.create('An unexpected error occurred', 'danger');
+      this.loadingController.dismiss();
     }
   }
-
   private resetForm() {
     this.bill = '';
     this.stockItems = [];
