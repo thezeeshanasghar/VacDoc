@@ -62,8 +62,8 @@ export class StockService {
   createBill(stocks: StockDTO[]): Observable<Response<StockDTO[]>> {
     return this.http.post<Response<StockDTO[]>>(`${this.apiUrl}Stock`, stocks);
   }
-  getBills(fromDate?: Date, toDate?: Date): Observable<Response<BillDetails[]>> {
-    let url = `${this.apiUrl}bill`;
+  getBills(id:number, toDate?: Date): Observable<Response<BillDetails[]>> {
+    let url = `${this.apiUrl}bill/doctor/${id}`;
     return this.http.get<Response<BillDetails[]>>(url);
   }
   getBrandBills(id:number): Observable<Response<BillDetails[]>> {

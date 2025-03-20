@@ -113,7 +113,7 @@ export class MembersPage implements OnInit {
                 children: [
                   {
                     title: "Stock In Hand",
-                    url: "/members/doctor/stock-management/report",
+                    url: "/members/doctor/stock-management/stockinhand",
                     icon: "bar-chart-outline"  // Changed to bar chart for stock levels
                   },
                   {
@@ -149,7 +149,7 @@ export class MembersPage implements OnInit {
                   },
                   {
                     title: "Sales Report",
-                    url: "/members/doctor/stock-management/report",
+                    url: "/members/doctor/stock-management/salesreport",
                     icon: "trending-up-outline"  // Changed to trending up for sales
                   }
                 ],

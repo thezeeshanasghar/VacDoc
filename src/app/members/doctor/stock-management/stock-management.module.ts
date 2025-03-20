@@ -13,7 +13,9 @@ const routes: Routes = [
   { path: 'add', loadChildren: () => import('./add/add.module').then(m => m.AddPageModule) },
   { path: 'total', loadChildren: () => import('./total/total.module').then(m => m.TotalPageModule) },
   { path: 'brandlist/:brandId', loadChildren: () => import('./brandlist/brandlist.module').then(m => m.BrandListPageModule) },
-  { path: 'adjust', loadChildren: () => import('./adjust/adjust.module').then(m => m.AdjustPageModule) }
+  { path: 'adjust', loadChildren: () => import('./adjust/adjust.module').then(m => m.AdjustPageModule) },
+  { path: 'stockinhand', loadChildren: () => import('./stockinhand/stockinhand.module').then(m => m.StockInHandPageModule) },
+  { path: 'salesreport', loadChildren: () => import('./salesreport/salesreport.module').then(m => m.SalesReportPageModule) }
 ];
 
 @NgModule({

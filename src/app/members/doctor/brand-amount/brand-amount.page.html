@@ -3,12 +3,7 @@
     <ion-buttons slot="start">
       <!-- <ion-menu-button></ion-menu-button> -->
     </ion-buttons>
-    <ion-title>Brand Management</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="downloadPDF()">
-        <img src="../../../../assets/pdf.jpg" alt="Download PDF" class="pdf-icon" />
-      </ion-button>
-    </ion-buttons>    
+    <ion-title>Brand Management</ion-title>    
   </ion-toolbar>
   <ion-toolbar color="primary" >
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
@@ -16,6 +11,11 @@
       <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/child" name="accessibility-outline" size="large" > </ion-icon>
       <ion-menu-button style="margin-left: 10%"></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="downloadPDF()">
+        <img src="../../../../assets/pdf.png" alt="Download PDF" class="pdf-icon" />
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
