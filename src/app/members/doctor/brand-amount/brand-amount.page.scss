@@ -21,4 +21,89 @@
     width: 30px;  // Adjust size as needed
     height: 32px;
   }
+  .table-container {
+    overflow-x: auto;
+    margin: 16px;
+    // background: var(--ion-color-light);
+    border-radius: 8px;
+    // box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 800px;
+  
+      th, td {
+        padding: 12px;
+        text-align: center;
+        // border-bottom: 1px solid var(--ion-color-medium-shade);
+        white-space: nowrap;
+      }
+  
+      th {
+        // background: var(--ion-color-primary);
+        // color: var(--ion-color-primary-contrast);
+        font-weight: 500;
+        font-size: 14px;
+      }
+  
+      td {
+        font-size: 14px;
+        vertical-align: middle;
+        
+        &:first-child {
+          text-align: left;
+        }
+      }
+  
+      tr:nth-child(even) {
+        // background: var(--ion-color-light-shade);
+      }
+    }
+  }
+  
+  .sale-price-input {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    // border: 1px solid var(--ion-color-medium);
+    border-radius: 4px;
+    // background: var(--ion-color-light);
+    max-width: 100px;
+    margin: 0 auto;
+  
+    &.ng-invalid.ng-touched {
+      // border-color: var(--ion-color-danger);
+    }
+  }
+  
+  @media screen and (max-width: 768px) {
+    .hide-mobile {
+      display: none;
+    }
+    
+    .table-container {
+      table {
+        min-width: auto;
+      }
+    }
+  }
+  
+  .table-container {
+    overflow-x: auto;
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      
+      th, td {
+        padding: 12px 8px;
+        text-align: center;
+        white-space: nowrap;
+      }
+    }
+  }
+  
+  ion-fab-button {
+    margin-bottom: 16px;
+    margin-right: 16px;
+  }

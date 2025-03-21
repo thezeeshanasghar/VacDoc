@@ -102,18 +102,18 @@ export class MembersPage implements OnInit {
                 url: "/members/doctor/password",
                 icon: "key-outline"
               },
-              {
-                title: "Brand Management",
-                url: "/members/doctor/brand-amount",
-                icon: "wallet-outline"
-              },
+              // {
+              //   title: "Brand Management",
+              //   url: "/members/doctor/brand-amount",
+              //   icon: "wallet-outline"
+              // },
               {
                 title: "Stock Management",
                 icon: "cube-outline",
                 children: [
                   {
                     title: "Stock In Hand",
-                    url: "/members/doctor/stock-management/stockinhand",
+                    url: "/members/doctor/brand-amount",
                     icon: "bar-chart-outline"  // Changed to bar chart for stock levels
                   },
                   {
