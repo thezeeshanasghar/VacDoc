@@ -28,9 +28,13 @@
         <ion-col class="header-col">Brand Name</ion-col>
         <ion-col class="header-col">Inventory</ion-col>
         <ion-col class="header-col">Purchase Price</ion-col>
-        <ion-col class="header-col">Purchase value</ion-col>
+        <!-- <div class="hide-mobile"> -->
+        <ion-col class="header-col hide-mobile">Purchase value</ion-col>
+        <!-- </div> -->
         <ion-col class="header-col">Sale Price</ion-col>
-        <ion-col class="header-col">Sale Value</ion-col>
+        <!-- <div class="hide-mobile"> -->
+        <ion-col class="header-col hide-mobile">Sale Value</ion-col>
+        <!-- </div> -->
         <!-- <ion-col class="header-col">Paid/Unpaid</ion-col> -->
       </ion-row>
       <ion-row *ngFor="let b of brandAmounts" class="data-row">
@@ -50,7 +54,9 @@
             <div *ngIf="purchaseInput.errors?.required" class="error">Purchase amount is required.</div>
           </div> 
         </ion-col> -->
-        <ion-col class="center-text" style="margin-top: 10px;">{{b.Count * b.PurchasedAmt}}</ion-col>
+        <!-- <div class="hide-mobile"> -->
+        <ion-col class="center-text hide-mobile" style="margin-top: 10px;">{{b.Count * b.PurchasedAmt}}</ion-col>
+      <!-- </div> -->
         <!-- <ion-col class="center-text">
           <ion-input [(ngModel)]="b.SupName" [ngModelOptions]="{standalone: true}" type="text" #supplierInput="ngModel" required pattern="^[a-zA-Z\s]*$"></ion-input>
           <div *ngIf="supplierInput.invalid && (supplierInput.dirty || supplierInput.touched)">
@@ -67,7 +73,9 @@
             <div *ngIf="amountInput.errors?.required" class="error">Amount is required.</div>
           </div> 
         </ion-col>
-        <ion-col class="center-text" style="margin-top: 10px;">{{b.Count * b.Amount}}</ion-col>
+        <!-- <div class="hide-mobile"> -->
+        <ion-col class="center-text hide-mobile" style="margin-top: 10px;">{{b.Count * b.Amount}}</ion-col>
+      <!-- </div> -->
       </ion-row>
     </ion-grid>
   </form>
