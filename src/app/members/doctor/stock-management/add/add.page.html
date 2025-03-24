@@ -1,9 +1,18 @@
 <ion-header>
     <ion-toolbar color="primary">
         <ion-buttons slot="start">
-            <ion-back-button defaultHref="/members/doctor/stock-management"></ion-back-button>
+            <ion-back-button></ion-back-button>
         </ion-buttons>
         <ion-title>Add Stock</ion-title>
+    </ion-toolbar>
+    <ion-toolbar color="primary" >
+        <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
+          <ion-icon style="margin-left: 10%" routerLink="/members/doctor/brand-amount"  name="bar-chart-outline" size="large" > </ion-icon>
+          <!-- <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/add"  name="add-circle-outline" size="large" > </ion-icon> -->
+          <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management" name="document-text-outline" size="large" > </ion-icon>
+          <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/adjust" name="sync-outline" size="large" > </ion-icon>
+          <ion-menu-button style="margin-left: 10%"></ion-menu-button>
+        </ion-buttons>
     </ion-toolbar>
 </ion-header>
   

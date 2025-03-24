@@ -185,6 +185,7 @@ export class ClinicPage {
     await this.clinicService.deleteClinic(id).subscribe(
       res => {
         if (res.IsSuccess == true) {
+          window.location.reload();
           this.router.navigate(['/members/doctor/clinic']);
           loading.dismiss();
         }

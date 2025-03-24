@@ -5,6 +5,7 @@ import { environment } from "src/environments/environment";
 import { ClinicService } from "../services/clinic.service";
 import { ToastService } from "../shared/toast.service";
 import { DoctorService } from "src/app/services/doctor.service";
+// import { url } from "inspector";
 
 @Component({
   selector: "app-members",
@@ -102,6 +103,11 @@ export class MembersPage implements OnInit {
                 url: "/members/doctor/password",
                 icon: "key-outline"
               },
+              {
+                title: "Analytics",
+                url: "/members/doctor/stock-management/total",
+                icon: "stats-chart-outline"
+              },
               // {
               //   title: "Brand Management",
               //   url: "/members/doctor/brand-amount",
@@ -110,50 +116,52 @@ export class MembersPage implements OnInit {
               {
                 title: "Stock Management",
                 icon: "cube-outline",
-                children: [
-                  {
-                    title: "Stock In Hand",
-                    url: "/members/doctor/brand-amount",
-                    icon: "bar-chart-outline"  // Changed to bar chart for stock levels
-                  },
-                  {
-                    title: "Purchase Bill",
-                    icon: "cart-outline",
-                    children: [
-                      {
-                        title: "Add Bill",
-                        url: "/members/doctor/stock-management/add",
-                        icon: "add-circle-outline"  // Keep add icon for new bills
-                      },
-                      {
-                        title: "Purchase History",
-                        url: "/members/doctor/stock-management",
-                        icon: "document-text-outline"  // Changed to document for history
-                      },
-                      // {
-                      //   title: "Purchase Pending",
-                      //   url: "/members/doctor/stock-management/total",
-                      //   icon: "time-outline"  // Changed to time/clock for pending items
-                      // },
-                      {
-                        title: "Purchase Report",
-                        url: "/members/doctor/stock-management/total",
-                        icon: "stats-chart-outline"  // Changed to stats for reports
-                      }
-                    ]
-                  },
-                  {
-                    title: "Adjust Stock",
-                    url: "/members/doctor/stock-management/adjust",
-                    icon: "sync-outline"  // Changed to sync for stock adjustment
-                  },
-                  {
-                    title: "Sales Report",
-                    url: "/members/doctor/stock-management/salesreport",
-                    icon: "trending-up-outline"  // Changed to trending up for sales
-                  }
-                ],
-                isOpen: false
+                url: "/members/doctor/brand-amount",
+                // children: [
+                //   {
+                //     title: "Stock In Hand",
+                //     url: "/members/doctor/brand-amount",
+                //     icon: "bar-chart-outline"  // Changed to bar chart for stock levels
+                //   },
+                //   {
+                //     title: "Purchase",
+                //     icon: "cart-outline",
+                //     url: "/members/doctor/stock-management/add",
+                //     children: [
+                //       {
+                //         title: "Add Bill",
+                //         url: "/members/doctor/stock-management/add",
+                //         icon: "add-circle-outline"  // Keep add icon for new bills
+                //       },
+                //       {
+                //         title: "Purchase History",
+                //         url: "/members/doctor/stock-management",
+                //         icon: "document-text-outline"  // Changed to document for history
+                //       },
+                //       // {
+                //       //   title: "Purchase Pending",
+                //       //   url: "/members/doctor/stock-management/total",
+                //       //   icon: "time-outline"  // Changed to time/clock for pending items
+                //       // },
+                //       {
+                //         title: "Purchase Report",
+                //         url: "/members/doctor/stock-management/total",
+                //         icon: "stats-chart-outline"  // Changed to stats for reports
+                //       }
+                //     ]
+                //   },
+                //   {
+                //     title: "Adjust Stock",
+                //     url: "/members/doctor/stock-management/adjust",
+                //     icon: "sync-outline"  // Changed to sync for stock adjustment
+                //   },
+                //   {
+                //     title: "Sales Report",
+                //     url: "/members/doctor/stock-management/salesreport",
+                //     icon: "trending-up-outline"  // Changed to trending up for sales
+                //   }
+                // ],
+                // isOpen: false
               }
             ];
 
