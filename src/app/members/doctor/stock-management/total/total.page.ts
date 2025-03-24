@@ -24,6 +24,7 @@ interface BrandAmountDTO {
 @Component({
   selector: 'app-total',
   templateUrl: './total.page.html',
+  styleUrls: ['./total.page.scss'],
 })
 export class TotalPage implements OnInit {
   brandAmounts: BrandAmountDTO[] = [];

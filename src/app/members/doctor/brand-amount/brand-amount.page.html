@@ -3,19 +3,20 @@
     <ion-buttons slot="start">
       <!-- <ion-menu-button></ion-menu-button> -->
     </ion-buttons>
-    <ion-title>Brand Management</ion-title>    
-  </ion-toolbar>
-  <ion-toolbar color="primary" >
-    <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
-      <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/child" name="accessibility-outline" size="large" > </ion-icon>
-      <ion-menu-button style="margin-left: 10%"></ion-menu-button>
-    </ion-buttons>
+    <ion-title>Brand Management</ion-title>   
     <ion-buttons slot="end">
       <ion-button (click)="downloadPDF()">
         <img src="../../../../assets/pdf.png" alt="Download PDF" class="pdf-icon" />
       </ion-button>
+    </ion-buttons> 
+  </ion-toolbar>
+  <ion-toolbar color="primary" >
+    <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
+      <!-- <ion-icon style="margin-left: 10%" routerLink="/members/doctor/brand-amount"  name="bar-chart-outline" size="large" > </ion-icon> -->
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/add"  name="add-circle-outline" size="large" > </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management" name="document-text-outline" size="large" > </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/adjust" name="sync-outline" size="large" > </ion-icon>
+      <ion-menu-button style="margin-left: 10%"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -27,13 +28,13 @@
         <!-- <ion-col class="header-col">Vaccine Name</ion-col> -->
         <ion-col class="header-col">Brand Name</ion-col>
         <ion-col class="header-col">Inventory</ion-col>
-        <ion-col class="header-col">Purchase Price</ion-col>
+        <!-- <ion-col class="header-col">Purchase Price</ion-col> -->
         <!-- <div class="hide-mobile"> -->
-        <ion-col class="header-col hide-mobile">Purchase value</ion-col>
+        <!-- <ion-col class="header-col hide-mobile">Purchase value</ion-col> -->
         <!-- </div> -->
         <ion-col class="header-col">Sale Price</ion-col>
         <!-- <div class="hide-mobile"> -->
-        <ion-col class="header-col hide-mobile">Sale Value</ion-col>
+        <!-- <ion-col class="header-col hide-mobile">Sale Value</ion-col> -->
         <!-- </div> -->
         <!-- <ion-col class="header-col">Paid/Unpaid</ion-col> -->
       </ion-row>
@@ -47,7 +48,7 @@
           </div> 
         </ion-col> -->
         <ion-col class="center-text" style="margin-top: 10px;">{{b.Count}}</ion-col>
-        <ion-col class="center-text" style="margin-top: 10px;">{{b.PurchasedAmt}}</ion-col>	
+        <!-- <ion-col class="center-text" style="margin-top: 10px;">{{b.PurchasedAmt}}</ion-col>	 -->
         <!-- <ion-col class="center-text">
           <ion-input [(ngModel)]="b.PurchasedAmt" [ngModelOptions]="{standalone: true}" type="tel" #purchaseInput="ngModel" required pattern="^[0-9]*$"></ion-input>
           <div *ngIf="purchaseInput.invalid && (purchaseInput.dirty || purchaseInput.touched)">
@@ -55,7 +56,7 @@
           </div> 
         </ion-col> -->
         <!-- <div class="hide-mobile"> -->
-        <ion-col class="center-text hide-mobile" style="margin-top: 10px;">{{b.Count * b.PurchasedAmt}}</ion-col>
+        <!-- <ion-col class="center-text hide-mobile" style="margin-top: 10px;">{{b.Count * b.PurchasedAmt}}</ion-col> -->
       <!-- </div> -->
         <!-- <ion-col class="center-text">
           <ion-input [(ngModel)]="b.SupName" [ngModelOptions]="{standalone: true}" type="text" #supplierInput="ngModel" required pattern="^[a-zA-Z\s]*$"></ion-input>
@@ -74,7 +75,7 @@
           </div> 
         </ion-col>
         <!-- <div class="hide-mobile"> -->
-        <ion-col class="center-text hide-mobile" style="margin-top: 10px;">{{b.Count * b.Amount}}</ion-col>
+        <!-- <ion-col class="center-text hide-mobile" style="margin-top: 10px;">{{b.Count * b.Amount}}</ion-col> -->
       <!-- </div> -->
       </ion-row>
     </ion-grid>
