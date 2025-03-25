@@ -3,6 +3,8 @@ import { ToastService } from 'src/app/shared/toast.service';
 import { BrandService } from 'src/app/services/brand.service';
 import { StockService, AdjustStockDTO } from 'src/app/services/stock.service';
 import { LoadingController } from '@ionic/angular';
+import { Storage } from "@ionic/storage";
+import { environment } from "src/environments/environment";
 
 interface StockAdjustment {
   brandName: any;
@@ -33,16 +35,21 @@ export class AdjustPage implements OnInit {
   };
   brands = [];
   filteredBrands: any[] = [];
+  doctorId: number;
+  DoctorId: any;
 
   constructor(
     private brandService: BrandService,
     private stockService: StockService,
     private toastService: ToastService,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private storage: Storage,
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.loadBrands();
+    this.DoctorId = await this.storage.get(environment.DOCTOR_Id);
+    console.log('Doctor ID:', this.DoctorId);
   }
 
   filterBrands(event: string) {
@@ -108,6 +115,7 @@ async onSubmit() {
       await loading.present();
 
       const dto: AdjustStockDTO = {
+        DoctorId: this.DoctorId,
         brandId: this.adjustment.brandId,
         adjustment: this.isIncrease ? this.adjustment.quantity : -this.adjustment.quantity,
         reason: this.adjustment.reason,
