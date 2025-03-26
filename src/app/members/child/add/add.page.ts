@@ -537,13 +537,17 @@ loadAgent(): void {
           console.log(sms1);
           const ChildId = res.ResponseData.Id
           console.log('child id', ChildId)
-          loading.dismiss();
-          this.toastService.create("successfully added");
-        if (res.ResponseData.Type == "special" ){
-            this.router.navigate([`/members/child/vaccine/${ChildId}`]);
-        } else{
-          this.router.navigate(["/members/child"]);
-        }
+            loading.dismiss();
+            // Add WhatsApp URL with dynamic parameters
+            const whatsappNumber = "92" + res.ResponseData.MobileNumber;
+            const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(sms1)}`;
+            this.toastService.create(`Child added successfully. Click here to send WhatsApp message: <a href="${whatsappUrl}" target="_system">${whatsappUrl}</a>`);
+            // window.open(whatsappUrl, '_system');
+        // if (res.ResponseData.Type == "special" ){
+        //     this.router.navigate([`/members/child/vaccine/${ChildId}`]);
+        // } else{
+        //   this.router.navigate(["/members/child"]);
+        // }
         } else {
           loading.dismiss();
           this.formcontroll = false;
