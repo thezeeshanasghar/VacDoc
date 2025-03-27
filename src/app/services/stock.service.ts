@@ -44,10 +44,7 @@ export interface Response<T> {
   ResponseData: T;
 }
 
-export interface Supplier {
-  id: number;
-  name: string;
-}
+export type Supplier = string[];
 
 @Injectable({
   providedIn: 'root'
