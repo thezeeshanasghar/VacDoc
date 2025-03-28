@@ -617,42 +617,28 @@ loadAgent(): void {
 onTravelChange(event: any) {
   const selectedValue = event.detail.value;
   console.log('Selected Type:', selectedValue);
-
-  // Reset all validations first
   this.fg1.get('CNIC').clearValidators();
   this.fg1.get('agent').clearValidators();
   this.fg1.get('Agent2').clearValidators();
-
   if (selectedValue === 'travel') {
-    // For travel type
     this.isCnicRequired = true;
     this.fg1.get('CNIC').setValidators([Validators.required]);
     this.fg1.get('agent').setValidators([Validators.required]);
     this.isButtonEnabled = true;
-    
-    // Enable agent fields
     this.fg1.get('agent').enable();
     // this.fg1.get('Agent2').enable();
     this.onAgentChange();
-    
   } else {
-    // For special or regular type
     this.isCnicRequired = false;
     this.isButtonEnabled = true;
-    
-    // Disable and clear agent fields
     this.fg1.get('agent').disable();
     this.fg1.get('Agent2').disable();
     this.fg1.get('agent').setValue('');
     this.fg1.get('Agent2').setValue('');
   }
-
-  // Update form validations
   this.fg1.get('CNIC').updateValueAndValidity();
   this.fg1.get('agent').updateValueAndValidity();
   this.fg1.get('Agent2').updateValueAndValidity();
-
-  // Check EPI status
   this.isRadioDisabled = this.isCnicRequired && !this.epiDone;
   this.checkEpi();
 }

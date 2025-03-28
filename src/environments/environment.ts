@@ -9,12 +9,13 @@ export const environment = {
   
 
   // for using web server
-  BASE_URL: "https://myapi.vaccinationcentre.com/api/",
-  RESOURCE_URL: "https://myapi.vaccinationcentre.com/",
+  // BASE_URL: "https://myapi.vaccinationcentre.com/api/",
+  // RESOURCE_URL: "https://myapi.vaccinationcentre.com/",
+
   
   // // for local server
-  // BASE_URL: "https://localhost:5001/api/",
-  // RESOURCE_URL: "https://localhost:5001/",
+  BASE_URL: "https://localhost:5001/api/",
+  RESOURCE_URL: "https://localhost:5001/",
 
 
 
