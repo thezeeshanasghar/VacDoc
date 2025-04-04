@@ -32,6 +32,7 @@ import { AgentService } from "src/app/services/agent.service";
   templateUrl: "./add.page.html",
   styleUrls: ["./add.page.scss"]
 })
+
 export class AddPage implements OnInit {
   isRadioDisabled: boolean = true; 
   fg1: FormGroup;
@@ -114,6 +115,7 @@ loadAgent(): void {
         }
     );
 }
+
   ionViewWillEnter() {
     this.storage.set(environment.MESSAGES, this.Messages);
     this.todaydate = new Date();
@@ -183,7 +185,6 @@ loadAgent(): void {
   }
 
   // isTravelSelected: boolean = false;
-
   // onTravelChange(event: any) {
   //   this.fg1.get('CNIC').setValidators([Validators.required]);
   // }
@@ -441,17 +442,14 @@ loadAgent(): void {
     { name: 'Zambia', code: '260' },
     { name: 'Zimbabwe', code: '263' },
   ];
+
   sendMessage(sms1: string): void {
     const url = 'https://graph.facebook.com/v19.0/331514553372468/messages';
     const accessToken = 'EAANxUIaDgugBO5XJ4tQLZBHcRQgF7l9znlMHTl1QXgjx4WXmMjF1J7hqAnFdQxUOOgsc7YMhj7FvBRWG60QdMNitVTeaZAI49YidLNZB2dtfKRDyBYOY28hQUYkvxg2hvqCrOvupbAGPfcC3ZBDSejZAv8ZBxts3qTjsh1tN8TCiqEwKYqGuaMPKA4wPkCzUzteXjbCSCOvgP5gdN2rC8ZD';
-
-    // Set the headers
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json'
     });
-
-    // Set the data to be sent
     const data = {
       "messaging_product": "whatsapp",
       "recipient_type": "individual",
@@ -461,8 +459,6 @@ loadAgent(): void {
         "body": sms1
       }
     };
-
-    // Make the POST request
     this.http.post(url, data, { headers })
       .subscribe(
         (response) => {
@@ -473,6 +469,7 @@ loadAgent(): void {
         }
       );
   }
+
   async moveNextStep() {
     console.log('Form Group Value:', this.fg1.value);
     this.fg1.value.DOB = await moment(this.fg1.value.DOB, "YYYY-MM-DD").format("DD-MM-YYYY");
@@ -482,6 +479,7 @@ loadAgent(): void {
     //console.log(this.fg1.value);
     await this.addNewChild(this.fg1.value);
   }
+
   updateGender(g: any) {
     this.fg1.controls['Gender'].setValue(g);
   }
@@ -515,9 +513,7 @@ loadAgent(): void {
     // let str = this.fg1.value.PreferredDayOfWeek;
     // this.fg1.value.PreferredDayOfWeek = str.toString();
     this.fg1.value.ClinicId = this.clinic.Id;
-
     console.log( "data" , data);
-    
     await this.childService.addChild(data).subscribe(
       async res => {
         this.setCity(this.fg1.value.City);
@@ -526,11 +522,9 @@ loadAgent(): void {
           var sms1 = "";
           if (res.ResponseData.Gender == "Boy")
             sms1 += ("Mr. " + this.titlecasePipe.transform(res.ResponseData.Name));
-
           if (res.ResponseData.Gender == "Girl")
             sms1 += ("Miss. " + this.titlecasePipe.transform(res.ResponseData.Name));
-
-          sms1 += " has been registered Succesfully at Vaccine.pk";
+          sms1 += " has been registered Successfully at Vaccine.pk";
           sms1 += "\nId: +" + res.ResponseData.CountryCode+ res.ResponseData.MobileNumber + " \nPassword: " + res.ResponseData.Password;
           sms1 += "\nClinic Phone Number: " + this.clinic.PhoneNumber;
           sms1 += "\nWeb Link:  https://client.vaccinationcentre.com/";
@@ -538,10 +532,26 @@ loadAgent(): void {
           const ChildId = res.ResponseData.Id
           console.log('child id', ChildId)
             loading.dismiss();
-            // Add WhatsApp URL with dynamic parameters
-            const whatsappNumber =  "+" + res.ResponseData.CountryCode + res.ResponseData.MobileNumber;
+            const whatsappNumber = "+" + res.ResponseData.CountryCode + res.ResponseData.MobileNumber;
             const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(sms1)}`;
-            this.toastService.create(`Child added successfully. Click here to send WhatsApp message: <a href="${whatsappUrl}" target="_system">${whatsappUrl}</a>`);
+            const alert = await this.alertCtrl.create({
+              header: 'Send WhatsApp Message',
+              message: 'Would you like to open WhatsApp to send the registration details?',
+              buttons: [
+                {
+                  text: 'Cancel',
+                  role: 'cancel'
+                },
+                {
+                  text: 'Open WhatsApp',
+                  handler: () => {
+                    window.open(whatsappUrl, '_system');
+                  }
+                }
+              ]
+            });
+            await alert.present();
+            this.toastService.create('Child added successfully.');
             // window.open(whatsappUrl, '_system');
         // if (res.ResponseData.Type == "special" ){
         //     this.router.navigate([`/members/child/vaccine/${ChildId}`]);
@@ -562,7 +572,7 @@ loadAgent(): void {
     );
   }
 
-  sendsms(number: string, message: string) {
+sendsms(number: string, message: string) {
     console.log(number + message);
     this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS).then(
       result => {
@@ -643,7 +653,7 @@ onTravelChange(event: any) {
   this.checkEpi();
 }
 
-  onCityChange() {
+onCityChange() {
     const cityValue = this.fg1.get('city').value;
     const city2Value = this.fg1.get('City2').value;
     console.log('City:', cityValue);
@@ -702,7 +712,6 @@ onTravelChange(event: any) {
         {
           name: 'cityname',
           placeholder: 'Enter City Name',
-
         }
       ],
       buttons: [
@@ -726,6 +735,7 @@ onTravelChange(event: any) {
     });
     await alert.present();
   }
+
   validation_messages = {
     name: [{ type: "required", message: "Name is required." },
     { type: 'pattern', message: 'Please enter only characters in the first name.' }],
@@ -745,9 +755,4 @@ onTravelChange(event: any) {
       { type: "required", message: "Agent is required." }
     ]
   };
-  //cities = ['Islamabad', 'Rawalpindi', 'Multan', 'Other']
-
-
 }
-
-///
