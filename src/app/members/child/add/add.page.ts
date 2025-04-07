@@ -495,14 +495,14 @@ loadAgent(): void {
   }
 
   async addNewChild(data: {agent: string; city: string; }) {
-    console.log('City2 value:', this.fg1.value.City2);
+    console.log('City2 value:', this.fg1.get('City2').value);
     console.log('City2 value:', this.fg1.value.Agent2);
-    if (data.agent === "") {
-      data.agent = this.fg1.value.Agent2;
+    if (data.agent == "") {
+      data.agent = this.fg1.get('Agent2').value;
       console.log('city2 data',data.agent)
     }
-    if (data.city === "") {
-      data.city = this.fg1.value.City2;
+    if (data.city == "") {
+      data.city = this.fg1.get('City2').value;
       console.log('city2 data')
     }
     console.log(data);
@@ -753,6 +753,10 @@ onCityChange() {
     gender: [{ type: "required", message: "Gender is required." }],
     Agent2: [
       { type: "required", message: "Agent is required." }
-    ]
+    ],
+    email: [
+      { type: "pattern", message: "Please enter a valid email address" },
+      { type: "email", message: "Please enter a valid email address" }
+  ],
   };
 }
