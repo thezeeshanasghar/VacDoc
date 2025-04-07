@@ -116,7 +116,7 @@
             </ion-col>
 
             <ion-col>
-              <ion-item c style="height: 100%;">
+              <ion-item style="height: 100%;">
                 <ion-label color="white">Customize</ion-label>
                 <ion-radio slot="start" value="special"></ion-radio>
               </ion-item>
@@ -134,8 +134,17 @@
 
       <ion-item>
         <ion-label color="primary" position="floating">Email</ion-label>
-        <ion-input type="text" formControlName="Email"></ion-input>
+        <ion-input type="email" formControlName="Email" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
+        </ion-input>
       </ion-item>
+      <div class="validation-errors">
+        <ng-container *ngFor="let validation of validation_messages.email">
+          <div class="error-message"
+            *ngIf="fg1.get('Email').hasError(validation.type) && (fg1.get('Email').dirty || fg1.get('Email').touched)">
+            <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+          </div>
+        </ng-container>
+      </div>
 
       <ion-item>
         <ion-label color="primary" position="floating">
