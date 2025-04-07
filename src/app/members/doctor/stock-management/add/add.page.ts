@@ -33,6 +33,7 @@ interface StockItem {
 }
 
 
+
 // interface Supplier {
 // }
 interface BrandAmountDTO {
@@ -43,7 +44,6 @@ interface BrandAmountDTO {
 }
 
 interface Supplier {
-
   Name: string;
 }
 
@@ -93,44 +93,44 @@ export class AddPage implements OnInit {
   
   ngOnInit() {
     this.loadBrands();
-    // this.loadSuppliers();
+    this.loadSuppliers();
     this.fg1 = this.fb.group({
       city: [''],
       City2: ['']
     });
   }
 
-  // async loadSuppliers() {
-  //   try {
-  //     const loading = await this.loadingController.create({
-  //       message: 'Loading suppliers...'
-  //     });
-  //     await loading.present();
-
-  //     this.stockService.getSuppliers().subscribe({
-  //       next: (response) => {
-  //         if (response.IsSuccess) {
-  //           this.suppliers = response.ResponseData;
-  //           console.log('Suppliers:', this.suppliers);
-
-  //           this.filteredSuppliers = [...this.suppliers];
-  //           loading.dismiss();
-  //         } else {
-  //           loading.dismiss();
-  //           this.toastService.create(response.Message, 'danger');
-  //         }
-  //       },
-  //       error: (error) => {
-  //         loading.dismiss();
-  //         console.error('Error loading suppliers:', error);
-  //         this.toastService.create('Failed to load suppliers', 'danger');
-  //       }
-  //     });
-  //   } catch (error) {
-  //     console.error('Error in loadSuppliers:', error);
-  //     this.toastService.create('An unexpected error occurred', 'danger');
-  //   }
-  // }
+  async loadSuppliers() {
+    try {
+      const loading = await this.loadingController.create({
+        message: 'Loading suppliers...'
+      });
+      await loading.present();
+  
+      this.stockService.getSuppliers().subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            // Map the supplier objects to string array
+            this.suppliers = response.ResponseData.map((supplier: Supplier) => supplier.Name);
+            this.filteredSuppliers = [...this.suppliers];
+            console.log('Suppliers loaded:', this.suppliers);
+            loading.dismiss();
+          } else {
+            loading.dismiss();
+            this.toastService.create(response.Message, 'danger');
+          }
+        },
+        error: (error) => {
+          loading.dismiss();
+          console.error('Error loading suppliers:', error);
+          this.toastService.create('Failed to load suppliers', 'danger');
+        }
+      });
+    } catch (error) {
+      console.error('Error in loadSuppliers:', error);
+      this.toastService.create('An unexpected error occurred', 'danger');
+    }
+  }
 
   filterSuppliers(event: string) {
     if (!event) {
