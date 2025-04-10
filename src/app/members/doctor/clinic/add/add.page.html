@@ -62,6 +62,20 @@
           </ng-container>
       </div>
 
+    <ion-item>
+        <ion-label color="primary" position="floating">Registration No.</ion-label>
+        <ion-input type="text" formControlName="RegNo" required></ion-input>
+    </ion-item>
+
+    <div class="validation-errors">
+        <ng-container *ngFor="let validation of validation_messages.RegNo">
+            <div class="error-message"
+                *ngIf="fg1.get('RegNo').hasError(validation.type) && (fg1.get('RegNo').dirty || fg1.get('RegNo').touched)">
+                <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+            </div>
+        </ng-container>
+    </div>
+
       <ion-item>
         <ion-label color="primary">Upload Monogram</ion-label>
         <!-- <ion-img *ngIf="fg1.value.MonogramImage" class="preview-image" [src]="fg1.value.MonogramImage1" alt="Uploaded Monogram" required></ion-img> -->
