@@ -99,17 +99,16 @@
       </ion-text>
     </ion-item>
     
-    <ion-item (click)="validityPicker.open()">
-      <ion-label color="primary">Validity</ion-label>
-      <input formControlName="Validity" matInput [matDatepicker]="validityPicker" [value]="todaydate">
-      <mat-datepicker-toggle matSuffix [for]="validityPicker"></mat-datepicker-toggle>
-      <mat-datepicker #validityPicker></mat-datepicker>
-      <ion-text color="danger"
-        *ngIf="fg.get('Validity')?.invalid && (fg.get('Validity').dirty || fg.get('Validity').touched)"
-        style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-        <ng-container *ngIf="fg.get('Validity')?.errors.required">
+    <ion-item>
+      <ion-label color="primary" position="floating">Validity</ion-label>
+      <ion-input type="text" placeholder="Enter Registration Number" formControlName="Validity"></ion-input>
+      <ion-text color="danger" *ngIf="fg.get('Validity').invalid && (fg.get('Validity').dirty || fg.get('Validity').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+        <ng-container *ngIf="fg.get('Validity').errors.required">
           Validity is required
         </ng-container>
+        <!-- <ng-container *ngIf="fg.get('Validity').errors.pattern">
+          Registration Number must be alphanumeric
+        </ng-container> -->
       </ion-text>
     </ion-item>
     
