@@ -193,6 +193,7 @@
         <ion-select-option value="6570">18 Years</ion-select-option>
       </ion-select>
     </ion-item> 
+    </div>
 
     <!-- <ion-item>
       <ion-label color="primary" position="floating">Disease</ion-label>
@@ -217,7 +218,7 @@
         <ion-select-option *ngFor="let user of brandName" [value]="user.Id">{{user.Name}}</ion-select-option>
       </ion-select>
     </ion-item> -->
-    
+
     <ion-item *ngIf="!fg.value.IsDisease">
       <ion-label color="primary">Brands</ion-label>
       <ion-select formControlName="BrandId" [interfaceOptions]="customActionSheetOptions" interface="action-sheet" placeholder="Select Brand">
@@ -225,13 +226,10 @@
         <ion-select-option *ngFor="let user of brandName" [value]="user.Id">{{ user.Name }}</ion-select-option>
       </ion-select>
     </ion-item>
-    
-    
     <ion-item>
       <ion-label>Schedule Date</ion-label>
       <ion-datetime disabled displayFormat="DD-MM-YYYY" value="{{Date}}"></ion-datetime>
     </ion-item>
-
     <ion-item *ngIf="!fg.value.IsDisease" (click)="picker.open()">
       <!-- <ion-datetime  picker-format="DD-MM-YYYY" value="{{Date}}" formControlName="GivenDate" max = "{{todaydate}}"></ion-datetime> -->
       <!-- <mat-form-field appearance="fill"> -->
@@ -242,9 +240,7 @@
       <mat-datepicker #picker disabled="false"></mat-datepicker>
       <!-- </mat-form-field> -->
     </ion-item>
-
     <!-- <ion-button (click)="fillVaccine()">Submit</ion-button> -->
-
     <ion-button [disabled]="!isBrandFilled() || isScheduleDateValid()" (click)="fillVaccine()">Submit</ion-button>
   </form>
 </ion-content>
