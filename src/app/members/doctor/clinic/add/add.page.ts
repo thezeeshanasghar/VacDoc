@@ -42,6 +42,7 @@ export class AddPage implements OnInit {
   resourceURL = environment.RESOURCE_URL;
   isWeb: any;
   http: any;
+  RegNo: any;
   constructor(
     private formbuilder: FormBuilder,
     private router: Router,
@@ -94,7 +95,13 @@ export class AddPage implements OnInit {
       Long: [null],
       IsOnline: false,
       childrenCount: 0,
-      
+      RegNo: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.pattern("^[A-Za-z0-9]+$") 
+        ])
+      ),
     });
 
     this.fg2 = this.formbuilder.group({
@@ -157,6 +164,7 @@ export class AddPage implements OnInit {
     this.GetUserLocation();
     this.cdr.detectChanges();
   }
+
   hello(): void {
     //Called after ngOnInit when the component's or directive's content has been initialized.
     //Add 'implements AfterContentInit' to the class.
@@ -177,6 +185,7 @@ export class AddPage implements OnInit {
       this.longitude = evt.latLng.lng().toFixed(3);
     });
   }
+
   GetUserLocation() {
     this.geolocation
       .getCurrentPosition()
@@ -201,15 +210,12 @@ export class AddPage implements OnInit {
   
   async SelectMonogramImage(monogramFile: FileList) {
     this.previewMonogramImage(monogramFile);
-  
     const loading = await this.loadingController.create({
       message: "Uploading Monogram Image"
     });
     await loading.present();
-  
     const monogramData = new FormData();
     monogramData.append("MonogramImage", monogramFile.item(0));
-  
     await this.uploadService.uploadImage(monogramData).subscribe(res => {
       if (res) {
         let mImage = res.dbPath;
@@ -223,6 +229,7 @@ export class AddPage implements OnInit {
       }
     });
   }
+
   setAllDaysValueStrat1() {
     this.fg2.controls["Tustart"].setValue(this.fg2.value.Mstart);
     this.fg2.controls["Wstart"].setValue(this.fg2.value.Mstart);
@@ -273,6 +280,7 @@ export class AddPage implements OnInit {
     this.fg1.value.DoctorId = this.DoctorId;
     this.fg1.value.Lat = 33.63207;
     this.fg1.value.Long = 72.935488;
+    this.fg1.value.regNo = this.fg1.get('RegNo').value;
     var ct = [];
     if (this.fg2.value.Monday) {
       if (this.fg2.value.MondayS1) {
@@ -579,6 +587,7 @@ export class AddPage implements OnInit {
     this.addNewClinic(this.fg1.value);
   }
   async addNewClinic(data) {
+    console.log(data);
     {
       const loading = await this.loadingController.create({
         message: "Loading"
@@ -590,8 +599,8 @@ export class AddPage implements OnInit {
           if (res.IsSuccess) {
             loading.dismiss();
             this.toastService.create("successfully added Clinic");
-            this.router.navigate(["/members/doctor/clinic"], { queryParams: { refresh: true } });
-            window.location.reload();
+            // this.router.navigate(["/members/doctor/clinic"], { queryParams: { refresh: true } });
+            // window.location.reload();
           } else {
             loading.dismiss();
             this.toastService.create(res.Message, "danger");
@@ -973,6 +982,10 @@ export class AddPage implements OnInit {
       { type: "pattern", message: "Enter Must be Number" }
     ],
     Address: [{ type: "required", message: "Address is required." }],
+    RegNo: [
+      { type: "required", message: "RegNo is required." },
+      { type: "pattern", message: "RegNo must be alphanumeric." }
+    ],
     ConsultationFee: [
       { type: "required", message: "Consultation Fee is required." },
       {
