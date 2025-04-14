@@ -126,6 +126,9 @@ export class FillPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.vaccineData = res.ResponseData;
+          console.log(this.vaccineData);
+          this.Validity = this.vaccineData.Dose.Vaccine.Validity;
+          this.fg.controls['Validity'].setValue(this.Validity + '');
           this.MinAge = this.vaccineData.Dose.Vaccine.MinAge;
           this.MinGap = this.vaccineData.Dose.MinGap;
           this.vaccine=this.vaccineData.Dose.Vaccine.isInfinite;
@@ -183,12 +186,15 @@ export class FillPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.vaccineData = res.ResponseData;
+          console.log(this.vaccineData);
           // this.MinAge = this.vaccineData.Dose.Vaccine.MinAge;
           // this.MinGap = this.vaccineData.Dose.MinGap;
           // console.log(this.vaccineData);
           // console.log(this.vaccineData.ChildId);
           this.childId = this.vaccineData.Id; // Assuming ChildId is the correct property to use
           this.Type = this.vaccineData.Type; // Retaining this line as it seems necessary
+          this.Validity = this.vaccineData.Validity; // Retaining this line as it seems necessary
+          console.log(this.vaccineData.validity);
           // this.vaccineName = this.vaccineData.Dose.Vaccine.Name;
           // this.brandName = this.vaccineData.Brands;
           // this.Date = this.vaccineData.Date;
@@ -235,7 +241,7 @@ export class FillPage implements OnInit {
     let givenDateOfInjection: Date = this.fg.value.GivenDate;
     let scheduleDate: Date = this.addDays(givenDateOfInjection, this.MinGap, this.vaccineData.DoseId);
     const givenDate = new Date(this.fg.value.GivenDate);
-    const currentDate = new Date();// Get the GivenDate value from the form
+    const currentDate = new Date();
     givenDate.setHours(0, 0, 0, 0);
     currentDate.setHours(0, 0, 0, 0);
     if (givenDate > currentDate) {
