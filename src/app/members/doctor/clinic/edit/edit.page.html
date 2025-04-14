@@ -15,9 +15,12 @@
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.Name">
-        <div class="error-message"
-          *ngIf="fg1.get('Name').hasError(validation.type) && (fg1.get('Name').dirty || fg1.get('Name').touched)">
-          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        <div
+          class="error-message"
+          *ngIf="fg1.get('Name').hasError(validation.type) && (fg1.get('Name').dirty || fg1.get('Name').touched)"
+        >
+          <ion-icon name="information-circle-outline"></ion-icon> {{
+          validation.message }}
         </div>
       </ng-container>
     </div>
@@ -28,9 +31,12 @@
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.phoneNumber">
-        <div class="error-message"
-          *ngIf="fg1.get('PhoneNumber').hasError(validation.type) && (fg1.get('PhoneNumber').dirty || fg1.get('PhoneNumber').touched)">
-          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        <div
+          class="error-message"
+          *ngIf="fg1.get('PhoneNumber').hasError(validation.type) && (fg1.get('PhoneNumber').dirty || fg1.get('PhoneNumber').touched)"
+        >
+          <ion-icon name="information-circle-outline"></ion-icon> {{
+          validation.message }}
         </div>
       </ng-container>
     </div>
@@ -41,51 +47,80 @@
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.Address">
-        <div class="error-message"
-          *ngIf="fg1.get('Address').hasError(validation.type) && (fg1.get('Address').dirty || fg1.get('Address').touched)">
-          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        <div
+          class="error-message"
+          *ngIf="fg1.get('Address').hasError(validation.type) && (fg1.get('Address').dirty || fg1.get('Address').touched)"
+        >
+          <ion-icon name="information-circle-outline"></ion-icon> {{
+          validation.message }}
         </div>
       </ng-container>
     </div>
 
     <ion-item>
-      <ion-label color="primary" position="floating">Consultation Fee</ion-label>
-      <ion-input type="number" formControlName="ConsultationFee" required></ion-input>
+      <ion-label color="primary" position="floating"
+        >Consultation Fee</ion-label
+      >
+      <ion-input
+        type="number"
+        formControlName="ConsultationFee"
+        required
+      ></ion-input>
     </ion-item>
     <div class="validation-errors">
-      <ng-container *ngFor="let validation of validation_messages.ConsultationFee">
-        <div class="error-message"
-          *ngIf="fg1.get('ConsultationFee').hasError(validation.type) && (fg1.get('ConsultationFee').dirty || fg1.get('ConsultationFee').touched)">
-          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+      <ng-container
+        *ngFor="let validation of validation_messages.ConsultationFee"
+      >
+        <div
+          class="error-message"
+          *ngIf="fg1.get('ConsultationFee').hasError(validation.type) && (fg1.get('ConsultationFee').dirty || fg1.get('ConsultationFee').touched)"
+        >
+          <ion-icon name="information-circle-outline"></ion-icon> {{
+          validation.message }}
         </div>
       </ng-container>
     </div>
 
-  <ion-item>
-      <ion-label color="primary" position="floating">Registration No.</ion-label>
+    <ion-item>
+      <ion-label color="primary" position="floating"
+        >Registration No.</ion-label
+      >
       <ion-input type="text" formControlName="RegNo" required></ion-input>
-  </ion-item>
-
-  <div class="validation-errors">
+    </ion-item>
+    <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.RegNo">
-          <div class="error-message"
-              *ngIf="fg1.get('RegNo').hasError(validation.type) && (fg1.get('RegNo').dirty || fg1.get('RegNo').touched)">
-              <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
-          </div>
+        <div
+          class="error-message"
+          *ngIf="fg1.get('RegNo').hasError(validation.type) && (fg1.get('RegNo').dirty || fg1.get('RegNo').touched)"
+        >
+          <ion-icon name="information-circle-outline"></ion-icon> {{
+          validation.message }}
+        </div>
       </ng-container>
-  </div>
+    </div>
 
     <ion-item>
       <div>
-        <label for="file">Monogram Image</label>
-        <input type="file" (change)="SelectMonogramImage($event.target.files)">
+        <label for="file">Profile Image</label>
+        <input
+          type="file"
+          (change)="SelectMonogramImage($event.target.files)"
+        />
       </div>
       <ion-item>
-        <ion-img class="preview-image" [src]="fg1.value.MonogramImage2" alt="No image"></ion-img>
+        <ion-img
+          class="preview-image"
+          [src]="fg1.value.MonogramImage2"
+          alt="No image"
+        ></ion-img>
       </ion-item>
     </ion-item>
     <ion-item>
-      <ion-img class="preview-image" [src]="resourceURL+fg1.value.MonogramImage" alt="No image"></ion-img>
+      <ion-img
+        class="preview-image"
+        [src]="resourceURL+fg1.value.MonogramImage"
+        alt="No image"
+      ></ion-img>
     </ion-item>
     <!-- <ion-item>
       <div>
@@ -103,68 +138,132 @@
       <div *ngIf="!fg1.value.MonogramImage" class="placeholder">No Image</div>
       <input type="file" (change)="SelectMonogramImage($event.target.files)" accept=".png, .jpg, .jpeg" />
   </ion-item> -->
-  
+
     <form [formGroup]="fg2">
       <ion-card>
         <ion-item>
           <ion-card-title>Monday</ion-card-title>
-          <ion-toggle #Monday id="Monday" name="Monday" slot="end" color="primary" formControlName="Monday">
+          <ion-toggle
+            #Monday
+            id="Monday"
+            name="Monday"
+            slot="end"
+            color="primary"
+            formControlName="Monday"
+          >
           </ion-toggle>
         </ion-item>
         <ion-card-content *ngIf="Monday.checked==true">
           <ion-label class="VerticalAlignMiddle">Session:1 </ion-label>
-          <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #MondayS1 id="MondayS1" name="MondayS1" slot="end" color="primary" formControlName="MondayS1"></ion-toggle>
+          <ion-toggle
+            class="VerticalAlignMiddle LeftPaddingToggle"
+            #MondayS1
+            id="MondayS1"
+            name="MondayS1"
+            slot="end"
+            color="primary"
+            formControlName="MondayS1"
+          ></ion-toggle>
           <ion-item *ngIf="MondayS1.checked==true" lines="none" no-padding>
-
             <ion-item lines="none" no-padding>
-              <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Mstart" display-format="h:mm a" (ionChange)="setTimeValidatorsMonday()">
+              <ion-label color="primary" position="floating"
+                >Start Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Mstart"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsMonday()"
+              >
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
-              <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Mend" display-format="h:mm a" (ionChange)="setTimeValidatorsMonday()">
+              <ion-label color="primary" position="floating"
+                >End Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Mend"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsMonday()"
+              >
               </ion-datetime>
             </ion-item>
-            <input type="hidden" formControlName="M1Id">
+            <input type="hidden" formControlName="M1Id" />
           </ion-item>
-          <div > <ion-button (click)="setAllDaysValueStrat1();setAllDaysValueEnd1();">Apply Session:1 to All</ion-button></div>
+          <div>
+            <ion-button (click)="setAllDaysValueStrat1();setAllDaysValueEnd1();"
+              >Apply Session:1 to All</ion-button
+            >
+          </div>
           <ion-label class="VerticalAlignMiddle">Session:2 </ion-label>
-          <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #MondayS2 id="MondayS2" name="MondayS2" slot="end" color="primary" formControlName="MondayS2"></ion-toggle>
+          <ion-toggle
+            class="VerticalAlignMiddle LeftPaddingToggle"
+            #MondayS2
+            id="MondayS2"
+            name="MondayS2"
+            slot="end"
+            color="primary"
+            formControlName="MondayS2"
+          ></ion-toggle>
           <ion-item *ngIf="MondayS2.checked==true" lines="none" no-padding>
-
             <ion-item lines="none" no-padding>
-              <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Mstart2" display-format="h:mm a" (ionChange)="setTimeValidatorsMonday()">
+              <ion-label color="primary" position="floating"
+                >Start Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Mstart2"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsMonday()"
+              >
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
-              <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Mend2" display-format="h:mm a" (ionChange)="setTimeValidatorsMonday()">
+              <ion-label color="primary" position="floating"
+                >End Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Mend2"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsMonday()"
+              >
               </ion-datetime>
             </ion-item>
-            <input type="hidden" formControlName="M2Id">
+            <input type="hidden" formControlName="M2Id" />
           </ion-item>
-          <div><ion-button (click)="setAllDaysValueStrat2();setAllDaysValueEnd2();">Apply Session:2 to All</ion-button></div>
+          <div>
+            <ion-button (click)="setAllDaysValueStrat2();setAllDaysValueEnd2();"
+              >Apply Session:2 to All</ion-button
+            >
+          </div>
           <div class="validation-errors">
-            <ng-container *ngFor="let validation of validation_messages.Mstart2">
-              <div class="error-message"
-                  *ngIf="fg2.get('Mstart2').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+            <ng-container
+              *ngFor="let validation of validation_messages.Mstart2"
+            >
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Mstart2').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
             <ng-container *ngFor="let validation of validation_messages.Mstart">
-              <div class="error-message"
-                  *ngIf="fg2.get('Mstart').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Mstart').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
             <ng-container *ngFor="let validation of validation_messages.Mend">
-              <div class="error-message"
-                  *ngIf="fg2.get('Mend').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Mend').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
           </div>
@@ -174,61 +273,117 @@
       <ion-card>
         <ion-item>
           <ion-card-title>Tuesday</ion-card-title>
-          <ion-toggle #Tuesday id="Tuesday" name="Tuesday" slot="end" color="primary" formControlName="Tuesday">
+          <ion-toggle
+            #Tuesday
+            id="Tuesday"
+            name="Tuesday"
+            slot="end"
+            color="primary"
+            formControlName="Tuesday"
+          >
           </ion-toggle>
         </ion-item>
         <ion-card-content *ngIf="Tuesday.checked==true">
           <ion-label class="VerticalAlignMiddle">Session:1 </ion-label>
-          <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #TuesdayS1 id="TuesdayS1" name="TuesdayS1" slot="end" color="primary" formControlName="TuesdayS1"></ion-toggle>
+          <ion-toggle
+            class="VerticalAlignMiddle LeftPaddingToggle"
+            #TuesdayS1
+            id="TuesdayS1"
+            name="TuesdayS1"
+            slot="end"
+            color="primary"
+            formControlName="TuesdayS1"
+          ></ion-toggle>
           <ion-item *ngIf="TuesdayS1.checked==true" lines="none" no-padding>
-
             <ion-item lines="none" no-padding>
-              <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Tustart" display-format="h:mm a" (ionChange)='setTimeValidatorsTuesday()'>
+              <ion-label color="primary" position="floating"
+                >Start Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Tustart"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsTuesday()"
+              >
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
-              <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Tuend" display-format="h:mm a" (ionChange)='setTimeValidatorsTuesday()'>
+              <ion-label color="primary" position="floating"
+                >End Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Tuend"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsTuesday()"
+              >
               </ion-datetime>
             </ion-item>
-            <input type="hidden" formControlName="Tu1Id">
+            <input type="hidden" formControlName="Tu1Id" />
           </ion-item>
           <ion-label class="VerticalAlignMiddle">Session:2 </ion-label>
-          <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #TuesdayS2 id="TuesdayS2" name="TuesdayS2" slot="end" color="primary" formControlName="TuesdayS2"></ion-toggle>
+          <ion-toggle
+            class="VerticalAlignMiddle LeftPaddingToggle"
+            #TuesdayS2
+            id="TuesdayS2"
+            name="TuesdayS2"
+            slot="end"
+            color="primary"
+            formControlName="TuesdayS2"
+          ></ion-toggle>
           <ion-item *ngIf="TuesdayS2.checked==true" lines="none" no-padding>
-
             <ion-item lines="none" no-padding>
-              <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Tustart2" display-format="h:mm a" (ionChange)='setTimeValidatorsTuesday()'>
+              <ion-label color="primary" position="floating"
+                >Start Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Tustart2"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsTuesday()"
+              >
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
-              <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Tuend2" display-format="h:mm a" (ionChange)='setTimeValidatorsTuesday()'>
+              <ion-label color="primary" position="floating"
+                >End Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Tuend2"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsTuesday()"
+              >
               </ion-datetime>
             </ion-item>
-            <input type="hidden" formControlName="Tu2Id">
+            <input type="hidden" formControlName="Tu2Id" />
           </ion-item>
           <div class="validation-errors">
-            <ng-container *ngFor="let validation of validation_messages.Mstart2">
-              <div class="error-message"
-                  *ngIf="fg2.get('Tustart2').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+            <ng-container
+              *ngFor="let validation of validation_messages.Mstart2"
+            >
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Tustart2').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
             <ng-container *ngFor="let validation of validation_messages.Mstart">
-              <div class="error-message"
-                  *ngIf="fg2.get('Tustart').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Tustart').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
             <ng-container *ngFor="let validation of validation_messages.Mend">
-              <div class="error-message"
-                  *ngIf="fg2.get('Tuend').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Tuend').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
           </div>
@@ -238,61 +393,117 @@
       <ion-card>
         <ion-item>
           <ion-card-title>Wednesday</ion-card-title>
-          <ion-toggle #Wednesday id="Wednesday" name="Wednesday" slot="end" color="primary" formControlName="Wednesday">
+          <ion-toggle
+            #Wednesday
+            id="Wednesday"
+            name="Wednesday"
+            slot="end"
+            color="primary"
+            formControlName="Wednesday"
+          >
           </ion-toggle>
         </ion-item>
         <ion-card-content *ngIf="Wednesday.checked==true">
           <ion-label class="VerticalAlignMiddle">Session:1 </ion-label>
-          <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #WednesdayS1 id="WednesdayS1" name="WednesdayS1" slot="end" color="primary" formControlName="WednesdayS1"></ion-toggle>
+          <ion-toggle
+            class="VerticalAlignMiddle LeftPaddingToggle"
+            #WednesdayS1
+            id="WednesdayS1"
+            name="WednesdayS1"
+            slot="end"
+            color="primary"
+            formControlName="WednesdayS1"
+          ></ion-toggle>
           <ion-item *ngIf="WednesdayS1.checked==true" lines="none" no-padding>
-
             <ion-item lines="none" no-padding>
-              <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Wstart" display-format="h:mm a" (ionChange)='setTimeValidatorsWed()'>
+              <ion-label color="primary" position="floating"
+                >Start Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Wstart"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsWed()"
+              >
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
-              <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Wend" display-format="h:mm a" (ionChange)='setTimeValidatorsWed()'>
+              <ion-label color="primary" position="floating"
+                >End Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Wend"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsWed()"
+              >
               </ion-datetime>
             </ion-item>
-            <input type="hidden" formControlName="W1Id">
+            <input type="hidden" formControlName="W1Id" />
           </ion-item>
           <ion-label class="VerticalAlignMiddle">Session:2 </ion-label>
-          <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #WednesdayS2 id="WednesdayS2" name="WednesdayS2" slot="end" color="primary" formControlName="WednesdayS2"></ion-toggle>
+          <ion-toggle
+            class="VerticalAlignMiddle LeftPaddingToggle"
+            #WednesdayS2
+            id="WednesdayS2"
+            name="WednesdayS2"
+            slot="end"
+            color="primary"
+            formControlName="WednesdayS2"
+          ></ion-toggle>
           <ion-item *ngIf="WednesdayS2.checked==true" lines="none" no-padding>
-
             <ion-item lines="none" no-padding>
-              <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Wstart2" display-format="h:mm a" (ionChange)='setTimeValidatorsWed()'>
+              <ion-label color="primary" position="floating"
+                >Start Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Wstart2"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsWed()"
+              >
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
-              <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Wend2" display-format="h:mm a" (ionChange)='setTimeValidatorsWed()'> 
+              <ion-label color="primary" position="floating"
+                >End Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Wend2"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsWed()"
+              >
               </ion-datetime>
             </ion-item>
-            <input type="hidden" formControlName="W2Id">
+            <input type="hidden" formControlName="W2Id" />
           </ion-item>
           <div class="validation-errors">
-            <ng-container *ngFor="let validation of validation_messages.Mstart2">
-              <div class="error-message"
-                  *ngIf="fg2.get('Wstart2').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+            <ng-container
+              *ngFor="let validation of validation_messages.Mstart2"
+            >
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Wstart2').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
             <ng-container *ngFor="let validation of validation_messages.Mstart">
-              <div class="error-message"
-                  *ngIf="fg2.get('Wstart').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Wstart').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
             <ng-container *ngFor="let validation of validation_messages.Mend">
-              <div class="error-message"
-                  *ngIf="fg2.get('Wend').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Wend').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
           </div>
@@ -302,61 +513,117 @@
       <ion-card>
         <ion-item>
           <ion-card-title>Thursday</ion-card-title>
-          <ion-toggle #Thursday id="Thursday" name="Thursday" slot="end" color="primary" formControlName="Thursday">
+          <ion-toggle
+            #Thursday
+            id="Thursday"
+            name="Thursday"
+            slot="end"
+            color="primary"
+            formControlName="Thursday"
+          >
           </ion-toggle>
         </ion-item>
         <ion-card-content *ngIf="Thursday.checked==true">
           <ion-label class="VerticalAlignMiddle">Session:1 </ion-label>
-          <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #ThursdayS1 id="ThursdayS1" name="ThursdayS1" slot="end" color="primary" formControlName="ThursdayS1"></ion-toggle>
+          <ion-toggle
+            class="VerticalAlignMiddle LeftPaddingToggle"
+            #ThursdayS1
+            id="ThursdayS1"
+            name="ThursdayS1"
+            slot="end"
+            color="primary"
+            formControlName="ThursdayS1"
+          ></ion-toggle>
           <ion-item *ngIf="ThursdayS1.checked==true" lines="none" no-padding>
-
             <ion-item lines="none" no-padding>
-              <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Thstart" display-format="h:mm a" (ionChange)='setTimeValidatorsThu()'>
+              <ion-label color="primary" position="floating"
+                >Start Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Thstart"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsThu()"
+              >
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
-              <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Thend" display-format="h:mm a" (ionChange)='setTimeValidatorsThu()'>
+              <ion-label color="primary" position="floating"
+                >End Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Thend"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsThu()"
+              >
               </ion-datetime>
             </ion-item>
-            <input type="hidden" formControlName="Th1Id">
+            <input type="hidden" formControlName="Th1Id" />
           </ion-item>
           <ion-label class="VerticalAlignMiddle">Session:2 </ion-label>
-          <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #ThursdayS2 id="ThursdayS2" name="ThursdayS2" slot="end" color="primary" formControlName="ThursdayS2"></ion-toggle>
+          <ion-toggle
+            class="VerticalAlignMiddle LeftPaddingToggle"
+            #ThursdayS2
+            id="ThursdayS2"
+            name="ThursdayS2"
+            slot="end"
+            color="primary"
+            formControlName="ThursdayS2"
+          ></ion-toggle>
           <ion-item *ngIf="ThursdayS2.checked==true" lines="none" no-padding>
-
             <ion-item lines="none" no-padding>
-              <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Thstart2" display-format="h:mm a" (ionChange)='setTimeValidatorsThu()'>
+              <ion-label color="primary" position="floating"
+                >Start Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Thstart2"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsThu()"
+              >
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
-              <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Thend2" display-format="h:mm a" (ionChange)='setTimeValidatorsThu()'>
+              <ion-label color="primary" position="floating"
+                >End Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Thend2"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsThu()"
+              >
               </ion-datetime>
             </ion-item>
-            <input type="hidden" formControlName="Th2Id">
+            <input type="hidden" formControlName="Th2Id" />
           </ion-item>
           <div class="validation-errors">
-            <ng-container *ngFor="let validation of validation_messages.Mstart2">
-              <div class="error-message"
-                  *ngIf="fg2.get('Thstart2').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+            <ng-container
+              *ngFor="let validation of validation_messages.Mstart2"
+            >
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Thstart2').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
             <ng-container *ngFor="let validation of validation_messages.Mstart">
-              <div class="error-message"
-                  *ngIf="fg2.get('Thstart').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Thstart').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
             <ng-container *ngFor="let validation of validation_messages.Mend">
-              <div class="error-message"
-                  *ngIf="fg2.get('Thend').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Thend').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
           </div>
@@ -366,61 +633,117 @@
       <ion-card>
         <ion-item>
           <ion-card-title>Friday</ion-card-title>
-          <ion-toggle #Friday id="Friday" name="Friday" slot="end" color="primary" formControlName="Friday">
+          <ion-toggle
+            #Friday
+            id="Friday"
+            name="Friday"
+            slot="end"
+            color="primary"
+            formControlName="Friday"
+          >
           </ion-toggle>
         </ion-item>
         <ion-card-content *ngIf="Friday.checked==true">
           <ion-label class="VerticalAlignMiddle">Session:1 </ion-label>
-          <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #FridayS1 id="FridayS1" name="FridayS1" slot="end" color="primary" formControlName="FridayS1"></ion-toggle>
+          <ion-toggle
+            class="VerticalAlignMiddle LeftPaddingToggle"
+            #FridayS1
+            id="FridayS1"
+            name="FridayS1"
+            slot="end"
+            color="primary"
+            formControlName="FridayS1"
+          ></ion-toggle>
           <ion-item *ngIf="FridayS1.checked==true" lines="none" no-padding>
-
             <ion-item lines="none" no-padding>
-              <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Fstart" display-format="h:mm a" (ionChange)='setTimeValidatorsFri()'>
+              <ion-label color="primary" position="floating"
+                >Start Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Fstart"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsFri()"
+              >
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
-              <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Fend" display-format="h:mm a" (ionChange)='setTimeValidatorsFri()'>
+              <ion-label color="primary" position="floating"
+                >End Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Fend"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsFri()"
+              >
               </ion-datetime>
             </ion-item>
-            <input type="hidden" formControlName="F1Id">
+            <input type="hidden" formControlName="F1Id" />
           </ion-item>
           <ion-label class="VerticalAlignMiddle">Session:2 </ion-label>
-          <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #FridayS2 id="FridayS2" name="FridayS2" slot="end" color="primary" formControlName="FridayS2"></ion-toggle>
+          <ion-toggle
+            class="VerticalAlignMiddle LeftPaddingToggle"
+            #FridayS2
+            id="FridayS2"
+            name="FridayS2"
+            slot="end"
+            color="primary"
+            formControlName="FridayS2"
+          ></ion-toggle>
           <ion-item *ngIf="FridayS2.checked==true" lines="none" no-padding>
-
             <ion-item lines="none" no-padding>
-              <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Fstart2" display-format="h:mm a" (ionChange)='setTimeValidatorsFri()'>
+              <ion-label color="primary" position="floating"
+                >Start Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Fstart2"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsFri()"
+              >
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
-              <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Fend2" display-format="h:mm a" (ionChange)='setTimeValidatorsFri()'>
+              <ion-label color="primary" position="floating"
+                >End Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Fend2"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsFri()"
+              >
               </ion-datetime>
             </ion-item>
-            <input type="hidden" formControlName="F2Id">
+            <input type="hidden" formControlName="F2Id" />
           </ion-item>
           <div class="validation-errors">
-            <ng-container *ngFor="let validation of validation_messages.Mstart2">
-              <div class="error-message"
-                  *ngIf="fg2.get('Fstart2').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+            <ng-container
+              *ngFor="let validation of validation_messages.Mstart2"
+            >
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Fstart2').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
             <ng-container *ngFor="let validation of validation_messages.Mstart">
-              <div class="error-message"
-                  *ngIf="fg2.get('Fstart').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Fstart').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
             <ng-container *ngFor="let validation of validation_messages.Mend">
-              <div class="error-message"
-                  *ngIf="fg2.get('Fend').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Fend').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
           </div>
@@ -430,61 +753,117 @@
       <ion-card>
         <ion-item>
           <ion-card-title>Saturday</ion-card-title>
-          <ion-toggle #Saturday id="Saturday" name="Saturday" slot="end" color="primary" formControlName="Saturday">
+          <ion-toggle
+            #Saturday
+            id="Saturday"
+            name="Saturday"
+            slot="end"
+            color="primary"
+            formControlName="Saturday"
+          >
           </ion-toggle>
         </ion-item>
         <ion-card-content *ngIf="Saturday.checked==true">
           <ion-label class="VerticalAlignMiddle">Session:1 </ion-label>
-          <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #SaturdayS1 id="SaturdayS1" name="SaturdayS1" slot="end" color="primary" formControlName="SaturdayS1"></ion-toggle>
+          <ion-toggle
+            class="VerticalAlignMiddle LeftPaddingToggle"
+            #SaturdayS1
+            id="SaturdayS1"
+            name="SaturdayS1"
+            slot="end"
+            color="primary"
+            formControlName="SaturdayS1"
+          ></ion-toggle>
           <ion-item *ngIf="SaturdayS1.checked==true" lines="none" no-padding>
-
             <ion-item lines="none" no-padding>
-              <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Sastart" display-format="h:mm a" (ionChange)='setTimeValidatorsSat()'>
+              <ion-label color="primary" position="floating"
+                >Start Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Sastart"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsSat()"
+              >
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
-              <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Saend" display-format="h:mm a" (ionChange)='setTimeValidatorsSat()'>
+              <ion-label color="primary" position="floating"
+                >End Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Saend"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsSat()"
+              >
               </ion-datetime>
             </ion-item>
-            <input type="hidden" formControlName="Sa1Id">
+            <input type="hidden" formControlName="Sa1Id" />
           </ion-item>
           <ion-label class="VerticalAlignMiddle">Session:2 </ion-label>
-          <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #SaturdayS2 id="SaturdayS2" name="SaturdayS2" slot="end" color="primary" formControlName="SaturdayS2"></ion-toggle>
+          <ion-toggle
+            class="VerticalAlignMiddle LeftPaddingToggle"
+            #SaturdayS2
+            id="SaturdayS2"
+            name="SaturdayS2"
+            slot="end"
+            color="primary"
+            formControlName="SaturdayS2"
+          ></ion-toggle>
           <ion-item *ngIf="SaturdayS1.checked==true" lines="none" no-padding>
-
             <ion-item lines="none" no-padding>
-              <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Sastart2" display-format="h:mm a" (ionChange)='setTimeValidatorsSat()'>
+              <ion-label color="primary" position="floating"
+                >Start Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Sastart2"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsSat()"
+              >
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
-              <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Saend2" display-format="h:mm a" (ionChange)='setTimeValidatorsSat()'>
+              <ion-label color="primary" position="floating"
+                >End Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Saend2"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsSat()"
+              >
               </ion-datetime>
             </ion-item>
-            <input type="hidden" formControlName="Sa2Id">
+            <input type="hidden" formControlName="Sa2Id" />
           </ion-item>
           <div class="validation-errors">
-            <ng-container *ngFor="let validation of validation_messages.Mstart2">
-              <div class="error-message"
-                  *ngIf="fg2.get('Sastart2').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+            <ng-container
+              *ngFor="let validation of validation_messages.Mstart2"
+            >
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Sastart2').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
             <ng-container *ngFor="let validation of validation_messages.Mstart">
-              <div class="error-message"
-                  *ngIf="fg2.get('Sastart').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Sastart').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
             <ng-container *ngFor="let validation of validation_messages.Mend">
-              <div class="error-message"
-                  *ngIf="fg2.get('Saend').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Saend').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
           </div>
@@ -494,61 +873,117 @@
       <ion-card>
         <ion-item>
           <ion-card-title>Sunday</ion-card-title>
-          <ion-toggle #Sunday id="Sunday" name="Sunday" slot="end" color="primary" formControlName="Sunday">
+          <ion-toggle
+            #Sunday
+            id="Sunday"
+            name="Sunday"
+            slot="end"
+            color="primary"
+            formControlName="Sunday"
+          >
           </ion-toggle>
         </ion-item>
         <ion-card-content *ngIf="Sunday.checked==true">
           <ion-label class="VerticalAlignMiddle">Session:1 </ion-label>
-          <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #SundayS1 id="SundayS1" name="SundayS1" slot="end" color="primary" formControlName="SundayS1"></ion-toggle>
+          <ion-toggle
+            class="VerticalAlignMiddle LeftPaddingToggle"
+            #SundayS1
+            id="SundayS1"
+            name="SundayS1"
+            slot="end"
+            color="primary"
+            formControlName="SundayS1"
+          ></ion-toggle>
           <ion-item *ngIf="SundayS1.checked==true" lines="none" no-padding>
-
             <ion-item lines="none" no-padding>
-              <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Sustart" display-format="h:mm a" (ionChange)="setTimeValidatorsSun()">
+              <ion-label color="primary" position="floating"
+                >Start Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Sustart"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsSun()"
+              >
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
-              <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Suend" display-format="h:mm a" (ionChange)="setTimeValidatorsSun()">
+              <ion-label color="primary" position="floating"
+                >End Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Suend"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsSun()"
+              >
               </ion-datetime>
             </ion-item>
-            <input type="hidden" formControlName="Su1Id">
+            <input type="hidden" formControlName="Su1Id" />
           </ion-item>
           <ion-label class="VerticalAlignMiddle">Session:2 </ion-label>
-          <ion-toggle class="VerticalAlignMiddle LeftPaddingToggle" #SundayS2 id="SundayS2" name="SundayS2" slot="end" color="primary" formControlName="SundayS2"></ion-toggle>
+          <ion-toggle
+            class="VerticalAlignMiddle LeftPaddingToggle"
+            #SundayS2
+            id="SundayS2"
+            name="SundayS2"
+            slot="end"
+            color="primary"
+            formControlName="SundayS2"
+          ></ion-toggle>
           <ion-item *ngIf="SundayS2.checked==true" lines="none" no-padding>
-
             <ion-item lines="none" no-padding>
-              <ion-label color="primary" position="floating">Start Time</ion-label>
-              <ion-datetime formControlName="Sustart2" display-format="h:mm a" (ionChange)="setTimeValidatorsSun()">
+              <ion-label color="primary" position="floating"
+                >Start Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Sustart2"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsSun()"
+              >
               </ion-datetime>
             </ion-item>
 
             <ion-item slot="end" lines="none" no-padding>
-              <ion-label color="primary" position="floating">End Time</ion-label>
-              <ion-datetime formControlName="Suend2" display-format="h:mm a" (ionChange)="setTimeValidatorsSun()">
+              <ion-label color="primary" position="floating"
+                >End Time</ion-label
+              >
+              <ion-datetime
+                formControlName="Suend2"
+                display-format="h:mm a"
+                (ionChange)="setTimeValidatorsSun()"
+              >
               </ion-datetime>
             </ion-item>
-            <input type="hidden" formControlName="Su1Id">
+            <input type="hidden" formControlName="Su1Id" />
           </ion-item>
           <div class="validation-errors">
-            <ng-container *ngFor="let validation of validation_messages.Mstart2">
-              <div class="error-message"
-                  *ngIf="fg2.get('Sustart2').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+            <ng-container
+              *ngFor="let validation of validation_messages.Mstart2"
+            >
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Sustart2').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
             <ng-container *ngFor="let validation of validation_messages.Mstart">
-              <div class="error-message"
-                  *ngIf="fg2.get('Sustart').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Sustart').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
             <ng-container *ngFor="let validation of validation_messages.Mend">
-              <div class="error-message"
-                  *ngIf="fg2.get('Suend').hasError('required')">  
-                 <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }} 
+              <div
+                class="error-message"
+                *ngIf="fg2.get('Suend').hasError('required')"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon> {{
+                validation.message }}
               </div>
             </ng-container>
           </div>
@@ -558,5 +993,4 @@
 
     <ion-button [disabled]="!fg1.valid" (click)="getdata()">Update</ion-button>
   </form>
-
 </ion-content>

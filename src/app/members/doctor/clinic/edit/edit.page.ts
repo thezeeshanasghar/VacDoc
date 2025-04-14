@@ -71,7 +71,7 @@ export class EditPage implements OnInit {
         Validators.compose([
           Validators.required,
           Validators.minLength(10),
-          Validators.pattern("^([0-9]*)$")
+          Validators.pattern("^([0-9]*)$"),
         ])
       ),
       Address: [null],
@@ -79,7 +79,7 @@ export class EditPage implements OnInit {
         "",
         Validators.compose([
           Validators.required,
-          Validators.pattern("^(0|[1-9][0-9]*)$")
+          Validators.pattern("^(0|[1-9][0-9]*)$"),
         ])
       ),
       ClinicTimings: [null],
@@ -88,12 +88,12 @@ export class EditPage implements OnInit {
       IsOnline: [false],
       MonogramImage: [null],
       RegNo: new FormControl(
-              "",
-              Validators.compose([
-                Validators.required,
-                Validators.pattern("^[A-Za-z0-9]+$") 
-              ])
-            ),
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.pattern("^[A-Za-z0-9]+$"),
+        ])
+      ),
     });
 
     this.fg2 = this.formbuilder.group({
@@ -1280,6 +1280,10 @@ export class EditPage implements OnInit {
         type: "pattern",
         message: "Your Consultation Fee must contain positive number"
       }
+    ],
+    RegNo: [
+      { type: "required", message: "RegNo is required." },
+      { type: "pattern", message: "RegNo must be alphanumeric." }
     ],
     MonogramImage:[
       { type: "required", message: "Monogram Image is required." },
