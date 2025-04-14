@@ -192,21 +192,8 @@
         <ion-select-option value="6205">17 Years</ion-select-option>
         <ion-select-option value="6570">18 Years</ion-select-option>
       </ion-select>
-    </ion-item>
-    
-    <ion-item>
-      <ion-label color="primary" position="floating">Validity</ion-label>
-      <ion-input type="text" placeholder="Enter Registration Number" formControlName="Validity"></ion-input>
-      <ion-text color="danger" *ngIf="fg.get('Validity').invalid && (fg.get('Validity').dirty || fg.get('Validity').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-        <ng-container *ngIf="fg.get('Validity').errors.required">
-          Validity is required
-        </ng-container>
-      </ion-text>
-    </ion-item>
-  </div>
-      
-    
-    
+    </ion-item> 
+
     <!-- <ion-item>
       <ion-label color="primary" position="floating">Disease</ion-label>
       <ion-input type="text" placeholder="Disease" ></ion-input>
@@ -224,13 +211,13 @@
         min="{{birthYear}}" max="{{todaydate}}"></ion-datetime>
     </ion-item>
 
-    
     <!-- <ion-item *ngIf="!fg.value.IsDisease">
       <ion-label color="primary">Brands</ion-label>
       <ion-select formControlName="BrandId">
         <ion-select-option *ngFor="let user of brandName" [value]="user.Id">{{user.Name}}</ion-select-option>
       </ion-select>
     </ion-item> -->
+    
     <ion-item *ngIf="!fg.value.IsDisease">
       <ion-label color="primary">Brands</ion-label>
       <ion-select formControlName="BrandId" [interfaceOptions]="customActionSheetOptions" interface="action-sheet" placeholder="Select Brand">
