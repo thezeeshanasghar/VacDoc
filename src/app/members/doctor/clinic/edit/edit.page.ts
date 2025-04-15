@@ -511,7 +511,7 @@ export class EditPage implements OnInit {
     this.fg1.value.Id = this.clinicId;
     this.fg1.value.Lat = 33.63207;
     this.fg1.value.Long = 72.935488;
-    // this.fg1.value.MonogramImage = this.
+    this.fg1.value.RegNo = this.fg1.get('RegNo').value;;
     var ct = [];
     if (this.fg2.value.Monday) {
       if (this.fg2.value.MondayS1) {
