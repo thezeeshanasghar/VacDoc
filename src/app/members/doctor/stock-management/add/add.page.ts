@@ -32,9 +32,6 @@ interface StockItem {
   billNo?: string;
 }
 
-
-// interface Supplier {
-// }
 interface BrandAmountDTO {
   BrandId: number;
   BrandName: string;
@@ -43,7 +40,6 @@ interface BrandAmountDTO {
 }
 
 interface Supplier {
-
   Name: string;
 }
 
@@ -60,13 +56,13 @@ interface Brand {
   styleUrls: ["./add.page.scss"]
 })
 export class AddPage implements OnInit {
-  // brands: any;
   suppliers: string[] =[];
   filteredSuppliers: string[];
   fg1: FormGroup;
   cities: string[] = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'];
   filteredCities: string[];
   purchaseDate: string;
+  paymentDate: string;
   defaultDate = new Date().toISOString();
   brand: string = '';
   supplierName: string = '';
@@ -88,6 +84,7 @@ export class AddPage implements OnInit {
     private storage: Storage,
   ) {
     this.purchaseDate = this.defaultDate;
+    this.paymentDate = this.defaultDate;
     this.filteredCities = this.cities;
   }
   
@@ -205,31 +202,39 @@ export class AddPage implements OnInit {
         message: 'Saving purchase...'
       });
       await loading.present();
-
+  
       const doctorId = await this.storage.get(environment.DOCTOR_Id);
       console.log('Doctor ID:', doctorId);
       if (!doctorId) {
         throw new Error('Doctor ID not found');
       }
-
-      // Convert doctorId to number since API expects it
+  
       const doctorIdNumber = parseInt(doctorId, 10);
-
       const billNo = `BILL-${this.bill}`;
-
-      const purchaseData = this.stockItems.map(item => ({
-        BrandId: item.brandId,
-        BillNo: billNo,
-        Supplier: this.supplierName,
-        Date: new Date(this.purchaseDate),
-        IsPaid: this.isPaid,
-        Quantity: item.quantity,
-        StockAmount: item.price,
-        DoctorId: doctorIdNumber // Send as number instead of string
-      }));
-
+  
+      const purchaseData = this.stockItems.map(item => {
+        const data: any = {
+          BrandId: item.brandId,
+          BillNo: billNo,
+          Supplier: this.supplierName,
+          BillDate: new Date(this.purchaseDate), // Renamed from Date to BillDate
+          IsPaid: this.isPaid,
+          Quantity: item.quantity,
+          StockAmount: item.price,
+          DoctorId: doctorIdNumber
+        };
+        // Only include PaymentDate if isPaid is true
+        if (this.isPaid) {
+          data.PaidDate = new Date(this.paymentDate);
+        }else {
+          data.PaidDate = "01-01-0001"; // Set to null if not paid   
+        }
+  
+        return data;
+      });
+  
       console.log('Purchase Data:', purchaseData);
-
+  
       this.stockService.createBill(purchaseData).subscribe({
         next: (response) => {
           loading.dismiss();
@@ -246,19 +251,21 @@ export class AddPage implements OnInit {
           this.toastService.create('Failed to create purchase bill', 'danger');
         }
       });
-
+  
     } catch (error) {
       console.error('Error in saveStock:', error);
       this.toastService.create('An unexpected error occurred', 'danger');
       this.loadingController.dismiss();
     }
   }
+
   private resetForm() {
     this.bill = '';
     this.stockItems = [];
     this.supplierName = '';
-    this.purchaseDate = new Date().toISOString();
-    this.isPaid = false;
+    this.purchaseDate = new Date().toISOString(); // Reset Bill Date
+    this.paymentDate =  new Date().toISOString(); // Reset Payment Date
+    this.isPaid = false; // Reset Payment Status
   }
 
   async loadBrands() {

@@ -15,7 +15,7 @@
           <ion-card-header>
             <ion-card-subtitle>Purchase Date</ion-card-subtitle>
             <ion-card-title *ngFor="let bill of data?.slice(0,1)">
-              {{bill.Date | date:'dd/MM/yyyy'}}
+              {{bill.BillDate | date:'dd/MM/yyyy'}}
             </ion-card-title>
           </ion-card-header>
         </ion-card>
@@ -63,6 +63,17 @@
           </ion-card-header>
         </ion-card>
       </ion-col>
+      <ion-col size="12" size-sm="6" size-md="3" *ngIf="data?.length && data[0]?.IsPaid">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-subtitle>Paid Date</ion-card-subtitle>
+            <ion-card-title>
+              {{ data[0]?.PaidDate | date: 'dd/MM/yyyy' }}
+            </ion-card-title>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+     
     </ion-row>
   </ion-grid>
   <div class="table-container">
