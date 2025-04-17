@@ -1,6 +1,6 @@
 /* General Styles */
 .dashboard-content {
-  --background: #f5f7fa;
+  // --background: #f5f7fa;
   --ion-font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   color: #333;
 }
@@ -40,7 +40,7 @@
 /* Header Styles */
 .header-toolbar {
   --background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%);
-  --color: white;
+  // --color: white;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 0 8px;
 }
@@ -162,7 +162,7 @@
 .no-clinics-card {
   margin: 16px;
   border-radius: 12px;
-  background: #fff8e1;
+  // background: #fff8e1;
   border-left: 5px solid #ffc107;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
@@ -228,7 +228,7 @@
 
 ion-card-header {
   padding: 20px 16px 16px;
-  background: #ffffff;
+  // background: #ffffff;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   position: relative;
 }
@@ -252,13 +252,13 @@ ion-card-header {
 ion-card-title {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #333;
+  // color: #333;
   margin-bottom: 8px;
 }
 
 ion-card-content {
   padding: 16px;
-  background: #f9f9f9;
+  // background: #f9f9f9;
 }
 
 .stats-card h2 {
