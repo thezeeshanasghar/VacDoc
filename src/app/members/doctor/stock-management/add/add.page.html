@@ -43,7 +43,7 @@
             </mat-form-field>
         </ion-item>
         <ion-item>
-            <ion-label position="floating">Date</ion-label>
+            <ion-label position="floating">Bill Date</ion-label>
             <ion-datetime 
                 [(ngModel)]="purchaseDate"
                 displayFormat="DD/MM/YYYY"
@@ -57,6 +57,19 @@
             <ion-label>Payment Status</ion-label>
             <ion-checkbox slot="end" [(ngModel)]="isPaid" name="paymentStatus"></ion-checkbox>
         </ion-item>
+          
+        <ion-item *ngIf="isPaid">
+            <ion-label position="floating">Payment Date</ion-label>
+            <ion-datetime 
+              [(ngModel)]="paymentDate"
+              displayFormat="DD/MM/YYYY"
+              min="2020"
+              max="2025"
+              [value]="defaultDate"
+              required>
+            </ion-datetime>
+        </ion-item>
+
             <ion-button expand="block" (click)="addNewRow()" color="primary" class="ion-margin-bottom">
                 <ion-icon name="add" slot="start"></ion-icon>
                 Add New Item
