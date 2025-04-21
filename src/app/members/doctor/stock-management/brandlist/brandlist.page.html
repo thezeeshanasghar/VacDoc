@@ -3,7 +3,12 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/members/doctor/stock-management"></ion-back-button>
     </ion-buttons>
-    <ion-title>{{brandName}} Details</ion-title>
+    <ion-title>Details</ion-title>
+    <ion-buttons slot="end">
+      <ion-button [routerLink]="['/members/doctor/stock-management/brandlist/edit', brandid]">
+        <ion-icon slot="icon-only" name="create"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 

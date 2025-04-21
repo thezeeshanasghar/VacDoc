@@ -30,21 +30,25 @@ export class BrandListPage implements OnInit {
   brandId: number;
   data: BillDetails[];
   Bills: BillDetails[];
+  brandid: number; // Ensure this variable exists
   constructor(
     private route: ActivatedRoute,
     private stockService: StockService
   ) {
-    // Get brandId from URL parameter
+    this.route.params.subscribe(params => {
+      this.brandid = +params['brandId']; // Assign brandId from route params
+      console.log('Brand ID:', this.brandid); // Debugging log
+    });
+  }
+
+  ngOnInit() {
+    this.loadBrandBills()
     this.route.params.subscribe(params => {
       this.brandId = +params['brandId']; // Convert string to number using +
       if (this.brandId) {
         this.loadBrandBills();
       }
     });
-  }
-
-  ngOnInit() {
-    this.loadBrandBills()
   }
 
   loadBrandBills() {
