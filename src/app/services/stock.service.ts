@@ -30,11 +30,12 @@ export interface BillDetails {
   BrandId: any;
   billNo: string;
   supplier: string;
-  date: Date;
-  isPaid: boolean;
+  BillDate: Date;
+  IsPaid: boolean;
   totalAmount: number;
   Quantity: number;
   StockAmount: number;
+  PaidDate: Date;
   stocks: StockDTO[];
 }
 

@@ -16,6 +16,7 @@ interface BrandBill {
   Supplier: string;
   StockAmount: number;
   Id: number;
+  Paiddate: string;
 }
 
 @Component({
