@@ -34,6 +34,7 @@ export class VaccinePage {
   today: Date = new Date();
   private readonly API_VACCINE = `${environment.BASE_URL}`
   type: string;
+  istravel: boolean = true;
 
   constructor(
     public loadingController: LoadingController,
@@ -54,12 +55,11 @@ export class VaccinePage {
     this.type = '';
   }
 
-
   ionViewWillEnter() {
     this.childId = this.route.snapshot.paramMap.get("id");
     this.vaccinesData = [];
     this.getVaccination();
-
+    // this.removal();
     this.fgAddData = this.formBuilder.group({
       'DoctorId': [''],
       'IsDone': [null],
@@ -73,12 +73,12 @@ export class VaccinePage {
       'DoseId': [null],
       'ChildId': [null],
       'Date': [null]
-
     });
-
-
-
   }
+
+  // ngOnInit() {
+  //   this.removal();
+  // }
 
   handleSkipClick(event: Event, id: number, doseName: string) {
     event.preventDefault();
@@ -120,7 +120,6 @@ export class VaccinePage {
   //   );
   // }
 
-
   checkVaccineIsDon(data): boolean {
     var isdone: boolean = true;
     for (let i = 0; i < data.length; i++) {
@@ -132,14 +131,11 @@ export class VaccinePage {
     return isdone;
   }
 
-
   async getVaccination() {
     const loading = await this.loadingController.create({
       message: "Loading Vaccines"
     });
-
     await loading.present();
-
     this.vaccineService
       .getVaccinationById(this.route.snapshot.paramMap.get("id"))
       .subscribe(
@@ -150,6 +146,7 @@ export class VaccinePage {
             this.vaccine = res.ResponseData;
             this.ChildName = this.vaccine[0].Child.Name;
             this.type = this.vaccine[0].Child.Type;
+            this.removal(this.type);
             this.vaccine.forEach(doc => {
               doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
               if (doc.GivenDate)
@@ -182,7 +179,6 @@ export class VaccinePage {
         acc[key].push(obj);
         return acc;
       },
-
       {}
     );
   }
@@ -344,9 +340,7 @@ export class VaccinePage {
                   this.toastService.create(err, "danger");
                 }
               );
-            }
-
-            else if (message.search("Minimum Gap from previous dose of this vaccine should be") != -1) {
+            }else if (message.search("Minimum Gap from previous dose of this vaccine should be") != -1) {
               this.bulkService.updateInjectionDate(data, false, false, true).subscribe(
                 res => {
                   if (res.IsSuccess) {
@@ -373,7 +367,6 @@ export class VaccinePage {
       ]
       // buttons: ['OK']
     });
-
     await alert.present();
   }
 
@@ -398,6 +391,12 @@ export class VaccinePage {
     console.log(this.Pneum2Date);
   }
 
+removal(type: string){
+    console.log(this.type);
+    if(this.type === 'travel') {
+     this.istravel= false;
+    }
+}
 
   printdata() {
     if (this.type === 'travel') {

@@ -5,3 +5,4 @@ Recommended Changes in VaccineAPI Project for ProfileImage, SignatureImage to wo
             // dbDoctor.SignatureImage=doctorDTO.SignatureImage;
 export NODE_OPTIONS=--openssl-legacy-provider
 $env:NODE_OPTIONS="--openssl-legacy-provider"
+ALTER TABLE `doctors` ADD `Nationality` TEXT NOT NULL;
