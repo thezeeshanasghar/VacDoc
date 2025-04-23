@@ -63,7 +63,7 @@ export class AddPage implements OnInit {
   cities: string[] = [];
   agents: string[] = [];
   isButtonEnabled: boolean;
-  istravel: boolean;
+  isTravel: boolean;
   // agentService: any;
   //cities: any;
 
@@ -195,9 +195,9 @@ loadAgent(): void {
   }
 
   logDoctorId() {
-    console.log('Doctor ID:', this.doctorId);
+    // console.log('Doctor ID:', this.doctorId);
     if(this.doctorId==1){
-      this.istravel=true;
+      this.isTravel=true;
     } 
   }
 

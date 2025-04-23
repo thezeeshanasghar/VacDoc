@@ -105,7 +105,7 @@ export class MembersPage implements OnInit {
               },
               {
                 title: "Analytics",
-                url: "/members/doctor/stock-management/total",
+                url: "/members/doctor/analytics/data",
                 icon: "stats-chart-outline"
               },
               // {
