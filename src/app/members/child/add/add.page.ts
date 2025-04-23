@@ -164,7 +164,10 @@ loadAgent(): void {
       IsVerified: [false],
       Password: [null],
       ChildVaccines: [null],
-      Nationality: [null],
+      Nationality: ['', Validators.compose([
+        Validators.required,
+        Validators.pattern(/^[a-zA-Z\s]+$/) 
+      ])],
     });
 
     this.storage.get(environment.DOCTOR_Id).then(val => {
@@ -771,6 +774,10 @@ onCityChange() {
     email: [
       { type: "pattern", message: "Please enter a valid email address" },
       { type: "email", message: "Please enter a valid email address" }
+  ],
+  nationality: [
+    { type: "required", message: "Nationality is required." },
+    { type: "pattern", message: "Please enter a valid nationality (letters and spaces only)." }
   ],
   };
 }
