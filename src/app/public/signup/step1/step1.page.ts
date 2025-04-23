@@ -40,15 +40,15 @@ export class Step1Page implements OnInit {
       AdditionalInfo: ["", [Validators.required, this.OneLineValidator,]],
       FirstName: ['', Validators.compose([
         Validators.required,
-        Validators.pattern(/^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/)
+        Validators.pattern(/^\s*[a-zA-Z]+(?:\s[a-zA-Z]+)*\s*$/)
       ])],
       LastName: ['', Validators.compose([
         Validators.required,
-        Validators.pattern(/^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/)
+        Validators.pattern(/^\s*[a-zA-Z]+(?:\s[a-zA-Z]+)*\s*$/)
       ])],
       DisplayName: ['', Validators.compose([
         Validators.required,
-        Validators.pattern(/^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/)
+        Validators.pattern(/^\s*[a-zA-Z]+(?:\s[a-zA-Z]+)*\s*$/) // Allow spaces at the start and end
       ])],
       Email: new FormControl(
         "",
