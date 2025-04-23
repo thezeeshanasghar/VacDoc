@@ -121,8 +121,7 @@
                 <ion-radio slot="start" value="special"></ion-radio>
               </ion-item>
             </ion-col>
-
-            <ion-col>
+            <ion-col *ngIf="istravel">
               <ion-item>
                 <ion-label color="white">Travel</ion-label>
                 <ion-radio slot="start" value="travel"></ion-radio>
@@ -208,6 +207,20 @@
 
       <div *ngIf="isCnicRequired">
         <div class="agent">
+        <ion-item>
+          <ion-label color="primary" position="floating">
+            Nationality <span class="required-asterisk">*</span>
+          </ion-label>
+          <ion-input type="text" formControlName="Nationality" required class="ion-text-capitalize"></ion-input>
+        </ion-item>
+        <div class="validation-errors">
+          <ng-container *ngFor="let validation of validation_messages.nationality">
+            <div class="error-message"
+              *ngIf="fg1.get('Nationality')?.hasError(validation.type) && (fg1.get('Nationality')?.dirty || fg1.get('Nationality')?.touched)">
+              <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+            </div>
+          </ng-container>
+        </div>
           <ion-label color="primary" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">
             Agent <span class="required-asterisk">*</span>
           </ion-label>

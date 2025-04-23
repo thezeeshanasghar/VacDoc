@@ -52,6 +52,7 @@ export class AddPage implements OnInit {
   Doctor: any;
   epiDone = false;
   Messages: any = [];
+  Nationality: any;
   // cities: string[];
   originalCities: string[];
   filteredOptions: Observable<string[]>;
@@ -62,6 +63,7 @@ export class AddPage implements OnInit {
   cities: string[] = [];
   agents: string[] = [];
   isButtonEnabled: boolean;
+  istravel: boolean;
   // agentService: any;
   //cities: any;
 
@@ -88,6 +90,9 @@ export class AddPage implements OnInit {
   ngOnInit() {
     this.loadCities();
     this.loadAgent();
+    this. logDoctorId();
+    // this.doctorId = this.storage.get(environment.DOCTOR_Id);
+    // console.log(this.doctorId);
 }
 
 loadCities(): void {
@@ -159,12 +164,14 @@ loadAgent(): void {
       IsVerified: [false],
       Password: [null],
       ChildVaccines: [null],
+      Nationality: [null],
     });
 
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
+      this.logDoctorId(); // Call the function to log the doctor ID
     });
-
+    console.log(this.doctorId);
     this.storage.get(environment.ON_CLINIC).then(val => {
       this.clinic = val;
     });
@@ -182,6 +189,13 @@ loadAgent(): void {
     });
 
     this.cities = this.cities;
+  }
+
+  logDoctorId() {
+    console.log('Doctor ID:', this.doctorId);
+    if(this.doctorId==1){
+      this.istravel=true;
+    } 
   }
 
   // isTravelSelected: boolean = false;
