@@ -75,6 +75,8 @@ export class AddPage implements OnInit {
   isPaid: boolean = false;
   filteredBrands = [];
   bill: string;
+  agents: string[] = [];
+  originalAgents: any[];
   constructor(
     private brandService: BrandService,
     private toastService: ToastService,
@@ -90,9 +92,10 @@ export class AddPage implements OnInit {
   
   ngOnInit() {
     this.loadBrands();
-    // this.loadSuppliers();
+    this.fetchAgent();
     this.fg1 = this.fb.group({
-      city: [''],
+      agent: [''],
+      city: [''], // Initialize form controls
       City2: ['']
     });
   }
@@ -128,19 +131,44 @@ export class AddPage implements OnInit {
   //     this.toastService.create('An unexpected error occurred', 'danger');
   //   }
   // }
-
-  filterSuppliers(event: string) {
-    if (!event) {
-      this.filteredSuppliers = [...this.suppliers];
-      return;
-    }
-
-    const filterValue = event.toLowerCase();
-    this.filteredSuppliers = this.suppliers.filter(supplier => 
-      supplier.toLowerCase().includes(filterValue)
+  fetchAgent() {
+    this.stockService.getSuppliers().subscribe(
+      (agents: any) => {
+        console.log('Fetched agents:', agents);
+        this.agents = agents.ResponseData;
+        this.originalAgents = [...this.agents]; // Store original agents for filtering
+        console.log('Fetched agents:', agents.ResponseData); 
+        console.log('Fetched agents:', agents.ResponseData.length); 
+        // Log the fetched agents
+      },
+      (error: any) => {
+        console.error('Error fetching agents:', error);
+      }
     );
-    console.log('Filtered suppliers:', this.filteredSuppliers);
   }
+
+  filterSuppliers(value: string) {
+    if (!value.trim()) {
+      this.agents = [...this.originalAgents]; // Restore original agents if input is empty
+    } else {
+      this.agents = this.originalAgents.filter(agent =>
+        agent.toLowerCase().includes(value.toLowerCase())
+      );
+    }
+  }
+
+  // filterSuppliers(event: string) {
+  //   if (!event) {
+  //     this.filteredSuppliers = [...this.suppliers];
+  //     return;
+  //   }
+
+  //   const filterValue = event.toLowerCase();
+  //   this.filteredSuppliers = this.suppliers.filter(supplier => 
+  //     supplier.toLowerCase().includes(filterValue)
+  //   );
+  //   console.log('Filtered suppliers:', this.filteredSuppliers);
+  // }
 
 
   selectSupplier(event: MatAutocompleteSelectedEvent) {

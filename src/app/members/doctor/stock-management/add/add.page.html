@@ -22,26 +22,23 @@
             <ion-label position="floating">Bill No.</ion-label>
             <ion-input type="text" [(ngModel)]="bill" required></ion-input>
         </ion-item>
+       
         <ion-item>
-            <!-- <ion-label position="floating">Supplier</ion-label> -->
+        <ion-label position="floating" >
+            Supplier <span class="required-asterisk"></span>
+          </ion-label>
+          <!-- <form [formGroup]="fg1"> -->
             <mat-form-field class="example-full-width">
-                <input type="text" 
-                    aria-label="Supplier" 
-                    matInput 
-                    [(ngModel)]="supplierName"
-                    name="supplier"
-                    [matAutocomplete]="supplierAuto"
-                    (ngModelChange)="filterSuppliers($event)" 
-                    required
-                    placeholder="Select supplier"
-                    style="font-size: 15px;">
-                <mat-autocomplete #supplierAuto="matAutocomplete" (optionSelected)="selectSupplier($event)">
-                    <mat-option *ngFor="let supplier of filteredSuppliers" [value]="supplier">
-                        {{supplier}}
-                    </mat-option>
-                </mat-autocomplete>
+              <input type="text" aria-label="Supplier" matInput  [(ngModel)]="supplierName" [matAutocomplete]="auto"
+              (ngModelChange)="filterSuppliers($event)"  style="font-size: 15px;">
+              <mat-autocomplete #auto="matAutocomplete" class="no-indent">
+                <mat-option *ngFor="let option of agents" [value]="option">
+                  {{option}}
+                </mat-option>
+              </mat-autocomplete>
             </mat-form-field>
         </ion-item>
+          <!-- </form> -->
         <ion-item>
             <ion-label position="floating">Bill Date</ion-label>
             <ion-datetime 

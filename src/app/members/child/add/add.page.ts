@@ -89,8 +89,9 @@ export class AddPage implements OnInit {
 
   ngOnInit() {
     this.loadCities();
-    this.loadAgent();
+    // this.loadAgent();
     this. logDoctorId();
+    this.fetchAgent();
     // this.doctorId = this.storage.get(environment.DOCTOR_Id);
     // console.log(this.doctorId);
 }
@@ -108,17 +109,45 @@ loadCities(): void {
     );
 }
 
-loadAgent(): void {
-    this.agentService.getAgents().subscribe(
-        (agents: any) => {
-            this.agents = agents;
-            this.originalAgents = [...agents];
-            console.log('Agents loaded:', agents); // Check the output here
-        },
-        (error: any) => {
-            console.error('Error loading agents', error);
-        }
+// loadAgent(): void {
+//   this.agentService.getAgents().subscribe(
+//     (agents: any) => {
+//       if (Array.isArray(agents)) {
+//         this.agents = agents; // Ensure agents is an array
+//       } else {
+//         this.agents = Object.values(agents); // Convert object to array if necessary
+//       }
+//       console.log('Agents loaded:', this.agents);
+//     },
+//     (error: any) => {
+//       console.error('Error loading agents', error);
+//     }
+//   );
+// }
+
+fetchAgent() {
+  this.childService.getAgent(1).subscribe(
+    (agents: any) => {
+      this.agents = agents.ResponseData;
+      this.originalAgents = [...this.agents]; // Store original agents for filtering
+      console.log('Fetched agents:', agents.ResponseData); 
+      console.log('Fetched agents:', agents.ResponseData.length); 
+      // Log the fetched agents
+    },
+    (error: any) => {
+      console.error('Error fetching agents:', error);
+    }
+  );
+}
+
+filterAgents(value: string) {
+  if (!value.trim()) {
+    this.agents = [...this.originalAgents]; // Restore original agents if input is empty
+  } else {
+    this.agents = this.originalAgents.filter(agent =>
+      agent.toLowerCase().includes(value.toLowerCase())
     );
+  }
 }
 
   ionViewWillEnter() {
