@@ -1,0 +1,445 @@
+// .coming-soon {
+//     position: absolute;
+//     top: 50%;
+//     left: 50%;
+//     transform: translate(-50%, -50%);
+//     text-align: center;
+//     padding: 20px;
+  
+//     ion-icon {
+//       font-size: 64px;
+//       color: var(--ion-color-primary);
+//       margin-bottom: 16px;
+//     }
+  
+//     h2 {
+//       font-size: 24px;
+//       font-weight: bold;
+//       color: var(--ion-color-dark);
+//       margin-bottom: 16px;
+//     }
+  
+//     p {
+//       font-size: 16px;
+//       color: var(--ion-color-medium);
+//       margin: 8px 0;
+//     }
+//   }
+//   /* General Styles */
+.dashboard-content {
+    // --background: #f5f7fa;
+    --ion-font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: #333;
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes fadeInUp {
+    from { 
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+  }
+  
+  .animated {
+    animation-duration: 0.5s;
+    animation-fill-mode: both;
+  }
+  
+  .fadeIn { animation-name: fadeIn; }
+  .fadeInUp { animation-name: fadeInUp; }
+  .pulse { animation-name: pulse; animation-iteration-count: infinite; animation-duration: 2s; }
+  
+  /* Header Styles */
+  .header-toolbar {
+    --background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%);
+    // --color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 0 8px;
+  }
+  
+  .header-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  
+  .clinic-name {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    font-weight: 400;
+    padding-right: 16px;
+  }
+  
+  .action-toolbar {
+    --background: linear-gradient(135deg, #1565c0 0%, #0b3d91 100%);
+    padding: 0 16px;
+  }
+  
+  .action-buttons {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .action-button {
+    --background: transparent;
+    --color: white;
+    --border-radius: 8px;
+    --padding-start: 8px;
+    --padding-end: 8px;
+    --ripple-color: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    text-transform: none;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+  
+  .action-button:hover {
+    --background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+  }
+  
+  .action-button ion-icon {
+    margin-right: 6px;
+    font-size: 1.4rem;
+  }
+  
+  .menu-button {
+    --color: white;
+    --background-hover: rgba(255, 255, 255, 0.15);
+  }
+  
+  /* Welcome Card Section */
+  .welcome-section {
+    padding: 16px;
+  }
+  
+  .welcome-card {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+    transition: transform 0.3s ease;
+  }
+  
+  .welcome-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  .header-image-container {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+  }
+  
+  .header-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.7);
+    transition: transform 0.5s ease;
+  }
+  
+  .welcome-card:hover .header-img {
+    transform: scale(1.03);
+  }
+  
+  .welcome-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    color: white;
+  }
+  
+  .welcome-overlay h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  .welcome-overlay p {
+    font-size: 1.1rem;
+    margin: 0;
+    opacity: 0.9;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  
+  .no-clinics-card {
+    margin: 16px;
+    border-radius: 12px;
+    // background: #fff8e1;
+    border-left: 5px solid #ffc107;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .no-clinics-text {
+    color: #e65100;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+  }
+  
+  .warning-icon {
+    color: #e65100;
+    margin-right: 10px;
+    font-size: 1.4rem;
+  }
+  
+  .no-underline {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s ease;
+  }
+  
+  .no-underline:hover {
+    color: #b71c1c;
+  }
+  
+  /* Stats Cards Section */
+  .stats-section {
+    padding: 0 16px 24px;
+  }
+  
+  .stats-card {
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+    height: 100%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: none;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #1976d2 0%, #0d47a1 100%);
+  }
+  
+  .stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  }
+  
+  ion-card-header {
+    padding: 20px 16px 16px;
+    // background: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    position: relative;
+  }
+  
+  .card-icon-container {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    background: rgba(25, 118, 210, 0.1);
+  }
+  
+  .card-icon {
+    font-size: 1.8rem;
+    color: #1976d2;
+  }
+  
+  ion-card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    // color: #333;
+    margin-bottom: 8px;
+  }
+  
+  ion-card-content {
+    padding: 16px;
+    // background: #f9f9f9;
+  }
+  
+  .stats-card h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 12px 0;
+    color: #1976d2;
+    letter-spacing: 0.5px;
+  }
+  
+  .stats-progress {
+    --progress-background: rgba(0, 0, 0, 0.1);
+    --progress-color: #1976d2;
+    height: 8px;
+    border-radius: 4px;
+    margin: 16px 0;
+  }
+  
+  .stats-comparison {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 8px 0 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  .trend-up {
+    color: #4caf50;
+    margin-right: 6px;
+    font-size: 1.1rem;
+  }
+  
+  .trend-down {
+    color: #f44336;
+    margin-right: 6px;
+    font-size: 1.1rem;
+  }
+  
+  .trend-neutral {
+    color: #ff9800;
+    margin-right: 6px;
+    font-size: 1.1rem;
+  }
+  
+  /* Card Color Variations */
+  .patient-stats::before { background: linear-gradient(90deg, #4caf50 0%, #2e7d32 100%); }
+  .patient-stats .card-icon-container { background: rgba(76, 175, 80, 0.1); }
+  .patient-stats .card-icon,
+  .patient-stats h2 { color: #4caf50; }
+  .patient-stats .stats-progress { --progress-color: #4caf50; }
+  
+  .total-patients::before { background: linear-gradient(90deg, #2196f3 0%, #1565c0 100%); }
+  .total-patients .card-icon-container { background: rgba(33, 150, 243, 0.1); }
+  .total-patients .card-icon,
+  .total-patients h2 { color: #2196f3; }
+  .total-patients .stats-progress { --progress-color: #2196f3; }
+  
+  .alert-stats::before { background: linear-gradient(90deg, #ff9800 0%, #f57c00 100%); }
+  .alert-stats .card-icon-container { background: rgba(255, 152, 0, 0.1); }
+  .alert-stats .card-icon,
+  .alert-stats h2 { color: #ff9800; }
+  .alert-stats .stats-progress { --progress-color: #ff9800; }
+  
+  .future-alerts::before { background: linear-gradient(90deg, #9c27b0 0%, #7b1fa2 100%); }
+  .future-alerts .card-icon-container { background: rgba(156, 39, 176, 0.1); }
+  .future-alerts .card-icon,
+  .future-alerts h2 { color: #9c27b0; }
+  .future-alerts .stats-progress { --progress-color: #9c27b0; }
+  
+  .doses-stats::before { background: linear-gradient(90deg, #f44336 0%, #d32f2f 100%); }
+  .doses-stats .card-icon-container { background: rgba(244, 67, 54, 0.1); }
+  .doses-stats .card-icon,
+  .doses-stats h2 { color: #f44336; }
+  .doses-stats .stats-progress { --progress-color: #f44336; }
+  
+  .revenue-stats::before { background: linear-gradient(90deg, #009688 0%, #00796b 100%); }
+  .revenue-stats .card-icon-container { background: rgba(0, 150, 136, 0.1); }
+  .revenue-stats .card-icon,
+  .revenue-stats h2 { color: #009688; }
+  .revenue-stats .stats-progress { --progress-color: #009688; }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 992px) {
+    .header-image-container {
+      height: 180px;
+    }
+    
+    .welcome-overlay h1 {
+      font-size: 1.8rem;
+    }
+    
+    .stats-card h2 {
+      font-size: 2rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .action-button ion-label {
+      display: none;
+    }
+    
+    .action-button ion-icon {
+      margin-right: 0;
+      font-size: 1.6rem;
+    }
+    
+    .header-title {
+      font-size: 1.2rem;
+    }
+    
+    .welcome-overlay h1 {
+      font-size: 1.6rem;
+    }
+    
+    .welcome-overlay p {
+      font-size: 1rem;
+    }
+    
+    .stats-card h2 {
+      font-size: 1.8rem;
+    }
+    
+    ion-card-title {
+      font-size: 1.1rem;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    ion-col {
+      padding: 8px;
+    }
+    
+    .header-image-container {
+      height: 150px;
+    }
+    
+    .welcome-overlay h1 {
+      font-size: 1.4rem;
+    }
+    
+    .welcome-overlay p {
+      font-size: 0.9rem;
+    }
+    
+    .stats-card h2 {
+      font-size: 1.6rem;
+    }
+    
+    .card-icon {
+      font-size: 1.5rem;
+    }
+    
+    .card-icon-container {
+      width: 40px;
+      height: 40px;
+    }
+  }

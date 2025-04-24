@@ -41,6 +41,10 @@ const routes: Routes = [
   {
     path: "stock-management",
     loadChildren: () => import('./stock-management/stock-management.module').then(m => m.StockManagementPageModule)
+  },
+  {
+    path: "analytics",
+    loadChildren: () => import('./analytics/analytics.module').then(m => m.AnalyticsPageModule)
   }
 ];
 

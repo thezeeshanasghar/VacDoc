@@ -63,7 +63,7 @@ export class AddPage implements OnInit {
   cities: string[] = [];
   agents: string[] = [];
   isButtonEnabled: boolean;
-  istravel: boolean;
+  isTravel: boolean;
   // agentService: any;
   //cities: any;
 
@@ -165,7 +165,7 @@ loadAgent(): void {
       Password: [null],
       ChildVaccines: [null],
       Nationality: ['', Validators.compose([
-        Validators.required,
+        // Validators.required,
         Validators.pattern(/^[a-zA-Z\s]+$/) 
       ])],
     });
@@ -195,9 +195,9 @@ loadAgent(): void {
   }
 
   logDoctorId() {
-    console.log('Doctor ID:', this.doctorId);
+    // console.log('Doctor ID:', this.doctorId);
     if(this.doctorId==1){
-      this.istravel=true;
+      this.isTravel=true;
     } 
   }
 
@@ -651,6 +651,7 @@ onTravelChange(event: any) {
     this.isCnicRequired = true;
     this.fg1.get('CNIC').setValidators([Validators.required]);
     this.fg1.get('agent').setValidators([Validators.required]);
+    this.fg1.get('Nationality').setValidators([Validators.required]);
     this.isButtonEnabled = true;
     this.fg1.get('agent').enable();
     // this.fg1.get('Agent2').enable();
@@ -666,6 +667,7 @@ onTravelChange(event: any) {
   this.fg1.get('CNIC').updateValueAndValidity();
   this.fg1.get('agent').updateValueAndValidity();
   this.fg1.get('Agent2').updateValueAndValidity();
+  this.fg1.get('Nationality').updateValueAndValidity();
   this.isRadioDisabled = this.isCnicRequired && !this.epiDone;
   this.checkEpi();
 }
