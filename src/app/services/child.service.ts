@@ -90,4 +90,12 @@ export class ChildService extends BaseService {
       })
     });
   }
+
+  getAgent(childId: number): Observable<any> {
+    const url = `${this.API_CHILD}Child/agents/${childId}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
 }

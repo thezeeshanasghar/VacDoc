@@ -226,7 +226,7 @@
           </ion-label>
           <mat-form-field class="example-full-width">
             <input type="text" aria-label="Number" matInput formControlName="agent" [matAutocomplete]="auto"
-              (ngModelChange)="filter($event)" (ionChange)="onAgentChange()" style="font-size: 15px;">
+              (input)="filterAgents($event.target.value)" style="font-size: 15px;">
             <mat-autocomplete #auto="matAutocomplete" class="no-indent">
               <mat-option *ngFor="let option of agents" [value]="option">
                 {{option}}

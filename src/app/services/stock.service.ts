@@ -73,7 +73,7 @@ export class StockService {
     return this.http.get<Response<BillDetails[]>>(url);
   }
   getSuppliers(): Observable<Response<Supplier[]>> {
-    let url = `${this.apiUrl}Bill/suppliers`;
+    let url = `${this.apiUrl}Bill/Suppliers`;
     return this.http.get<Response<Supplier[]>>(url);
   }
 }
