@@ -4,6 +4,14 @@
     <ion-button slot="end" routerLink="/signup">Signup</ion-button>
   </ion-toolbar>
 </ion-header> -->
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="login"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Login Personel Assistant</ion-title>
+  </ion-toolbar>
+</ion-header>
 
 <ion-content *ngIf="!forgot">
 
@@ -41,10 +49,8 @@
             <div style="color: red;" *ngIf="fg.get('MobileNumber').errors.onlyNumbers">
               Please enter only numbers.
             </div>
-
           </div>
         </div>
-
 
         <ion-label style="color: white;" position="floating" class="ion-margin-top">
           <ion-icon name="lock-closed" class="ion-item-start"></ion-icon>
@@ -70,60 +76,27 @@
           </div>
         </div>
 
-
         <ion-button class="ion-margin-top" expand="full" color="tertiary" (click)="login()"
           [disabled]="isFormInvalid()">
           <ion-icon name="log-in"></ion-icon>&nbsp;
-          Login
+          Login Personel Assistant
         </ion-button>
-
       </form>
 
 
-      <div style="display: flex; justify-content: space-between;">
+      <!-- <div style="display: flex; justify-content: space-between;">
         <ion-text class="ion-text-right">
           <a routerLink="/forget" style="text-decoration: none;">
             <h2>Forget Password</h2>
           </a>
-        </ion-text>
-        <ion-text class="ion-text-middle">
-          <a routerLink="/loginpa" style="text-decoration: none;">
-            <h2>Personel Assistant</h2>
-          </a>
-        </ion-text>
-        <ion-text class="ion-text-left">
+        </ion-text> -->
+
+        <!-- <ion-text class="ion-text-left">
           <a routerLink="/signup" style="text-decoration: none;">
             <h2>Signup</h2>
           </a>
-        </ion-text>
-      </div>
-
-
-
+        </ion-text> -->
+      <!-- </div> -->
     </ion-card-content>
   </ion-card>
-
-</ion-content>
-
-<ion-content *ngIf="forgot">
-
-  <ion-card style="background-color: #d3cccc94;">
-    <ion-card-content>
-
-      <ion-label color="primary" position="floating" class="ion-margin-top">
-        <ion-icon name="mail" class="ion-item-start"></ion-icon>
-        Mobile Number
-      </ion-label>
-      <ion-input type="text" [(ngModel)]="MobileNumber"></ion-input>
-
-
-      <ion-button class="ion-margin-top" expand="full" color="tertiary" (click)="sendPassword()">
-        <ion-icon name="log-in"></ion-icon>&nbsp;
-        Send Password
-      </ion-button>
-
-
-    </ion-card-content>
-  </ion-card>
-
 </ion-content>
