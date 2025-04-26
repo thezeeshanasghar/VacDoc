@@ -656,7 +656,7 @@ removal(type: string){
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'Immunization-Record.pdf';
+      // a.download = 'Immunization-Record.pdf';
       a.click();
       window.URL.revokeObjectURL(url);
     }, error => {
