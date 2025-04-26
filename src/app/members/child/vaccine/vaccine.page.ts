@@ -650,13 +650,26 @@ removal(type: string){
 
   // Method to download the travel PDF
   downloadTravelPdf() {
-    debugger
     this.vaccineService.generateTravelPdf(this.childId).subscribe((response: Blob) => {
       const blob = new Blob([response], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      // a.download = 'Immunization-Record.pdf';
+      
+      // Get the filename from the Content-Disposition header if available
+      const contentDisposition = this.vaccineService.getLastContentDisposition();
+      let filename = 'Immunization-Record.pdf';
+      
+      if (contentDisposition) {
+        // Extract filename from Content-Disposition header
+        const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+        const matches = filenameRegex.exec(contentDisposition);
+        if (matches != null && matches[1]) {
+          filename = matches[1].replace(/['"]/g, '');
+        }
+      }
+      
+      a.download = filename;
       a.click();
       window.URL.revokeObjectURL(url);
     }, error => {

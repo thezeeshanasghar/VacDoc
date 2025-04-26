@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseService } from './base.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 // import { ApiResponse } from 'src/app/models/dose-response.model'; // Adjust the path as necessary
 // src/app/models/dose-response.model.ts
 
@@ -26,6 +26,8 @@ export interface ApiResponse {
 export class VaccineService extends BaseService {
 
   private readonly API_VACCINE = `${environment.BASE_URL}`
+  private lastContentDisposition: string = null;
+  
   constructor(
     protected http: HttpClient
   ) { super(http); }
@@ -116,6 +118,23 @@ export class VaccineService extends BaseService {
 
   // Method to call the GenerateTravelPdf API
   generateTravelPdf(childId: number): Observable<Blob> {
-    return this.http.get(`${this.API_VACCINE}Child/Travel-PDF-Download-verify/${childId}`, { responseType: 'blob' });
+    return this.http.get(`${this.API_VACCINE}Child/Travel-PDF-Download-verify/${childId}`, { 
+      responseType: 'blob',
+      observe: 'response'
+    }).pipe(
+      tap((response: HttpResponse<Blob>) => {
+        // Store the Content-Disposition header for later use
+        const contentDisposition = response.headers.get('Content-Disposition');
+        if (contentDisposition) {
+          this.lastContentDisposition = contentDisposition;
+        }
+      }),
+      map(response => response.body)
+    );
+  }
+  
+  // Method to retrieve the last Content-Disposition header
+  getLastContentDisposition(): string {
+    return this.lastContentDisposition;
   }
 }
