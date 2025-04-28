@@ -8,6 +8,10 @@ const routes: Routes = [
     path: 'login', 
     loadChildren: () => import('./public/login/login.module').then(m => m.LoginPageModule)
   },
+  {
+    path: 'loginpa',
+    loadChildren: () => import('./public/loginpa/loginpa.module').then(m => m.LoginPAPageModule)
+  },
   { 
     path: 'signup', 
     loadChildren: () => import('./public/signup/signup.module').then(m => m.SignupPageModule)
