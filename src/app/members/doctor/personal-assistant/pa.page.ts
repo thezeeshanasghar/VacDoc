@@ -1,63 +1,135 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AlertController, LoadingController } from '@ionic/angular';
-import { LoginService } from 'src/app/services/login.service';
-import { ToastService } from 'src/app/shared/toast.service';
+import { LoadingController } from '@ionic/angular';
+import { ClinicService } from 'src/app/services/clinic.service';
 import { Storage } from '@ionic/storage';
+import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-import { IonRouterOutlet, Platform } from '@ionic/angular';
-import { Plugins } from '@capacitor/core';
+import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
+import { VacationService } from 'src/app/services/vacation.service';
+import { Router } from '@angular/router';
+import * as moment from 'moment';
+import { HttpClient } from '@angular/common/http';
+import { Validators } from '@angular/forms';
 import { AbstractControl, ValidatorFn } from '@angular/forms';
-
-const { App } = Plugins;
 
 
 @Component({
-  selector: 'app-loginpa',
-  templateUrl: './loginpa.page.html',
-  styleUrls: ['./loginpa.page.scss'],
+  selector: 'app-pa',
+  templateUrl: './pa.page.html',
+  styleUrls: ['./pa.page.scss'],
 })
-export class LoginPAPage implements OnInit {
-  showPassword = false;
+export class PaPage implements OnInit {
+
   fg: FormGroup;
-  obj: any;
-  forgot = false;
-  MobileNumber: number;
+  clinics: any = [];
+
+  DoctorId: any;
+  ClinicId: any = [];
+  todaydate;
+
   constructor(
-    public router: Router,
-    public alertController: AlertController,
-    private formBuilder: FormBuilder,
-    private loginservice: LoginService,
-    private toastService: ToastService,
+    public loadingController: LoadingController,
+    private router: Router,
+    public formBuilder: FormBuilder,
     private storage: Storage,
-    private loadingController: LoadingController,
-    private platform: Platform,
-    private routerOutlet: IonRouterOutlet
+    private clinicService: ClinicService,
+    private vacationService: VacationService,
+    private toastService: ToastService,
+    private http: HttpClient
+
   ) {
-    this.platform.backButton.subscribeWithPriority(-1, () => {
-      if (!this.routerOutlet.canGoBack()) {
-        App.exitApp();
-      }
-    });
+    this.todaydate = new Date().toISOString().slice(0, 10);
+
+    //this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format('YYYY-MM-DD');
+    // this.fg2 = this.formBuilder.group({
+    //   clinics: new FormArray([]),
+    //   'formDate': [this.todaydate],
+    //   'ToDate': [this.todaydate],
+    //   'CountryCode': ['92'],
+    //   'MobileNumber': [null, [Validators.required, this.onlyNumbersValidator()]],
+    // });
   }
-  ngOnInit() { }
-  ionViewWillEnter() {
-    this.storage.get(environment.DOCTOR_Id).then(value => {
-      if (value) {
-        this.router.navigate(['/members']);
-      } else {
-        this.skipLoginIfAlreadyLoggedIn();
-        this.loginservice.changeState(false);
-        this.fg = this.formBuilder.group({
-          'MobileNumber': [null, [Validators.required, this.onlyNumbersValidator()]],
-          'Password': [null, [Validators.required, this.passwordValidator()]],
-          'CountryCode': ['92'],
-          'UserType': ['PA']
-        });
-      }
+
+  ngOnInit() {
+    this.storage.get(environment.DOCTOR_Id).then((val) => {
+      this.DoctorId = val;
     });
+    // this.getClinics();
+    this.fg = this.formBuilder.group({
+      // Id: [null],
+      // FirstName: [null],
+      // LastName: [null],
+      // DisplayName: [null],
+      // Email: new FormControl(
+      //   "",
+      //   Validators.compose([
+      //     Validators.required,
+      //     Validators.pattern(
+      //       "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
+      //     )
+      //   ])
+      // ),
+      // IsApproved: ['true'],
+      Name: ['', Validators.compose([
+        Validators.required,
+        Validators.pattern(/^[^\d]+$/)
+      ])],
+      CountryCode: ['92'],
+      MobileNumber: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.pattern("[0-9]{10}$")
+        ])
+      ),
+      // ShowMobile: [null],
+      // PhoneNo: new FormControl(
+      //   "",
+      //   Validators.compose([
+      //     Validators.required,
+      //     Validators.minLength(7),
+      //     Validators.maxLength(11),
+      //     Validators.pattern("^([0-9]*)$")
+      //   ])
+      // ),
+      // ShowPhone: [null],
+      // PMDC: new FormControl(
+      //   "",
+      //   Validators.compose([
+      //     Validators.required,
+      //     Validators.pattern("^[0-9-\\+]*-[A-Z]$")
+      //   ])
+      // ),
+      // AdditionalInfo:["",
+      //  [Validators.required,
+      //   // this.fourLinesValidator,
+      // ]],
+      // Qualification:[null],
+      // // SignatureImage: new FormControl([null]),
+      // ProfileImage: new FormControl([null])
+
+    });
+
+  }
+  // pickFromDate($event) {
+  //   this.fg2.controls['formDate'].setValue($event.detail.value);
+  // }
+  // pickTodayDate($event) {
+  //   this.fg2.controls['ToDate'].setValue($event.detail.value);
+  // }
+
+  getChildVaccinefromUser() {
+    // for (let i = 0; i <= this.clinics.length; i++) {
+    //   if (this.fg2.value.clinics[i] == true) {
+    //     this.ClinicId.push({'Id':this.clinics[i].Id});
+    //   }
+    // }
+    // let data = { 'Clinics': this.ClinicId, 'FromDate': this.fg2.value.formDate, 'ToDate': this.fg2.value.ToDate }
+    // this.addVacation(data)
+   
+    // this.addVacation()
+
+
   }
 
   onlyNumbersValidator(): ValidatorFn {
@@ -67,25 +139,35 @@ export class LoginPAPage implements OnInit {
     };
   }
 
-  togglePasswordVisibility() {
-    this.showPassword = !this.showPassword;
-  }
+  // async getClinics() {
+  //   const loading = await this.loadingController.create({ message: 'Loading' });
+  //   await loading.present();
 
-  isFormInvalid(): boolean {
-    return this.fg.invalid && (this.fg.dirty || this.fg.touched);
-  }
+  //   await this.clinicService.getClinics(this.DoctorId).subscribe(
+  //     res => {
+  //       if (res.IsSuccess) {
+  //         this.clinics = res.ResponseData;
+  //         const controls = this.clinics.map(c => new FormControl(false));
+  //         this.fg2 = this.formBuilder.group({
+  //           clinics: new FormArray(controls),
+  //            'formDate': [this.todaydate],
+  //            'ToDate': [this.todaydate]
+  //         });
+  //         loading.dismiss();
+  //       }
+  //       else {
+  //         loading.dismiss();
+  //         this.toastService.create(res.Message, 'danger');
+  //       }
+  //     },
+  //     err => {
+  //       loading.dismiss();
+  //       this.toastService.create(err, 'danger');
+  //     }
+  //   );
+  // }
 
-  // password
-  passwordValidator(): ValidatorFn {
-    return (control) => {
-      const password = control.value;
-      if (password && password.length == 0) {
-        return { minlength: true };
-      }
-      return null;
-    };
-  }
-
+  
   countryCodes = [
     { name: 'Afghanistan', code: '93' },
     { name: 'Albania', code: '355' },
@@ -329,94 +411,102 @@ export class LoginPAPage implements OnInit {
     { name: 'Zimbabwe', code: '263' },
   ];
 
-  skipLoginIfAlreadyLoggedIn() {
-    this.storage.get(environment.DOCTOR_Id).then(value => {
-      if (value) {
-        let state = true;
-        this.loginservice.changeState(state);
-        this.router.navigate(['members/dashboard']);
-      }
-    });
-  }
+  // async addVacation() {
 
+  //   const clinicId = 56; // Example clinic IDs
+  //   const fromDate = '2024-04-23'; // Example from date
+  //   const toDate = '2024-04-24';
 
+  //   this.vacationService.patchChildIdsWithSchedules(clinicId, fromDate, toDate)
+  //     .subscribe(
+  //       (response) => {
+  //         console.log('Data patched successfully:', response);
+  //         // Add your success handling code here
+  //       },
+  //       (error) => {
+  //         console.error('Failed to patch data:', error);
+  //         // Add your error handling code here
+  //       }
+  //     );
+  
+  //   // const loading = await this.loadingController.create({ message: 'Loading' });
+  //   // await loading.present();
 
-  async login() {
+  //   // await this.vacationService.addVaccation(data)
+  //   //   .subscribe(res => {
+  //   //     if (res.IsSuccess) {
+  //   //       loading.dismiss();
+  //   //       this.toastService.create('successfully added');
+  //   //       this.router.navigate(['/members/']);
+  //   //     }
+  //   //     else {
+  //   //       loading.dismiss();
+  //   //       this.toastService.create(res.Message, 'danger');
+  //   //     }
+  //   //   }, (err) => {
+  //   //     loading.dismiss();
+  //   //     this.toastService.create(err, 'danger')
+  //   //   });
+  // }
+//   async addVacation() {
+//     // Retrieve selected clinic IDs from the form
+//     const selectedClinics = this.fg2.value.clinics.reduce((acc, curr, index) => {
+//       if (curr) acc.push(this.clinics[index].Id);
+//       return acc;
+//     }, []);
 
-    const loading = await this.loadingController.create({
-      message: 'Loading'
-    });
-    await loading.present();
-    await this.loginservice.checkAuth(this.fg.value)
-      .subscribe(res => {
-        if (res.IsSuccess) {
-          this.storage.set(environment.USER, res.ResponseData);
-          this.storage.set(environment.DOCTOR_Id, res.ResponseData.DoctorId);
-          this.storage.set(environment.USER_Id, res.ResponseData.Id);
-          console.log(res.ResponseData.UserType);
-          let state = true;
-          this.loginservice.changeState(state);
-          this.getdoctorprofile(res.ResponseData.DoctorId);
-          this.router.navigate(['/members']).then(() => {
-            window.location.reload();
-          });
-          localStorage.setItem('docid', res.ResponseData.DoctorId)
-          loading.dismiss();
-        }
-        else {
-          loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
+//     // Retrieve from date and to date from the form
+//     const fromDate = moment(this.fg2.value.formDate).format('YYYY-MM-DD');
+//     const toDate = moment(this.fg2.value.ToDate).format('YYYY-MM-DD');
+//     console.log(fromDate);
+//     console.log(toDate);
 
-        }
-      }, (err) => {
-        loading.dismiss();
-        this.toastService.create(err, 'danger');
-      });
-  }
-  async getdoctorprofile(id) {
-    await this.loginservice.getDoctorProfile(id).subscribe(res => {
-      if (res.IsSuccess) {
-        this.storage.set(environment.DOCTOR, res.ResponseData);
-      }
-    });
+//     // Patch data for each selected clinic
+//     selectedClinics.forEach(async clinicId => {
+//       this.vacationService.patchChildIdsWithSchedules(clinicId, fromDate, toDate)
+//         .subscribe(
+//           (response) => {
+//             console.log('Data patched successfully for clinic ID', clinicId, ':', response);
+//             this.toastService.create("Vacation Updated Successfully")
+//             // Add your success handling code here
+//           },
+//           (error) => {
+//             console.error('Failed to patch data for clinic ID', clinicId, ':', error);
+//             this.toastService.create("Cannot Update Vacation", 'danger')
+//             // Add your error handling code here
+//           }
+//         );
+//     });
+// }
+validation_messages = {
+  name: [{ type: "required", message: "Name is required." },
+  // { type: 'pattern', message: 'Please enter only characters in the first name.' }],
+  // City2: [
+  //   { type: 'pattern', message: 'Please enter only characters in the city.' }],
+  // fatherName: [{ type: "required", message: "Guardian name is required." },
+  // { type: 'pattern', message: 'Only letters, spaces, commas, and hyphens are allowed in Guardian.' }],
+  // DOB: [{ type: "required", message: "Date of Birth is required." }
+  ],
+  mobileNumber: [
+    {
+      type: "required",
+      message: "Mobile number is required"
+    },
+  ],
+//   gender: [{ type: "required", message: "Gender is required." }],
+//   Agent2: [
+//     { type: "required", message: "Agent is required." }
+//   ],
+//   email: [
+//     { type: "pattern", message: "Please enter a valid email address" },
+//     { type: "email", message: "Please enter a valid email address" }
+// ],
+// nationality: [
+//   { type: "required", message: "Nationality is required." },
+//   { type: "pattern", message: "Please enter a valid nationality (letters and spaces only)." }
+// ],
+};
 
-  }
-
-  async forgotPasswordAlert() {
-    this.forgot = true;
-  }
-
-
-  async sendPassword() {
-    const loading = await this.loadingController.create({
-      message: 'Loading'
-    });
-    let data = {
-      "MobileNumber": this.MobileNumber,
-      "CountryCode": "92",
-      "UserType": "PA"
-    }
-    await loading.present();
-    this.loginservice.forgotPassword(data).subscribe(
-      res => {
-        if (res.IsSuccess) {
-          console.log(res.ResponseData);
-          loading.dismiss();
-          this.forgot = false;
-        }
-        else {
-          loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
-        }
-      },
-      err => {
-        loading.dismiss();
-        this.toastService.create(err, 'danger');
-      }
-    );
-  }
-
-  onInputChange(event: any) {
-    console.log('Input changed:', event.target.value);
-  }
 }
+
+// https://coryrylan.com/blog/creating-a-dynamic-checkbox-list-in-angular

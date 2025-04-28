@@ -45,6 +45,10 @@ const routes: Routes = [
   {
     path: "analytics",
     loadChildren: () => import('./analytics/analytics.module').then(m => m.AnalyticsPageModule)
+  },
+  {
+    path: "personal-assistant",
+    loadChildren: () => import('./personal-assistant/pa.module').then(m => m.PaPageModule)
   }
 ];
 

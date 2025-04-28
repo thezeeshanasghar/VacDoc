@@ -1,0 +1,103 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <!-- <ion-menu-button></ion-menu-button> -->
+    </ion-buttons>
+    <ion-title>Personal Assistant</ion-title>
+  </ion-toolbar>
+  <ion-toolbar color="primary" >
+    <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
+      <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/child" name="accessibility-outline" size="large"> </ion-icon>
+      <ion-menu-button style="margin-left: 10%"></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <form [formGroup]="fg">
+    <!-- <ion-label  position="floating" class="ion-margin-top">
+      <ion-icon name="mail" class="ion-item-start"></ion-icon>
+      Mobile Number
+    </ion-label>
+
+    <div style="display: flex;  ;">
+      <ion-select formControlName="CountryCode" style="border-bottom: 1px solid">
+        <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
+          (+{{ country.code }}) {{ country.name }}
+        </ion-select-option>
+      </ion-select>
+      <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
+    </div>
+    <div *ngIf="fg.get('MobileNumber').invalid && (fg.get('MobileNumber').dirty || fg.get('MobileNumber').touched)">
+      <div *ngIf="fg.get('MobileNumber').errors">
+        <div style="color: red;" *ngIf="fg.get('MobileNumber').errors.required">
+          Mobile number is required.
+        </div>
+        <div style="color: red;" *ngIf="fg.get('MobileNumber').errors.onlyNumbers">
+          Please enter only numbers.
+        </div>
+      </div>
+    </div> -->
+    <ion-item>
+      <div  style="display: flex;" class="country-code-container">
+        <!-- <ion-label color="primary" position="stacked" class="country-label">
+        <span class="required-asterisk">*</span>
+        </ion-label> -->
+        <ion-select formControlName="CountryCode" class="country-code-select">
+          <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
+            (+{{ country.code }}) {{ country.name }}
+          </ion-select-option>
+        </ion-select>
+
+        <ion-label color="primary" position="stacked" class="mobile-label">
+          Mobile Number <span class="required-asterisk">*</span>
+        </ion-label>
+        <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
+      </div>
+    </ion-item>
+
+
+    <ion-item>
+      <ion-label color="primary" position="floating">
+        Patient Name <span class="required-asterisk">*</span>
+      </ion-label>
+      <ion-input type="text" formControlName="Name" class="ion-text-capitalize">
+      </ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.name">
+        <div class="error-message"
+          *ngIf="fg.get('Name').hasError(validation.type) && (fg.get('Name').dirty || fg.get('Name').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+  
+    <!-- <ion-item (click)="picker.open()"> 
+      <ion-label color="primary" >From Date</ion-label>
+       <input formControlName="formDate" matInput [matDatepicker]="picker" value="{{todaydate}}" >
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker disabled="false"></mat-datepicker>
+    </ion-item>
+
+    <ion-item (click)="picker.open()"> 
+      <ion-label color="primary" >To Date</ion-label>
+       <input disabled formControlName="ToDate" matInput [matDatepicker]="picker1" value="{{todaydate}}" >
+      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+      <mat-datepicker #picker1 disabled="false"></mat-datepicker>
+    </ion-item>
+  
+
+    
+    <h1>Clinics</h1>
+    <ion-item formArrayName="clinics" *ngFor="let a of fg2.get('clinics')['controls']; let i = index">
+      <ion-label> {{clinics[i].Name}}</ion-label>
+      <ion-checkbox slot="start" required [formControlName]="i"></ion-checkbox>
+    </ion-item> -->
+
+    <ion-button (click)="getChildVaccinefromUser()">Add Assistant</ion-button>
+  </form>
+</ion-content>
