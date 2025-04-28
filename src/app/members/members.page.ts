@@ -108,11 +108,11 @@ export class MembersPage implements OnInit {
                 url: "/members/doctor/analytics/data",
                 icon: "stats-chart-outline"
               },
-              // {
-              //   title: "Brand Management",
-              //   url: "/members/doctor/brand-amount",
-              //   icon: "wallet-outline"
-              // },
+              {
+                title: "Personal Assistant",
+                url: "/members/doctor/personal-assistant",
+                icon: "wallet-outline"
+              },
               {
                 title: "Stock Management",
                 icon: "cube-outline",
