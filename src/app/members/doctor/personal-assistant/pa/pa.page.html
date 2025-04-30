@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <!-- <ion-menu-button></ion-menu-button> -->
     </ion-buttons>
-    <ion-title>Personal Assistant</ion-title>
+    <ion-title>Personal Assistant Signup</ion-title>
   </ion-toolbar>
   <ion-toolbar color="primary" >
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
@@ -98,6 +98,6 @@
       <ion-checkbox slot="start" required [formControlName]="i"></ion-checkbox>
     </ion-item> -->
 
-    <ion-button (click)="getChildVaccinefromUser()">Add Assistant</ion-button>
+    <ion-button (click)="submit()" [disabled]="!fg.valid" >Add Assistant</ion-button>
   </form>
 </ion-content>
