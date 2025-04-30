@@ -48,7 +48,7 @@ const routes: Routes = [
   },
   {
     path: "personal-assistant",
-    loadChildren: () => import('./personal-assistant/pa.module').then(m => m.PaPageModule)
+    loadChildren: () => import('./personal-assistant/personal-assistant.module').then(m => m.PersonalAssistantPageModule)
   }
 ];
 

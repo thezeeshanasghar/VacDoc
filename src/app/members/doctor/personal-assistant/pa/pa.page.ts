@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
-import { ClinicService } from 'src/app/services/clinic.service';
+// import { ClinicService } from 'src/app/services/clinic.service';
 import { Storage } from '@ionic/storage';
 import { ToastService } from 'src/app/shared/toast.service';
-import { environment } from 'src/environments/environment';
+import { environment } from '../../../../../environments/environment';
 import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
-import { VacationService } from 'src/app/services/vacation.service';
+import { PaService } from 'src/app/services/pa.service';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
 import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
 import { AbstractControl, ValidatorFn } from '@angular/forms';
+
 
 
 @Component({
@@ -32,8 +33,8 @@ export class PaPage implements OnInit {
     private router: Router,
     public formBuilder: FormBuilder,
     private storage: Storage,
-    private clinicService: ClinicService,
-    private vacationService: VacationService,
+    private paService: PaService,
+    // private vacationService: VacationService,
     private toastService: ToastService,
     private http: HttpClient
 
@@ -118,18 +119,48 @@ export class PaPage implements OnInit {
   //   this.fg2.controls['ToDate'].setValue($event.detail.value);
   // }
 
-  getChildVaccinefromUser() {
-    // for (let i = 0; i <= this.clinics.length; i++) {
-    //   if (this.fg2.value.clinics[i] == true) {
-    //     this.ClinicId.push({'Id':this.clinics[i].Id});
-    //   }
-    // }
-    // let data = { 'Clinics': this.ClinicId, 'FromDate': this.fg2.value.formDate, 'ToDate': this.fg2.value.ToDate }
-    // this.addVacation(data)
-   
-    // this.addVacation()
+  async submit() {
+    const personalAssistantData = {
+      Name: this.fg.value.Name,
+      CountryCode: this.fg.value.CountryCode,
+      MobileNumber: this.fg.value.MobileNumber,
+      Password: this.generatePassword(8), // Generate a password
+      DoctorId: this.DoctorId
+    };
+  
+    console.log('Personal Assistant Data:', personalAssistantData);
+  
+    const loading = await this.loadingController.create({
+      message: 'Loading'
+    });
+    await loading.present();
+  
+    this.paService.signUpPersonalAssistant(personalAssistantData).subscribe({
+      next: (res) => {
+        loading.dismiss();
+        if (res.IsSuccess) {
+          this.toastService.create('Assistant added successfully', 'success');
+          // Navigate or reset form if needed
+        } else {
+          this.toastService.create(res.Message, 'danger');
+        }
+      },
+      error: (err) => {
+        loading.dismiss();
+        this.toastService.create('An error occurred', 'danger');
+        console.error(err);
+      }
+    });
+  }
 
-
+  generatePassword(length: number = 8): string {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}|;:,.<>?';
+    let password = '';
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      password += characters[randomIndex];
+    }
+    return password;
   }
 
   onlyNumbersValidator(): ValidatorFn {
