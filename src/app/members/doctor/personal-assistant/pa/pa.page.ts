@@ -27,6 +27,7 @@ export class PaPage implements OnInit {
   DoctorId: any;
   ClinicId: any = [];
   todaydate;
+  email: any; 
 
   constructor(
     public loadingController: LoadingController,
@@ -83,6 +84,9 @@ export class PaPage implements OnInit {
           Validators.pattern("[0-9]{10}$")
         ])
       ),
+      Email: new FormControl("", Validators.compose([
+        Validators.required,  ]), 
+      ),
       // ShowMobile: [null],
       // PhoneNo: new FormControl(
       //   "",
@@ -125,7 +129,8 @@ export class PaPage implements OnInit {
       CountryCode: this.fg.value.CountryCode,
       MobileNumber: this.fg.value.MobileNumber,
       Password: this.generatePassword(8), // Generate a password
-      DoctorId: this.DoctorId
+      DoctorId: this.DoctorId,
+      Email: this.fg.value.Email,
     };
   
     console.log('Personal Assistant Data:', personalAssistantData);
@@ -140,7 +145,7 @@ export class PaPage implements OnInit {
         loading.dismiss();
         if (res.IsSuccess) {
           this.toastService.create('Assistant added successfully', 'success');
-          // Navigate or reset form if needed
+          this.router.navigate(['/members/doctor/personal-assistant']);
         } else {
           this.toastService.create(res.Message, 'danger');
         }
@@ -510,7 +515,7 @@ export class PaPage implements OnInit {
 //     });
 // }
 validation_messages = {
-  name: [{ type: "required", message: "Name is required." },
+  Name: [{ type: "required", message: "Name is required." },
   // { type: 'pattern', message: 'Please enter only characters in the first name.' }],
   // City2: [
   //   { type: 'pattern', message: 'Please enter only characters in the city.' }],
@@ -518,12 +523,16 @@ validation_messages = {
   // { type: 'pattern', message: 'Only letters, spaces, commas, and hyphens are allowed in Guardian.' }],
   // DOB: [{ type: "required", message: "Date of Birth is required." }
   ],
-  mobileNumber: [
+  MobileNumber: [
     {
       type: "required",
       message: "Mobile number is required"
     },
   ],
+  Email: [
+    { type: "pattern", message: "Please enter a valid email address" },
+    { type: "email", message: "Please enter a valid email address" }
+],
 //   gender: [{ type: "required", message: "Gender is required." }],
 //   Agent2: [
 //     { type: "required", message: "Agent is required." }
