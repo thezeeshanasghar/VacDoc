@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <!-- <ion-menu-button></ion-menu-button> -->
     </ion-buttons>
-    <ion-title>Personal Assistant Signup</ion-title>
+    <ion-title>Personal Assistant</ion-title>
   </ion-toolbar>
   <ion-toolbar color="primary" >
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
@@ -42,7 +42,7 @@
       </div>
     </div> -->
     <ion-item>
-      <div  style="display: flex;" class="country-code-container">
+      <div   class="country-code-container">
         <!-- <ion-label color="primary" position="stacked" class="country-label">
         <span class="required-asterisk">*</span>
         </ion-label> -->
@@ -51,24 +51,31 @@
             (+{{ country.code }}) {{ country.name }}
           </ion-select-option>
         </ion-select>
-
-        <ion-label color="primary" position="stacked" class="mobile-label">
-          Mobile Number <span class="required-asterisk">*</span>
-        </ion-label>
-        <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
       </div>
     </ion-item>
-
+    <ion-item>
+        <ion-label color="primary" position="floating" >Mobile Number <span class="required-asterisk">*</span>
+        </ion-label>
+        <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.MobileNumber">
+        <div class="error-message"
+          *ngIf="fg.get('MobileNumber').hasError(validation.type) && (fg.get('MobileNumber').dirty || fg.get('MobileNumber').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
 
     <ion-item>
       <ion-label color="primary" position="floating">
-        Patient Name <span class="required-asterisk">*</span>
+        PA Name <span class="required-asterisk">*</span>
       </ion-label>
       <ion-input type="text" formControlName="Name" class="ion-text-capitalize">
       </ion-input>
     </ion-item>
     <div class="validation-errors">
-      <ng-container *ngFor="let validation of validation_messages.name">
+      <ng-container *ngFor="let validation of validation_messages.Name">
         <div class="error-message"
           *ngIf="fg.get('Name').hasError(validation.type) && (fg.get('Name').dirty || fg.get('Name').touched)">
           <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
@@ -76,6 +83,19 @@
       </ng-container>
     </div>
   
+    <ion-item>
+      <ion-label color="primary" position="floating">Email <span class="required-asterisk">*</span></ion-label>
+      <ion-input type="email" formControlName="Email" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
+      </ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.Email">
+        <div class="error-message"
+          *ngIf="fg.get('Email').hasError(validation.type) && (fg.get('Email').dirty || fg.get('Email').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
     <!-- <ion-item (click)="picker.open()"> 
       <ion-label color="primary" >From Date</ion-label>
        <input formControlName="formDate" matInput [matDatepicker]="picker" value="{{todaydate}}" >

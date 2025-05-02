@@ -509,21 +509,17 @@ export class MembersPage implements OnInit {
       // Retrieve DoctorId and User from storage
       this.DoctorId = await this.storage.get(environment.DOCTOR_Id);
       this.user = await this.storage.get(environment.USER);
-
+  
       console.log(this.user);
-
-      // Call checkPermissions and destructure the returned object
-      const { AllowStock, AllowAlert, AllowSchedule, AllowVacation, AllowAnalytics, AllowClinic, AllowChild } = 
-        await this.checkPermissions(this.user.PAId);
-
-      console.log('Allow Stock:', AllowStock);
-      console.log('Allow Alert:', AllowAlert);
-      console.log('Allow Schedule:', AllowSchedule);
-      console.log('Allow Vacation:', AllowVacation);
-      console.log('Allow Analytics:', AllowAnalytics);
-      console.log('Allow Clinic:', AllowClinic);
-      console.log('Allow Child:', AllowChild);
-
+  
+      if (this.user.type === "PA") {
+        const permissions = await this.checkPermissions(this.user.PAId);
+        if (permissions) {
+          const { AllowStock, AllowAlert, AllowSchedule, AllowVacation, AllowAnalytics, AllowClinic, AllowChild } = permissions;
+          console.log('Permissions:', permissions);
+        }
+      }
+  
       // Call getProfile
       this.getProfile(this.user.UserType);
     } catch (error) {
@@ -541,23 +537,32 @@ export class MembersPage implements OnInit {
     AllowChild: boolean;
   }> {
     try {
-      // Simulate an API call or logic to check permissions
-      const hasPermission = await this.paService.getPa(id).toPromise();
-      console.log('Permissions:', hasPermission);
-
-      // Return multiple permissions as an object
+      if (this.user.type === "PA") {
+        const hasPermission = await this.paService.getPa(id).toPromise();
+        if (hasPermission) {
+          return {
+            AllowStock: hasPermission.AllowStock || false,
+            AllowAlert: hasPermission.AllowAlert || false,
+            AllowSchedule: hasPermission.AllowSchedule || false,
+            AllowVacation: hasPermission.AllowVacation || false,
+            AllowAnalytics: hasPermission.AllowAnalytics || false,
+            AllowClinic: hasPermission.AllowClinic || false,
+            AllowChild: hasPermission.AllowChild || false,
+          };
+        }
+      }
+      // Return default values if no permissions are found
       return {
-        AllowStock: hasPermission.AllowStock || false,
-        AllowAlert: hasPermission.AllowAlert || false,
-        AllowSchedule: hasPermission.AllowSchedule || false,
-        AllowVacation: hasPermission.AllowVacation || false,
-        AllowAnalytics: hasPermission.AllowAnalytics || false,
-        AllowClinic: hasPermission.AllowClinic || false,
-        AllowChild: hasPermission.AllowChild || false,
+        AllowStock: false,
+        AllowAlert: false,
+        AllowSchedule: false,
+        AllowVacation: false,
+        AllowAnalytics: false,
+        AllowClinic: false,
+        AllowChild: false,
       };
     } catch (error) {
       console.error('Error checking permissions:', error);
-
       // Return default values in case of an error
       return {
         AllowStock: false,
@@ -581,22 +586,14 @@ export class MembersPage implements OnInit {
       async (res) => {
         if (res.IsSuccess) {
           this.doctorData = res.ResponseData;
-          console.log(this.doctorData);
-
           this.profileImagePath = this.doctorData.ProfileImage;
           this.Name = this.doctorData.DisplayName;
-
           const clinics = this.doctorData.Clinics;
           this.hasClinics = clinics && clinics.length > 0;
+          const permissions = await this.checkPermissions(this.user.PAId);
+          if (permissions) {
+            const { AllowStock, AllowAlert, AllowClinic, AllowAnalytics, AllowVacation, AllowSchedule, AllowChild } = permissions;      
 
-          console.log(clinics);
-          console.log(this.hasClinics);
-          console.log(clinics.length);
-
-          // Get permissions
-          const { AllowStock, AllowAlert, AllowClinic, AllowAnalytics, AllowVacation, AllowSchedule, AllowChild } = await this.checkPermissions(this.user.PAId);
-
-          // Control menu based on the number of clinics
           if (data === "PA") {
             this.appPages = [
               {
@@ -767,7 +764,7 @@ export class MembersPage implements OnInit {
             this.appPages = [];
             this.childPages = [];
           }
-
+        }
           loading.dismiss();
         } else {
           loading.dismiss();
