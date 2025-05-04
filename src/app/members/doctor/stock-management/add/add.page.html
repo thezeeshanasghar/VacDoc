@@ -95,8 +95,8 @@
                                         (ngModelChange)="filterBrands($event)" 
                                         style="font-size: 15px;">
                                     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectBrand($event, item)">
-                                        <mat-option *ngFor="let brand of filteredBrands" [value]="brand.name">
-                                            {{brand.name}}
+                                        <mat-option *ngFor="let brand of filteredBrands" [value]="brand.displayName">
+                                            {{brand.displayName}}
                                         </mat-option>
                                     </mat-autocomplete>
                                 </mat-form-field>

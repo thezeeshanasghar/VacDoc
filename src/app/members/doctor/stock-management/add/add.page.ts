@@ -47,6 +47,8 @@ interface Brand {
   price: number;
   id: number;
   name: string;
+  vaccineName?: string;
+  displayName?: string;
   PurchasedAmt?: number;
   [key: string]: string | number | undefined;
 }
@@ -311,7 +313,9 @@ export class AddPage implements OnInit {
             this.brands = response.ResponseData.map(brand => ({
               id: brand.BrandId,
               name: brand.BrandName,
-              price: brand.PurchasedAmt
+              price: brand.PurchasedAmt,
+              vaccineName: brand.VaccineName || '',
+              displayName: brand.VaccineName ? `${brand.BrandName} (${brand.VaccineName})` : brand.BrandName
             }));
             this.filteredBrands = [...this.brands];
             loading.dismiss();
@@ -346,44 +350,45 @@ export class AddPage implements OnInit {
   filterBrands(event: string) {
     const filterValue = event.toLowerCase();
     this.filteredBrands = this.brands.filter(brand => 
-        brand.name.toLowerCase().includes(filterValue)
+        brand.name.toLowerCase().includes(filterValue) || 
+        (brand.vaccineName && brand.vaccineName.toLowerCase().includes(filterValue))
     );
-}
-
-selectBrand(event: MatAutocompleteSelectedEvent, item: StockItem) {
-  const selectedBrand = this.brands.find(brand => brand.name === event.option.value);
-  if (selectedBrand) {
-      item.brandId = selectedBrand.id;
-      item.brandName = selectedBrand.name;
-      item.price = selectedBrand.price; // Auto-populates but can be edited
-      console.log('Selected brand with suggested price:', selectedBrand);
-  }
-}
-
-    addNewRow() {
-        this.stockItems.push({
-            brandName: '',
-            quantity: null,
-            price: null
-        });
-    }  
-
-    calculateTotal(): number {
-      return this.stockItems.reduce((total, item) => {
-          const price = Number(item.price) || 0;
-          const quantity = Number(item.quantity) || 0;
-          return total + (price * quantity);
-      }, 0);
   }
 
-    removeRow(index: number) {
-        this.stockItems.splice(index, 1);
+  selectBrand(event: MatAutocompleteSelectedEvent, item: StockItem) {
+    const selectedBrand = this.brands.find(brand => brand.displayName === event.option.value || brand.name === event.option.value);
+    if (selectedBrand) {
+        item.brandId = selectedBrand.id;
+        item.brandName = selectedBrand.name; // Keep storing just the brand name
+        item.price = selectedBrand.price; // Auto-populates but can be edited
+        console.log('Selected brand with suggested price:', selectedBrand);
     }
+  }
 
-    // saveStock() {
-    //     if (this.stockItems.length > 0) {
-    //         console.log('Saving stock items:', this.stockItems);
-    //         // Add your save logic here
-    //     }
-    // }
+  addNewRow() {
+      this.stockItems.push({
+          brandName: '',
+          quantity: null,
+          price: null
+      });
+  }  
+
+  calculateTotal(): number {
+    return this.stockItems.reduce((total, item) => {
+        const price = Number(item.price) || 0;
+        const quantity = Number(item.quantity) || 0;
+        return total + (price * quantity);
+    }, 0);
+  }
+
+  removeRow(index: number) {
+      this.stockItems.splice(index, 1);
+  }
+
+  // saveStock() {
+  //     if (this.stockItems.length > 0) {
+  //         console.log('Saving stock items:', this.stockItems);
+  //         // Add your save logic here
+  //     }
+  // }
 }
