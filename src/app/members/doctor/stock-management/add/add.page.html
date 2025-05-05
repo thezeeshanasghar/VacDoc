@@ -67,6 +67,17 @@
             </ion-datetime>
         </ion-item>
 
+        <ion-item>
+            <ion-label position="floating">
+              Clinics <span class="required-asterisk"></span>
+            </ion-label>
+            <ion-select [(ngModel)]="selectedClinic" >
+              <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+                {{ clinic.Name }}
+              </ion-select-option>
+            </ion-select>
+        </ion-item>
+
             <ion-button expand="block" (click)="addNewRow()" color="primary" class="ion-margin-bottom">
                 <ion-icon name="add" slot="start"></ion-icon>
                 Add New Item

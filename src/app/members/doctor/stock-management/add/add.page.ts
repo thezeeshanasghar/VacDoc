@@ -22,6 +22,7 @@ import { FilePath } from '@ionic-native/file-path/ngx';
 import { StockService, StockDTO } from 'src/app/services/stock.service';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { UploadService } from 'src/app/services/upload.service';
+import { ClinicService } from "src/app/services/clinic.service";
 declare var google;
 
 interface StockItem {
@@ -65,6 +66,7 @@ export class AddPage implements OnInit {
   filteredCities: string[];
   purchaseDate: string;
   paymentDate: string;
+  selectedClinic: string = '';
   defaultDate = new Date().toISOString();
   brand: string = '';
   supplierName: string = '';
@@ -79,6 +81,10 @@ export class AddPage implements OnInit {
   bill: string;
   agents: string[] = [];
   originalAgents: any[];
+  filteredClinics: any[] = []; // Filtered clinics for autocomplete
+  clinic: string = '';
+  clinics: any[] = []; // All clinics
+  doctorId: string = '';
   constructor(
     private brandService: BrandService,
     private toastService: ToastService,
@@ -86,15 +92,23 @@ export class AddPage implements OnInit {
     private stockService: StockService,
     private fb: FormBuilder,
     private storage: Storage,
+    private clinicService: ClinicService,
   ) {
     this.purchaseDate = this.defaultDate;
     this.paymentDate = this.defaultDate;
     this.filteredCities = this.cities;
   }
   
-  ngOnInit() {
+  async ngOnInit() {
+    this.doctorId = await this.storage.get(environment.DOCTOR_Id);
+    if (!this.doctorId) {
+      console.error("Doctor ID not found");
+      this.toastService.create("Doctor ID not found", "danger");
+      return;
+    }
     this.loadBrands();
     this.fetchAgent();
+    await this.loadClinics();
     this.fg1 = this.fb.group({
       agent: [''],
       city: [''], // Initialize form controls
@@ -158,6 +172,8 @@ export class AddPage implements OnInit {
       );
     }
   }
+
+
 
   // filterSuppliers(event: string) {
   //   if (!event) {
@@ -248,6 +264,7 @@ export class AddPage implements OnInit {
           BillNo: billNo,
           Supplier: this.supplierName,
           BillDate: new Date(this.purchaseDate), // Renamed from Date to BillDate
+          clinicId: this.selectedClinic,
           IsPaid: this.isPaid,
           Quantity: item.quantity,
           StockAmount: item.price,
@@ -336,6 +353,45 @@ export class AddPage implements OnInit {
       this.toastService.create('An unexpected error occurred', 'danger');
     }
   }
+
+  async loadClinics() {
+    try {
+      const loading = await this.loadingController.create({
+        message: "Loading clinics...",
+      });
+      await loading.present();
+
+      this.clinicService.getClinics(Number(this.doctorId)).subscribe({
+        next: (response) => {
+          loading.dismiss();
+          // if (response.IsSuccess) {
+            this.clinics = response.ResponseData;
+            console.log("Clinics:", this.clinics);
+          // } else {
+          //   this.toastService.create(response.Message, "danger");
+          // }
+        },
+        error: (error) => {
+          loading.dismiss();
+          console.error("Error fetching clinics:", error);
+          this.toastService.create("Failed to load clinics", "danger");
+        },
+      });
+    } catch (error) {
+      console.error("Error in loadClinics:", error);
+      this.toastService.create("An unexpected error occurred", "danger");
+    }
+  }
+
+  // filterClinics(searchTerm: string) {
+  //   if (!searchTerm) {
+  //     this.filteredClinics = this.clinics;
+  //   } else {
+  //     this.filteredClinics = this.clinics.filter((clinic) =>
+  //       clinic.Name.toLowerCase().includes(searchTerm.toLowerCase())
+  //     );
+  //   }
+  // }
 
   filter(event: any): void {
     const filterValue = event.toLowerCase();
