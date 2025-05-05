@@ -106,6 +106,10 @@ export class AddPage implements OnInit {
       this.toastService.create("Doctor ID not found", "danger");
       return;
     }
+    this.storage.get(environment.CLINIC_Id).then((val) => {
+      console.log('Clinic ID:', val);
+      this.selectedClinic = val;
+    });
     this.loadBrands();
     this.fetchAgent();
     await this.loadClinics();
@@ -154,8 +158,7 @@ export class AddPage implements OnInit {
         this.agents = agents.ResponseData;
         this.originalAgents = [...this.agents]; // Store original agents for filtering
         console.log('Fetched agents:', agents.ResponseData); 
-        console.log('Fetched agents:', agents.ResponseData.length); 
-        // Log the fetched agents
+        console.log('Fetched agents:', agents.ResponseData.length);
       },
       (error: any) => {
         console.error('Error fetching agents:', error);
@@ -173,6 +176,10 @@ export class AddPage implements OnInit {
     }
   }
 
+  // if (storedClinicId) {
+  //   this.selectedClinic = storedClinicId; // Preselect the clinic
+  //   console.log("Preselected Clinic ID:", this.selectedClinic);
+  // }
 
 
   // filterSuppliers(event: string) {
