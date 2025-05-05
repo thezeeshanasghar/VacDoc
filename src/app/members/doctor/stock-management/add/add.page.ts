@@ -106,10 +106,7 @@ export class AddPage implements OnInit {
       this.toastService.create("Doctor ID not found", "danger");
       return;
     }
-    this.storage.get(environment.CLINIC_Id).then((val) => {
-      console.log('Clinic ID:', val);
-      this.selectedClinic = val;
-    });
+   
     this.loadBrands();
     this.fetchAgent();
     await this.loadClinics();
@@ -374,6 +371,10 @@ export class AddPage implements OnInit {
           // if (response.IsSuccess) {
             this.clinics = response.ResponseData;
             console.log("Clinics:", this.clinics);
+            this.storage.get(environment.CLINIC_Id).then((val) => {
+              console.log('Clinic ID:', val);
+              this.selectedClinic = val;
+            });
           // } else {
           //   this.toastService.create(response.Message, "danger");
           // }
