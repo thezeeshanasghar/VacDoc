@@ -44,6 +44,10 @@ export class StockManagementPage implements OnInit {
     this.storage.get(environment.DOCTOR_Id).then((val) => {
       this.getBrandAmount(val);
     });
+    this.storage.get(environment.CLINIC_Id).then((val) => {
+      console.log('Clinic ID:', val);
+      this.getBrandAmount(val);
+    });
   }
 
   async getBrandAmount(id: string) {
