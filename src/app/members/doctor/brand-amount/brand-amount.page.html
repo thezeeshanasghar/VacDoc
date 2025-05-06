@@ -21,6 +21,14 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+  <ion-item>
+    <ion-label position="floating">Select Clinic</ion-label>
+    <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)">
+      <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+        {{ clinic.Name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
   <form>
     <ion-grid>
       <ion-row class="header-row">

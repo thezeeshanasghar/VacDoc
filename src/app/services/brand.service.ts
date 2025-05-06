@@ -40,7 +40,7 @@ export class BrandService extends BaseService {
   }
 
   getBrandAmount(id: string): Observable<Response<BrandAmountDTO[]>> {
-    const url = `${this.API_BRAND}brandamount/${id}`;
+    const url = `${this.API_BRAND}brandamount/clinic/${id}`;
     return this.http.get<Response<BrandAmountDTO[]>>(url, this.httpOptions);
   }
 
