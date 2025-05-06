@@ -85,6 +85,7 @@ export class AddPage implements OnInit {
   clinic: string = '';
   clinics: any[] = []; // All clinics
   doctorId: string = '';
+  clinicid: any;
   constructor(
     private brandService: BrandService,
     private toastService: ToastService,
@@ -326,9 +327,10 @@ export class AddPage implements OnInit {
       });
       await loading.present();
   
-      const doctorId = await this.storage.get(environment.DOCTOR_Id);
+      // const doctorId = await this.storage.get(environment.DOCTOR_Id);
+      this.clinicid = await this.storage.get(environment.CLINIC_Id);
       
-      this.brandService.getBrandAmount(doctorId).subscribe({
+      this.brandService.getBrandAmount( this.clinicid).subscribe({
         next: (response) => {
           if (response.IsSuccess) {
             this.brands = response.ResponseData.map(brand => ({

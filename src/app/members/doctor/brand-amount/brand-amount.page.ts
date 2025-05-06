@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { BrandService, BrandAmountDTO } from 'src/app/services/brand.service';
+import { ClinicService } from 'src/app/services/clinic.service'; 
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
@@ -17,27 +18,82 @@ export class BrandAmountPage implements OnInit {
 
   brandAmounts: BrandAmountDTO[] = [];
   fg: FormGroup
+  // clinicService: any;
+  clinics: any;
+  selectedClinicId: any;
+  doctorId: any;
+  online: Promise<any>;
+  clinicId: any;
   constructor(
     public loadingController: LoadingController,
     private storage: Storage,
     private brandService: BrandService,
     private toastService: ToastService,
+    private clinicService: ClinicService,
   ) { }
 
-  ngOnInit() {
-    this.storage.get(environment.DOCTOR_Id).then((val) => {
-      this.getBrandAmount(val);
-    });
+  async ngOnInit() {
+    this.doctorId = await this.storage.get(environment.DOCTOR_Id);
+    console.log('Doctor ID:', this.doctorId);
+    if (!this.doctorId) {
+      console.error('Doctor ID not found');
+      this.toastService.create('Doctor ID not found', 'danger');
+      return;
+    }
+    this.clinicId = await this.storage.get(environment.CLINIC_Id);
+    console.log('Clinic ID:', this.clinicId);
+    if (!this.doctorId) {
+      console.error('Doctor ID not found');
+      this.toastService.create('Doctor ID not found', 'danger');
+      return;
+    }
+   await this.loadClinics();
+  }
+
+  async loadClinics() {
+    try {
+      const loading = await this.loadingController.create({
+        message: 'Loading clinics...',
+      });
+      await loading.present();
+
+      this.clinicService.getClinics(Number(this.doctorId)).subscribe({
+        next: (response) => {
+          loading.dismiss();
+          if (response.IsSuccess) {
+            this.clinics = response.ResponseData;
+            console.log('Clinics:', this.clinics);
+           
+              console.log('Clinic ID:', this.clinicId);
+              this.selectedClinicId = this.clinicId || (this.clinics.length > 0 ? this.clinics[0].Id : null);
+              if (this.selectedClinicId) {
+                this.getBrandAmount(this.selectedClinicId);
+              }
+          
+          } else {
+            this.toastService.create(response.Message, 'danger');
+          }
+        },
+        error: (error) => {
+          loading.dismiss();
+          console.error('Error fetching clinics:', error);
+          this.toastService.create('Failed to load clinics', 'danger');
+        },
+      });
+    } catch (error) {
+      console.error('Error in loadClinics:', error);
+      this.toastService.create('An unexpected error occurred', 'danger');
+    }
   }
 
   async getBrandAmount(id: string) {
     const loading = await this.loadingController.create({
-      message: 'Loading'
+      message: 'Loading...',
     });
     await loading.present();
-  
+
     this.brandService.getBrandAmount(id).subscribe(
-      (res: { IsSuccess: boolean, ResponseData: BrandAmountDTO[], Message: string }) => {
+      (res: { IsSuccess: boolean; ResponseData: BrandAmountDTO[]; Message: string }) => {
         loading.dismiss();
         if (res.IsSuccess) {
           this.brandAmounts = res.ResponseData.sort((a, b) => a.BrandName.localeCompare(b.BrandName));
@@ -46,7 +102,7 @@ export class BrandAmountPage implements OnInit {
           this.toastService.create(res.Message || 'Failed to fetch brand amounts', 'danger');
         }
       },
-      err => {
+      (err) => {
         loading.dismiss();
         console.error('Error fetching brand amounts:', err);
         this.toastService.create('Failed to fetch brand amounts', 'danger');
@@ -54,13 +110,17 @@ export class BrandAmountPage implements OnInit {
     );
   }
 
+  onClinicChange(event: any) {
+    const clinicId = event.detail.value;
+    console.log('Selected Clinic ID:', clinicId);
+    this.getBrandAmount(clinicId);
+  }
+
   async updateBrandAmount() {
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
-
     await loading.present();
-
     await this.brandService.putBrandAmount(this.brandAmounts)
       .subscribe(res => {
         if (res.IsSuccess) {
@@ -76,7 +136,7 @@ export class BrandAmountPage implements OnInit {
         this.toastService.create(err, 'danger')
       });
   }
-  // Add to BrandAmountPage class
+ 
 async downloadPDF() {
   try {
     const loading = await this.loadingController.create({
