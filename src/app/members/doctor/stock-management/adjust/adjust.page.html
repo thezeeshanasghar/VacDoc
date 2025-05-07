@@ -18,88 +18,113 @@
 
 <ion-content class="ion-padding">
     <form #adjustForm="ngForm" (ngSubmit)="onSubmit()">
-        <ion-list>
-            <!-- Brand Selection -->
-            <ion-item>
-                <ion-checkbox [(ngModel)]="isIncrease" required name="increaseCheckbox" (ionChange)="onIncreaseChange()"
-                    [disabled]="isDecrease">
-                </ion-checkbox>
-                <ion-label class="ion-padding-start">Increase Stock</ion-label>
-           
-                <ion-checkbox [(ngModel)]="isDecrease" required name="decreaseCheckbox" (ionChange)="onDecreaseChange()"
-                    [disabled]="isIncrease">
-                </ion-checkbox>
-                <ion-label class="ion-padding-start">Decrease Stock</ion-label>
-            </ion-item>
-            <ion-item>
-                <mat-form-field class="example-full-width">
-                    <input type="text" 
-                        aria-label="Brand" 
-                        matInput 
-                        [(ngModel)]="adjustment.brandName"
-                        name="brandName"
-                        [matAutocomplete]="auto"
-                        (ngModelChange)="filterBrands($event)" 
-                        required
-                        placeholder="Select brand"
-                        style="font-size: 15px;">
-                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectBrand($event)">
-                        <mat-option *ngFor="let brand of filteredBrands" [value]="brand.name">
-                            {{brand.name}}
-                        </mat-option>
-                    </mat-autocomplete>
-                </mat-form-field>
-            </ion-item>
-
-            <!-- Adjustment Type -->
-            <!-- Replace the existing Adjustment Type section with this -->
-            <!-- <ion-item>
-                <ion-label>Adjustment Type</ion-label>
-            </ion-item> -->
-
-            <!-- Date -->
-            <ion-item>
-                <ion-label position="stacked">Date</ion-label>
-                <ion-datetime [(ngModel)]="adjustment.date" name="date" display-format="DD/MM/YYYY" required>
-                </ion-datetime>
-            </ion-item>
-
-            <!-- Quantity -->
-            <ion-item>
-                <ion-label position="stacked">Quantity</ion-label>
-                <ion-input type="number" [(ngModel)]="adjustment.quantity" name="quantity" required min="1">
-                </ion-input>
-            </ion-item>
-
-            <!-- Price -->
-            <!-- <ion-item>
-                <ion-label position="stacked">Price per Unit</ion-label>
-                <ion-input type="number" [(ngModel)]="adjustment.price" name="price" required min="0">
-                </ion-input>
-            </ion-item> -->
-
-            <!-- Reason -->
-            <ion-item>
-                <ion-label position="stacked">Reason for Adjustment</ion-label>
-                <ion-textarea [(ngModel)]="adjustment.reason" name="reason" rows="3" required
-                    placeholder="Enter reason for stock adjustment">
-                </ion-textarea>
-            </ion-item>
-        </ion-list>
-
-        <!-- Total Value -->
-        <!-- <ion-item lines="none">
-            <ion-label>
-                <h2>Total Value</h2>
-            </ion-label>
-            <ion-text slot="end" color="primary">
-                <h2>Rs {{adjustment.quantity * adjustment.price || 0}}</h2>
-            </ion-text>
-        </ion-item> -->
-
-        <ion-button expand="block" type="submit" class="ion-margin-top" [color]="isIncrease ? 'success' : 'danger'"
-            [disabled]="!adjustForm.valid">
-            {{isIncrease ? 'Add Stock' : 'Remove Stock'}}
-        </ion-button>
+      <ion-list>
+        <!-- Brand Selection -->
+        <ion-item>
+            <ion-checkbox [(ngModel)]="isIncrease" required name="increaseCheckbox" (ionChange)="onIncreaseChange()"
+                [disabled]="isDecrease">
+            </ion-checkbox>
+            <ion-label class="ion-padding-start">Increase Stock</ion-label>
+       
+            <ion-checkbox [(ngModel)]="isDecrease" required name="decreaseCheckbox" (ionChange)="onDecreaseChange()"
+                [disabled]="isIncrease">
+            </ion-checkbox>
+            <ion-label class="ion-padding-start">Decrease Stock</ion-label>
+        </ion-item>
+        <ion-item>
+          <mat-form-field class="example-full-width">
+            <input
+              type="text"
+              aria-label="Brand"
+              matInput
+              [(ngModel)]="adjustment.brandName"
+              name="brandName" 
+              [matAutocomplete]="auto"
+              (ngModelChange)="filterBrands($event)"
+              required
+              placeholder="Select brand"
+              style="font-size: 15px;"
+            />
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectBrand($event)">
+              <mat-option *ngFor="let brand of filteredBrands" [value]="brand.name">
+                {{ brand.name }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </ion-item>
+  
+        <!-- Date -->
+        <ion-item>
+          <ion-label position="floating">Date</ion-label>
+          <ion-datetime
+            [(ngModel)]="adjustment.date"
+            name="date" 
+            display-format="DD/MM/YYYY"
+            required
+          >
+          </ion-datetime>
+        </ion-item>
+  
+        <!-- Quantity -->
+        <ion-item>
+          <ion-label position="floating">Quantity</ion-label>
+          <ion-input
+            type="number"
+            [(ngModel)]="adjustment.quantity"
+            name="quantity" 
+            required
+            min="1"
+          >
+          </ion-input>
+        </ion-item>
+  
+        <!-- Price -->
+        <ion-item>
+          <ion-label position="floating">Price</ion-label>
+          <ion-input
+            type="number"
+            [(ngModel)]="adjustment.price"
+            name="price" 
+            required
+            min="0.01"
+            step="0.01"
+            placeholder="Enter price per unit"
+          >
+          </ion-input>
+        </ion-item>
+  
+        <!-- Clinics -->
+        <ion-item>
+          <ion-label position="floating">Clinics <span class="required-asterisk"></span></ion-label>
+          <ion-select [(ngModel)]="selectedClinic" name="clinic" style="margin-left: 55px;">
+            <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+              {{ clinic.Name }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+  
+        <!-- Reason -->
+        <ion-item>
+          <ion-label position="floating">Reason for Adjustment</ion-label>
+          <ion-textarea
+            [(ngModel)]="adjustment.reason"
+            name="reason"
+            rows="3"
+            required
+            placeholder="Enter reason for stock adjustment"
+          >
+          </ion-textarea>
+        </ion-item>
+      </ion-list>
+  
+      <ion-button
+        expand="block"
+        type="submit"
+        class="ion-margin-top"
+        [color]="isIncrease ? 'success' : 'danger'"
+        [disabled]="!adjustForm.valid"
+      >
+        {{ isIncrease ? 'Add Stock' : 'Remove Stock' }}
+      </ion-button>
     </form>
-</ion-content>
+  </ion-content>

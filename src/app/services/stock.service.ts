@@ -8,6 +8,8 @@ export interface AdjustStockDTO {
   brandId: number;
   adjustment: number;
   reason: string;
+  clinicId: string;
+  price: number;
   date: Date;
   brandName?: string;
   vaccineName?: string;
@@ -65,7 +67,7 @@ export class StockService {
     return this.http.post<Response<StockDTO[]>>(`${this.apiUrl}Stock`, stocks);
   }
   getBills(id:number, toDate?: Date): Observable<Response<BillDetails[]>> {
-    let url = `${this.apiUrl}bill/doctor/${id}`;
+    let url = `${this.apiUrl}bill/clinic/${id}`;
     return this.http.get<Response<BillDetails[]>>(url);
   }
   getBrandBills(id:number): Observable<Response<BillDetails[]>> {
