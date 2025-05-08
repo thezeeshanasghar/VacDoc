@@ -66,6 +66,7 @@ export class StockManagementPage implements OnInit {
     console.log('Selected Clinic ID:', clinicId);
     this.getBrandAmount(clinicId);
   }
+  
   async loadClinics(id: number) {
     try {
       const loading = await this.loadingController.create({
