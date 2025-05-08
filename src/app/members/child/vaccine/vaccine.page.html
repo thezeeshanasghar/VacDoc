@@ -32,16 +32,16 @@
           <ion-img *ngIf="!checkVaccineIsDon(item.value)" style="height: 20px; display: inline-block;" (click) = "unfillbulk(item)"
             src="../../assets/injectionFilled.png">
           </ion-img>
-          <ion-icon style="margin-right: 10px" *ngIf="!checkVaccineIsDon(item.value)" size="small"
-          routerLink="/members/child/vaccine/{{childId}}/bulkinvoice/{{item.key}}" color="primary"
-            name="document-text-outline">
-          </ion-icon> 
-           <ion-icon color="primary" name="calendar" (click)="picker.open()" size="small">
+          <ion-icon color="primary" name="calendar" (click)="picker.open()" size="small">
             <input [matDatepicker]="picker" value="{{item.key}}"
-              (dateChange)="updateBulkDate($event, item.value[0].Id)">
+            (dateChange)="updateBulkDate($event, item.value[0].Id)">
             <mat-datepicker #picker></mat-datepicker>
           </ion-icon> 
         </div>
+        <ion-icon style="margin-right: 10px" *ngIf="!checkVaccineIsDon(item.value)" size="small"
+        routerLink="/members/child/vaccine/{{childId}}/bulkinvoice/{{item.key}}" color="primary"
+          name="document-text-outline">
+        </ion-icon> 
         </div>
         <div *ngFor="let v of item.value" style="margin-bottom: -10px;">
           <ion-item lines="none" style="display: flex; align-items: center; margin: -2px 0; padding: -5px 0;">
