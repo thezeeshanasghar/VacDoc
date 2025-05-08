@@ -1,0 +1,42 @@
+<ion-header>
+    <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+        <!-- <ion-menu-button></ion-menu-button> -->
+      </ion-buttons>
+      <ion-title>Personal Assistant Access</ion-title>
+    </ion-toolbar>
+    <ion-toolbar color="primary" >
+      <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
+        <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
+        <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
+        <ion-icon style="margin-left: 10%" routerLink="/members/child" name="accessibility-outline" size="large"> </ion-icon>
+        <ion-menu-button style="margin-left: 10%"></ion-menu-button>
+      </ion-buttons>
+    </ion-toolbar>
+ </ion-header>
+  
+  <ion-content class="ion-padding">
+    <form [formGroup]="fg">
+      <!-- PA Dropdown -->
+      <ion-item>
+        <ion-label position="floating">Select PA</ion-label>
+        <ion-select formControlName="pa" (ionChange)="onPADropdownChange($event)">
+          <ion-select-option *ngFor="let pa of personalAssistants" [value]="pa.Id">
+            {{ pa.Name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+  
+      <!-- Clinics Dropdown -->
+      <ion-item>
+        <ion-label position="floating">Select Clinic</ion-label>
+        <ion-select formControlName="clinic" (ionChange)="onClinicDropdownChange($event)">
+          <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+            {{ clinic.Name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+  
+      <ion-button expand="block" (click)="submit()" [disabled]="!fg.valid">Submit</ion-button>
+    </form>
+  </ion-content>

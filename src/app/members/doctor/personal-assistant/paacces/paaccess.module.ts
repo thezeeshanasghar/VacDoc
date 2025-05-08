@@ -5,22 +5,14 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { PersonalAssistantPage } from './personal-assistant.page';
+import { PaAccessPage } from './paaccess.page';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatFormFieldModule , MatInputModule } from '@angular/material';
 
 const routes: Routes = [
   {
     path: '',
-    component: PersonalAssistantPage
-  },
-  { 
-    path: 'signup', 
-    loadChildren: () => import('./pa/pa.module').then(m => m.PaPageModule) 
-  },
-  { 
-    path: 'access', 
-    loadChildren: () => import('./paacces/paaccess.module').then(m => m.PaAccessPageModule) 
+    component: PaAccessPage
   },
 ];
 
@@ -35,6 +27,6 @@ const routes: Routes = [
     MatFormFieldModule,
     MatInputModule
   ],
-  declarations: [PersonalAssistantPage]
+  declarations: [PaAccessPage]
 })
-export class PersonalAssistantPageModule {}
+export class PaAccessPageModule {}
