@@ -370,16 +370,12 @@ export class AddPage implements OnInit {
       this.clinicService.getClinics(Number(this.doctorId)).subscribe({
         next: (response) => {
           loading.dismiss();
-          // if (response.IsSuccess) {
             this.clinics = response.ResponseData;
             console.log("Clinics:", this.clinics);
             this.storage.get(environment.CLINIC_Id).then((val) => {
               console.log('Clinic ID:', val);
               this.selectedClinic = val;
             });
-          // } else {
-          //   this.toastService.create(response.Message, "danger");
-          // }
         },
         error: (error) => {
           loading.dismiss();

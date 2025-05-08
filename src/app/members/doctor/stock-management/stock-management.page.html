@@ -15,6 +15,14 @@
 </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
+  <ion-item>
+    <ion-label position="floating">Select Clinic</ion-label>
+    <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)">
+      <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+        {{ clinic.Name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
   <ion-grid>
     <ion-row>
       <ion-col size="12" size-sm="6" size-md="4" *ngFor="let b of data">

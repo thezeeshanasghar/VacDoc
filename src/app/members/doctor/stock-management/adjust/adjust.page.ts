@@ -3,6 +3,7 @@ import { ToastService } from 'src/app/shared/toast.service';
 import { BrandService } from 'src/app/services/brand.service';
 import { StockService, AdjustStockDTO } from 'src/app/services/stock.service';
 import { LoadingController } from '@ionic/angular';
+import { ClinicService } from 'src/app/services/clinic.service';
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 
@@ -24,7 +25,7 @@ interface StockAdjustment {
 export class AdjustPage implements OnInit {
     isIncrease: boolean = false;
     isDecrease: boolean = false;
-  adjustment: StockAdjustment = {
+    adjustment: StockAdjustment = {
     brandName: null,
     brandId: null,
     type: null,
@@ -37,12 +38,18 @@ export class AdjustPage implements OnInit {
   filteredBrands: any[] = [];
   doctorId: number;
   DoctorId: any;
+  clinicid: string;
+  // clinicService: any;
+  selectedClinic: string = '';
+  clinic: string = '';
+  clinics: any[] = [];
 
   constructor(
     private brandService: BrandService,
     private stockService: StockService,
     private toastService: ToastService,
     private loadingController: LoadingController,
+    private clinicService: ClinicService,
     private storage: Storage,
   ) {}
 
@@ -50,6 +57,41 @@ export class AdjustPage implements OnInit {
     this.loadBrands();
     this.DoctorId = await this.storage.get(environment.DOCTOR_Id);
     console.log('Doctor ID:', this.DoctorId);
+    await this.loadClinics(this.DoctorId);
+  }
+
+  async loadClinics(id:number) {
+    try {
+      const loading = await this.loadingController.create({
+        message: "Loading clinics...",
+      });
+      await loading.present();
+      console.log("Doctor ID:", id);
+
+      this.clinicService.getClinics(id).subscribe({
+        next: (response) => {
+          loading.dismiss();
+          // if (response.IsSuccess) {
+            this.clinics = response.ResponseData;
+            console.log("Clinics:", this.clinics);
+            this.storage.get(environment.CLINIC_Id).then((val) => {
+              console.log('Clinic ID:', val);
+              this.selectedClinic = val;
+            });
+          // } else {
+          //   this.toastService.create(response.Message, "danger");
+          // }
+        },
+        error: (error) => {
+          loading.dismiss();
+          console.error("Error fetching clinics:", error);
+          this.toastService.create("Failed to load clinics", "danger");
+        },
+      });
+    } catch (error) {
+      console.error("Error in loadClinics:", error);
+      this.toastService.create("An unexpected error occurred", "danger");
+    }
   }
 
   filterBrands(event: string) {
@@ -64,27 +106,70 @@ export class AdjustPage implements OnInit {
     if (selectedBrand) {
       this.adjustment.brandId = selectedBrand.id;
       this.adjustment.brandName = selectedBrand.name;
+      this.adjustment.price = selectedBrand.price; 
     }
   }
 
+  // async loadBrands() {
+  //   try {
+  //     this.brandService.getBrands().subscribe({
+  //       next: (response) => {
+  //         if (response.IsSuccess) {
+  //           console.log('Brands:', response.ResponseData);
+  //           this.brands = response.ResponseData.map(brand => ({
+  //             id: brand.Id,
+  //             name: brand.Name
+  //           }));
+  //         } else {
+  //           this.toastService.create(response.Message, 'danger');
+  //         }
+  //       },
+  //       error: (error) => {
+  //         console.error('Error fetching brands:', error);
+  //         this.toastService.create('Failed to load brands', 'danger');
+  //       }
+  //     });
+  //   } catch (error) {
+  //     console.error('Error in loadBrands:', error);
+  //     this.toastService.create('An unexpected error occurred', 'danger');
+  //   }
+  // }
   async loadBrands() {
     try {
-      this.brandService.getBrands().subscribe({
+      const loading = await this.loadingController.create({
+        message: 'Loading brands...'
+      });
+      await loading.present();
+  
+      // const doctorId = await this.storage.get(environment.DOCTOR_Id);
+      this.clinicid = await this.storage.get(environment.CLINIC_Id);
+      
+      this.brandService.getBrandAmount( this.clinicid).subscribe({
         next: (response) => {
           if (response.IsSuccess) {
+            console.log('Brands:', response.ResponseData);
             this.brands = response.ResponseData.map(brand => ({
-              id: brand.Id,
-              name: brand.Name
+              id: brand.BrandId,
+              name: brand.BrandName,
+              price: brand.Amount,
+              
+              vaccineName: brand.VaccineName || '',
+              displayName: brand.VaccineName ? `${brand.BrandName} (${brand.VaccineName})` : brand.BrandName
             }));
+            this.filteredBrands = [...this.brands];
+            loading.dismiss();
           } else {
+            loading.dismiss();
             this.toastService.create(response.Message, 'danger');
           }
         },
         error: (error) => {
-          console.error('Error fetching brands:', error);
+          loading.dismiss();
+          console.error('Error fetching brand amounts:', error);
           this.toastService.create('Failed to load brands', 'danger');
         }
       });
+  
     } catch (error) {
       console.error('Error in loadBrands:', error);
       this.toastService.create('An unexpected error occurred', 'danger');
@@ -118,6 +203,8 @@ async onSubmit() {
         DoctorId: this.DoctorId,
         brandId: this.adjustment.brandId,
         adjustment: this.isIncrease ? this.adjustment.quantity : -this.adjustment.quantity,
+        clinicId: this.selectedClinic,
+        price: this.adjustment.price,
         reason: this.adjustment.reason,
         date: new Date(this.adjustment.date)
       };
