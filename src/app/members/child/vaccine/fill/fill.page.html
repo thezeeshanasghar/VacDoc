@@ -87,7 +87,7 @@
 
     <ion-item (click)="expiryPicker.open()">
       <ion-label color="primary">Expiry</ion-label>
-      <input formControlName="Expiry" matInput [matDatepicker]="expiryPicker" [value]="todaydate">
+      <input formControlName="Expiry" matInput [matDatepicker]="expiryPicker" >
       <mat-datepicker-toggle matSuffix [for]="expiryPicker"></mat-datepicker-toggle>
       <mat-datepicker #expiryPicker></mat-datepicker>
       <ion-text color="danger"
