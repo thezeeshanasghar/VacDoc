@@ -42,10 +42,10 @@ export class Step1Page implements OnInit {
         Validators.required,
         Validators.pattern(/^\s*[a-zA-Z]+(?:\s[a-zA-Z]+)*\s*$/)
       ])],
-      LastName: ['', Validators.compose([
-        Validators.required,
-        Validators.pattern(/^\s*[a-zA-Z]+(?:\s[a-zA-Z]+)*\s*$/)
-      ])],
+      // LastName: ['', Validators.compose([
+      //   Validators.required,
+      //   Validators.pattern(/^\s*[a-zA-Z]+(?:\s[a-zA-Z]+)*\s*$/)
+      // ])],
       DisplayName: ['', Validators.compose([
         Validators.required,
         Validators.pattern(/^\s*[a-zA-Z]+(?:\s[a-zA-Z]+)*\s*$/) // Allow spaces at the start and end
@@ -566,10 +566,9 @@ export class Step1Page implements OnInit {
       { type: 'required', message: 'First Name is required.' },
       { type: 'pattern', message: 'PLeaseEnter Only Charecters in First Name.' }
     ],
-
-    lastName: [{ type: "required", message: "LastName is required." },
-    { type: 'pattern', message: 'You can Enter Only Charecters in Last Name.' }
-    ],
+    // lastName: [{ type: "required", message: "LastName is required." },
+    // { type: 'pattern', message: 'You can Enter Only Charecters in Last Name.' }
+    // ],
     displayName: [{ type: "required", message: "DisplayName is required." },
     { type: 'pattern', message: 'You can Enter Only Charecters in Display Name.' }
     ],

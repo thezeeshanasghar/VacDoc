@@ -24,6 +24,12 @@ export class EditPage implements OnInit {
   ];
   filteredCities: string[];
   fg: FormGroup;
+  isCnicRequired: boolean = false;
+  check:string = '';
+  agents: string[] = [];
+  originalAgents: any[];
+  Agent: any;
+  Nationality: any;
 
   constructor(
     public loadingController: LoadingController,
@@ -53,23 +59,67 @@ export class EditPage implements OnInit {
       'PreferredDayOfReminder': 0,
       'IsEPIDone': [null],
       'IsVerified': [null],
-      'PreferredSchedule': [null]
+      'PreferredSchedule': [null],
+      'Type': [null],
+      'agent': [null],
+      'Nationality': [null],
     });
     this.getchild();
+    this.fetchAgent()
   }
 
   updateGender(gender) {
     this.fg.value.Gender = gender;
   }
+
+  checkAvailability(type: string) {
+    console.log(type);
+    if (type === 'travel') {
+      this.isCnicRequired = true; // Show the inputs
+console.log(this.isCnicRequired);
+      // return true;
+    } else {
+      this.isCnicRequired = false; // Hide the inputs
+      console.log(this.isCnicRequired);
+      // return false;
+    }
+  }
+
+  fetchAgent() {
+    this.childService.getAgent(1).subscribe(
+      (agents: any) => {
+        this.agents = agents.ResponseData;
+        this.originalAgents = [...this.agents]; // Store original agents for filtering
+        console.log('Fetched agents:', agents.ResponseData); 
+        console.log('Fetched agents:', agents.ResponseData.length); 
+        // Log the fetched agents
+      },
+      (error: any) => {
+        console.error('Error fetching agents:', error);
+      }
+    );
+  }
+
+  filterAgents(value: string) {
+    if (!value.trim()) {
+      this.agents = [...this.originalAgents]; // Restore original agents if input is empty
+    } else {
+      this.agents = this.originalAgents.filter(agent =>
+        agent.toLowerCase().includes(value.toLowerCase())
+      );
+    }
+  }
+  
   async getchild() {
     const loading = await this.loadingController.create({
-      message: 'Loading'
+      message: 'Loading',
     });
     await loading.present();
     await this.childService.getChildById(this.route.snapshot.paramMap.get('id')).subscribe(
-      res => {
+      (res) => {
         if (res.IsSuccess) {
           this.child = res.ResponseData;
+          console.log(this.child);
           loading.dismiss();
           this.fg.controls['Id'].setValue(this.child.Id);
           this.fg.controls['ClinicId'].setValue(this.child.ClinicId);
@@ -87,18 +137,25 @@ export class EditPage implements OnInit {
           this.fg.controls['IsEPIDone'].setValue(this.child.IsEPIDone);
           this.fg.controls['IsVerified'].setValue(this.child.IsVerified);
           this.fg.controls['CNIC'].setValue(this.child.CNIC);
-        }
-        else {
+          this.fg.controls['Type'].setValue(this.child.Type);
+          this.fg.controls['agent'].setValue(this.child.Agent);
+          console.log(this.child.Agent);
+          this.fg.controls['Nationality'].setValue(this.child.Nationality);
+          this.check = this.child.Type;
+          // Check availability and update isCnicRequired
+          this.checkAvailability(this.child.Type);
+        } else {
           loading.dismiss();
-          this.toastService.create(res.Message, 'danger')
+          this.toastService.create(res.Message, 'danger');
         }
       },
-      err => {
+      (err) => {
         loading.dismiss();
         this.toastService.create(err, 'danger');
       }
     );
   }
+
   countryCodes = [
     { name: 'Afghanistan', code: '93' },
     { name: 'Albania', code: '355' },
@@ -364,6 +421,7 @@ export class EditPage implements OnInit {
         this.toastService.create(err, 'danger')
       });
   }
+  
 
   filterCities(event: any) {
     const searchTerm = event.toLowerCase();
