@@ -84,7 +84,7 @@ export class FillPage implements OnInit {
       // ['', Validators.required], // Ensure this is initialized
       Lot: new FormControl(''),
       // ['', Validators.required],
-      Expiry: new FormControl(''),
+      Expiry: [],
       // ['', Validators.required], // Add Expiry control
       Validity: new FormControl(''),
       // ['', Validators.required],
@@ -251,6 +251,7 @@ export class FillPage implements OnInit {
     }
     loading.dismiss();
     this.fg.value.GivenDate = moment(this.fg.value.GivenDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
+    this.fg.value.Expiry = moment(this.fg.value.Expiry, 'YYYY-MM-DD').format('YYYY-MM-DD');
     await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
       res => {
         if (res.IsSuccess) {

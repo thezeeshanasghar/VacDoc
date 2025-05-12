@@ -599,11 +599,11 @@ filterAgents(value: string) {
             await alert.present();
             this.toastService.create('Child added successfully.');
             // window.open(whatsappUrl, '_system');
-        // if (res.ResponseData.Type == "special" ){
-        //     this.router.navigate([`/members/child/vaccine/${ChildId}`]);
-        // } else{
-        //   this.router.navigate(["/members/child"]);
-        // }
+        if (res.ResponseData.Type == "special" ){
+            this.router.navigate([`/members/child/vaccine/${ChildId}`]);
+        } else{
+          this.router.navigate(["/members/child"]);
+        }
         } else {
           loading.dismiss();
           this.formcontroll = false;
