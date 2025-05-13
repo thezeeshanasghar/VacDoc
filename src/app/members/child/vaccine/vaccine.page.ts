@@ -536,7 +536,8 @@ removal(type: string){
           this.toastService.create('Success: Skipped ' + res.ResponseData.Dose.Name, 'success', false, 3000);
           if (res.ResponseData.Dose.Vaccine.isInfinite) {
             let scheduleDate: any = this.addDays(res.ResponseData.Date, res.ResponseData.Dose.MinGap);
-            this.addNewVaccineInScheduleTable(scheduleDate, res.ResponseData);
+            // this.addNewVaccineInScheduleTable(scheduleDate, res.ResponseData);
+            this.getVaccination();
             loading.dismiss();
           } else {
             this.getVaccination();
