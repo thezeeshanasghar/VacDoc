@@ -81,7 +81,7 @@ export class FillPage implements OnInit {
       Height: new FormControl(''),
       Circle: new FormControl(''),
       Manufacturer: new FormControl(''),
-      // ['', Validators.required], // Ensure this is initialized
+      // ['', Validators.required], 
       Lot: new FormControl(''),
       // ['', Validators.required],
       Expiry: [],
@@ -172,7 +172,7 @@ export class FillPage implements OnInit {
   //     }
   //   );
   // }
-  
+ 
   async getChildData(childId) {
     if (!this.childService) {
       console.error('childService is not defined');
@@ -193,6 +193,7 @@ export class FillPage implements OnInit {
           // console.log(this.vaccineData.ChildId);
           this.childId = this.vaccineData.Id; // Assuming ChildId is the correct property to use
           this.Type = this.vaccineData.Type; // Retaining this line as it seems necessary
+          console.log(this.vaccineData.Type);
           this.Validity = this.vaccineData.Validity; // Retaining this line as it seems necessary
           console.log(this.vaccineData.validity);
           // this.vaccineName = this.vaccineData.Dose.Vaccine.Name;
@@ -251,7 +252,13 @@ export class FillPage implements OnInit {
     }
     loading.dismiss();
     this.fg.value.GivenDate = moment(this.fg.value.GivenDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
-    this.fg.value.Expiry = moment(this.fg.value.Expiry, 'YYYY-MM-DD').format('YYYY-MM-DD');
+
+    if (this.fg.value.Expiry) {
+      this.fg.value.Expiry = moment(this.fg.value.Expiry, 'YYYY-MM-DD').format('YYYY-MM-DD');
+    } else {
+      this.fg.value.Expiry = null;
+    }
+
     await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
       res => {
         if (res.IsSuccess) {

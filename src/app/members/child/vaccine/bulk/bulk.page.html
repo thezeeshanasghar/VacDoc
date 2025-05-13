@@ -65,7 +65,7 @@
     </ion-item> -->
 
     <ion-item *ngFor="let user of bulkData; let i = index;">
-      <ion-label>Brands</ion-label>
+      <ion-label color="primary">Brands</ion-label>
       <!-- <ion-select formControlName="BrandId{{i}}"> -->
       <ion-select [(ngModel)]="BrandIds[i]" [ngModelOptions]="{standalone: true}"  [interfaceOptions]="customActionSheetOptions" interface="action-sheet" placeholder="Select Brand">
         <ion-select-option *ngFor="let user1 of user.Brands; let i = index;" selected [value]="user1.Id">{{user1.Name}}
@@ -84,6 +84,6 @@
       <mat-datepicker #picker disabled="false"></mat-datepicker>
     </ion-item>
 
-    <ion-button type="submit">Submit</ion-button>
+    <ion-button [disabled]="isScheduleDateValid()" type="submit">Submit</ion-button>
   </form>
 </ion-content> 

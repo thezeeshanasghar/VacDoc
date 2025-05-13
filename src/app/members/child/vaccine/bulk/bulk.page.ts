@@ -116,6 +116,13 @@ export class BulkPage implements OnInit {
     this.fillVaccine(data);
   }
 
+  isScheduleDateValid(): boolean {
+    const today = new Date().toISOString().split('T')[0];
+    const givenDate = this.fg.get('GivenDate').value; 
+    const formattedDate = new Date(givenDate).toISOString().split('T')[0];
+    return formattedDate > today;
+  }
+
   async fillVaccine(data) {
     data.GivenDate = moment(this.fg.value.GivenDate, "YYYY-MM-DD").format("DD-MM-YYYY");
     const loading = await this.loadingController.create({
@@ -207,8 +214,6 @@ export class BulkPage implements OnInit {
         this.toastService.create("Error: server failure");
       }
     );
-
-
   }
 
 
