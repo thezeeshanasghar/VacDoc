@@ -37,7 +37,7 @@
             <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
               (+{{ country.code }}) {{ country.name }} 
             </ion-select-option>
-          </ion-select>
+        </ion-select>
           <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
       </div>
     </ion-item>
@@ -54,7 +54,6 @@
 
       <ion-grid>
         <ion-row>
-
           <ion-col>
             <ion-item>
               <ion-label color="primary">Boy</ion-label>
@@ -73,7 +72,6 @@
 
     </ion-radio-group>
 
-
     <ion-item>
       <ion-label color="primary" position="floating">City</ion-label>
       <mat-form-field class="example-full-width">
@@ -91,8 +89,22 @@
       </mat-form-field>
     </ion-item>
 
-
-
+    <div *ngIf="isCnicRequired">
+      <div class="agent">
+      <ion-item>
+        <ion-label color="primary" position="floating">
+          Nationality 
+        </ion-label>
+        <ion-input type="text" formControlName="Nationality" required class="ion-text-capitalize"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label color="primary" position="floating">
+          Agent 
+        </ion-label>
+        <ion-input type="text" formControlName="agent" required class="ion-text-capitalize"></ion-input>
+      </ion-item>
+      </div>
+    </div>
     <!-- <ion-grid>
       <ion-row>
 

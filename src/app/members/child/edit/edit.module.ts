@@ -6,8 +6,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { EditPage } from './edit.page';
-import { MatAutocompleteModule, MatFormFieldModule, MatInputModule } from '@angular/material';
-
+import { MatAutocompleteModule, MatFormFieldModule, MatInputModule, MatDatepickerModule } from '@angular/material';
+import { MatNativeDateModule } from '@angular/material/core';
 const routes: Routes = [
   {
     path: '',
