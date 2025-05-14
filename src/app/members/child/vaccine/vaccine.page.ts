@@ -556,6 +556,10 @@ removal(type: string){
     );
   }
 
+  allVaccinesGiven(vaccines: any[]): boolean {
+    return vaccines.every(vaccine => vaccine.IsDone); // Returns true if all vaccines are given
+  }
+
   async addNewVaccineInScheduleTable(scheduleDate, unfillData) {
     const loading = await this.loadingController.create({
       message: 'Updating Schedule'
