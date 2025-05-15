@@ -132,21 +132,42 @@ export class PaAccessPage implements OnInit {
   }
 
   onPADropdownChange(event: any) {
-    console.log('Selected PA:', event);
+    this.selectedPA = event.detail.value;
+    console.log('Selected PA:', event.detail.value);
     console.log('Selected PA:', this.selectedPA);
   }
 
   onClinicDropdownChange(event: any) {
+    this.selectedClinic = event.detail.value;
     console.log('Selected PA:', event.detail.value);
     console.log('Selected Clinic:', this.selectedClinic);
   }
 
-  submit() {
+    async submit() {
     if (this.fg.valid) {
+      const loading = await this.loadingController.create({
+        message: 'Submitting...',
+      });
+      await loading.present();
+      this.paService.addPAAccess({ PersonalAssistantId: this.selectedPA, clinicId: this.selectedClinic }).subscribe({
+          next: (response) => {
+            loading.dismiss();
+          
+              this.toastService.create('PA Access added successfully', 'success');
+              console.log('Response:', response);
+           
+          },
+          error: (error) => {
+            loading.dismiss();
+            console.error('Error adding PA access:', error);
+            this.toastService.create(error.error.message, 'danger');
+          },
+        });
       console.log('Form Submitted:', {
         selectedPA: this.selectedPA,
         selectedClinic: this.selectedClinic,
       });
+      loading.dismiss();
     } else {
       console.error('Form is invalid');
     }
