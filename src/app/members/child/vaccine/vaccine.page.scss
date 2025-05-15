@@ -37,3 +37,21 @@ ion-toolbar {
     align-items: center;
   }
   
+  .approve-button {
+    background-color: #4caf50; 
+    color: white; 
+    border: none; 
+    border-radius: 5px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; 
+
+    &:hover {
+      background-color: #45a049; 
+    }
+  
+    &:focus {
+      outline: none; 
+      box-shadow: 0 0 5px #4caf50; 
+    }
+  }

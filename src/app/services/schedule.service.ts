@@ -29,4 +29,9 @@ export class ScheduleService extends BaseService {
       .put(url, data, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
+
+  patchIsApproved(scheduleId: number ): Observable<any> {
+    const url = `${this.API_SCHEDULE}Schedule/${scheduleId}/ispaapprove`;
+    return this.http.patch(url, scheduleId);
+  }
 }
