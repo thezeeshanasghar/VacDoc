@@ -569,8 +569,13 @@ filterAgents(value: string) {
           if (res.ResponseData.Gender == "Boy")
             sms1 += ("Mr. " + this.titlecasePipe.transform(res.ResponseData.Name));
           if (res.ResponseData.Gender == "Girl")
-            sms1 += ("Miss. " + this.titlecasePipe.transform(res.ResponseData.Name));
-          sms1 += " has been registered Successfully at Vaccine.pk";
+          sms1 += ("Miss. " + this.titlecasePipe.transform(res.ResponseData.Name));
+          sms1 += " has been registered Successfully at ";
+          if (res.ResponseData.DoctorId === 1) {
+            sms1 += "Vaccine.pk";
+          } else {
+            sms1 += "https://vaccinationcentre.com/";
+          }
           sms1 += "\nId: +" + res.ResponseData.CountryCode+ res.ResponseData.MobileNumber + " \nPassword: " + res.ResponseData.Password;
           sms1 += "\nClinic Phone Number: " + this.clinic.PhoneNumber;
           sms1 += "\nWeb Link:  https://client.vaccinationcentre.com/";

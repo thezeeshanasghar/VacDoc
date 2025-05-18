@@ -14,7 +14,7 @@
         <ion-input type="hidden" formControlName="DoctorType" value="CS"></ion-input>
       </ion-radio-group>
 
-      <ion-item class="custom-item-background">
+      <!-- <ion-item class="custom-item-background">
         <ion-label color="primary" position="floating">Qualification</ion-label>
         <ion-input type="text" formControlName="Qualification" class="ion-text-capitalize" required></ion-input>
       </ion-item>
@@ -25,12 +25,25 @@
             <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
           </div>
         </ng-container>
+      </div> -->
+
+      <ion-item class="custom-item-background">
+        <ion-label color="primary" position="floating">Printed Name</ion-label>
+        <ion-input type="text" formControlName="DisplayName" class="ion-text-capitalize" required></ion-input>
+      </ion-item>
+      <div class="validation-errors">
+        <ng-container *ngFor="let validation of validation_messages.displayName">
+          <div class="error-message"
+            *ngIf="fg.get('DisplayName').hasError(validation.type) && (fg.get('DisplayName').dirty || fg.get('DisplayName').touched)">
+            <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+          </div>
+        </ng-container>
       </div>
 
       <ion-item class="custom-item-background">
-        <ion-label color="primary" position="floating">Design Your Letterpad</ion-label>
+        <ion-label color="primary" position="floating">Letterpad information ( don’t mention your name here)</ion-label>
         <ion-textarea type="text" formControlName="AdditionalInfo" class="ion-text-capitalize"
-          [autoGrow]="true"></ion-textarea>
+          [autoGrow]="true" style="color: grey;"></ion-textarea>
       </ion-item>
       <div class="validation-errors">
         <ng-container *ngFor="let validation of validation_messages.AdditionalInfo">
@@ -41,7 +54,7 @@
         </ng-container>
       </div>
 
-      <ion-item class="custom-item-background">
+      <!-- <ion-item class="custom-item-background">
         <ion-label color="primary" position="floating">Name</ion-label>
         <ion-input type="text" formControlName="FirstName" class="ion-text-capitalize" required></ion-input>
       </ion-item>
@@ -52,7 +65,7 @@
             <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
           </div>
         </ng-container>
-      </div>
+      </div> -->
 
 
       <!-- <ion-item class="custom-item-background">
@@ -68,18 +81,7 @@
         </ng-container>
       </div> -->
 
-      <ion-item class="custom-item-background">
-        <ion-label color="primary" position="floating">Display Name</ion-label>
-        <ion-input type="text" formControlName="DisplayName" class="ion-text-capitalize" required></ion-input>
-      </ion-item>
-      <div class="validation-errors">
-        <ng-container *ngFor="let validation of validation_messages.displayName">
-          <div class="error-message"
-            *ngIf="fg.get('DisplayName').hasError(validation.type) && (fg.get('DisplayName').dirty || fg.get('DisplayName').touched)">
-            <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
-          </div>
-        </ng-container>
-      </div>
+
 
       <ion-item class="custom-item-background">
         <ion-label color="primary" position="floating">Email</ion-label>
@@ -126,7 +128,7 @@
       </div>
 
       <ion-item class="custom-item-background">
-        <ion-label color="primary" position="floating">Appointment Number</ion-label>
+        <ion-label color="primary" position="floating">Phone Number</ion-label>
         <ion-input type="tel" formControlName="PhoneNo" required></ion-input>
         <!-- <ion-item slot="end" lines="none"  class="custom-item-background">
         <ion-checkbox formControlName="ShowPhone"></ion-checkbox>

@@ -99,7 +99,7 @@ export class AddPage implements OnInit {
         "",
         Validators.compose([
           Validators.required,
-          Validators.pattern("^[A-Za-z0-9]+$") 
+          Validators.pattern("^[A-Za-z0-9-]+$") 
         ])
       ),
     });

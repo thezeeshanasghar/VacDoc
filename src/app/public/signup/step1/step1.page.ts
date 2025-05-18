@@ -1,6 +1,4 @@
 import { Component, ViewChild, OnInit } from "@angular/core";
-// import { Component, OnInit } from '@angular/core';
-// import { FormBuilder, FormGroup, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
 import { IonSelect } from "@ionic/angular";
 import {
   FormGroup,
@@ -13,7 +11,6 @@ import {
 import { Router } from "@angular/router";
 import { SignupService } from "src/app/services/signup.service";
 import { ToastService } from "src/app/shared/toast.service";
-// import { Ng2TelInputModule } from 'ng2-tel-input';
 
 @Component({
   selector: "app-step1",
@@ -25,7 +22,7 @@ export class Step1Page implements OnInit {
   checkedVal: any;
   isSubmitted = false;
   @ViewChild("speciality", { static: false }) selectPop: IonSelect;
-  // toastService: any;
+
   constructor(
     private frombuilder: FormBuilder,
     private router: Router,
@@ -38,17 +35,13 @@ export class Step1Page implements OnInit {
       DoctorType: new FormControl("CS"),
       Qualification: [],
       AdditionalInfo: ["", [Validators.required, this.OneLineValidator,]],
-      FirstName: ['', Validators.compose([
-        Validators.required,
-        Validators.pattern(/^\s*[a-zA-Z]+(?:\s[a-zA-Z]+)*\s*$/)
-      ])],
-      // LastName: ['', Validators.compose([
+      // FirstName: ['', Validators.compose([
       //   Validators.required,
       //   Validators.pattern(/^\s*[a-zA-Z]+(?:\s[a-zA-Z]+)*\s*$/)
       // ])],
       DisplayName: ['', Validators.compose([
         Validators.required,
-        Validators.pattern(/^\s*[a-zA-Z]+(?:\s[a-zA-Z]+)*\s*$/) // Allow spaces at the start and end
+        Validators.pattern(/^\s*[a-zA-Z]+(?:\s[a-zA-Z]+)*\s*$/)
       ])],
       Email: new FormControl(
         "",
@@ -562,10 +555,10 @@ export class Step1Page implements OnInit {
     qualification: [
       { type: "required", message: "Qualification is required." },
     ],
-    FirstName: [
-      { type: 'required', message: 'First Name is required.' },
-      { type: 'pattern', message: 'PLeaseEnter Only Charecters in First Name.' }
-    ],
+    // FirstName: [
+    //   { type: 'required', message: 'First Name is required.' },
+    //   { type: 'pattern', message: 'PLeaseEnter Only Charecters in First Name.' }
+    // ],
     // lastName: [{ type: "required", message: "LastName is required." },
     // { type: 'pattern', message: 'You can Enter Only Charecters in Last Name.' }
     // ],
