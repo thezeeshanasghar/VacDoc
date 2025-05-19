@@ -46,6 +46,7 @@ export class FillPage implements OnInit {
   Validity:any;
   vaccine: any;
   doseId: any;
+  usertype: any;
 
   constructor(
     public loadingController: LoadingController,
@@ -70,6 +71,15 @@ export class FillPage implements OnInit {
     this.storage.get('vaccinesData').then((val) => {
       this.vaccinesData = val;
       this.addOHFToBrands(); // Add OHF to the list of brands
+    });
+
+    this.storage.get(environment.USER).then((user) => {
+      if (user) {
+        console.log('Retrieved user from storage:', user);
+        this.usertype = user.UserType; // Ensure this is set correctly
+      } else {
+        console.error('No user data found in storage.');
+      }
     });
 
     this.fg = this.formBuilder.group({
@@ -234,7 +244,12 @@ export class FillPage implements OnInit {
     if (this.fg.value.BrandId === 'OHF') {
       this.fg.value.BrandId = null; // Set BrandId to null if the brand is "OHF"
     }
-
+    console.log(this.usertype)
+    if (this.usertype === 'DOCTOR') {
+      this.fg.value.IsPAApprove = true;
+    } else {
+      this.fg.value.IsPAApprove = false;
+    }
     this.fg.value.Id = this.route.snapshot.paramMap.get('id');
     this.fg.value.DoctorId = this.doctorId;
     this.fg.value.IsDone = true;
@@ -258,6 +273,7 @@ export class FillPage implements OnInit {
     } else {
       this.fg.value.Expiry = null;
     }
+
 
     await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
       res => {

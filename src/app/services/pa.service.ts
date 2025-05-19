@@ -55,6 +55,17 @@ export class PaService extends BaseService {
     );
   }
 
+  addPAAccess(data: any): Observable<any> {
+    const url = `${this.API_PA}PAAccess`;
+    return this.http.post(url, data, this.httpOptions).pipe(
+      map((response: any) => response),
+      catchError((error) => {
+        console.error('Error in addPAAccess:', error);
+        throw error;
+      })
+    );
+  }
+
   editPa(id: String,data): Observable<any> {
     const url = `${this.API_PA}PersonalAssistant/${id}`;
     return this.http.put(url, data, this.httpOptions)
