@@ -126,17 +126,13 @@
                                 </div>
                             </td>
                             <td>
-                                <ion-input 
-                                    type="tel" 
-                                    [(ngModel)]="item.price" 
-                                    placeholder="Enter price"
-                                    #priceInput="ngModel"
-                                    required
-                                    pattern="^[0-9]*$">
+                                <ion-input type="number" [(ngModel)]="item.price" placeholder="Enter price" #priceInput="ngModel" required step="0.01"
+                                    min="0" 
+                                    pattern="^[0-9]+(\.[0-9]{1,2})?$"> <!-- Updated pattern to allow decimals -->
                                 </ion-input>
                                 <div *ngIf="priceInput.invalid && (priceInput.dirty || priceInput.touched)" class="error-message">
                                     <small *ngIf="priceInput.errors?.required">Price is required</small>
-                                    <small *ngIf="priceInput.errors?.pattern">Only numbers allowed</small>
+                                    <small *ngIf="priceInput.errors?.pattern">Only numbers with up to 2 decimal places allowed</small>
                                 </div>
                             </td>
                             <td style="text-align: center" class="ion-margin-top">
