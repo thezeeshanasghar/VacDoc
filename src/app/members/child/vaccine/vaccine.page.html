@@ -76,7 +76,7 @@
             <ion-img *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip"
               style="height: 20px;" src="../../assets/injectionFilled.png" (click)="UnfillVaccine(v.Id)">
             </ion-img>
-            <button *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && !usertype === 'DOCTOR' && !v.IsPAApprove"
+            <button *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && usertype === 'DOCTOR' && !v.IsPAApprove"
               (click)="updateScheduleApproval(v.Id)"
               class="approve-button" >
               Approve
