@@ -340,7 +340,7 @@ export class AddPage implements OnInit {
       // const doctorId = await this.storage.get(environment.DOCTOR_Id);
       this.clinicid = await this.storage.get(environment.CLINIC_Id);
       
-      this.brandService.getBrandAmount( this.clinicid).subscribe({
+      this.brandService.getBrandAmount(this.clinicid).subscribe({
         next: (response) => {
           if (response.IsSuccess) {
             this.brands = response.ResponseData.map(brand => ({

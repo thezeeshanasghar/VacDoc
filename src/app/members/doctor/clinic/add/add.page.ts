@@ -599,8 +599,8 @@ export class AddPage implements OnInit {
           if (res.IsSuccess) {
             loading.dismiss();
             this.toastService.create("successfully added Clinic");
-            // this.router.navigate(["/members/doctor/clinic"], { queryParams: { refresh: true } });
-            // window.location.reload();
+            this.router.navigate(["/members/doctor/clinic"], { queryParams: { refresh: true } });
+            window.location.reload();
           } else {
             loading.dismiss();
             this.toastService.create(res.Message, "danger");
