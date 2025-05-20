@@ -1,3 +1,4 @@
+
 import { Component, OnInit } from "@angular/core";
 import { LoadingController } from "@ionic/angular";
 import { Storage } from "@ionic/storage";
@@ -7,6 +8,7 @@ import { environment } from "src/environments/environment";
 import { FormGroup, FormBuilder, FormControl, FormArray } from "@angular/forms";
 import { StockService, BillDetails, Response } from "src/app/services/stock.service";
 import { ClinicService } from "src/app/services/clinic.service";
+
 
 interface BrandAmountDTO {
   BrandId: string;
@@ -37,6 +39,7 @@ export class StockManagementPage implements OnInit {
   selectedClinicId: any;
   doctorId: any;
   usertype: any;
+
   clinic: any;
   // clinicService: any;
   constructor(
@@ -46,20 +49,31 @@ export class StockManagementPage implements OnInit {
      private toastService: ToastService, 
      private clinicService: ClinicService, 
      private stockService: StockService){}
+r
 
   ngOnInit() {
     // this.storage.get(environment.DOCTOR_Id).then((val) => {
-    //   this.getBrandAmount(val);
+    //   this.getBill(val);
     // });
     this.storage.get(environment.CLINIC_Id).then((val) => {
+
       console.log("Clinic ID:", val);
       this.clinic = val;
+
       this.getBill(val);
     });
     this.storage.get(environment.DOCTOR_Id).then((val) => {
       console.log("Doctor ID:", val);
       this.doctorId = val;
       this.loadClinics(this.doctorId);
+    });
+    this.storage.get(environment.USER).then((user) => {
+      if (user) {
+        console.log('Retrieved user from storage:', user);
+        this.usertype = user.UserType; // Ensure this is set correctly
+      } else {
+        console.error('No user data found in storage.');
+      }
     });
   }
 
@@ -111,6 +125,7 @@ export class StockManagementPage implements OnInit {
       (res: Response<BillDetails[]>) => {
         loading.dismiss();
         if (res.IsSuccess) {
+
           console.log("Bills:", res.ResponseData);
           this.data = res.ResponseData;
           console.log("Data:", this.data);
@@ -160,4 +175,29 @@ export class StockManagementPage implements OnInit {
       }
     );
   }
+
+
+  async approvePurchase(billId: number) {
+    const loading = await this.loadingController.create({
+      message: 'approved',
+    });
+    await loading.present();
+  
+  // Define the data object
+    this.stockService.patchIsApproved(billId).subscribe(
+      (response: any) => {
+        console.log('API Response:', response);
+        this.toastService.create(response.message, 'success');
+        loading.dismiss();
+        this.getBill(response.schedule.ClinicId); // Refresh the vaccination data
+      },
+      (error) => {
+        console.error('Error updating IsPAApprove:', error);
+        this.toastService.create(error.error.message, 'danger');
+        loading.dismiss();
+      }
+    );
+  }
+
 }
+

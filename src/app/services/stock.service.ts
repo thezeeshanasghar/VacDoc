@@ -63,19 +63,28 @@ export class StockService {
   adjustStock(dto: AdjustStockDTO): Observable<Response<AdjustStockDTO>> {
     return this.http.post<Response<AdjustStockDTO>>(`${this.apiUrl}AdjustStock`, dto);
   }
+
   createBill(stocks: StockDTO[]): Observable<Response<StockDTO[]>> {
     return this.http.post<Response<StockDTO[]>>(`${this.apiUrl}Stock`, stocks);
   }
+
   getBills(id:number, toDate?: Date): Observable<Response<BillDetails[]>> {
     let url = `${this.apiUrl}bill/clinic/${id}`;
     return this.http.get<Response<BillDetails[]>>(url);
   }
+
   getBrandBills(id:number): Observable<Response<BillDetails[]>> {
     let url = `${this.apiUrl}stock/bill/${id}`;
     return this.http.get<Response<BillDetails[]>>(url);
   }
+
   getSuppliers(): Observable<Response<Supplier[]>> {
     let url = `${this.apiUrl}Bill/Suppliers`;
     return this.http.get<Response<Supplier[]>>(url);
+  }
+  
+  patchIsApproved(scheduleId: number ): Observable<any> {
+    const url = `${this.apiUrl}Bill/${scheduleId}/ispaapprove`;
+    return this.http.patch(url, scheduleId);
   }
 }

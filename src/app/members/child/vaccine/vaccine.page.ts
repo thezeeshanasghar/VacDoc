@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { LoadingController } from "@ionic/angular";
 import { VaccineService } from "src/app/services/vaccine.service";
+import { ScheduleService } from "src/app/services/schedule.service";
 import { ToastService } from "src/app/shared/toast.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import * as moment from "moment";
@@ -35,6 +36,7 @@ export class VaccinePage {
   private readonly API_VACCINE = `${environment.BASE_URL}`
   type: string;
   istravel: boolean = true;
+  usertype: any;
 
   constructor(
     public loadingController: LoadingController,
@@ -48,6 +50,7 @@ export class VaccinePage {
     private storage: Storage,
     public platform: Platform,
     private formBuilder: FormBuilder,
+    private scheduleService: ScheduleService,
 
     // private invoiceService: InvoiceService
     // private document: DocumentViewer,
@@ -76,9 +79,16 @@ export class VaccinePage {
     });
   }
 
-  // ngOnInit() {
-  //   this.removal();
-  // }
+  ngOnInit() {
+    this.storage.get(environment.USER).then((user) => {
+      if (user) {
+        console.log('Retrieved user from storage:', user);
+        this.usertype = user.UserType; // Ensure this is set correctly
+      } else {
+        console.error('No user data found in storage.');
+      }
+    });
+  } 
 
   handleSkipClick(event: Event, id: number, doseName: string) {
     event.preventDefault();
@@ -653,6 +663,71 @@ removal(type: string){
     return myDate;
   }
 
+  async updateScheduleApproval(scheduleId: number) {
+    const loading = await this.loadingController.create({
+      message: 'approved',
+    });
+    await loading.present();
+  
+  // Define the data object
+    this.scheduleService.patchIsApproved(scheduleId).subscribe(
+      (response: any) => {
+        console.log('API Response:', response);
+        this.toastService.create(response.message, 'success');
+        loading.dismiss();
+        this.getVaccination(); // Refresh the vaccination data
+      },
+      (error) => {
+        console.error('Error updating IsPAApprove:', error);
+        this.toastService.create(error.error.message, 'danger');
+        loading.dismiss();
+      }
+    );
+  }
+
+  // async UnfillVaccine(id, Data = null) {
+  //   const loading = await this.loadingController.create({
+  //     message: 'Unfilling vaccine'
+  //   });
+  //   if (!Data) {
+  //     await loading.present();
+  //   }
+
+  //   let data = {
+  //     Id: id,
+  //     IsDone: false,
+  //   }
+  //   if (Data) {
+  //     data = Data;
+  //   }
+
+  //   await this.vaccineService.UnfillChildVaccine(data)
+  //     .subscribe(
+  //       res => {
+  //         if (res.IsSuccess) {
+  //           if (res.ResponseData.Dose.Vaccine.isInfinite) {
+  //             var cId = res.ResponseData.ChildId;
+  //             var dId = res.ResponseData.Dose.Id;
+  //             var dSchedule = res.ResponseData.Date;
+  //             this.deleteFutureSchedules(cId, dId, dSchedule);
+  //             loading.dismiss();
+  //           }
+  //           else {
+  //             this.getVaccination();
+  //             loading.dismiss();
+  //           }
+  //         }
+  //         else {
+  //           loading.dismiss();
+  //           this.toastService.create(res.Message, 'danger');
+  //         }
+  //       },
+  //       err => {
+  //         this.toastService.create('Error: server failure');
+  //         loading.dismiss();
+  //       }
+  //     );
+  // }
   // Method to download the travel PDF
   downloadTravelPdf() {
     this.vaccineService.generateTravelPdf(this.childId).subscribe((response: Blob) => {

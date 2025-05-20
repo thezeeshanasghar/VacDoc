@@ -86,6 +86,7 @@ export class AddPage implements OnInit {
   clinics: any[] = []; // All clinics
   doctorId: string = '';
   clinicid: any;
+  usertype: any;
   constructor(
     private brandService: BrandService,
     private toastService: ToastService,
@@ -107,7 +108,14 @@ export class AddPage implements OnInit {
       this.toastService.create("Doctor ID not found", "danger");
       return;
     }
-   
+    this.storage.get(environment.USER).then((user) => {
+      if (user) {
+        console.log('Retrieved user from storage:', user);
+        this.usertype = user.UserType; // Ensure this is set correctly
+      } else {
+        console.error('No user data found in storage.');
+      }
+    });
     this.loadBrands();
     this.fetchAgent();
     await this.loadClinics();
@@ -262,7 +270,7 @@ export class AddPage implements OnInit {
   
       const doctorIdNumber = parseInt(doctorId, 10);
       const billNo = `BILL-${this.bill}`;
-  
+
       const purchaseData = this.stockItems.map(item => {
         const data: any = {
           BrandId: item.brandId,
@@ -273,7 +281,8 @@ export class AddPage implements OnInit {
           IsPaid: this.isPaid,
           Quantity: item.quantity,
           StockAmount: item.price,
-          DoctorId: doctorIdNumber
+          DoctorId: doctorIdNumber,
+          IsPAApprove: this.usertype === 'DOCTOR' ? true : false,
         };
         // Only include PaymentDate if isPaid is true
         if (this.isPaid) {
@@ -281,6 +290,7 @@ export class AddPage implements OnInit {
         }else {
           data.PaidDate = "01-01-0001"; // Set to null if not paid   
         }
+       
   
         return data;
       });

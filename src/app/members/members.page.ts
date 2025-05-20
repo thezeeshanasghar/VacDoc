@@ -512,7 +512,7 @@ export class MembersPage implements OnInit {
   
       console.log(this.user);
   
-      if (this.user.type === "PA") {
+      if (this.user.UserType === "PA") {
         const permissions = await this.checkPermissions(this.user.PAId);
         if (permissions) {
           const { AllowStock, AllowAlert, AllowSchedule, AllowVacation, AllowAnalytics, AllowClinic, AllowChild } = permissions;
@@ -537,7 +537,7 @@ export class MembersPage implements OnInit {
     AllowChild: boolean;
   }> {
     try {
-      if (this.user.type === "PA") {
+      if (this.user.UserType === "PA") {
         const hasPermission = await this.paService.getPa(id).toPromise();
         if (hasPermission) {
           return {
