@@ -54,7 +54,12 @@ export class AdjustPage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.loadBrands();
+    this.storage.get(environment.CLINIC_Id).then((val) => {
+      console.log('Clinic ID:', val);
+      // this.getBill(val);
+      this.clinicid = val;
+      this.loadBrands(val);
+    });
     this.DoctorId = await this.storage.get(environment.DOCTOR_Id);
     console.log('Doctor ID:', this.DoctorId);
     await this.loadClinics(this.DoctorId);
@@ -74,10 +79,10 @@ export class AdjustPage implements OnInit {
           // if (response.IsSuccess) {
             this.clinics = response.ResponseData;
             console.log("Clinics:", this.clinics);
-            this.storage.get(environment.CLINIC_Id).then((val) => {
-              console.log('Clinic ID:', val);
-              this.selectedClinic = val;
-            });
+            // this.storage.get(environment.CLINIC_Id).then((val) => {
+              // console.log('Clinic ID:', val);
+              this.selectedClinic = this.clinicid;
+            // });
           // } else {
           //   this.toastService.create(response.Message, "danger");
           // }
@@ -134,7 +139,7 @@ export class AdjustPage implements OnInit {
   //     this.toastService.create('An unexpected error occurred', 'danger');
   //   }
   // }
-  async loadBrands() {
+  async loadBrands(id:any) {
     try {
       const loading = await this.loadingController.create({
         message: 'Loading brands...'
@@ -142,9 +147,9 @@ export class AdjustPage implements OnInit {
       await loading.present();
   
       // const doctorId = await this.storage.get(environment.DOCTOR_Id);
-      this.clinicid = await this.storage.get(environment.CLINIC_Id);
+      // this.clinicid = await this.storage.get(environment.CLINIC_Id);
       
-      this.brandService.getBrandAmount(this.clinicid).subscribe({
+      this.brandService.getBrandAmount(id).subscribe({
         next: (response) => {
           if (response.IsSuccess) {
             console.log('Brands:', response.ResponseData);
