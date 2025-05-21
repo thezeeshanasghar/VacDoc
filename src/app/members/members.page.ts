@@ -719,16 +719,6 @@ export class MembersPage implements OnInit {
                 url: "/members/doctor/analytics/data",
                 icon: "stats-chart-outline"
               },
-              {
-                title: "Personal Assistant",
-                url: "/members/doctor/personal-assistant",
-                icon: "wallet-outline"
-              },
-              {
-                title: "Stock Management",
-                icon: "cube-outline",
-                url: "/members/doctor/brand-amount",
-              }
             ];
 
             this.childPages = [
@@ -743,6 +733,18 @@ export class MembersPage implements OnInit {
                 icon: "person-add-outline"
               }
             ];
+            if (this.DoctorId === 1) {
+              this.appPages.push(  {
+                title: "Personal Assistant",
+                url: "/members/doctor/personal-assistant",
+                icon: "wallet-outline"
+              },
+              {
+                title: "Stock Management",
+                icon: "cube-outline",
+                url: "/members/doctor/brand-amount",
+              });
+            }
           } else {
             this.doctorPages = [
               {
