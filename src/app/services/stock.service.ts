@@ -42,6 +42,7 @@ export interface BillDetails {
 }
 
 export interface Response<T> {
+  message: string;
   IsSuccess: boolean;
   Message: string;
   ResponseData: T;
@@ -86,5 +87,9 @@ export class StockService {
   patchIsApproved(scheduleId: number ): Observable<any> {
     const url = `${this.apiUrl}Bill/${scheduleId}/ispaapprove`;
     return this.http.patch(url, scheduleId);
+  }
+  editStocks(id:number,stockDTOs: StockDTO[]): Observable<Response<StockDTO[]>> {
+    const url = `${this.apiUrl}Bill/${id}`; // Replace with the correct endpoint if different
+    return this.http.patch<Response<StockDTO[]>>(url, stockDTOs);
   }
 }
