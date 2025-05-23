@@ -57,7 +57,7 @@
       </ion-item> -->
     <ion-item>
         <ion-label>Payment Status</ion-label>
-        <ion-checkbox slot="end" formControlName="isPaid" (ionChange)="onPaymentStatusChange($event)"></ion-checkbox>
+        <ion-checkbox slot="end" formControlName="isPaid" ></ion-checkbox>
     </ion-item>
     
     <ion-item *ngIf="fg1.get('isPaid')?.value">
