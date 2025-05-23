@@ -29,6 +29,7 @@ export class BulkPage implements OnInit {
     header: 'Select Brand',
     cssClass: 'action-sheet-class'
   };
+  usertype: any;
   constructor(
     private loadingController: LoadingController,
     private activatedRoute: ActivatedRoute,
@@ -65,7 +66,17 @@ export class BulkPage implements OnInit {
       BrandId2: [null],
       BrandId3: [null],
       //  BrandId: this.BrandId,
-      GivenDate: this.currentDate
+      GivenDate: this.currentDate,
+      IsPAApprove: [null]
+    });
+
+    this.storage.get(environment.USER).then((user) => {
+      if (user) {
+        console.log('Retrieved user from storage:', user);
+        this.usertype = user.UserType; // Ensure this is set correctly
+      } else {
+        console.error('No user data found in storage.');
+      }
     });
   }
 
@@ -79,6 +90,7 @@ export class BulkPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.bulkData = res.ResponseData;
+          console.log(this.bulkData);
         } else {
           this.toastService.create(res.Message, "danger");
         }
@@ -100,7 +112,12 @@ export class BulkPage implements OnInit {
         brands.push({ BrandId: this.BrandIds[i], ScheduleId: element.Id });
       i++;
     });
-
+    console.log(this.usertype)
+    if (this.usertype === 'DOCTOR') {
+      this.fg.value.IsPAApprove = true;
+    } else {
+      this.fg.value.IsPAApprove = false;
+    }
     let data = {
       Circle: this.fg.value.Circle,
       Date: this.fg.value.Date,
@@ -110,7 +127,8 @@ export class BulkPage implements OnInit {
       Weight: this.fg.value.Weight,
       IsDone: true,
       ScheduleBrands: brands,
-      Id: this.bulkData[0].Id
+      Id: this.bulkData[0].Id,
+      IsPAApprove: this.fg.value.IsPAApprove,	
     };
 
     this.fillVaccine(data);
