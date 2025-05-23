@@ -90,6 +90,7 @@ export class EditPage implements OnInit {
     private stockService: StockService,
     private fb: FormBuilder,
     private storage: Storage,
+    private router: Router,
   ) {
     this.purchaseDate = this.defaultDate;
     this.paymentDate = this.defaultDate;
@@ -431,6 +432,8 @@ export class EditPage implements OnInit {
           // if (response.Message) {
           //   console.log('Stocks updated successfully:', response.ResponseData);
             this.toastService.create(response.message, 'success');
+            // this.router.navigate(["/members/doctor/stock-management/brandlist/${this.id}"]);
+            this.router.navigate(['/members/doctor/stock-management/brandlist', this.id]);
           // } else {
           //   console.error('Failed to update stocks:', response.Message);
           //   this.toastService.create(response.Message, 'danger');
