@@ -44,6 +44,7 @@ export class ChildPage {
       Name: ["", Validators.required],
     });
   }
+
   ionViewWillEnter() {
     this.storage.get(environment.DOCTOR_Id).then((docId) => {
       this.doctorId = docId;
@@ -51,10 +52,20 @@ export class ChildPage {
     this.storage.get(environment.ON_CLINIC).then((clinic) => {
       this.clinic = clinic;
     });
-    this.page = 0;
-    this.search = false;
-    this.childs = [];
-    this.getChlidByClinic(false);
+    this.storage.get('searchInput').then((searchValue) => {
+      if (searchValue) {
+        this.fg.controls['Name'].setValue(searchValue); // Restore the search input value
+        this.search = true;
+        this.page = 0;
+        this.childs = [];
+        this.getChlidbyUser(false); // Perform the search
+      } else {
+        this.page = 0;
+        this.search = false;
+        this.childs = [];
+        this.getChlidByClinic(false); // Load default data
+      }
+    });
   }
 
   getStringValue(value: any): string {
@@ -72,7 +83,6 @@ export class ChildPage {
       this.getChlidByClinic(false);
   }
 
-  // Alert Msg Show for deletion of Child
   async alertforDeleteChild(id) {
     this.alertService.confirmAlert('Are you sure you want to delete this ?', null)
       .then((yes) => {
@@ -82,7 +92,6 @@ export class ChildPage {
       });
   }
 
-  // Call api to delete a Child 
   async Deletechild(id) {
     const loading = await this.loadingController.create({
       message: "Loading"
@@ -118,6 +127,7 @@ export class ChildPage {
       this.childs = [];
       this.infiniteScroll.disabled = false;
     }
+    this.storage.set('searchInput', this.fg.value.Name);
     await this.childService.getChildByUserSearch(this.doctorId, this.page, this.fg.value.Name).subscribe(
       res => {
         if (res.IsSuccess) {
@@ -150,6 +160,7 @@ export class ChildPage {
       this.childs = [];
       this.search = false;
       this.fg.controls['Name'].setValue(null);
+      this.storage.remove('searchInput');
     }
     await this.childService.getChildByClinic(this.clinic.Id, this.page).subscribe(
       res => {
