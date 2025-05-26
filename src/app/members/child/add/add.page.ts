@@ -92,6 +92,7 @@ export class AddPage implements OnInit {
     // this.loadAgent();
     this. logDoctorId();
     this.fetchAgent();
+    this.loadCities();
     // this.doctorId = this.storage.get(environment.DOCTOR_Id);
     // console.log(this.doctorId);
 }

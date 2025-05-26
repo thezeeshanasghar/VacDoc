@@ -1,5 +1,5 @@
-import { Component, OnInit } from "@angular/core";
-import { LoadingController } from "@ionic/angular";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { LoadingController, IonContent } from "@ionic/angular";
 import { VaccineService } from "src/app/services/vaccine.service";
 import { ScheduleService } from "src/app/services/schedule.service";
 import { ToastService } from "src/app/shared/toast.service";
@@ -16,12 +16,14 @@ import { FormBuilder, FormGroup } from "@angular/forms";
 // import { InvoiceService } from "src/app/services/invoice.service";
 
 
+
 @Component({
   selector: "app-vaccine",
   templateUrl: "./vaccine.page.html",
   styleUrls: ["./vaccine.page.scss"]
 })
 export class VaccinePage {
+  @ViewChild(IonContent, { static: false }) content: IonContent;
   vaccine: any[] = [];
   specialvaccineids: any[] = [];
   dataGrouping: any[] = [];
@@ -51,7 +53,6 @@ export class VaccinePage {
     public platform: Platform,
     private formBuilder: FormBuilder,
     private scheduleService: ScheduleService,
-
     // private invoiceService: InvoiceService
     // private document: DocumentViewer,
   ) {
@@ -141,7 +142,9 @@ export class VaccinePage {
     return isdone;
   }
 
+
   async getVaccination() {
+    const scrollPosition = await this.content.getScrollElement().then(element => element.scrollTop); 
     const loading = await this.loadingController.create({
       message: "Loading Vaccines"
     });
@@ -151,6 +154,9 @@ export class VaccinePage {
       .subscribe(
         res => {
           if (res.IsSuccess && res.ResponseData.length > 0) {
+            setTimeout(() => {
+              this.content.scrollToPoint(0, scrollPosition);
+            }, 100);
             this.BirthYear = res.ResponseData[0].Child.DOB;
             this.storage.set('BirthYear', this.BirthYear);
             this.vaccine = res.ResponseData;
