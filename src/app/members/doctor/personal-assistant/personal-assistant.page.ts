@@ -73,7 +73,9 @@ export class PersonalAssistantPage implements OnInit {
 
     this.paService.editPa(updatedData.Id,updatedData).subscribe({
       next: (res) => {
-        console.log('Response:', res);
+        console.log('Response:', res.message);
+        this.toastService.create(res.message, 'success');
+         // Refresh the list of personal assistants after update
         loading.dismiss();
           this.personalAssistants = res;
           console.log('Personal Assistants:', this.personalAssistants);
@@ -102,7 +104,7 @@ export class PersonalAssistantPage implements OnInit {
         loading.dismiss();
           this.personalAssistants = res;
           console.log('Personal Assistants:', this.personalAssistants);
-        
+          this.toastService.create(res.message, 'success'); 
       },
       error: (err) => {
         loading.dismiss();
