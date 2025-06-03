@@ -8,17 +8,20 @@ import { environment } from 'src/environments/environment';
 import { Storage } from '@ionic/storage';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
+
 @Component({
   selector: 'app-salesreport',
   templateUrl: './salesreport.page.html',
   styleUrls: ['./salesreport.page.scss'],
 })
 export class SalesReportPage implements OnInit {
-  clinics: any[] = [];
-  selectedClinicId: any;
-  doctorId: any;
-  salesReportForm: FormGroup;
-  salesReportData: any[] = [];
+
+clinics: any[] = [];
+selectedClinicId: any;
+doctorId: any;
+salesReportForm: FormGroup;
+salesReportData: any[] = [];
+todaydate;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,6 +32,7 @@ export class SalesReportPage implements OnInit {
     private clinicService: ClinicService,
     private formBuilder: FormBuilder
   ) {
+    this.todaydate = new Date().toISOString().slice(0, 10);
     this.salesReportForm = this.formBuilder.group({
       fromDate: [null, Validators.required],
       toDate: [null, Validators.required],
@@ -44,6 +48,7 @@ export class SalesReportPage implements OnInit {
 
     await this.loadClinics();
   }
+
 
   async loadClinics() {
     try {
@@ -77,34 +82,32 @@ export class SalesReportPage implements OnInit {
       this.toastService.create('Please select a clinic', 'danger');
       return;
     }
-  
+
     if (!this.salesReportForm.valid) {
       this.toastService.create('Please select valid dates', 'danger');
       return;
     }
-  
     const { fromDate, toDate } = this.salesReportForm.value;
-  
+
     try {
       const loading = await this.loadingController.create({
         message: 'Fetching sales report...',
       });
       await loading.present();
-  
+
       this.stockService
         .getSalesReportFile(this.selectedClinicId, fromDate, toDate)
         .subscribe({
           next: (response) => {
             loading.dismiss();
-  
-            // Handle file download
+
             const blob = new Blob([response], { type: 'application/pdf' });
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
             link.download = `SalesReport_${this.selectedClinicId}_${fromDate}_${toDate}.pdf`;
             link.click();
             window.URL.revokeObjectURL(link.href);
-  
+
             this.toastService.create('Sales report downloaded successfully', 'success');
           },
           error: (error) => {
