@@ -92,4 +92,8 @@ export class StockService {
     const url = `${this.apiUrl}Bill/${id}`; // Replace with the correct endpoint if different
     return this.http.patch<Response<StockDTO[]>>(url, stockDTOs);
   }
+  getSalesReportFile(clinicId: string, fromDate: Date, toDate: Date): Observable<Blob> {
+    const url = `${this.apiUrl}Schedule/clinic-report-pdf/${clinicId}?fromDate=${fromDate.toISOString()}&toDate=${toDate.toISOString()}`;
+    return this.http.get(url, { responseType: 'blob' });
+  }
 }
