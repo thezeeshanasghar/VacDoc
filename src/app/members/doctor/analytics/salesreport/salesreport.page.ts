@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { StockService,BillDetails, Response } from 'src/app/services/stock.service';
-
+import { StockService } from 'src/app/services/stock.service';
+import { LoadingController } from '@ionic/angular';
+import { ToastService } from 'src/app/shared/toast.service';
+import { ClinicService } from 'src/app/services/clinic.service';
+import { environment } from 'src/environments/environment';
+import { Storage } from '@ionic/storage';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 // interface BrandBill {
 //   BillId: number;
 //   BillNo: string;
@@ -29,64 +34,107 @@ export class SalesReportPage implements OnInit {
 //   brandId: number;
 //   data: BillDetails[];
 //   Bills: BillDetails[];
+clinics: any[] = [];
+selectedClinicId: any;
+doctorId: any;
+salesReportForm: FormGroup;
+salesReportData: any[] = [];
+todaydate;
   constructor(
     private route: ActivatedRoute,
-    // private stockService: StockService
+    private stockService: StockService,
+    public loadingController: LoadingController,
+    private storage: Storage,
+    private toastService: ToastService,
+    private clinicService: ClinicService,
+    private formBuilder: FormBuilder
   ) {
-    // Get brandId from URL parameter
-    // this.route.params.subscribe(params => {
-    //   this.brandId = +params['brandId']; // Convert string to number using +
-    //   if (this.brandId) {
-    //     this.loadBrandBills();
-    //   }
-    // });
+    this.todaydate = new Date().toISOString().slice(0, 10);
+    this.salesReportForm = this.formBuilder.group({
+      fromDate: [null, Validators.required],
+      toDate: [null, Validators.required],
+    });
   }
 
-  ngOnInit() {
-    // this.loadBrandBills()
+  async ngOnInit() {
+    this.doctorId = await this.storage.get(environment.DOCTOR_Id);
+    if (!this.doctorId) {
+      this.toastService.create('Doctor ID not found', 'danger');
+      return;
+    }
+
+    await this.loadClinics();
   }
 
-//   loadBrandBills() {
-//     this.stockService.getBrandBills(this.brandId).subscribe({
-//       next: (response) => {
-//         if (response.IsSuccess) {
-//           // this.brandBills = response.ResponseData.map((item: any) => ({
-//           //   BillId: item.billId,
-//           //   BillNo: item.billNo,
-//           //   Date: item.date,
-//           //   SupName: item.supName,
-//           //   Quantity: item.quantity,
-//           //   PurchasedAmt: item.purchasedAmt,
-//           //   IsPaid: item.isPaid,
-//           //   BrandId: item.brandId,
-//           //   BrandName: item.brandName,
-//           //   VaccineName: item.vaccineName,
-//           //   Supplier: item.supplier,
-//           //   StockAmount: item.stockAmount,
-//           //   Id: item.id
-//           // }));
-//            this.data=response.ResponseData;
-//            this.Bills = this.data;
-//            console.log('Data:', this.data);
-//           // console.log('Brand bills loaded:', this.brandBills);
-//           console.log('Brand bills loaded:', response.ResponseData);
-//         }
-//       },
-//       error: (error) => {
-//         console.error('Error loading brand bills:', error);
-//       }
-//     });
-//   }
-//   totalAmount(): string {
-//     if (!this.data || !this.data.length) {
-//       return '0.00';
-//     }
-  
-//     const total = this.data.reduce((acc, item) => {
-//       const amount = item.Quantity * item.StockAmount || 0;
-//       return acc + amount;
-//     }, 0);
-  
-//     return total.toFixed(2);
-//   }
+
+  async loadClinics() {
+    try {
+      const loading = await this.loadingController.create({
+        message: 'Loading clinics...',
+      });
+      await loading.present();
+
+      this.clinicService.getClinics(Number(this.doctorId)).subscribe({
+        next: (response) => {
+          loading.dismiss();
+          if (response.IsSuccess) {
+            this.clinics = response.ResponseData;
+            this.selectedClinicId = this.clinics.length > 0 ? this.clinics[0].Id : null;
+          } else {
+            this.toastService.create(response.Message, 'danger');
+          }
+        },
+        error: (error) => {
+          loading.dismiss();
+          this.toastService.create('Failed to load clinics', 'danger');
+        },
+      });
+    } catch (error) {
+      this.toastService.create('An unexpected error occurred', 'danger');
+    }
+  }
+
+  async getSalesReport() {
+    if (!this.selectedClinicId) {
+      this.toastService.create('Please select a clinic', 'danger');
+      return;
+    }
+
+    if (!this.salesReportForm.valid) {
+      this.toastService.create('Please select valid dates', 'danger');
+      return;
+    }
+    const { fromDate, toDate } = this.salesReportForm.value;
+
+    try {
+      const loading = await this.loadingController.create({
+        message: 'Fetching sales report...',
+      });
+      await loading.present();
+
+      this.stockService
+        .getSalesReportFile(this.selectedClinicId, fromDate, toDate)
+        .subscribe({
+          next: (response) => {
+            loading.dismiss();
+
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = `SalesReport_${this.selectedClinicId}_${fromDate}_${toDate}.pdf`;
+            link.click();
+            window.URL.revokeObjectURL(link.href);
+
+            this.toastService.create('Sales report downloaded successfully', 'success');
+          },
+          error: (error) => {
+            loading.dismiss();
+            this.toastService.create('Failed to fetch sales report', 'danger');
+          },
+        });
+    } catch (error) {
+      this.toastService.create('An unexpected error occurred', 'danger');
+    }
+  }
+
 }

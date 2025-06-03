@@ -1,24 +1,58 @@
 <ion-header>
-    <ion-toolbar color="primary">
-      <ion-buttons slot="start">
-        <ion-back-button defaultHref="/members/doctor/stock-management"></ion-back-button>
-      </ion-buttons>
-      <ion-title>Sales Report</ion-title>
-    </ion-toolbar>
-    <ion-toolbar color="primary" >
-      <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
-        <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/data" name="stats-chart-outline" size="large" > </ion-icon>
-        <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/total" name="bar-chart-outline" size="large" > </ion-icon>
-        <!-- <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/salesreport" name="trending-up-outline" size="large" > </ion-icon> -->
-        <ion-menu-button style="margin-left: 10%"></ion-menu-button>
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-header>
-  <ion-content class="ion-padding ion-text-center">
-    <div class="coming-soon">
-      <ion-icon name="time-outline" size="large"></ion-icon>
-      <h2>Coming Soon!</h2>
-      <p>We're working on making this feature available.</p>
-      <p>Please check back later.</p>
-    </div>
-  </ion-content>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/stock-management"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Sales Report</ion-title>
+  </ion-toolbar>
+  <ion-toolbar color="primary" >
+    <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/data" name="stats-chart-outline" size="large" > </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/total" name="bar-chart-outline" size="large" > </ion-icon>
+      <!-- <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/salesreport" name="trending-up-outline" size="large" > </ion-icon> -->
+      <ion-menu-button style="margin-left: 10%"></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item>
+    <ion-label position="floating">Select Clinic</ion-label>
+    <ion-select [(ngModel)]="selectedClinicId">
+      <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+        {{ clinic.Name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <!-- Bind the formGroup directive -->
+  <div [formGroup]="salesReportForm">
+    <!-- From Date -->
+    <ion-item>
+      <ion-label color="primary">From Date</ion-label>
+      <input formControlName="fromDate" matInput [matDatepicker]="fromDatePicker" value="{{todaydate}}">
+      <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #fromDatePicker></mat-datepicker>
+    </ion-item>
+
+    <!-- To Date -->
+    <ion-item>
+      <ion-label color="primary">To Date</ion-label>
+      <input formControlName="toDate" matInput [matDatepicker]="toDatePicker" value="{{todaydate}}">
+      <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #toDatePicker></mat-datepicker>
+    </ion-item>
+  </div>
+
+  <ion-button expand="block" (click)="getSalesReport()">Get Sales Report</ion-button>
+
+  <ion-list *ngIf="salesReportData.length > 0">
+    <ion-item *ngFor="let report of salesReportData">
+      <ion-label>
+        <h2>{{ report.BrandName }}</h2>
+        <p>Quantity: {{ report.Quantity }}</p>
+        <p>Amount: {{ report.PurchasedAmt }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
