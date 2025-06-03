@@ -149,9 +149,8 @@ export class VaccinePage {
       message: "Loading Vaccines"
     });
     await loading.present();
-    this.vaccineService
-      .getVaccinationById(this.route.snapshot.paramMap.get("id"))
-      .subscribe(
+    console.log("ChildId: " + this.childId);
+    this.vaccineService.getVaccinationById(this.childId).subscribe(
         res => {
           if (res.IsSuccess && res.ResponseData.length > 0) {
             setTimeout(() => {
@@ -173,7 +172,25 @@ export class VaccinePage {
             this.dataGrouping = this.groupBy(this.vaccine, "Date");
             console.log(this.dataGrouping);
             loading.dismiss();
-          } else {
+          } else if (res) {
+            this.BirthYear = res.ResponseData[0].Child.DOB;
+            this.storage.set('BirthYear', this.BirthYear);
+            this.vaccine = res.ResponseData;
+            this.ChildName = this.vaccine[0].Child.Name;
+            this.type = this.vaccine[0].Child.Type;
+            this.removal(this.type);
+            this.vaccine.forEach(doc => {
+              doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
+              if (doc.GivenDate)
+                doc.GivenDate = moment(doc.GivenDate, "DD-MM-YYYY").format("YYYY-MM-DD");
+              this.vaccinesData.push({ childId: doc.Child.Id, vaccineId: doc.Dose.VaccineId, brandId: doc.BrandId });
+            });
+            this.storage.set("vaccinesData", this.vaccinesData);
+            this.dataGrouping = this.groupBy(this.vaccine, "Date");
+            console.log(this.dataGrouping);
+            loading.dismiss();   
+          }else {
+            window.location.reload();
             this.toastService.create("Vaccines Not Found! Please Add vaccines");
             loading.dismiss();
           }
@@ -764,4 +781,5 @@ removal(type: string){
   }
 
 }
+
 // https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-a-array-of-objects

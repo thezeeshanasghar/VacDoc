@@ -7,21 +7,7 @@ import { ClinicService } from 'src/app/services/clinic.service';
 import { environment } from 'src/environments/environment';
 import { Storage } from '@ionic/storage';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-// interface BrandBill {
-//   BillId: number;
-//   BillNo: string;
-//   Date: string;
-//   SupName: string;
-//   Quantity: number;
-//   PurchasedAmt: number;
-//   IsPaid: boolean;
-//   BrandId: number;
-//   BrandName: string;
-//   VaccineName: string;
-//   Supplier: string;
-//   StockAmount: number;
-//   Id: number;
-// }
+
 
 @Component({
   selector: 'app-salesreport',
@@ -29,17 +15,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./salesreport.page.scss'],
 })
 export class SalesReportPage implements OnInit {
-//   brandName: string;
-//   brandBills: BrandBill[] = [];
-//   brandId: number;
-//   data: BillDetails[];
-//   Bills: BillDetails[];
+
 clinics: any[] = [];
 selectedClinicId: any;
 doctorId: any;
 salesReportForm: FormGroup;
 salesReportData: any[] = [];
 todaydate;
+
   constructor(
     private route: ActivatedRoute,
     private stockService: StockService,
@@ -136,5 +119,4 @@ todaydate;
       this.toastService.create('An unexpected error occurred', 'danger');
     }
   }
-
 }
