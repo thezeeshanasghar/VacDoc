@@ -4,6 +4,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule, Routes } from '@angular/router';
 import { SalesReportPage } from './salesreport.page';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatFormFieldModule , MatInputModule } from '@angular/material';
+
 
 const routes: Routes = [
   {
@@ -18,6 +21,9 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatInputModule,
     RouterModule.forChild(routes)
   ],
   declarations: [SalesReportPage]
