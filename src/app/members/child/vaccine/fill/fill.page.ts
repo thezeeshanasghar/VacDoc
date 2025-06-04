@@ -338,9 +338,15 @@ export class FillPage implements OnInit {
     );
   }
 
-  addDays(date: Date, days: number, doseId: number): Date {
-    // console.log('Adding days:', days, 'to date:', date, 'for doseId:', doseId);
-    const myDate = new Date(date.getTime());
+  addDays(date: Date | string, days: number, doseId: number): Date {
+    // Ensure we have a proper Date object
+    const myDate = date instanceof Date ? new Date(date.getTime()) : new Date(date);
+    
+    if (isNaN(myDate.getTime())) {
+      console.error('Invalid date provided to addDays:', date);
+      return new Date(); // Return current date as fallback
+    }
+
     if (doseId === 30 && days === 1095) {
       const currentYear = myDate.getFullYear();
       myDate.setFullYear(currentYear + 3);
