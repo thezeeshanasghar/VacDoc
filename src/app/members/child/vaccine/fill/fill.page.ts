@@ -47,6 +47,7 @@ export class FillPage implements OnInit {
   vaccine: any;
   doseId: any;
   usertype: any;
+  scheduleDatecheck: string;
 
   constructor(
     public loadingController: LoadingController,
@@ -230,9 +231,9 @@ export class FillPage implements OnInit {
   }
   
   isScheduleDateValid(): boolean {
-    const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-    const givenDate = this.fg.get('GivenDate').value; // Get the GivenDate value from the form
-    return givenDate > today; // Return true if the GivenDate is greater than today's date
+    const today = new Date().toISOString().split('T')[0]; 
+    const givenDate = this.fg.get('GivenDate').value; 
+    return givenDate > today;
   }
 
   async fillVaccine() {
@@ -240,9 +241,8 @@ export class FillPage implements OnInit {
       message: 'Updating'
     });
     await loading.present();
-    // Check if the selected brand is "OHF"
     if (this.fg.value.BrandId === 'OHF') {
-      this.fg.value.BrandId = null; // Set BrandId to null if the brand is "OHF"
+      this.fg.value.BrandId = null; 
     }
     console.log(this.usertype)
     if (this.usertype === 'DOCTOR') {
@@ -255,14 +255,17 @@ export class FillPage implements OnInit {
     this.fg.value.IsDone = true;
     this.fg.value.DiseaseYear = moment(this.fg.value.DiseaseYear, 'YYYY-MM-DD').format('YYYY');
     let givenDateOfInjection: Date = this.fg.value.GivenDate;
-    let scheduleDate: Date = this.addDays(givenDateOfInjection, this.MinGap, this.vaccineData.DoseId);
+    let scheduleDate: Date = this.addDays(givenDateOfInjection,this.MinGap,this.doseId);
+    console.log('Schedule Date:', scheduleDate);
+    this.scheduleDatecheck = moment(scheduleDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
+    console.log('Schedule Date Check:', this.scheduleDatecheck);
     const givenDate = new Date(this.fg.value.GivenDate);
     const currentDate = new Date();
     givenDate.setHours(0, 0, 0, 0);
     currentDate.setHours(0, 0, 0, 0);
     if (givenDate > currentDate) {
       this.toastService.create("Given date is not today. Cannot update injection.", 'danger');
-      loading.dismiss();
+      loading.dismiss();66
       return;
     }
     loading.dismiss();
@@ -280,7 +283,7 @@ export class FillPage implements OnInit {
         if (res.IsSuccess) {
           if (this.vaccine) {
             loading.dismiss();
-            this.addNewVaccineInScheduleTable(scheduleDate);
+            this.addNewVaccineInScheduleTable(this.scheduleDatecheck);
           } else {
             loading.dismiss();
             this.router.navigate(['/members/child/vaccine/' + this.childId]);
@@ -315,7 +318,7 @@ export class FillPage implements OnInit {
     Weight: this.fg.value.Weight,
     IsSkip: false
     };
-   
+  
     await this.vaccineService.AddChildSchedule(VaccineData).subscribe(
       res => {
         console.log(res);
@@ -335,14 +338,23 @@ export class FillPage implements OnInit {
     );
   }
 
-  addDays(date, days, doseId) {
-    var myDate = new Date(date);
+  addDays(date: Date, days: number, doseId: number): Date {
+    // console.log('Adding days:', days, 'to date:', date, 'for doseId:', doseId);
+    const myDate = new Date(date.getTime());
     if (doseId === 30 && days === 1095) {
-      myDate.setFullYear(myDate.getFullYear() + 3);
+      const currentYear = myDate.getFullYear();
+      myDate.setFullYear(currentYear + 3);
+      if (myDate.getMonth() === 1 && myDate.getDate() === 29 && !this.isLeapYear(myDate.getFullYear())) {
+        myDate.setDate(28);
+      }
     } else {
       myDate.setDate(myDate.getDate() + days);
     }
     return myDate;
+  }
+  
+  isLeapYear(year: number): boolean {
+    return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
   }
 
   isBrandFilled(): boolean {
@@ -352,7 +364,6 @@ export class FillPage implements OnInit {
   addOHFToBrands() {
     const OHFBrand = { brandId: 'OHF', name: 'OHF' };
     const existingOHF = this.vaccinesData.find(brand => brand.brandId === 'OHF');
-
     if (!existingOHF) {
       this.vaccinesData.push(OHFBrand);
     }
