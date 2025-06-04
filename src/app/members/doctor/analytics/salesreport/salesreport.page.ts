@@ -7,7 +7,7 @@ import { ClinicService } from 'src/app/services/clinic.service';
 import { environment } from 'src/environments/environment';
 import { Storage } from '@ionic/storage';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-salesreport',
@@ -22,6 +22,9 @@ doctorId: any;
 salesReportForm: FormGroup;
 salesReportData: any[] = [];
 todaydate;
+  givenDatecheck: string;
+  fromDateTime: string;
+  toDateTime: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -49,6 +52,17 @@ todaydate;
     await this.loadClinics();
   }
 
+  isScheduleDateValid(): boolean {
+    const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+    const givenDate = this.salesReportForm.get('toDate').value; // Get the GivenDate value from the form
+    const givenDate1 = this.salesReportForm.get('fromDate').value;
+     this.givenDatecheck = moment(givenDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
+     console.log(this.givenDatecheck);
+    console.log(givenDate);
+    console.log(givenDate1);
+    console.log(today);
+    return givenDate > today; // Return true if the GivenDate is greater than today's date
+  }
 
   async loadClinics() {
     try {
@@ -88,7 +102,10 @@ todaydate;
       return;
     }
     const { fromDate, toDate } = this.salesReportForm.value;
-
+    this.fromDateTime = moment(this.salesReportForm.value.fromDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
+    console.log(this.fromDateTime);
+    this.toDateTime = moment(this.salesReportForm.value.toDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
+    console.log(this.toDateTime);
     try {
       const loading = await this.loadingController.create({
         message: 'Fetching sales report...',
@@ -96,7 +113,7 @@ todaydate;
       await loading.present();
 
       this.stockService
-        .getSalesReportFile(this.selectedClinicId, fromDate, toDate)
+        .getSalesReportFile(this.selectedClinicId, new Date(this.fromDateTime), new Date(this.toDateTime))
         .subscribe({
           next: (response) => {
             loading.dismiss();
