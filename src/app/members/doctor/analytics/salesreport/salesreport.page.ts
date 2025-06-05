@@ -15,16 +15,15 @@ import * as moment from 'moment';
   styleUrls: ['./salesreport.page.scss'],
 })
 export class SalesReportPage implements OnInit {
-
 clinics: any[] = [];
 selectedClinicId: any;
 doctorId: any;
 salesReportForm: FormGroup;
 salesReportData: any[] = [];
 todaydate;
-  givenDatecheck: string;
-  fromDateTime: string;
-  toDateTime: string;
+givenDatecheck: string;
+fromDateTime: string;
+toDateTime: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -37,8 +36,8 @@ todaydate;
   ) {
     this.todaydate = new Date().toISOString().slice(0, 10);
     this.salesReportForm = this.formBuilder.group({
-      fromDate: [null, Validators.required],
-      toDate: [null, Validators.required],
+      fromDate: [this.todaydate],
+      toDate: [this.todaydate],
     });
   }
 
@@ -48,23 +47,11 @@ todaydate;
       this.toastService.create('Doctor ID not found', 'danger');
       return;
     }
-
     await this.loadClinics();
   }
 
-  isScheduleDateValid(): boolean {
-    const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-    const givenDate = this.salesReportForm.get('toDate').value; // Get the GivenDate value from the form
-    const givenDate1 = this.salesReportForm.get('fromDate').value;
-     this.givenDatecheck = moment(givenDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
-     console.log(this.givenDatecheck);
-    console.log(givenDate);
-    console.log(givenDate1);
-    console.log(today);
-    return givenDate > today; // Return true if the GivenDate is greater than today's date
-  }
-
   async loadClinics() {
+
     try {
       const loading = await this.loadingController.create({
         message: 'Loading clinics...',
@@ -92,20 +79,8 @@ todaydate;
   }
 
   async getSalesReport() {
-    if (!this.selectedClinicId) {
-      this.toastService.create('Please select a clinic', 'danger');
-      return;
-    }
-
-    if (!this.salesReportForm.valid) {
-      this.toastService.create('Please select valid dates', 'danger');
-      return;
-    }
-    const { fromDate, toDate } = this.salesReportForm.value;
-    this.fromDateTime = moment(this.salesReportForm.value.fromDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
-    console.log(this.fromDateTime);
-    this.toDateTime = moment(this.salesReportForm.value.toDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
-    console.log(this.toDateTime);
+    const fromDate = moment(this.salesReportForm.value.fromDate).format('YYYY-MM-DD'); 
+    const toDate = moment(this.salesReportForm.value.toDate).format('YYYY-MM-DD'); 
     try {
       const loading = await this.loadingController.create({
         message: 'Fetching sales report...',
@@ -113,18 +88,16 @@ todaydate;
       await loading.present();
 
       this.stockService
-        .getSalesReportFile(this.selectedClinicId, new Date(this.fromDateTime), new Date(this.toDateTime))
+        .getSalesReportFile(this.selectedClinicId, new Date(fromDate), new Date(toDate))
         .subscribe({
           next: (response) => {
             loading.dismiss();
-
             const blob = new Blob([response], { type: 'application/pdf' });
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
             link.download = `SalesReport_${this.selectedClinicId}_${fromDate}_${toDate}.pdf`;
             link.click();
             window.URL.revokeObjectURL(link.href);
-
             this.toastService.create('Sales report downloaded successfully', 'success');
           },
           error: (error) => {
