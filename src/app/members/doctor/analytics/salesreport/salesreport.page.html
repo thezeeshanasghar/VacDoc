@@ -44,7 +44,7 @@
     </ion-item>
   </div>
 
-  <ion-button expand="block" [disabled]="isScheduleDateValid()" (click)="getSalesReport()">Get Sales Report</ion-button>
+  <ion-button expand="block" (click)="getSalesReport()">Get Sales Report</ion-button>
 
   <ion-list *ngIf="salesReportData.length > 0">
     <ion-item *ngFor="let report of salesReportData">
