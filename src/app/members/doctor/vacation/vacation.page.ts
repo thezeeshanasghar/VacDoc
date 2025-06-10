@@ -16,10 +16,8 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./vacation.page.scss'],
 })
 export class VacationPage implements OnInit {
-
   fg2: FormGroup;
   clinics: any = [];
-
   DoctorId: any;
   ClinicId: any = [];
   todaydate;
@@ -36,7 +34,6 @@ export class VacationPage implements OnInit {
 
   ) {
     this.todaydate = new Date().toISOString().slice(0, 10);
-    //this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format('YYYY-MM-DD');
     this.fg2 = this.formBuilder.group({
       clinics: new FormArray([]),
       'formDate': [this.todaydate],
@@ -49,31 +46,22 @@ export class VacationPage implements OnInit {
       this.DoctorId = val;
     });
     this.getClinics();
-
   }
+
   pickFromDate($event) {
     this.fg2.controls['formDate'].setValue($event.detail.value);
   }
+
   pickTodayDate($event) {
     this.fg2.controls['ToDate'].setValue($event.detail.value);
   }
 
   getChildVaccinefromUser() {
-    // for (let i = 0; i <= this.clinics.length; i++) {
-    //   if (this.fg2.value.clinics[i] == true) {
-    //     this.ClinicId.push({'Id':this.clinics[i].Id});
-    //   }
-    // }
-    // let data = { 'Clinics': this.ClinicId, 'FromDate': this.fg2.value.formDate, 'ToDate': this.fg2.value.ToDate }
-    // this.addVacation(data)
-   
     this.addVacation()
-
-
   }
 
   async getClinics() {
-    const loading = await this.loadingController.create({ message: 'Loading' });
+    const loading = await this.loadingController.create({ message: 'Loading Clinics' });
     await loading.present();
 
     await this.clinicService.getClinics(this.DoctorId).subscribe(
@@ -137,36 +125,29 @@ export class VacationPage implements OnInit {
   //   //   });
   // }
   async addVacation() {
-    // Retrieve selected clinic IDs from the form
     const selectedClinics = this.fg2.value.clinics.reduce((acc, curr, index) => {
       if (curr) acc.push(this.clinics[index].Id);
       return acc;
     }, []);
 
-    // Retrieve from date and to date from the form
     const fromDate = moment(this.fg2.value.formDate).format('YYYY-MM-DD');
     const toDate = moment(this.fg2.value.ToDate).format('YYYY-MM-DD');
     console.log(fromDate);
     console.log(toDate);
 
-    // Patch data for each selected clinic
     selectedClinics.forEach(async clinicId => {
       this.vacationService.patchChildIdsWithSchedules(clinicId, fromDate, toDate)
         .subscribe(
           (response) => {
             console.log('Data patched successfully for clinic ID', clinicId, ':', response);
             this.toastService.create("Vacation Updated Successfully")
-            // Add your success handling code here
           },
           (error) => {
             console.error('Failed to patch data for clinic ID', clinicId, ':', error);
-            this.toastService.create("Cannot Update Vacation", 'danger')
-            // Add your error handling code here
+            this.toastService.create(error.error, 'danger')
           }
         );
     });
 }
-
 }
-
 // https://coryrylan.com/blog/creating-a-dynamic-checkbox-list-in-angular
