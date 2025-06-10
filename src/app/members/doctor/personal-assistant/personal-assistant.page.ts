@@ -56,7 +56,6 @@ export class PersonalAssistantPage implements OnInit {
     console.log('Update PA button clicked for:', pa);
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
-    // Example: Access all checkbox values for the selected PA
     const updatedData = {
       Id: pa.Id,
       AllowAlert: pa.AllowAlert,
@@ -75,7 +74,6 @@ export class PersonalAssistantPage implements OnInit {
       next: (res) => {
         console.log('Response:', res.message);
         this.toastService.create(res.message, 'success');
-         // Refresh the list of personal assistants after update
         loading.dismiss();
           this.personalAssistants = res;
           console.log('Personal Assistants:', this.personalAssistants);
@@ -87,9 +85,6 @@ export class PersonalAssistantPage implements OnInit {
         console.error(err);
       },
     });
-  
-    // Navigate to the update page or handle the update logic
-    // Example: this.router.navigate(['/members/doctor/personal-assistant/update'], { queryParams: { paId: pa.id } });
   }
 
   async fetchPersonalAssistants() {
@@ -104,7 +99,7 @@ export class PersonalAssistantPage implements OnInit {
         loading.dismiss();
           this.personalAssistants = res;
           console.log('Personal Assistants:', this.personalAssistants);
-          this.toastService.create(res.message, 'success'); 
+          this.toastService.create('Personal Assistants fetched successfully', 'success'); 
       },
       error: (err) => {
         loading.dismiss();
