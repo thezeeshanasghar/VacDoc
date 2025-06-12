@@ -6,6 +6,8 @@ import { Storage } from "@ionic/storage";
 import { FollowupService } from "src/app/services/followup.service";
 import { AndroidPermissions } from "@ionic-native/android-permissions/ngx";
 import { Platform } from '@ionic/angular';
+import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
+
 @Component({
   selector: "app-follow-up",
   templateUrl: "./follow-up.page.html",
@@ -13,17 +15,20 @@ import { Platform } from '@ionic/angular';
 })
 export class FollowUpPage implements OnInit {
   doctorId: any;
-  followUpChild: any;
+  followUpChild: any[] = []; // Initialize as an empty array
   numOfDays: number = 0;
   clinicId: any;
   selectedDate: string = new Date().toISOString();
   formattedDate: string;
+  Childs: any;
+  private readonly API_VACCINE = `${environment.BASE_URL}`;
   constructor(
     public loadingController: LoadingController,
     private followupService: FollowupService,
     private toastService: ToastService,
     private storage: Storage,
     public platform: Platform,
+    private downloader: Downloader,
   ) { }
   
   ngOnInit() {
@@ -58,6 +63,79 @@ export class FollowUpPage implements OnInit {
           this.toastService.create(err, "danger");
         }
       );
+  }
+
+  async sendemails() {
+    const loading = await this.loadingController.create({
+      message: "sending follow up emails"
+    });
+    await loading.present();
+    await this.followupService.sendEmailToAll(this.numOfDays, this.clinicId).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          loading.dismiss();
+          this.toastService.create("Follow up emails sent successfull", "success");
+        } else {
+          loading.dismiss();
+          this.toastService.create(res.Message, "danger");
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, "danger");
+      }
+    );
+  }
+
+  downloadcsv() {
+    if (!this.followUpChild || this.followUpChild.length === 0) {
+      console.error('No follow-up data available.');
+      this.toastService.create('No follow-up data available to download.', 'danger');
+      return;
+    }
+  
+    let query = '';
+    this.followUpChild.map((x) => x.followUpChild.Id).forEach((id) => {
+      if (id) {
+        query += 'arr[]=' + id + '&';
+      }
+    });
+  
+    if (!query) {
+      console.error('No valid IDs found in follow-up data.');
+      this.toastService.create('No valid IDs found to download.', 'danger');
+      return;
+    }
+  
+    const url = `${this.API_VACCINE}FollowUp/export-followups-csv?${query}`;
+  
+    if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
+      window.open(url, '_blank');
+    } else {
+      const request: DownloadRequest = {
+        uri: url,
+        title: 'Child Alerts CSV',
+        description: 'Downloading follow-up alerts CSV',
+        mimeType: 'text/csv',
+        visibleInDownloadsUi: true,
+        notificationVisibility: NotificationVisibility.VisibleNotifyCompleted,
+        destinationInExternalFilesDir: {
+          dirType: 'Downloads',
+          subPath: 'Child Alerts.csv',
+        },
+      };
+  
+      this.downloader
+        .download(request)
+        .then((location: string) => {
+          console.log('File downloaded at:', location);
+          this.toastService.create('File downloaded successfully', 'success');
+        })
+        .catch((error: any) => {
+          console.error('Download failed:', error);
+          this.toastService.create('Failed to download file', 'danger');
+        });
+    }
   }
 
   formatDateToString(date: string | Date): string {

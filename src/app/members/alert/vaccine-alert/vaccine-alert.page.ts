@@ -11,8 +11,7 @@ import { SMS } from '@ionic-native/sms/ngx';
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 import { Platform } from '@ionic/angular';
 import { DoctorService } from "src/app/services/doctor.service";
-import { VaccineService } from 'src/app/services/vaccine.service'; // Import the service
-
+import { VaccineService } from 'src/app/services/vaccine.service'; 
 
 @Component({
   selector: "app-vaccine-alert",
@@ -30,10 +29,8 @@ export class VaccineAlertPage implements OnInit {
   Childs: any;
   private readonly API_VACCINE = `${environment.BASE_URL}`;
   Messages = [];
-  numOfDays: number = 0; // 0 means get alert for today, 5 means get alert for next five days, same as for -5
+  numOfDays: number = 0;
   selectedDate: string = new Date().toISOString();
-
-
 
   constructor(
     public loadingController: LoadingController,
@@ -48,12 +45,7 @@ export class VaccineAlertPage implements OnInit {
     private downloader: Downloader,
     public platform: Platform,
     private vaccineService: VaccineService
-  ) {
-
-  }
-
-
-
+  ) {}
 
   async ngOnInit() {
     this.getAlerts(this.selectedDate);
@@ -80,18 +72,13 @@ export class VaccineAlertPage implements OnInit {
         if (res.IsSuccess) {
           const doctorData = res.ResponseData;
           console.log("Doctor Data is ", res.ResponseData);
-
-          // Doctor Information
           console.log('Doctor ID:', doctorData.Id);
           console.log('Doctor Name:', doctorData.DisplayName);
           console.log('Doctor Email:', doctorData.Email);
           console.log('Doctor Phone:', doctorData.Phone);
           console.log('Doctor Specialization:', doctorData.Specialization);
           console.log('Doctor Address:', doctorData.Address);
-
           this.displayName = doctorData.DisplayName;
-
-          // Clinic Information
           if (doctorData.Clinics && doctorData.Clinics.length > 0) {
             doctorData.Clinics.forEach((clinic, index) => {
               console.log(`Clinic ${index + 1} Data:`);
@@ -100,18 +87,14 @@ export class VaccineAlertPage implements OnInit {
               console.log('Clinic Address:', clinic.Address);
               console.log('Clinic Phone:', clinic.PhoneNumber);
               console.log('Clinic Email:', clinic.Email);
-
               if (clinic.Staff && clinic.Staff.length > 0) {
                 console.log(`Clinic ${index + 1} Staff:`);
                 clinic.Staff.forEach((staff, staffIndex) => {
                   console.log(`Staff Member ${staffIndex + 1}:`, staff.Name);
                 });
               }
-
-              console.log('-------------------'); // Separator between clinics
+              console.log('-------------------'); 
             });
-
-            // Store the first clinic's name (or adjust as needed)
             this.clinicName = doctorData.Clinics[0].Name;
             this.clinicPhoneNumber = doctorData.Clinics[0].PhoneNumber;
           } else {
@@ -127,7 +110,7 @@ export class VaccineAlertPage implements OnInit {
       }
     );
   }
-  // Get childs get from server
+
   async getChlid(numOfDays: number, formattedDate: string) {
     this.numOfDays = numOfDays;
     this.formattedDate = formattedDate;
@@ -174,6 +157,7 @@ export class VaccineAlertPage implements OnInit {
       }
     );
   }
+
   async sendemail(child: any) {
     console.log(child);
     console.log(child[0].ChildId);
@@ -197,6 +181,7 @@ export class VaccineAlertPage implements OnInit {
       }
     );
   }
+
   downloadcsv() {
     let query = "";
     this.Childs.map(x => x.Child.Id).forEach(id => {
@@ -210,12 +195,11 @@ export class VaccineAlertPage implements OnInit {
     else {
       var request: DownloadRequest = {
         uri: `${this.API_VACCINE}child/downloadcsv?${query}`,
-        title: 'Chil dAlerts CSV',
+        title: 'Child Alerts CSV',
         description: '',
         mimeType: '',
         visibleInDownloadsUi: true,
         notificationVisibility: NotificationVisibility.VisibleNotifyCompleted,
-        // notificationVisibility: 0,
         destinationInExternalFilesDir: {
           dirType: 'Downloads',
           subPath: 'Child Alerts.csv'
@@ -245,7 +229,6 @@ export class VaccineAlertPage implements OnInit {
     return sms1;
   }
 
-  // send Alert Msg to childs
   async sendAlertMsg(id, childMobile, message) {
     if (this.SMSKey == 0) {
       await this.alertService
@@ -253,15 +236,12 @@ export class VaccineAlertPage implements OnInit {
         .subscribe(
           res => {
             if (res.IsSuccess) {
-              //loading.dismiss();
               this.toastService.create("Alerts has been sent successfully");
             } else {
-              //loading.dismiss();
               this.toastService.create('Error: Failed to send alert\nTry again', 'danger', false, 3000);
             }
           },
           err => {
-            //loading.dismiss();
             this.toastService.create('Error: Server failure', 'danger', false, 3000);
           }
         );
@@ -309,7 +289,6 @@ export class VaccineAlertPage implements OnInit {
         this.storage.set(environment.MESSAGES, this.Messages);
         this.toastService.create("Message Sent Successful");
       }).catch((error) => {
-        //console.log("The Message is Failed",error);
         this.toastService.create("Message Sent Failed", "danger");
         let obj = { 'toNumber': '+92' + childMobile, 'message': message, 'created': Date.now(), 'status': false };
         this.Messages.push(obj);
@@ -318,7 +297,6 @@ export class VaccineAlertPage implements OnInit {
   }
 
   callFunction(celnumber: string) {
-    // Ensure the phone number is in the correct format
     const formattedNumber = celnumber.startsWith('0') ? celnumber : `0${celnumber}`;
     this.callNumber.callNumber(formattedNumber, true)
       .then(res => console.log('Launched dialer!', res))
@@ -356,20 +334,17 @@ export class VaccineAlertPage implements OnInit {
       message: "Sending Messages"
     });
     await loading.present();
-
     await listMessages.forEach(element => {
       this.sendAlertMsg(element.ChildId, element.MobileNumber, element.SMS);
     });
-
     loading.dismiss();
-
   }
+
   openWhatsApp(mobileNumber: string, childName: string, doseName: string, child: any) {
     if (child.isMessageSent) {
       alert('You have already sent the alert for this child.');
       return;
     }
-  
     this.vaccineService.getDosesForChild(child.Child.Id, this.formatDateToString(this.selectedDate), this.clinicId).subscribe(
       (response) => {
         if (response.IsSuccess && response.ResponseData) {
@@ -398,10 +373,11 @@ export class VaccineAlertPage implements OnInit {
     );
     child.isMessageSent = true;
   }
+
   formatDateToString(date: string | Date): string {
     const d = new Date(date);
     const year = d.getFullYear();
-    const month = ('0' + (d.getMonth() + 1)).slice(-2);  // Months are 0-based
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);
     const day = ('0' + d.getDate()).slice(-2);
     return `${year}-${month}-${day}`;
   }

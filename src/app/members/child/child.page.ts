@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { IonInfiniteScroll } from '@ionic/angular';
 import { LoadingController } from '@ionic/angular';
 import { ChildService } from 'src/app/services/child.service';
@@ -31,14 +31,11 @@ export class ChildPage {
     public router: Router,
     public loadingController: LoadingController,
     private childService: ChildService,
-    private clinicService: ClinicService,
     private formBuilder: FormBuilder,
     private toastService: ToastService,
     private storage: Storage,
     private alertService: AlertService,
     private callNumber: CallNumber,
-    private http: HttpClient,
-
   ) {
     this.fg = this.formBuilder.group({
       Name: ["", Validators.required],
@@ -54,16 +51,15 @@ export class ChildPage {
     });
     this.storage.get('searchInput').then((searchValue) => {
       if (searchValue) {
-        this.fg.controls['Name'].setValue(searchValue); // Restore the search input value
-        this.search = true;
+        this.fg.controls['Name'].setValue(searchValue);
         this.page = 0;
         this.childs = [];
-        this.getChlidbyUser(false); // Perform the search
+        this.getChlidbyUser(false);
       } else {
         this.page = 0;
         this.search = false;
         this.childs = [];
-        this.getChlidByClinic(false); // Load default data
+        this.getChlidByClinic(false);
       }
     });
   }
@@ -200,8 +196,6 @@ export class ChildPage {
       (res) => {
         loading.dismiss();
         if (res.IsSuccess) {
-          // this.toastService.create(res.Message);
-          // Refresh the child list or update the specific child's status in the UI
           this.refreshPage();
         } else {
           this.toastService.create(res.Message, 'danger');
@@ -227,20 +221,14 @@ export class ChildPage {
       const blob = new Blob([response.body], { type: 'application/pdf' });
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
-
       const contentDisposition = response.headers.get('Content-Disposition');
-      let filename = 'Patient-ID.pdf'; // Default filename
-
+      let filename = 'Patient-ID.pdf';
       if (contentDisposition) {
-        // Try to get filename from the attachment; filename= part
         let matches = /filename=(.*?)(;|$)/.exec(contentDisposition);
-
         if (matches && matches[1]) {
-          // Remove quotes if present
           filename = matches[1].replace(/["']/g, '');
         }
       }
-
       link.download = filename;
       link.click();
       window.URL.revokeObjectURL(link.href);

@@ -6,7 +6,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
 import { IonicModule } from '@ionic/angular';
-
+import { Downloader } from '@ionic-native/downloader/ngx';
 import { FollowUpPage } from './follow-up.page';
 
 const routes: Routes = [
@@ -26,6 +26,9 @@ const routes: Routes = [
     MatInputModule,
     MatNativeDateModule,
   ],
-  declarations: [FollowUpPage]
+  declarations: [FollowUpPage],
+  providers: [
+    Downloader
+ ],
 })
 export class FollowUpPageModule {}
