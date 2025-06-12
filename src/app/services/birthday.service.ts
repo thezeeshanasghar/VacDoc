@@ -23,6 +23,15 @@ export class BirthdayService extends BaseService {
     );
   }
 
+  sendEmailToAll(Id: number): Observable<any> {
+    const url = `${this.API_ALERT
+      }Birthday/birthdaymail/bulk/${Id}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
   sendBirthdayMails(Id: number): Observable<any> {
     const url = `${this.API_ALERT}Birthday/birthdaymail/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(

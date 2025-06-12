@@ -1,5 +1,9 @@
 <ion-content class="ion-padding">
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="primary" fill="outline" [disabled]="!followUpChild || followUpChild.length === 0" (click)="sendemails()">Email</ion-button>
+      <ion-button color="primary" fill="outline" [disabled]="!followUpChild || followUpChild.length === 0" (click)="downloadcsv()">Sheet</ion-button>
+    </ion-buttons>
     <ion-buttons slot="end">
       <ion-item (click)="picker.open()">
         <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChange($event)">
@@ -8,7 +12,7 @@
       </ion-item>
     </ion-buttons>
   </ion-toolbar>
-  <h1 *ngIf="followUpChild == 0" style="color: red">No follow up for today.</h1>
+  <h1 *ngIf="!followUpChild || followUpChild.length === 0" style="color: red">No follow up for today.</h1>
   <ion-grid>
     <ion-row>
       <ion-col>

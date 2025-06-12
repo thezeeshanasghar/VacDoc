@@ -122,6 +122,28 @@ export class BirthdayAlertPage implements OnInit {
     );
   }
 
+  async sendemails() {
+    const loading = await this.loadingController.create({
+      message: "Sending birthday emails"
+    });
+    await loading.present();
+    await this.birthdayService.sendEmailToAll(this.doctorId).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          loading.dismiss();
+          this.toastService.create("Birthday emails sent successfull", "success");
+        } else {
+          loading.dismiss();
+          this.toastService.create(res.Message, "danger");
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(err, "danger");
+      }
+    );
+  }
+
   async sendemail(child: any) {
     console.log(child);
     console.log(child[0].Id);

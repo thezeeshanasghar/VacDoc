@@ -1,18 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
-// import { ClinicService } from 'src/app/services/clinic.service';
 import { Storage } from '@ionic/storage';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from '../../../../environments/environment';
-import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
 import { PaService } from 'src/app/services/pa.service';
 import { Router } from '@angular/router';
-import * as moment from 'moment';
-import { HttpClient } from '@angular/common/http';
-import { Validators } from '@angular/forms';
-import { AbstractControl, ValidatorFn } from '@angular/forms';
-
-
 
 @Component({
   selector: 'app-PersonalAssistant',
@@ -21,7 +13,7 @@ import { AbstractControl, ValidatorFn } from '@angular/forms';
 })
 export class PersonalAssistantPage implements OnInit {
   doctorId: string;
-  personalAssistants: any[] = []; // Array to store the fetched PAs
+  personalAssistants: any[] = [];
   AllowAlert: boolean;
   AllowAnalytics: boolean;
   AllowClinic: boolean;

@@ -44,6 +44,15 @@ export class FollowupService extends BaseService {
       catchError(this.handleError)
     );
   }
+
+  sendEmailToAll(numOfDays: number, clinicID: number): Observable<any> {
+    const url = `${this.API_ALERT
+      }FollowUp/followup-alert/${numOfDays}/${clinicID}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
   
   getFollowupChild(followupId: number, Id: number,date:string): Observable<any> {
     const url = `${this.API_ALERT}followup/alert/${followupId}/${Id}?inputDate=${date}`;
