@@ -64,12 +64,11 @@ export class PersonalAssistantPage implements OnInit {
 
     this.paService.editPa(updatedData.Id,updatedData).subscribe({
       next: (res) => {
-        console.log('Response:', res.message);
-        this.toastService.create(res.message, 'success');
-        loading.dismiss();
-          this.personalAssistants = res;
-          console.log('Personal Assistants:', this.personalAssistants);
-          this.fetchPersonalAssistants();
+      loading.dismiss();
+      console.log('Response:', res);
+      console.log('Response:', res.Message);
+      this.toastService.create(res.Message, 'success');
+      this.fetchPersonalAssistants();
       },
       error: (err) => {
         loading.dismiss();
@@ -91,7 +90,7 @@ export class PersonalAssistantPage implements OnInit {
         loading.dismiss();
           this.personalAssistants = res;
           console.log('Personal Assistants:', this.personalAssistants);
-          this.toastService.create('Personal Assistants fetched successfully', 'success'); 
+          // this.toastService.create('Personal Assistants fetched successfully', 'success'); 
       },
       error: (err) => {
         loading.dismiss();
