@@ -5,6 +5,7 @@ import { environment } from "src/environments/environment";
 import { Storage } from "@ionic/storage";
 import { BirthdayService } from "src/app/services/birthday.service";
 import { Platform } from '@ionic/angular';
+import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 
 @Component({
   selector: 'app-birthday-alert',
@@ -18,14 +19,15 @@ export class BirthdayAlertPage implements OnInit {
   clinic: string = ''; 
   clinics: string = ''; 
   firstClinic: string = ''; 
-  birthdayChild: any = [];
-
+  birthdayChild: any[] = [];
+  private readonly API_VACCINE = `${environment.BASE_URL}`;
   constructor(
     public loadingController: LoadingController,
     private birthdayService: BirthdayService,
     private toastService: ToastService,
     private storage: Storage,
     public platform: Platform,
+    private downloader: Downloader,
   ) { }
 
   ngOnInit() {
@@ -78,26 +80,19 @@ export class BirthdayAlertPage implements OnInit {
 
   loadDoctorDetails(doctorId: number) {
     console.log("Doctor ID:", doctorId);
-
     this.birthdayService.loadDoctorDetails(doctorId).subscribe(
       (res) => {
         console.log("Full API Response:", res);
-
         if (res.IsSuccess) {
           const DoctorDetails = res.ResponseData;
           console.log("DoctorDetails Object:", DoctorDetails);
-
           this.docname = DoctorDetails.DisplayName;
           this.clinics = Array.isArray(DoctorDetails.Clinics) ? DoctorDetails.Clinics : [];
-
           console.log("Clinic List:", this.clinics);
-
           if (this.clinics.length > 0) {
             const firstClinic = this.clinics[0];
-
             if (Array.isArray(this.clinics) && this.clinics.length > 0) {
               const firstClinic = this.clinics[0];
-
               if (typeof firstClinic === 'object' && firstClinic !== null) {
                 this.clinic = firstClinic.Name || firstClinic.ClinicName || "Unknown Clinic";
               } else {
@@ -107,11 +102,9 @@ export class BirthdayAlertPage implements OnInit {
             } else {
               this.clinic = "Unknown Clinic";
             }
-
           } else {
             this.clinic = "Unknown Clinic"
           }
-
         } else {
           console.error("Error fetching doctor details:", res.Message);
         }
@@ -167,6 +160,44 @@ export class BirthdayAlertPage implements OnInit {
       }
     );
   }
+
+   downloadcsv() {
+      let query = '';
+      this.birthdayChild.map((x) => x.Id).forEach((Id) => {
+        if (Id) {
+          query += 'arr[]=' + Id + '&';
+        }
+      });
+    
+      const url = `${this.API_VACCINE}Birthday/export-birthdays-csv?${query}`;
+      if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
+        window.open(url, '_blank');
+      } else {
+        const request: DownloadRequest = {
+          uri: url,
+          title: 'Child Alerts CSV',
+          description: 'Downloading follow-up alerts CSV',
+          mimeType: 'text/csv',
+          visibleInDownloadsUi: true,
+          notificationVisibility: NotificationVisibility.VisibleNotifyCompleted,
+          destinationInExternalFilesDir: {
+            dirType: 'Downloads',
+            subPath: 'Child Alerts.csv',
+          },
+        };
+    
+        this.downloader
+          .download(request)
+          .then((location: string) => {
+            console.log('File downloaded at:', location);
+            this.toastService.create('File downloaded successfully', 'success');
+          })
+          .catch((error: any) => {
+            console.error('Download failed:', error);
+            this.toastService.create('Failed to download file', 'danger');
+          });
+      }
+    }
 
   openWhatsApp(mobileNumber: string, childName: string, birthDate: string) {
     if (mobileNumber.trim() === '') {
