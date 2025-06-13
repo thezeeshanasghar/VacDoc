@@ -90,7 +90,6 @@ export class PersonalAssistantPage implements OnInit {
         loading.dismiss();
           this.personalAssistants = res;
           console.log('Personal Assistants:', this.personalAssistants);
-          // this.toastService.create('Personal Assistants fetched successfully', 'success'); 
       },
       error: (err) => {
         loading.dismiss();

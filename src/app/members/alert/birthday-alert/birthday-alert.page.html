@@ -1,8 +1,8 @@
 <ion-content class="ion-padding">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button color="primary" fill="outline"  (click)="sendemails()">Email</ion-button>
-      <!-- <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button> -->
+      <ion-button color="primary" fill="outline" [disabled]="birthdayChild.length == 0" (click)="sendemails()">Email</ion-button>
+      <ion-button color="primary" fill="outline" [disabled]="birthdayChild.length == 0" (click)="downloadcsv()">Sheet</ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-item (click)="picker.open()">

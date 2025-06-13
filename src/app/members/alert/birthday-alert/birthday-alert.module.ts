@@ -7,6 +7,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
 import { BirthdayAlertPage } from './birthday-alert.page';
+import { Downloader } from '@ionic-native/downloader/ngx';
 
 const routes: Routes = [
   {
@@ -26,6 +27,9 @@ const routes: Routes = [
     MatNativeDateModule,
     ReactiveFormsModule
   ],
+  providers: [
+      Downloader
+   ],
   declarations: [BirthdayAlertPage]
 })
 export class BirthdayAlertPageModule {}

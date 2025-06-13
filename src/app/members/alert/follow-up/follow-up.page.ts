@@ -88,27 +88,14 @@ export class FollowUpPage implements OnInit {
   }
 
   downloadcsv() {
-    if (!this.followUpChild || this.followUpChild.length === 0) {
-      console.error('No follow-up data available.');
-      this.toastService.create('No follow-up data available to download.', 'danger');
-      return;
-    }
-  
     let query = '';
-    this.followUpChild.map((x) => x.followUpChild.Id).forEach((id) => {
-      if (id) {
-        query += 'arr[]=' + id + '&';
+    this.followUpChild.map((x) => x.ChildId).forEach((ChildId) => {
+      if (ChildId) {
+        query += 'arr[]=' + ChildId + '&';
       }
     });
   
-    if (!query) {
-      console.error('No valid IDs found in follow-up data.');
-      this.toastService.create('No valid IDs found to download.', 'danger');
-      return;
-    }
-  
     const url = `${this.API_VACCINE}FollowUp/export-followups-csv?${query}`;
-  
     if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
       window.open(url, '_blank');
     } else {
