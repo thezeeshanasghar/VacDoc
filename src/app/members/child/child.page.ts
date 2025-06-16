@@ -27,6 +27,7 @@ export class ChildPage {
   page: number;
   search: boolean;
   clinic: any;
+  usertype: any;
   constructor(
     public router: Router,
     public loadingController: LoadingController,
@@ -43,6 +44,9 @@ export class ChildPage {
   }
 
   ionViewWillEnter() {
+    this.storage.get(environment.USER).then((user) => {
+      this.usertype = user.UserType;
+    });
     this.storage.get(environment.DOCTOR_Id).then((docId) => {
       this.doctorId = docId;
     });

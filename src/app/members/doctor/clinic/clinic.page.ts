@@ -10,7 +10,7 @@ import { AlertService } from "src/app/shared/alert.service";
 @Component({
   selector: "app-clinic",
   templateUrl: "./clinic.page.html",
-  styleUrls: ["./clinic.page.scss"]
+  styleUrls: ["./clinic.page.scss"],
 })
 export class ClinicPage {
   Clinics: any;
@@ -18,19 +18,9 @@ export class ClinicPage {
   doctorId: number;
   clinicId: any;
   onlineclinic: any;
-  
-
-  constructor(
-    public loadingController: LoadingController,
-    public clinicService: ClinicService,
-    private toastService: ToastService,
-    private storage: Storage,
-    private router: Router,
-    private alertService: AlertService,
-    private route: ActivatedRoute
-  ) {
+  usertype: any;
+  constructor(public loadingController: LoadingController, public clinicService: ClinicService, private toastService: ToastService, private storage: Storage, private router: Router, private alertService: AlertService, private route: ActivatedRoute) {
     this.router.events.subscribe((val) => {
-      // Check if redirected from another page
       if (val instanceof NavigationEnd) {
         // this.getClinics();
       }
@@ -38,11 +28,12 @@ export class ClinicPage {
   }
 
   async ngOnInit() {
-
-    await this.storage.get(environment.DOCTOR_Id).then(docId => {
+    await this.storage.get(environment.DOCTOR_Id).then((docId) => {
       this.doctorId = docId;
     });
-
+    this.storage.get(environment.USER).then((user) => {
+      this.usertype = user.UserType;
+    });
     // await this.storage.get(environment.CLINIC_Id).then(clinicId => {
     //   this.clinicId = clinicId;
     // });
@@ -51,13 +42,11 @@ export class ClinicPage {
     // });
     // console.log(this.Clinics);
     // console.log(this.doctorId);
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       if (params.refresh) {
-        // Fetch clinics again
         this.getClinics();
         this.clearRefreshFlag();
       } else {
-        // Check if clinics are already available
         if (!this.Clinics) {
           this.getClinics();
         } else {
@@ -66,30 +55,28 @@ export class ClinicPage {
       }
     });
   }
+
   clearRefreshFlag() {
     this.router.navigate([], {
       queryParams: { refresh: null },
-      queryParamsHandling: 'merge'
+      queryParamsHandling: "merge",
     });
   }
+
   async getClinics() {
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
     await this.clinicService.getClinics(this.doctorId).subscribe(
-      res => {
+      (res) => {
         loading.dismiss();
         if (res.IsSuccess) {
           // console.log(res);
           this.Clinics = res.ResponseData;
           for (let i = 0; i < this.Clinics.length; i++) {
             const clinic = this.Clinics[i];
-            // Access ClinicTimings array
             if (clinic.ClinicTimings) {
-              // Iterate over each timing in ClinicTimings
               for (let j = 0; j < clinic.ClinicTimings.length; j++) {
                 const timing = clinic.ClinicTimings[j];
-
-                // Process timing as needed
                 // console.log(timing);
               }
             }
@@ -108,13 +95,13 @@ export class ClinicPage {
           //     this.clinicService.updateClinic(this.Clinics[i])
           //   }
           // }
-           this.ngOnInit();
+          this.ngOnInit();
         } else {
           loading.dismiss();
           this.toastService.create(res.Message, "danger");
         }
       },
-      err => {
+      (err) => {
         loading.dismiss();
         this.toastService.create(err, "danger");
       }
@@ -124,89 +111,75 @@ export class ClinicPage {
   async setOnlineClinic(clinicId) {
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
-  
-    let data = { 'DoctorId': this.doctorId, 'Id': clinicId, 'IsOnline': 'true' }
-    console.log('data', data)
-  
-    await this.clinicService.changeOnlineClinic(data)
-      .subscribe(res => {
+    let data = { DoctorId: this.doctorId, Id: clinicId, IsOnline: "true" };
+    // console.log("data", data);
+    await this.clinicService.changeOnlineClinic(data).subscribe(
+      (res) => {
         if (res.IsSuccess) {
           loading.dismiss();
-  
-          // Update the storage with the new clinicId
           this.storage.set(environment.CLINIC_Id, data.Id).then(() => {
-            console.log('ClinicId stored:', data.Id);
+            // console.log("ClinicId stored:", data.Id);
           });
-  
-          // Set the selected clinic as the current clinic
           this.storage.get(environment.CLINICS).then((clinics) => {
             const selectedClinic = clinics.find((clinic) => clinic.Id === data.Id);
             this.storage.set(environment.ON_CLINIC, selectedClinic).then(() => {
-              console.log('Selected clinic stored:', selectedClinic);
+              // console.log("Selected clinic stored:", selectedClinic);
             });
           });
-  
           this.getClinics();
           // this.router.navigate(['/members/doctor/clinic']);
+        } else {
+          this.toastService.create(res.Message);
         }
-        else {
-          this.toastService.create(res.Message)
-        }
-  
-        // Retrieve the updated clinicId from storage
-        this.storage.get(environment.CLINIC_Id).then(val => {
+        this.storage.get(environment.CLINIC_Id).then((val) => {
           this.clinicId = val;
-          console.log('clinicId:', this.clinicId);
+          // console.log("clinicId:", this.clinicId);
         });
-  
-      }, (err) => {
+      },
+      (err) => {
         this.toastService.create(err);
-      });
-  
+      }
+    );
     loading.dismiss();
   }
-  // }
 
   alertDeleteClinic(id) {
-    this.alertService
-      .confirmAlert("Are you sure you want to delete this ?")
-      .then(yes => {
-        if (yes) {
-          this.deleteClinic(id);
-        }
-      });
+    this.alertService.confirmAlert("Are you sure you want to delete this ?").then((yes) => {
+      if (yes) {
+        this.deleteClinic(id);
+      }
+    });
   }
 
   async deleteClinic(id) {
     const loading = await this.loadingController.create({
-      message: "Loading"
+      message: "Loading",
     });
     await loading.present();
     await this.clinicService.deleteClinic(id).subscribe(
-      res => {
+      (res) => {
         if (res.IsSuccess == true) {
           window.location.reload();
-          this.router.navigate(['/members/doctor/clinic']);
+          this.router.navigate(["/members/doctor/clinic"]);
           loading.dismiss();
-        }
-        else {
+        } else {
           loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
+          this.toastService.create(res.Message, "danger");
         }
       },
-      err => {
+      (err) => {
         loading.dismiss();
-        this.toastService.create(err, 'danger')
+        this.toastService.create(err, "danger");
       }
     );
   }
+
   doRefresh(event) {
-    console.log('Begin async operation');
+    console.log("Begin async operation");
     this.ngOnInit();
     setTimeout(() => {
-      console.log('Async operation has ended');
+      // console.log("Async operation has ended");
       event.target.complete();
     }, 1000);
   }
-
 }
