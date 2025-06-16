@@ -41,7 +41,7 @@
       <ion-item class="ion-justify-content-center">
         <ion-icon class="iconchild" slot="start" color="primary" name="create"
           routerLink="/members/child/edit/{{child.Id}}" style="font-size: 40px;"></ion-icon>
-        <ion-icon class="iconchild" slot="start" color="primary" name="trash" (click)="alertforDeleteChild(child.Id)"
+        <ion-icon class="iconchild" *ngIf="usertype!=='PA'" slot="start" color="primary" name="trash" (click)="alertforDeleteChild(child.Id)"
           style="font-size: 40px;"></ion-icon>
         <ion-icon class="iconchild" slot="start" color="primary" name="mail"
           routerLink="/members/child/cmsg/{{child.Id}}" style="font-size: 40px;"></ion-icon>
