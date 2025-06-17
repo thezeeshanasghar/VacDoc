@@ -164,6 +164,7 @@ export class ChildPage {
     }
     await this.childService.getChildByClinic(this.clinic.Id, this.page).subscribe(
       res => {
+        console.log(res);
         if (res.IsSuccess) {
           if (res.ResponseData.length < 10)
             this.infiniteScroll.disabled = true;
@@ -182,6 +183,15 @@ export class ChildPage {
         this.toastService.create(err, 'danger');
       }
     )
+  }
+
+  approveChild(childId: number) {
+    this.loadingController.create({ message: 'Approving...' }).then((loading) => {
+      loading.present();
+  
+      console.log('Approving child with ID:', childId);
+      loading.dismiss();
+    });
   }
 
   callFunction(celnumber) {
@@ -210,6 +220,34 @@ export class ChildPage {
         this.toastService.create('An error occurred while updating status', 'danger');
       }
     );
+  }
+
+  async getUnapprovedPatients() {
+    const loading = await this.loadingController.create({ 
+      message: 'Loading Unapproved Patients...' 
+    }); 
+     await loading.present();
+  
+      this.childService.getUnapprovedPatients(this.clinic.Id).subscribe({
+        next: (res) => {
+          loading.dismiss();
+          console.log(res);
+          if (res.IsSuccess) {
+            this.infiniteScroll.disabled = true;
+            this.childs = res.ResponseData;
+            this.search = true; 
+            loading.dismiss();
+            this.infiniteScroll.complete();
+          } else {
+            this.toastService.create(res.Message, 'danger');
+          }
+        },
+        error: (err) => {
+          loading.dismiss();
+          this.toastService.create('Failed to fetch unapproved patients', 'danger');
+          console.error(err);
+        },
+      })
   }
 
   refreshPage() {
