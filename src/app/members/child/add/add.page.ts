@@ -64,6 +64,7 @@ export class AddPage implements OnInit {
   agents: string[] = [];
   isButtonEnabled: boolean;
   isTravel: boolean;
+  usertype: any;
   // agentService: any;
   //cities: any;
 
@@ -93,6 +94,15 @@ export class AddPage implements OnInit {
     this. logDoctorId();
     this.fetchAgent();
     this.loadCities();
+    this.storage.get(environment.USER).then((user) => {
+      if (user) {
+        console.log('Retrieved user from storage:', user);
+        this.usertype = user.UserType; // Ensure this is set correctly
+      } else {
+        console.error('No user data found in storage.');
+      }
+    });
+
     // this.doctorId = this.storage.get(environment.DOCTOR_Id);
     // console.log(this.doctorId);
 }
@@ -557,6 +567,11 @@ filterAgents(value: string) {
       message: "loading"
     });
     await loading.present();
+    if (this.usertype === 'DOCTOR') {
+      this.fg1.value.IsPAApprove = true;
+    } else {
+      this.fg1.value.IsPAApprove = false;
+    }
     // let str = this.fg1.value.PreferredDayOfWeek;
     // this.fg1.value.PreferredDayOfWeek = str.toString();
     this.fg1.value.ClinicId = this.clinic.Id;

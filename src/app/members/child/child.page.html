@@ -25,6 +25,7 @@
         required></ion-input>
       <ion-button [disabled]="false" (click)="getChlidbyUser(true)">search</ion-button>
       <ion-button *ngIf="search" (click)="getChlidByClinic(true)">clear</ion-button>
+      <ion-button *ngIf="usertype !== 'PA'" (click)="getUnapprovedPatients()">UnApproved</ion-button>
     </ion-item>
 
   </form>
@@ -67,6 +68,10 @@
       {{child.MobileNumber}}
       <!-- </p> -->
       <br>
+      <ion-button *ngIf="!child.IsPAApprove" size="small" fill="outline" color="success" (click)="approveChild(child.Id)">
+        Approve
+      </ion-button>
+      &nbsp; &nbsp;
       <ion-button disabled="false" size="small" fill="outline" color="primary"
         routerLink="/members/child/vaccine/{{child.Id}}">
         Vaccine
