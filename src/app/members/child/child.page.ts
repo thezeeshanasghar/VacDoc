@@ -165,6 +165,7 @@ export class ChildPage {
     }
     await this.childService.getChildByClinic(this.clinic.Id, this.page).subscribe(
       res => {
+        console.log(res);
         if (res.IsSuccess) {
           if (res.ResponseData.length < 10)
             this.infiniteScroll.disabled = true;
@@ -234,7 +235,9 @@ export class ChildPage {
     );
   }
 
+
   async getUnapprovedPatients(isdelete: boolean) {
+
     const loading = await this.loadingController.create({ 
       message: 'Loading Unapproved Patients...' 
     }); 
