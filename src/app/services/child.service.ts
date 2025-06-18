@@ -98,4 +98,19 @@ export class ChildService extends BaseService {
       catchError(this.handleError)
     );
   }
+
+  getUnapprovedPatients(doctorId: number): Observable<any> {
+    const url = `${this.API_CHILD}Child/not-approved/${doctorId}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
+  approveChild(childId: number): Observable<any> {
+    const apiUrl = `${this.API_CHILD}Child/approve/${childId}`;
+    return this.http.put<any>(apiUrl, {}, this.httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
 }

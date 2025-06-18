@@ -7,7 +7,6 @@
   </ion-toolbar>
   <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
-
       <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/doctor/clinic" name="medkit" size="large"> </ion-icon>
@@ -17,16 +16,14 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <!-- <ion-searchbar type="tel"></ion-searchbar> -->
-
   <form [formGroup]="fg">
     <ion-item>
       <ion-input type="text" placeholder="search" formControlName="Name" (keyup.Enter)="getChlidbyUser(true)"
         required></ion-input>
       <ion-button [disabled]="false" (click)="getChlidbyUser(true)">search</ion-button>
       <ion-button *ngIf="search" (click)="getChlidByClinic(true)">clear</ion-button>
+      <ion-button *ngIf="usertype !== 'PA'" (click)="getUnapprovedPatients(true)">UnApproved</ion-button>
     </ion-item>
-
   </form>
 
   <ion-card *ngFor="let child of childs" [ngClass]="child.Gender=='Girl' ? 'girl' : 'boy'">
@@ -51,21 +48,14 @@
     </div>
 
     <ion-card-content>
-      <!-- <p> -->
       <ion-icon color="white" name="person"></ion-icon>
       {{child.FatherName}}
-      <!-- </p> -->
       &nbsp; &nbsp;
-
-      <!-- <p> -->
       <ion-icon color="white" name="calendar"></ion-icon>
       {{child.DOB}}
-      <!-- </p> -->
       &nbsp; &nbsp;
-      <!-- <p> -->
       <ion-icon color="white" name="call"></ion-icon>
       {{child.MobileNumber}}
-      <!-- </p> -->
       <br>
       <ion-button disabled="false" size="small" fill="outline" color="primary"
         routerLink="/members/child/vaccine/{{child.Id}}">
@@ -88,13 +78,15 @@
       <ion-button size="small" fill="outline" color="primary" (click)="downloadPdf(child.Id)">
         PID
       </ion-button>
+      &nbsp; &nbsp;
+      <ion-button *ngIf="!child.IsPAApprove" size="small" fill="outline" color="success" (click)="approveChild(child.Id)">
+        Approve
+      </ion-button>
     </ion-card-content>
-
   </ion-card>
 
   <ion-infinite-scroll threshold="100%" (ionInfinite)="loadData()">
     <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
-
 </ion-content>

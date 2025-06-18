@@ -56,6 +56,7 @@ export class ChildPage {
     this.storage.get('searchInput').then((searchValue) => {
       if (searchValue) {
         this.fg.controls['Name'].setValue(searchValue);
+        this.search = true;
         this.page = 0;
         this.childs = [];
         this.getChlidbyUser(false);
@@ -184,6 +185,27 @@ export class ChildPage {
     )
   }
 
+  async approveChild(childId: number) {
+    console.log('Approving child with ID:', childId);
+    const loading = await this.loadingController.create({
+      message: 'Approving'
+    });
+    await loading.present();
+  
+      this.childService.approveChild(childId).subscribe({
+        next: (res) => {
+          loading.dismiss();
+            this.toastService.create('Child approved successfully', 'success');
+            this.refreshPage();
+        },
+        error: (err) => {
+          loading.dismiss();
+          this.toastService.create('Failed to approve child', 'danger');
+          console.error(err);
+        },
+      });
+  }
+
   callFunction(celnumber) {
     this.callNumber.callNumber(0 + celnumber, true)
       .then(res => console.log('Launched dialer!', res))
@@ -210,6 +232,41 @@ export class ChildPage {
         this.toastService.create('An error occurred while updating status', 'danger');
       }
     );
+  }
+
+  async getUnapprovedPatients(isdelete: boolean) {
+    const loading = await this.loadingController.create({ 
+      message: 'Loading Unapproved Patients...' 
+    }); 
+     await loading.present();
+     if (isdelete) {
+      this.page = 0;
+      this.childs = [];
+      this.search = false;
+      this.fg.controls['Name'].setValue(null);
+      this.storage.remove('searchInput');
+    }
+  
+      this.childService.getUnapprovedPatients(this.clinic.Id).subscribe({
+        next: (res) => {
+          loading.dismiss();
+          console.log(res);
+          if (res.IsSuccess) {
+            this.infiniteScroll.disabled = true;
+            this.childs = res.ResponseData;
+            this.search = true; 
+            loading.dismiss();
+            this.infiniteScroll.complete();
+          } else {
+            this.toastService.create(res.Message, 'danger');
+          }
+        },
+        error: (err) => {
+          loading.dismiss();
+          this.toastService.create('Failed to fetch unapproved patients', 'danger');
+          console.error(err);
+        },
+      })
   }
 
   refreshPage() {
