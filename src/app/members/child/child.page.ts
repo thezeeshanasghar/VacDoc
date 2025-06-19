@@ -44,6 +44,9 @@ export class ChildPage {
   }
 
   ionViewWillEnter() {
+    window.onbeforeunload = () => {
+      this.storage.remove('searchInput');  // Clear search input on page unload
+    };
     this.storage.get(environment.USER).then((user) => {
       this.usertype = user.UserType;
     });

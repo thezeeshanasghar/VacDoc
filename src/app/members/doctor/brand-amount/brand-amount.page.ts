@@ -69,6 +69,7 @@ export class BrandAmountPage implements OnInit {
               this.clinics = response.ResponseData;
               console.log('Clinics:', this.clinics);
               this.selectedClinicId = this.clinicId || (this.clinics.length > 0 ? this.clinics[0].Id : null);
+              console.log('Selected Clinic ID:', this.selectedClinicId);
               if (this.selectedClinicId) {
                 this.getBrandAmount(this.selectedClinicId);
               }
@@ -89,7 +90,8 @@ export class BrandAmountPage implements OnInit {
             if (response.IsSuccess) {
               this.clinics = response.ResponseData;
               console.log('PA Clinics:', this.clinics);
-              this.selectedClinicId = this.clinicId || (this.clinics.length > 0 ? this.clinics[0].Id : null);
+              this.selectedClinicId = (this.clinics.length > 0 ? this.clinics[0].Id : null);
+              console.log('Selected PA Clinic ID:', this.selectedClinicId);
               if (this.selectedClinicId) {
                 this.getBrandAmount(this.selectedClinicId);
               }

@@ -23,6 +23,7 @@ import { StockService, StockDTO } from 'src/app/services/stock.service';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { UploadService } from 'src/app/services/upload.service';
 import { ClinicService } from "src/app/services/clinic.service";
+import { PaService } from 'src/app/services/pa.service';
 declare var google;
 
 interface StockItem {
@@ -87,6 +88,7 @@ export class AddPage implements OnInit {
   doctorId: string = '';
   clinicid: any;
   usertype: any;
+  clinicId: any;
   constructor(
     private brandService: BrandService,
     private toastService: ToastService,
@@ -95,6 +97,7 @@ export class AddPage implements OnInit {
     private fb: FormBuilder,
     private storage: Storage,
     private clinicService: ClinicService,
+    private paService: PaService,
   ) {
     this.purchaseDate = this.defaultDate;
     this.paymentDate = this.defaultDate;
@@ -116,6 +119,10 @@ export class AddPage implements OnInit {
         console.error('No user data found in storage.');
       }
     });
+    this.usertype = await this.storage.get(environment.USER); // Fetch user type (e.g., 'DOCTOR' or 'PA')
+    console.log('User Type:', this.usertype);
+    this.clinicId = await this.storage.get(environment.CLINIC_Id);
+    console.log('Clinic ID:', this.clinicId);
     this.loadBrands();
     this.fetchAgent();
     await this.loadClinics();
@@ -261,16 +268,13 @@ export class AddPage implements OnInit {
         message: 'Saving purchase...'
       });
       await loading.present();
-  
       const doctorId = await this.storage.get(environment.DOCTOR_Id);
       console.log('Doctor ID:', doctorId);
       if (!doctorId) {
         throw new Error('Doctor ID not found');
       }
-  
       const doctorIdNumber = parseInt(doctorId, 10);
       const billNo = `BILL-${this.bill}`;
-
       const purchaseData = this.stockItems.map(item => {
         const data: any = {
           BrandId: item.brandId,
@@ -284,19 +288,14 @@ export class AddPage implements OnInit {
           DoctorId: doctorIdNumber,
           IsPAApprove: this.usertype === 'DOCTOR' ? true : false,
         };
-        // Only include PaymentDate if isPaid is true
         if (this.isPaid) {
           data.PaidDate = new Date(this.paymentDate);
         }else {
           data.PaidDate = "01-01-0001"; // Set to null if not paid   
         }
-       
-  
         return data;
       });
-  
       console.log('Purchase Data:', purchaseData);
-  
       this.stockService.createBill(purchaseData).subscribe({
         next: (response) => {
           loading.dismiss();
@@ -313,7 +312,6 @@ export class AddPage implements OnInit {
           this.toastService.create('Failed to create purchase bill', 'danger');
         }
       });
-  
     } catch (error) {
       console.error('Error in saveStock:', error);
       this.toastService.create('An unexpected error occurred', 'danger');
@@ -336,10 +334,7 @@ export class AddPage implements OnInit {
         message: 'Loading brands...'
       });
       await loading.present();
-  
-      // const doctorId = await this.storage.get(environment.DOCTOR_Id);
       this.clinicid = await this.storage.get(environment.CLINIC_Id);
-      
       this.brandService.getBrandAmount(this.clinicid).subscribe({
         next: (response) => {
           if (response.IsSuccess) {
@@ -370,32 +365,81 @@ export class AddPage implements OnInit {
     }
   }
 
+  // async loadClinics() {
+  //   try {
+  //     const loading = await this.loadingController.create({
+  //       message: "Loading clinics...",
+  //     });
+  //     await loading.present();
+
+  //     this.clinicService.getClinics(Number(this.doctorId)).subscribe({
+  //       next: (response) => {
+  //         loading.dismiss();
+  //           this.clinics = response.ResponseData;
+  //           console.log("Clinics:", this.clinics);
+  //           this.storage.get(environment.CLINIC_Id).then((val) => {
+  //             console.log('Clinic ID:', val);
+  //             this.selectedClinic = val;
+  //           });
+  //       },
+  //       error: (error) => {
+  //         loading.dismiss();
+  //         console.error("Error fetching clinics:", error);
+  //         this.toastService.create("Failed to load clinics", "danger");
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.error("Error in loadClinics:", error);
+  //     this.toastService.create("An unexpected error occurred", "danger");
+  //   }
+  // }
+
   async loadClinics() {
     try {
       const loading = await this.loadingController.create({
-        message: "Loading clinics...",
+        message: 'Loading clinics...',
       });
       await loading.present();
-
-      this.clinicService.getClinics(Number(this.doctorId)).subscribe({
-        next: (response) => {
-          loading.dismiss();
-            this.clinics = response.ResponseData;
-            console.log("Clinics:", this.clinics);
-            this.storage.get(environment.CLINIC_Id).then((val) => {
-              console.log('Clinic ID:', val);
-              this.selectedClinic = val;
-            });
-        },
-        error: (error) => {
-          loading.dismiss();
-          console.error("Error fetching clinics:", error);
-          this.toastService.create("Failed to load clinics", "danger");
-        },
-      });
+      if (this.usertype.UserType === 'DOCTOR') {
+        this.clinicService.getClinics(Number(this.doctorId)).subscribe({
+          next: (response) => {
+            loading.dismiss();
+            if (response.IsSuccess) {
+              this.clinics = response.ResponseData;
+              console.log('Clinics:', this.clinics);
+              this.selectedClinic = this.clinicId || (this.clinics.length > 0 ? this.clinics[0].Id : null);
+            } else {
+              this.toastService.create(response.Message, 'danger');
+            }
+          },
+          error: (error) => {
+            loading.dismiss();
+            console.error('Error fetching clinics:', error);
+            this.toastService.create('Failed to load clinics', 'danger');
+          },
+        });
+      } else if (this.usertype.UserType === 'PA') {
+        this.paService.getPaClinics(Number(this.usertype.PAId)).subscribe({
+          next: (response) => {
+            loading.dismiss();
+            if (response.IsSuccess) {
+              this.clinics = response.ResponseData;
+              console.log('PA Clinics:', this.clinics);
+              this.selectedClinic =  (this.clinics.length > 0 ? this.clinics[0].Id : null);
+            } else {
+              this.toastService.create(response.Message, 'danger');
+            }
+          },
+          error: (error) => {
+            loading.dismiss();
+            console.error('Error fetching PA clinics:', error);
+            this.toastService.create('Failed to load clinics', 'danger');
+          },
+        });
+      }
     } catch (error) {
-      console.error("Error in loadClinics:", error);
-      this.toastService.create("An unexpected error occurred", "danger");
+      console.error('Error in loadClinics:', error);
+      this.toastService.create('An unexpected error occurred', 'danger');
     }
   }
 
@@ -415,7 +459,6 @@ export class AddPage implements OnInit {
   }
 
   onCityChange(): void {
-    // Handle city change logic here
     console.log('City changed:', this.fg1.get('city').value);
   }
 

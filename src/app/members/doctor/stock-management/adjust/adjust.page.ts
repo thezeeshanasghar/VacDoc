@@ -6,7 +6,7 @@ import { LoadingController } from '@ionic/angular';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
-
+import { PaService } from "src/app/services/pa.service";
 interface StockAdjustment {
   brandName: any;
   brandId: number;
@@ -43,6 +43,9 @@ export class AdjustPage implements OnInit {
   selectedClinic: string = '';
   clinic: string = '';
   clinics: any[] = [];
+  usertype: any;
+  selectedClinicId: any;
+  clinicId: any;
 
   constructor(
     private brandService: BrandService,
@@ -51,49 +54,96 @@ export class AdjustPage implements OnInit {
     private loadingController: LoadingController,
     private clinicService: ClinicService,
     private storage: Storage,
+    private paService: PaService
   ) {}
 
   async ngOnInit() {
+    this.usertype = await this.storage.get(environment.USER);
+    console.log('User Type:', this.usertype);
     this.storage.get(environment.CLINIC_Id).then((val) => {
       console.log('Clinic ID:', val);
-      // this.getBill(val);
       this.clinicid = val;
       this.loadBrands(val);
     });
-    this.DoctorId = await this.storage.get(environment.DOCTOR_Id);
-    console.log('Doctor ID:', this.DoctorId);
-    await this.loadClinics(this.DoctorId);
+    this.doctorId = await this.storage.get(environment.DOCTOR_Id);
+    console.log('Doctor ID:', this.doctorId);
+    await this.loadClinics();
   }
+  // async ngOnInit() {
+  //   try {
+  //     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
+  //     this.clinicId = await this.storage.get(environment.CLINIC_Id);
+  //     this.usertype = await this.storage.get(environment.USER);
 
-  async loadClinics(id:number) {
+  //     if (!this.doctorId || !this.usertype) {
+  //       console.error("Doctor ID or User Type not found in storage.");
+  //       this.toastService.create("Failed to load user data", "danger");
+  //       return;
+  //     }
+
+  //     console.log("Doctor ID:", this.doctorId);
+  //     console.log("Clinic ID:", this.clinicId);
+  //     console.log("User Type:", this.usertype);
+
+  //     await this.loadClinics();
+  //   } catch (error) {
+  //     console.error("Error during initialization:", error);
+  //     this.toastService.create("An unexpected error occurred", "danger");
+  //   }
+  // }
+
+  async loadClinics() {
+    const loading = await this.loadingController.create({
+      message: "Loading clinics...",
+    });
+    await loading.present();
+
     try {
-      const loading = await this.loadingController.create({
-        message: "Loading clinics...",
-      });
-      await loading.present();
-      console.log("Doctor ID:", id);
-
-      this.clinicService.getClinics(id).subscribe({
-        next: (response) => {
-          loading.dismiss();
-          // if (response.IsSuccess) {
-            this.clinics = response.ResponseData;
-            console.log("Clinics:", this.clinics);
-            // this.storage.get(environment.CLINIC_Id).then((val) => {
-              // console.log('Clinic ID:', val);
-              this.selectedClinic = this.clinicid;
-            // });
-          // } else {
-          //   this.toastService.create(response.Message, "danger");
-          // }
-        },
-        error: (error) => {
-          loading.dismiss();
-          console.error("Error fetching clinics:", error);
-          this.toastService.create("Failed to load clinics", "danger");
-        },
-      });
+      if (this.usertype.UserType === "DOCTOR") {
+        this.clinicService.getClinics(Number(this.doctorId)).subscribe({
+          next: (response) => {
+            loading.dismiss();
+            if (response.IsSuccess) {
+              this.clinics = response.ResponseData;
+              console.log("Clinics:", this.clinics);
+              this.selectedClinic = this.clinicId || (this.clinics.length > 0 ? this.clinics[0].Id : null);
+              // if (this.selectedClinicId) {
+              //   this.getBill(this.selectedClinicId);
+              // }
+            } else {
+              this.toastService.create(response.Message, "danger");
+            }
+          },
+          error: (error) => {
+            loading.dismiss();
+            console.error("Error fetching clinics:", error);
+            this.toastService.create("Failed to load clinics", "danger");
+          },
+        });
+      } else if (this.usertype.UserType === "PA") {
+        this.paService.getPaClinics(Number(this.usertype.PAId)).subscribe({
+          next: (response) => {
+            loading.dismiss();
+            if (response.IsSuccess) {
+              this.clinics = response.ResponseData;
+              console.log("PA Clinics:", this.clinics);
+              this.selectedClinic = this.clinics.length > 0 ? this.clinics[0].Id : null;
+              // if (this.selectedClinicId) {
+              //   this.getBill(this.selectedClinicId);
+              // }
+            } else {
+              this.toastService.create(response.Message, "danger");
+            }
+          },
+          error: (error) => {
+            loading.dismiss();
+            console.error("Error fetching PA clinics:", error);
+            this.toastService.create("Failed to load clinics", "danger");
+          },
+        });
+      }
     } catch (error) {
+      loading.dismiss();
       console.error("Error in loadClinics:", error);
       this.toastService.create("An unexpected error occurred", "danger");
     }
