@@ -93,6 +93,9 @@ export class DashboardPage implements OnInit {
             this.Clinics = res.ResponseData;
             this.clinicCount = this.Clinics.length;
             this.clinicsExist = this.clinicCount > 0;
+            if (!this.clinicsExist) {
+                this.routerOutlet.nativeEl.ownerDocument.defaultView.location.href = 'members/doctor/clinic/add';
+            }
             this.storage.set(environment.CLINICS, this.Clinics);
             for (let i = 0; i < this.Clinics.length; i++) {
               if (this.Clinics[i].IsOnline) {
