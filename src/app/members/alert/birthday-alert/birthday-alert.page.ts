@@ -146,7 +146,7 @@ export class BirthdayAlertPage implements OnInit {
     );
   }
 
-  openWhatsApp(mobileNumber: string, childName: string, birthDate: string) {
+  openWhatsApp(mobileNumber: string, childName: string, birthDate: string, child: any ) {
     if (mobileNumber.trim() === '') {
       alert('Invalid mobile number. Please provide a valid number.');
       return;
@@ -168,5 +168,6 @@ export class BirthdayAlertPage implements OnInit {
       whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPatientNumber}&text=${message}`;
     }
     window.open(whatsappUrl, '_system');
+    child.isMessageSent = true;
   }
 }
