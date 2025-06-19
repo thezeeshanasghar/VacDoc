@@ -119,6 +119,12 @@ export class StockManagementPage implements OnInit {
     }
   }
 
+  onClinicChange(event: any) {
+        const clinicId = event.detail.value;
+        console.log("Selected Clinic ID:", clinicId);
+        this.getBill(clinicId);
+      }
+
   async getBill(clinicId: string) {
     const loading = await this.loadingController.create({
       message: "Loading bills...",
