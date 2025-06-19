@@ -3,6 +3,7 @@ import { LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { BrandService, BrandAmountDTO } from 'src/app/services/brand.service';
 import { ClinicService } from 'src/app/services/clinic.service'; 
+import { PaService } from 'src/app/services/pa.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
@@ -18,10 +19,10 @@ export class BrandAmountPage implements OnInit {
 
   brandAmounts: BrandAmountDTO[] = [];
   fg: FormGroup
-  // clinicService: any;
   clinics: any;
   selectedClinicId: any;
   doctorId: any;
+  usertype: any; // Default user type, can be set dynamically based on the logged-in user
   online: Promise<any>;
   clinicId: any;
   constructor(
@@ -30,6 +31,7 @@ export class BrandAmountPage implements OnInit {
     private brandService: BrandService,
     private toastService: ToastService,
     private clinicService: ClinicService,
+    private paService: PaService,
   ) { }
 
   async ngOnInit() {
@@ -40,6 +42,8 @@ export class BrandAmountPage implements OnInit {
       this.toastService.create('Doctor ID not found', 'danger');
       return;
     }
+    this.usertype = await this.storage.get(environment.USER); // Fetch user type (e.g., 'DOCTOR' or 'PA')
+    console.log('User Type:', this.usertype);
     this.clinicId = await this.storage.get(environment.CLINIC_Id);
     console.log('Clinic ID:', this.clinicId);
     if (!this.doctorId) {
@@ -56,30 +60,52 @@ export class BrandAmountPage implements OnInit {
         message: 'Loading clinics...',
       });
       await loading.present();
-
-      this.clinicService.getClinics(Number(this.doctorId)).subscribe({
-        next: (response) => {
-          loading.dismiss();
-          if (response.IsSuccess) {
-            this.clinics = response.ResponseData;
-            console.log('Clinics:', this.clinics);
-           
-              console.log('Clinic ID:', this.clinicId);
+  
+      if (this.usertype.UserType === 'DOCTOR') {
+        this.clinicService.getClinics(Number(this.doctorId)).subscribe({
+          next: (response) => {
+            loading.dismiss();
+            if (response.IsSuccess) {
+              this.clinics = response.ResponseData;
+              console.log('Clinics:', this.clinics);
               this.selectedClinicId = this.clinicId || (this.clinics.length > 0 ? this.clinics[0].Id : null);
+              console.log('Selected Clinic ID:', this.selectedClinicId);
               if (this.selectedClinicId) {
                 this.getBrandAmount(this.selectedClinicId);
               }
-          
-          } else {
-            this.toastService.create(response.Message, 'danger');
-          }
-        },
-        error: (error) => {
-          loading.dismiss();
-          console.error('Error fetching clinics:', error);
-          this.toastService.create('Failed to load clinics', 'danger');
-        },
-      });
+            } else {
+              this.toastService.create(response.Message, 'danger');
+            }
+          },
+          error: (error) => {
+            loading.dismiss();
+            console.error('Error fetching clinics:', error);
+            this.toastService.create('Failed to load clinics', 'danger');
+          },
+        });
+      } else if (this.usertype.UserType === 'PA') {
+        this.paService.getPaClinics(Number(this.usertype.PAId)).subscribe({
+          next: (response) => {
+            loading.dismiss();
+            if (response.IsSuccess) {
+              this.clinics = response.ResponseData;
+              console.log('PA Clinics:', this.clinics);
+              this.selectedClinicId = (this.clinics.length > 0 ? this.clinics[0].Id : null);
+              console.log('Selected PA Clinic ID:', this.selectedClinicId);
+              if (this.selectedClinicId) {
+                this.getBrandAmount(this.selectedClinicId);
+              }
+            } else {
+              this.toastService.create(response.Message, 'danger');
+            }
+          },
+          error: (error) => {
+            loading.dismiss();
+            console.error('Error fetching PA clinics:', error);
+            this.toastService.create('Failed to load clinics', 'danger');
+          },
+        });
+      }
     } catch (error) {
       console.error('Error in loadClinics:', error);
       this.toastService.create('An unexpected error occurred', 'danger');

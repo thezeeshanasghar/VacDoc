@@ -44,6 +44,9 @@ export class ChildPage {
   }
 
   ionViewWillEnter() {
+    window.onbeforeunload = () => {
+      this.storage.remove('searchInput');  // Clear search input on page unload
+    };
     this.storage.get(environment.USER).then((user) => {
       this.usertype = user.UserType;
     });
@@ -56,6 +59,7 @@ export class ChildPage {
     this.storage.get('searchInput').then((searchValue) => {
       if (searchValue) {
         this.fg.controls['Name'].setValue(searchValue);
+        this.search = true;
         this.page = 0;
         this.childs = [];
         this.getChlidbyUser(false);
@@ -185,13 +189,25 @@ export class ChildPage {
     )
   }
 
-  approveChild(childId: number) {
-    this.loadingController.create({ message: 'Approving...' }).then((loading) => {
-      loading.present();
-  
-      console.log('Approving child with ID:', childId);
-      loading.dismiss();
+  async approveChild(childId: number) {
+    console.log('Approving child with ID:', childId);
+    const loading = await this.loadingController.create({
+      message: 'Approving'
     });
+    await loading.present();
+  
+      this.childService.approveChild(childId).subscribe({
+        next: (res) => {
+          loading.dismiss();
+            this.toastService.create('Child approved successfully', 'success');
+            this.refreshPage();
+        },
+        error: (err) => {
+          loading.dismiss();
+          this.toastService.create('Failed to approve child', 'danger');
+          console.error(err);
+        },
+      });
   }
 
   callFunction(celnumber) {
@@ -222,11 +238,20 @@ export class ChildPage {
     );
   }
 
-  async getUnapprovedPatients() {
+
+  async getUnapprovedPatients(isdelete: boolean) {
+
     const loading = await this.loadingController.create({ 
       message: 'Loading Unapproved Patients...' 
     }); 
      await loading.present();
+     if (isdelete) {
+      this.page = 0;
+      this.childs = [];
+      this.search = false;
+      this.fg.controls['Name'].setValue(null);
+      this.storage.remove('searchInput');
+    }
   
       this.childService.getUnapprovedPatients(this.clinic.Id).subscribe({
         next: (res) => {

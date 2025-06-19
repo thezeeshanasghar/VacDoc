@@ -44,6 +44,17 @@ export class PaService extends BaseService {
     );
   }
 
+  getPaaccess(id: string): Observable<any> {
+    const url = `${this.API_PA}PAAccess/doctor/${id}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map((response: any) => response),
+      catchError((error) => {
+        console.error('Error in getPa:', error);
+        throw error;
+      })
+    );
+  }
+
   getPaAll(): Observable<any> {
     const url = `${this.API_PA}PersonalAssistant`;
     return this.http.get(url, this.httpOptions).pipe(
@@ -74,6 +85,11 @@ export class PaService extends BaseService {
       );
   }
 
+  getPaClinics(Id: number): Observable<any> {
+    const url = `${this.API_PA}PersonalAssistant/clinics/${Id}`;
+    return this.http.get<any>(url);
+  }
+
   // getPaByDoctorId(id: string): Observable<any> {
   //   const url = `${this.API_SCHEDULE}PersonalAssistant/by-doctor/${id}`;
   //   return this.http.get(url, this.httpOptions).pipe(
@@ -94,6 +110,16 @@ export class PaService extends BaseService {
       })
     );
   }
+
+  deleteAccess(accessId: number): Observable<any> {
+    const url = `${this.API_PA}PAAccess/${accessId}`;
+    return this.http.delete(url, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+
 
 //   putDoctorSchedule(data): Observable<any> {
 //     const url = `${this.API_SCHEDULE}doctorschedule`;
