@@ -1,0 +1,75 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/stock-management"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Items Report</ion-title>
+  </ion-toolbar>
+  <ion-toolbar color="primary" >
+    <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/data" name="stats-chart-outline" size="large" > </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/total" name="bar-chart-outline" size="large" > </ion-icon>
+      <!-- <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/salesreport" name="trending-up-outline" size="large" > </ion-icon> -->
+      <ion-menu-button style="margin-left: 10%"></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item>
+    <ion-label position="floating">Select Clinic</ion-label>
+    <ion-select [(ngModel)]="selectedClinicId">
+      <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+        {{ clinic.Name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <mat-form-field class="example-full-width">
+      <input
+        type="text"
+        aria-label="Brand"
+        matInput
+        [(ngModel)]="adjustment.brandName"
+        name="brandName" 
+        [matAutocomplete]="auto"
+        (ngModelChange)="filterBrands($event)"
+        required
+        placeholder="Select brand"
+        style="font-size: 15px;"
+      />
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectBrand($event)">
+        <mat-option *ngFor="let brand of filteredBrands" [value]="brand.name">
+          {{ brand.name }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </ion-item>
+
+  <div [formGroup]="salesReportForm">
+    <ion-item>
+      <ion-label color="primary">From Date</ion-label>
+      <input formControlName="fromDate" matInput [matDatepicker]="fromDatePicker" value="{{todaydate}}">
+      <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #fromDatePicker></mat-datepicker>
+    </ion-item>
+    <ion-item>
+      <ion-label color="primary">To Date</ion-label>
+      <input formControlName="toDate" matInput [matDatepicker]="toDatePicker" value="{{todaydate}}">
+      <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #toDatePicker></mat-datepicker>
+    </ion-item>
+  </div>
+
+  <ion-button expand="block" (click)="getItemsReport()">Get Items Report</ion-button>
+  <ion-list *ngIf="salesReportData.length > 0">
+    <ion-item *ngFor="let report of salesReportData">
+      <ion-label>
+        <h2>{{ report.BrandName }}</h2>
+        <p>Quantity: {{ report.Quantity }}</p>
+        <p>Amount: {{ report.PurchasedAmt }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
