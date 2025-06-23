@@ -39,7 +39,6 @@ export class AdjustPage implements OnInit {
   doctorId: number;
   DoctorId: any;
   clinicid: string;
-  // clinicService: any;
   selectedClinic: string = '';
   clinic: string = '';
   clinics: any[] = [];
