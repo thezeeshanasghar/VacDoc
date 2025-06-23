@@ -57,10 +57,6 @@
       <ion-icon color="white" name="call"></ion-icon>
       {{child.MobileNumber}}
       <br>
-      <ion-button *ngIf="!child.IsPAApprove" size="small" fill="outline" color="success" (click)="approveChild(child.Id)">
-        Approve
-      </ion-button>
-      &nbsp; &nbsp;
       <ion-button disabled="false" size="small" fill="outline" color="primary"
         routerLink="/members/child/vaccine/{{child.Id}}">
         Vaccine
