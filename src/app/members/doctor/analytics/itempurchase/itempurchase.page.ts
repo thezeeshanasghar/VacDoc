@@ -12,11 +12,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 
 @Component({
-  selector: 'app-itemreport',
-  templateUrl: './itemreport.page.html',
-  styleUrls: ['./itemreport.page.scss'],
+  selector: 'app-itempurchase',
+  templateUrl: './itempurchase.page.html',
+  styleUrls: ['./itempurchase.page.scss'],
 })
-export class ItemReportPage implements OnInit {
+export class ItemPurchasePage implements OnInit {
   clinics: any[] = [];
   selectedClinicId: any;
   doctorId: any;
@@ -150,15 +150,15 @@ export class ItemReportPage implements OnInit {
       message: 'Fetching items report...',
     });
     await loading.present();
-  
+
     try {
-      this.stockService.getItemsReportFile(payload.clinicId, payload.brandId, payload.fromDate, payload.toDate).subscribe({
+      this.stockService.getItemsPurchaseReportFile(payload.clinicId, payload.brandId, payload.fromDate, payload.toDate).subscribe({
         next: (response) => {
           loading.dismiss();
           const blob = new Blob([response], { type: 'application/pdf' });
           const link = document.createElement('a');
           link.href = window.URL.createObjectURL(blob);
-          link.download = `ItemsReport_${payload.clinicId}_${payload.brandId}_${payload.fromDate}_${payload.toDate}.pdf`;
+          link.download = `ItemsWisePurchaseReport_${payload.clinicId}_${payload.brandId}_${payload.fromDate}_${payload.toDate}.pdf`;
           link.click();
           window.URL.revokeObjectURL(link.href);
           this.toastService.create('Sales report downloaded successfully', 'success');
@@ -214,4 +214,3 @@ export class ItemReportPage implements OnInit {
         }
       }
 }
-

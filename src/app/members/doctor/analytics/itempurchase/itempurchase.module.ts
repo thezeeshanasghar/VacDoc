@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule, Routes } from '@angular/router';
-import { ItemReportPage } from './itemreport.page';
+import { ItemPurchasePage } from './itempurchase.page';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,7 +13,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 const routes: Routes = [
   {
     path: '',
-    component: ItemReportPage
+    component: ItemPurchasePage
   }
 ];
 
@@ -30,6 +30,6 @@ const routes: Routes = [
     MatInputModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [ItemReportPage]
+  declarations: [ItemPurchasePage]
 })
-export class ItemReportPageModule {}
+export class ItemPurchasePageModule {}

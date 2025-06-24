@@ -9,7 +9,8 @@
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
       <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/data" name="stats-chart-outline" size="large" > </ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/total" name="bar-chart-outline" size="large" > </ion-icon>
-      <!-- <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/salesreport" name="trending-up-outline" size="large" > </ion-icon> -->
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/salesreport" name="stats-chart" size="large" > </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/itempurchase" name="cart-outline" size="large" > </ion-icon>
       <ion-menu-button style="margin-left: 10%"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
@@ -26,6 +27,9 @@
   </ion-item>
 
   <ion-item>
+    <ion-label position="floating" >
+      Brand <span class="required-asterisk"></span>
+    </ion-label>
     <mat-form-field class="example-full-width">
       <input
         type="text"
@@ -36,7 +40,6 @@
         [matAutocomplete]="auto"
         (ngModelChange)="filterBrands($event)"
         required
-        placeholder="Select brand"
         style="font-size: 15px;"
       />
       <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectBrand($event)">
@@ -49,13 +52,13 @@
 
   <div [formGroup]="salesReportForm">
     <ion-item>
-      <ion-label color="primary">From Date</ion-label>
+      <ion-label>From Date</ion-label>
       <input formControlName="fromDate" matInput [matDatepicker]="fromDatePicker" value="{{todaydate}}">
       <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #fromDatePicker></mat-datepicker>
     </ion-item>
     <ion-item>
-      <ion-label color="primary">To Date</ion-label>
+      <ion-label>To Date</ion-label>
       <input formControlName="toDate" matInput [matDatepicker]="toDatePicker" value="{{todaydate}}">
       <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #toDatePicker></mat-datepicker>
