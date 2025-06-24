@@ -13,6 +13,9 @@ const routes: Routes = [
   { path: 'total', loadChildren: () => import('./total/total.module').then(m => m.TotalPageModule) },
   { path: 'salesreport', loadChildren: () => import('./salesreport/salesreport.module').then(m => m.SalesReportPageModule) },
   { path: 'data', loadChildren: () => import('./data/data.module').then(m => m.DataPageModule) },
+  { path: 'itemreport', loadChildren: () => import('./itemreport/itemreport.module').then(m => m.ItemReportPageModule) },
+  { path: 'itempurchase', loadChildren: () => import('./itempurchase/itempurchase.module').then(m => m.ItemPurchasePageModule) },
+
 ];
 
 @NgModule({
