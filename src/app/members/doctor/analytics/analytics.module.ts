@@ -15,7 +15,6 @@ const routes: Routes = [
   { path: 'data', loadChildren: () => import('./data/data.module').then(m => m.DataPageModule) },
   { path: 'itemreport', loadChildren: () => import('./itemreport/itemreport.module').then(m => m.ItemReportPageModule) },
   { path: 'itempurchase', loadChildren: () => import('./itempurchase/itempurchase.module').then(m => m.ItemPurchasePageModule) },
-
 ];
 
 @NgModule({

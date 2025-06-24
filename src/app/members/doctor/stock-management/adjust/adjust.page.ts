@@ -39,7 +39,6 @@ export class AdjustPage implements OnInit {
   doctorId: number;
   DoctorId: any;
   clinicid: string;
-  // clinicService: any;
   selectedClinic: string = '';
   clinic: string = '';
   clinics: any[] = [];
@@ -195,10 +194,6 @@ export class AdjustPage implements OnInit {
         message: 'Loading brands...'
       });
       await loading.present();
-  
-      // const doctorId = await this.storage.get(environment.DOCTOR_Id);
-      // this.clinicid = await this.storage.get(environment.CLINIC_Id);
-      
       this.brandService.getBrandAmount(id).subscribe({
         next: (response) => {
           if (response.IsSuccess) {
@@ -206,8 +201,7 @@ export class AdjustPage implements OnInit {
             this.brands = response.ResponseData.map(brand => ({
               id: brand.BrandId,
               name: brand.BrandName,
-              price: brand.Amount,
-              
+              price: brand.Amount,       
               vaccineName: brand.VaccineName || '',
               displayName: brand.VaccineName ? `${brand.BrandName} (${brand.VaccineName})` : brand.BrandName
             }));
@@ -247,7 +241,6 @@ async onSubmit() {
     if (!this.isValid()) {
       return;
     }
-
     try {
       const loading = await this.loadingController.create({
         message: 'Adjusting stock...'
@@ -255,7 +248,7 @@ async onSubmit() {
       await loading.present();
 
       const dto: AdjustStockDTO = {
-        DoctorId: this.DoctorId,
+        DoctorId: this.doctorId,
         brandId: this.adjustment.brandId,
         adjustment: this.isIncrease ? this.adjustment.quantity : -this.adjustment.quantity,
         clinicId: this.selectedClinic,

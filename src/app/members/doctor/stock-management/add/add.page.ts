@@ -208,7 +208,6 @@ export class AddPage implements OnInit {
   //   console.log('Filtered suppliers:', this.filteredSuppliers);
   // }
 
-
   selectSupplier(event: MatAutocompleteSelectedEvent) {
     const selectedSupplier = event.option.value;
     if (selectedSupplier) {
