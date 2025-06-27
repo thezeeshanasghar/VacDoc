@@ -98,7 +98,6 @@ export class AddPage implements OnInit {
       RegNo: new FormControl(
         "",
         Validators.compose([
-          Validators.required,
           Validators.pattern("^[A-Za-z0-9-]+$") 
         ])
       ),
