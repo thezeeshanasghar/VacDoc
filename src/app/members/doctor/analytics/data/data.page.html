@@ -1,4 +1,4 @@
-<ion-header>
+<!-- <ion-header>
     <ion-toolbar color="primary">
       <ion-buttons slot="start">
         <ion-back-button defaultHref="/members/doctor/analytics/data"></ion-back-button>
@@ -8,13 +8,18 @@
     <ion-toolbar color="primary" >
       <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
         <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/salesreport" name="stats-chart" size="large" > </ion-icon>
+<<<<<<< Updated upstream
         <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/total" name="bar-chart-outline" size="large" > </ion-icon>
         <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/itemreport" name="file-tray-outline" size="large" > </ion-icon>
+=======
+        <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/total" name="bar-chart-outline" size="large" > </ion-icon> -->
+        <!-- <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/itemreport" name="file-tray-outline" size="large" > </ion-icon>
+>>>>>>> Stashed changes
         <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/itempurchase" name="cart-outline" size="large" > </ion-icon>
         <ion-menu-button style="margin-left: 10%"></ion-menu-button>
       </ion-buttons>
     </ion-toolbar>
-  </ion-header>
+  </ion-header> -->
  <!-- <ion-content class="ion-padding ion-text-center">
     <div class="coming-soon">
       <ion-icon name="time-outline" size="large"></ion-icon>
@@ -66,10 +71,81 @@
       </ion-card>
     </div>
   
-    <!-- Stats Grid Section -->
     <div class="stats-section">
       <ion-grid>
         <ion-row>
+          <ion-col size="12" size-md="6" size-lg="4">
+            <ion-card class="stats-card sales-report animated fadeInUp" style="animation-delay: 0.1s" routerLink="/members/doctor/analytics/salesreport">
+              <ion-card-header>
+                <div class="card-flex">
+                  <div class="card-icon-container">
+                    <ion-icon name="stats-chart" class="card-icon"></ion-icon>
+                  </div>
+                  <ion-card-title>Sales Report</ion-card-title>
+                </div>
+              </ion-card-header>
+            </ion-card>
+          </ion-col>
+          <ion-col size="12" size-md="6" size-lg="4">
+            <ion-card class="stats-card item-report animated fadeInUp" style="animation-delay: 0.1s" routerLink="/members/doctor/analytics/itemreport">
+              <ion-card-header>
+                <div class="card-flex">
+                  <div class="card-icon-container">
+                    <ion-icon name="file-tray-outline" class="card-icon"></ion-icon>
+                  </div>
+                  <ion-card-title>Item Report</ion-card-title>
+                </div>
+              </ion-card-header>
+            </ion-card>
+          </ion-col>
+          <ion-col size="12" size-md="6" size-lg="4">
+            <ion-card class="stats-card item-purchase animated fadeInUp" style="animation-delay: 0.1s" routerLink="/members/doctor/analytics/itempurchase">
+              <ion-card-header>
+                <div class="card-flex">
+                  <div class="card-icon-container">
+                    <ion-icon name="cart-outline" class="card-icon"></ion-icon>
+                  </div>
+                  <ion-card-title>Item Purchase</ion-card-title>
+                </div>
+              </ion-card-header>
+            </ion-card>
+          </ion-col>
+          <ion-col size="12" size-md="6" size-lg="4">
+            <ion-card class="stats-card item-supplier animated fadeInUp" style="animation-delay: 0.1s" routerLink="members/doctor/analytics/itemsupplier">
+              <ion-card-header>
+                <div class="card-flex">
+                  <div class="card-icon-container">
+                    <ion-icon name="folder-outline" class="card-icon"></ion-icon>
+                  </div>
+                  <ion-card-title>Item Supplier</ion-card-title>
+                </div>
+              </ion-card-header>
+            </ion-card>
+          </ion-col>
+          <ion-col size="12" size-md="6" size-lg="4">
+            <ion-card class="stats-card cross animated fadeInUp" style="animation-delay: 0.1s">
+              <ion-card-header>
+                <div class="card-flex">
+                  <div class="card-icon-container">
+                    <ion-icon name="close-outline" class="card-icon"></ion-icon>
+                  </div>
+                  <!-- <ion-card-title></ion-card-title> -->
+                </div>
+              </ion-card-header>
+            </ion-card>
+          </ion-col>
+          <ion-col size="12" size-md="6" size-lg="4">
+            <ion-card class="stats-card cross animated fadeInUp" style="animation-delay: 0.1s">
+              <ion-card-header>
+                <div class="card-flex">
+                  <div class="card-icon-container">
+                    <ion-icon name="close-outline" class="card-icon"></ion-icon>
+                  </div>
+                  <!-- <ion-card-title></ion-card-title> -->
+                </div>
+              </ion-card-header>
+            </ion-card>
+          </ion-col>
           <ion-col size="12" size-md="6" size-lg="4">
             <ion-card class="stats-card patient-stats animated fadeInUp">
               <ion-card-header>
@@ -88,7 +164,6 @@
               </ion-card-content>
             </ion-card>
           </ion-col>
-      
           <ion-col size="12" size-md="6" size-lg="4">
             <ion-card class="stats-card total-patients animated fadeInUp" style="animation-delay: 0.1s">
               <ion-card-header>

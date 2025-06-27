@@ -329,6 +329,33 @@
     margin-right: 6px;
     font-size: 1.1rem;
   }
+
+  .card-flex {
+    display: flex;
+    align-items: center;
+    margin: 20%;
+    // justify-content: space-between;
+  }
+
+  .sales-report::before { background: linear-gradient(90deg, #4caf50 0%, #2e7d32 100%); }
+  .sales-report .card-icon-container { background: rgba(76, 175, 80, 0.1); }
+  .sales-report .card-icon { color: #4caf50; }
+
+  .item-report::before { background: linear-gradient(90deg, #2196f3 0%, #1565c0 100%); }
+  .item-report .card-icon-container { background: rgba(33, 150, 243, 0.1); }
+  .item-report .card-icon { color: #2196f3; }
+
+  .item-purchase::before { background: linear-gradient(90deg, #ff9800 0%, #f57c00 100%); }
+  .item-purchase .card-icon-container { background: rgba(255, 152, 0, 0.1); }
+  .item-purchase .card-icon { color: #ff9800; }
+
+  .item-supplier::before { background: linear-gradient(90deg, #9c27b0 0%, #7b1fa2 100%); }
+  .item-supplier .card-icon-container { background: rgba(156, 39, 176, 0.1); }
+  .item-supplier .card-icon { color: #9c27b0; }
+
+  .cross::before { background: linear-gradient(90deg, #f44336 0%, #d32f2f 100%); }
+  .cross .card-icon-container { background: rgba(244, 67, 54, 0.1); }
+  .cross .card-icon { color: #f44336; }
   
   /* Card Color Variations */
   .patient-stats::before { background: linear-gradient(90deg, #4caf50 0%, #2e7d32 100%); }
@@ -443,3 +470,49 @@
       height: 40px;
     }
   }
+  /* General Card Styling */
+.stats-card {
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: white;
+}
+
+/* Sales Report Card */
+.sales-report-card {
+  background-color: #4caf50; /* Green */
+}
+
+/* Item Report Card */
+.item-report-card {
+  background-color: #2196f3; /* Blue */
+}
+
+/* Item Purchase Card */
+.item-purchase-card {
+  background-color: #ff9800; /* Orange */
+}
+
+/* Item Supplier Card */
+.item-supplier-card {
+  background-color: #9c27b0; /* Purple */
+}
+
+/* Revenue Card */
+.revenue-card {
+  background-color: #f44336; /* Red */
+}
+
+/* Card Icon Styling */
+.card-icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.card-icon {
+  font-size: 24px;
+}
