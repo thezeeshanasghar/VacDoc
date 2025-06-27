@@ -104,4 +104,8 @@ export class StockService {
     const url = `${this.apiUrl}Bill/item-purchase-report-pdf?clinicId=${clinicId}&brandId=${brandId}&fromDate=${fromDate}&toDate=${toDate}`;
     return this.http.get(url, { responseType: 'blob' });
   }
+  getItemsSupplierReportFile(clinicId: number, supplier: number, fromDate: string, toDate: string): Observable<any> {
+    const url = `${this.apiUrl}Bill/supplier-purchase-report-pdf?clinicId=${clinicId}&supplier=${supplier}&fromDate=${fromDate}&toDate=${toDate}`;
+    return this.http.get(url, { responseType: 'blob' });
+  }
 }

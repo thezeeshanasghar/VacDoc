@@ -3,15 +3,16 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/members/doctor/stock-management"></ion-back-button>
     </ion-buttons>
-    <ion-title>Sales Report</ion-title>
+    <ion-title>Items Supplier</ion-title>
   </ion-toolbar>
   <ion-toolbar color="primary" >
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
       <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/data" name="stats-chart-outline" size="large" > </ion-icon>
       <!-- <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/total" name="bar-chart-outline" size="large" > </ion-icon> -->
       <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/itemreport" name="file-tray-outline" size="large" > </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/salesreport" name="stats-chart" size="large" > </ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/itempurchase" name="cart-outline" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/analytics/itemsupplier" name="folder-outline" size="large" title="Items Supplier"></ion-icon>
+     
       <ion-menu-button style="margin-left: 10%"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
@@ -27,17 +28,29 @@
     </ion-select>
   </ion-item>
 
-  <!-- Bind the formGroup directive -->
+    <ion-item>
+      <ion-label position="floating" >
+        Supplier <span class="required-asterisk"></span>
+      </ion-label>
+      <!-- <form [formGroup]="fg1"> -->
+        <mat-form-field class="example-full-width">
+          <input type="text" aria-label="Supplier" matInput  [(ngModel)]="supplierName" [matAutocomplete]="auto"
+          (ngModelChange)="filterSuppliers($event)"  style="font-size: 15px;">
+          <mat-autocomplete #auto="matAutocomplete" class="no-indent">
+            <mat-option *ngFor="let option of agents" [value]="option">
+              {{option}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+    </ion-item>
+
   <div [formGroup]="salesReportForm">
-    <!-- From Date -->
     <ion-item>
       <ion-label>From Date</ion-label>
       <input formControlName="fromDate" matInput [matDatepicker]="fromDatePicker" value="{{todaydate}}">
       <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #fromDatePicker></mat-datepicker>
     </ion-item>
-
-    <!-- To Date -->
     <ion-item>
       <ion-label>To Date</ion-label>
       <input formControlName="toDate" matInput [matDatepicker]="toDatePicker" value="{{todaydate}}">
@@ -46,8 +59,7 @@
     </ion-item>
   </div>
 
-  <ion-button expand="block" (click)="getSalesReport()">Get Sales Report</ion-button>
-
+  <ion-button expand="block" (click)="getItemsReport()">Get Items Supplier Report</ion-button>
   <ion-list *ngIf="salesReportData.length > 0">
     <ion-item *ngFor="let report of salesReportData">
       <ion-label>
