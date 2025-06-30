@@ -46,6 +46,7 @@ export class ChildPage {
   ionViewWillEnter() {
     window.onbeforeunload = () => {
       this.storage.remove('searchInput');  // Clear search input on page unload
+      this.storage.remove('unapprovedSearch'); // Clear unapproved search flag on page unload
     };
     this.storage.get(environment.USER).then((user) => {
       this.usertype = user.UserType;
@@ -56,18 +57,25 @@ export class ChildPage {
     this.storage.get(environment.ON_CLINIC).then((clinic) => {
       this.clinic = clinic;
     });
-    this.storage.get('searchInput').then((searchValue) => {
-      if (searchValue) {
-        this.fg.controls['Name'].setValue(searchValue);
-        this.search = true;
-        this.page = 0;
-        this.childs = [];
-        this.getChlidbyUser(false);
+    this.storage.get('unapprovedSearch').then((isUnapprovedSearch) => {
+      if (isUnapprovedSearch) {
+        this.storage.get('unapprovedPatients').then((cachedPatients) => {
+          if (cachedPatients) {
+            this.childs = cachedPatients; // Load cached unapproved patients
+            this.search = true;
+            this.infiniteScroll.disabled = true;
+          } else {
+            this.page = 0;
+            this.search = false;
+            this.childs = [];
+            this.getUnapprovedPatients(false); // Fetch unapproved patients if cache is empty
+          }
+        });
       } else {
         this.page = 0;
         this.search = false;
         this.childs = [];
-        this.getChlidByClinic(false);
+        this.getChlidByClinic(false); // Render clinic patients
       }
     });
   }
@@ -156,9 +164,10 @@ export class ChildPage {
 
   async getChlidByClinic(isdelete: boolean) {
     const loading = await this.loadingController.create({
-      message: 'Loading'
+      message: 'Loading',
     });
     await loading.present();
+
     if (isdelete) {
       this.page = 0;
       this.childs = [];
@@ -166,27 +175,31 @@ export class ChildPage {
       this.fg.controls['Name'].setValue(null);
       this.storage.remove('searchInput');
     }
-    await this.childService.getChildByClinic(this.clinic.Id, this.page).subscribe(
-      res => {
+
+    this.childService.getChildByClinic(this.clinic.Id, this.page).subscribe({
+      next: (res) => {
         console.log(res);
         if (res.IsSuccess) {
-          if (res.ResponseData.length < 10)
-            this.infiniteScroll.disabled = true;
+          if (res.ResponseData.length < 10) this.infiniteScroll.disabled = true;
           this.childs = this.childs.concat(res.ResponseData);
           this.page += 1;
           loading.dismiss();
           this.infiniteScroll.complete();
-        }
-        else {
+        } else {
           loading.dismiss();
           this.toastService.create(res.Message, 'danger');
         }
       },
-      err => {
+      error: (err) => {
         loading.dismiss();
         this.toastService.create(err, 'danger');
-      }
-    )
+      },
+    });
+  }
+
+  navigateToRoute(route: string) {
+    this.storage.remove('unapprovedSearch'); // Clear the flag
+    this.router.navigate([route]);
   }
 
   async approveChild(childId: number) {
@@ -238,41 +251,45 @@ export class ChildPage {
     );
   }
 
-
   async getUnapprovedPatients(isdelete: boolean) {
+    const loading = await this.loadingController.create({
+      message: 'Loading Unapproved Patients...',
+    });
+    await loading.present();
 
-    const loading = await this.loadingController.create({ 
-      message: 'Loading Unapproved Patients...' 
-    }); 
-     await loading.present();
-     if (isdelete) {
+    if (isdelete) {
       this.page = 0;
       this.childs = [];
       this.search = false;
       this.fg.controls['Name'].setValue(null);
       this.storage.remove('searchInput');
+      this.storage.remove('unapprovedSearch'); // Clear the flag
+      this.storage.set('unapprovedSearch', true); // Set the flag
+    } else {
+      this.storage.remove('searchInput');
+      this.storage.remove('unapprovedSearch'); // Clear the flag
     }
-  
-      this.childService.getUnapprovedPatients(this.clinic.Id).subscribe({
-        next: (res) => {
-          loading.dismiss();
-          console.log(res);
-          if (res.IsSuccess) {
-            this.infiniteScroll.disabled = true;
-            this.childs = res.ResponseData;
-            this.search = true; 
-            loading.dismiss();
-            this.infiniteScroll.complete();
-          } else {
-            this.toastService.create(res.Message, 'danger');
-          }
-        },
-        error: (err) => {
-          loading.dismiss();
-          this.toastService.create('Failed to fetch unapproved patients', 'danger');
-          console.error(err);
-        },
-      })
+
+    this.childService.getUnapprovedPatients(this.clinic.Id).subscribe({
+      next: (res) => {
+        loading.dismiss();
+        console.log(res);
+        if (res.IsSuccess) {
+          this.infiniteScroll.disabled = true;
+          this.childs = res.ResponseData;
+          this.search = true;
+          this.storage.set('unapprovedPatients', res.ResponseData); // Cache unapproved patients
+          this.infiniteScroll.complete();
+        } else {
+          this.toastService.create(res.Message, 'danger');
+        }
+      },
+      error: (err) => {
+        loading.dismiss();
+        this.toastService.create('Failed to fetch unapproved patients', 'danger');
+        console.error(err);
+      },
+    });
   }
 
   refreshPage() {
