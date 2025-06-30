@@ -43,42 +43,97 @@ export class ChildPage {
     });
   }
 
-  ionViewWillEnter() {
-    window.onbeforeunload = () => {
-      this.storage.remove('searchInput');  // Clear search input on page unload
-      this.storage.remove('unapprovedSearch'); // Clear unapproved search flag on page unload
-    };
-    this.storage.get(environment.USER).then((user) => {
-      this.usertype = user.UserType;
-    });
-    this.storage.get(environment.DOCTOR_Id).then((docId) => {
-      this.doctorId = docId;
-    });
-    this.storage.get(environment.ON_CLINIC).then((clinic) => {
-      this.clinic = clinic;
-    });
-    this.storage.get('unapprovedSearch').then((isUnapprovedSearch) => {
-      if (isUnapprovedSearch) {
-        this.storage.get('unapprovedPatients').then((cachedPatients) => {
-          if (cachedPatients) {
-            this.childs = cachedPatients; // Load cached unapproved patients
-            this.search = true;
-            this.infiniteScroll.disabled = true;
-          } else {
-            this.page = 0;
-            this.search = false;
-            this.childs = [];
-            this.getUnapprovedPatients(false); // Fetch unapproved patients if cache is empty
-          }
-        });
-      } else {
+ ionViewWillEnter() {
+  window.onbeforeunload = () => {
+    this.storage.remove('searchInput');
+    this.storage.remove('unapprovedSearch');
+    this.storage.remove('unapprovedPatients');
+  };
+
+  this.storage.get(environment.USER).then((user) => {
+    this.usertype = user.UserType;
+  });
+  this.storage.get(environment.DOCTOR_Id).then((docId) => {
+    this.doctorId = docId;
+  });
+  this.storage.get(environment.ON_CLINIC).then((clinic) => {
+    this.clinic = clinic;
+  });
+
+  this.storage.get('unapprovedSearch').then((isUnapprovedSearch) => {
+    if (isUnapprovedSearch) {
+      this.storage.get('unapprovedPatients').then((cachedPatients) => {
+        if (cachedPatients) {
+          this.childs = cachedPatients;
+          this.search = true;
+          this.infiniteScroll.disabled = true;
+        } else {
+          this.page = 0;
+          this.search = false;
+          this.childs = [];
+          this.getUnapprovedPatients(false);
+        }
+      });
+    } else {
+      this.page = 0;
+      this.search = false;
+      this.childs = [];
+      this.getChlidByClinic(false);
+    }
+    this.storage.get('searchInput').then((searchValue) => {
+      if (searchValue) {
+        this.fg.controls['Name'].setValue(searchValue);
+        this.search = true;
         this.page = 0;
-        this.search = false;
         this.childs = [];
-        this.getChlidByClinic(false); // Render clinic patients
+        this.getChlidbyUser(false);
       }
     });
+  });
+}
+
+async getUnapprovedPatients(isdelete: boolean) {
+  const loading = await this.loadingController.create({
+    message: 'Loading Unapproved Patients...',
+  });
+  await loading.present();
+
+  if (isdelete) {
+    this.page = 0;
+    this.childs = [];
+    this.search = false;
+    this.fg.controls['Name'].setValue(null);
+    this.storage.remove('searchInput');
+    this.storage.remove('unapprovedSearch');
+    this.storage.remove('unapprovedPatients');
+    this.storage.set('unapprovedSearch', true);
+  } else {
+    this.storage.set('unapprovedSearch', true);
+    this.page = 0;
+    this.childs = [];
+    this.infiniteScroll.disabled = false;
   }
+
+  this.childService.getUnapprovedPatients(this.clinic.Id).subscribe({
+    next: (res) => {
+      loading.dismiss();
+      if (res.IsSuccess) {
+        this.infiniteScroll.disabled = true;
+        this.childs = res.ResponseData;
+        this.search = true;
+        this.storage.set('unapprovedPatients', res.ResponseData);
+        this.infiniteScroll.complete();
+      } else {
+        this.toastService.create(res.Message, 'danger');
+      }
+    },
+    error: (err) => {
+      loading.dismiss();
+      this.toastService.create('Failed to fetch unapproved patients', 'danger');
+      console.error(err);
+    },
+  });
+}
 
   getStringValue(value: any): string {
     if (typeof value === 'object') {
@@ -249,47 +304,6 @@ export class ChildPage {
         this.toastService.create('An error occurred while updating status', 'danger');
       }
     );
-  }
-
-  async getUnapprovedPatients(isdelete: boolean) {
-    const loading = await this.loadingController.create({
-      message: 'Loading Unapproved Patients...',
-    });
-    await loading.present();
-
-    if (isdelete) {
-      this.page = 0;
-      this.childs = [];
-      this.search = false;
-      this.fg.controls['Name'].setValue(null);
-      this.storage.remove('searchInput');
-      this.storage.remove('unapprovedSearch'); // Clear the flag
-      this.storage.set('unapprovedSearch', true); // Set the flag
-    } else {
-      this.storage.remove('searchInput');
-      this.storage.remove('unapprovedSearch'); // Clear the flag
-    }
-
-    this.childService.getUnapprovedPatients(this.clinic.Id).subscribe({
-      next: (res) => {
-        loading.dismiss();
-        console.log(res);
-        if (res.IsSuccess) {
-          this.infiniteScroll.disabled = true;
-          this.childs = res.ResponseData;
-          this.search = true;
-          this.storage.set('unapprovedPatients', res.ResponseData); // Cache unapproved patients
-          this.infiniteScroll.complete();
-        } else {
-          this.toastService.create(res.Message, 'danger');
-        }
-      },
-      error: (err) => {
-        loading.dismiss();
-        this.toastService.create('Failed to fetch unapproved patients', 'danger');
-        console.error(err);
-      },
-    });
   }
 
   refreshPage() {
