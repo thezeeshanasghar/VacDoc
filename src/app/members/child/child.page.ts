@@ -28,6 +28,7 @@ export class ChildPage {
   search: boolean;
   clinic: any;
   usertype: any;
+  isSearchDisabled: boolean;
   constructor(
     public router: Router,
     public loadingController: LoadingController,
@@ -49,6 +50,7 @@ export class ChildPage {
     this.storage.remove('unapprovedSearch');
     this.storage.remove('unapprovedPatients');
   };
+  this.isSearchDisabled = false;
 
   this.storage.get(environment.USER).then((user) => {
     this.usertype = user.UserType;
@@ -121,6 +123,7 @@ async getUnapprovedPatients(isdelete: boolean) {
         this.infiniteScroll.disabled = true;
         this.childs = res.ResponseData;
         this.search = true;
+        this.isSearchDisabled = true;
         this.storage.set('unapprovedPatients', res.ResponseData);
         this.infiniteScroll.complete();
       } else {
@@ -203,6 +206,7 @@ async getUnapprovedPatients(isdelete: boolean) {
           this.childs = (this.childs.concat(res.ResponseData));
           this.page += 1;
           this.infiniteScroll.complete();
+          this.isSearchDisabled = false;
           loading.dismiss();
         }
         else {
@@ -238,6 +242,7 @@ async getUnapprovedPatients(isdelete: boolean) {
           if (res.ResponseData.length < 10) this.infiniteScroll.disabled = true;
           this.childs = this.childs.concat(res.ResponseData);
           this.page += 1;
+          this.isSearchDisabled = false;
           loading.dismiss();
           this.infiniteScroll.complete();
         } else {
