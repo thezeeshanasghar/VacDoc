@@ -266,6 +266,8 @@ export class ChildPage {
       this.storage.remove('unapprovedSearch'); // Clear the flag
       this.storage.set('unapprovedSearch', true); // Set the flag
     } else {
+      this.storage.remove('searchInput');
+      this.storage.remove('unapprovedSearch'); // Clear the flag
     }
 
     this.childService.getUnapprovedPatients(this.clinic.Id).subscribe({
