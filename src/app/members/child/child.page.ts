@@ -61,36 +61,37 @@ export class ChildPage {
   this.storage.get(environment.ON_CLINIC).then((clinic) => {
     this.clinic = clinic;
   });
-
-  this.storage.get('unapprovedSearch').then((isUnapprovedSearch) => {
-    if (isUnapprovedSearch) {
-      this.storage.get('unapprovedPatients').then((cachedPatients) => {
-        if (cachedPatients) {
-          this.childs = cachedPatients;
-          this.search = true;
-          this.infiniteScroll.disabled = true;
+ this.storage.get('searchInput').then((searchValue) => {
+    if (searchValue) {
+      this.fg.controls['Name'].setValue(searchValue);
+      this.search = true;
+      this.page = 0;
+      this.childs = [];
+      this.getChlidbyUser(false);
+    } else {
+      this.storage.get('unapprovedSearch').then((isUnapprovedSearch) => {
+        if (isUnapprovedSearch) {
+          this.storage.get('unapprovedPatients').then((cachedPatients) => {
+            if (cachedPatients) {
+              this.childs = cachedPatients;
+              this.search = true;
+              this.infiniteScroll.disabled = true;
+              this.isSearchDisabled = true;
+            } else {
+              this.page = 0;
+              this.search = false;
+              this.childs = [];
+              this.getUnapprovedPatients(false);
+            }
+          });
         } else {
           this.page = 0;
           this.search = false;
           this.childs = [];
-          this.getUnapprovedPatients(false);
+          this.getChlidByClinic(false);
         }
       });
-    } else {
-      this.page = 0;
-      this.search = false;
-      this.childs = [];
-      this.getChlidByClinic(false);
     }
-    this.storage.get('searchInput').then((searchValue) => {
-      if (searchValue) {
-        this.fg.controls['Name'].setValue(searchValue);
-        this.search = true;
-        this.page = 0;
-        this.childs = [];
-        this.getChlidbyUser(false);
-      }
-    });
   });
 }
 
