@@ -6,6 +6,7 @@ import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { NavigationEnd, Router, Route, ActivatedRoute } from "@angular/router";
 import { AlertService } from "src/app/shared/alert.service";
+import { PaService } from "src/app/services/pa.service";
 
 @Component({
   selector: "app-clinic",
@@ -19,7 +20,16 @@ export class ClinicPage {
   clinicId: any;
   onlineclinic: any;
   usertype: any;
-  constructor(public loadingController: LoadingController, public clinicService: ClinicService, private toastService: ToastService, private storage: Storage, private router: Router, private alertService: AlertService, private route: ActivatedRoute) {
+  selectedClinic: any;
+  constructor(public loadingController: LoadingController, 
+    public clinicService: ClinicService,
+    private toastService: ToastService, 
+    private storage: Storage, 
+    private router: Router,
+    private alertService: AlertService,
+    private route: ActivatedRoute,
+    private paService: PaService
+      ) {
     this.router.events.subscribe((val) => {
       if (val instanceof NavigationEnd) {
         // this.getClinics();
@@ -31,17 +41,7 @@ export class ClinicPage {
     await this.storage.get(environment.DOCTOR_Id).then((docId) => {
       this.doctorId = docId;
     });
-    this.storage.get(environment.USER).then((user) => {
-      this.usertype = user.UserType;
-    });
-    // await this.storage.get(environment.CLINIC_Id).then(clinicId => {
-    //   this.clinicId = clinicId;
-    // });
-    // await this.storage.get(environment.CLINICS).then(clinics => {
-    //   this.Clinics = clinics;
-    // });
-    // console.log(this.Clinics);
-    // console.log(this.doctorId);
+   this.usertype = await this.storage.get(environment.USER);
     this.route.queryParams.subscribe((params) => {
       if (params.refresh) {
         this.getClinics();
@@ -66,18 +66,17 @@ export class ClinicPage {
   async getClinics() {
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
+    if (this.usertype.UserType === "DOCTOR") {
     await this.clinicService.getClinics(this.doctorId).subscribe(
       (res) => {
         loading.dismiss();
         if (res.IsSuccess) {
-          // console.log(res);
           this.Clinics = res.ResponseData;
           for (let i = 0; i < this.Clinics.length; i++) {
             const clinic = this.Clinics[i];
             if (clinic.ClinicTimings) {
               for (let j = 0; j < clinic.ClinicTimings.length; j++) {
                 const timing = clinic.ClinicTimings[j];
-                // console.log(timing);
               }
             }
           }
@@ -106,34 +105,46 @@ export class ClinicPage {
         this.toastService.create(err, "danger");
       }
     );
+  }else if (this.usertype.UserType === "PA") {
+        this.paService.getPaClinics(Number(this.usertype.PAId)).subscribe({
+          next: (response) => {
+            loading.dismiss();
+            if (response.IsSuccess) {
+              this.Clinics = response.ResponseData;
+            } else {
+              this.toastService.create(response.Message, "danger");
+            }
+          },
+          error: (error) => {
+            loading.dismiss();
+            console.error("Error fetching PA clinics:", error);
+            this.toastService.create("Failed to load clinics", "danger");
+          },
+        });
+      }
   }
 
   async setOnlineClinic(clinicId) {
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
     let data = { DoctorId: this.doctorId, Id: clinicId, IsOnline: "true" };
-    // console.log("data", data);
     await this.clinicService.changeOnlineClinic(data).subscribe(
       (res) => {
         if (res.IsSuccess) {
           loading.dismiss();
           this.storage.set(environment.CLINIC_Id, data.Id).then(() => {
-            // console.log("ClinicId stored:", data.Id);
           });
           this.storage.get(environment.CLINICS).then((clinics) => {
             const selectedClinic = clinics.find((clinic) => clinic.Id === data.Id);
             this.storage.set(environment.ON_CLINIC, selectedClinic).then(() => {
-              // console.log("Selected clinic stored:", selectedClinic);
             });
           });
           this.getClinics();
-          // this.router.navigate(['/members/doctor/clinic']);
         } else {
           this.toastService.create(res.Message);
         }
         this.storage.get(environment.CLINIC_Id).then((val) => {
           this.clinicId = val;
-          // console.log("clinicId:", this.clinicId);
         });
       },
       (err) => {
@@ -178,7 +189,6 @@ export class ClinicPage {
     console.log("Begin async operation");
     this.ngOnInit();
     setTimeout(() => {
-      // console.log("Async operation has ended");
       event.target.complete();
     }, 1000);
   }
