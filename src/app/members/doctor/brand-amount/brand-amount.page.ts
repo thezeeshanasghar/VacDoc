@@ -8,21 +8,18 @@ import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 
-// import { Response, BrandAmountDTO } from 'src/app/models/response.model'; // adjust the import path as needed
-
 @Component({
   selector: 'app-brand-amount',
   templateUrl: './brand-amount.page.html',
   styleUrls: ['./brand-amount.page.scss'],
 })
 export class BrandAmountPage implements OnInit {
-
   brandAmounts: BrandAmountDTO[] = [];
   fg: FormGroup
   clinics: any;
   selectedClinicId: any;
   doctorId: any;
-  usertype: any; // Default user type, can be set dynamically based on the logged-in user
+  usertype: any; 
   online: Promise<any>;
   clinicId: any;
   constructor(
@@ -36,16 +33,16 @@ export class BrandAmountPage implements OnInit {
 
   async ngOnInit() {
     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
-    console.log('Doctor ID:', this.doctorId);
+    // console.log('Doctor ID:', this.doctorId);
     if (!this.doctorId) {
       console.error('Doctor ID not found');
       this.toastService.create('Doctor ID not found', 'danger');
       return;
     }
-    this.usertype = await this.storage.get(environment.USER); // Fetch user type (e.g., 'DOCTOR' or 'PA')
-    console.log('User Type:', this.usertype);
+    this.usertype = await this.storage.get(environment.USER);
+    // console.log('User Type:', this.usertype);
     this.clinicId = await this.storage.get(environment.CLINIC_Id);
-    console.log('Clinic ID:', this.clinicId);
+    // console.log('Clinic ID:', this.clinicId);
     if (!this.doctorId) {
       console.error('Doctor ID not found');
       this.toastService.create('Doctor ID not found', 'danger');
@@ -60,7 +57,6 @@ export class BrandAmountPage implements OnInit {
         message: 'Loading clinics...',
       });
       await loading.present();
-  
       if (this.usertype.UserType === 'DOCTOR') {
         this.clinicService.getClinics(Number(this.doctorId)).subscribe({
           next: (response) => {
@@ -117,7 +113,6 @@ export class BrandAmountPage implements OnInit {
       message: 'Loading...',
     });
     await loading.present();
-
     this.brandService.getBrandAmount(id).subscribe(
       (res: { IsSuccess: boolean; ResponseData: BrandAmountDTO[]; Message: string }) => {
         loading.dismiss();
@@ -169,10 +164,8 @@ async downloadPDF() {
       message: 'Downloading PDF...'
     });
     await loading.present();
-
-    const doctorId = await this.storage.get(environment.DOCTOR_Id);
-    
-    this.brandService.downloadPdf(doctorId, { observe: 'response', responseType: 'blob' }).subscribe(
+    // const doctorId = await this.storage.get(environment.DOCTOR_Id);
+    this.brandService.downloadPdf(this.clinicId, { observe: 'response', responseType: 'blob' }).subscribe(
       (response) => {
         const blob = response.body;
         const url = window.URL.createObjectURL(blob);
