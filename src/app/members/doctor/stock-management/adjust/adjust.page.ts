@@ -59,11 +59,8 @@ export class AdjustPage implements OnInit {
   async ngOnInit() {
     this.usertype = await this.storage.get(environment.USER);
     console.log('User Type:', this.usertype);
-    this.storage.get(environment.CLINIC_Id).then((val) => {
-      console.log('Clinic ID:', val);
-      this.clinicid = val;
-      this.loadBrands(val);
-    });
+     this.clinicId = await this.storage.get(environment.CLINIC_Id);
+    console.log('Clinic ID:', this.clinicId);
     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
     console.log('Doctor ID:', this.doctorId);
     await this.loadClinics();
