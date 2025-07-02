@@ -53,7 +53,7 @@ export class BrandService extends BaseService {
   }
 
   downloadPdf(dId: number, options: any): Observable<HttpResponse<Blob>> {
-      const apiUrl = `${this.API_BRAND}BrandAmount/pdf/${dId}`;
+      const apiUrl = `${this.API_BRAND}Brandamount/brandamountclinicwisepdf/${dId}`;
       return this.http.get(apiUrl, {
         responseType: 'blob',
         observe: 'response',
