@@ -47,7 +47,6 @@ export class ChildPage {
  ionViewWillEnter() {
   window.onbeforeunload = () => {
     this.storage.remove('searchInput');
-
   };
   this.isSearchDisabled = false;
 
@@ -74,50 +73,6 @@ export class ChildPage {
           this.getChlidByClinic(false);
         }
       });
-}
-
-async getUnapprovedPatients(isdelete: boolean) {
-  const loading = await this.loadingController.create({
-    message: 'Loading Unapproved Patients...',
-  });
-  await loading.present();
-
-  if (isdelete) {
-    this.page = 0;
-    this.childs = [];
-    this.search = false;
-    this.fg.controls['Name'].setValue(null);
-    this.storage.remove('searchInput');
-    this.storage.remove('unapprovedSearch');
-    this.storage.remove('unapprovedPatients');
-    this.storage.set('unapprovedSearch', true);
-  } else {
-    this.storage.set('unapprovedSearch', true);
-    this.page = 0;
-    this.childs = [];
-    this.infiniteScroll.disabled = false;
-  }
-
-  this.childService.getUnapprovedPatients(this.clinic.Id).subscribe({
-    next: (res) => {
-      loading.dismiss();
-      if (res.IsSuccess) {
-        this.infiniteScroll.disabled = true;
-        this.childs = res.ResponseData;
-        this.search = true;
-        this.isSearchDisabled = true;
-        this.storage.set('unapprovedPatients', res.ResponseData);
-        this.infiniteScroll.complete();
-      } else {
-        this.toastService.create(res.Message, 'danger');
-      }
-    },
-    error: (err) => {
-      loading.dismiss();
-      this.toastService.create('Failed to fetch unapproved patients', 'danger');
-      console.error(err);
-    },
-  });
 }
 
   getStringValue(value: any): string {
