@@ -21,6 +21,7 @@ export class ClinicPage {
   onlineclinic: any;
   usertype: any;
   selectedClinic: any;
+  type: any;
   constructor(public loadingController: LoadingController, 
     public clinicService: ClinicService,
     private toastService: ToastService, 
@@ -42,6 +43,8 @@ export class ClinicPage {
       this.doctorId = docId;
     });
    this.usertype = await this.storage.get(environment.USER);
+   console.log("User Type:", this.usertype.UserType);
+   this.type= this.usertype.UserType;
     this.route.queryParams.subscribe((params) => {
       if (params.refresh) {
         this.getClinics();
