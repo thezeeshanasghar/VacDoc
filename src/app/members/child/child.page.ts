@@ -47,8 +47,7 @@ export class ChildPage {
  ionViewWillEnter() {
   window.onbeforeunload = () => {
     this.storage.remove('searchInput');
-    this.storage.remove('unapprovedSearch');
-    this.storage.remove('unapprovedPatients');
+
   };
   this.isSearchDisabled = false;
 
@@ -69,30 +68,12 @@ export class ChildPage {
       this.childs = [];
       this.getChlidbyUser(false);
     } else {
-      this.storage.get('unapprovedSearch').then((isUnapprovedSearch) => {
-        if (isUnapprovedSearch) {
-          this.storage.get('unapprovedPatients').then((cachedPatients) => {
-            if (cachedPatients) {
-              this.childs = cachedPatients;
-              this.search = true;
-              this.infiniteScroll.disabled = true;
-              this.isSearchDisabled = true;
-            } else {
-              this.page = 0;
-              this.search = false;
-              this.childs = [];
-              this.getUnapprovedPatients(false);
-            }
-          });
-        } else {
           this.page = 0;
           this.search = false;
           this.childs = [];
           this.getChlidByClinic(false);
         }
       });
-    }
-  });
 }
 
 async getUnapprovedPatients(isdelete: boolean) {
@@ -243,7 +224,7 @@ this.storage.remove('searchInput');
         if (res.IsSuccess) {
           if (res.ResponseData.length < 10) 
               this.infiniteScroll.disabled = true;
-            
+
           this.childs = this.childs.concat(res.ResponseData);
           this.page += 1;
           this.isSearchDisabled = false;
