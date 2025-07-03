@@ -168,9 +168,8 @@ export class ChildPage {
       this.page = 0;
       this.childs = [];
       this.search = false;
-      
-      // this.fg.controls['Name'].setValue(null);
-      // this.storage.remove('searchInput');
+      this.fg.controls['Name'].setValue(null);
+      this.storage.remove('searchInput');
     }
 this.storage.remove('searchInput');
     this.childService.getChildByClinic(this.clinic.Id, this.page).subscribe({
