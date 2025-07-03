@@ -1,0 +1,43 @@
+
+
+.girl {
+    border: rgb(245, 12, 167) 2px solid
+}
+
+.boy {
+    border: rgb(8, 28, 206) 2px solid
+}
+.iconchild {
+    margin-left: 6%;
+}
+
+.icons{
+    --background: rgb(0, 0, 0, 0.155); /* Replace 'your-color' with the desired background color */
+    border-radius: 2px;
+    color: #fff;
+}
+
+.gender-image {
+    width: 100px; /* Adjust width as needed */
+    height: auto; /* Maintain aspect ratio */
+  }
+  
+  .gender-image path {
+    fill: blue; /* Default color for male */
+  }
+  
+  .gender-image.girl path {
+    fill: pink; /* Color for female */
+  }
+  @media (max-width: 642px) { /* Adjust the breakpoint as needed */
+    .icons {
+      display: block !important;
+    font-size: 0px;
+    }
+ 
+  }
+
+  ::slotted(ion-icon) {
+    color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.54);
+    font-size: 18px;
+}

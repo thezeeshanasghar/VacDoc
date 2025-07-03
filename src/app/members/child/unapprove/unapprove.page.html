@@ -2,29 +2,30 @@
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
+          <ion-back-button defaultHref="/members/child"></ion-back-button>
     </ion-buttons>
-    <ion-title>Patients</ion-title>
+    <ion-title>Unapproved Patients</ion-title>
   </ion-toolbar>
   <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
       <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/doctor/clinic" name="medkit" size="large"> </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/child/unapprove" name="close-circle-outline" size="large"></ion-icon>
       <ion-menu-button style="margin-left: 10%"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <form [formGroup]="fg">
+  <!-- <form [formGroup]="fg">
     <ion-item>
       <ion-input type="text" placeholder="search" formControlName="Name" (keyup.Enter)="getChlidbyUser(true)"
         required></ion-input>
       <ion-button [disabled]="isSearchDisabled" (click)="getChlidbyUser(true)">search</ion-button>
       <ion-button *ngIf="search" (click)="getChlidByClinic(true)">clear</ion-button>
+      <ion-button *ngIf="usertype !== 'PA'" (click)="getUnapprovedPatients(true)">UnApproved</ion-button>
     </ion-item>
-  </form>
+  </form> -->
 
   <ion-card *ngFor="let child of childs" [ngClass]="child.Gender=='Girl' ? 'girl' : 'boy'">
     <div class="icons" style="display: flex; justify-content: space-between; align-items: center;">
@@ -57,7 +58,10 @@
       <ion-icon color="white" name="call"></ion-icon>
       {{child.MobileNumber}}
       <br>
-      <ion-button disabled="false" size="small" fill="outline" color="primary"
+      <ion-button 
+        [color]="child.IsPAApprove ? 'success' : 'primary'" 
+        size="small" 
+        fill="outline" 
         routerLink="/members/child/vaccine/{{child.Id}}">
         Vaccine
       </ion-button>
@@ -77,6 +81,10 @@
       &nbsp; &nbsp;
       <ion-button size="small" fill="outline" color="primary" (click)="downloadPdf(child.Id)">
         PID
+      </ion-button>
+      &nbsp; &nbsp;
+      <ion-button *ngIf="!child.IsPAApprove && usertype !== 'PA'" size="small" fill="outline" color="success" (click)="approveChild(child.Id)">
+        Approve
       </ion-button>
     </ion-card-content>
   </ion-card>

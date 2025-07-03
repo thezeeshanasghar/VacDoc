@@ -17,6 +17,10 @@ const routes: Routes = [
     loadChildren: () => import('./add/add.module').then(m => m.AddPageModule) 
   },
   { 
+    path: 'unapprove', 
+    loadChildren: () => import('./unapprove/unapprove.module').then(m => m.UnapprovePageModule) 
+  },
+  { 
     path: 'edit/:id', 
     loadChildren: () => import('./edit/edit.module').then(m => m.EditPageModule) 
   },
