@@ -41,3 +41,90 @@
     color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.54);
     font-size: 18px;
 }
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+.mat-datepicker-toggle-default-icon {
+  color: #3880ff;
+}
+input {
+  border: 0;
+  margin-left: 7%;
+  width: 40%;
+}
+#dob{
+  margin-left: 5%;
+}
+ion-list-header{
+  color: #3880ff;
+}
+
+.example-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.example-full-width {
+  width: 100%;
+}
+
+.no-indent .mat-option {
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.custom-item-background1 {
+  --background: rgba(8, 8, 8, 0.162);
+  color: #fff;
+}
+
+
+.custom-item-background2 {
+  --background: rgba(8, 8, 8, 0);
+  color: #fff;
+}
+
+.custom-item-background3 {
+  --background: rgb(0, 0, 0);
+  color: #fff;
+}
+
+
+#EPI{
+  height: auto;
+}
+.city{
+  
+}
+
+.input-group {
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+.country-code-container {
+  width: 100%;
+}
+
+@media (max-width: 375px) {
+  .country-code-container {
+    width: 200%;
+  }
+
+  .country-label, .mobile-label {
+    font-size: 14px;
+  }
+  
+  .country-code-select, .number-input {
+    font-size: 14px;
+  }
+}
+
+.required-asterisk {
+  color: red;
+  margin-left: 2px; 
+}
+

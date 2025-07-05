@@ -1,9 +1,8 @@
-import { Component, OnInit, ViewChild, ɵConsole } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import {
   FormGroup,
   FormBuilder,
   FormControl,
-  FormArray,
   Validators
 } from "@angular/forms";
 import * as moment from "moment";
@@ -20,12 +19,11 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { SMS } from '@ionic-native/sms/ngx';
 import { TitleCasePipe } from '@angular/common';
 import { AlertController } from '@ionic/angular';
-import { env } from 'process';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CityService } from "src/app/services/city.service";
 import { AgentService } from "src/app/services/agent.service";
+import { PaService } from "src/app/services/pa.service";
 
 @Component({
   selector: "app-add",
@@ -34,7 +32,7 @@ import { AgentService } from "src/app/services/agent.service";
 })
 
 export class AddPage implements OnInit {
-  isRadioDisabled: boolean = true; 
+  isRadioDisabled: boolean = true;
   fg1: FormGroup;
   fg2: FormGroup;
   formcontroll: boolean = false;
@@ -53,20 +51,18 @@ export class AddPage implements OnInit {
   epiDone = false;
   Messages: any = [];
   Nationality: any;
-  // cities: string[];
   originalCities: string[];
   filteredOptions: Observable<string[]>;
   travel: [false];
-  isCnicRequired: boolean=false;
-  // agents: any;
+  isCnicRequired: boolean = false;
   originalAgents: any[];
   cities: string[] = [];
   agents: string[] = [];
   isButtonEnabled: boolean;
   isTravel: boolean;
   usertype: any;
-  // agentService: any;
-  //cities: any;
+  selectedClinicId: any;
+  clinicid: Promise<any>;
 
   constructor(
     public loadingController: LoadingController,
@@ -85,87 +81,98 @@ export class AddPage implements OnInit {
     private titlecasePipe: TitleCasePipe,
     public alertCtrl: AlertController,
     private http: HttpClient,
-   
+    private paService: PaService,
+    private cd: ChangeDetectorRef,
   ) { }
 
   ngOnInit() {
     this.loadCities();
-    // this.loadAgent();
-    this. logDoctorId();
+    this.logDoctorId();
     this.fetchAgent();
     this.loadCities();
+    this.loadClinics();
+    this.doctorId = this.storage.get(environment.DOCTOR_Id);
+    this.clinicid = this.storage.get(environment.CLINIC_Id);
     this.storage.get(environment.USER).then((user) => {
       if (user) {
-        console.log('Retrieved user from storage:', user);
-        this.usertype = user.UserType; // Ensure this is set correctly
+        this.usertype = user;
       } else {
         console.error('No user data found in storage.');
       }
     });
+  }
 
-    // this.doctorId = this.storage.get(environment.DOCTOR_Id);
-    // console.log(this.doctorId);
-}
-
-loadCities(): void {
+  loadCities(): void {
     this.cityService.getCities().subscribe(
-        (cities: any) => {
-            this.cities = cities;
-            this.originalCities = [...cities];
-            console.log('Cities loaded:', cities); // Check the output here
-        },
-        (error: any) => {
-            console.error('Error loading cities', error);
-        }
-    );
-}
-
-// loadAgent(): void {
-//   this.agentService.getAgents().subscribe(
-//     (agents: any) => {
-//       if (Array.isArray(agents)) {
-//         this.agents = agents; // Ensure agents is an array
-//       } else {
-//         this.agents = Object.values(agents); // Convert object to array if necessary
-//       }
-//       console.log('Agents loaded:', this.agents);
-//     },
-//     (error: any) => {
-//       console.error('Error loading agents', error);
-//     }
-//   );
-// }
-
-fetchAgent() {
-  this.childService.getAgent(1).subscribe(
-    (agents: any) => {
-      this.agents = agents.ResponseData;
-      this.originalAgents = [...this.agents]; // Store original agents for filtering
-      console.log('Fetched agents:', agents.ResponseData); 
-      console.log('Fetched agents:', agents.ResponseData.length); 
-      // Log the fetched agents
-    },
-    (error: any) => {
-      console.error('Error fetching agents:', error);
-    }
-  );
-}
-
-filterAgents(value: string) {
-  if (!value.trim()) {
-    this.agents = [...this.originalAgents]; // Restore original agents if input is empty
-  } else {
-    this.agents = this.originalAgents.filter(agent =>
-      agent.toLowerCase().includes(value.toLowerCase())
+      (cities: any) => {
+        this.cities = cities;
+        this.originalCities = [...cities];
+      },
+      (error: any) => {
+        console.error('Error loading cities', error);
+      }
     );
   }
-}
+
+  fetchAgent() {
+    this.childService.getAgent(1).subscribe(
+      (agents: any) => {
+        this.agents = agents.ResponseData;
+        this.originalAgents = [...this.agents];
+      },
+      (error: any) => {
+        console.error('Error fetching agents:', error);
+      }
+    );
+  }
+
+  filterAgents(value: string) {
+    if (!value.trim()) {
+      this.agents = [...this.originalAgents];
+    } else {
+      this.agents = this.originalAgents.filter(agent =>
+        agent.toLowerCase().includes(value.toLowerCase())
+      );
+    }
+  }
+
+  async loadClinics() {
+    const loading = await this.loadingController.create({
+      message: 'Loading clinics...',
+    });
+    await loading.present();
+
+    try {
+       if (this.usertype.UserType === 'PA') {
+        this.paService.getPaClinics(Number(this.usertype.PAId)).subscribe({
+          next: (response) => {
+            loading.dismiss();
+            if (response.IsSuccess) {
+              this.clinics = response.ResponseData;
+              this.selectedClinicId = this.clinics.length > 0 ? this.clinics[0].Id : null;
+              console.log('PA Clinics:', this.clinics);
+            } else {
+              this.toastService.create(response.Message, 'danger');
+            }
+          },
+          error: (error) => {
+            loading.dismiss();
+            console.error('Error fetching PA clinics:', error);
+            this.toastService.create('Failed to load clinics', 'danger');
+          },
+        });
+      }
+    } catch (error) {
+      loading.dismiss();
+      console.error('Error in loadClinics:', error);
+      this.toastService.create('An unexpected error occurred', 'danger');
+    }
+  }
 
   ionViewWillEnter() {
     this.storage.set(environment.MESSAGES, this.Messages);
     this.todaydate = new Date();
     this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format("YYYY-MM-DD");
-
     this.fg1 = this.formBuilder.group({
       ClinicId: [""],
       Name: ['', Validators.compose([
@@ -177,7 +184,7 @@ filterAgents(value: string) {
         Validators.required,
         Validators.pattern(/^[^\d]+$/)
       ])),
-      Email: new FormControl(""), 
+      Email: new FormControl(""),
       DOB: new FormControl('', Validators.required),
       CountryCode: ["92", Validators.required],
       MobileNumber: new FormControl(
@@ -205,50 +212,38 @@ filterAgents(value: string) {
       Password: [null],
       ChildVaccines: [null],
       Nationality: ['', Validators.compose([
-        // Validators.required,
-        Validators.pattern(/^[a-zA-Z\s]+$/) 
+        Validators.pattern(/^[a-zA-Z\s]+$/)
       ])],
     });
-
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
-      this.logDoctorId(); // Call the function to log the doctor ID
+      this.logDoctorId(); 
     });
     console.log(this.doctorId);
     this.storage.get(environment.ON_CLINIC).then(val => {
       this.clinic = val;
     });
-
     this.storage.get(environment.CITY).then(val => {
       val == null ? "" : this.fg1.controls['City'].setValue(val);
     });
-
     this.storage.get(environment.DOCTOR).then(doc => {
       this.Doctor = doc;
     });
-
     this.storage.get(environment.MESSAGES).then(messages => {
       messages == null ? "" : this.Messages = messages;
     });
-
     this.cities = this.cities;
   }
 
   logDoctorId() {
-    // console.log('Doctor ID:', this.doctorId);
-    if(this.doctorId==1){
-      this.isTravel=true;
-    } 
+    if (this.doctorId == 1) {
+      this.isTravel = true;
+    }
   }
-
-  // isTravelSelected: boolean = false;
-  // onTravelChange(event: any) {
-  //   this.fg1.get('CNIC').setValidators([Validators.required]);
-  // }
 
   public filter(value: string) {
     if (!value.trim()) {
-      this.cities = [...this.originalCities]; // Restore the original list of cities
+      this.cities = [...this.originalCities];
     } else {
       this.cities = this.originalCities.filter(option => (
         option.toLowerCase().includes(value.toLowerCase()) || option.includes(value)
@@ -530,10 +525,7 @@ filterAgents(value: string) {
   async moveNextStep() {
     console.log('Form Group Value:', this.fg1.value);
     this.fg1.value.DOB = await moment(this.fg1.value.DOB, "YYYY-MM-DD").format("DD-MM-YYYY");
-    // this.formcontroll = true;
-    //this.fg1.value.Gender = this.gender;
     await this.PasswordGenerator();
-    //console.log(this.fg1.value);
     await this.addNewChild(this.fg1.value);
   }
 
@@ -551,12 +543,12 @@ filterAgents(value: string) {
     this.fg1.value.Password = retVal;
   }
 
-  async addNewChild(data: {agent: string; city: string; }) {
+  async addNewChild(data: { agent: string; city: string; }) {
     console.log('City2 value:', this.fg1.get('City2').value);
     console.log('City2 value:', this.fg1.value.Agent2);
     if (data.agent == "") {
       data.agent = this.fg1.get('Agent2').value;
-      console.log('city2 data',data.agent)
+      console.log('city2 data', data.agent)
     }
     if (data.city == "") {
       data.city = this.fg1.get('City2').value;
@@ -567,15 +559,18 @@ filterAgents(value: string) {
       message: "loading"
     });
     await loading.present();
-    if (this.usertype === 'DOCTOR') {
+    if (this.usertype.UserType === 'DOCTOR') {
       this.fg1.value.IsPAApprove = true;
     } else {
       this.fg1.value.IsPAApprove = false;
     }
-    // let str = this.fg1.value.PreferredDayOfWeek;
-    // this.fg1.value.PreferredDayOfWeek = str.toString();
-    this.fg1.value.ClinicId = this.clinic.Id;
-    console.log( "data" , data);
+    if (this.usertype.UserType === 'DOCTOR') {
+       this.fg1.value.ClinicId = this.clinic.Id;
+    } else {
+      this.fg1.value.ClinicId;
+    }
+    // this.fg1.value.ClinicId = this.clinic.Id;
+    console.log("data", data);
     await this.childService.addChild(data).subscribe(
       async res => {
         this.setCity(this.fg1.value.City);
@@ -585,46 +580,45 @@ filterAgents(value: string) {
           if (res.ResponseData.Gender == "Boy")
             sms1 += ("Mr. " + this.titlecasePipe.transform(res.ResponseData.Name));
           if (res.ResponseData.Gender == "Girl")
-          sms1 += ("Miss. " + this.titlecasePipe.transform(res.ResponseData.Name));
+            sms1 += ("Miss. " + this.titlecasePipe.transform(res.ResponseData.Name));
           sms1 += " has been registered Successfully at ";
           if (res.ResponseData.DoctorId === 1) {
             sms1 += "Vaccine.pk";
           } else {
             sms1 += "https://vaccinationcentre.com/";
           }
-          sms1 += "\nId: +" + res.ResponseData.CountryCode+ res.ResponseData.MobileNumber + " \nPassword: " + res.ResponseData.Password;
+          sms1 += "\nId: +" + res.ResponseData.CountryCode + res.ResponseData.MobileNumber + " \nPassword: " + res.ResponseData.Password;
           sms1 += "\nClinic Phone Number: " + this.clinic.PhoneNumber;
           sms1 += "\nWeb Link:  https://client.vaccinationcentre.com/";
           console.log(sms1);
           const ChildId = res.ResponseData.Id
           console.log('child id', ChildId)
-            loading.dismiss();
-            const whatsappNumber = "+" + res.ResponseData.CountryCode + res.ResponseData.MobileNumber;
-            const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(sms1)}`;
-            const alert = await this.alertCtrl.create({
-              header: 'Send WhatsApp Message',
-              message: 'Would you like to open WhatsApp to send the registration details?',
-              buttons: [
-                {
-                  text: 'Cancel',
-                  role: 'cancel'
-                },
-                {
-                  text: 'Open WhatsApp',
-                  handler: () => {
-                    window.open(whatsappUrl, '_system');
-                  }
+          loading.dismiss();
+          const whatsappNumber = "+" + res.ResponseData.CountryCode + res.ResponseData.MobileNumber;
+          const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(sms1)}`;
+          const alert = await this.alertCtrl.create({
+            header: 'Send WhatsApp Message',
+            message: 'Would you like to open WhatsApp to send the registration details?',
+            buttons: [
+              {
+                text: 'Cancel',
+                role: 'cancel'
+              },
+              {
+                text: 'Open WhatsApp',
+                handler: () => {
+                  window.open(whatsappUrl, '_system');
                 }
-              ]
-            });
-            await alert.present();
-            this.toastService.create('Child added successfully.');
-            // window.open(whatsappUrl, '_system');
-        if (res.ResponseData.Type == "special" ){
+              }
+            ]
+          });
+          await alert.present();
+          this.toastService.create('Child added successfully.');
+          if (res.ResponseData.Type == "special") {
             this.router.navigate([`/members/child/vaccine/${ChildId}`]);
-        } else{
-          this.router.navigate(["/members/child"]);
-        }
+          } else {
+            this.router.navigate(["/members/child"]);
+          }
         } else {
           loading.dismiss();
           this.formcontroll = false;
@@ -639,11 +633,10 @@ filterAgents(value: string) {
     );
   }
 
-sendsms(number: string, message: string) {
+  sendsms(number: string, message: string) {
     console.log(number + message);
     this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS).then(
       result => {
-        // console.log('Has permission?',result.hasPermission);
         if (result.hasPermission) {
           this.sms.send('+92' + number, message)
             .then(() => {
@@ -669,60 +662,51 @@ sendsms(number: string, message: string) {
   }
 
   async setCity(city: any) {
-    // if (city == 'Other')
-    //   await this.otherCityAlert();
-    // this.childService.othercity = true;
     this.storage.set(environment.CITY, city);
   }
-
-  // uncheckany() {
-  //   if (this.fg1.value.PreferredDayOfWeek.length > 1)
-  //     this.fg1.value.PreferredDayOfWeek = this.fg1.value.PreferredDayOfWeek.filter(x => (x !== 'Any'));
-  // }
-
 
   async checkEpi() {
     let days = await this.calculateDiff(this.fg1.value.DOB);
     console.log(days);
     this.epiDone = days > 272;
-    this.isRadioDisabled = !this.epiDone; 
+    this.isRadioDisabled = !this.epiDone;
     if (this.isRadioDisabled) {
       this.fg1.get('IsEPIDone').setValue(false);
+    }
+    this.cd.detectChanges();
   }
-}
 
-onTravelChange(event: any) {
-  const selectedValue = event.detail.value;
-  console.log('Selected Type:', selectedValue);
-  this.fg1.get('CNIC').clearValidators();
-  this.fg1.get('agent').clearValidators();
-  this.fg1.get('Agent2').clearValidators();
-  if (selectedValue === 'travel') {
-    this.isCnicRequired = true;
-    this.fg1.get('CNIC').setValidators([Validators.required]);
-    this.fg1.get('agent').setValidators([Validators.required]);
-    this.fg1.get('Nationality').setValidators([Validators.required]);
-    this.isButtonEnabled = true;
-    this.fg1.get('agent').enable();
-    // this.fg1.get('Agent2').enable();
-    this.onAgentChange();
-  } else {
-    this.isCnicRequired = false;
-    this.isButtonEnabled = true;
-    this.fg1.get('agent').disable();
-    this.fg1.get('Agent2').disable();
-    this.fg1.get('agent').setValue('');
-    this.fg1.get('Agent2').setValue('');
+  onTravelChange(event: any) {
+    const selectedValue = event.detail.value;
+    console.log('Selected Type:', selectedValue);
+    this.fg1.get('CNIC').clearValidators();
+    this.fg1.get('agent').clearValidators();
+    this.fg1.get('Agent2').clearValidators();
+    if (selectedValue === 'travel') {
+      this.isCnicRequired = true;
+      this.fg1.get('CNIC').setValidators([Validators.required]);
+      this.fg1.get('agent').setValidators([Validators.required]);
+      this.fg1.get('Nationality').setValidators([Validators.required]);
+      this.isButtonEnabled = true;
+      this.fg1.get('agent').enable();
+      this.onAgentChange();
+    } else {
+      this.isCnicRequired = false;
+      this.isButtonEnabled = true;
+      this.fg1.get('agent').disable();
+      this.fg1.get('Agent2').disable();
+      this.fg1.get('agent').setValue('');
+      this.fg1.get('Agent2').setValue('');
+    }
+    this.fg1.get('CNIC').updateValueAndValidity();
+    this.fg1.get('agent').updateValueAndValidity();
+    this.fg1.get('Agent2').updateValueAndValidity();
+    this.fg1.get('Nationality').updateValueAndValidity();
+    this.isRadioDisabled = this.isCnicRequired && !this.epiDone;
+    this.checkEpi();
   }
-  this.fg1.get('CNIC').updateValueAndValidity();
-  this.fg1.get('agent').updateValueAndValidity();
-  this.fg1.get('Agent2').updateValueAndValidity();
-  this.fg1.get('Nationality').updateValueAndValidity();
-  this.isRadioDisabled = this.isCnicRequired && !this.epiDone;
-  this.checkEpi();
-}
 
-onCityChange() {
+  onCityChange() {
     const cityValue = this.fg1.get('city').value;
     const city2Value = this.fg1.get('City2').value;
     console.log('City:', cityValue);
@@ -776,7 +760,6 @@ onCityChange() {
 
   async otherCityAlert() {
     let alert = await this.alertCtrl.create({
-      // title: 'Login',
       inputs: [
         {
           name: 'cityname',
@@ -826,10 +809,10 @@ onCityChange() {
     email: [
       { type: "pattern", message: "Please enter a valid email address" },
       { type: "email", message: "Please enter a valid email address" }
-  ],
-  nationality: [
-    { type: "required", message: "Nationality is required." },
-    { type: "pattern", message: "Please enter a valid nationality (letters and spaces only)." }
-  ],
+    ],
+    nationality: [
+      { type: "required", message: "Nationality is required." },
+      { type: "pattern", message: "Please enter a valid nationality (letters and spaces only)." }
+    ],
   };
 }
