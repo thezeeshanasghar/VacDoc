@@ -31,6 +31,7 @@ export class ChildPage {
   isSearchDisabled: boolean;
   clinics: any;
   selectedClinicId: any;
+  type: any;
   constructor(
     public router: Router,
     public loadingController: LoadingController,
@@ -56,6 +57,7 @@ export class ChildPage {
 
   this.storage.get(environment.USER).then((user) => {
     this.usertype = user;
+    this.type = user.UserType;
   });
   this.storage.get(environment.DOCTOR_Id).then((docId) => {
     this.doctorId = docId;

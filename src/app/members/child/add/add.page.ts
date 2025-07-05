@@ -63,6 +63,7 @@ export class AddPage implements OnInit {
   usertype: any;
   selectedClinicId: any;
   clinicid: Promise<any>;
+  type: any;
 
   constructor(
     public loadingController: LoadingController,
@@ -90,12 +91,16 @@ export class AddPage implements OnInit {
     this.logDoctorId();
     this.fetchAgent();
     this.loadCities();
-    this.loadClinics();
     this.doctorId = this.storage.get(environment.DOCTOR_Id);
     this.clinicid = this.storage.get(environment.CLINIC_Id);
     this.storage.get(environment.USER).then((user) => {
       if (user) {
         this.usertype = user;
+        console.log('User Type:', this.usertype.UserType);
+        this.type=user.UserType;
+        if (this.usertype.UserType === 'PA') {
+        this.loadClinics();
+        }
       } else {
         console.error('No user data found in storage.');
       }

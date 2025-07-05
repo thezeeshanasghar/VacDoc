@@ -26,7 +26,7 @@
     </ion-item>
   </form>
 <!-- Show clinic selector for PA users -->
-<ion-item *ngIf="usertype?.UserType === 'PA'">
+<ion-item *ngIf="type === 'PA'">
   <ion-label color="primary">Select Clinic</ion-label>
   <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange()">
     <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
