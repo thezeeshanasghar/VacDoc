@@ -14,7 +14,8 @@
       <ion-icon style="margin-left: 10%" routerLink="/members/doctor/clinic" name="medkit" size="large"> </ion-icon>
       <!-- <ion-icon style="margin-left: 10%" routerLink="/members/child/add" name="person-add" size="large"> </ion-icon> -->
       <ion-icon style="margin-left: 10%" routerLink="/members/alert" name="alert" size="large"> </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/child" name="accessibility-outline" size="large"> </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/child" name="accessibility-outline" size="large">
+      </ion-icon>
       <ion-menu-button style="margin-left: 10%"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
@@ -131,6 +132,19 @@
         </ion-grid>
       </ion-radio-group>
 
+      <ion-item *ngIf="type === 'PA'">
+        <div class="country-code-container">
+       <ion-label color="primary" position="stacked" class="country-label">
+            Clinics <span class="required-asterisk">*</span>
+          </ion-label>
+        <ion-select formControlName="ClinicId" [(ngModel)]="selectedClinicId" required class="no-indent">
+          <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+            {{ clinic.Name }}
+          </ion-select-option>
+        </ion-select>
+        </div>
+      </ion-item>
+
       <ion-item>
         <ion-label color="primary" position="floating">Email</ion-label>
         <ion-input type="email" formControlName="Email" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
@@ -165,7 +179,6 @@
               (+{{ country.code }}) {{ country.name }}
             </ion-select-option>
           </ion-select>
-
           <ion-label color="primary" position="stacked" class="mobile-label">
             Mobile Number <span class="required-asterisk">*</span>
           </ion-label>
@@ -194,8 +207,8 @@
           <ion-input type="text" formControlName="City2" required class="ion-text-capitalize"
             [(ngModel)]="fg1.value.City2" [disabled]="fg1.get('city')?.value !== ''" (ionChange)="onCityChange()">
           </ion-input>
-        </ion-item>
-        <div class="validation-errors">
+        </ion-item> 
+         <div class="validation-errors">
           <ng-container *ngFor="let validation of validation_messages.City2">
             <div class="error-message"
               *ngIf="fg1.get('City2')?.hasError(validation.type) && (fg1.get('City2')?.dirty || fg1.get('City2')?.touched)">
@@ -207,20 +220,20 @@
 
       <div *ngIf="isCnicRequired">
         <div class="agent">
-        <ion-item>
-          <ion-label color="primary" position="floating">
-            Nationality <span class="required-asterisk">*</span>
-          </ion-label>
-          <ion-input type="text" formControlName="Nationality" required class="ion-text-capitalize"></ion-input>
-        </ion-item>
-        <div class="validation-errors">
-          <ng-container *ngFor="let validation of validation_messages.nationality">
-            <div class="error-message"
-              *ngIf="fg1.get('Nationality')?.hasError(validation.type) && (fg1.get('Nationality')?.dirty || fg1.get('Nationality')?.touched)">
-              <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
-            </div>
-          </ng-container>
-        </div>
+          <ion-item>
+            <ion-label color="primary" position="floating">
+              Nationality <span class="required-asterisk">*</span>
+            </ion-label>
+            <ion-input type="text" formControlName="Nationality" required class="ion-text-capitalize"></ion-input>
+          </ion-item>
+          <div class="validation-errors">
+            <ng-container *ngFor="let validation of validation_messages.nationality">
+              <div class="error-message"
+                *ngIf="fg1.get('Nationality')?.hasError(validation.type) && (fg1.get('Nationality')?.dirty || fg1.get('Nationality')?.touched)">
+                <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+              </div>
+            </ng-container>
+          </div>
           <ion-label color="primary" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">
             Agent <span class="required-asterisk">*</span>
           </ion-label>
