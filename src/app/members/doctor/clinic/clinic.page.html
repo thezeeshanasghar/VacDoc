@@ -57,14 +57,14 @@
         </span>
       </p>
       <p *ngIf="!clinic.ClinicTimings || !clinic.ClinicTimings.length">No timings available</p> -->
-      <ion-button size="small" fill="outline" color="primary" routerLink="/members/child">
+      <ion-button size="small" *ngIf="type !== 'PA'" fill="outline" color="primary" routerLink="/members/child">
         Patients &nbsp;<ion-badge size="small" color="primary">{{clinic.childrenCount}}</ion-badge>
       </ion-button>
-      <ion-button *ngIf="!clinic.IsOnline" size="small" fill="outline" color="primary"
+      <ion-button *ngIf="!clinic.IsOnline&& type !== 'PA'" size="small" fill="outline" color="primary"
         (click)="setOnlineClinic(clinic.Id)">
         Set as Online
       </ion-button>
-      <ion-button *ngIf="clinic.IsOnline" size="small" color="success" enabled="false" routerLink="/members/dashboard">
+      <ion-button *ngIf="clinic.IsOnline&& type !== 'PA'" size="small" color="success" enabled="false" routerLink="/members/dashboard">
         <ion-icon slot="start" name="checkmark"></ion-icon>
         Online
       </ion-button>

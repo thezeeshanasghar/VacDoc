@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-
+import { PaService } from "src/app/services/pa.service";
 
 @Component({
   selector: 'app-child',
@@ -29,6 +29,9 @@ export class ChildPage {
   clinic: any;
   usertype: any;
   isSearchDisabled: boolean;
+  clinics: any;
+  selectedClinicId: any;
+  type: any;
   constructor(
     public router: Router,
     public loadingController: LoadingController,
@@ -38,9 +41,11 @@ export class ChildPage {
     private storage: Storage,
     private alertService: AlertService,
     private callNumber: CallNumber,
+    private paService: PaService,
   ) {
     this.fg = this.formBuilder.group({
       Name: ["", Validators.required],
+       ClinicId: [""],
     });
   }
 
@@ -51,7 +56,8 @@ export class ChildPage {
   this.isSearchDisabled = false;
 
   this.storage.get(environment.USER).then((user) => {
-    this.usertype = user.UserType;
+    this.usertype = user;
+    this.type = user.UserType;
   });
   this.storage.get(environment.DOCTOR_Id).then((docId) => {
     this.doctorId = docId;
@@ -70,7 +76,12 @@ export class ChildPage {
           this.page = 0;
           this.search = false;
           this.childs = [];
-          this.getChlidByClinic(false);
+      if (this.usertype.UserType === 'PA') {
+        this.loadClinics();
+      } else {
+        this.getChlidByClinic(false);
+      }
+          // this.getChlidByClinic(false);
         }
       });
 }
@@ -159,46 +170,89 @@ export class ChildPage {
   }
 
   async getChlidByClinic(isdelete: boolean) {
-    const loading = await this.loadingController.create({
-      message: 'Loading',
-    });
-    await loading.present();
+  const loading = await this.loadingController.create({
+    message: 'Loading',
+  });
+  await loading.present();
 
-    if (isdelete) {
-      this.page = 0;
-      this.childs = [];
-      this.search = false;
-      this.fg.controls['Name'].setValue(null);
-      this.storage.remove('searchInput');
-    }
-this.storage.remove('searchInput');
-    this.childService.getChildByClinic(this.clinic.Id, this.page).subscribe({
-      next: (res) => {
-        console.log(res);
-        if (res.IsSuccess) {
-          if (res.ResponseData.length < 10) 
-              this.infiniteScroll.disabled = true;
-
-          this.childs = this.childs.concat(res.ResponseData);
-          this.page += 1;
-          this.isSearchDisabled = false;
-          loading.dismiss();
-          this.infiniteScroll.complete();
-        } else {
-          loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
-        }
-      },
-      error: (err) => {
-        loading.dismiss();
-        this.toastService.create(err, 'danger');
-      },
-    });
+  if (isdelete) {
+    this.page = 0;
+    this.childs = [];
+    this.search = false;
+    this.fg.controls['Name'].setValue(null);
+    this.storage.remove('searchInput');
   }
+  this.storage.remove('searchInput');
+
+  let clinicIdToUse = this.clinic.Id;
+  if (this.usertype.UserType === 'PA') {
+    clinicIdToUse = this.selectedClinicId;
+  }
+
+  this.childService.getChildByClinic(clinicIdToUse, this.page).subscribe({
+    next: (res) => {
+      if (res.IsSuccess) {
+        if (res.ResponseData.length < 10)
+          this.infiniteScroll.disabled = true;
+
+        this.childs = this.childs.concat(res.ResponseData);
+        this.page += 1;
+        this.isSearchDisabled = false;
+        loading.dismiss();
+        this.infiniteScroll.complete();
+      } else {
+        loading.dismiss();
+        this.toastService.create(res.Message, 'danger');
+      }
+    },
+    error: (err) => {
+      loading.dismiss();
+      this.toastService.create(err, 'danger');
+    },
+  });
+}
+
+onClinicChange() {
+  this.page = 0;
+  this.childs = [];
+  this.getChlidByClinic(true);
+}
 
   navigateToRoute(route: string) {
     this.storage.remove('unapprovedSearch'); // Clear the flag
     this.router.navigate([route]);
+  }
+
+    async loadClinics() {
+    const loading = await this.loadingController.create({
+      message: 'Loading clinics...',
+    });
+    await loading.present();
+
+    try {
+        this.paService.getPaClinics(Number(this.usertype.PAId)).subscribe({
+          next: (response) => {
+            loading.dismiss();
+            if (response.IsSuccess) {
+              this.clinics = response.ResponseData;
+              this.selectedClinicId = this.clinics.length > 0 ? this.clinics[0].Id : null;
+              console.log('PA Clinics:', this.clinics);
+               this.getChlidByClinic(false);
+            } else {
+              this.toastService.create(response.Message, 'danger');
+            }
+          },
+          error: (error) => {
+            loading.dismiss();
+            console.error('Error fetching PA clinics:', error);
+            this.toastService.create('Failed to load clinics', 'danger');
+          },
+        });
+    } catch (error) {
+      loading.dismiss();
+      console.error('Error in loadClinics:', error);
+      this.toastService.create('An unexpected error occurred', 'danger');
+    }
   }
 
   async approveChild(childId: number) {
