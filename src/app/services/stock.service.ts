@@ -98,10 +98,7 @@ export class StockService {
   }
   getItemsReportFile(clinicId: number, brandId: number, fromDate: string, toDate: string): Observable<any> {
     const url = `${this.apiUrl}Bill/brand-stock-report-pdf?clinicId=${clinicId}&brandId=${brandId}&fromDate=${fromDate}&toDate=${toDate}`;
-    const headers = new HttpHeaders({
-      'X-App-Access': 'my-static-key-123'
-    });
-    return this.http.get(url, { responseType: 'blob', headers });
+    return this.http.get(url, { responseType: 'blob' });
   }
   getItemsPurchaseReportFile(clinicId: number, brandId: number, fromDate: string, toDate: string): Observable<any> {
     const url = `${this.apiUrl}Bill/item-purchase-report-pdf?clinicId=${clinicId}&brandId=${brandId}&fromDate=${fromDate}&toDate=${toDate}`;
