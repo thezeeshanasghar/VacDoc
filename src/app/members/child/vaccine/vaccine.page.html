@@ -34,7 +34,7 @@
             >
             </ion-img>
             <ion-img
-              *ngIf="!checkVaccineIsDon(item.value)"
+              *ngIf="!checkVaccineIsDon(item.value) && usertype === 'DOCTOR'"
               style="height: 20px; display: inline-block;"
               (click)="unfillbulk(item)"
               src="../../assets/injectionFilled.png"
@@ -117,7 +117,7 @@
             >
             </ion-img>
             <ion-img
-              *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip"
+              *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && usertype === 'DOCTOR'"
               style="height: 20px;"
               src="../../assets/injectionFilled.png"
               (click)="UnfillVaccine(v.Id)"
