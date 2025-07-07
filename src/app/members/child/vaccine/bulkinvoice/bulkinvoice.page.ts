@@ -27,6 +27,7 @@ export class BulkInvoicePage implements OnInit {
   consultationfee: number = 0;
   private readonly API_VACCINE = `${environment.BASE_URL}`
   BrandIds = [];
+  usertype: any;
   // invoiceNumber: string;
   constructor(
     private loadingController: LoadingController,
@@ -76,6 +77,14 @@ export class BulkInvoicePage implements OnInit {
     this.storage.get(environment.ON_CLINIC).then(val => {
       this.fg.controls['ConsultationFee'].setValue(val.ConsultationFee);
       // this.fg.value.ConsultationFee = val.ConsultationFee;
+    });
+    this.storage.get(environment.USER).then((user) => {
+      if (user) {
+        console.log('Retrieved user from storage:', user);
+        this.usertype = user.UserType; // Ensure this is set correctly
+      } else {
+        console.error('No user data found in storage.');
+      }
     });
     // this.loadInvoiceData();
   }

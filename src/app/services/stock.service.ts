@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-
+import { HttpHeaders } from '@angular/common/http';
 export interface AdjustStockDTO {
   DoctorId: number;
   brandId: number;
@@ -98,7 +98,10 @@ export class StockService {
   }
   getItemsReportFile(clinicId: number, brandId: number, fromDate: string, toDate: string): Observable<any> {
     const url = `${this.apiUrl}Bill/brand-stock-report-pdf?clinicId=${clinicId}&brandId=${brandId}&fromDate=${fromDate}&toDate=${toDate}`;
-    return this.http.get(url, { responseType: 'blob' });
+    const headers = new HttpHeaders({
+      'X-App-Access': 'my-static-key-123'
+    });
+    return this.http.get(url, { responseType: 'blob', headers });
   }
   getItemsPurchaseReportFile(clinicId: number, brandId: number, fromDate: string, toDate: string): Observable<any> {
     const url = `${this.apiUrl}Bill/item-purchase-report-pdf?clinicId=${clinicId}&brandId=${brandId}&fromDate=${fromDate}&toDate=${toDate}`;
