@@ -132,6 +132,21 @@ export class VaccineService extends BaseService {
       map(response => response.body)
     );
   }
+
+   generateSpecialPdf(childId: number): Observable<Blob> {
+    return this.http.get(`${this.API_VACCINE}Child/${childId}/CustomVerify`, { 
+      responseType: 'blob',
+      observe: 'response'
+    }).pipe(
+      tap((response: HttpResponse<Blob>) => {
+        const contentDisposition = response.headers.get('Content-Disposition');
+        if (contentDisposition) {
+          this.lastContentDisposition = contentDisposition;
+        }
+      }),
+      map(response => response.body)
+    );
+  }
   
   // Method to retrieve the last Content-Disposition header
   getLastContentDisposition(): string {
