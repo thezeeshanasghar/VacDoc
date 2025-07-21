@@ -435,7 +435,10 @@ removal(type: string){
   printdata() {
     if (this.type === 'travel') {
       this.downloadTravelPdf();
-    } else {
+    } else if (this.type === 'special'){
+this.downloadSpecialPdf();
+    }
+    else {
       if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
         const url = `${this.API_VACCINE}child/${this.childId}/ScheduleVerify`;
         window.open(url);
@@ -781,6 +784,30 @@ removal(type: string){
     });
   }
 
+  downloadSpecialPdf() {
+    this.vaccineService.generateSpecialPdf(this.childId).subscribe((response: Blob) => {
+      const blob = new Blob([response], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const contentDisposition = this.vaccineService.getLastContentDisposition();
+      let filename = 'Immunization-Record.pdf';
+      
+      if (contentDisposition) {
+        const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+        const matches = filenameRegex.exec(contentDisposition);
+        if (matches != null && matches[1]) {
+          filename = matches[1].replace(/['"]/g, '');
+        }
+      }
+      
+      a.download = filename;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }, error => {
+      console.error('Error downloading PDF:', error);
+    });
+  }
 }
 
 // https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-a-array-of-objects
