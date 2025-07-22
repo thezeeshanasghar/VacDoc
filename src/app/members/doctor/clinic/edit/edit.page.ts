@@ -38,6 +38,7 @@ export class EditPage implements OnInit {
   RegNo: any;
 
   private readonly DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm";
+  usertype: any;
   
 
   constructor(
@@ -62,6 +63,14 @@ export class EditPage implements OnInit {
   }
 
   ngOnInit() {
+     this.storage.get(environment.USER).then((user) => {
+      if (user) {
+        console.log('Retrieved user from storage:', user);
+        this.usertype = user.UserType; // Ensure this is set correctly
+      } else {
+        console.error('No user data found in storage.');
+      }
+    });
     this.fg1 = this.formbuilder.group({
       Id: [null],
       DoctorId: [null],

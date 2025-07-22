@@ -38,6 +38,7 @@
           <th>Allow Vacation</th>
           <th>Verified</th>
           <th>Action</th>
+          <th>Delete</th>
           <!-- <th>Purchase Price</th>
           <th>Purchase Value</th> -->
           <!-- <th>Status</th> -->
@@ -61,6 +62,11 @@
             <ion-button color="primary" (click)="updatePA(pa)">
               <ion-icon name="save" slot="icon-only"></ion-icon>
             </ion-button>
+          </td>
+          <td>
+          <ion-button color="danger" fill="clear" (click)="deletepa(pa.Id)">
+                  <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+                </ion-button>
           </td>
           <!-- <td>Rs.{{bill.StockAmount}}</td>
           <td>Rs.{{bill.Quantity*bill.StockAmount}}</td> -->

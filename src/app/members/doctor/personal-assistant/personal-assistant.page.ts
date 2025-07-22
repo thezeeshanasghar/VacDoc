@@ -98,4 +98,25 @@ export class PersonalAssistantPage implements OnInit {
       },
     });
   }
+  
+  async deletepa(Id: number) {
+    const loading = await this.loadingController.create({
+      message: "Delete PA...",
+    });
+    await loading.present();
+console.log("Deleting PA with ID:", Id);
+    this.paService.deletePA(Id).subscribe({
+      next: (res) => {
+        loading.dismiss();
+          this.toastService.create("PA deleted successfully", "success");
+          loading.dismiss();
+          this.fetchPersonalAssistants();
+      },
+      error: (err) => {
+        loading.dismiss();
+        this.toastService.create("Failed to delete PA", "danger");
+        console.error(err);
+      },
+    });
+  }
 }

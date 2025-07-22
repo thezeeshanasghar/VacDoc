@@ -118,7 +118,14 @@ export class PaService extends BaseService {
         catchError(this.handleError)
       );
   }
-
+ 
+   deletePA(Id: number): Observable<any> {
+    const url = `${this.API_PA}PersonalAssistant/${Id}`;
+    return this.http.delete(url, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
 
 
 //   putDoctorSchedule(data): Observable<any> {
