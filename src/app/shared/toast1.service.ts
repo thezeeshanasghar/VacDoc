@@ -18,7 +18,7 @@ export class ToastService {
     this.toast = await this.toastCtrl.create({
       message,
       color: color,
-      duration: ok ? null : duration,
+      duration: ok ? undefined : duration,
       position: 'bottom',
       // showCloseButton: ok,
       // closeButtonText: 'OK'
