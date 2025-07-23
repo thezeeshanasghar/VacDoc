@@ -359,6 +359,12 @@ export class FillPage implements OnInit {
       if (myDate.getMonth() === 1 && myDate.getDate() === 29 && !this.isLeapYear(myDate.getFullYear())) {
         myDate.setDate(28);
       }
+    }else if (doseId === 122 && days === 3650) {
+      const currentYear = myDate.getFullYear();
+      myDate.setFullYear(currentYear + 10);
+      if (myDate.getMonth() === 1 && myDate.getDate() === 29 && !this.isLeapYear(myDate.getFullYear())) {
+        myDate.setDate(28);
+      }
     }else {
       myDate.setDate(myDate.getDate() + days);
     }
