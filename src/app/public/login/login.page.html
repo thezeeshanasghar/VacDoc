@@ -79,27 +79,66 @@
 
       </form>
 
-
-      <div style="display: flex; justify-content: space-between;">
-        <ion-text class="ion-text-right">
-          <a routerLink="/forget" style="text-decoration: none;">
-            <h2>Forget Password</h2>
+      <div class="auth-links">
+        <ion-text class="auth-link ion-text-right">
+          <a routerLink="/forget" class="link">
+            <h2 class="link-heading">Forget Password</h2>
           </a>
         </ion-text>
-        <ion-text class="ion-text-middle">
-          <a routerLink="/loginpa" style="text-decoration: none;">
-            <h2>Personel Assistant</h2>
+        <ion-text class="auth-link ion-text-center">
+          <a routerLink="/loginpa" class="link">
+            <h2 class="link-heading">Personal Assistant</h2>
           </a>
         </ion-text>
-        <ion-text class="ion-text-left">
-          <a routerLink="/signup" style="text-decoration: none;">
-            <h2>Signup</h2>
+        <ion-text class="auth-link ion-text-left">
+          <a routerLink="/signup" class="link">
+            <h2 class="link-heading">Signup</h2>
           </a>
         </ion-text>
       </div>
-
-
-
+      <style>
+        .auth-links {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 4px;
+          padding: 8px;
+          width: 100%;
+          box-sizing: border-box;
+          overflow: hidden;
+          flex-wrap: nowrap;
+        }
+        .auth-link {
+          flex: 1 1 auto;
+          min-width: 0;
+          text-align: center;
+          overflow: hidden;
+        }
+        .link {
+          text-decoration: none;
+          display: block;
+          width: 100%;
+          overflow: hidden;
+        }
+        .link-heading {
+          margin: 0;
+          font-size: clamp(11px, 2.5vw, 14px); 
+          color: white;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          text-align: center;
+        }
+        @media (max-width: 375px) {
+          .auth-links {
+            gap: 2px;
+          }
+      
+          .link-heading {
+            font-size: 11px;
+          }
+        }
+      </style>
     </ion-card-content>
   </ion-card>
 
