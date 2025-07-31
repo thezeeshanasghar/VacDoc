@@ -3,6 +3,7 @@ import { Route, ActivatedRoute, Router } from "@angular/router";
 import { LoadingController } from "@ionic/angular";
 import { BulkService } from "src/app/services/bulk.service";
 import { ToastService } from "src/app/shared/toast.service";
+import { InvoiceService } from "src/app/services/invoice.service";
 import { FormBuilder, FormGroup, FormControl, Validators } from "@angular/forms";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
@@ -11,7 +12,6 @@ import { AlertController } from '@ionic/angular';
 import { elementAt } from 'rxjs/operators';
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 import { Platform } from '@ionic/angular';
-// import { InvoiceService } from "src/app/services/invoice.service";
 @Component({
   selector: "app-bulk",
   templateUrl: "./bulk.page.html",
@@ -28,6 +28,8 @@ export class BulkInvoicePage implements OnInit {
   private readonly API_VACCINE = `${environment.BASE_URL}`
   BrandIds = [];
   usertype: any;
+  invoiceData: any;
+  bulkDatadiff: any;
   // invoiceNumber: string;
   constructor(
     private loadingController: LoadingController,
@@ -40,8 +42,7 @@ export class BulkInvoicePage implements OnInit {
     public alertController: AlertController,
     private downloader: Downloader,
     public platform: Platform,
-    // private invoiceService: InvoiceService
-
+    private invoiceService: InvoiceService
   ) { }
 
   hasActiveValidations(): boolean {
@@ -87,6 +88,7 @@ export class BulkInvoicePage implements OnInit {
       }
     });
     // this.loadInvoiceData();
+    // this.getInvoiceId(this.childId, this.doseId);
   }
 //   loadInvoiceData() {
 //     const storedInvoiceId = localStorage.getItem('invoiceId');
@@ -117,11 +119,14 @@ export class BulkInvoicePage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.bulkData = res.ResponseData.filter(x => x.IsDone == true);
-          // console.log(this.bulkData);
+          console.log(this.bulkData);
+          this.bulkDatadiff = this.bulkData.map(item => {
+              console.log(item.Dose.Id);
+              this.getInvoiceId(item.Dose.Id, this.childId);
+          });
         } else {
           this.toastService.create(res.Message, "danger");
         }
-
         loading.dismiss();
       },
       err => {
@@ -129,7 +134,6 @@ export class BulkInvoicePage implements OnInit {
         this.toastService.create(err, "danger");
       }
     );
-
   }
 
   onSubmit() {
@@ -141,7 +145,6 @@ export class BulkInvoicePage implements OnInit {
       }
       data.push(obj);
     });
-
     this.fillVaccine(data);
   }
 
@@ -204,6 +207,35 @@ export class BulkInvoicePage implements OnInit {
       }
     );
   }
+
+async getInvoiceId(doseId: string, childId: string) {
+  const loading = await this.loadingController.create({
+    message: "Loading"
+  });
+  await loading.present();
+  this.invoiceService.getInvoiceId(doseId, childId).subscribe(
+    res => {
+      if (res.IsSuccess) {
+        // Find the bulk item and set InvoiceId
+        const bulkItem = this.bulkData.find(item => item.Dose.Id === doseId);
+        if (bulkItem) {
+          bulkItem.InvoiceId = res.ResponseData.InvoiceId;
+        }
+      } else {
+        this.toastService.create(res.Message, "danger");
+      }
+      loading.dismiss();
+    },
+    err => {
+      loading.dismiss();
+      this.toastService.create(err, "danger");
+    }
+  );
+}
+
+hasAnyInvoiceId(): boolean {
+  return Array.isArray(this.bulkData) && this.bulkData.some(bulk => !!bulk.InvoiceId);
+}
 
   download(id, date, fee) {
     const today = new Date(date); // Use the provided date instead of today's date
