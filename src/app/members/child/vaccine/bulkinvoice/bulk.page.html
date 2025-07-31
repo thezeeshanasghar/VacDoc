@@ -11,7 +11,7 @@
   <form [formGroup]="fg" (ngSubmit)="onSubmit()">
     <ion-card *ngFor="let bulk of bulkData">
     <ion-item >
-      <b style="padding-right:10%">vaccine:</b> {{bulk.Dose.Name}}
+      <b style="padding-right:10%">vaccine</b> {{bulk.Dose.Name}}
       </ion-item>
       <ion-item >
         <b style="padding-right:10%">brand</b> <ion-select [(ngModel)]="bulk.BrandId" [ngModelOptions]="{standalone: true}" disabled>
@@ -41,7 +41,7 @@
         </div>
           <ion-checkbox formControlName="IsConsultationFee"></ion-checkbox>
         </ion-item>
-        <ion-button [disabled]="hasActiveValidations()" (click)="saveanddownload()">Download</ion-button>
+        <ion-button [disabled]="usertype === 'PA' && hasAnyInvoiceId() || hasActiveValidations()" (click)="saveanddownload()">Download</ion-button>
         
   </form>
 </ion-content>
