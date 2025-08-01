@@ -241,6 +241,7 @@ async getFee(Id: string) {
     res => {
         console.log(res.ResponseData.Amount);
          this.fg.controls['ConsultationFee'].setValue(res.ResponseData.Amount);
+         this.fg.controls['IsConsultationFee'].setValue(true);
       loading.dismiss();
     },
     err => {
