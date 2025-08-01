@@ -216,14 +216,31 @@ async getInvoiceId(doseId: string, childId: string) {
   this.invoiceService.getInvoiceId(doseId, childId).subscribe(
     res => {
       if (res.IsSuccess) {
-        // Find the bulk item and set InvoiceId
         const bulkItem = this.bulkData.find(item => item.Dose.Id === doseId);
+        this.getFee(res.ResponseData.InvoiceId)
         if (bulkItem) {
           bulkItem.InvoiceId = res.ResponseData.InvoiceId;
+          bulkItem.Amount = res.ResponseData.Amount; 
         }
       } else {
-        this.toastService.create(res.Message, "danger");
       }
+      loading.dismiss();
+    },
+    err => {
+      loading.dismiss();
+    }
+  );
+}
+
+async getFee(Id: string) {
+  const loading = await this.loadingController.create({
+    message: "Loading"
+  });
+  await loading.present();
+  this.invoiceService.getFee(Id).subscribe(
+    res => {
+        console.log(res.ResponseData.Amount);
+         this.fg.controls['ConsultationFee'].setValue(res.ResponseData.Amount);
       loading.dismiss();
     },
     err => {
@@ -234,6 +251,7 @@ async getInvoiceId(doseId: string, childId: string) {
 }
 
 hasAnyInvoiceId(): boolean {
+  console.log(Array.isArray(this.bulkData) && this.bulkData.some(bulk => !!bulk.InvoiceId));
   return Array.isArray(this.bulkData) && this.bulkData.some(bulk => !!bulk.InvoiceId);
 }
 
