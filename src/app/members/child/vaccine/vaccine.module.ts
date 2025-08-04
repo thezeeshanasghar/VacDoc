@@ -16,6 +16,7 @@ const routes: Routes = [
     path: '',
     component: VaccinePage
   },
+  { path: 'afterfill/:id', loadChildren: () => import('./afterfill/afterfill.module').then(m => m.AfterFillPageModule) },
   { path: 'fill/:id', loadChildren: () => import('./fill/fill.module').then(m => m.FillPageModule) },
   { path: 'bulk/:childId', loadChildren: () => import('./bulk/bulk.module').then(m => m.BulkPageModule) },
   { path: 'bulkinvoice/:childId', loadChildren: () => import('./bulkinvoice/bulkinvoice.module').then(m => m.BulkInvoicePageModule) },

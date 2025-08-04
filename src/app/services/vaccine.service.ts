@@ -72,6 +72,14 @@ export class VaccineService extends BaseService {
       );
   }
 
+   AfterfillUpChildVaccine(data): Observable<any> {
+    const url = `${this.API_VACCINE}schedule/after-injection`;
+    return this.http.patch(url, data, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   AddChildSchedule(data): Observable<any> {
     const url = `${this.API_VACCINE}schedule/add-schedule`;
     return this.http.post(url, data, this.httpOptions)
