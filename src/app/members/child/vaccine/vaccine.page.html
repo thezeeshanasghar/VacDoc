@@ -123,11 +123,18 @@
               (click)="UnfillVaccine(v.Id)"
             >
             </ion-img>
+            <ion-img
+              *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip"
+              style="height: 20px;"
+              src="../../assets/injectionEmpty.png"
+              routerLink="/members/child/vaccine/{{childId}}/afterfill/{{v.Id}}"
+            >
             <button *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && usertype === 'DOCTOR' && !v.IsPAApprove"
               (click)="updateScheduleApproval(v.Id)"
               class="approve-button" >
               Approve
             </button>
+            </ion-img>
             <ion-button *ngIf="!v.IsDone && !v.Due2EPI && (v.IsSkip == null || !v.IsSkip)"
               (click)="handleSkipClick($event, v.Id, v.Dose.Name)" style="font-size: 10px; height: 20px;">
               Skip

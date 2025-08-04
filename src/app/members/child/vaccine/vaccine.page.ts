@@ -7,15 +7,11 @@ import { ActivatedRoute, Router } from "@angular/router";
 import * as moment from "moment";
 import { BulkService } from "src/app/services/bulk.service";
 import { AlertController } from '@ionic/angular';
-//import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
 import { environment } from 'src/environments/environment';
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 import { Storage } from '@ionic/storage';
 import { Platform } from '@ionic/angular';
 import { FormBuilder, FormGroup } from "@angular/forms";
-// import { InvoiceService } from "src/app/services/invoice.service";
-
-
 
 @Component({
   selector: "app-vaccine",

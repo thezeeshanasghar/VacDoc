@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Fill Child vaccine</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class=ion-padding>
+
+  <form [formGroup]="fg">
+    <div *ngIf="Type!=='travel'">
+    <ion-item>
+      <ion-label color="primary" position="floating">Weight</ion-label>
+      <ion-input type="text" placeholder="Weight" formControlName="Weight"></ion-input>
+      <ion-text color="danger" *ngIf="fg.get('Weight').invalid && (fg.get('Weight').dirty || fg.get('Weight').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+        <ng-container *ngIf="fg.get('Weight').errors.required">
+          Weight is required
+        </ng-container>
+        <ng-container *ngIf="fg.get('Weight').errors.pattern">
+          Only numbers are allowed for Weight
+        </ng-container>
+      </ion-text>
+      <ion-text color="success" *ngIf="fg.get('Weight').valid && (fg.get('Weight').dirty || fg.get('Weight').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+        <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon> <!-- Use the name of the desired icon -->
+      </ion-text>
+    </ion-item>
+    <ion-item>
+      <ion-label color="primary" position="floating">Height</ion-label>
+      <ion-input type="text" placeholder="Height" formControlName="Height"></ion-input>
+      <ion-text color="danger" *ngIf="fg.get('Height').invalid && (fg.get('Height').dirty || fg.get('Height').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+        <ng-container *ngIf="fg.get('Height').errors.required">
+          Height is required
+        </ng-container>
+        <ng-container *ngIf="fg.get('Height').errors.pattern">
+          Only numbers are allowed for Height
+        </ng-container>
+      </ion-text>
+      <ion-text color="success" *ngIf="fg.get('Height').valid && (fg.get('Height').dirty || fg.get('Height').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+        <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon> <!-- Use the name of the desired icon -->
+      </ion-text>
+    </ion-item>
+    <ion-item> 
+      <ion-label color="primary" position="floating">OFC</ion-label>
+      <ion-input type="text" placeholder="OFC" formControlName="Circle"></ion-input>
+      <ion-text color="danger" *ngIf="fg.get('Circle').invalid && (fg.get('Circle').dirty || fg.get('Circle').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+        <ng-container *ngIf="fg.get('Circle').errors.required">
+          OFC is required
+        </ng-container>
+        <ng-container *ngIf="fg.get('Circle').errors.pattern">
+          Only numbers are allowed for OFC
+        </ng-container>
+      </ion-text>
+      <ion-text color="success" *ngIf="fg.get('Circle').valid && (fg.get('Circle').dirty || fg.get('Circle').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+        <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon> 
+      </ion-text>
+    </ion-item>
+  </div>
+  
+    <ion-button (click)="fillVaccine()">Submit</ion-button>
+  </form>
+</ion-content>
