@@ -12,6 +12,8 @@ import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-nati
 import { Platform } from '@ionic/angular';
 import { DoctorService } from "src/app/services/doctor.service";
 import { VaccineService } from 'src/app/services/vaccine.service'; 
+import { ClinicService } from "src/app/services/clinic.service";
+import { PaService } from "src/app/services/pa.service";
 
 @Component({
   selector: "app-vaccine-alert",
@@ -31,6 +33,9 @@ export class VaccineAlertPage implements OnInit {
   Messages = [];
   numOfDays: number = 0;
   selectedDate: string = new Date().toISOString();
+  usertype: any;
+  clinics: any;
+  selectedClinicId: any;
 
   constructor(
     public loadingController: LoadingController,
@@ -44,7 +49,9 @@ export class VaccineAlertPage implements OnInit {
     private sms: SMS,
     private downloader: Downloader,
     public platform: Platform,
-    private vaccineService: VaccineService
+    private vaccineService: VaccineService,
+    private clinicService: ClinicService,
+    private paService: PaService
   ) {}
 
   async ngOnInit() {
@@ -52,6 +59,7 @@ export class VaccineAlertPage implements OnInit {
     await this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
     });
+    this.usertype = await this.storage.get(environment.USER);
     await this.storage.get(environment.CLINIC_Id).then(clinicId => {
       this.clinicId = clinicId;
     });
@@ -63,6 +71,7 @@ export class VaccineAlertPage implements OnInit {
     this.getAlerts(formattedDate);
     await this.getChlid(this.numOfDays, formattedDate);
     await this.getdoctor();
+    await this.loadClinics();
   }
 
   async getdoctor() {
@@ -71,37 +80,37 @@ export class VaccineAlertPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           const doctorData = res.ResponseData;
-          console.log("Doctor Data is ", res.ResponseData);
-          console.log('Doctor ID:', doctorData.Id);
-          console.log('Doctor Name:', doctorData.DisplayName);
-          console.log('Doctor Email:', doctorData.Email);
-          console.log('Doctor Phone:', doctorData.Phone);
-          console.log('Doctor Specialization:', doctorData.Specialization);
-          console.log('Doctor Address:', doctorData.Address);
+          // console.log("Doctor Data is ", res.ResponseData);
+          // console.log('Doctor ID:', doctorData.Id);
+          // console.log('Doctor Name:', doctorData.DisplayName);
+          // console.log('Doctor Email:', doctorData.Email);
+          // console.log('Doctor Phone:', doctorData.Phone);
+          // console.log('Doctor Specialization:', doctorData.Specialization);
+          // console.log('Doctor Address:', doctorData.Address);
           this.displayName = doctorData.DisplayName;
           if (doctorData.Clinics && doctorData.Clinics.length > 0) {
             doctorData.Clinics.forEach((clinic, index) => {
-              console.log(`Clinic ${index + 1} Data:`);
-              console.log('Clinic ID:', clinic.Id);
-              console.log('Clinic Name:', clinic.Name);
-              console.log('Clinic Address:', clinic.Address);
-              console.log('Clinic Phone:', clinic.PhoneNumber);
-              console.log('Clinic Email:', clinic.Email);
+              // console.log(`Clinic ${index + 1} Data:`);
+              // console.log('Clinic ID:', clinic.Id);
+              // console.log('Clinic Name:', clinic.Name);
+              // console.log('Clinic Address:', clinic.Address);
+              // console.log('Clinic Phone:', clinic.PhoneNumber);
+              // console.log('Clinic Email:', clinic.Email);
               if (clinic.Staff && clinic.Staff.length > 0) {
-                console.log(`Clinic ${index + 1} Staff:`);
+                // console.log(`Clinic ${index + 1} Staff:`);
                 clinic.Staff.forEach((staff, staffIndex) => {
-                  console.log(`Staff Member ${staffIndex + 1}:`, staff.Name);
+                  // console.log(`Staff Member ${staffIndex + 1}:`, staff.Name);
                 });
               }
-              console.log('-------------------'); 
+              // console.log('-------------------'); 
             });
             this.clinicName = doctorData.Clinics[0].Name;
             this.clinicPhoneNumber = doctorData.Clinics[0].PhoneNumber;
           } else {
-            console.log('No clinic data available');
+            // console.log('No clinic data available');
           }
         } else {
-          console.log("Failed to get doctor data");
+          // console.log("Failed to get doctor data");
         }
       },
       err => {
@@ -109,6 +118,72 @@ export class VaccineAlertPage implements OnInit {
         this.toastService.create(err, "danger");
       }
     );
+  }
+
+   async loadClinics() {
+    try {
+      const loading = await this.loadingController.create({
+        message: 'Loading clinics...',
+      });
+      await loading.present();
+      if (this.usertype.UserType === 'DOCTOR') {
+        this.clinicService.getClinics(Number(this.doctorId)).subscribe({
+          next: (response) => {
+            loading.dismiss();
+            if (response.IsSuccess) {
+              this.clinics = response.ResponseData;
+              // console.log('Clinics:', this.clinics);
+              this.selectedClinicId = this.clinicId || (this.clinics.length > 0 ? this.clinics[0].Id : null);
+              // console.log('Selected Clinic ID:', this.selectedClinicId);
+              if (this.selectedClinicId) {
+                this.getChlid(this.numOfDays, this.formattedDate);
+                this.clinicId = this.selectedClinicId;
+              }
+            } else {
+              this.toastService.create(response.Message, 'danger');
+            }
+          },
+          error: (error) => {
+            loading.dismiss();
+            console.error('Error fetching clinics:', error);
+            this.toastService.create('Failed to load clinics', 'danger');
+          },
+        });
+      } else if (this.usertype.UserType === 'PA') {
+        this.paService.getPaClinics(Number(this.usertype.PAId)).subscribe({
+          next: (response) => {
+            loading.dismiss();
+            if (response.IsSuccess) {
+              this.clinics = response.ResponseData;
+              // console.log('PA Clinics:', this.clinics);
+              this.selectedClinicId = (this.clinics.length > 0 ? this.clinics[0].Id : null);
+              // console.log('Selected PA Clinic ID:', this.selectedClinicId);
+              if (this.selectedClinicId) {
+               this.getChlid(this.numOfDays, this.formattedDate);
+                this.clinicId = this.selectedClinicId;
+              }
+            } else {
+              this.toastService.create(response.Message, 'danger');
+            }
+          },
+          error: (error) => {
+            loading.dismiss();
+            console.error('Error fetching PA clinics:', error);
+            this.toastService.create('Failed to load clinics', 'danger');
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Error in loadClinics:', error);
+      this.toastService.create('An unexpected error occurred', 'danger');
+    }
+  }
+
+   onClinicChange(event: any) {
+    const clinicId = event.detail.value;
+    // console.log('Selected Clinic ID:', clinicId);
+    this.getChlid(this.numOfDays, this.formattedDate);
+    this.clinicId = clinicId;
   }
 
   async getChlid(numOfDays: number, formattedDate: string) {
