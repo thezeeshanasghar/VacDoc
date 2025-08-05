@@ -181,7 +181,7 @@ export class VaccineAlertPage implements OnInit {
 
    onClinicChange(event: any) {
     const clinicId = event.detail.value;
-    console.log('Selected Clinic ID:', clinicId);
+    // console.log('Selected Clinic ID:', clinicId);
     this.getChlid(this.numOfDays, this.formattedDate);
     this.clinicId = clinicId;
   }
