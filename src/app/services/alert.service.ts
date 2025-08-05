@@ -17,7 +17,6 @@ export class AlertService extends BaseService {
 
   getChild(date: String ,numOfDays: number, Id: String): Observable<any> {
     const url = `${this.API_ALERT}alert/${numOfDays}/${Id}?inputDate=${date}`;
-    console.log('API URL:', url);
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
