@@ -105,8 +105,13 @@ export class AfterFillPage implements OnInit {
     await this.vaccineService.getVaccineByVaccineId(this.route.snapshot.paramMap.get('id')).subscribe(
       res => {
         if (res.IsSuccess) {
+
           this.vaccineData = res.ResponseData;
+          console.log('Vaccine Data:', this.vaccineData);
           this.childId=this.vaccineData.ChildId;
+          this.fg.controls['Weight'].setValue(this.vaccineData.Weight);
+          this.fg.controls['Height'].setValue(this.vaccineData.Height);
+          this.fg.controls['Circle'].setValue(this.vaccineData.Circle);
           this.getChildData(this.childId)
           loading.dismiss();
         } else {

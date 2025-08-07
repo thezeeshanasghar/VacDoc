@@ -41,7 +41,6 @@
         </div>
           <ion-checkbox formControlName="IsConsultationFee"></ion-checkbox>
         </ion-item>
-        <ion-button [disabled]="usertype === 'PA' && hasAnyInvoiceId() || hasActiveValidations()" (click)="saveanddownload()">Download</ion-button>
-        
+        <ion-button [disabled]="usertype === 'PA' && hasAnyInvoiceId() || hasActiveValidations()" (click)="saveanddownload()">Save & Download</ion-button>
   </form>
 </ion-content>
