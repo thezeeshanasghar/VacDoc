@@ -112,6 +112,7 @@
             <ion-img
               *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip"
               style="height: 20px;"
+              [title]="'Click here to fill vaccine '"
               src="../../assets/injectionEmpty.png"
               routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}"
             >
@@ -120,15 +121,23 @@
               *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && usertype === 'DOCTOR'"
               style="height: 20px;"
               src="../../assets/injectionFilled.png"
+              [title]="'Click here to unfill vaccine '"
               (click)="UnfillVaccine(v.Id)"
             >
             </ion-img>
+            <!-- <div
+  *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip"
+  [title]="'Click here to add info after given vaccine '"
+  routerLink="/members/child/vaccine/{{childId}}/afterfill/{{v.Id}}"
+> -->
             <ion-img
               *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip"
               style="height: 20px;"
+              [title]="'Click here to add info after given vaccine '"
               src="../../assets/injectionEmpty.png"
               routerLink="/members/child/vaccine/{{childId}}/afterfill/{{v.Id}}"
             > </ion-img>
+            <!-- </div> -->
             <button *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && usertype === 'DOCTOR' && !v.IsPAApprove"
               (click)="updateScheduleApproval(v.Id)"
               class="approve-button" >

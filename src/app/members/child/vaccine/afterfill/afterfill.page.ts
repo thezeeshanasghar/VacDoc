@@ -87,6 +87,13 @@ export class AfterFillPage implements OnInit {
       Weight: new FormControl(''),
       Height: new FormControl(''),
       Circle: new FormControl(''),
+      Manufacturer: new FormControl(''),
+      // ['', Validators.required], 
+      Lot: new FormControl(''),
+      // ['', Validators.required],
+      Expiry: [],
+      // ['', Validators.required], // Add Expiry control
+      Validity: new FormControl(''),
     });
 
     this.fgAddData = this.formBuilder.group({
@@ -112,6 +119,10 @@ export class AfterFillPage implements OnInit {
           this.fg.controls['Weight'].setValue(this.vaccineData.Weight);
           this.fg.controls['Height'].setValue(this.vaccineData.Height);
           this.fg.controls['Circle'].setValue(this.vaccineData.Circle);
+          this.fg.controls['Manufacturer'].setValue(this.vaccineData.Manufacturer);
+          this.fg.controls['Lot'].setValue(this.vaccineData.Lot);
+          this.fg.controls['Expiry'].setValue(this.vaccineData.Expiry);
+          this.fg.controls['Validity'].setValue(this.vaccineData.Validity);
           this.getChildData(this.childId)
           loading.dismiss();
         } else {
@@ -140,6 +151,8 @@ export class AfterFillPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.vaccineData = res.ResponseData;
+          console.log('Vaccine Data:', this.vaccineData);
+          this.Type = this.vaccineData.Type;
           this.childId = this.vaccineData.Id; 
           this.ref.detectChanges();
           loading.dismiss();
