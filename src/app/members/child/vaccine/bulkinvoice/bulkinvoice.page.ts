@@ -119,10 +119,12 @@ export class BulkInvoicePage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.bulkData = res.ResponseData.filter(x => x.IsDone == true);
-          console.log(this.bulkData);
+          // console.log(this.bulkData);
+          console.log(res.ResponseData);
           this.bulkDatadiff = this.bulkData.map(item => {
               console.log(item.Dose.Id);
               this.getInvoiceId(item.Dose.Id, this.childId);
+              // this.getFee(res.ResponseData.InvoiceId)
           });
         } else {
           this.toastService.create(res.Message, "danger");
@@ -196,6 +198,7 @@ export class BulkInvoicePage implements OnInit {
         if (res.IsSuccess) {
           loading.dismiss();
           this.download(this.childId, this.currentDate, this.consultationfee);
+          window.location.reload();
         } else {
           loading.dismiss();
           this.toastService.create(res.Message, "danger");
@@ -220,6 +223,7 @@ async getInvoiceId(doseId: string, childId: string) {
         this.getFee(res.ResponseData.InvoiceId)
         if (bulkItem) {
           bulkItem.InvoiceId = res.ResponseData.InvoiceId;
+          console.log(bulkItem);
           bulkItem.Amount = res.ResponseData.Amount; 
         }
       } else {
@@ -239,22 +243,22 @@ async getFee(Id: string) {
   await loading.present();
   this.invoiceService.getFee(Id).subscribe(
     res => {
-        console.log(res.ResponseData.Amount);
+        console.log(res.ResponseData);
          this.fg.controls['ConsultationFee'].setValue(res.ResponseData.Amount);
          this.fg.controls['IsConsultationFee'].setValue(true);
       loading.dismiss();
     },
     err => {
       loading.dismiss();
-      this.toastService.create(err, "danger");
+      // this.toastService.create(err, "danger");
     }
   );
 }
 
-hasAnyInvoiceId(): boolean {
-  console.log(Array.isArray(this.bulkData) && this.bulkData.some(bulk => !!bulk.InvoiceId));
-  return Array.isArray(this.bulkData) && this.bulkData.some(bulk => !!bulk.InvoiceId);
-}
+// hasAnyInvoiceId(): boolean {
+//   console.log(Array.isArray(this.bulkData) && this.bulkData.some(bulk => !!bulk.InvoiceId));
+//   return Array.isArray(this.bulkData) && this.bulkData.some(bulk => !!bulk.InvoiceId);
+// }
 
   download(id, date, fee) {
     const today = new Date(date); // Use the provided date instead of today's date
