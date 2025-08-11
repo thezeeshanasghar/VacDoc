@@ -112,6 +112,7 @@
             <ion-img
               *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip"
               style="height: 20px;"
+              [title]="'Give Vaccine '"
               src="../../assets/injectionEmpty.png"
               routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}"
             >
@@ -120,12 +121,14 @@
               *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && usertype === 'DOCTOR'"
               style="height: 20px;"
               src="../../assets/injectionFilled.png"
+              [title]="'Ungive Vaccine'"
               (click)="UnfillVaccine(v.Id)"
             >
             </ion-img>
             <ion-img
               *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip"
               style="height: 20px;"
+              [title]="'Add Parametres '"
               src="../../assets/injectionEmpty.png"
               routerLink="/members/child/vaccine/{{childId}}/afterfill/{{v.Id}}"
             > </ion-img>
