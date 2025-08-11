@@ -198,7 +198,7 @@ export class BulkInvoicePage implements OnInit {
         if (res.IsSuccess) {
           loading.dismiss();
           this.download(this.childId, this.currentDate, this.consultationfee);
-          window.location.reload();
+          this.router.navigate(["/members/child/vaccine/" + this.childId]);
         } else {
           loading.dismiss();
           this.toastService.create(res.Message, "danger");
