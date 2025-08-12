@@ -165,16 +165,16 @@ export class BulkPage implements OnInit {
     await this.bulkService.updateVaccine(data).subscribe(
       res => {
         if (res.IsSuccess) {
-          this.toastService.create("Succfully Update");
+          this.toastService.create("Successfully Update");
           this.validationOfInfiniteVaccine();
           loading.dismiss();
         } else {
-          this.toastService.create("Error: failed to fill vaccine");
+          this.toastService.create("Error: failed to fill vaccine", "danger");
           loading.dismiss();
         }
       },
       err => {
-        this.toastService.create("Error: server failure");
+        this.toastService.create("Error: server failure", "danger");
         loading.dismiss();
       }
     );
@@ -224,12 +224,12 @@ export class BulkPage implements OnInit {
         }
         else {
           loading.dismiss();
-          this.toastService.create("Error: failed to add injection");
+          this.toastService.create("Error: failed to add injection", "danger");
         }
       },
       err => {
         loading.dismiss();
-        this.toastService.create("Error: server failure");
+        this.toastService.create("Error: server failure", "danger");
       }
     );
   }
