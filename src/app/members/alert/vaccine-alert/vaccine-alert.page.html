@@ -4,6 +4,15 @@
       <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button>
       <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button>
     </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-item (click)="picker.open()">
+        <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChange($event)">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </ion-item>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
      <ion-item>
     <ion-label position="floating">Select Clinic</ion-label>
     <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)">
@@ -12,13 +21,6 @@
       </ion-select-option>
     </ion-select>
   </ion-item>
-    <ion-buttons slot="end">
-      <ion-item (click)="picker.open()">
-        <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChange($event)">
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </ion-item>
-    </ion-buttons>
   </ion-toolbar>
   <h1 *ngIf="Childs == 0" style="color: red;">No alert found</h1>
   <ion-grid>
