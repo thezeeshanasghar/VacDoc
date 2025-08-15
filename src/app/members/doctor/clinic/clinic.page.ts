@@ -83,20 +83,20 @@ export class ClinicPage {
               }
             }
           }
-          // this.storage.set(environment.CLINICS, this.Clinics);
-          // for (let i = 0; i < this.Clinics.length; i++) {
-          //   if (this.Clinics[i].IsOnline) {
-          //     this.storage.set(
-          //       environment.CLINIC_Id,
-          //       this.Clinics[i].Id
-          //     );
-          //     this.storage.set(
-          //       environment.ON_CLINIC,
-          //       this.Clinics[i]
-          //     );
-          //     this.clinicService.updateClinic(this.Clinics[i])
-          //   }
-          // }
+          this.storage.set(environment.CLINICS, this.Clinics);
+          for (let i = 0; i < this.Clinics.length; i++) {
+            if (this.Clinics[i].IsOnline) {
+              this.storage.set(
+                environment.CLINIC_Id,
+                this.Clinics[i].Id
+              );
+              this.storage.set(
+                environment.ON_CLINIC,
+                this.Clinics[i]
+              );
+              this.clinicService.updateClinic(this.Clinics[i])
+            }
+          }
           this.ngOnInit();
         } else {
           loading.dismiss();
@@ -143,6 +143,7 @@ export class ClinicPage {
             });
           });
           this.getClinics();
+          this.router.navigate(["/members/doctor/clinic"]);
         } else {
           this.toastService.create(res.Message);
         }

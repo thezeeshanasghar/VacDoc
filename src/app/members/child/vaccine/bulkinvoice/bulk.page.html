@@ -27,7 +27,7 @@
                      type="text" 
                      [ngModelOptions]="{standalone: true}" 
                      (input)="validateInput($event)"
-                     [disabled]="usertype === 'PA'">
+                     [disabled]="usertype === 'PA' && !!bulk.InvoiceId">
           </ion-input>
           <div *ngIf="!isValidInput" style="color: red;">Please enter only numbers.</div>
                     </ion-item>
@@ -35,12 +35,12 @@
      
       <ion-item style="padding:10px 0 10px" >
         <b style="padding-right:10%">Consultation Fee</b>
-        <ion-input formControlName="ConsultationFee" placeholder="Enter Amount" position="end" type="text" [disabled]="usertype === 'PA'"></ion-input>
+        <ion-input formControlName="ConsultationFee" placeholder="Enter Amount" position="end" type="text" [disabled]="usertype === 'PA'&& fg.get('IsConsultationFee').value === true"></ion-input>
         <div *ngIf="fg.get('ConsultationFee').hasError('invalidNumber') && (fg.get('ConsultationFee').dirty || fg.get('ConsultationFee').touched)">
           <ion-text color="danger">Please enter only numbers.</ion-text>
         </div>
-          <ion-checkbox formControlName="IsConsultationFee"></ion-checkbox>
+          <ion-checkbox [disabled]="usertype === 'PA'&& fg.get('IsConsultationFee').value === true" formControlName="IsConsultationFee"></ion-checkbox>
         </ion-item>
-        <ion-button [disabled]="usertype === 'PA' && hasAnyInvoiceId() || hasActiveValidations()" (click)="saveanddownload()">Save & Download</ion-button>
+        <ion-button [disabled]="hasActiveValidations()" (click)="saveanddownload()">Save & Download</ion-button>
   </form>
 </ion-content>
