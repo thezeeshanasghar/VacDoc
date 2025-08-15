@@ -1,9 +1,5 @@
-<ion-content class="ion-padding">
+<ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button>
-      <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button>
-    </ion-buttons>
      <ion-item>
     <ion-label position="floating">Select Clinic</ion-label>
     <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)">
@@ -12,6 +8,25 @@
       </ion-select-option>
     </ion-select>
   </ion-item>
+</ion-toolbar>
+  
+  <ion-toolbar color="primary">
+    <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
+      <ion-icon style="margin-left: 10%" routerLink="/members/child/add" name="person-add" size="large"> </ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/clinic" name="medkit" size="large"> </ion-icon>
+      <!-- <ion-icon style="margin-left: 10%" routerLink="/members/alert" name="alert" size="large"> </ion-icon> -->
+      <ion-icon style="margin-left: 10%" routerLink="/members/child" name="accessibility-outline" size="large"> </ion-icon>
+      <ion-menu-button style="margin-left: 10%"></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+</ion-header>
+<ion-content class="ion-padding">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button>
+      <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button>
+    </ion-buttons>
     <ion-buttons slot="end">
       <ion-item (click)="picker.open()">
         <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChange($event)">
@@ -20,6 +35,16 @@
       </ion-item>
     </ion-buttons>
   </ion-toolbar>
+  <!-- <ion-toolbar>
+     <ion-item>
+    <ion-label position="floating">Select Clinic</ion-label>
+    <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)">
+      <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+        {{ clinic.Name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+  </ion-toolbar> -->
   <h1 *ngIf="Childs == 0" style="color: red;">No alert found</h1>
   <ion-grid>
     <ion-row>

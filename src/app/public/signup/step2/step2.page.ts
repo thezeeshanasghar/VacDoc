@@ -260,35 +260,35 @@ export class Step2Page implements OnInit {
       });
     }
   }
-  hello(): void {
-    //Called after ngOnInit when the component's or directive's content has been initialized.
-    //Add 'implements AfterContentInit' to the class.
-    // this.map = new google.maps.Map(this.mapElement.nativeElement, {
-    //   center: { lat: 33.632553, lng: 72.934592 },
-    //   zoom: 15
-    // });
-    this.map = new google.maps.Map(this.mapElement.nativeElement, {
-      center: { lat: this.latitude, lng: this.longitude },
-      zoom: 15
-    });
-    // this.myMarker = new google.maps.Marker({
-    //   position: { lat: 30.632553, lng: 72.934592 },
-    //   draggable: true
-    // });
-    this.myMarker = new google.maps.Marker({
-      position: { lat: this.latitude, lng: this.longitude },
-      draggable: true
-    });
-    this.map.setCenter(this.myMarker.position);
-    this.myMarker.setMap(this.map);
+  // hello(): void {
+  //   //Called after ngOnInit when the component's or directive's content has been initialized.
+  //   //Add 'implements AfterContentInit' to the class.
+  //   // this.map = new google.maps.Map(this.mapElement.nativeElement, {
+  //   //   center: { lat: 33.632553, lng: 72.934592 },
+  //   //   zoom: 15
+  //   // });
+  //   this.map = new google.maps.Map(this.mapElement.nativeElement, {
+  //     center: { lat: this.latitude, lng: this.longitude },
+  //     zoom: 15
+  //   });
+  //   // this.myMarker = new google.maps.Marker({
+  //   //   position: { lat: 30.632553, lng: 72.934592 },
+  //   //   draggable: true
+  //   // });
+  //   this.myMarker = new google.maps.Marker({
+  //     position: { lat: this.latitude, lng: this.longitude },
+  //     draggable: true
+  //   });
+  //   this.map.setCenter(this.myMarker.position);
+  //   this.myMarker.setMap(this.map);
 
-    google.maps.event.addListener(this.myMarker, "dragend", function (evt) {
-      this.latitude = evt.latLng.lat().toFixed(3);
-      this.longitude = evt.latLng.lng().toFixed(3);
-      // this.lat = evt.latLng.lat().toFixed(3);
-      // this.lng = evt.latLng.lng().toFixed(3);
-    });
-  }
+  //   google.maps.event.addListener(this.myMarker, "dragend", function (evt) {
+  //     this.latitude = evt.latLng.lat().toFixed(3);
+  //     this.longitude = evt.latLng.lng().toFixed(3);
+  //     // this.lat = evt.latLng.lat().toFixed(3);
+  //     // this.lng = evt.latLng.lng().toFixed(3);
+  //   });
+  // }
   ionViewDidEnte() {
     this.geolocation
       .getCurrentPosition()
@@ -296,7 +296,7 @@ export class Step2Page implements OnInit {
         this.latitude = resp.coords.latitude;
         this.longitude = resp.coords.longitude;
         console.log(this.latitude);
-        this.hello();
+        // this.hello();
       })
       .catch(error => {
         console.log("Error getting location", error);
