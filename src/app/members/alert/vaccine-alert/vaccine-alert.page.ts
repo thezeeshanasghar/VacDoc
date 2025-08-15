@@ -424,6 +424,8 @@ export class VaccineAlertPage implements OnInit {
       (response) => {
         if (response.IsSuccess && response.ResponseData) {
           const doseNames = response.ResponseData.map((dose: any) => dose.Name).join(', ');
+          // console.log('Dose Names:', response.ResponseData[0].CountryCode);
+          const mobile = response.ResponseData[0].CountryCode + mobileNumber;
           const childName = child.Child.Name;
             const clinicName = response.ResponseData[0] && response.ResponseData[0].Clinic? response.ResponseData[0].Clinic.Name: 'Unknown Clinic';
           const clinicPhoneNumber = response.ResponseData[0] && response.ResponseData[0].Clinic? response.ResponseData[0].Clinic.PhoneNumber: 'Unknown Phone Number';
@@ -433,9 +435,9 @@ export class VaccineAlertPage implements OnInit {
           const formattedPatientNumber = mobileNumber.startsWith('+92') ? mobileNumber : `+92${mobileNumber.replace(/^0/, '')}`;
           let whatsappUrl: string;
           if (this.platform.is('android') || this.platform.is('ios')) {
-            whatsappUrl = `whatsapp://send?phone=${formattedPatientNumber}&text=${message}`;
+            whatsappUrl = `whatsapp://send?phone=${mobile}&text=${message}`;
           } else {
-            whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPatientNumber}&text=${message}`;
+            whatsappUrl = `https://web.whatsapp.com/send?phone=+${mobile}&text=${message}`;
           }
           window.open(whatsappUrl, '_system');
         } else {

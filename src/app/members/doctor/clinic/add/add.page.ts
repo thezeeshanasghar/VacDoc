@@ -160,44 +160,44 @@ export class AddPage implements OnInit {
       Suend: [null],
       Suend2: [null]
     });
-    this.GetUserLocation();
+    // this.GetUserLocation();
     this.cdr.detectChanges();
   }
 
-  hello(): void {
-    //Called after ngOnInit when the component's or directive's content has been initialized.
-    //Add 'implements AfterContentInit' to the class.
-    this.map = new google.maps.Map(this.mapElement.nativeElement, {
-      center: { lat: this.latitude, lng: this.longitude },
-      zoom: 15
-    });
+  // hello(): void {
+  //   //Called after ngOnInit when the component's or directive's content has been initialized.
+  //   //Add 'implements AfterContentInit' to the class.
+  //   this.map = new google.maps.Map(this.mapElement.nativeElement, {
+  //     center: { lat: this.latitude, lng: this.longitude },
+  //     zoom: 15
+  //   });
 
-    this.myMarker = new google.maps.Marker({
-      position: { lat: this.latitude, lng: this.longitude },
-      draggable: true
-    });
-    this.map.setCenter(this.myMarker.position);
-    this.myMarker.setMap(this.map);
+  //   this.myMarker = new google.maps.Marker({
+  //     position: { lat: this.latitude, lng: this.longitude },
+  //     draggable: true
+  //   });
+  //   this.map.setCenter(this.myMarker.position);
+  //   this.myMarker.setMap(this.map);
 
-    google.maps.event.addListener(this.myMarker, "dragend", function (evt) {
-      this.latitude = evt.latLng.lat().toFixed(3);
-      this.longitude = evt.latLng.lng().toFixed(3);
-    });
-  }
+  //   google.maps.event.addListener(this.myMarker, "dragend", function (evt) {
+  //     this.latitude = evt.latLng.lat().toFixed(3);
+  //     this.longitude = evt.latLng.lng().toFixed(3);
+  //   });
+  // }
 
-  GetUserLocation() {
-    this.geolocation
-      .getCurrentPosition()
-      .then(resp => {
-        this.latitude = resp.coords.latitude;
-        this.longitude = resp.coords.longitude;
-        console.log(this.latitude);
-        this.hello();
-      })
-      .catch(error => {
-        console.log("Error getting location", error);
-      });
-  }
+  // GetUserLocation() {
+  //   this.geolocation
+  //     .getCurrentPosition()
+  //     .then(resp => {
+  //       this.latitude = resp.coords.latitude;
+  //       this.longitude = resp.coords.longitude;
+  //       console.log(this.latitude);
+  //       this.hello();
+  //     })
+  //     .catch(error => {
+  //       console.log("Error getting location", error);
+  //     });
+  // }
   
   private previewMonogramImage(file: FileList) {
     const reader = new FileReader();
