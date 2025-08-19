@@ -148,7 +148,7 @@ export class VaccinePage {
     console.log("ChildId: " + this.childId);
     this.vaccineService.getVaccinationById(this.childId).subscribe(
         res => {
-          if (res.IsSuccess && res.ResponseData.length > 0) {
+          if (res.IsSuccess &&res.ResponseData&& res.ResponseData.length > 0) {
             setTimeout(() => {
               this.content.scrollToPoint(0, scrollPosition);
             }, 100);
@@ -168,7 +168,7 @@ export class VaccinePage {
             this.dataGrouping = this.groupBy(this.vaccine, "Date");
             console.log(this.dataGrouping);
             loading.dismiss();
-          } else if (res && res.ResponseData.length > 0) {
+          } else if (res && res.ResponseData && res.ResponseData.length > 0) {
             if (res.ResponseData[0]) {
             this.BirthYear = res.ResponseData[0].Child.DOB;
             this.storage.set('BirthYear', this.BirthYear);
