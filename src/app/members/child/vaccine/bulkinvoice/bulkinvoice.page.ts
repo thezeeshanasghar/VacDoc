@@ -81,7 +81,7 @@ export class BulkInvoicePage implements OnInit {
     });
     this.storage.get(environment.USER).then((user) => {
       if (user) {
-        console.log('Retrieved user from storage:', user);
+        // console.log('Retrieved user from storage:', user);
         this.usertype = user.UserType; // Ensure this is set correctly
       } else {
         console.error('No user data found in storage.');
@@ -120,11 +120,12 @@ export class BulkInvoicePage implements OnInit {
         if (res.IsSuccess) {
           this.bulkData = res.ResponseData.filter(x => x.IsDone == true);
           // console.log(this.bulkData);
-          console.log(res.ResponseData);
+          // console.log(res.ResponseData);
           this.bulkDatadiff = this.bulkData.map(item => {
-              console.log(item.Dose.Id);
+              // console.log(item.Dose.Id);
               this.getInvoiceId(item.Dose.Id, this.childId);
               // this.getFee(res.ResponseData.InvoiceId)
+              this.getAmount(item.Id, item.Dose.Id, this.childId);
           });
         } else {
           this.toastService.create(res.Message, "danger");
@@ -223,8 +224,29 @@ async getInvoiceId(doseId: string, childId: string) {
         this.getFee(res.ResponseData.InvoiceId)
         if (bulkItem) {
           bulkItem.InvoiceId = res.ResponseData.InvoiceId;
-          console.log(bulkItem);
-          bulkItem.Amount = res.ResponseData.Amount; 
+        }
+      } else {
+      }
+      loading.dismiss();
+    },
+    err => {
+      loading.dismiss();
+    }
+  );
+}
+
+async getAmount(id: string,doseId: string, childId: string) {
+  const loading = await this.loadingController.create({
+    message: "Loading"
+  });
+  await loading.present();
+  this.invoiceService.getAmount(id, doseId, childId).subscribe(
+    res => {
+      if (res.IsSuccess) {
+        const bulkItem = this.bulkData.find(item => item.Dose.Id === doseId);
+        // console.log(res.ResponseData);
+        if (bulkItem) {
+          bulkItem.Amount = res.ResponseData; 
         }
       } else {
       }
@@ -243,7 +265,6 @@ async getFee(Id: string) {
   await loading.present();
   this.invoiceService.getFee(Id).subscribe(
     res => {
-        console.log(res.ResponseData);
          this.fg.controls['ConsultationFee'].setValue(res.ResponseData.Amount);
          this.fg.controls['IsConsultationFee'].setValue(true);
       loading.dismiss();

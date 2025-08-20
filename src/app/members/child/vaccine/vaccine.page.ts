@@ -79,7 +79,7 @@ export class VaccinePage {
   ngOnInit() {
     this.storage.get(environment.USER).then((user) => {
       if (user) {
-        console.log('Retrieved user from storage:', user);
+        // console.log('Retrieved user from storage:', user);
         this.usertype = user.UserType; // Ensure this is set correctly
       } else {
         console.error('No user data found in storage.');
@@ -145,7 +145,7 @@ export class VaccinePage {
       message: "Loading Vaccines"
     });
     await loading.present();
-    console.log("ChildId: " + this.childId);
+    // console.log("ChildId: " + this.childId);
     this.vaccineService.getVaccinationById(this.childId).subscribe(
         res => {
           if (res.IsSuccess &&res.ResponseData&& res.ResponseData.length > 0) {
@@ -166,7 +166,7 @@ export class VaccinePage {
             });
             this.storage.set("vaccinesData", this.vaccinesData);
             this.dataGrouping = this.groupBy(this.vaccine, "Date");
-            console.log(this.dataGrouping);
+            // console.log(this.dataGrouping);
             loading.dismiss();
           } else if (res && res.ResponseData && res.ResponseData.length > 0) {
             if (res.ResponseData[0]) {
@@ -184,12 +184,13 @@ export class VaccinePage {
             });
             this.storage.set("vaccinesData", this.vaccinesData);
             this.dataGrouping = this.groupBy(this.vaccine, "Date");
-            console.log(this.dataGrouping);
+            // console.log(this.dataGrouping);
             }
             loading.dismiss();   
           } else {
             this.toastService.create("Vaccines Not Found! Please Add vaccines");
             loading.dismiss();
+            location.reload();
           }
         },
         err => {
@@ -214,7 +215,7 @@ export class VaccinePage {
   }
 
   async updateDate($event, vacId) {
-    console.log($event.value);
+    // console.log($event.value);
     let newDate = $event.value;
     newDate = moment(newDate, "YYYY-MM-DD").format("DD-MM-YYYY");
     let data = { Date: newDate, Id: vacId };
@@ -402,7 +403,7 @@ export class VaccinePage {
 
   checkforpnemococal(name, DOB, Id) {
     if ((name == 'Pneumococcal # 3') || (name == 'Pneumococcal # 4')) {
-      console.log(name);
+      // console.log(name);
       //       const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
       let firstDate = new Date(DOB);
       const secondDate = new Date(this.Pneum2Date);
@@ -410,19 +411,19 @@ export class VaccinePage {
       // const diffDays = Math.round(Math.abs((firstDate - secondDate) / oneDay));
       var diff = Math.abs(firstDate.getTime() - secondDate.getTime());
       var diffDays = Math.ceil(diff / (1000 * 3600 * 24));
-      console.log(diffDays); console.log(firstDate); console.log(secondDate);
+      // console.log(diffDays); console.log(firstDate); console.log(secondDate);
 
     }
     else {
       this.router.navigate(["/members/child/vaccine/" + this.childId + "/fill/" + Id]);
     }
     // let Date = moment(DOB, 'DD-MM-YYYY');
-    console.log(DOB);
-    console.log(this.Pneum2Date);
+    // console.log(DOB);
+    // console.log(this.Pneum2Date);
   }
 
 removal(type: string){
-    console.log(this.type);
+    // console.log(this.type);
     if(this.type === 'travel') {
      this.istravel= false;
     }
@@ -464,7 +465,7 @@ this.downloadSpecialPdf();
   }
 
   async unfillbulk(item: any) {
-    console.log(item);
+    // console.log(item);
     let data = []
     for (const element of item.value) {
       let tempdata = {
@@ -612,7 +613,7 @@ this.downloadSpecialPdf();
         if (res.IsSuccess) {
           this.toastService.create('Success: Created new dose of ' + unfillData.Dose.Name, 'success', false, 3000);
           console.log("Added vaccine");
-          console.log(res.ResponseData);
+          // console.log(res.ResponseData);
           this.getVaccination();
           loading.dismiss();
         }
@@ -642,7 +643,7 @@ this.downloadSpecialPdf();
     await this.vaccineService.UnfillChildVaccine(data).subscribe(
       res => {
         if (res.IsSuccess) {
-          console.log(res.ResponseData)
+          // console.log(res.ResponseData)
           this.toastService.create('Success: Unskipped ' + doseName, 'success', false, 3000);
           if (res.ResponseData.Dose.Vaccine.isInfinite) {
             var cId = res.ResponseData.ChildId;
@@ -671,9 +672,9 @@ this.downloadSpecialPdf();
   // New method to unfill all vaccines
   addDays(date, days) {
     console.log("days");
-    console.log(days);
+    // console.log(days);
     console.log("date");
-    console.log(date);
+    // console.log(date);
 
     let momentVariable = moment(date, 'DD-MM-YYYY');
     var stringvalue = momentVariable.format('YYYY-MM-DD');
@@ -681,7 +682,7 @@ this.downloadSpecialPdf();
     myDate.setDate(myDate.getDate() + days);
 
     console.log("schedule date")
-    console.log(myDate)
+    // console.log(myDate)
 
     return myDate;
   }
@@ -695,7 +696,7 @@ this.downloadSpecialPdf();
   // Define the data object
     this.scheduleService.patchIsApproved(scheduleId).subscribe(
       (response: any) => {
-        console.log('API Response:', response);
+        // console.log('API Response:', response);
         this.toastService.create(response.message, 'success');
         loading.dismiss();
         this.getVaccination(); // Refresh the vaccination data

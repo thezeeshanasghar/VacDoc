@@ -38,6 +38,14 @@ export class InvoiceService extends BaseService {
     );
   }
 
+   getAmount(Id: string,doseId: string, childId: string): Observable<any> {
+    const url = `${this.API_INVOICE}Child/schedule-amount?id=${Id}&doseId=${doseId}&childId=${childId}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
 getFee(Id: string): Observable<any> {
     const url = `${this.API_INVOICE}Child/consultation-fee/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
