@@ -190,7 +190,6 @@ export class VaccinePage {
           } else {
             this.toastService.create("Vaccines Not Found! Please Add vaccines");
             loading.dismiss();
-            location.reload();
           }
         },
         err => {
