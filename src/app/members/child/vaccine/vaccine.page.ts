@@ -187,7 +187,11 @@ export class VaccinePage {
             // console.log(this.dataGrouping);
             }
             loading.dismiss();   
-          } else {
+          }else if (res.IsSuccess==false){
+            this.router.navigate(["/members/child/vaccine/" + this.childId]);
+            loading.dismiss();
+          } 
+          else {
             this.toastService.create("Vaccines Not Found! Please Add vaccines");
             loading.dismiss();
           }
