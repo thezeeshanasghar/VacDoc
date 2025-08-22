@@ -35,7 +35,8 @@ export class VaccinePage {
   type: string;
   istravel: boolean = true;
   usertype: any;
-
+  retryCount = 0; // add this as a class property
+  maxRetries = 3;
   constructor(
     public loadingController: LoadingController,
     public route: ActivatedRoute,
@@ -137,71 +138,63 @@ export class VaccinePage {
     }
     return isdone;
   }
+  
 
+ async getVaccination() {
+  const scrollPosition = await this.content.getScrollElement().then(element => element.scrollTop); 
+  const loading = await this.loadingController.create({
+    message: "Loading Vaccines"
+  });
+  await loading.present();
 
-  async getVaccination() {
-    const scrollPosition = await this.content.getScrollElement().then(element => element.scrollTop); 
-    const loading = await this.loadingController.create({
-      message: "Loading Vaccines"
-    });
-    await loading.present();
-    // console.log("ChildId: " + this.childId);
-    this.vaccineService.getVaccinationById(this.childId).subscribe(
-        res => {
-          if (res.IsSuccess &&res.ResponseData&& res.ResponseData.length > 0) {
-            setTimeout(() => {
-              this.content.scrollToPoint(0, scrollPosition);
-            }, 100);
-            this.BirthYear = res.ResponseData[0].Child.DOB;
-            this.storage.set('BirthYear', this.BirthYear);
-            this.vaccine = res.ResponseData;
-            this.ChildName = this.vaccine[0].Child.Name;
-            this.type = this.vaccine[0].Child.Type;
-            this.removal(this.type);
-            this.vaccine.forEach(doc => {
-              doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
-              if (doc.GivenDate)
-                doc.GivenDate = moment(doc.GivenDate, "DD-MM-YYYY").format("YYYY-MM-DD");
-              this.vaccinesData.push({ childId: doc.Child.Id, vaccineId: doc.Dose.VaccineId, brandId: doc.BrandId });
-            });
-            this.storage.set("vaccinesData", this.vaccinesData);
-            this.dataGrouping = this.groupBy(this.vaccine, "Date");
-            // console.log(this.dataGrouping);
-            loading.dismiss();
-          } else if (res && res.ResponseData && res.ResponseData.length > 0) {
-            if (res.ResponseData[0]) {
-            this.BirthYear = res.ResponseData[0].Child.DOB;
-            this.storage.set('BirthYear', this.BirthYear);
-            this.vaccine = res.ResponseData;
-            this.ChildName = this.vaccine[0].Child.Name;
-            this.type = this.vaccine[0].Child.Type;
-            this.removal(this.type);
-            this.vaccine.forEach(doc => {
-              doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
-              if (doc.GivenDate)
-                doc.GivenDate = moment(doc.GivenDate, "DD-MM-YYYY").format("YYYY-MM-DD");
-              this.vaccinesData.push({ childId: doc.Child.Id, vaccineId: doc.Dose.VaccineId, brandId: doc.BrandId });
-            });
-            this.storage.set("vaccinesData", this.vaccinesData);
-            this.dataGrouping = this.groupBy(this.vaccine, "Date");
-            // console.log(this.dataGrouping);
-            }
-            loading.dismiss();   
-          }else if (res.IsSuccess==false){
-            this.router.navigate(["/members/child/vaccine/" + this.childId]);
-            loading.dismiss();
-          } 
-          else {
-            this.toastService.create("Vaccines Not Found! Please Add vaccines");
-            loading.dismiss();
-          }
-        },
-        err => {
-          this.toastService.create("Error: server failure");
-          loading.dismiss();
+  this.vaccineService.getVaccinationById(this.childId).subscribe(
+    res => {
+      if (res.IsSuccess && res.ResponseData && res.ResponseData.length > 0) {
+        setTimeout(() => {
+          this.content.scrollToPoint(0, scrollPosition);
+        }, 100);
+
+        this.BirthYear = res.ResponseData[0].Child.DOB;
+        this.storage.set('BirthYear', this.BirthYear);
+        this.vaccine = res.ResponseData;
+        this.ChildName = this.vaccine[0].Child.Name;
+        this.type = this.vaccine[0].Child.Type;
+        this.removal(this.type);
+
+        this.vaccine.forEach(doc => {
+          doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
+          if (doc.GivenDate)
+            doc.GivenDate = moment(doc.GivenDate, "DD-MM-YYYY").format("YYYY-MM-DD");
+          this.vaccinesData.push({ childId: doc.Child.Id, vaccineId: doc.Dose.VaccineId, brandId: doc.BrandId });
+        });
+
+        this.storage.set("vaccinesData", this.vaccinesData);
+        this.dataGrouping = this.groupBy(this.vaccine, "Date");
+        loading.dismiss();
+
+      } else if (res.IsSuccess === false) {
+        loading.dismiss();
+        if (this.retryCount < this.maxRetries) {
+          this.retryCount++;
+          console.log(`Retrying... Attempt ${this.retryCount}`);
+          setTimeout(() => {
+            this.getVaccination();
+          }, 2000); // wait 2 seconds before retry
+        } else {
+          this.toastService.create("Failed after multiple retries.");
         }
-      );
-  }
+
+      } else {
+        this.toastService.create("Vaccines Not Found! Please Add vaccines");
+        loading.dismiss();
+      }
+    },
+    err => {
+      this.toastService.create("Error: server failure");
+      loading.dismiss();
+    }
+  );
+}
 
   groupBy(objectArray, property) {
     return objectArray.reduce(
