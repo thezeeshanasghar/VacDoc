@@ -73,7 +73,7 @@
               {{ v.Dose.Name }}
             </ion-label>
             <div style="flex: 1; display: flex; font-size: 14px;">
-              <span *ngIf="v.BrandId; else noBrand" style="color: rgb(55, 231, 10);">
+              <span *ngIf="v.BrandId && v.IsDone; else noBrand" style="color: rgb(55, 231, 10);">
                 ({{ v.Brand.Name }})
               </span>
               <ng-template #noBrand style="font-size: 14px;">
