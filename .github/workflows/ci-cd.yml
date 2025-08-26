@@ -1,4 +1,4 @@
-name: Angular CI/CD (EC2 Deployment)
+name: VacDoc - Angular CI/CD (EC2 Deployment)
 
 on:
   push:
