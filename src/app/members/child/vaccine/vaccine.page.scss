@@ -55,3 +55,15 @@ ion-toolbar {
       box-shadow: 0 0 5px #4caf50; 
     }
   }
+@media (max-width: 450px) {
+  .approve-button {
+    display: none;
+    width: 10%;
+    padding: 0%;
+  }
+}
+@media (max-width: 450px) {
+  .vaccine-action-icon {
+    display: none;
+  }
+}
