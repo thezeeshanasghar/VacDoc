@@ -1,10 +1,10 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-buttons slot="start">
+    <!-- <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Add Patient</ion-title>
-    <ion-title *ngIf="clinicService.OnlineClinic" slot="end">
+    </ion-buttons> -->
+    <!-- <ion-title>Add Patient</ion-title> -->
+    <ion-title *ngIf="clinicService.OnlineClinic">
       {{clinicService.OnlineClinic.Name}}
     </ion-title>
   </ion-toolbar>

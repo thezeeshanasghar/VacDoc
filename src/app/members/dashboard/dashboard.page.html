@@ -1,10 +1,10 @@
 <ion-header>
   
   <ion-toolbar color="primary">
-    <ion-title>
+    <!-- <ion-title>
       Dashboard
-    </ion-title>
-    <ion-title *ngIf="clinicService.OnlineClinic" slot="end">
+    </ion-title> -->
+    <ion-title *ngIf="clinicService.OnlineClinic" >
       {{clinicService.OnlineClinic.Name}}
     </ion-title>
   </ion-toolbar>
