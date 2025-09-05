@@ -18,6 +18,7 @@ import { PaService } from "src/app/services/pa.service";
 @Component({
   selector: "app-vaccine-alert",
   templateUrl: "./vaccine-alert.page.html",
+  styleUrls: ["./vaccine-alert.page.scss"],
   providers: [AndroidPermissions]
 })
 export class VaccineAlertPage implements OnInit {

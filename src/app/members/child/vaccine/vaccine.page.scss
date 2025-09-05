@@ -67,3 +67,18 @@ ion-toolbar {
     display: none;
   }
 }
+@media (max-width: 400px) {
+  ion-label,
+  .vaccine-action-icon,
+  .approve-button,
+  ion-button,
+  p,
+  span {
+    font-size: 10px !important;
+    margin: 0px !important;
+  }
+//   .ion-text-wrap{
+//     font-size: 8px !important;
+//     // margin: 0px !important;
+//   }
+}
