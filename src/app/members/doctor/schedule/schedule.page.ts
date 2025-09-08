@@ -13,6 +13,7 @@ import {
   Validators
 } from "@angular/forms";
 import { DoseService } from "src/app/services/dose.service";
+import { ClinicService } from "src/app/services/clinic.service";
 
 @Component({
   selector: "app-schedule",
@@ -32,6 +33,7 @@ export class SchedulePage implements OnInit {
     private toastService: ToastService,
     private storage: Storage,
     private router: Router,
+    private clinicService: ClinicService,
   ) {
 
 

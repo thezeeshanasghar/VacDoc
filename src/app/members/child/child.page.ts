@@ -12,6 +12,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { PaService } from "src/app/services/pa.service";
+// import { ClinicService } from 'src/app/services/clinic.service';
 
 @Component({
   selector: 'app-child',
@@ -42,6 +43,7 @@ export class ChildPage {
     private alertService: AlertService,
     private callNumber: CallNumber,
     private paService: PaService,
+    public clinicService: ClinicService,
   ) {
     this.fg = this.formBuilder.group({
       Name: ["", Validators.required],

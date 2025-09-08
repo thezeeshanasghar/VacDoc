@@ -3,7 +3,9 @@
     <ion-buttons slot="start">
       <!-- <ion-menu-button></ion-menu-button> -->
     </ion-buttons>
-    <ion-title>Personal Assistant</ion-title>
+      <ion-title class="ion-text-center">
+    {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name : 'Dashboard' }}
+  </ion-title>
     <ion-item routerLink="/members/doctor/personal-assistant/signup" slot="end" color="primary">
       <ion-icon  name="add" slot="end" color="light"></ion-icon>
     </ion-item>

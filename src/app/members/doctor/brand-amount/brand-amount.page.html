@@ -3,7 +3,9 @@
     <ion-buttons slot="start">
       <!-- <ion-menu-button></ion-menu-button> -->
     </ion-buttons>
-    <ion-title>Brand Management</ion-title>   
+      <ion-title class="ion-text-center">
+    {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name : 'Dashboard' }}
+  </ion-title> 
     <ion-buttons slot="end">
       <ion-button (click)="downloadPDF()">
         <img src="../../../../assets/pdf.png" alt="Download PDF" class="pdf-icon" />

@@ -4,9 +4,9 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons> -->
     <!-- <ion-title>Add Patient</ion-title> -->
-    <ion-title *ngIf="clinicService.OnlineClinic">
-      {{clinicService.OnlineClinic.Name}}
-    </ion-title>
+     <ion-title class="ion-text-center">
+    {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name : 'Add Patient' }}
+  </ion-title>
   </ion-toolbar>
 
   <ion-toolbar color="primary">
