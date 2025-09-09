@@ -18,7 +18,6 @@ export class PasswordPage implements OnInit {
   fg: FormGroup;
   matching_passwords_group: FormGroup;
   userId: any;
-  clinicService: any;
   // router: any;
   constructor(
     private formBuilder: FormBuilder,
@@ -26,7 +25,8 @@ export class PasswordPage implements OnInit {
     private storage: Storage,
     private loginService: LoginService,
     private toastService: ToastService,
-    private router: Router 
+    private router: Router,
+    public clinicService: ClinicService, 
   ) { }
 
   ngOnInit() {

@@ -3,10 +3,9 @@
     <ion-buttons slot="start">
       <!-- <ion-menu-button></ion-menu-button> -->
     </ion-buttons>
-    <ion-title>Clinics</ion-title>
-    <ion-title *ngIf="clinicService.OnlineClinic" slot="end">
-      {{clinicService.OnlineClinic.Name}}
-    </ion-title>
+      <ion-title class="ion-text-center">
+    {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name : 'Dashboard' }}
+  </ion-title>
    
     <!-- <ion-item slot="end" color="primary" routerLink="/members/child/add">
         <ion-icon slot="end" name="person-add" size="large" > </ion-icon>

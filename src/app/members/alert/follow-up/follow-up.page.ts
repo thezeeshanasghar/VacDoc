@@ -6,6 +6,7 @@ import { Storage } from "@ionic/storage";
 import { FollowupService } from "src/app/services/followup.service";
 import { AndroidPermissions } from "@ionic-native/android-permissions/ngx";
 import { Platform } from '@ionic/angular';
+import { ClinicService } from "src/app/services/clinic.service";
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 
 @Component({
@@ -29,6 +30,7 @@ export class FollowUpPage implements OnInit {
     private storage: Storage,
     public platform: Platform,
     private downloader: Downloader,
+    private clinicService: ClinicService,
   ) { }
   
   ngOnInit() {
@@ -39,6 +41,12 @@ export class FollowUpPage implements OnInit {
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
     });
+    // this.storage.get(environment.USER).then(user => {
+    //   if (user) {
+    //     this.Childs = user.Children;
+    //   }
+    // });
+    console.log(this.clinicService.OnlineClinic);
   }
   
   async getFollowupChild( formattedDate: string) {

@@ -3,7 +3,9 @@
     <ion-buttons slot="start">
       <!-- <ion-menu-button></ion-menu-button> -->
     </ion-buttons>
-    <ion-title>Vacation</ion-title>
+     <ion-title class="ion-text-center">
+    {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name : 'Dashboard' }}
+  </ion-title>
   </ion-toolbar>
   <ion-toolbar color="primary" >
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">

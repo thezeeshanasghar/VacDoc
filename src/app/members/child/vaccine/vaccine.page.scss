@@ -74,9 +74,17 @@ ion-toolbar {
   ion-button,
   p,
   span {
-    font-size: 10px !important;
+    font-size: 12px !important;
     margin: 0px !important;
   }
+  ion-item {
+  margin: 0 !important;
+  padding: 0px !important;
+}
+
+ion-card-content {
+  padding: 0 !important;
+}
 //   .ion-text-wrap{
 //     font-size: 8px !important;
 //     // margin: 0px !important;
