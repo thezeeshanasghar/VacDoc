@@ -7,7 +7,7 @@ import { FollowupService } from "src/app/services/followup.service";
 import { AndroidPermissions } from "@ionic-native/android-permissions/ngx";
 import { Platform } from '@ionic/angular';
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
-
+import { ClinicService } from "src/app/services/clinic.service";
 @Component({
   selector: "app-follow-up",
   templateUrl: "./follow-up.page.html",
@@ -29,6 +29,7 @@ export class FollowUpPage implements OnInit {
     private storage: Storage,
     public platform: Platform,
     private downloader: Downloader,
+    public clinicService: ClinicService,
   ) { }
   
   ngOnInit() {

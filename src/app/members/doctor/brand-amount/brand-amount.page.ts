@@ -27,7 +27,7 @@ export class BrandAmountPage implements OnInit {
     private storage: Storage,
     private brandService: BrandService,
     private toastService: ToastService,
-    private clinicService: ClinicService,
+    public clinicService: ClinicService,
     private paService: PaService,
   ) { }
 
