@@ -27,7 +27,7 @@ export class VacationPage implements OnInit {
     private router: Router,
     public formBuilder: FormBuilder,
     private storage: Storage,
-    private clinicService: ClinicService,
+    public clinicService: ClinicService,
     private vacationService: VacationService,
     private toastService: ToastService,
     private http: HttpClient
