@@ -8,7 +8,6 @@ import { AndroidPermissions } from "@ionic-native/android-permissions/ngx";
 import { Platform } from '@ionic/angular';
 import { ClinicService } from "src/app/services/clinic.service";
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
-import { ClinicService } from "src/app/services/clinic.service";
 @Component({
   selector: "app-follow-up",
   templateUrl: "./follow-up.page.html",
