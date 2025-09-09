@@ -5,6 +5,7 @@ import { environment } from "src/environments/environment";
 import { Storage } from "@ionic/storage";
 import { BirthdayService } from "src/app/services/birthday.service";
 import { Platform } from '@ionic/angular';
+import { ClinicService } from "src/app/services/clinic.service";
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 
 @Component({
@@ -28,6 +29,7 @@ export class BirthdayAlertPage implements OnInit {
     private storage: Storage,
     public platform: Platform,
     private downloader: Downloader,
+    public clinicService: ClinicService,
   ) { }
 
   ngOnInit() {

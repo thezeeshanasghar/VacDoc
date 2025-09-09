@@ -5,6 +5,7 @@ import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from '../../../../environments/environment';
 import { PaService } from 'src/app/services/pa.service';
 import { Router } from '@angular/router';
+import { ClinicService } from 'src/app/services/clinic.service';
 
 @Component({
   selector: 'app-PersonalAssistant',
@@ -28,7 +29,8 @@ export class PersonalAssistantPage implements OnInit {
     private storage: Storage,
     private loadingController: LoadingController,
     private toastService: ToastService,
-    private router: Router
+    private router: Router,
+    public clinicService: ClinicService,
   ) {}
 
   ngOnInit() {

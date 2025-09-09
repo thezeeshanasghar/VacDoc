@@ -33,14 +33,8 @@ export class SchedulePage implements OnInit {
     private storage: Storage,
     private router: Router,
     public clinicService: ClinicService,
-  ) {
-
-
-  }
-  ngOnInit() {
-
-
-  }
+  ) { }
+  ngOnInit() { }
 
   async ionViewDidEnter() {
     this.fg = this.formBuilder.group({}); // Initialize the form group
