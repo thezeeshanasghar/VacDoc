@@ -11,6 +11,7 @@ import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-nati
 @Component({
   selector: 'app-birthday-alert',
   templateUrl: './birthday-alert.page.html',
+  styleUrls: ['./birthday-alert.page.scss'],
 })
 export class BirthdayAlertPage implements OnInit {
   selectedDate: string = new Date().toISOString();

@@ -1,21 +1,31 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <!-- <ion-menu-button></ion-menu-button> -->
-    </ion-buttons>
-    <ion-title *ngIf="clinicService.OnlineClinic.Name">   {{clinicService.OnlineClinic.Name}}</ion-title>
-    <ion-title slot="end">
-      <!-- {{clinicService.OnlineClinic.Name}} -->
-    </ion-title>
+<ion-title 
+  *ngIf="clinicService.OnlineClinic.Name" 
+  routerLink="/members/doctor/clinic" 
+  style="cursor: pointer; text-align: center; width: 100%;">
+  {{clinicService.OnlineClinic.Name}}
+</ion-title>
   </ion-toolbar>
   
   <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
-      <ion-icon style="margin-left: 10%" routerLink="/members/child/add" name="person-add" size="large"> </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/clinic" name="medkit" size="large"> </ion-icon>
-      <!-- <ion-icon style="margin-left: 10%" routerLink="/members/alert" name="alert" size="large"> </ion-icon> -->
-      <ion-icon style="margin-left: 10%" routerLink="/members/child" name="accessibility-outline" size="large"> </ion-icon>
-      <ion-menu-button style="margin-left: 10%"></ion-menu-button>
+      <ion-icon
+        style="margin-left: 10%; cursor: pointer"
+        routerLink="/members/child/add"
+        name="person-add"
+        size="large"
+      >
+      </ion-icon>
+      <ion-icon
+        style="margin-left: 10%; cursor: pointer"
+        routerLink="/members/alert"
+        name="alert"
+        size="large"
+      >
+      </ion-icon>
+       <ion-icon style="margin-left: 10%;cursor: pointer;" routerLink="/members/child" name="accessibility-outline" size="large"> </ion-icon>
+      <ion-menu-button style="margin-left: 10%;cursor: pointer;"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
 

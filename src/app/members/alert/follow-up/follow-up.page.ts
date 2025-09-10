@@ -11,6 +11,7 @@ import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-nati
 @Component({
   selector: "app-follow-up",
   templateUrl: "./follow-up.page.html",
+  styleUrls: ["./follow-up.page.scss"],
   providers: [AndroidPermissions]
 })
 export class FollowUpPage implements OnInit {
