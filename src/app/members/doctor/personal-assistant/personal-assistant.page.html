@@ -1,10 +1,7 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <!-- <ion-menu-button></ion-menu-button> -->
-    </ion-buttons>
-      <ion-title class="ion-text-center">
-    {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name : 'Dashboard' }}
+      <ion-title class="ion-text-center" style="cursor: pointer" routerLink="/members/doctor/clinic">
+    {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name : 'Personal Assistants' }}
   </ion-title>
     <ion-item routerLink="/members/doctor/personal-assistant/signup" slot="end" color="primary">
       <ion-icon  name="add" slot="end" color="light"></ion-icon>
@@ -12,17 +9,16 @@
   </ion-toolbar>
   <ion-toolbar color="primary" >
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/personal-assistant/access" name="person-add-outline" size="large"></ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/child" name="accessibility-outline" size="large"> </ion-icon>
-      <ion-menu-button style="margin-left: 10%"></ion-menu-button>
+      <ion-icon style="margin-left: 10%;cursor: pointer;" routerLink="/members/doctor/personal-assistant/access" name="person-add-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left: 10%;cursor: pointer;" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
+      <ion-icon style="margin-left: 10%;cursor: pointer;" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
+      <ion-icon style="margin-left: 10%;cursor: pointer;" routerLink="/members/child" name="accessibility-outline" size="large"> </ion-icon>
+      <ion-menu-button style="margin-left: 10%;cursor: pointer;"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <!--  -->
   <div class="table-container">
     <table>
       <thead>

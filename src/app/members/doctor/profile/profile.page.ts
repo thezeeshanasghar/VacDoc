@@ -1,3 +1,4 @@
+import { ClinicService } from './../../../services/clinic.service';
 import { Component, OnInit } from "@angular/core";
 import { LoadingController, Platform } from "@ionic/angular";
 import { DoctorService } from "src/app/services/doctor.service";
@@ -5,7 +6,6 @@ import { ToastService } from "src/app/shared/toast.service";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { FormGroup, FormBuilder, FormControl, Validators } from "@angular/forms";
-// import { FileUploader, FileLikeObject } from 'ng2-file-upload';
 import { concat } from 'rxjs';
 import { UploadService } from 'src/app/services/upload.service';
 import { FileChooser } from '@ionic-native/file-chooser/ngx';
@@ -25,7 +25,6 @@ export class ProfilePage implements OnInit {
   DocotrId: any;
   uploading: any;
   profileImagePath: any;
-  // signatureImagePath: any;
   resourceURL = environment.RESOURCE_URL;
   profileImagePath2: any;
 
@@ -40,8 +39,8 @@ export class ProfilePage implements OnInit {
     private file: File,
     private filePath: FilePath,
     private transfer: FileTransfer,
-    private platform: Platform
-
+    private platform: Platform,
+    public clinicService: ClinicService,
   ) { }
 
   ngOnInit() {
@@ -98,7 +97,6 @@ export class ProfilePage implements OnInit {
       Qualification:[null],
       // SignatureImage: new FormControl([null]),
       ProfileImage: new FormControl([null])
-
     });
   }
   fourLinesValidator(control: FormControl) {

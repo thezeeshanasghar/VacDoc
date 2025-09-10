@@ -1,0 +1,28 @@
+@media (max-width: 400px) {
+  ion-toolbar {
+    --min-height: 40px; /* reduce toolbar height */
+    padding: 0 0px;
+  }
+
+  ion-button {
+    font-size: 12px; /* smaller button text */
+    --padding-start: 2px;
+    --padding-end: 2px;
+    --padding-top: 2px;
+    --padding-bottom: 2px;
+  }
+
+  ion-item {
+    --min-height: 36px; /* shrink ion-item */
+    font-size: 12px;
+  }
+
+  input[matInput] {
+    font-size: 12px;
+    padding: 0px 0px;
+  }
+
+  mat-datepicker-toggle {
+    transform: scale(0.8); /* make the calendar icon smaller */
+  }
+}

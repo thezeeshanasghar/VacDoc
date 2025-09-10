@@ -1,159 +1,185 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <!-- <ion-menu-button></ion-menu-button> -->
-    </ion-buttons>
-    <ion-title>Doctor</ion-title>
+    <ion-title
+      class="ion-text-center"
+      style="cursor: pointer"
+      routerLink="/members/doctor/clinic"
+    >
+      {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name :'Profile' }}
+    </ion-title>
   </ion-toolbar>
-
   <ion-toolbar color="primary">
-    <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
-      <ion-icon style="margin-left: 10%" routerLink="/members/child/add" name="person-add" size="large"> </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/alert" name="alert" size="large"> </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/clinic" name="medkit" size="large"> </ion-icon>
-      <ion-menu-button style="margin-left: 10%"></ion-menu-button>
+    <ion-buttons class="ion-justify-content-center" style="border-radius: 5px">
+      <ion-icon
+        style="margin-left: 10%; cursor: pointer"
+        routerLink="/members/child/add"
+        name="person-add"
+        size="large"
+      >
+      </ion-icon>
+      <ion-icon
+        style="margin-left: 10%; cursor: pointer"
+        routerLink="/members/alert"
+        name="alert"
+        size="large"
+      >
+      </ion-icon>
+       <ion-icon style="margin-left: 10%;cursor: pointer;" routerLink="/members/child" name="accessibility-outline" size="large"> </ion-icon>
+      <ion-menu-button
+        style="margin-left: 10%; cursor: pointer"
+      ></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-
 <ion-content class="ion-padding">
-
   <form [formGroup]="fg">
     <ion-item>
       <ion-label color="primary" position="floating">Name</ion-label>
       <ion-input type="text" formControlName="FirstName" required></ion-input>
     </ion-item>
-
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.FirstName">
-        <div class="error-message"
-          *ngIf="fg.get('FirstName').hasError(validation.type) && (fg.get('FirstName').dirty || fg.get('FirstName').touched)">
-          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        <div
+          class="error-message"
+          *ngIf="fg.get('FirstName').hasError(validation.type) && (fg.get('FirstName').dirty || fg.get('FirstName').touched)"
+        >
+          <ion-icon name="information-circle-outline"></ion-icon> {{
+          validation.message }}
         </div>
       </ng-container>
     </div>
-
-    <!-- <ion-item>
-      <ion-label color="primary" position="floating">Last Name</ion-label>
-      <ion-input type="text" formControlName="LastName" required></ion-input>
-    </ion-item>
-
-    <div class="validation-errors">
-      <ng-container *ngFor="let validation of validation_messages.LastName">
-        <div class="error-message"
-          *ngIf="fg.get('LastName').hasError(validation.type) && (fg.get('LastName').dirty || fg.get('LastName').touched)">
-          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
-        </div>
-      </ng-container>
-    </div> -->
-
     <ion-item>
       <ion-label color="primary" position="floating">Display Name</ion-label>
       <ion-input type="text" formControlName="DisplayName" required></ion-input>
     </ion-item>
-
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.DisplayName">
-        <div class="error-message"
-          *ngIf="fg.get('DisplayName').hasError(validation.type) && (fg.get('DisplayName').dirty || fg.get('DisplayName').touched)">
-          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        <div
+          class="error-message"
+          *ngIf="fg.get('DisplayName').hasError(validation.type) && (fg.get('DisplayName').dirty || fg.get('DisplayName').touched)"
+        >
+          <ion-icon name="information-circle-outline"></ion-icon> {{
+          validation.message }}
         </div>
       </ng-container>
     </div>
-
     <ion-item>
       <ion-label color="primary" position="floating">Email</ion-label>
-      <ion-input type="text" formControlName="Email" required [disabled]="true"></ion-input>
+      <ion-input
+        type="text"
+        formControlName="Email"
+        required
+        [disabled]="true"
+      ></ion-input>
     </ion-item>
-
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.Email">
-        <div class="error-message"
-          *ngIf="fg.get('Email').hasError(validation.type) && (fg.get('Email').dirty || fg.get('Email').touched)">
-          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        <div
+          class="error-message"
+          *ngIf="fg.get('Email').hasError(validation.type) && (fg.get('Email').dirty || fg.get('Email').touched)"
+        >
+          <ion-icon name="information-circle-outline"></ion-icon> {{
+          validation.message }}
         </div>
       </ng-container>
     </div>
-
     <ion-item>
       <ion-label color="primary" position="floating">Mobile No</ion-label>
-      <ion-input type="text" formControlName="MobileNumber" required disabled="true"></ion-input>
+      <ion-input
+        type="text"
+        formControlName="MobileNumber"
+        required
+        disabled="true"
+      ></ion-input>
       <div class="validation-errors">
-        <ng-container *ngFor="let validation of validation_messages.MobileNumber">
-          <div class="error-message"
-            *ngIf="fg.get('MobileNumber').hasError(validation.type) && (fg.get('MobileNumber').dirty || fg.get('MobileNumber').touched)">
-            <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        <ng-container
+          *ngFor="let validation of validation_messages.MobileNumber"
+        >
+          <div
+            class="error-message"
+            *ngIf="fg.get('MobileNumber').hasError(validation.type) && (fg.get('MobileNumber').dirty || fg.get('MobileNumber').touched)"
+          >
+            <ion-icon name="information-circle-outline"></ion-icon> {{
+            validation.message }}
           </div>
         </ng-container>
       </div>
-
       <ion-label color="primary">Display</ion-label>
-      <ion-checkbox slot="end" formControlName="ShowMobile" required></ion-checkbox>
+      <ion-checkbox
+        slot="end"
+        formControlName="ShowMobile"
+        required
+      ></ion-checkbox>
     </ion-item>
-
     <ion-item>
       <ion-label color="primary" position="floating">Phone No</ion-label>
       <ion-input type="text" formControlName="PhoneNo" required></ion-input>
-
       <ion-label color="primary">Display</ion-label>
-      <ion-checkbox slot="end" formControlName="ShowPhone" required></ion-checkbox>
+      <ion-checkbox
+        slot="end"
+        formControlName="ShowPhone"
+        required
+      ></ion-checkbox>
     </ion-item>
-    
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.PhoneNo">
-        <div class="error-message"
-          *ngIf="fg.get('PhoneNo').hasError(validation.type) && (fg.get('PhoneNo').dirty || fg.get('PhoneNo').touched)">
-          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        <div
+          class="error-message"
+          *ngIf="fg.get('PhoneNo').hasError(validation.type) && (fg.get('PhoneNo').dirty || fg.get('PhoneNo').touched)"
+        >
+          <ion-icon name="information-circle-outline"></ion-icon> {{
+          validation.message }}
         </div>
       </ng-container>
     </div>
-
     <ion-item>
       <ion-label color="primary" position="floating">PMDC</ion-label>
       <ion-input type="text" formControlName="PMDC" required></ion-input>
     </ion-item>
     <ion-item>
       <ion-label color="primary" position="floating">Additional Info</ion-label>
-      <ion-textarea type="text" formControlName="AdditionalInfo" class="ion-text-capitalize"></ion-textarea>
+      <ion-textarea
+        type="text"
+        formControlName="AdditionalInfo"
+        class="ion-text-capitalize"
+      ></ion-textarea>
     </ion-item>
     <div class="validation-errors">
-      <ng-container *ngFor="let validation of validation_messages.AdditionalInfo">
-        <div class="error-message" *ngIf="fg.get('AdditionalInfo').hasError(validation.type) && (fg.get('AdditionalInfo').dirty || fg.get('AdditionalInfo').touched)">
-          <ion-icon name="information-circle-outline"></ion-icon> {{validation.message }}
+      <ng-container
+        *ngFor="let validation of validation_messages.AdditionalInfo"
+      >
+        <div
+          class="error-message"
+          *ngIf="fg.get('AdditionalInfo').hasError(validation.type) && (fg.get('AdditionalInfo').dirty || fg.get('AdditionalInfo').touched)"
+        >
+          <ion-icon name="information-circle-outline"></ion-icon>
+          {{validation.message }}
         </div>
       </ng-container>
     </div>
     <ion-item>
       <ion-label color="primary" position="floating">Qualification</ion-label>
-      <ion-input type="text" formControlName="Qualification" required></ion-input>
+      <ion-input
+        type="text"
+        formControlName="Qualification"
+        required
+      ></ion-input>
     </ion-item>
     <ion-item>
       <div>
         <label for="file">Profile Image</label>
-        <input type="file" (change)="SelectProfileImage($event.target.files)">
-      </div>
-      <!-- <ion-item>
-        <ion-img class="preview-image" [src]="profileImagePath2" alt="No image"></ion-img>
-      </ion-item> -->
-    </ion-item>
-    <ion-item>
-      <ion-img class="preview-image" [src]="resourceURL+profileImagePath" alt="No image"></ion-img>
-    </ion-item>
-
-    <!-- <ion-item>
-      <div>
-        <label for="file">Signature Image</label>
-        <input type="file" (change)="SelectSignatureImage($event.target.files)">
+        <input type="file" (change)="SelectProfileImage($event.target.files)" />
       </div>
     </ion-item>
-
     <ion-item>
-      <ion-img class="preview-image" [src]="signatureImagePath" alt="No image"></ion-img>
-    </ion-item> -->
-
+      <ion-img
+        class="preview-image"
+        [src]="resourceURL+profileImagePath"
+        alt="No image"
+      ></ion-img>
+    </ion-item>
     <ion-item>
       <ion-button (click)="updateProfile()">Update</ion-button>
     </ion-item>
-
   </form>
 </ion-content>
