@@ -686,11 +686,11 @@ export class MembersPage implements OnInit {
                 url: "/members/alert",
                 icon: "alert"
               },
-              {
-                title: "Messages",
-                url: "/members/message",
-                icon: "mail-unread-outline"
-              }
+              // {
+              //   title: "Messages",
+              //   url: "/members/message",
+              //   icon: "mail-unread-outline"
+              // }
             ];
 
             this.doctorPages = [

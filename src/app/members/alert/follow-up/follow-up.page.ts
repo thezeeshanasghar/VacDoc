@@ -182,27 +182,59 @@ export class FollowUpPage implements OnInit {
     this.getFollowupChild(formattedDate);
   }
 
-  openWhatsApp(mobileNumber: string, childName: string, nextVisitDate: string) {
-    console.log('Child Name:', childName);
-    console.log('Next Visit Date:', nextVisitDate);
-    if (mobileNumber.trim() === '') {
-      alert('Invalid mobile number. Please provide a valid number.');
-      return;
-    }
-    const message = encodeURIComponent(
-      `Reminder: Follow-up visit for ${childName} is scheduled on ${nextVisitDate}.\n` +
-      `Please confirm your appointment. Thanks!\nBaby Medics\n` +
-      `Login and check your record at https://vaccinationcentre.com`
-    );
-    const formattedPatientNumber = mobileNumber.startsWith('+92')
-      ? mobileNumber
-      : `+92${mobileNumber.replace(/^0/, '')}`;
-    let whatsappUrl: string;
-    if (this.platform.is('android') || this.platform.is('ios')) {
-      whatsappUrl = `whatsapp://send?phone=${formattedPatientNumber}&text=${message}`;
-    } else {
-      whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPatientNumber}&text=${message}`;
-    }
-    window.open(whatsappUrl, '_system');
+  // openWhatsApp(mobileNumber: string, childName: string, nextVisitDate: string, child: any) {
+  //   console.log('Child Name:', childName);
+  //   console.log('Next Visit Date:', nextVisitDate);
+  //   if (mobileNumber.trim() === '') {
+  //     alert('Invalid mobile number. Please provide a valid number.');
+  //     return;
+  //   }
+  //   const message = encodeURIComponent(
+  //     `Reminder: Follow-up visit for ${childName} is scheduled on ${nextVisitDate}.\n` +
+  //     `Please confirm your appointment. Thanks!\nBaby Medics\n` +
+  //     `Login and check your record at https://client.vaccinationcentre.com`
+  //   );
+  //   const formattedPatientNumber = mobileNumber.startsWith('+92')
+  //     ? mobileNumber
+  //     : `+92${mobileNumber.replace(/^0/, '')}`;
+  //   let whatsappUrl: string;
+  //   if (this.platform.is('android') || this.platform.is('ios')) {
+  //     whatsappUrl = `whatsapp://send?phone=${formattedPatientNumber}&text=${message}`;
+  //   } else {
+  //     whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPatientNumber}&text=${message}`;
+  //   }
+  //   window.open(whatsappUrl, '_system');
+  // }
+
+  openWhatsApp(mobileNumber: string, childName: string, nextVisitDate: string, child: any) {
+  console.log('Child Name:', childName);
+  console.log('Next Visit Date:', nextVisitDate);
+  if (mobileNumber.trim() === '') {
+    alert('Invalid mobile number. Please provide a valid number.');
+    return;
   }
+  // Get dynamic country code, fallback to '+92' if not present
+  const countryCode = child.Child.User.CountryCode ? child.Child.User.CountryCode : '+92';
+  // Remove any leading zero from the mobile number
+  const cleanedMobile = mobileNumber.replace(/^0+/, '');
+  const formattedPatientNumber = countryCode + cleanedMobile;
+
+  // const userName = child.Child.User?.MobileNumber ? child.Child.User.MobileNumber : '';
+  const password = child.Child.User.Password ? child.Child.User.Password : '******';
+  const message = encodeURIComponent(
+    `Reminder: Follow-up visit for ${childName} is scheduled on ${nextVisitDate}.\n` +
+    `Please confirm your appointment.\n` +
+    `Login at https://client.vaccinationcentre.com\nUsername: ${formattedPatientNumber}\nPassword: ${password}\n` +
+    `Thanks, Baby Medics`
+  );
+
+  let whatsappUrl: string;
+  if (this.platform.is('android') || this.platform.is('ios')) {
+    whatsappUrl = `whatsapp://send?phone=${formattedPatientNumber}&text=${message}`;
+  } else {
+    whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPatientNumber}&text=${message}`;
+  }
+  window.open(whatsappUrl, '_system');
+  child.isMessageSent = true;
+}
 }
