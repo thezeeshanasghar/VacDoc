@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
      <ion-item>
-    <ion-label position="floating">Select Clinic</ion-label>
+    <ion-label position="floating"></ion-label>
     <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)">
       <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
         {{ clinic.Name }}
