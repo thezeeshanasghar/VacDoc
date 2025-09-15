@@ -9,6 +9,7 @@ import { VacationService } from 'src/app/services/vacation.service';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
 import { HttpClient } from '@angular/common/http';
+import { PaService } from 'src/app/services/pa.service';
 
 @Component({
   selector: 'app-vacation',
@@ -21,6 +22,8 @@ export class VacationPage implements OnInit {
   DoctorId: any;
   ClinicId: any = [];
   todaydate;
+  selectedClinicId: any;
+  usertype: any;
 
   constructor(
     public loadingController: LoadingController,
@@ -30,7 +33,8 @@ export class VacationPage implements OnInit {
     public clinicService: ClinicService,
     private vacationService: VacationService,
     private toastService: ToastService,
-    private http: HttpClient
+    private http: HttpClient,
+    private paService: PaService
 
   ) {
     this.todaydate = new Date().toISOString().slice(0, 10);
@@ -41,10 +45,11 @@ export class VacationPage implements OnInit {
     });
   }
 
-  ngOnInit() {
-    this.storage.get(environment.DOCTOR_Id).then((val) => {
+  async ngOnInit() {
+    await this.storage.get(environment.DOCTOR_Id).then((val) => {
       this.DoctorId = val;
     });
+    this.usertype = await this.storage.get(environment.USER);
     this.getClinics();
   }
 
@@ -64,28 +69,107 @@ export class VacationPage implements OnInit {
     const loading = await this.loadingController.create({ message: 'Loading Clinics' });
     await loading.present();
 
-    await this.clinicService.getClinics(this.DoctorId).subscribe(
-      res => {
-        if (res.IsSuccess) {
-          this.clinics = res.ResponseData;
-          const controls = this.clinics.map(c => new FormControl(false));
-          this.fg2 = this.formBuilder.group({
-            clinics: new FormArray(controls),
-             'formDate': [this.todaydate],
-             'ToDate': [this.todaydate]
-          });
+    if (this.usertype.UserType === 'DOCTOR') {
+      await this.clinicService.getClinics(this.DoctorId).subscribe(
+        res => {
+          if (res.IsSuccess) {
+            this.clinics = res.ResponseData;
+            // Check if there's already an online clinic from storage or API response
+            let onlineClinic = this.clinics.find(clinic => clinic.IsOnline);
+            
+            // If no online clinic found in API response, check storage
+            if (!onlineClinic) {
+              this.storage.get(environment.ON_CLINIC).then(storedOnlineClinic => {
+                if (storedOnlineClinic) {
+                  onlineClinic = this.clinics.find(clinic => clinic.Id === storedOnlineClinic.Id);
+                  if (onlineClinic) {
+                    this.selectedClinicId = onlineClinic.Id;
+                    this.clinicService.updateClinic(onlineClinic);
+                    console.log('Found online clinic from storage:', onlineClinic.Name);
+                  }
+                }
+              });
+            }
+            
+            if (onlineClinic) {
+              this.selectedClinicId = onlineClinic.Id;
+              this.clinicService.updateClinic(onlineClinic);
+              console.log('Found online clinic from API:', onlineClinic.Name);
+            } else {
+              this.selectedClinicId = (this.clinics.length > 0 ? this.clinics[0].Id : null);
+              if (this.selectedClinicId) {
+                this.setOnlineClinic(this.selectedClinicId);
+              }
+            }
+            const controls = this.clinics.map(c => new FormControl(false));
+            this.fg2 = this.formBuilder.group({
+              clinics: new FormArray(controls),
+               'formDate': [this.todaydate],
+               'ToDate': [this.todaydate]
+            });
+            loading.dismiss();
+          }
+          else {
+            loading.dismiss();
+            this.toastService.create(res.Message, 'danger');
+          }
+        },
+        err => {
           loading.dismiss();
+          this.toastService.create(err, 'danger');
         }
-        else {
+      );
+    } else if (this.usertype.UserType === 'PA') {
+      await this.paService.getPaClinics(Number(this.usertype.PAId)).subscribe(
+        res => {
+          if (res.IsSuccess) {
+            this.clinics = res.ResponseData;
+            // Check if there's already an online clinic from storage or API response
+            let onlineClinic = this.clinics.find(clinic => clinic.IsOnline);
+            
+            // If no online clinic found in API response, check storage
+            if (!onlineClinic) {
+              this.storage.get(environment.ON_CLINIC).then(storedOnlineClinic => {
+                if (storedOnlineClinic) {
+                  onlineClinic = this.clinics.find(clinic => clinic.Id === storedOnlineClinic.Id);
+                  if (onlineClinic) {
+                    this.selectedClinicId = onlineClinic.Id;
+                    this.clinicService.updateClinic(onlineClinic);
+                    console.log('Found online clinic from storage:', onlineClinic.Name);
+                  }
+                }
+              });
+            }
+            
+            if (onlineClinic) {
+              this.selectedClinicId = onlineClinic.Id;
+              this.clinicService.updateClinic(onlineClinic);
+              console.log('Found online clinic from API:', onlineClinic.Name);
+            } else {
+              this.selectedClinicId = (this.clinics.length > 0 ? this.clinics[0].Id : null);
+              if (this.selectedClinicId) {
+                this.setOnlineClinic(this.selectedClinicId);
+              }
+            }
+            const controls = this.clinics.map(c => new FormControl(false));
+            this.fg2 = this.formBuilder.group({
+              clinics: new FormArray(controls),
+               'formDate': [this.todaydate],
+               'ToDate': [this.todaydate]
+            });
+            loading.dismiss();
+          }
+          else {
+            loading.dismiss();
+            this.toastService.create(res.Message, 'danger');
+          }
+        },
+        err => {
           loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
+          this.toastService.create(err, 'danger');
         }
-      },
-      err => {
-        loading.dismiss();
-        this.toastService.create(err, 'danger');
-      }
-    );
+      );
+    }
   }
   // async addVacation() {
 
@@ -148,6 +232,51 @@ export class VacationPage implements OnInit {
           }
         );
     });
-}
+  }
+
+  onClinicChange(event: any) {
+    const clinicId = event.detail.value;
+    console.log('Selected Clinic ID:', clinicId);
+    this.selectedClinicId = clinicId;
+    this.setOnlineClinic(clinicId);
+  }
+
+  async setOnlineClinic(clinicId: any) {
+    const loading = await this.loadingController.create({ message: "Setting clinic online..." });
+    await loading.present();
+    
+    let data = { DoctorId: this.DoctorId, Id: clinicId, IsOnline: "true" };
+    
+    try {
+      await this.clinicService.changeOnlineClinic(data).subscribe(
+        (res) => {
+          if (res.IsSuccess) {
+            loading.dismiss();
+            // Update local storage
+            this.storage.set(environment.CLINIC_Id, data.Id);
+            this.storage.get(environment.CLINICS).then((clinics) => {
+              const selectedClinic = clinics.find((clinic) => clinic.Id === data.Id);
+              this.storage.set(environment.ON_CLINIC, selectedClinic);
+              this.clinicService.updateClinic(selectedClinic);
+            });
+            this.toastService.create('Clinic set as online successfully', 'success');
+            console.log('Online clinic set to:', clinicId);
+          } else {
+            loading.dismiss();
+            this.toastService.create(res.Message, 'danger');
+          }
+        },
+        (err) => {
+          loading.dismiss();
+          this.toastService.create('Failed to set clinic online', 'danger');
+          console.error('Error setting clinic online:', err);
+        }
+      );
+    } catch (error) {
+      loading.dismiss();
+      this.toastService.create('An error occurred', 'danger');
+      console.error('Error in setOnlineClinic:', error);
+    }
+  }
 }
 // https://coryrylan.com/blog/creating-a-dynamic-checkbox-list-in-angular

@@ -8,6 +8,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { IonRouterOutlet, Platform } from '@ionic/angular';
 import { Plugins } from '@capacitor/core';
 import { DashboardService } from "src/app/services/dashboard.service";
+import { PaService } from "src/app/services/pa.service";
 
 const { App } = Plugins;
 
@@ -32,6 +33,9 @@ export class DashboardPage implements OnInit {
   futureAlertsCount: number;
   currentMonthGivenDosesCount: number = 0;
   totalRevenue: number = 0;
+  clinics: any;
+  selectedClinicId: any;
+  usertype: any;
 
   constructor(
     private loadingController: LoadingController,
@@ -41,20 +45,22 @@ export class DashboardPage implements OnInit {
     private storage: Storage,
     private androidPermissions: AndroidPermissions,
     public platform: Platform,
-    private routerOutlet: IonRouterOutlet
+    private routerOutlet: IonRouterOutlet,
+    private paService: PaService
   ) {}
 
   async ngOnInit() {
     await this.storage.get(environment.DOCTOR_Id).then(docId => {
       this.doctorId = docId;
     });
+    this.usertype = await this.storage.get(environment.USER);
 
     const loading = await this.loadingController.create({ message: "Loading ..." });
     await loading.present();
 
     try {
       await this.getCombinedDashboardData();
-      await this.getClinics();
+      await this.loadClinics();
     } catch (error) {
       console.error("Error while loading dashboard data:", error);
       this.toastService.create("Error loading dashboard data", "danger");
@@ -67,7 +73,7 @@ export class DashboardPage implements OnInit {
       if (this.clinic) {
         this.clinicService.updateClinic(this.clinic);
       } else {
-        this.getClinics();
+        this.loadClinics();
       }
     });
   }
@@ -82,6 +88,119 @@ export class DashboardPage implements OnInit {
           }
         }
       );
+    }
+  }
+
+  async loadClinics() {
+    try {
+      if (this.usertype.UserType === 'DOCTOR') {
+        this.clinicService.getClinics(this.doctorId).subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.clinics = response.ResponseData;
+              this.Clinics = response.ResponseData; // Keep for backward compatibility
+              this.clinicCount = this.clinics.length;
+              this.clinicsExist = this.clinicCount > 0;
+              
+              // Check if there's already an online clinic from storage or API response
+              let onlineClinic = this.clinics.find(clinic => clinic.IsOnline);
+              
+              // If no online clinic found in API response, check storage
+              if (!onlineClinic) {
+                this.storage.get(environment.ON_CLINIC).then(storedOnlineClinic => {
+                  if (storedOnlineClinic) {
+                    onlineClinic = this.clinics.find(clinic => clinic.Id === storedOnlineClinic.Id);
+                    if (onlineClinic) {
+                      this.selectedClinicId = onlineClinic.Id;
+                      this.clinicService.updateClinic(onlineClinic);
+                      console.log('Found online clinic from storage:', onlineClinic.Name);
+                    }
+                  }
+                });
+              }
+              
+              if (onlineClinic) {
+                this.selectedClinicId = onlineClinic.Id;
+                this.clinicService.updateClinic(onlineClinic);
+                console.log('Found online clinic from API:', onlineClinic.Name);
+              } else {
+                this.selectedClinicId = (this.clinics.length > 0 ? this.clinics[0].Id : null);
+                if (this.selectedClinicId) {
+                  this.setOnlineClinic(this.selectedClinicId);
+                }
+              }
+              console.log('Clinics:', this.clinics);
+              console.log('Selected Clinic ID:', this.selectedClinicId);
+              if (!this.clinicsExist) {
+                this.routerOutlet.nativeEl.ownerDocument.defaultView.location.href = 'members/doctor/clinic/add';
+              }
+              this.storage.set(environment.CLINICS, this.clinics);
+            } else {
+              this.clinicsExist = false;
+              this.toastService.create(response.Message, 'danger');
+            }
+          },
+          error: (error) => {
+            this.clinicsExist = false;
+            console.error('Error fetching clinics:', error);
+            this.toastService.create('Failed to load clinics', 'danger');
+          },
+        });
+      } else if (this.usertype.UserType === 'PA') {
+        this.paService.getPaClinics(Number(this.usertype.PAId)).subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.clinics = response.ResponseData;
+              this.Clinics = response.ResponseData; // Keep for backward compatibility
+              this.clinicCount = this.clinics.length;
+              this.clinicsExist = this.clinicCount > 0;
+              
+              // Check if there's already an online clinic from storage or API response
+              let onlineClinic = this.clinics.find(clinic => clinic.IsOnline);
+              
+              // If no online clinic found in API response, check storage
+              if (!onlineClinic) {
+                this.storage.get(environment.ON_CLINIC).then(storedOnlineClinic => {
+                  if (storedOnlineClinic) {
+                    onlineClinic = this.clinics.find(clinic => clinic.Id === storedOnlineClinic.Id);
+                    if (onlineClinic) {
+                      this.selectedClinicId = onlineClinic.Id;
+                      this.clinicService.updateClinic(onlineClinic);
+                      console.log('Found PA online clinic from storage:', onlineClinic.Name);
+                    }
+                  }
+                });
+              }
+              
+              if (onlineClinic) {
+                this.selectedClinicId = onlineClinic.Id;
+                this.clinicService.updateClinic(onlineClinic);
+                console.log('Found PA online clinic from API:', onlineClinic.Name);
+              } else {
+                this.selectedClinicId = (this.clinics.length > 0 ? this.clinics[0].Id : null);
+                if (this.selectedClinicId) {
+                  this.setOnlineClinic(this.selectedClinicId);
+                }
+              }
+              console.log('PA Clinics:', this.clinics);
+              console.log('Selected PA Clinic ID:', this.selectedClinicId);
+              this.storage.set(environment.CLINICS, this.clinics);
+            } else {
+              this.clinicsExist = false;
+              this.toastService.create(response.Message, 'danger');
+            }
+          },
+          error: (error) => {
+            this.clinicsExist = false;
+            console.error('Error fetching PA clinics:', error);
+            this.toastService.create('Failed to load clinics', 'danger');
+          },
+        });
+      }
+    } catch (error) {
+      this.clinicsExist = false;
+      console.error('Error in loadClinics:', error);
+      this.toastService.create('An unexpected error occurred', 'danger');
     }
   }
 
@@ -145,5 +264,50 @@ export class DashboardPage implements OnInit {
         }
       );
     });
+  }
+
+  onClinicChange(event: any) {
+    const clinicId = event.detail.value;
+    console.log('Selected Clinic ID:', clinicId);
+    this.selectedClinicId = clinicId;
+    this.setOnlineClinic(clinicId);
+  }
+
+  async setOnlineClinic(clinicId: any) {
+    const loading = await this.loadingController.create({ message: "Setting clinic online..." });
+    await loading.present();
+    
+    let data = { DoctorId: this.doctorId, Id: clinicId, IsOnline: "true" };
+    
+    try {
+      await this.clinicService.changeOnlineClinic(data).subscribe(
+        (res) => {
+          if (res.IsSuccess) {
+            loading.dismiss();
+            // Update local storage
+            this.storage.set(environment.CLINIC_Id, data.Id);
+            this.storage.get(environment.CLINICS).then((clinics) => {
+              const selectedClinic = clinics.find((clinic) => clinic.Id === data.Id);
+              this.storage.set(environment.ON_CLINIC, selectedClinic);
+              this.clinicService.updateClinic(selectedClinic);
+            });
+            this.toastService.create('Clinic set as online successfully', 'success');
+            console.log('Online clinic set to:', clinicId);
+          } else {
+            loading.dismiss();
+            this.toastService.create(res.Message, 'danger');
+          }
+        },
+        (err) => {
+          loading.dismiss();
+          this.toastService.create('Failed to set clinic online', 'danger');
+          console.error('Error setting clinic online:', err);
+        }
+      );
+    } catch (error) {
+      loading.dismiss();
+      this.toastService.create('An error occurred', 'danger');
+      console.error('Error in setOnlineClinic:', error);
+    }
   }
 }
