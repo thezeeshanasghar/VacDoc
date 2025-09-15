@@ -5,7 +5,7 @@
   margin-top: 10px;
 }
 .mat-datepicker-toggle-default-icon {
-  color: #3880ff;
+    color: rgb(198, 198, 198);
 }
 input {
   border: 0;
@@ -15,9 +15,9 @@ input {
 #dob{
   margin-left: 5%;
 }
-ion-list-header{
-  color: #3880ff;
-}
+// ion-list-header{
+//   color: #3880ff;
+// }
 
 .example-form {
   min-width: 150px;
@@ -85,3 +85,16 @@ ion-list-header{
   margin-left: 2px; 
 }
 
+ion-label {
+  color: rgb(198, 198, 198);
+  // font-color: gray;
+}
+.label-gray {
+  color: gray !important;
+}
+.label-gray .mat-datepicker-toggle-default-icon,
+.label-gray .mat-icon,
+.label-gray svg {
+  color: gray !important;
+  fill: gray !important;
+}
