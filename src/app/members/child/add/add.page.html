@@ -115,27 +115,27 @@
           <ion-row>
             <ion-col>
               <ion-item>
-                <ion-label color="white">Regular</ion-label>
+                <ion-label  class="label-gray">Regular</ion-label>
                 <ion-radio slot="start" value="regular"></ion-radio>
               </ion-item>
             </ion-col>
 
             <ion-col>
               <ion-item style="height: 100%;">
-                <ion-label color="white">EPI Plus</ion-label>
+                <ion-label  class="label-gray">EPI Plus</ion-label>
                 <ion-radio slot="start" value="IsEPIDone" [disabled]="isRadioDisabled"></ion-radio>
               </ion-item>
             </ion-col>
 
             <ion-col>
               <ion-item style="height: 100%;">
-                <ion-label color="white">Customize</ion-label>
+                <ion-label  class="label-gray">Customize</ion-label>
                 <ion-radio slot="start" value="special"></ion-radio>
               </ion-item>
             </ion-col>
             <ion-col *ngIf="isTravel">
               <ion-item>
-                <ion-label color="white">Travel</ion-label>
+                <ion-label  class="label-gray">Travel</ion-label>
                 <ion-radio slot="start" value="travel"></ion-radio>
               </ion-item>
             </ion-col>
@@ -182,7 +182,7 @@
 
       <ion-item>
         <div class="country-code-container">
-          <ion-label class="label-gray" position="stacked" class="country-label">
+          <ion-label class="label-gray" position="stacked" >
             Country Code <span class="required-asterisk">*</span>
           </ion-label>
           <ion-select formControlName="CountryCode" class="country-code-select">
@@ -190,7 +190,7 @@
               (+{{ country.code }}) {{ country.name }}
             </ion-select-option>
           </ion-select>
-          <ion-label class="label-gray" position="stacked" class="mobile-label">
+          <ion-label class="label-gray" position="stacked" >
             Mobile Number <span class="required-asterisk">*</span>
           </ion-label>
           <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
@@ -276,7 +276,7 @@
         </div>
       </div>
       <ion-button type="submit" [disabled]="!fg1.valid || (isCnicRequired && !fg1.get('CNIC').value)"
-        style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;" class="label-gray">
+        style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;" >
         Submit
       </ion-button>
     </form>
