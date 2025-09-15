@@ -47,7 +47,7 @@
     <!-- 1st Step of Add Child -->
     <form [formGroup]="fg1" (ngSubmit)="moveNextStep()">
       <ion-item>
-        <ion-label color="primary" position="floating">
+        <ion-label class="label-gray" position="floating">
           Patient Name <span class="required-asterisk">*</span>
         </ion-label>
         <ion-input type="text" formControlName="Name" required [(ngModel)]="fg1.value.Name" class="ion-text-capitalize">
@@ -62,7 +62,7 @@
         </ng-container>
       </div>
       <ion-item>
-        <ion-label color="primary" position="floating">
+        <ion-label class="label-gray" position="floating">
           Guardian's Name <span class="required-asterisk">*</span>
         </ion-label>
         <ion-input type="text" formControlName="FatherName" required [(ngModel)]="fg1.value.FatherName"
@@ -80,21 +80,21 @@
 
       <!-- Gender -->
       <ion-radio-group formControlName="Gender">
-        <ion-list-header>
+        <ion-list-header class="label-gray">
           Gender <span class="required-asterisk">*</span>
         </ion-list-header>
         <ion-grid>
           <ion-row>
             <ion-col>
               <ion-item>
-                <ion-label color="primary">Male</ion-label>
+                <ion-label class="label-gray">Male</ion-label>
                 <ion-radio slot="start" value="Boy"></ion-radio>
               </ion-item>
             </ion-col>
 
             <ion-col>
               <ion-item>
-                <ion-label color="primary">Female</ion-label>
+                <ion-label class="label-gray">Female</ion-label>
                 <ion-radio slot="start" value="Girl"></ion-radio>
               </ion-item>
             </ion-col>
@@ -102,13 +102,13 @@
         </ion-grid>
       </ion-radio-group>
 
-      <ion-label id="dob" color="primary" position="floating" style="margin-left: 1.5%; margin-bottom: 20px;">
+      <ion-label id="dob" class="label-gray" position="floating" style="margin-left: 1.5%; margin-bottom: 20px;">
         Date of Birth <span class="required-asterisk">*</span>
       </ion-label>
       <input formControlName="DOB" slot="end" matInput [matDatepicker]="picker" disabled max="{{todaydate}}"
         (click)="picker.open()" (dateChange)="checkEpi()">
-      <mat-datepicker-toggle slot="end" matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker slot="end" #picker disabled="false"></mat-datepicker>
+      <mat-datepicker-toggle class="label-gray" slot="end" matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker class="label-gray" slot="end" #picker disabled="false"></mat-datepicker>
 
       <div class="validation-errors" style="margin-bottom: 20px;">
         <ng-container *ngFor="let validation of validation_messages.DOB">
@@ -125,27 +125,27 @@
           <ion-row>
             <ion-col>
               <ion-item>
-                <ion-label color="white">Regular</ion-label>
+                <ion-label  class="label-gray">Regular</ion-label>
                 <ion-radio slot="start" value="regular"></ion-radio>
               </ion-item>
             </ion-col>
 
             <ion-col>
               <ion-item style="height: 100%;">
-                <ion-label color="white">EPI Plus</ion-label>
+                <ion-label  class="label-gray">EPI Plus</ion-label>
                 <ion-radio slot="start" value="IsEPIDone" [disabled]="isRadioDisabled"></ion-radio>
               </ion-item>
             </ion-col>
 
             <ion-col>
               <ion-item style="height: 100%;">
-                <ion-label color="white">Customize</ion-label>
+                <ion-label  class="label-gray">Customize</ion-label>
                 <ion-radio slot="start" value="special"></ion-radio>
               </ion-item>
             </ion-col>
             <ion-col *ngIf="isTravel">
               <ion-item>
-                <ion-label color="white">Travel</ion-label>
+                <ion-label  class="label-gray">Travel</ion-label>
                 <ion-radio slot="start" value="travel"></ion-radio>
               </ion-item>
             </ion-col>
@@ -153,9 +153,20 @@
         </ion-grid>
       </ion-radio-group>
 
-
+      <ion-item *ngIf="type === 'PA'">
+        <div class="country-code-container">
+       <ion-label class="label-gray" position="stacked" class="country-label">
+            Clinics <span class="required-asterisk">*</span>
+          </ion-label>
+        <ion-select formControlName="ClinicId" [(ngModel)]="selectedClinicId" required class="no-indent">
+          <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+            {{ clinic.Name }}
+          </ion-select-option>
+        </ion-select>
+        </div>
+      </ion-item>
       <ion-item>
-        <ion-label color="primary" position="floating">Email</ion-label>
+        <ion-label class="label-gray" position="floating">Email</ion-label>
         <ion-input type="email" formControlName="Email" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
         </ion-input>
       </ion-item>
@@ -169,7 +180,7 @@
       </div>
 
       <ion-item>
-        <ion-label color="primary" position="floating">
+        <ion-label class="label-gray" position="floating">
           CNIC/Passport No. <span *ngIf="isCnicRequired" class="required-asterisk">*</span>
         </ion-label>
         <ion-input type="text" formControlName="CNIC"></ion-input>
@@ -180,7 +191,7 @@
 
       <ion-item>
         <div class="country-code-container">
-          <ion-label color="primary" position="stacked" class="country-label">
+          <ion-label class="label-gray" position="stacked" >
             Country Code <span class="required-asterisk">*</span>
           </ion-label>
           <ion-select formControlName="CountryCode" class="country-code-select">
@@ -188,7 +199,7 @@
               (+{{ country.code }}) {{ country.name }}
             </ion-select-option>
           </ion-select>
-          <ion-label color="primary" position="stacked" class="mobile-label">
+          <ion-label class="label-gray" position="stacked" >
             Mobile Number <span class="required-asterisk">*</span>
           </ion-label>
           <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
@@ -196,7 +207,7 @@
       </ion-item>
 
       <div class="city">
-        <ion-label color="primary" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">
+        <ion-label class="label-gray" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">
           City <span class="required-asterisk">*</span>
         </ion-label>
         <mat-form-field class="example-full-width">
@@ -210,7 +221,7 @@
           </mat-autocomplete>
         </mat-form-field>
         <ion-item>
-          <ion-label color="primary" position="floating">
+          <ion-label class="label-gray" position="floating">
             Add New City
           </ion-label>
           <ion-input type="text" formControlName="City2" required class="ion-text-capitalize"
@@ -230,7 +241,7 @@
       <div *ngIf="isCnicRequired">
         <div class="agent">
           <ion-item>
-            <ion-label color="primary" position="floating">
+            <ion-label class="label-gray" position="floating">
               Nationality <span class="required-asterisk">*</span>
             </ion-label>
             <ion-input type="text" formControlName="Nationality" required class="ion-text-capitalize"></ion-input>
@@ -243,7 +254,7 @@
               </div>
             </ng-container>
           </div>
-          <ion-label color="primary" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">
+          <ion-label class="label-gray" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">
             Agent <span class="required-asterisk">*</span>
           </ion-label>
           <mat-form-field class="example-full-width">
@@ -256,7 +267,7 @@
             </mat-autocomplete>
           </mat-form-field>
           <ion-item>
-            <ion-label color="primary" position="floating">
+            <ion-label class="label-gray" position="floating">
               Add New Agent <span class="required-asterisk">*</span>
             </ion-label>
             <ion-input type="text" formControlName="Agent2" required class="ion-text-capitalize"
@@ -274,7 +285,7 @@
         </div>
       </div>
       <ion-button type="submit" [disabled]="!fg1.valid || (isCnicRequired && !fg1.get('CNIC').value)"
-        style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;" color="primary">
+        style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;" >
         Submit
       </ion-button>
     </form>
