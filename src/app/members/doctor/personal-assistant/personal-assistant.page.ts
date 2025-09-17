@@ -23,6 +23,9 @@ export class PersonalAssistantPage implements OnInit {
   AllowStock: boolean;
   AllowVacation: boolean;
   IsVerified: boolean;
+  clinics: any;
+  selectedClinicId: any;
+  usertype: any;
 
   constructor(
     private paService: PaService,
@@ -33,9 +36,9 @@ export class PersonalAssistantPage implements OnInit {
     public clinicService: ClinicService,
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.fetchPersonalAssistants();
-    this.storage.get(environment.DOCTOR_Id).then((id) => {
+    await this.storage.get(environment.DOCTOR_Id).then((id) => {
       this.doctorId = id;
       console.log('Doctor ID:', this.doctorId);
       if (this.doctorId) {
@@ -44,6 +47,8 @@ export class PersonalAssistantPage implements OnInit {
         this.toastService.create('Doctor ID not found', 'danger');
       }
     });
+    this.usertype = await this.storage.get(environment.USER);
+    await this.loadClinics();
   }
 
   async updatePA(pa: any) {
@@ -120,5 +125,153 @@ console.log("Deleting PA with ID:", Id);
         console.error(err);
       },
     });
+  }
+
+  async loadClinics() {
+    try {
+      const loading = await this.loadingController.create({
+        message: 'Loading clinics...',
+      });
+      await loading.present();
+      if (this.usertype.UserType === 'DOCTOR') {
+        this.clinicService.getClinics(Number(this.doctorId)).subscribe({
+          next: (response) => {
+            loading.dismiss();
+            if (response.IsSuccess) {
+              this.clinics = response.ResponseData;
+              console.log('Clinics:', this.clinics);
+              // Check if there's already an online clinic from storage or API response
+              let onlineClinic = this.clinics.find(clinic => clinic.IsOnline);
+              
+              // If no online clinic found in API response, check storage
+              if (!onlineClinic) {
+                this.storage.get(environment.ON_CLINIC).then(storedOnlineClinic => {
+                  if (storedOnlineClinic) {
+                    onlineClinic = this.clinics.find(clinic => clinic.Id === storedOnlineClinic.Id);
+                    if (onlineClinic) {
+                      this.selectedClinicId = onlineClinic.Id;
+                      this.clinicService.updateClinic(onlineClinic);
+                      console.log('Found online clinic from storage:', onlineClinic.Name);
+                    }
+                  }
+                });
+              }
+              
+              if (onlineClinic) {
+                this.selectedClinicId = onlineClinic.Id;
+                this.clinicService.updateClinic(onlineClinic);
+                console.log('Found online clinic from API:', onlineClinic.Name);
+              } else {
+                this.selectedClinicId = (this.clinics.length > 0 ? this.clinics[0].Id : null);
+                if (this.selectedClinicId) {
+                  this.setOnlineClinic(this.selectedClinicId);
+                }
+              }
+              console.log('Selected Clinic ID:', this.selectedClinicId);
+            } else {
+              this.toastService.create(response.Message, 'danger');
+            }
+          },
+          error: (error) => {
+            loading.dismiss();
+            console.error('Error fetching clinics:', error);
+            this.toastService.create('Failed to load clinics', 'danger');
+          },
+        });
+      } else if (this.usertype.UserType === 'PA') {
+        this.paService.getPaClinics(Number(this.usertype.PAId)).subscribe({
+          next: (response) => {
+            loading.dismiss();
+            if (response.IsSuccess) {
+              this.clinics = response.ResponseData;
+              console.log('PA Clinics:', this.clinics);
+              // Check if there's already an online clinic from storage or API response
+              let onlineClinic = this.clinics.find(clinic => clinic.IsOnline);
+              
+              // If no online clinic found in API response, check storage
+              if (!onlineClinic) {
+                this.storage.get(environment.ON_CLINIC).then(storedOnlineClinic => {
+                  if (storedOnlineClinic) {
+                    onlineClinic = this.clinics.find(clinic => clinic.Id === storedOnlineClinic.Id);
+                    if (onlineClinic) {
+                      this.selectedClinicId = onlineClinic.Id;
+                      this.clinicService.updateClinic(onlineClinic);
+                      console.log('Found online clinic from storage:', onlineClinic.Name);
+                    }
+                  }
+                });
+              }
+              
+              if (onlineClinic) {
+                this.selectedClinicId = onlineClinic.Id;
+                this.clinicService.updateClinic(onlineClinic);
+                console.log('Found online clinic from API:', onlineClinic.Name);
+              } else {
+                this.selectedClinicId = (this.clinics.length > 0 ? this.clinics[0].Id : null);
+                if (this.selectedClinicId) {
+                  this.setOnlineClinic(this.selectedClinicId);
+                }
+              }
+              console.log('Selected PA Clinic ID:', this.selectedClinicId);
+            } else {
+              this.toastService.create(response.Message, 'danger');
+            }
+          },
+          error: (error) => {
+            loading.dismiss();
+            console.error('Error fetching PA clinics:', error);
+            this.toastService.create('Failed to load clinics', 'danger');
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Error in loadClinics:', error);
+      this.toastService.create('An unexpected error occurred', 'danger');
+    }
+  }
+
+  onClinicChange(event: any) {
+    const clinicId = event.detail.value;
+    console.log('Selected Clinic ID:', clinicId);
+    this.selectedClinicId = clinicId;
+    this.setOnlineClinic(clinicId);
+  }
+
+  async setOnlineClinic(clinicId: any) {
+    const loading = await this.loadingController.create({ message: "Setting clinic online..." });
+    await loading.present();
+    
+    let data = { DoctorId: this.doctorId, Id: clinicId, IsOnline: "true" };
+    
+    try {
+      await this.clinicService.changeOnlineClinic(data).subscribe(
+        (res) => {
+          if (res.IsSuccess) {
+            loading.dismiss();
+            // Update local storage
+            this.storage.set(environment.CLINIC_Id, data.Id);
+            this.storage.get(environment.CLINICS).then((clinics) => {
+              const selectedClinic = clinics.find((clinic) => clinic.Id === data.Id);
+              this.storage.set(environment.ON_CLINIC, selectedClinic);
+              this.clinicService.updateClinic(selectedClinic);
+            });
+            this.toastService.create('Clinic set as online successfully', 'success');
+            console.log('Online clinic set to:', clinicId);
+          } else {
+            loading.dismiss();
+            this.toastService.create(res.Message, 'danger');
+          }
+        },
+        (err) => {
+          loading.dismiss();
+          this.toastService.create('Failed to set clinic online', 'danger');
+          console.error('Error setting clinic online:', err);
+        }
+      );
+    } catch (error) {
+      loading.dismiss();
+      this.toastService.create('An error occurred', 'danger');
+      console.error('Error in setOnlineClinic:', error);
+    }
   }
 }

@@ -22,6 +22,8 @@ export class ClinicPage {
   usertype: any;
   selectedClinic: any;
   type: any;
+  clinics: any;
+  selectedClinicId: any;
   constructor(public loadingController: LoadingController, 
     public clinicService: ClinicService,
     private toastService: ToastService, 
@@ -45,6 +47,10 @@ export class ClinicPage {
    this.usertype = await this.storage.get(environment.USER);
    console.log("User Type:", this.usertype.UserType);
    this.type= this.usertype.UserType;
+   
+   // Load clinics for dropdown
+   await this.loadClinicsForDropdown();
+   
     this.route.queryParams.subscribe((params) => {
       if (params.refresh) {
         this.getClinics();
@@ -125,6 +131,61 @@ export class ClinicPage {
           },
         });
       }
+  }
+
+  async loadClinicsForDropdown() {
+    try {
+      if (this.usertype.UserType === 'DOCTOR') {
+        this.clinicService.getClinics(this.doctorId).subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.clinics = response.ResponseData;
+              // Set the currently online clinic as selected
+              const onlineClinic = this.clinics.find(clinic => clinic.IsOnline);
+              this.selectedClinicId = onlineClinic ? onlineClinic.Id : (this.clinics.length > 0 ? this.clinics[0].Id : null);
+              console.log('Dropdown Clinics:', this.clinics);
+              console.log('Selected Clinic ID:', this.selectedClinicId);
+            } else {
+              this.toastService.create(response.Message, 'danger');
+            }
+          },
+          error: (error) => {
+            console.error('Error fetching clinics for dropdown:', error);
+            this.toastService.create('Failed to load clinics', 'danger');
+          },
+        });
+      } else if (this.usertype.UserType === 'PA') {
+        this.paService.getPaClinics(Number(this.usertype.PAId)).subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.clinics = response.ResponseData;
+              // Set the currently online clinic as selected
+              const onlineClinic = this.clinics.find(clinic => clinic.IsOnline);
+              this.selectedClinicId = onlineClinic ? onlineClinic.Id : (this.clinics.length > 0 ? this.clinics[0].Id : null);
+              console.log('PA Dropdown Clinics:', this.clinics);
+              console.log('Selected PA Clinic ID:', this.selectedClinicId);
+            } else {
+              this.toastService.create(response.Message, 'danger');
+            }
+          },
+          error: (error) => {
+            console.error('Error fetching PA clinics for dropdown:', error);
+            this.toastService.create('Failed to load clinics', 'danger');
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Error in loadClinicsForDropdown:', error);
+      this.toastService.create('An unexpected error occurred', 'danger');
+    }
+  }
+
+  onClinicChange(event: any) {
+    const clinicId = event.detail.value;
+    console.log('Selected Clinic ID from dropdown:', clinicId);
+    this.selectedClinicId = clinicId;
+    // Call the existing setOnlineClinic method to update the online status
+    this.setOnlineClinic(clinicId);
   }
 
   async setOnlineClinic(clinicId) {

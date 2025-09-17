@@ -1,4 +1,14 @@
 <ion-header>
+  <ion-toolbar>
+     <ion-item>
+    <ion-label position="floating">Select Clinic</ion-label>
+    <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)">
+      <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+        {{ clinic.Name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+</ion-toolbar> 
   <ion-toolbar color="primary">
     <ion-title
       class="ion-text-center"
@@ -42,15 +52,6 @@
       <ion-button *ngIf="search" (click)="getChlidByClinic(true)">clear</ion-button>
     </ion-item>
   </form>
-<!-- Show clinic selector for PA users -->
-<ion-item *ngIf="type === 'PA'">
-  <ion-label color="primary">Select Clinic</ion-label>
-  <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange()">
-    <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
-      {{ clinic.Name }}
-    </ion-select-option>
-  </ion-select>
-</ion-item>
 
   <ion-card *ngFor="let child of childs" [ngClass]="child.Gender=='Girl' ? 'girl' : 'boy'">
     <div class="icons" style="display: flex; justify-content: space-between; align-items: center;">

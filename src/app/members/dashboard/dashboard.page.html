@@ -1,5 +1,15 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar>
+     <ion-item>
+    <ion-label position="floating"></ion-label>
+    <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)">
+      <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+        {{ clinic.Name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+</ion-toolbar> 
+  <!-- <ion-toolbar color="primary">
     <ion-title
       class="ion-text-center"
       style="cursor: pointer"
@@ -8,7 +18,7 @@
       {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name :
       'Dashboard' }}
     </ion-title>
-  </ion-toolbar>
+  </ion-toolbar> -->
   <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px">
       <ion-icon
