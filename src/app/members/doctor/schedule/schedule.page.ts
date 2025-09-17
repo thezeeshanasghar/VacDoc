@@ -273,7 +273,7 @@ export class SchedulePage implements OnInit {
   }
 
   async setOnlineClinic(clinicId: any) {
-    const loading = await this.loadingController.create({ message: "Setting clinic online..." });
+    const loading = await this.loadingcontroller.create({ message: "Setting clinic online..." });
     await loading.present();
     
     let data = { DoctorId: this.doctorId, Id: clinicId, IsOnline: "true" };
