@@ -55,18 +55,18 @@ export class DashboardPage implements OnInit {
     });
     this.usertype = await this.storage.get(environment.USER);
 
-    const loading = await this.loadingController.create({ message: "Loading ..." });
-    await loading.present();
+    // const loading = await this.loadingController.create({ message: "Loading ..." });
+    // await loading.present();
 
-    try {
-      await this.getCombinedDashboardData();
-      await this.loadClinics();
-    } catch (error) {
-      console.error("Error while loading dashboard data:", error);
-      this.toastService.create("Error loading dashboard data", "danger");
-    } finally {
-      loading.dismiss();
-    }
+   await this.loadClinics();
+    // try {
+    //   await this.getCombinedDashboardData();
+    // } catch (error) {
+    //   console.error("Error while loading dashboard data:", error);
+    //   this.toastService.create("Error loading dashboard data", "danger");
+    // } finally {
+    //   loading.dismiss();
+    // }
 
     await this.storage.get(environment.ON_CLINIC).then(clinic => {
       this.clinic = clinic;
@@ -93,19 +93,20 @@ export class DashboardPage implements OnInit {
 
   async loadClinics() {
     try {
+       const loading = await this.loadingController.create({
+        message: 'Loading clinics...',
+      });
+      await loading.present();
       if (this.usertype.UserType === 'DOCTOR') {
         this.clinicService.getClinics(this.doctorId).subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+               loading.dismiss();
               this.clinics = response.ResponseData;
-              this.Clinics = response.ResponseData; // Keep for backward compatibility
+              this.Clinics = response.ResponseData; 
               this.clinicCount = this.clinics.length;
               this.clinicsExist = this.clinicCount > 0;
-              
-              // Check if there's already an online clinic from storage or API response
               let onlineClinic = this.clinics.find(clinic => clinic.IsOnline);
-              
-              // If no online clinic found in API response, check storage
               if (!onlineClinic) {
                 this.storage.get(environment.ON_CLINIC).then(storedOnlineClinic => {
                   if (storedOnlineClinic) {
@@ -138,9 +139,11 @@ export class DashboardPage implements OnInit {
             } else {
               this.clinicsExist = false;
               this.toastService.create(response.Message, 'danger');
+               loading.dismiss();
             }
           },
           error: (error) => {
+             loading.dismiss();
             this.clinicsExist = false;
             console.error('Error fetching clinics:', error);
             this.toastService.create('Failed to load clinics', 'danger');
@@ -150,15 +153,12 @@ export class DashboardPage implements OnInit {
         this.paService.getPaClinics(Number(this.usertype.PAId)).subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+               loading.dismiss();
               this.clinics = response.ResponseData;
-              this.Clinics = response.ResponseData; // Keep for backward compatibility
+              this.Clinics = response.ResponseData; 
               this.clinicCount = this.clinics.length;
               this.clinicsExist = this.clinicCount > 0;
-              
-              // Check if there's already an online clinic from storage or API response
               let onlineClinic = this.clinics.find(clinic => clinic.IsOnline);
-              
-              // If no online clinic found in API response, check storage
               if (!onlineClinic) {
                 this.storage.get(environment.ON_CLINIC).then(storedOnlineClinic => {
                   if (storedOnlineClinic) {
@@ -186,11 +186,13 @@ export class DashboardPage implements OnInit {
               console.log('Selected PA Clinic ID:', this.selectedClinicId);
               this.storage.set(environment.CLINICS, this.clinics);
             } else {
+               loading.dismiss();
               this.clinicsExist = false;
               this.toastService.create(response.Message, 'danger');
             }
           },
           error: (error) => {
+             loading.dismiss();
             this.clinicsExist = false;
             console.error('Error fetching PA clinics:', error);
             this.toastService.create('Failed to load clinics', 'danger');
@@ -239,32 +241,32 @@ export class DashboardPage implements OnInit {
     });
   }
 
-  async getCombinedDashboardData() {
-    debugger
-    return new Promise<void>((resolve, reject) => {
-      this.dashboardService.getCombinedDashboardData(this.doctorId).subscribe(
-        res => {
-          if (res) {
-            debugger
-            this.Children = res.CurrentMonthChildCount;
-            this.totalChildCount = res.TotalChildCount;
-            this.totalAlertsCount = res.TotalAlertsCount;
-            this.futureAlertsCount = res.FutureAlertsCount;
-            this.currentMonthGivenDosesCount = res.GivenDosesCount;
-            this.totalRevenue = res.TotalRevenue;
-            resolve();
-          } else {
-            this.toastService.create("Failed to fetch combined dashboard data", "danger");
-            reject("Unexpected response format");
-          }
-        },
-        err => {
-          this.toastService.create("Error fetching combined dashboard data", "danger");
-          reject(err);
-        }
-      );
-    });
-  }
+  // async getCombinedDashboardData() {
+  //   debugger
+  //   return new Promise<void>((resolve, reject) => {
+  //     this.dashboardService.getCombinedDashboardData(this.doctorId).subscribe(
+  //       res => {
+  //         if (res) {
+  //           debugger
+  //           this.Children = res.CurrentMonthChildCount;
+  //           this.totalChildCount = res.TotalChildCount;
+  //           this.totalAlertsCount = res.TotalAlertsCount;
+  //           this.futureAlertsCount = res.FutureAlertsCount;
+  //           this.currentMonthGivenDosesCount = res.GivenDosesCount;
+  //           this.totalRevenue = res.TotalRevenue;
+  //           resolve();
+  //         } else {
+  //           this.toastService.create("Failed to fetch combined dashboard data", "danger");
+  //           reject("Unexpected response format");
+  //         }
+  //       },
+  //       err => {
+  //         this.toastService.create("Error fetching combined dashboard data", "danger");
+  //         reject(err);
+  //       }
+  //     );
+  //   });
+  // }
 
   onClinicChange(event: any) {
     const clinicId = event.detail.value;
@@ -284,7 +286,6 @@ export class DashboardPage implements OnInit {
         (res) => {
           if (res.IsSuccess) {
             loading.dismiss();
-            // Update local storage
             this.storage.set(environment.CLINIC_Id, data.Id);
             this.storage.get(environment.CLINICS).then((clinics) => {
               const selectedClinic = clinics.find((clinic) => clinic.Id === data.Id);
