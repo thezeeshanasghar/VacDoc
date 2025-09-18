@@ -49,6 +49,7 @@
     "cordova-plugin-geolocation": "^4.0.2",
     "cordova-sms-plugin": "^1.0.0",
     "core-js": "^2.5.4",
+    "flag-icons": "^7.5.0",
     "integrator-cordova-plugin-downloader": "^1.1.0",
     "moment": "^2.30.1",
     "rxjs": "~6.5.1",
