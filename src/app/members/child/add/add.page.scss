@@ -12,9 +12,9 @@ input {
   margin-left: 7%;
   width: 40%;
 }
-#dob{
-  margin-left: 5%;
-}
+// #dob{
+//   margin-left: 5%;
+// }
 // ion-list-header{
 //   color: #3880ff;
 // }
@@ -97,4 +97,54 @@ ion-label {
 .label-gray svg {
   color: gray !important;
   fill: gray !important;
+}
+.custom-input-item {
+  --background: #fff;
+  --border-radius: 8px;
+  --border-color: #ddd;
+  --border-width: 1px;
+  --highlight-height: 0; // remove default ionic highlight line
+  // border: 1px solid #ddd;
+  // border-radius: 8px;
+  margin: 8px 0;
+  padding: 4px 8px;
+   width: 100%;
+}
+
+.custom-input {
+  font-size: 14px;
+  color: #333;
+  --padding-start: 10px;
+}
+
+.custom-input::placeholder {
+  color: #aaa;
+  font-size: 14px;
+}
+.custom-date-field {
+  width: 100%;
+  margin-bottom: 16px;
+
+  .mat-form-field-outline {
+    border-radius: 8px; // rounded edges like your screenshot
+  }
+
+  input {
+    font-size: 14px;
+    color: #333;
+  }
+
+  .mat-placeholder-required {
+    color: red;
+  }
+}
+.fi {
+  display: inline-block !important;
+  width: 1.5em !important;
+  height: 1em !important;
+  background-size: contain !important;
+  background-position: 50% 50% !important;
+  background-repeat: no-repeat !important;
+  vertical-align: middle !important;
+  margin-right: 0.5em;
 }

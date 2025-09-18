@@ -1,43 +1,29 @@
 <ion-header>
   <ion-toolbar>
-     <ion-item>
-    <ion-label position="floating">Select Clinic</ion-label>
-    <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)">
-      <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
-        {{ clinic.Name }}
-      </ion-select-option>
-    </ion-select>
-  </ion-item>
-</ion-toolbar> 
-  <ion-toolbar color="primary">
-    <ion-title
-      class="ion-text-center"
-      style="cursor: pointer"
-      routerLink="/members/doctor/clinic"
-    >
+    <ion-item>
+      <ion-label position="floating">Select Clinic</ion-label>
+      <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)">
+        <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+          {{ clinic.Name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-toolbar>
+  <!-- <ion-toolbar color="primary">
+    <ion-title class="ion-text-center" style="cursor: pointer" routerLink="/members/doctor/clinic">
       {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name :'Add Patient' }}
     </ion-title>
-  </ion-toolbar>
+  </ion-toolbar> -->
   <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px">
-      <ion-icon
-        style="margin-left: 10%; cursor: pointer"
-        routerLink="/members/child/add"
-        name="person-add"
-        size="large"
-      >
+      <ion-icon style="margin-left: 10%; cursor: pointer" routerLink="/members/child/add" name="person-add"
+        size="large">
       </ion-icon>
-      <ion-icon
-        style="margin-left: 10%; cursor: pointer"
-        routerLink="/members/alert"
-        name="alert"
-        size="large"
-      >
+      <ion-icon style="margin-left: 10%; cursor: pointer" routerLink="/members/alert" name="alert" size="large">
       </ion-icon>
-       <ion-icon style="margin-left: 10%;cursor: pointer;" routerLink="/members/child" name="accessibility-outline" size="large"> </ion-icon>
-      <ion-menu-button
-        style="margin-left: 10%; cursor: pointer"
-      ></ion-menu-button>
+      <ion-icon style="margin-left: 10%;cursor: pointer;" routerLink="/members/child" name="accessibility-outline"
+        size="large"> </ion-icon>
+      <ion-menu-button style="margin-left: 10%; cursor: pointer"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -46,13 +32,18 @@
   <ion-card>
     <!-- 1st Step of Add Child -->
     <form [formGroup]="fg1" (ngSubmit)="moveNextStep()">
-      <ion-item>
+      <ion-item lines="none" class="custom-input-item">
+        <ion-input type="text" formControlName="Name" required placeholder="Name of patient *"
+          [(ngModel)]="fg1.value.Name" class="custom-input ion-text-capitalize">
+        </ion-input>
+      </ion-item>
+      <!-- <ion-item>
         <ion-label class="label-gray" position="floating">
           Patient Name <span class="required-asterisk">*</span>
         </ion-label>
         <ion-input type="text" formControlName="Name" required [(ngModel)]="fg1.value.Name" class="ion-text-capitalize">
         </ion-input>
-      </ion-item>
+      </ion-item> -->
       <div class="validation-errors">
         <ng-container *ngFor="let validation of validation_messages.name">
           <div class="error-message"
@@ -61,12 +52,12 @@
           </div>
         </ng-container>
       </div>
-      <ion-item>
-        <ion-label class="label-gray" position="floating">
+      <ion-item lines="none" class="custom-input-item">
+        <!-- <ion-label class="label-gray" position="floating">
           Guardian's Name <span class="required-asterisk">*</span>
-        </ion-label>
-        <ion-input type="text" formControlName="FatherName" required [(ngModel)]="fg1.value.FatherName"
-          class="ion-text-capitalize">
+        </ion-label> -->
+        <ion-input type="text" formControlName="FatherName" required placeholder="Guardian's Name *" required
+          [(ngModel)]="fg1.value.FatherName" class="ion-text-capitalize custom-input">
         </ion-input>
       </ion-item>
       <div class="validation-errors">
@@ -101,51 +92,52 @@
           </ion-row>
         </ion-grid>
       </ion-radio-group>
-
-      <ion-label id="dob" class="label-gray" position="floating" style="margin-left: 1.5%; margin-bottom: 20px;">
-        Date of Birth <span class="required-asterisk">*</span>
-      </ion-label>
-      <input formControlName="DOB" slot="end" matInput [matDatepicker]="picker" disabled max="{{todaydate}}"
-        (click)="picker.open()" (dateChange)="checkEpi()">
-      <mat-datepicker-toggle class="label-gray" slot="end" matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker class="label-gray" slot="end" #picker disabled="false"></mat-datepicker>
-
-      <div class="validation-errors" style="margin-bottom: 20px;">
-        <ng-container *ngFor="let validation of validation_messages.DOB">
-          <div class="error-message"
-            *ngIf="fg1.get('DOB').hasError(validation.type) && (fg1.get('DOB').dirty || fg1.get('DOB').touched)">
-            <ion-icon name="information-circle-outline" style="color: rgb(255, 0, 0); margin-bottom: -2px;"></ion-icon>
-            {{ validation.message }}
-          </div>
-        </ng-container>
-      </div>
+      <ion-item>
+        <mat-form-field appearance="outline" class="custom-input-item" (click)="picker.open()">
+          <!-- <mat-label>Date of Birth <span class="required-asterisk">*</span></mat-label> -->
+          <input matInput formControlName="DOB" [matDatepicker]="picker" placeholder="Date of Birth *" [max]="todaydate"
+            (dateChange)="checkEpi()" class="custom-input" />
+          <!-- <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle> -->
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <div class="validation-errors" style="margin-bottom: 20px;">
+          <ng-container *ngFor="let validation of validation_messages.DOB">
+            <div class="error-message"
+              *ngIf="fg1.get('DOB').hasError(validation.type) && (fg1.get('DOB').dirty || fg1.get('DOB').touched)">
+              <ion-icon name="information-circle-outline"
+                style="color: rgb(255, 0, 0); margin-bottom: -2px;"></ion-icon>
+              {{ validation.message }}
+            </div>
+          </ng-container>
+        </div>
+      </ion-item>
 
       <ion-radio-group formControlName="Type" (ionChange)="onTravelChange($event)">
         <ion-grid>
           <ion-row>
             <ion-col>
               <ion-item>
-                <ion-label  class="label-gray">Regular</ion-label>
+                <ion-label class="label-gray">Regular</ion-label>
                 <ion-radio slot="start" value="regular"></ion-radio>
               </ion-item>
             </ion-col>
 
             <ion-col>
               <ion-item style="height: 100%;">
-                <ion-label  class="label-gray">EPI Plus</ion-label>
+                <ion-label class="label-gray">EPI Plus</ion-label>
                 <ion-radio slot="start" value="IsEPIDone" [disabled]="isRadioDisabled"></ion-radio>
               </ion-item>
             </ion-col>
 
             <ion-col>
               <ion-item style="height: 100%;">
-                <ion-label  class="label-gray">Customize</ion-label>
+                <ion-label class="label-gray">Customize</ion-label>
                 <ion-radio slot="start" value="special"></ion-radio>
               </ion-item>
             </ion-col>
             <ion-col *ngIf="isTravel">
               <ion-item>
-                <ion-label  class="label-gray">Travel</ion-label>
+                <ion-label class="label-gray">Travel</ion-label>
                 <ion-radio slot="start" value="travel"></ion-radio>
               </ion-item>
             </ion-col>
@@ -155,19 +147,20 @@
 
       <ion-item *ngIf="type === 'PA'">
         <div class="country-code-container">
-       <ion-label class="label-gray" position="stacked" class="country-label">
+          <ion-label class="label-gray" position="stacked" class="country-label">
             Clinics <span class="required-asterisk">*</span>
           </ion-label>
-        <ion-select formControlName="ClinicId" [(ngModel)]="selectedClinicId" required class="no-indent">
-          <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
-            {{ clinic.Name }}
-          </ion-select-option>
-        </ion-select>
+          <ion-select formControlName="ClinicId" [(ngModel)]="selectedClinicId" required class="no-indent">
+            <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+              {{ clinic.Name }}
+            </ion-select-option>
+          </ion-select>
         </div>
       </ion-item>
-      <ion-item>
-        <ion-label class="label-gray" position="floating">Email</ion-label>
-        <ion-input type="email" formControlName="Email" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
+      <ion-item lines="none" class="custom-input-item">
+        <!-- <ion-label class="label-gray" position="floating">Email</ion-label> -->
+        <ion-input type="email" formControlName="Email" placeholder="Email" class="ion-text-capitalize custom-input"
+          pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
         </ion-input>
       </ion-item>
       <div class="validation-errors">
@@ -179,56 +172,66 @@
         </ng-container>
       </div>
 
-      <ion-item>
-        <ion-label class="label-gray" position="floating">
-          CNIC/Passport No. <span *ngIf="isCnicRequired" class="required-asterisk">*</span>
-        </ion-label>
-        <ion-input type="text" formControlName="CNIC"></ion-input>
+      <ion-item lines="none" class="custom-input-item">
+        <!-- <ion-label class="label-gray" position="floating">
+          CNIC/Passport No. <span *ngIf="isCnicRequired" class="required-asterisk ion-text-capitalize custom-input">*</span>
+        </ion-label> -->
+        <ion-input type="text" formControlName="CNIC" placeholder="CNIC/Passport No."
+          class="ion-text-capitalize custom-input"></ion-input>
       </ion-item>
       <div *ngIf="isCnicRequired && fg1.get('CNIC').hasError('required')" style="color: red;">
         CNIC number is required when traveling.
       </div>
 
-      <ion-item>
+      <ion-item appearance="outline" class="custom-input-item">
         <div class="country-code-container">
-          <ion-label class="label-gray" position="stacked" >
+          <!-- <ion-label class="label-gray" position="stacked" >
             Country Code <span class="required-asterisk">*</span>
-          </ion-label>
-          <ion-select formControlName="CountryCode" class="country-code-select">
-            <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
-              (+{{ country.code }}) {{ country.name }}
-            </ion-select-option>
-          </ion-select>
-          <ion-label class="label-gray" position="stacked" >
+          </ion-label> -->
+          <ion-item class="custom-input-item">
+            <span class="fi fi-{{ getFlagCode(fg1.get('CountryCode').value) }}"></span>
+            <ion-select formControlName="CountryCode" class="country-code-select">
+              <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
+                {{ country.name }} (+{{ country.code }})
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+          <!-- </ion-item>
+          <ion-item lines="none" class="number-input-item"> -->
+          <!-- <ion-label class="label-gray" position="stacked" >
             Mobile Number <span class="required-asterisk">*</span>
-          </ion-label>
-          <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
+          </ion-label> -->
+          <div class="custom-input-item">
+            <ion-input type="text" placeholder="Mobile Number" required formControlName="MobileNumber"
+              class="number-input ion-text-capitalize custom-input"></ion-input>
+          </div>
         </div>
       </ion-item>
 
       <div class="city">
-        <ion-label class="label-gray" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">
+        <!-- <ion-label class="label-gray" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">
           City <span class="required-asterisk">*</span>
-        </ion-label>
-        <mat-form-field class="example-full-width">
-          <input type="text" aria-label="Number" matInput formControlName="city" [matAutocomplete]="auto"
-            (ngModelChange)="filter($event)" style="font-size: 15px;" (ionChange)="onCityChange()"
-            [disabled]="fg1.get('City2')?.value !== ''">
+        </ion-label> -->
+        <mat-form-field appearance="outline" class="example-full-width custom-input-item">
+          <input type="text" aria-label="Number" matInput placeholder="City" formControlName="city"
+            [matAutocomplete]="auto" (ngModelChange)="filter($event)" style="font-size: 15px;"
+            (ionChange)="onCityChange()" [disabled]="fg1.get('City2')?.value !== ''">
           <mat-autocomplete #auto="matAutocomplete" class="no-indent">
             <mat-option *ngFor="let option of cities" [value]="option">
               {{option}}
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
-        <ion-item>
-          <ion-label class="label-gray" position="floating">
+        <ion-item appearance="outline" class="custom-input-item">
+          <!-- <ion-label class="label-gray" position="floating">
             Add New City
-          </ion-label>
-          <ion-input type="text" formControlName="City2" required class="ion-text-capitalize"
-            [(ngModel)]="fg1.value.City2" [disabled]="fg1.get('city')?.value !== ''" (ionChange)="onCityChange()">
+          </ion-label> -->
+          <ion-input type="text" formControlName="City2" required class="ion-text-capitalize custom-input"
+            placeholder="Add New City" [(ngModel)]="fg1.value.City2" [disabled]="fg1.get('city')?.value !== ''"
+            (ionChange)="onCityChange()">
           </ion-input>
-        </ion-item> 
-         <div class="validation-errors">
+        </ion-item>
+        <div class="validation-errors">
           <ng-container *ngFor="let validation of validation_messages.City2">
             <div class="error-message"
               *ngIf="fg1.get('City2')?.hasError(validation.type) && (fg1.get('City2')?.dirty || fg1.get('City2')?.touched)">
@@ -240,11 +243,12 @@
 
       <div *ngIf="isCnicRequired">
         <div class="agent">
-          <ion-item>
-            <ion-label class="label-gray" position="floating">
+          <ion-item appearance="outline" class="custom-input-item">
+            <!-- <ion-label class="label-gray" position="floating">
               Nationality <span class="required-asterisk">*</span>
-            </ion-label>
-            <ion-input type="text" formControlName="Nationality" required class="ion-text-capitalize"></ion-input>
+            </ion-label> -->
+            <ion-input type="text" formControlName="Nationality" placeholder="Nationality" required
+              class="ion-text-capitalize custom-input"></ion-input>
           </ion-item>
           <div class="validation-errors">
             <ng-container *ngFor="let validation of validation_messages.nationality">
@@ -254,24 +258,25 @@
               </div>
             </ng-container>
           </div>
-          <ion-label class="label-gray" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">
+          <!-- <ion-label class="label-gray" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">
             Agent <span class="required-asterisk">*</span>
-          </ion-label>
-          <mat-form-field class="example-full-width">
-            <input type="text" aria-label="Number" matInput formControlName="agent" [matAutocomplete]="auto"
-              (input)="filterAgents($event.target.value)" style="font-size: 15px;">
+          </ion-label> -->
+          <mat-form-field appearance="outline" class="example-full-width custom-input-item">
+            <input type="text" aria-label="Number" placeholder="Agent" matInput formControlName="agent"
+              [matAutocomplete]="auto" (input)="filterAgents($event.target.value)" style="font-size: 15px;">
             <mat-autocomplete #auto="matAutocomplete" class="no-indent">
               <mat-option *ngFor="let option of agents" [value]="option">
                 {{option}}
               </mat-option>
             </mat-autocomplete>
           </mat-form-field>
-          <ion-item>
-            <ion-label class="label-gray" position="floating">
+          <ion-item appearance="outline" class="custom-input-item">
+            <!-- <ion-label class="label-gray" position="floating">
               Add New Agent <span class="required-asterisk">*</span>
-            </ion-label>
-            <ion-input type="text" formControlName="Agent2" required class="ion-text-capitalize"
-              [(ngModel)]="fg1.value.Agent2" [disabled]="fg1.get('agent')?.value !== ''" (ionChange)="onAgentChange()">
+            </ion-label> -->
+            <ion-input type="text" formControlName="Agent2" required class="ion-text-capitalize custom-input"
+              placeholder="Add New Agent" [(ngModel)]="fg1.value.Agent2" [disabled]="fg1.get('agent')?.value !== ''"
+              (ionChange)="onAgentChange()">
             </ion-input>
           </ion-item>
           <div class="validation-errors">
@@ -285,7 +290,7 @@
         </div>
       </div>
       <ion-button type="submit" [disabled]="!fg1.valid || (isCnicRequired && !fg1.get('CNIC').value)"
-        style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;" >
+        style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;">
         Submit
       </ion-button>
     </form>
