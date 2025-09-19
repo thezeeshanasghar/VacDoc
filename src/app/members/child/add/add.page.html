@@ -1,8 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-item>
-      <ion-label position="floating">Select Clinic</ion-label>
-      <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)">
+      <ion-label position="floating"></ion-label>
+      <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)" class="clinic-select"
+      >
         <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
           {{ clinic.Name }}
         </ion-select-option>
@@ -214,7 +215,7 @@
         </ion-label> -->
         <mat-form-field appearance="outline" class="example-full-width custom-input-item">
           <input type="text" aria-label="Number" matInput placeholder="City" formControlName="city"
-            [matAutocomplete]="auto" (ngModelChange)="filter($event)" style="font-size: 15px;"
+            [matAutocomplete]="auto" (ngModelChange)="filter($event)" style="font-size: 15px;" class="custom-input"
             (ionChange)="onCityChange()" [disabled]="fg1.get('City2')?.value !== ''">
           <mat-autocomplete #auto="matAutocomplete" class="no-indent">
             <mat-option *ngFor="let option of cities" [value]="option">

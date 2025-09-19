@@ -99,13 +99,14 @@ ion-label {
   fill: gray !important;
 }
 .custom-input-item {
-  --background: #fff;
+  // --background: #fff;
   --border-radius: 8px;
   --border-color: #ddd;
   --border-width: 1px;
   --highlight-height: 0; // remove default ionic highlight line
   // border: 1px solid #ddd;
   // border-radius: 8px;
+  color: #ddd;
   margin: 8px 0;
   padding: 4px 8px;
    width: 100%;
@@ -113,12 +114,13 @@ ion-label {
 
 .custom-input {
   font-size: 14px;
-  color: #333;
+  color: gray !important;
   --padding-start: 10px;
+    --border-color: #ddd;
 }
 
 .custom-input::placeholder {
-  color: #aaa;
+  color: gray !important;
   font-size: 14px;
 }
 .custom-date-field {
@@ -148,3 +150,9 @@ ion-label {
   vertical-align: middle !important;
   margin-right: 0.5em;
 }
+.clinic-select {
+  text-align: center;
+  justify-content: center;
+  // width: 100%;
+}
+
