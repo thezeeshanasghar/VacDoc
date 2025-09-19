@@ -127,4 +127,9 @@ ion-list-header{
   color: red;
   margin-left: 2px; 
 }
+.clinic-select::part(text) {
+  text-align: center;
+  justify-content: center;
+  width: 100%;
+}
 
