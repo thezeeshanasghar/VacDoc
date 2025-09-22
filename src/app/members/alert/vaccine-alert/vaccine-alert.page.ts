@@ -51,7 +51,7 @@ export class VaccineAlertPage implements OnInit {
     private downloader: Downloader,
     public platform: Platform,
     private vaccineService: VaccineService,
-    private clinicService: ClinicService,
+    public clinicService: ClinicService,
     private paService: PaService
   ) {}
 
