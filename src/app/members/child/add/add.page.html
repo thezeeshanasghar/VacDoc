@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <!-- <ion-toolbar>
     <ion-item>
       <ion-label position="floating"></ion-label>
       <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)" class="clinic-select"
@@ -9,12 +9,12 @@
         </ion-select-option>
       </ion-select>
     </ion-item>
-  </ion-toolbar>
-  <!-- <ion-toolbar color="primary">
+  </ion-toolbar> -->
+  <ion-toolbar color="primary">
     <ion-title class="ion-text-center" style="cursor: pointer" routerLink="/members/doctor/clinic">
       {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name :'Add Patient' }}
     </ion-title>
-  </ion-toolbar> -->
+  </ion-toolbar>
   <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px">
       <ion-icon style="margin-left: 10%; cursor: pointer" routerLink="/members/child/add" name="person-add"
