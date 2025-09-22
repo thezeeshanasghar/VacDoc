@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <!-- <ion-toolbar>
      <ion-item>
     <ion-label position="floating"></ion-label>
     <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)"  class="clinic-select">
@@ -8,7 +8,15 @@
       </ion-select-option>
     </ion-select>
   </ion-item>
-</ion-toolbar> 
+</ion-toolbar>  -->
+  <ion-toolbar color="primary">
+<ion-title 
+  *ngIf="clinicService.OnlineClinic.Name" 
+  routerLink="/members/doctor/clinic" 
+  style="cursor: pointer; text-align: center; width: 100%;">
+  {{clinicService.OnlineClinic.Name}}
+</ion-title>
+  </ion-toolbar>
   <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
             <ion-icon
@@ -44,7 +52,7 @@
       </ion-item>
     </ion-buttons>
   </ion-toolbar>
-  <!-- <ion-toolbar>
+  <ion-toolbar>
      <ion-item>
     <ion-label position="floating">Select Clinic</ion-label>
     <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)">
@@ -53,7 +61,7 @@
       </ion-select-option>
     </ion-select>
   </ion-item>
-  </ion-toolbar> -->
+  </ion-toolbar>
   <h1 *ngIf="Childs == 0" style="color: red;">No alert found</h1>
   <ion-grid>
     <ion-row>
