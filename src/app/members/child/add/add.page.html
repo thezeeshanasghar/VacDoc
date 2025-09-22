@@ -160,7 +160,7 @@
       </ion-item>
       <ion-item lines="none" class="custom-input-item">
         <!-- <ion-label class="label-gray" position="floating">Email</ion-label> -->
-        <ion-input type="email" formControlName="Email" placeholder="Email" class="ion-text-capitalize custom-input"
+        <ion-input type="email" formControlName="Email" placeholder="Email" class="custom-input"
           pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
         </ion-input>
       </ion-item>
@@ -204,7 +204,20 @@
           </ion-label> -->
           <div class="custom-input-item">
             <ion-input type="text" placeholder="Mobile Number" required formControlName="MobileNumber"
-              class="number-input ion-text-capitalize custom-input"></ion-input>
+              class="number-input ion-text-capitalize custom-input" inputmode="numeric" (ionInput)="removeSpaces($event)">
+            </ion-input>
+            <div class="validation-errors">
+              <div class="error-message"
+                *ngIf="fg1.get('MobileNumber').hasError('pattern') && (fg1.get('MobileNumber').dirty || fg1.get('MobileNumber').touched)">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                Mobile number must not contain spaces and must not start with 0.
+              </div>
+              <div class="error-message"
+                *ngIf="fg1.get('MobileNumber').hasError('required') && (fg1.get('MobileNumber').dirty || fg1.get('MobileNumber').touched)">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                Mobile number is required.
+              </div>
+            </div>
           </div>
         </div>
       </ion-item>

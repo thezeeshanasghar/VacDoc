@@ -98,7 +98,7 @@ export class AddPage implements OnInit {
       console.log('User Type:', this.usertype.UserType);
       this.type = this.usertype.UserType;
       // Load clinics for both DOCTOR and PA users
-      await this.loadClinics();
+      // await this.loadClinics();
     } else {
       console.error('No user data found in storage.');
     }
@@ -233,45 +233,51 @@ export class AddPage implements OnInit {
     this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format("YYYY-MM-DD");
     this.fg1 = this.formBuilder.group({
       ClinicId: [""],
-      Name: ['', Validators.compose([
-        Validators.required,
-        Validators.pattern(/^[^\d]+$/)
-      ])],
+      Name: [
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.pattern(/^[^\d]+$/),
+        ]),
+      ],
       Guardian: ["Guardian", Validators.required],
-      FatherName: new FormControl("", Validators.compose([
-        Validators.required,
-        Validators.pattern(/^[^\d]+$/)
-      ])),
+      FatherName: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.pattern(/^[^\d]+$/),
+        ])
+      ),
       Email: new FormControl(""),
-      DOB: new FormControl('', Validators.required),
+      DOB: new FormControl("", Validators.required),
       CountryCode: ["92", Validators.required],
       MobileNumber: new FormControl(
         "",
         Validators.compose([
           Validators.required,
-          Validators.pattern("^[0-9]+$")
+          Validators.pattern("^[1-9][0-9]*$"), // Updated pattern
         ])
       ),
-      city: ['', Validators.compose([
-        Validators.required
-      ])],
-      City2: [{ value: '', disabled: true }, Validators.compose([
-        Validators.required
-      ])],
-      Agent2: [{ value: '', disabled: true }, Validators.compose([])],
+      city: ["", Validators.compose([Validators.required])],
+      City2: [
+        { value: "", disabled: true },
+        Validators.compose([Validators.required]),
+      ],
+      Agent2: [{ value: "", disabled: true }, Validators.compose([])],
       Gender: [null, Validators.required],
       Type: [null, Validators.required],
-      agent: [''],
+      agent: [""],
       travel: [false],
-      CNIC: [''],
+      CNIC: [""],
       IsEPIDone: [false],
       IsSkip: [true],
       IsVerified: [false],
       Password: [null],
       ChildVaccines: [null],
-      Nationality: ['', Validators.compose([
-        Validators.pattern(/^[a-zA-Z\s]+$/)
-      ])],
+      Nationality: [
+        "",
+        Validators.compose([Validators.pattern(/^[a-zA-Z\s]+$/)]),
+      ],
     });
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
@@ -560,7 +566,11 @@ getFlagCode(code: string): string {
   const found = this.countryCodes.find(c => c.code === code);
   return found ? found.flag : 'pk';
 }
-
+removeSpaces(event: any) {
+  const input = event.target as HTMLInputElement;
+  input.value = input.value.replace(/\s/g, '');
+  this.fg1.get('MobileNumber').setValue(input.value);
+}
   // countryCodes = [
   //   { name: 'Afghanistan', code: '93' },
   //   { name: 'Albania', code: '355' },
