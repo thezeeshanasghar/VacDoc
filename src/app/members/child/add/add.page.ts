@@ -138,7 +138,7 @@ export class AddPage implements OnInit {
     }
   }
 
-  async loadClinics() {
+   async loadClinics() {
     const loading = await this.loadingController.create({
       message: "Loading clinics...",
     });
