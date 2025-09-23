@@ -98,7 +98,7 @@ export class AddPage implements OnInit {
       console.log('User Type:', this.usertype.UserType);
       this.type = this.usertype.UserType;
       // Load clinics for both DOCTOR and PA users
-      // await this.loadClinics();
+      await this.loadClinics();
     } else {
       console.error('No user data found in storage.');
     }
@@ -138,77 +138,21 @@ export class AddPage implements OnInit {
     }
   }
 
-  async loadClinics() {
+   async loadClinics() {
     const loading = await this.loadingController.create({
       message: 'Loading clinics...',
     });
     await loading.present();
-
+console.log('User Type:', this.usertype.UserType);
     try {
-      if (this.usertype.UserType === 'DOCTOR') {
-        this.clinicService.getClinics(Number(this.doctorId)).subscribe({
-          next: (response) => {
-            loading.dismiss();
-            if (response.IsSuccess) {
-              this.clinics = response.ResponseData;
-              // Check if there's already an online clinic from storage or API response
-              let onlineClinic = this.clinics.find(clinic => clinic.IsOnline);
-              
-              // If no online clinic found in API response, check storage
-              if (!onlineClinic) {
-                this.storage.get(environment.ON_CLINIC).then(storedOnlineClinic => {
-                  if (storedOnlineClinic) {
-                    onlineClinic = this.clinics.find(clinic => clinic.Id === storedOnlineClinic.Id);
-                    if (onlineClinic) {
-                      this.selectedClinicId = onlineClinic.Id;
-                      this.clinicService.updateClinic(onlineClinic);
-                      console.log('Found online clinic from storage:', onlineClinic.Name);
-                    }
-                  }
-                });
-              }
-              
-              if (onlineClinic) {
-                this.selectedClinicId = onlineClinic.Id;
-                this.clinicService.updateClinic(onlineClinic);
-                console.log('Found online clinic from API:', onlineClinic.Name);
-              } else {
-                this.selectedClinicId = (this.clinics.length > 0 ? this.clinics[0].Id : null);
-                if (this.selectedClinicId) {
-                  this.setOnlineClinic(this.selectedClinicId);
-                }
-              }
-              console.log('Clinics:', this.clinics);
-              console.log('Selected Clinic ID:', this.selectedClinicId);
-            } else {
-              this.toastService.create(response.Message, 'danger');
-            }
-          },
-          error: (error) => {
-            loading.dismiss();
-            console.error('Error fetching clinics:', error);
-            this.toastService.create('Failed to load clinics', 'danger');
-          },
-        });
-      } else if (this.usertype.UserType === 'PA') {
+       if (this.usertype.UserType === 'PA') {
         this.paService.getPaClinics(Number(this.usertype.PAId)).subscribe({
           next: (response) => {
             loading.dismiss();
             if (response.IsSuccess) {
               this.clinics = response.ResponseData;
-              // Check if there's already an online clinic, if not set the first one
-              const onlineClinic = this.clinics.find(clinic => clinic.IsOnline);
-              if (onlineClinic) {
-                this.selectedClinicId = onlineClinic.Id;
-                this.clinicService.updateClinic(onlineClinic);
-              } else {
-                this.selectedClinicId = this.clinics.length > 0 ? this.clinics[0].Id : null;
-                if (this.selectedClinicId) {
-                  this.setOnlineClinic(this.selectedClinicId);
-                }
-              }
+              this.selectedClinicId = this.clinics.length > 0 ? this.clinics[0].Id : null;
               console.log('PA Clinics:', this.clinics);
-              console.log('Selected PA Clinic ID:', this.selectedClinicId);
             } else {
               this.toastService.create(response.Message, 'danger');
             }
