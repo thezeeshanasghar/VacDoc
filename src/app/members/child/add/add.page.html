@@ -189,14 +189,27 @@
           <!-- <ion-label class="label-gray" position="stacked" >
             Country Code <span class="required-asterisk">*</span>
           </ion-label> -->
-          <ion-item class="custom-input-item">
+          <mat-form-field appearance="outline" class="custom-input-item">
+            <span class="fi fi-{{ getFlagCode(fg1.get('CountryCode').value) }}"></span>
+            +
+            <input type="text" matInput placeholder="Country Code" formControlName="CountryCode" [matAutocomplete]="countryAuto"
+              (input)="filterCountryCodes($event.target.value)" class="custom-input" autocomplete="off" />
+            <mat-autocomplete #countryAuto="matAutocomplete" class="no-indent">
+              <mat-option *ngFor="let country of filteredCountryCodes" [value]="country.code">
+                <span class="fi fi-{{ country.flag }}"></span>
+                {{ country.name }} (+{{ country.code }})
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <!-- <ion-item class="custom-input-item">
             <span class="fi fi-{{ getFlagCode(fg1.get('CountryCode').value) }}"></span>
             <ion-select formControlName="CountryCode" class="country-code-select">
               <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
                 {{ country.name }} (+{{ country.code }})
               </ion-select-option>
             </ion-select>
-          </ion-item>
+          </ion-item> -->
           <!-- </ion-item>
           <ion-item lines="none" class="number-input-item"> -->
           <!-- <ion-label class="label-gray" position="stacked" >

@@ -63,6 +63,7 @@ export class AddPage implements OnInit {
   selectedClinicId: any;
   clinicid: Promise<any>;
   type: any;
+  filteredCountryCodes: any[] = [];
 
   constructor(
     public loadingController: LoadingController,
@@ -102,7 +103,16 @@ export class AddPage implements OnInit {
     } else {
       console.error("No user data found in storage.");
     }
+    this.filteredCountryCodes = this.countryCodes;
   }
+
+filterCountryCodes(value: string) {
+  const filterValue = value.toLowerCase();
+  this.filteredCountryCodes = this.countryCodes.filter(country =>
+    country.name.toLowerCase().includes(filterValue) ||
+    country.code.includes(filterValue)
+  );
+}
 
   loadCities(): void {
     this.cityService.getCities().subscribe(
