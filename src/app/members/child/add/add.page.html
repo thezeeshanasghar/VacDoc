@@ -191,7 +191,7 @@
           </ion-label> -->
           <mat-form-field appearance="outline" class="custom-input-item">
             <span class="fi fi-{{ getFlagCode(fg1.get('CountryCode').value) }}"></span>
-            +
+            <span style="color: gray !important;">+</span>
             <input type="text" matInput placeholder="Country Code" formControlName="CountryCode" [matAutocomplete]="countryAuto"
               (input)="filterCountryCodes($event.target.value)" class="custom-input" autocomplete="off" />
             <mat-autocomplete #countryAuto="matAutocomplete" class="no-indent">
