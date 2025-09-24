@@ -10,7 +10,11 @@ import { MatNativeDateModule } from '@angular/material/core';
 
 import { VaccineAlertPage } from './vaccine-alert.page';
 import { Downloader} from '@ionic-native/downloader/ngx';
-
+// import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatOptionModule } from '@angular/material/core'; // Needed for <mat-option>
+// import { VaccineAlertPage } from './vaccine-alert.page';
 const routes: Routes = [
   {
     path: '',
@@ -27,6 +31,11 @@ const routes: Routes = [
     MatDatepickerModule,
     MatInputModule,
     MatNativeDateModule,
+    // MatDatepickerModule,
+    MatFormFieldModule,
+    // MatInputModule,
+    MatAutocompleteModule,
+    MatOptionModule
   ],
   declarations: [VaccineAlertPage],
   providers: [

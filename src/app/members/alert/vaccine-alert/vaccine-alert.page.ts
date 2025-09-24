@@ -36,7 +36,9 @@ export class VaccineAlertPage implements OnInit {
   selectedDate: string = new Date().toISOString();
   usertype: any;
   clinics: any;
-  selectedClinicId: any;
+  selectedClinicId: any=null;
+filteredClinics: any[] = [];
+selectedClinicName: string = '';
 
   constructor(
     public loadingController: LoadingController,
@@ -72,6 +74,7 @@ export class VaccineAlertPage implements OnInit {
     this.getAlerts(formattedDate);
     await this.getChlid(this.numOfDays, formattedDate);
     await this.getdoctor();
+    this.filteredClinics = [];
     await this.loadClinics();
   }
 
@@ -133,9 +136,11 @@ export class VaccineAlertPage implements OnInit {
             loading.dismiss();
             if (response.IsSuccess) {
               this.clinics = response.ResponseData;
-              // console.log('Clinics:', this.clinics);
+              console.log('Clinics:', this.clinics);
+              this.selectedClinicName = this.clinicService.OnlineClinic.Name || (this.clinics.length > 0 ? this.clinics[0].Name : '');
               this.selectedClinicId = this.clinicId || (this.clinics.length > 0 ? this.clinics[0].Id : null);
               // console.log('Selected Clinic ID:', this.selectedClinicId);
+              this.filteredClinics = this.clinics;
               if (this.selectedClinicId) {
                 this.getChlid(this.numOfDays, this.formattedDate);
                 this.clinicId = this.selectedClinicId;
@@ -156,8 +161,9 @@ export class VaccineAlertPage implements OnInit {
             loading.dismiss();
             if (response.IsSuccess) {
               this.clinics = response.ResponseData;
-              // console.log('PA Clinics:', this.clinics);
-              this.selectedClinicId = (this.clinics.length > 0 ? this.clinics[0].Id : null);
+              console.log('PA Clinics:', this.clinics);
+              this.selectedClinicId = (this.clinics.length > 0 ? this.clinics[0].Name : null);
+              this.filteredClinics = this.clinics;
               // console.log('Selected PA Clinic ID:', this.selectedClinicId);
               if (this.selectedClinicId) {
                this.getChlid(this.numOfDays, this.formattedDate);
@@ -180,12 +186,33 @@ export class VaccineAlertPage implements OnInit {
     }
   }
 
+filterClinics(value: string) {
+  const filterValue = value ? value.toLowerCase() : '';
+  this.filteredClinics = (this.clinics || []).filter(clinic =>
+    clinic.Name && clinic.Name.toLowerCase().includes(filterValue)
+  );
+  // If the input matches a clinic exactly, select it and load data
+  const matchedClinic = this.filteredClinics.find(clinic => clinic.Name.toLowerCase() === filterValue);
+  if (matchedClinic) {
+    this.onClinicSelect(matchedClinic);
+  }
+}
+
    onClinicChange(event: any) {
     const clinicId = event.detail.value;
     // console.log('Selected Clinic ID:', clinicId);
     this.getChlid(this.numOfDays, this.formattedDate);
     this.clinicId = clinicId;
   }
+
+onClinicSelect(clinic: any) {
+  if (clinic && clinic.Id) {
+    this.selectedClinicName = clinic.Name;
+    this.selectedClinicId = clinic.Id;
+    this.clinicId = clinic.Id;
+    this.getChlid(this.numOfDays, this.formattedDate); // <-- Loads child data
+  }
+}
 
   async getChlid(numOfDays: number, formattedDate: string) {
     this.numOfDays = numOfDays;

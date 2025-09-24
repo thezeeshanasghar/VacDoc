@@ -30,4 +30,11 @@
   text-align: center;        /* center text */
   justify-content: center;   /* center flex container */
 }
+.full-width-input {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+.mat-form-field {
+  width: 100% !important;
+}
 
