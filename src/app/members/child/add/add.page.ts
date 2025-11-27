@@ -538,7 +538,8 @@ filterCountryCodes(value: string) {
     let value = input.value.replace(/\s/g, ""); // Remove spaces
     
     // If country code is 92 (Pakistan), remove leading zero
-    const countryCode = this.fg1.get("CountryCode")?.value;
+    const countryCodeControl = this.fg1.get("CountryCode");
+    const countryCode = countryCodeControl ? countryCodeControl.value : null;
     if (countryCode === "92" && value.startsWith("0")) {
       value = value.substring(1); // Remove leading 0
     }
