@@ -62,13 +62,63 @@ input {
   flex-direction: row;
   flex-wrap: nowrap;
 }
-.country-code-container {
+
+// Mobile Number Layout
+.mobile-number-wrapper {
+  margin: 8px 0;
   width: 100%;
 }
 
+.mobile-number-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+.country-code-field {
+  flex: 0 0 auto;
+  min-width: 100px;
+  max-width: 120px;
+  margin: 0 !important;
+  
+  .mat-form-field-wrapper {
+    padding-bottom: 0;
+  }
+}
+
+.mobile-number-field {
+  flex: 1 1 auto;
+  --background: transparent;
+  --border-radius: 8px;
+  --border-color: #ddd;
+  --border-width: 1px;
+  --highlight-height: 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 0;
+  padding: 4px 8px;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 576px) {
+  .country-code-field {
+    min-width: 90px;
+    max-width: 100px;
+  }
+}
+
 @media (max-width: 375px) {
-  .country-code-container {
-    width: 200%;
+  .mobile-number-container {
+    gap: 6px;
+  }
+  
+  .country-code-field {
+    min-width: 85px;
+    max-width: 95px;
   }
 
   .country-label, .mobile-label {
@@ -154,5 +204,11 @@ ion-label {
   text-align: center;
   justify-content: center;
   // width: 100%;
+}
+
+// City Label Styling
+.city-label {
+  color: gray !important;
+  font-size: 16px;
 }
 

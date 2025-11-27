@@ -72,9 +72,6 @@
 
       <!-- Gender -->
       <ion-radio-group formControlName="Gender">
-        <ion-list-header class="label-gray">
-          Gender <span class="required-asterisk">*</span>
-        </ion-list-header>
         <ion-grid>
           <ion-row>
             <ion-col>
@@ -184,15 +181,12 @@
         CNIC number is required when traveling.
       </div>
 
-      <ion-item appearance="outline" class="custom-input-item">
-        <div class="country-code-container">
-          <!-- <ion-label class="label-gray" position="stacked" >
-            Country Code <span class="required-asterisk">*</span>
-          </ion-label> -->
-          <mat-form-field appearance="outline" class="custom-input-item">
+      <div class="mobile-number-wrapper">
+        <div class="mobile-number-container">
+          <mat-form-field appearance="outline" class="country-code-field">
             <span class="fi fi-{{ getFlagCode(fg1.get('CountryCode').value) }}"></span>
             <span style="color: gray !important;">+</span>
-            <input type="text" matInput placeholder="Country Code" formControlName="CountryCode" [matAutocomplete]="countryAuto"
+            <input type="text" matInput placeholder="Code" formControlName="CountryCode" [matAutocomplete]="countryAuto"
               (input)="filterCountryCodes($event.target.value)" class="custom-input" autocomplete="off" />
             <mat-autocomplete #countryAuto="matAutocomplete" class="no-indent">
               <mat-option *ngFor="let country of filteredCountryCodes" [value]="country.code">
@@ -202,44 +196,31 @@
             </mat-autocomplete>
           </mat-form-field>
 
-          <!-- <ion-item class="custom-input-item">
-            <span class="fi fi-{{ getFlagCode(fg1.get('CountryCode').value) }}"></span>
-            <ion-select formControlName="CountryCode" class="country-code-select">
-              <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
-                {{ country.name }} (+{{ country.code }})
-              </ion-select-option>
-            </ion-select>
-          </ion-item> -->
-          <!-- </ion-item>
-          <ion-item lines="none" class="number-input-item"> -->
-          <!-- <ion-label class="label-gray" position="stacked" >
-            Mobile Number <span class="required-asterisk">*</span>
-          </ion-label> -->
-          <div class="custom-input-item">
-            <ion-input type="text" placeholder="Mobile Number" required formControlName="MobileNumber"
+          <ion-item class="mobile-number-field">
+            <ion-input type="text" placeholder="Mobile Number *" required formControlName="MobileNumber"
               class="number-input ion-text-capitalize custom-input" inputmode="numeric" (ionInput)="removeSpaces($event)">
             </ion-input>
-            <div class="validation-errors">
-              <div class="error-message"
-                *ngIf="fg1.get('MobileNumber').hasError('pattern') && (fg1.get('MobileNumber').dirty || fg1.get('MobileNumber').touched)">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                Mobile number must not contain spaces and must not start with 0.
-              </div>
-              <div class="error-message"
-                *ngIf="fg1.get('MobileNumber').hasError('required') && (fg1.get('MobileNumber').dirty || fg1.get('MobileNumber').touched)">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                Mobile number is required.
-              </div>
-            </div>
+          </ion-item>
+        </div>
+        <div class="validation-errors">
+          <div class="error-message"
+            *ngIf="fg1.get('MobileNumber').hasError('pattern') && (fg1.get('MobileNumber').dirty || fg1.get('MobileNumber').touched)">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            Mobile number must not contain spaces and must not start with 0.
+          </div>
+          <div class="error-message"
+            *ngIf="fg1.get('MobileNumber').hasError('required') && (fg1.get('MobileNumber').dirty || fg1.get('MobileNumber').touched)">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            Mobile number is required.
           </div>
         </div>
-      </ion-item>
+      </div>
 
       <div class="city">
-        <!-- <ion-label class="label-gray" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">
-          City <span class="required-asterisk">*</span>
-        </ion-label> -->
         <mat-form-field appearance="outline" class="example-full-width custom-input-item">
+          <mat-label *ngIf="!fg1.get('city')?.value" class="city-label">
+            City <span class="required-asterisk">*</span>
+          </mat-label>
           <input type="text" aria-label="Number" matInput placeholder="City" formControlName="city"
             [matAutocomplete]="auto" (ngModelChange)="filter($event)" style="font-size: 15px;" class="custom-input"
             (ionChange)="onCityChange()" (click)="onCityInputClick()" [disabled]="fg1.get('City2')?.value !== ''">
