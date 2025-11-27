@@ -535,8 +535,16 @@ filterCountryCodes(value: string) {
   }
   removeSpaces(event: any) {
     const input = event.target as HTMLInputElement;
-    input.value = input.value.replace(/\s/g, "");
-    this.fg1.get("MobileNumber").setValue(input.value);
+    let value = input.value.replace(/\s/g, ""); // Remove spaces
+    
+    // If country code is 92 (Pakistan), remove leading zero
+    const countryCode = this.fg1.get("CountryCode")?.value;
+    if (countryCode === "92" && value.startsWith("0")) {
+      value = value.substring(1); // Remove leading 0
+    }
+    
+    input.value = value;
+    this.fg1.get("MobileNumber").setValue(value);
   }
   // countryCodes = [
   //   { name: 'Afghanistan', code: '93' },

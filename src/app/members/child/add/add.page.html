@@ -206,7 +206,12 @@
           <div class="error-message"
             *ngIf="fg1.get('MobileNumber').hasError('pattern') && (fg1.get('MobileNumber').dirty || fg1.get('MobileNumber').touched)">
             <ion-icon name="information-circle-outline"></ion-icon>
-            Mobile number must not contain spaces and must not start with 0.
+            <span *ngIf="fg1.get('CountryCode')?.value === '92'">
+              Mobile number must not start with 0 (e.g., 3001234567 not 03001234567).
+            </span>
+            <span *ngIf="fg1.get('CountryCode')?.value !== '92'">
+              Mobile number must not contain spaces and must not start with 0.
+            </span>
           </div>
           <div class="error-message"
             *ngIf="fg1.get('MobileNumber').hasError('required') && (fg1.get('MobileNumber').dirty || fg1.get('MobileNumber').touched)">
