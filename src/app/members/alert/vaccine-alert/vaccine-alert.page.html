@@ -52,34 +52,6 @@
       </ion-item>
     </ion-buttons>
   </ion-toolbar>
-  <ion-toolbar>
-     <ion-item>
-<mat-form-field appearance="outline" class="custom-input-item">
-  <mat-label>Select Clinic</mat-label>
-  <input
-    type="text"
-    matInput
-    placeholder="Select Clinic"
-    [matAutocomplete]="clinicAuto"
-    [(ngModel)]="selectedClinicName"
-    (ngModelChange)="filterClinics($event)"
-    autocomplete="off"
-    class="custom-input full-width-input"
-  />
-  <mat-autocomplete #clinicAuto="matAutocomplete">
-    <mat-option *ngFor="let clinic of filteredClinics" [value]="clinic.Name" (onSelectionChange)="onClinicSelect(clinic)">
-      {{ clinic.Name }}
-    </mat-option>
-  </mat-autocomplete>
-</mat-form-field>
-    <!-- <ion-label position="floating">Select Clinic</ion-label>
-    <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)">
-      <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
-        {{ clinic.Name }}
-      </ion-select-option>
-    </ion-select> -->
-  </ion-item>
-  </ion-toolbar>
   <h1 *ngIf="Childs == 0" style="color: red;">No alert found</h1>
   <ion-grid>
     <ion-row>

@@ -36,9 +36,7 @@ export class VaccineAlertPage implements OnInit {
   selectedDate: string = new Date().toISOString();
   usertype: any;
   clinics: any;
-  selectedClinicId: any=null;
-filteredClinics: any[] = [];
-selectedClinicName: string = '';
+  allClinicIds: number[] = []; // Store all clinic IDs for the user
 
   constructor(
     public loadingController: LoadingController,
@@ -74,7 +72,6 @@ selectedClinicName: string = '';
     this.getAlerts(formattedDate);
     await this.getChlid(this.numOfDays, formattedDate);
     await this.getdoctor();
-    this.filteredClinics = [];
     await this.loadClinics();
   }
 
@@ -136,14 +133,15 @@ selectedClinicName: string = '';
             loading.dismiss();
             if (response.IsSuccess) {
               this.clinics = response.ResponseData;
-              console.log('Clinics:', this.clinics);
-              this.selectedClinicName = this.clinicService.OnlineClinic.Name || (this.clinics.length > 0 ? this.clinics[0].Name : '');
-              this.selectedClinicId = this.clinicId || (this.clinics.length > 0 ? this.clinics[0].Id : null);
-              // console.log('Selected Clinic ID:', this.selectedClinicId);
-              this.filteredClinics = this.clinics;
-              if (this.selectedClinicId) {
-                this.getChlid(this.numOfDays, this.formattedDate);
-                this.clinicId = this.selectedClinicId;
+              console.log('Doctor Clinics:', this.clinics);
+              
+              // Store all clinic IDs for fetching alerts
+              this.allClinicIds = this.clinics.map(clinic => clinic.Id);
+              console.log('All Clinic IDs for Doctor:', this.allClinicIds);
+              
+              // Fetch alerts from ALL clinics for doctors
+              if (this.allClinicIds.length > 0) {
+                this.getAllClinicsAlerts(this.numOfDays, this.formattedDate);
               }
             } else {
               this.toastService.create(response.Message, 'danger');
@@ -162,12 +160,14 @@ selectedClinicName: string = '';
             if (response.IsSuccess) {
               this.clinics = response.ResponseData;
               console.log('PA Clinics:', this.clinics);
-              this.selectedClinicId = (this.clinics.length > 0 ? this.clinics[0].Name : null);
-              this.filteredClinics = this.clinics;
-              // console.log('Selected PA Clinic ID:', this.selectedClinicId);
-              if (this.selectedClinicId) {
-               this.getChlid(this.numOfDays, this.formattedDate);
-                this.clinicId = this.selectedClinicId;
+              
+              // Store all clinic IDs for fetching alerts
+              this.allClinicIds = this.clinics.map(clinic => clinic.Id);
+              console.log('All Clinic IDs for PA:', this.allClinicIds);
+              
+              // Fetch alerts from ALL clinics for PAs
+              if (this.allClinicIds.length > 0) {
+                this.getAllClinicsAlerts(this.numOfDays, this.formattedDate);
               }
             } else {
               this.toastService.create(response.Message, 'danger');
@@ -186,33 +186,6 @@ selectedClinicName: string = '';
     }
   }
 
-filterClinics(value: string) {
-  const filterValue = value ? value.toLowerCase() : '';
-  this.filteredClinics = (this.clinics || []).filter(clinic =>
-    clinic.Name && clinic.Name.toLowerCase().includes(filterValue)
-  );
-  // If the input matches a clinic exactly, select it and load data
-  const matchedClinic = this.filteredClinics.find(clinic => clinic.Name.toLowerCase() === filterValue);
-  if (matchedClinic) {
-    this.onClinicSelect(matchedClinic);
-  }
-}
-
-   onClinicChange(event: any) {
-    const clinicId = event.detail.value;
-    // console.log('Selected Clinic ID:', clinicId);
-    this.getChlid(this.numOfDays, this.formattedDate);
-    this.clinicId = clinicId;
-  }
-
-onClinicSelect(clinic: any) {
-  if (clinic && clinic.Id) {
-    this.selectedClinicName = clinic.Name;
-    this.selectedClinicId = clinic.Id;
-    this.clinicId = clinic.Id;
-    this.getChlid(this.numOfDays, this.formattedDate); // <-- Loads child data
-  }
-}
 
   async getChlid(numOfDays: number, formattedDate: string) {
     this.numOfDays = numOfDays;
@@ -239,26 +212,89 @@ onClinicSelect(clinic: any) {
     );
   }
 
+  // New method to fetch alerts from all clinics
+  async getAllClinicsAlerts(numOfDays: number, formattedDate: string) {
+    this.numOfDays = numOfDays;
+    this.formattedDate = formattedDate;
+    
+    if (!this.allClinicIds || this.allClinicIds.length === 0) {
+      this.toastService.create("No clinics available", "danger");
+      return;
+    }
+
+    const loading = await this.loadingController.create({
+      message: "Loading alerts from all clinics..."
+    });
+    await loading.present();
+
+    try {
+      // Create an array of observables for all clinic requests
+      const requests = this.allClinicIds.map(clinicId =>
+        this.alertService.getChild(this.formattedDate, this.numOfDays, clinicId.toString())
+      );
+
+      // Use forkJoin to wait for all requests to complete
+      const { forkJoin } = await import('rxjs');
+      
+      forkJoin(requests).subscribe(
+        (responses: any[]) => {
+          // Combine all successful responses
+          let allChildren = [];
+          responses.forEach(res => {
+            if (res.IsSuccess && res.ResponseData) {
+              allChildren = allChildren.concat(res.ResponseData);
+            }
+          });
+
+          this.Childs = allChildren;
+          loading.dismiss();
+          console.log(`Loaded ${allChildren.length} alerts from ${this.allClinicIds.length} clinics`);
+        },
+        err => {
+          loading.dismiss();
+          this.toastService.create("Error loading alerts", "danger");
+          console.error("Error fetching alerts:", err);
+        }
+      );
+    } catch (error) {
+      loading.dismiss();
+      this.toastService.create("Error loading alerts", "danger");
+      console.error("Error in getAllClinicsAlerts:", error);
+    }
+  }
+
   async sendemails() {
     const loading = await this.loadingController.create({
       message: "sending emails"
     });
     await loading.present();
-    await this.alertService.sendEmailToAll(this.numOfDays, this.clinicId).subscribe(
-      res => {
-        if (res.IsSuccess) {
+    
+    // Send emails for all clinics
+    try {
+      const { forkJoin } = await import('rxjs');
+      const emailRequests = this.allClinicIds.map(clinicId =>
+        this.alertService.sendEmailToAll(this.numOfDays, clinicId)
+      );
+      
+      forkJoin(emailRequests).subscribe(
+        (responses: any[]) => {
           loading.dismiss();
-          this.toastService.create("emails sent successfull", "success");
-        } else {
+          const successCount = responses.filter(res => res.IsSuccess).length;
+          if (successCount > 0) {
+            this.toastService.create(`Emails sent successfully to ${successCount} clinic(s)`, "success");
+          } else {
+            this.toastService.create("Failed to send emails", "danger");
+          }
+        },
+        err => {
           loading.dismiss();
-          this.toastService.create(res.Message, "danger");
+          this.toastService.create(err, "danger");
         }
-      },
-      err => {
-        loading.dismiss();
-        this.toastService.create(err, "danger");
-      }
-    );
+      );
+    } catch (error) {
+      loading.dismiss();
+      this.toastService.create("Error sending emails", "danger");
+    }
   }
 
   async sendemail(child: any) {
@@ -407,29 +443,44 @@ onClinicSelect(clinic: any) {
   }
 
   async sendMsgsThroughList() {
-    let listMessages: any;
+    let allMessages: any[] = [];
     const loading = await this.loadingController.create({
       message: "Loading Messages"
     });
     await loading.present();
-    await this.alertService.sendMsgsThroughDictionary(0, this.clinicId).subscribe(
-      (response) => {
-        if (response.IsSuccess) {
-          this.toastService.create('Success: Generated messages', 'success', false, 3000);
-          listMessages = response.ResponseData;
-          this.sendMessagesToChildren(listMessages);
+    
+    // Send messages for all clinics
+    try {
+      const { forkJoin } = await import('rxjs');
+      const messageRequests = this.allClinicIds.map(clinicId =>
+        this.alertService.sendMsgsThroughDictionary(0, clinicId.toString())
+      );
+      
+      forkJoin(messageRequests).subscribe(
+        (responses: any[]) => {
+          responses.forEach(response => {
+            if (response.IsSuccess && response.ResponseData) {
+              allMessages = allMessages.concat(response.ResponseData);
+            }
+          });
+          
+          if (allMessages.length > 0) {
+            this.toastService.create('Success: Generated messages', 'success', false, 3000);
+            this.sendMessagesToChildren(allMessages);
+          } else {
+            this.toastService.create('Error: No messages generated', 'danger', false, 6000);
+          }
+          loading.dismiss();
+        },
+        (err) => {
+          this.toastService.create('Error: Server failure', 'danger', false, 3000);
           loading.dismiss();
         }
-        else {
-          this.toastService.create('Error: Failed to generate messages\nTry Again', 'danger', false, 6000);
-          loading.dismiss();
-        }
-      },
-      (err) => {
-        this.toastService.create('Error: Server failure', 'danger', false, 3000);
-        loading.dismiss();
-      }
-    );
+      );
+    } catch (error) {
+      loading.dismiss();
+      this.toastService.create('Error loading messages', 'danger');
+    }
   }
 
   async sendMessagesToChildren(listMessages: any) {
@@ -497,6 +548,7 @@ onClinicSelect(clinic: any) {
 
   getAlerts(date: string) {
     const formattedDate = this.formatDateToString(date);
-    this.getChlid(0, formattedDate);
+    // Always fetch from all clinics
+    this.getAllClinicsAlerts(0, formattedDate);
   }
 }
