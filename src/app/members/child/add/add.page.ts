@@ -276,6 +276,13 @@ filterCountryCodes(value: string) {
     this.fg1.get("City2").setValue("");
   }
 
+  onCityInputClick() {
+    // Clear the city field and reset to show all cities
+    this.fg1.get("city").setValue("");
+    this.cities = [...this.originalCities];
+    console.log("City input clicked - cleared and showing all cities");
+  }
+
   countryCodes = [
     { name: "Afghanistan", code: "93", flag: "af" },
     { name: "Albania", code: "355", flag: "al" },
