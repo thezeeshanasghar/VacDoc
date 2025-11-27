@@ -243,7 +243,10 @@ filterCountryCodes(value: string) {
       this.clinic = val;
     });
     this.storage.get(environment.CITY).then((val) => {
-      val == null ? "" : this.fg1.controls["City"].setValue(val);
+       if (val != null && val !== "") {
+        this.fg1.controls["city"].setValue(val);
+        console.log("Loaded previous city from storage:", val);
+      }
     });
     this.storage.get(environment.DOCTOR).then((doc) => {
       this.Doctor = doc;
@@ -851,7 +854,8 @@ filterCountryCodes(value: string) {
     console.log("data", data);
     await this.childService.addChild(data).subscribe(
       async (res) => {
-        this.setCity(this.fg1.value.City);
+        // Save the city that was actually used (either from dropdown or manually entered)
+        this.setCity(data.city);
         if (res.IsSuccess) {
           console.log("res", res.ResponseData);
           var sms1 = "";
