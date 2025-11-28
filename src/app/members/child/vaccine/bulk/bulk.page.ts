@@ -182,27 +182,34 @@ export class BulkPage implements OnInit {
 
   async validationOfInfiniteVaccine() {
     const loading = await this.loadingController.create({
-      message: "Loading Infinite Vaccine"
+      message: "Adding Infinite Vaccines"
     });
 
     await loading.present();
+    
+    // Collect all promises for infinite vaccines
+    const promises = [];
     this.bulkData.forEach(element => {
       if (element.Dose.Vaccine.isInfinite) {
-        this.addNewVaccineInScheduleTable(element);
+        promises.push(this.addNewVaccineInScheduleTable(element));
       }
     });
-    this.router.navigate(["/members/child/vaccine/" + this.childId]);
-    loading.dismiss();
+
+    // Wait for all infinite vaccines to be added
+    try {
+      await Promise.all(promises);
+      loading.dismiss();
+      // Navigate only once after all vaccines are added
+      this.router.navigate(["/members/child/vaccine/" + this.childId]);
+    } catch (error) {
+      loading.dismiss();
+      this.toastService.create("Error adding infinite vaccines", "danger");
+      console.error("Error in validationOfInfiniteVaccine:", error);
+    }
   }
 
-  async addNewVaccineInScheduleTable(element) {
-    const loading = await this.loadingController.create({
-      message: 'Adding Infinite Vaccine'
-    });
-
+  async addNewVaccineInScheduleTable(element): Promise<void> {
     let scheduleDate: Date = this.addDays(this.fg.value.GivenDate, element.Dose.MinGap, element.Dose.Id);
-
-    await loading.present();
 
     let VaccineData = {
       Date: scheduleDate,
@@ -216,22 +223,24 @@ export class BulkPage implements OnInit {
       IsSkip: false
     };
 
-    await this.vaccineService.AddChildSchedule(VaccineData).subscribe(
-      res => {
-        if (res.IsSuccess) {
-          this.router.navigate(["/members/child/vaccine/" + this.childId], { queryParams: { refresh: true } });
-          loading.dismiss();
+    return new Promise((resolve, reject) => {
+      this.vaccineService.AddChildSchedule(VaccineData).subscribe(
+        res => {
+          if (res.IsSuccess) {
+            console.log(`Added infinite vaccine: ${element.Dose.Name}`);
+            resolve();
+          }
+          else {
+            this.toastService.create("Error: failed to add injection", "danger");
+            reject(new Error("Failed to add injection"));
+          }
+        },
+        err => {
+          this.toastService.create("Error: server failure", "danger");
+          reject(err);
         }
-        else {
-          loading.dismiss();
-          this.toastService.create("Error: failed to add injection", "danger");
-        }
-      },
-      err => {
-        loading.dismiss();
-        this.toastService.create("Error: server failure", "danger");
-      }
-    );
+      );
+    });
   }
 
 
