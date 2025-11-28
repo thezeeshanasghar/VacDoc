@@ -210,6 +210,9 @@ export class BulkPage implements OnInit {
 
   async addNewVaccineInScheduleTable(element): Promise<void> {
     let scheduleDate: Date = this.addDays(this.fg.value.GivenDate, element.Dose.MinGap, element.Dose.Id);
+    
+    // Normalize date to midnight (remove time portion)
+    scheduleDate.setHours(0, 0, 0, 0);
 
     let VaccineData = {
       Date: scheduleDate,
