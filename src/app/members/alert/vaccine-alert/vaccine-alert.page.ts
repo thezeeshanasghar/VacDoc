@@ -56,7 +56,6 @@ export class VaccineAlertPage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.getAlerts(this.selectedDate);
     await this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
     });
@@ -68,9 +67,10 @@ export class VaccineAlertPage implements OnInit {
       this.SMSKey = val;
     });
     this.storage.get(environment.MESSAGES).then(messages => { messages == null ? '' : this.Messages = messages });
-    const formattedDate = this.formatDateToString(this.selectedDate);
-    this.getAlerts(formattedDate);
-    await this.getChlid(this.numOfDays, formattedDate);
+    
+    // Initialize formatted date before loading clinics
+    this.formattedDate = this.formatDateToString(this.selectedDate);
+    
     await this.getdoctor();
     await this.loadClinics();
   }
