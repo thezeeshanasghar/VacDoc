@@ -135,7 +135,13 @@ clinicid: any;
           },
           error: (error) => {
             loading.dismiss();
-            this.toastService.create('Failed to fetch sales report', 'danger');
+            console.error('Error fetching sales report:', error);
+            // Check if it's a 404 (no data) or other error
+            if (error.status === 404) {
+              this.toastService.create('There is no sales in the selected period', 'warning');
+            } else {
+              this.toastService.create('Failed to fetch sales report', 'danger');
+            }
           },
         });
     } catch (error) {
