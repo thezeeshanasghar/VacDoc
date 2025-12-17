@@ -130,7 +130,7 @@
               *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip"
               style="height: 20px;"
               [title]="'Add Parametres '"
-              src="../../assets/injectionEmpty.png"
+              src="../../assets/add-parameter.png"
               routerLink="/members/child/vaccine/{{childId}}/afterfill/{{v.Id}}"
             > </ion-img>
             <button *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && usertype === 'DOCTOR' && !v.IsPAApprove"
