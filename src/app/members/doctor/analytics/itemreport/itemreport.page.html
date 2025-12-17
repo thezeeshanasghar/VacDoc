@@ -28,6 +28,13 @@
   </ion-item>
 
   <ion-item>
+    <ion-label>
+      <ion-checkbox [(ngModel)]="showAllBrands" (ionChange)="toggleAllBrands()"></ion-checkbox>
+      All Brands
+    </ion-label>
+  </ion-item>
+
+  <ion-item *ngIf="!showAllBrands">
     <ion-label position="floating" >
       Brand <span class="required-asterisk"></span>
     </ion-label>
@@ -40,7 +47,7 @@
         name="brandName" 
         [matAutocomplete]="auto"
         (ngModelChange)="filterBrands($event)"
-        required
+        [required]="!showAllBrands"
         style="font-size: 15px;"
       />
       <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectBrand($event)">

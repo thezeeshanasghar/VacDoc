@@ -28,6 +28,7 @@ export class ItemReportPage implements OnInit {
   clinicid: any;
   brands: { id: number; name: string; price: number; vaccineName?: string; displayName: string }[] = [];
   adjustment: { brandName: string; brandId?: number } = { brandName: '', brandId: null };
+  showAllBrands: boolean = false;
   constructor(
     private route: ActivatedRoute,
     private brandService: BrandService,
@@ -86,6 +87,14 @@ export class ItemReportPage implements OnInit {
     }
   }
 
+  toggleAllBrands() {
+    if (this.showAllBrands) {
+      // Clear brand selection when "All Brands" is checked
+      this.adjustment.brandName = '';
+      this.adjustment.brandId = 0;
+    }
+  }
+
   async loadClinics() {
     const loading = await this.loadingController.create({
       message: 'Loading clinics...',
@@ -138,16 +147,27 @@ export class ItemReportPage implements OnInit {
   }
 
   async getItemsReport() {
-    const fromDateString = moment(this.salesReportForm.value.fromDate).format('YYYY-MM-DD'); // Format to YYYY-MM-DD
-    const toDateString = moment(this.salesReportForm.value.toDate).format('YYYY-MM-DD'); // Format to YYYY-MM-DD
+    // Validate: either "All Brands" is checked OR a specific brand is selected
+    if (!this.showAllBrands && (!this.adjustment.brandId || this.adjustment.brandId === 0)) {
+      this.toastService.create('Please select a brand or check "All Brands"', 'warning');
+      return;
+    }
+
+    const fromDateString = moment(this.salesReportForm.value.fromDate).format('YYYY-MM-DD');
+    const toDateString = moment(this.salesReportForm.value.toDate).format('YYYY-MM-DD');
+    
+    // Use 0 or null for brandId when "All Brands" is selected
+    const brandId = this.showAllBrands ? 0 : this.adjustment.brandId;
+    
     const payload = {
       clinicId: this.selectedClinicId,
-      brandId: this.adjustment.brandId,
+      brandId: brandId,
       fromDate: fromDateString, 
       toDate: toDateString,   
     };
+
     const loading = await this.loadingController.create({
-      message: 'Fetching items report...',
+      message: this.showAllBrands ? 'Fetching all brands report...' : 'Fetching items report...',
     });
     await loading.present();
   
@@ -158,19 +178,22 @@ export class ItemReportPage implements OnInit {
           const blob = new Blob([response], { type: 'application/pdf' });
           const link = document.createElement('a');
           link.href = window.URL.createObjectURL(blob);
-          link.download = `ItemsReport_${payload.clinicId}_${payload.brandId}_${payload.fromDate}_${payload.toDate}.pdf`;
+          const fileName = this.showAllBrands 
+            ? `AllBrandsReport_${payload.clinicId}_${payload.fromDate}_${payload.toDate}.pdf`
+            : `ItemsReport_${payload.clinicId}_${payload.brandId}_${payload.fromDate}_${payload.toDate}.pdf`;
+          link.download = fileName;
           link.click();
           window.URL.revokeObjectURL(link.href);
-          this.toastService.create('Sales report downloaded successfully', 'success');
+          this.toastService.create('Report downloaded successfully', 'success');
         },
         error: (error) => {
           loading.dismiss();
-          console.error('Error fetching sales report:', error);
+          console.error('Error fetching report:', error);
           // Check if it's a 404 (no data) or other error
           if (error.status === 404) {
             this.toastService.create('There is no sales in the selected period', 'warning');
           } else {
-            this.toastService.create('Failed to fetch sales report', 'danger');
+            this.toastService.create('Failed to fetch report', 'danger');
           }
         },
       });
