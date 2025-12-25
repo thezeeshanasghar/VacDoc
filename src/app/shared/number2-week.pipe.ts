@@ -294,6 +294,96 @@ export class Number2WeekPipe implements PipeTransform {
         case 6570:
             day = '18 Years';
             break;
+        case 6600:
+            day = '18 Years 1 Month';
+            break;
+        case 6631:
+            day = '18 Years 2 Months';
+            break;
+        case 6661:
+            day = '18 Years 3 Months';
+            break;
+        case 6691:
+            day = '18 Years 4 Months';
+            break;
+        case 6722:
+            day = '18 Years 5 Months';
+            break;
+        case 6752:
+            day = '18 Years 6 Months';
+            break;
+        case 6783:
+            day = '18 Years 7 Months';
+            break;
+        case 6813:
+            day = '18 Years 8 Months';
+            break;
+        case 6843:
+            day = '18 Years 9 Months';
+            break;
+        case 6874:
+            day = '18 Years 10 Months';
+            break;
+        case 6904:
+            day = '18 Years 11 Months';
+            break;
+        case 6935:
+            day = '19 Years';
+            break;
+        case 6965:
+            day = '19 Years 1 Month';
+            break;
+        case 6996:
+            day = '19 Years 2 Months';
+            break;
+        case 7026:
+            day = '19 Years 3 Months';
+            break;
+        case 7056:
+            day = '19 Years 4 Months';
+            break;
+        case 7087:
+            day = '19 Years 5 Months';
+            break;
+        case 7117:
+            day = '19 Years 6 Months';
+            break;
+        case 7148:
+            day = '19 Years 7 Months';
+            break;
+        case 7178:
+            day = '19 Years 8 Months';
+            break;
+        case 7208:
+            day = '19 Years 9 Months';
+            break;
+        case 7239:
+            day = '19 Years 10 Months';
+            break;
+        case 7269:
+            day = '19 Years 11 Months';
+            break;
+        case 7300:
+            day = '20 Years';
+            break;
+        case 7665:
+            day = '21 Years';
+            break;
+        case 8030:
+            day = '22 Years';
+            break;
+        case 8395:
+            day = '23 Years';
+            break;
+        case 8760:
+            day = '24 Years';
+            break;
+        case 9125:
+            day = '25 Years';
+            break;
+        case 30000:
+            day = 'Life Time';
+            break;
     }
     return day;
   }
