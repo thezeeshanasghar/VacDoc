@@ -21,6 +21,15 @@
   <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px">
       <ion-icon
+        *ngIf="type !== 'PA'"
+        style="margin-left: 10%; cursor: pointer"
+        routerLink="/members/doctor/clinic/add"
+        name="add-circle-outline"
+        size="large"
+        title="Add New Clinic"
+      >
+      </ion-icon>
+      <ion-icon
         style="margin-left: 10%; cursor: pointer"
         routerLink="/members/child/add"
         name="person-add"

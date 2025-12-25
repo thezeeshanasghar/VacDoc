@@ -98,7 +98,7 @@ export class AddPage implements OnInit {
       RegNo: new FormControl(
         "",
         Validators.compose([
-          Validators.pattern("^[A-Za-z0-9-]+$") 
+          Validators.pattern("^[A-Za-z0-9@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?\\s]+$") 
         ])
       ),
     });
@@ -983,7 +983,7 @@ export class AddPage implements OnInit {
     Address: [{ type: "required", message: "Address is required." }],
     RegNo: [
       { type: "required", message: "RegNo is required." },
-      { type: "pattern", message: "RegNo must be alphanumeric." }
+      { type: "pattern", message: "RegNo can contain letters, numbers, and special characters." }
     ],
     ConsultationFee: [
       { type: "required", message: "Consultation Fee is required." },

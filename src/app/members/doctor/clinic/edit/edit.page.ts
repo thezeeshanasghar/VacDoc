@@ -100,7 +100,7 @@ export class EditPage implements OnInit {
         "",
         Validators.compose([
           Validators.required,
-          Validators.pattern("^[A-Za-z0-9-,]+$"),
+          Validators.pattern("^[A-Za-z0-9@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?\\s]+$"),
         ])
       ),
     });
@@ -1292,7 +1292,7 @@ export class EditPage implements OnInit {
     ],
     RegNo: [
       { type: "required", message: "RegNo is required." },
-      { type: "pattern", message: "RegNo must be alphanumeric." }
+      { type: "pattern", message: "RegNo can contain letters, numbers, and special characters." }
     ],
     MonogramImage:[
       { type: "required", message: "Monogram Image is required." },
