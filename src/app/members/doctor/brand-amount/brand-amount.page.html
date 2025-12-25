@@ -36,7 +36,7 @@
         <ion-col class="header-col">Sale Price</ion-col>
       </ion-row>
       <ion-row *ngFor="let b of brandAmounts" class="data-row">
-        <ion-col class="center-text" style="margin-top: 10px;">{{b.BrandName}} ({{b.VaccineName}})</ion-col>
+        <ion-col class="center-text" style="margin-top: 10px;">{{b.BrandName}}</ion-col>
         <ion-col class="center-text" style="margin-top: 10px;">{{b.Count}}</ion-col>
         <ion-col class="center-text">
           <ion-input [(ngModel)]="b.Amount" [ngModelOptions]="{standalone: true}" type="tel" #amountInput="ngModel" required pattern="^[0-9]*$"></ion-input>

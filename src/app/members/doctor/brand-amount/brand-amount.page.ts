@@ -15,6 +15,8 @@ import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 })
 export class BrandAmountPage implements OnInit {
   brandAmounts: BrandAmountDTO[] = [];
+  originalBrandAmounts: BrandAmountDTO[] = []; // Store original data for updates
+  brandGroupMap: Map<string, BrandAmountDTO[]> = new Map(); // Map merged brands to originals
   fg: FormGroup
   clinics: any;
   selectedClinicId: any;
@@ -117,8 +119,13 @@ export class BrandAmountPage implements OnInit {
       (res: { IsSuccess: boolean; ResponseData: BrandAmountDTO[]; Message: string }) => {
         loading.dismiss();
         if (res.IsSuccess) {
-          this.brandAmounts = res.ResponseData.sort((a, b) => a.BrandName.localeCompare(b.BrandName));
-          console.log('Brand Amounts:', this.brandAmounts);
+          // Store original data
+          this.originalBrandAmounts = res.ResponseData;
+          
+          // Group brands by base name (remove vaccine name in parentheses)
+          const grouped = this.groupBrandsByBaseName(res.ResponseData);
+          this.brandAmounts = grouped.sort((a, b) => a.BrandName.localeCompare(b.BrandName));
+          console.log('Grouped Brand Amounts:', this.brandAmounts);
         } else {
           this.toastService.create(res.Message || 'Failed to fetch brand amounts', 'danger');
         }
@@ -131,6 +138,69 @@ export class BrandAmountPage implements OnInit {
     );
   }
 
+  // Group brands by base name (removing vaccine name in parentheses)
+  private groupBrandsByBaseName(brands: BrandAmountDTO[]): BrandAmountDTO[] {
+    const grouped = new Map<string, BrandAmountDTO[]>();
+    this.brandGroupMap.clear(); // Reset the map
+    
+    // Group by base brand name
+    brands.forEach(brand => {
+      const baseName = this.extractBaseBrandName(brand.BrandName);
+      if (!grouped.has(baseName)) {
+        grouped.set(baseName, []);
+      }
+      grouped.get(baseName)!.push(brand);
+    });
+
+    // Merge grouped brands
+    const result: BrandAmountDTO[] = [];
+    grouped.forEach((brandGroup, baseName) => {
+      if (brandGroup.length === 1) {
+        // If only one brand with this name, keep as is but remove vaccine name from display
+        const brand = { ...brandGroup[0] };
+        brand.BrandName = baseName;
+        brand.VaccineName = ''; // Clear vaccine name for display
+        
+        // Store mapping for updates
+        this.brandGroupMap.set(baseName, [brandGroup[0]]);
+        
+        result.push(brand);
+      } else {
+        // Merge multiple brands with same base name
+        const totalCount = brandGroup.reduce((sum, b) => sum + (b.Count || 0), 0);
+        const totalPurchaseValue = brandGroup.reduce((sum, b) => sum + ((b.Count || 0) * (b.PurchasedAmt || 0)), 0);
+        const totalSaleValue = brandGroup.reduce((sum, b) => sum + ((b.Count || 0) * (b.Amount || 0)), 0);
+        
+        // Calculate weighted averages
+        const avgPurchasePrice = totalCount !== 0 ? totalPurchaseValue / totalCount : 0;
+        const avgSalePrice = totalCount !== 0 ? totalSaleValue / totalCount : 0;
+        
+        // Use the first brand's IDs and merge the data
+        const mergedBrand: BrandAmountDTO = {
+          ...brandGroup[0],
+          BrandName: baseName,
+          VaccineName: '', // Combined brand, no specific vaccine
+          Count: totalCount,
+          PurchasedAmt: Math.round(avgPurchasePrice * 100) / 100, // Round to 2 decimals
+          Amount: Math.round(avgSalePrice * 100) / 100 // Round to 2 decimals
+        };
+        
+        // Store mapping for updates (map merged brand to all originals)
+        this.brandGroupMap.set(baseName, brandGroup);
+        
+        result.push(mergedBrand);
+      }
+    });
+
+    return result;
+  }
+
+  // Extract base brand name (remove content in parentheses)
+  private extractBaseBrandName(brandName: string): string {
+    // Remove anything in parentheses and trim
+    return brandName.replace(/\s*\([^)]*\)\s*/g, '').trim();
+  }
+
   onClinicChange(event: any) {
     const clinicId = event.detail.value;
     console.log('Selected Clinic ID:', clinicId);
@@ -139,14 +209,32 @@ export class BrandAmountPage implements OnInit {
 
   async updateBrandAmount() {
     const loading = await this.loadingController.create({
-      message: 'Loading'
+      message: 'Updating...'
     });
     await loading.present();
-    await this.brandService.putBrandAmount(this.brandAmounts)
+    
+    // Expand merged brands back to original entries with updated prices
+    const brandsToUpdate: BrandAmountDTO[] = [];
+    this.brandAmounts.forEach(displayedBrand => {
+      const baseName = displayedBrand.BrandName;
+      const originalBrands = this.brandGroupMap.get(baseName) || [];
+      
+      // Update each original brand with the new price from the merged display
+      originalBrands.forEach(originalBrand => {
+        brandsToUpdate.push({
+          ...originalBrand,
+          Amount: displayedBrand.Amount // Apply the updated sale price to all variants
+        });
+      });
+    });
+    
+    console.log('Updating brands:', brandsToUpdate);
+    
+    await this.brandService.putBrandAmount(brandsToUpdate)
       .subscribe(res => {
         if (res.IsSuccess) {
           loading.dismiss();
-          this.toastService.create("successfully updated");
+          this.toastService.create("Successfully updated");
         }
         else {
           loading.dismiss();
