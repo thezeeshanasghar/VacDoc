@@ -922,7 +922,7 @@ filterCountryCodes(value: string) {
             ],
           });
           await alert.present();
-          this.toastService.create("Child added successfully.");
+          this.toastService.create("Client added successfully.");
           if (res.ResponseData.Type == "special") {
             this.router.navigate([`/members/child/vaccine/${ChildId}`]);
           } else {
