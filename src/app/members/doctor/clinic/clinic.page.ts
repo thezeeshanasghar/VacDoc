@@ -255,7 +255,7 @@ export class ClinicPage {
         },
         (err) => {
           loading.dismiss();
-          this.toastService.create(err.error?.message || "Failed to update clinic status", "danger");
+          this.toastService.create((err.error && err.error.message) || "Failed to update clinic status", "danger");
         }
       );
     } else {

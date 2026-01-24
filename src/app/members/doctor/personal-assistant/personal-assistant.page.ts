@@ -290,7 +290,7 @@ console.log("Deleting PA with ID:", Id);
         },
         (err) => {
           loading.dismiss();
-          this.toastService.create(err.error?.message || 'Failed to set clinic online', 'danger');
+          this.toastService.create((err.error && err.error.message) || 'Failed to set clinic online', 'danger');
           console.error('Error setting clinic online:', err);
         }
       );
