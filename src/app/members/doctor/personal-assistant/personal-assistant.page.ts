@@ -26,6 +26,7 @@ export class PersonalAssistantPage implements OnInit {
   clinics: any;
   selectedClinicId: any;
   usertype: any;
+  paAccessId: any; // Store PaAccessId for PA users
 
   constructor(
     private paService: PaService,
@@ -195,6 +196,7 @@ console.log("Deleting PA with ID:", Id);
                     onlineClinic = this.clinics.find(clinic => clinic.Id === storedOnlineClinic.Id);
                     if (onlineClinic) {
                       this.selectedClinicId = onlineClinic.Id;
+                      this.paAccessId = onlineClinic.PaAccessId; // Store PaAccessId
                       this.clinicService.updateClinic(onlineClinic);
                       console.log('Found online clinic from storage:', onlineClinic.Name);
                     }
@@ -204,15 +206,21 @@ console.log("Deleting PA with ID:", Id);
               
               if (onlineClinic) {
                 this.selectedClinicId = onlineClinic.Id;
+                this.paAccessId = onlineClinic.PaAccessId; // Store PaAccessId
                 this.clinicService.updateClinic(onlineClinic);
                 console.log('Found online clinic from API:', onlineClinic.Name);
               } else {
                 this.selectedClinicId = (this.clinics.length > 0 ? this.clinics[0].Id : null);
                 if (this.selectedClinicId) {
+                  const selectedClinic = this.clinics.find(c => c.Id === this.selectedClinicId);
+                  if (selectedClinic) {
+                    this.paAccessId = selectedClinic.PaAccessId;
+                  }
                   this.setOnlineClinic(this.selectedClinicId);
                 }
               }
               console.log('Selected PA Clinic ID:', this.selectedClinicId);
+              console.log('PaAccessId:', this.paAccessId);
             } else {
               this.toastService.create(response.Message, 'danger');
             }
@@ -234,6 +242,13 @@ console.log("Deleting PA with ID:", Id);
     const clinicId = event.detail.value;
     console.log('Selected Clinic ID:', clinicId);
     this.selectedClinicId = clinicId;
+    // Find and store PaAccessId for PA users
+    if (this.usertype.UserType === 'PA' && this.clinics) {
+      const selectedClinic = this.clinics.find(c => c.Id === clinicId);
+      if (selectedClinic) {
+        this.paAccessId = selectedClinic.PaAccessId;
+      }
+    }
     this.setOnlineClinic(clinicId);
   }
 
@@ -241,37 +256,78 @@ console.log("Deleting PA with ID:", Id);
     const loading = await this.loadingController.create({ message: "Setting clinic online..." });
     await loading.present();
     
-    let data = { DoctorId: this.doctorId, Id: clinicId, IsOnline: "true" };
-    
-    try {
-      await this.clinicService.changeOnlineClinic(data).subscribe(
+    if (this.usertype.UserType === "PA") {
+      // For PA users, use PaAccess endpoint
+      if (!this.paAccessId) {
+        // Find PaAccessId from clinics list
+        const clinic = this.clinics ? this.clinics.find(c => c.Id === clinicId) : null;
+        if (clinic && clinic.PaAccessId) {
+          this.paAccessId = clinic.PaAccessId;
+        } else {
+          loading.dismiss();
+          this.toastService.create("Unable to find clinic access information", "danger");
+          return;
+        }
+      }
+      
+      this.paService.updatePaClinicOnlineStatus(this.paAccessId, true).subscribe(
         (res) => {
-          if (res.IsSuccess) {
+          if (res.IsSuccess || res.message) {
             loading.dismiss();
             // Update local storage
-            this.storage.set(environment.CLINIC_Id, data.Id);
-            this.storage.get(environment.CLINICS).then((clinics) => {
-              const selectedClinic = clinics.find((clinic) => clinic.Id === data.Id);
+            this.storage.set(environment.CLINIC_Id, clinicId);
+            const selectedClinic = this.clinics.find(c => c.Id === clinicId);
+            if (selectedClinic) {
               this.storage.set(environment.ON_CLINIC, selectedClinic);
               this.clinicService.updateClinic(selectedClinic);
-            });
+            }
             this.toastService.create('Clinic set as online successfully', 'success');
             console.log('Online clinic set to:', clinicId);
           } else {
             loading.dismiss();
-            this.toastService.create(res.Message, 'danger');
+            this.toastService.create(res.Message || 'Failed to update clinic status', 'danger');
           }
         },
         (err) => {
           loading.dismiss();
-          this.toastService.create('Failed to set clinic online', 'danger');
+          this.toastService.create(err.error?.message || 'Failed to set clinic online', 'danger');
           console.error('Error setting clinic online:', err);
         }
       );
-    } catch (error) {
-      loading.dismiss();
-      this.toastService.create('An error occurred', 'danger');
-      console.error('Error in setOnlineClinic:', error);
+    } else {
+      // For DOCTOR users, use existing endpoint
+      let data = { DoctorId: this.doctorId, Id: clinicId, IsOnline: "true" };
+      
+      try {
+        await this.clinicService.changeOnlineClinic(data).subscribe(
+          (res) => {
+            if (res.IsSuccess) {
+              loading.dismiss();
+              // Update local storage
+              this.storage.set(environment.CLINIC_Id, data.Id);
+              this.storage.get(environment.CLINICS).then((clinics) => {
+                const selectedClinic = clinics.find((clinic) => clinic.Id === data.Id);
+                this.storage.set(environment.ON_CLINIC, selectedClinic);
+                this.clinicService.updateClinic(selectedClinic);
+              });
+              this.toastService.create('Clinic set as online successfully', 'success');
+              console.log('Online clinic set to:', clinicId);
+            } else {
+              loading.dismiss();
+              this.toastService.create(res.Message, 'danger');
+            }
+          },
+          (err) => {
+            loading.dismiss();
+            this.toastService.create('Failed to set clinic online', 'danger');
+            console.error('Error setting clinic online:', err);
+          }
+        );
+      } catch (error) {
+        loading.dismiss();
+        this.toastService.create('An error occurred', 'danger');
+        console.error('Error in setOnlineClinic:', error);
+      }
     }
   }
 }

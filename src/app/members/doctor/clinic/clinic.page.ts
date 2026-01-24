@@ -24,6 +24,7 @@ export class ClinicPage {
   type: any;
   clinics: any;
   selectedClinicId: any;
+  paAccessId: any; // Store PaAccessId for PA users
   constructor(public loadingController: LoadingController, 
     public clinicService: ClinicService,
     private toastService: ToastService, 
@@ -120,6 +121,16 @@ export class ClinicPage {
             loading.dismiss();
             if (response.IsSuccess) {
               this.Clinics = response.ResponseData;
+              // Store PaAccessId for online clinic
+              for (let i = 0; i < this.Clinics.length; i++) {
+                if (this.Clinics[i].IsOnline) {
+                  this.paAccessId = this.Clinics[i].PaAccessId;
+                  this.storage.set(environment.CLINIC_Id, this.Clinics[i].Id);
+                  this.storage.set(environment.ON_CLINIC, this.Clinics[i]);
+                  this.clinicService.updateClinic(this.Clinics[i]);
+                  break;
+                }
+              }
             } else {
               this.toastService.create(response.Message, "danger");
             }
@@ -161,9 +172,19 @@ export class ClinicPage {
               this.clinics = response.ResponseData;
               // Set the currently online clinic as selected
               const onlineClinic = this.clinics.find(clinic => clinic.IsOnline);
-              this.selectedClinicId = onlineClinic ? onlineClinic.Id : (this.clinics.length > 0 ? this.clinics[0].Id : null);
+              if (onlineClinic) {
+                this.selectedClinicId = onlineClinic.Id;
+                this.paAccessId = onlineClinic.PaAccessId; // Store PaAccessId
+              } else {
+                this.selectedClinicId = (this.clinics.length > 0 ? this.clinics[0].Id : null);
+                if (this.selectedClinicId) {
+                  const selectedClinic = this.clinics.find(c => c.Id === this.selectedClinicId);
+                  this.paAccessId = selectedClinic ? selectedClinic.PaAccessId : null;
+                }
+              }
               console.log('PA Dropdown Clinics:', this.clinics);
               console.log('Selected PA Clinic ID:', this.selectedClinicId);
+              console.log('PaAccessId:', this.paAccessId);
             } else {
               this.toastService.create(response.Message, 'danger');
             }
@@ -184,6 +205,13 @@ export class ClinicPage {
     const clinicId = event.detail.value;
     console.log('Selected Clinic ID from dropdown:', clinicId);
     this.selectedClinicId = clinicId;
+    // Find and store PaAccessId for PA users
+    if (this.usertype.UserType === 'PA' && this.clinics) {
+      const selectedClinic = this.clinics.find(c => c.Id === clinicId);
+      if (selectedClinic) {
+        this.paAccessId = selectedClinic.PaAccessId;
+      }
+    }
     // Call the existing setOnlineClinic method to update the online status
     this.setOnlineClinic(clinicId);
   }
@@ -191,32 +219,74 @@ export class ClinicPage {
   async setOnlineClinic(clinicId) {
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
-    let data = { DoctorId: this.doctorId, Id: clinicId, IsOnline: "true" };
-    await this.clinicService.changeOnlineClinic(data).subscribe(
-      (res) => {
-        if (res.IsSuccess) {
-          loading.dismiss();
-          this.storage.set(environment.CLINIC_Id, data.Id).then(() => {
-          });
-          this.storage.get(environment.CLINICS).then((clinics) => {
-            const selectedClinic = clinics.find((clinic) => clinic.Id === data.Id);
-            this.storage.set(environment.ON_CLINIC, selectedClinic).then(() => {
-            });
-          });
-          this.getClinics();
-          this.router.navigate(["/members/doctor/clinic"]);
+    
+    if (this.usertype.UserType === "PA") {
+      // For PA users, use PaAccess endpoint
+      if (!this.paAccessId) {
+        // Find PaAccessId from clinics list
+        const clinic = this.Clinics ? this.Clinics.find(c => c.Id === clinicId) : 
+                      (this.clinics ? this.clinics.find(c => c.Id === clinicId) : null);
+        if (clinic && clinic.PaAccessId) {
+          this.paAccessId = clinic.PaAccessId;
         } else {
-          this.toastService.create(res.Message);
+          loading.dismiss();
+          this.toastService.create("Unable to find clinic access information", "danger");
+          return;
         }
-        this.storage.get(environment.CLINIC_Id).then((val) => {
-          this.clinicId = val;
-        });
-      },
-      (err) => {
-        this.toastService.create(err);
       }
-    );
-    loading.dismiss();
+      
+      this.paService.updatePaClinicOnlineStatus(this.paAccessId, true).subscribe(
+        (res) => {
+          if (res.IsSuccess || res.message) {
+            loading.dismiss();
+            this.storage.set(environment.CLINIC_Id, clinicId).then(() => {});
+            const selectedClinic = this.Clinics ? this.Clinics.find(c => c.Id === clinicId) : 
+                                  (this.clinics ? this.clinics.find(c => c.Id === clinicId) : null);
+            if (selectedClinic) {
+              this.storage.set(environment.ON_CLINIC, selectedClinic).then(() => {});
+              this.clinicService.updateClinic(selectedClinic);
+            }
+            this.getClinics();
+            this.toastService.create("Clinic set as online successfully", "success");
+          } else {
+            loading.dismiss();
+            this.toastService.create(res.Message || "Failed to update clinic status", "danger");
+          }
+        },
+        (err) => {
+          loading.dismiss();
+          this.toastService.create(err.error?.message || "Failed to update clinic status", "danger");
+        }
+      );
+    } else {
+      // For DOCTOR users, use existing endpoint
+      let data = { DoctorId: this.doctorId, Id: clinicId, IsOnline: "true" };
+      await this.clinicService.changeOnlineClinic(data).subscribe(
+        (res) => {
+          if (res.IsSuccess) {
+            loading.dismiss();
+            this.storage.set(environment.CLINIC_Id, data.Id).then(() => {
+            });
+            this.storage.get(environment.CLINICS).then((clinics) => {
+              const selectedClinic = clinics.find((clinic) => clinic.Id === data.Id);
+              this.storage.set(environment.ON_CLINIC, selectedClinic).then(() => {
+              });
+            });
+            this.getClinics();
+            this.router.navigate(["/members/doctor/clinic"]);
+          } else {
+            this.toastService.create(res.Message);
+          }
+          this.storage.get(environment.CLINIC_Id).then((val) => {
+            this.clinicId = val;
+          });
+        },
+        (err) => {
+          this.toastService.create(err);
+        }
+      );
+      loading.dismiss();
+    }
   }
 
   alertDeleteClinic(id) {

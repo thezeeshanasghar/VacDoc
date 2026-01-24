@@ -127,6 +127,16 @@ export class PaService extends BaseService {
       );
   }
 
+  updatePaClinicOnlineStatus(paAccessId: number, isOnline: boolean): Observable<any> {
+    const url = `${this.API_PA}PAAccess/${paAccessId}/isonline`;
+    return this.http.put(url, isOnline, this.httpOptions).pipe(
+      map((response: any) => response),
+      catchError((error) => {
+        console.error('Error in updatePaClinicOnlineStatus:', error);
+        throw error;
+      })
+    );
+  }
 
 //   putDoctorSchedule(data): Observable<any> {
 //     const url = `${this.API_SCHEDULE}doctorschedule`;

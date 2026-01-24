@@ -67,6 +67,10 @@ export class ChildPage {
   this.storage.get(environment.ON_CLINIC).then((clinic) => {
     this.clinic = clinic;
     console.log('Loaded clinic from storage:', this.clinic);
+    // For PA users, we need to load clinics separately to get PA-specific online clinic
+    if (this.usertype && this.usertype.UserType === 'PA') {
+      this.loadClinics();
+    }
   });
  this.storage.get('searchInput').then((searchValue) => {
     if (searchValue) {
@@ -190,10 +194,18 @@ console.log('Current Clinic:', this.clinic);
    let clinicIdToUse: any = null;
 
   if (this.usertype.UserType === 'PA') {
-    clinicIdToUse = this.selectedClinicId;
+    // For PA, use selectedClinicId (which should be the online clinic)
+    clinicIdToUse = this.selectedClinicId || (this.clinic ? this.clinic.Id : null);
   } else if (this.clinic && this.clinic.Id) {
+    // For DOCTOR, use clinic from storage (doctor's online clinic)
     clinicIdToUse = this.clinic.Id;
   } else {
+    loading.dismiss();
+    this.toastService.create('No clinic selected or available.', 'danger');
+    return;
+  }
+
+  if (!clinicIdToUse) {
     loading.dismiss();
     this.toastService.create('No clinic selected or available.', 'danger');
     return;
@@ -245,8 +257,25 @@ onClinicChange() {
             loading.dismiss();
             if (response.IsSuccess) {
               this.clinics = response.ResponseData;
-              this.selectedClinicId = this.clinics.length > 0 ? this.clinics[0].Id : null;
+              // Find the online clinic for PA (using PA-specific IsOnline)
+              const onlineClinic = this.clinics.find(clinic => clinic.IsOnline);
+              if (onlineClinic) {
+                this.selectedClinicId = onlineClinic.Id;
+                // Also update the clinic object for consistency
+                this.clinic = onlineClinic;
+                this.storage.set(environment.ON_CLINIC, onlineClinic);
+                this.storage.set(environment.CLINIC_Id, onlineClinic.Id);
+              } else {
+                // If no online clinic, use first clinic
+                this.selectedClinicId = this.clinics.length > 0 ? this.clinics[0].Id : null;
+                if (this.selectedClinicId) {
+                  this.clinic = this.clinics[0];
+                  this.storage.set(environment.ON_CLINIC, this.clinic);
+                  this.storage.set(environment.CLINIC_Id, this.selectedClinicId);
+                }
+              }
               console.log('PA Clinics:', this.clinics);
+              console.log('Selected Online Clinic ID:', this.selectedClinicId);
                this.getChlidByClinic(false);
             } else {
               this.toastService.create(response.Message, 'danger');

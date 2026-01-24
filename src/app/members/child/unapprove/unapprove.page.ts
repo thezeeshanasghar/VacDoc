@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { HttpResponse } from '@angular/common/http';
+import { PaService } from 'src/app/services/pa.service';
 
 @Component({
   selector: 'app-unapprove',
@@ -26,6 +27,8 @@ export class UnapprovePage {
   clinic: any;
   usertype: any;
   isSearchDisabled: boolean = false;
+  clinics: any;
+  selectedClinicId: any;
 
   constructor(
     public router: Router,
@@ -36,6 +39,7 @@ export class UnapprovePage {
     private storage: Storage,
     private alertService: AlertService,
     private callNumber: CallNumber,
+    private paService: PaService,
   ) {
     this.fg = this.formBuilder.group({
       Name: ["", Validators.required],
@@ -46,15 +50,68 @@ export class UnapprovePage {
     // Always fetch fresh unapproved patients when entering this page
     this.isSearchDisabled = true;
     this.storage.get(environment.USER).then((user) => {
-      this.usertype = user.UserType;
+      this.usertype = user;
+      // For PA users, load clinics to get PA-specific online clinic
+      if (user.UserType === 'PA') {
+        this.loadPaClinics();
+      } else {
+        // For DOCTOR users, use clinic from storage
+        this.storage.get(environment.ON_CLINIC).then((clinic) => {
+          this.clinic = clinic;
+          this.getUnapprovedPatients(false);
+        });
+      }
     });
     this.storage.get(environment.DOCTOR_Id).then((docId) => {
       this.doctorId = docId;
     });
-    this.storage.get(environment.ON_CLINIC).then((clinic) => {
-      this.clinic = clinic;
-      this.getUnapprovedPatients(false);
+  }
+
+  async loadPaClinics() {
+    const loading = await this.loadingController.create({
+      message: 'Loading clinics...',
     });
+    await loading.present();
+
+    try {
+      this.paService.getPaClinics(Number(this.usertype.PAId)).subscribe({
+        next: (response) => {
+          loading.dismiss();
+          if (response.IsSuccess) {
+            this.clinics = response.ResponseData;
+            // Find the online clinic for PA (using PA-specific IsOnline)
+            const onlineClinic = this.clinics.find(clinic => clinic.IsOnline);
+            if (onlineClinic) {
+              this.clinic = onlineClinic;
+              this.selectedClinicId = onlineClinic.Id;
+              this.storage.set(environment.ON_CLINIC, onlineClinic);
+              this.storage.set(environment.CLINIC_Id, onlineClinic.Id);
+            } else {
+              // If no online clinic, use first clinic
+              this.clinic = this.clinics.length > 0 ? this.clinics[0] : null;
+              this.selectedClinicId = this.clinic ? this.clinic.Id : null;
+              if (this.clinic) {
+                this.storage.set(environment.ON_CLINIC, this.clinic);
+                this.storage.set(environment.CLINIC_Id, this.selectedClinicId);
+              }
+            }
+            console.log('PA Clinics loaded, using clinic:', this.clinic);
+            this.getUnapprovedPatients(false);
+          } else {
+            this.toastService.create(response.Message, 'danger');
+          }
+        },
+        error: (error) => {
+          loading.dismiss();
+          console.error('Error fetching PA clinics:', error);
+          this.toastService.create('Failed to load clinics', 'danger');
+        },
+      });
+    } catch (error) {
+      loading.dismiss();
+      console.error('Error in loadPaClinics:', error);
+      this.toastService.create('An unexpected error occurred', 'danger');
+    }
   }
 
   async getUnapprovedPatients(isdelete: boolean) {
@@ -199,7 +256,16 @@ export class UnapprovePage {
     }
 
     this.isSearchDisabled = true;
-    this.childService.getChildByClinic(this.clinic.Id, this.page).subscribe({
+    // Use clinic.Id for both DOCTOR and PA (clinic should be set correctly in ionViewWillEnter)
+    const clinicIdToUse = this.clinic ? this.clinic.Id : null;
+    
+    if (!clinicIdToUse) {
+      loading.dismiss();
+      this.toastService.create('No clinic selected or available.', 'danger');
+      return;
+    }
+
+    this.childService.getChildByClinic(clinicIdToUse, this.page).subscribe({
       next: (res) => {
         if (res.IsSuccess) {
           if (res.ResponseData.length < 10) this.infiniteScroll.disabled = true;
