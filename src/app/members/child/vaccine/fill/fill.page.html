@@ -10,6 +10,14 @@
 <ion-content class=ion-padding>
 
   <form [formGroup]="fg">
+    <ion-item *ngIf="!fg.value.IsDisease">
+      <ion-label color="primary">Brands</ion-label>
+      <ion-select formControlName="BrandId" [interfaceOptions]="customActionSheetOptions" interface="action-sheet" placeholder="Select Brand">
+        <ion-select-option value="OHF">OHF</ion-select-option>
+        <ion-select-option *ngFor="let user of brandName" [value]="user.Id">{{ user.Name }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
     <div *ngIf="Type!=='travel'">
     <ion-item>
       <ion-label color="primary" position="floating">Weight</ion-label>
@@ -149,13 +157,6 @@
       </ion-select>
     </ion-item> -->
 
-    <ion-item *ngIf="!fg.value.IsDisease">
-      <ion-label color="primary">Brands</ion-label>
-      <ion-select formControlName="BrandId" [interfaceOptions]="customActionSheetOptions" interface="action-sheet" placeholder="Select Brand">
-        <ion-select-option value="OHF">OHF</ion-select-option>
-        <ion-select-option *ngFor="let user of brandName" [value]="user.Id">{{ user.Name }}</ion-select-option>
-      </ion-select>
-    </ion-item>
     <ion-item>
       <ion-label>Schedule Date</ion-label>
       <ion-datetime disabled displayFormat="DD-MM-YYYY" value="{{Date}}"></ion-datetime>

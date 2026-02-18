@@ -48,6 +48,7 @@ export class FillPage implements OnInit {
   doseId: any;
   usertype: any;
   scheduleDatecheck: string;
+  private readonly travelFieldStorageSuffix = 'travel-vaccine-fill-state';
 
   constructor(
     public loadingController: LoadingController,
@@ -105,6 +106,9 @@ export class FillPage implements OnInit {
       'DiseaseYear': ['2019'],
     });
 
+    this.setupTravelFieldPersistence();
+    this.restoreTravelFieldState();
+
     this.fgAddData = this.formBuilder.group({
       'DoctorId': [''],
       'IsDone': [null],
@@ -152,6 +156,9 @@ export class FillPage implements OnInit {
           this.Date = moment(this.Date, 'DD-MM-YYYY').format('YYYY-MM-DD');
           // this.isScheduleDateValid(this.Date);
           this.fg.controls.GivenDate.setValue(this.Date);
+
+          this.restoreTravelFieldState();
+
           var brand = this.vaccinesData.filter(x => x.vaccineId == res.ResponseData.Dose.VaccineId);
           if (brand[0].brandId != null) {
             this.fg.controls['BrandId'].setValue(brand[0].brandId);
@@ -384,6 +391,56 @@ export class FillPage implements OnInit {
     const existingOHF = this.vaccinesData.find(brand => brand.brandId === 'OHF');
     if (!existingOHF) {
       this.vaccinesData.push(OHFBrand);
+    }
+  }
+
+  private getTravelFieldStorageKey(): string {
+    const scheduleId = this.route.snapshot.paramMap.get('id') || 'unknown';
+    return `${this.travelFieldStorageSuffix}-${scheduleId}`;
+  }
+
+  private setupTravelFieldPersistence(): void {
+    const fields = ['Manufacturer', 'Lot', 'Expiry', 'Validity'];
+    fields.forEach((field) => {
+      this.fg.get(field)?.valueChanges.subscribe(() => {
+        this.saveTravelFieldState();
+      });
+    });
+  }
+
+  private saveTravelFieldState(): void {
+    const expiryValue = this.fg.get('Expiry')?.value;
+    const expiry = expiryValue ? moment(expiryValue).format('YYYY-MM-DD') : null;
+
+    const payload = {
+      Manufacturer: this.fg.get('Manufacturer')?.value ?? '',
+      Lot: this.fg.get('Lot')?.value ?? '',
+      Expiry: expiry,
+      Validity: this.fg.get('Validity')?.value ?? ''
+    };
+
+    localStorage.setItem(this.getTravelFieldStorageKey(), JSON.stringify(payload));
+  }
+
+  private restoreTravelFieldState(): void {
+    const raw = localStorage.getItem(this.getTravelFieldStorageKey());
+    if (!raw) {
+      return;
+    }
+
+    try {
+      const saved = JSON.parse(raw);
+      this.fg.patchValue(
+        {
+          Manufacturer: saved?.Manufacturer ?? this.fg.get('Manufacturer')?.value,
+          Lot: saved?.Lot ?? this.fg.get('Lot')?.value,
+          Expiry: saved?.Expiry ? new Date(saved.Expiry) : this.fg.get('Expiry')?.value,
+          Validity: saved?.Validity ?? this.fg.get('Validity')?.value
+        },
+        { emitEvent: false }
+      );
+    } catch (error) {
+      console.error('Unable to restore travel field state from localStorage', error);
     }
   }
 }
