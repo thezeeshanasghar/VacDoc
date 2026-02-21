@@ -87,6 +87,8 @@
                     <thead>
                         <tr>
                             <th>Brand Name</th>
+                            <th>Batch / Lot</th>
+                            <th>Expiry</th>
                             <th>Quantity</th>
                             <th>Purchase Price</th>
                             <th>Purchase Value</th>
@@ -110,6 +112,20 @@
                                         </mat-option>
                                     </mat-autocomplete>
                                 </mat-form-field>
+                            </td>
+                            <td>
+                                <ion-input
+                                    type="text"
+                                    [(ngModel)]="item.batchLot"
+                                    placeholder="Enter batch / lot">
+                                </ion-input>
+                            </td>
+                            <td>
+                                <ion-input
+                                    type="date"
+                                    [(ngModel)]="item.expiry"
+                                    placeholder="Select expiry date">
+                                </ion-input>
                             </td>
                             <td>
                                 <ion-input 

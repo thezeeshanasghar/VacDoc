@@ -402,21 +402,29 @@ export class FillPage implements OnInit {
   private setupTravelFieldPersistence(): void {
     const fields = ['Manufacturer', 'Lot', 'Expiry', 'Validity'];
     fields.forEach((field) => {
-      this.fg.get(field)?.valueChanges.subscribe(() => {
-        this.saveTravelFieldState();
-      });
+      const control = this.fg.get(field);
+      if (control && control.valueChanges) {
+        control.valueChanges.subscribe(() => {
+          this.saveTravelFieldState();
+        });
+      }
     });
   }
 
   private saveTravelFieldState(): void {
-    const expiryValue = this.fg.get('Expiry')?.value;
+    const expiryControl = this.fg.get('Expiry');
+    const expiryValue = expiryControl ? expiryControl.value : null;
     const expiry = expiryValue ? moment(expiryValue).format('YYYY-MM-DD') : null;
 
+    const manufacturerControl = this.fg.get('Manufacturer');
+    const lotControl = this.fg.get('Lot');
+    const validityControl = this.fg.get('Validity');
+
     const payload = {
-      Manufacturer: this.fg.get('Manufacturer')?.value ?? '',
-      Lot: this.fg.get('Lot')?.value ?? '',
+      Manufacturer: manufacturerControl && manufacturerControl.value != null ? manufacturerControl.value : '',
+      Lot: lotControl && lotControl.value != null ? lotControl.value : '',
       Expiry: expiry,
-      Validity: this.fg.get('Validity')?.value ?? ''
+      Validity: validityControl && validityControl.value != null ? validityControl.value : ''
     };
 
     localStorage.setItem(this.getTravelFieldStorageKey(), JSON.stringify(payload));
@@ -430,12 +438,25 @@ export class FillPage implements OnInit {
 
     try {
       const saved = JSON.parse(raw);
+      const manufacturerControl = this.fg.get('Manufacturer');
+      const lotControl = this.fg.get('Lot');
+      const expiryControl = this.fg.get('Expiry');
+      const validityControl = this.fg.get('Validity');
+
       this.fg.patchValue(
         {
-          Manufacturer: saved?.Manufacturer ?? this.fg.get('Manufacturer')?.value,
-          Lot: saved?.Lot ?? this.fg.get('Lot')?.value,
-          Expiry: saved?.Expiry ? new Date(saved.Expiry) : this.fg.get('Expiry')?.value,
-          Validity: saved?.Validity ?? this.fg.get('Validity')?.value
+          Manufacturer: saved && saved.Manufacturer != null
+            ? saved.Manufacturer
+            : (manufacturerControl ? manufacturerControl.value : null),
+          Lot: saved && saved.Lot != null
+            ? saved.Lot
+            : (lotControl ? lotControl.value : null),
+          Expiry: saved && saved.Expiry
+            ? new Date(saved.Expiry)
+            : (expiryControl ? expiryControl.value : null),
+          Validity: saved && saved.Validity != null
+            ? saved.Validity
+            : (validityControl ? validityControl.value : null)
         },
         { emitEvent: false }
       );

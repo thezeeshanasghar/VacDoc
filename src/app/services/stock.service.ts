@@ -23,6 +23,8 @@ export interface StockDTO {
   IsPaid: boolean;
   Quantity: number;
   StockAmount: number;
+  BatchLot?: string;
+  Expiry?: Date | string;
 }
 export interface BillDetails {
   Count: any;

@@ -32,6 +32,8 @@ interface StockItem {
   quantity: number;
   price: number;
   billNo?: string;
+  batchLot?: string;
+  expiry?: string;
 }
 
 interface BrandAmountDTO {
@@ -284,6 +286,8 @@ export class AddPage implements OnInit {
           IsPaid: this.isPaid,
           Quantity: item.quantity,
           StockAmount: item.price,
+          BatchLot: item.batchLot ? item.batchLot.trim() : '',
+          Expiry: item.expiry ? new Date(item.expiry) : null,
           DoctorId: doctorIdNumber,
           IsPAApprove: this.usertype === 'DOCTOR' ? true : false,
         };
@@ -483,7 +487,9 @@ export class AddPage implements OnInit {
       this.stockItems.push({
           brandName: '',
           quantity: null,
-          price: null
+        price: null,
+        batchLot: '',
+        expiry: ''
       });
   }  
 
