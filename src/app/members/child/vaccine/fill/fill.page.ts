@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VaccineService } from 'src/app/services/vaccine.service';
+import { StockService } from 'src/app/services/stock.service';
 import { ChildService } from 'src/app/services/child.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { LoadingController } from '@ionic/angular';
@@ -37,6 +38,7 @@ export class FillPage implements OnInit {
   scheduleDate: string = '';  // Bind this to the ion-datetime value
   isScheduleDateInvalid: boolean = false;
   childId: number;
+  clinicId: number;
   // childService: any;
   childData: any;
   Type: any;
@@ -56,6 +58,7 @@ export class FillPage implements OnInit {
     private storage: Storage,
     private route: ActivatedRoute,
     private vaccineService: VaccineService,
+    private stockService: StockService,
     private toastService: ToastService,
     private router: Router,
     private ref: ChangeDetectorRef,
@@ -211,6 +214,7 @@ export class FillPage implements OnInit {
           // console.log(this.vaccineData.ChildId);
           this.childId = this.vaccineData.Id; // Assuming ChildId is the correct property to use
           this.Type = this.vaccineData.Type; // Retaining this line as it seems necessary
+          this.clinicId = this.vaccineData.ClinicId;
           console.log(this.vaccineData.Type);
           this.Validity = this.vaccineData.Validity; // Retaining this line as it seems necessary
           console.log(this.vaccineData.validity);
@@ -392,6 +396,37 @@ export class FillPage implements OnInit {
     if (!existingOHF) {
       this.vaccinesData.push(OHFBrand);
     }
+  }
+
+  onBrandChange(event: any): void {
+    if (this.Type !== 'travel') {
+      return;
+    }
+
+    const brandId = event && event.detail ? event.detail.value : null;
+    if (!brandId || brandId === 'OHF') {
+      this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
+      return;
+    }
+
+    if (!this.clinicId) {
+      return;
+    }
+
+    this.stockService.getLatestStock(brandId, this.clinicId).subscribe(
+      res => {
+        if (res && res.IsSuccess && res.ResponseData) {
+          const batchLot = res.ResponseData.BatchLot || '';
+          const expiry = res.ResponseData.Expiry ? new Date(res.ResponseData.Expiry) : null;
+          this.fg.patchValue({ Lot: batchLot, Expiry: expiry }, { emitEvent: true });
+        } else {
+          this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
+        }
+      },
+      () => {
+        this.toastService.create('Unable to load batch/expiry for selected brand', 'danger');
+      }
+    );
   }
 
   private getTravelFieldStorageKey(): string {

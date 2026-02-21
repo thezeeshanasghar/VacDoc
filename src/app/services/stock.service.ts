@@ -81,6 +81,11 @@ export class StockService {
     return this.http.get<Response<BillDetails[]>>(url);
   }
 
+  getLatestStock(brandId: number, clinicId: number): Observable<Response<StockDTO>> {
+    const url = `${this.apiUrl}stock/latest?brandId=${brandId}&clinicId=${clinicId}`;
+    return this.http.get<Response<StockDTO>>(url);
+  }
+
   getSuppliers(): Observable<Response<Supplier[]>> {
     let url = `${this.apiUrl}Bill/Suppliers`;
     return this.http.get<Response<Supplier[]>>(url);
