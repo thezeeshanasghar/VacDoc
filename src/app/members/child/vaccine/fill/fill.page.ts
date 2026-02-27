@@ -28,6 +28,8 @@ export class FillPage implements OnInit {
   vaccinesData: any;
   vaccineName: any;
   brandName: any;
+  filteredBrandName: any[] = [];
+  brandSearchTerm: string = '';
   Date: any;
   todaydate: any;
   birthYear: any;
@@ -155,6 +157,7 @@ export class FillPage implements OnInit {
           this.getChildData(this.childId)
           this.vaccineName = this.vaccineData.Dose.Vaccine.Name;
           this.brandName = this.vaccineData.Brands || [];
+          this.applyBrandFilter();
           this.Date = this.vaccineData.Date;
           this.Date = moment(this.Date, 'DD-MM-YYYY').format('YYYY-MM-DD');
           // this.isScheduleDateValid(this.Date);
@@ -389,6 +392,24 @@ export class FillPage implements OnInit {
 
   isBrandFilled(): boolean {
     return this.fg.get('BrandId').value !== null;
+  }
+
+  onBrandSearchChange(event: any): void {
+    this.brandSearchTerm = (event && event.detail && event.detail.value) ? event.detail.value : '';
+    this.applyBrandFilter();
+  }
+
+  private applyBrandFilter(): void {
+    const brands = this.brandName || [];
+    const term = (this.brandSearchTerm || '').toLowerCase().trim();
+
+    const filtered = term
+      ? brands.filter((brand) => (brand?.Name || '').toLowerCase().includes(term))
+      : brands;
+
+    this.filteredBrandName = [...filtered].sort((a, b) =>
+      (a?.Name || '').toLowerCase().localeCompare((b?.Name || '').toLowerCase())
+    );
   }
 
   addOHFToBrands() {
