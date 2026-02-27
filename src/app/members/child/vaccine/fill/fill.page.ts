@@ -74,7 +74,7 @@ export class FillPage implements OnInit {
       this.birthYear = moment(val, "DD-MM-YYYY").format("YYYY-MM-DD");
     });
     this.storage.get('vaccinesData').then((val) => {
-      this.vaccinesData = val;
+      this.vaccinesData = val || [];
       this.addOHFToBrands(); // Add OHF to the list of brands
     });
 
@@ -154,7 +154,7 @@ export class FillPage implements OnInit {
           this.doseId=this.vaccineData.DoseId;
           this.getChildData(this.childId)
           this.vaccineName = this.vaccineData.Dose.Vaccine.Name;
-          this.brandName = this.vaccineData.Brands;
+          this.brandName = this.vaccineData.Brands || [];
           this.Date = this.vaccineData.Date;
           this.Date = moment(this.Date, 'DD-MM-YYYY').format('YYYY-MM-DD');
           // this.isScheduleDateValid(this.Date);
@@ -162,9 +162,10 @@ export class FillPage implements OnInit {
 
           this.restoreTravelFieldState();
 
-          var brand = this.vaccinesData.filter(x => x.vaccineId == res.ResponseData.Dose.VaccineId);
-          if (brand[0].brandId != null) {
-            this.fg.controls['BrandId'].setValue(brand[0].brandId);
+          const matchedBrand = (this.vaccinesData || []).find(x => x && x.vaccineId == res.ResponseData.Dose.VaccineId && x.brandId != null);
+          const matchedBrandExists = this.brandName.some(b => b && b.Id == (matchedBrand ? matchedBrand.brandId : null));
+          if (matchedBrand && matchedBrandExists) {
+            this.fg.controls['BrandId'].setValue(matchedBrand.brandId);
           }
           this.ref.detectChanges();
           loading.dismiss();

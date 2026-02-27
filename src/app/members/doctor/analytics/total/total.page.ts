@@ -54,8 +54,9 @@ export class TotalPage implements OnInit {
         if (res.IsSuccess) {
           this.brandAmounts = res.ResponseData;
           this.brandAmounts.sort((a, b) => {
-            const vaccineComparison = a.VaccineName.localeCompare(b.VaccineName);
-            return vaccineComparison !== 0 ? vaccineComparison : a.BrandName.localeCompare(b.BrandName);
+            const brandA = (a.BrandName || '').toLowerCase();
+            const brandB = (b.BrandName || '').toLowerCase();
+            return brandA.localeCompare(brandB);
           });
           console.log('Brand Amounts:', this.brandAmounts);
         } else {
