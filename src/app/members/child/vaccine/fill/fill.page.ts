@@ -404,11 +404,11 @@ export class FillPage implements OnInit {
     const term = (this.brandSearchTerm || '').toLowerCase().trim();
 
     const filtered = term
-      ? brands.filter((brand) => (brand?.Name || '').toLowerCase().includes(term))
+      ? brands.filter((brand) => ((brand && brand.Name) || '').toLowerCase().includes(term))
       : brands;
 
     this.filteredBrandName = [...filtered].sort((a, b) =>
-      (a?.Name || '').toLowerCase().localeCompare((b?.Name || '').toLowerCase())
+      (((a && a.Name) || '').toLowerCase()).localeCompare((((b && b.Name) || '').toLowerCase()))
     );
   }
 
