@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VaccineService } from 'src/app/services/vaccine.service';
+import { BrandService } from 'src/app/services/brand.service';
 import { StockService } from 'src/app/services/stock.service';
 import { ChildService } from 'src/app/services/child.service';
 import { ToastService } from 'src/app/shared/toast.service';
@@ -60,6 +61,7 @@ export class FillPage implements OnInit {
     private storage: Storage,
     private route: ActivatedRoute,
     private vaccineService: VaccineService,
+    private brandService: BrandService,
     private stockService: StockService,
     private toastService: ToastService,
     private router: Router,
@@ -156,8 +158,11 @@ export class FillPage implements OnInit {
           this.doseId=this.vaccineData.DoseId;
           this.getChildData(this.childId)
           this.vaccineName = this.vaccineData.Dose.Vaccine.Name;
-          this.brandName = this.vaccineData.Brands || [];
+          this.brandName = this.vaccineData.Brands || this.vaccineData.brands || [];
           this.applyBrandFilter();
+          if (!this.brandName || this.brandName.length === 0) {
+            this.loadAllBrands();
+          }
           this.Date = this.vaccineData.Date;
           this.Date = moment(this.Date, 'DD-MM-YYYY').format('YYYY-MM-DD');
           // this.isScheduleDateValid(this.Date);
@@ -395,8 +400,25 @@ export class FillPage implements OnInit {
   }
 
   onBrandSearchChange(event: any): void {
-    this.brandSearchTerm = (event && event.detail && event.detail.value) ? event.detail.value : '';
+    const inputValue =
+      (event && event.detail && event.detail.value) ||
+      (event && event.target && event.target.value) ||
+      '';
+    this.brandSearchTerm = inputValue;
     this.applyBrandFilter();
+  }
+
+  private loadAllBrands(): void {
+    this.brandService.getBrands().subscribe(
+      res => {
+        this.brandName = (res && res.ResponseData) ? res.ResponseData : [];
+        this.applyBrandFilter();
+      },
+      () => {
+        this.brandName = [];
+        this.filteredBrandName = [];
+      }
+    );
   }
 
   private applyBrandFilter(): void {
