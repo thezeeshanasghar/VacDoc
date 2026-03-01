@@ -12,6 +12,7 @@
   <form [formGroup]="fg">
     <div *ngIf="!fg.value.IsDisease">
       <mat-form-field appearance="outline" class="example-full-width custom-input-item">
+        <mat-label *ngIf="!brandSearchTerm" class="brand-label">Brands</mat-label>
         <input
           type="text"
           matInput
