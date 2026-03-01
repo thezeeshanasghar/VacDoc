@@ -399,12 +399,8 @@ export class FillPage implements OnInit {
     return this.fg.get('BrandId').value !== null;
   }
 
-  onBrandSearchChange(event: any): void {
-    const inputValue =
-      (event && event.detail && event.detail.value) ||
-      (event && event.target && event.target.value) ||
-      '';
-    this.brandSearchTerm = inputValue;
+  onBrandSearchChange(value: string): void {
+    this.brandSearchTerm = (value || '').toString();
     this.applyBrandFilter();
   }
 
