@@ -174,6 +174,11 @@ export class FillPage implements OnInit {
           const matchedBrandExists = this.brandName.some(b => b && b.Id == (matchedBrand ? matchedBrand.brandId : null));
           if (matchedBrand && matchedBrandExists) {
             this.fg.controls['BrandId'].setValue(matchedBrand.brandId);
+            const preselectedBrand = (this.brandName || []).find(b => b && b.Id == matchedBrand.brandId);
+            this.brandSearchTerm = preselectedBrand ? preselectedBrand.Name : '';
+          } else if (matchedBrand && matchedBrand.brandId === 'OHF') {
+            this.fg.controls['BrandId'].setValue('OHF');
+            this.brandSearchTerm = 'OHF';
           }
           this.ref.detectChanges();
           loading.dismiss();
@@ -401,7 +406,38 @@ export class FillPage implements OnInit {
 
   onBrandSearchChange(value: string): void {
     this.brandSearchTerm = (value || '').toString();
+    const term = this.brandSearchTerm.toLowerCase().trim();
+    const exactMatch = (this.brandName || []).find(
+      (brand) => ((brand && brand.Name) || '').toLowerCase() === term
+    );
+
+    if (term === 'ohf') {
+      this.fg.controls['BrandId'].setValue('OHF');
+    } else if (exactMatch) {
+      this.fg.controls['BrandId'].setValue(exactMatch.Id);
+    } else {
+      this.fg.controls['BrandId'].setValue(null);
+    }
+
     this.applyBrandFilter();
+  }
+
+  onBrandOptionSelected(selectedBrandName: string): void {
+    this.brandSearchTerm = selectedBrandName || '';
+
+    if (this.brandSearchTerm === 'OHF') {
+      this.fg.controls['BrandId'].setValue('OHF');
+      this.onBrandChange('OHF');
+      return;
+    }
+
+    const selectedBrand = (this.brandName || []).find(
+      (brand) => brand && brand.Name === this.brandSearchTerm
+    );
+
+    const brandId = selectedBrand ? selectedBrand.Id : null;
+    this.fg.controls['BrandId'].setValue(brandId);
+    this.onBrandChange(brandId);
   }
 
   private loadAllBrands(): void {
@@ -443,7 +479,7 @@ export class FillPage implements OnInit {
       return;
     }
 
-    const brandId = event && event.detail ? event.detail.value : null;
+    const brandId = event && event.detail ? event.detail.value : event;
     if (!brandId || brandId === 'OHF') {
       this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
       return;

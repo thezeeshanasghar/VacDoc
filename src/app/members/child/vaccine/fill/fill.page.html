@@ -10,23 +10,26 @@
 <ion-content class=ion-padding>
 
   <form [formGroup]="fg">
-      <ion-item *ngIf="!fg.value.IsDisease">
-      <ion-label color="primary" position="floating">Search Brand</ion-label>
-      <ion-input
-        type="text"
-        [value]="brandSearchTerm"
-        (ionInput)="onBrandSearchChange($event)"
-        placeholder="Type to search brand">
-      </ion-input>
-    </ion-item>
-
-    <ion-item *ngIf="!fg.value.IsDisease">
-      <ion-label color="primary">Brands</ion-label>
-      <ion-select formControlName="BrandId" [interfaceOptions]="customActionSheetOptions" interface="action-sheet" placeholder="Select Brand" (ionChange)="onBrandChange($event)">
-        <ion-select-option value="OHF">OHF</ion-select-option>
-        <ion-select-option *ngFor="let user of filteredBrandName" [value]="user.Id">{{ user.Name }}</ion-select-option>
-      </ion-select>
-    </ion-item>
+    <div *ngIf="!fg.value.IsDisease">
+      <mat-form-field appearance="outline" class="example-full-width custom-input-item">
+        <input
+          type="text"
+          matInput
+          placeholder="Brands"
+          [matAutocomplete]="brandAuto"
+          [(ngModel)]="brandSearchTerm"
+          [ngModelOptions]="{ standalone: true }"
+          (ngModelChange)="onBrandSearchChange($event)"
+          style="font-size: 15px;"
+        >
+        <mat-autocomplete #brandAuto="matAutocomplete" class="no-indent" (optionSelected)="onBrandOptionSelected($event.option.value)">
+          <mat-option [value]="'OHF'">OHF</mat-option>
+          <mat-option *ngFor="let user of filteredBrandName" [value]="user.Name">
+            {{ user.Name }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
 
     <div *ngIf="Type!=='travel'">
     <ion-item>
