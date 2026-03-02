@@ -415,10 +415,8 @@ export class FillPage implements OnInit {
 
     if (term === 'ohf') {
       this.fg.controls['BrandId'].setValue('OHF');
-      this.onBrandChange('OHF');
     } else if (exactMatch) {
       this.fg.controls['BrandId'].setValue(exactMatch.Id);
-      this.onBrandChange(exactMatch.Id);
     } else {
       this.fg.controls['BrandId'].setValue(null);
       this.fg.patchValue({ Manufacturer: '', Lot: '', Expiry: null }, { emitEvent: true });
