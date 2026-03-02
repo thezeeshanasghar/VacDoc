@@ -413,10 +413,13 @@ export class FillPage implements OnInit {
 
     if (term === 'ohf') {
       this.fg.controls['BrandId'].setValue('OHF');
+      this.onBrandChange('OHF');
     } else if (exactMatch) {
       this.fg.controls['BrandId'].setValue(exactMatch.Id);
+      this.onBrandChange(exactMatch.Id);
     } else {
       this.fg.controls['BrandId'].setValue(null);
+      this.fg.patchValue({ Manufacturer: '', Lot: '', Expiry: null }, { emitEvent: true });
     }
 
     this.applyBrandFilter();
@@ -475,17 +478,18 @@ export class FillPage implements OnInit {
   }
 
   onBrandChange(event: any): void {
-    if (this.Type !== 'travel') {
+    const brandId = event && event.detail ? event.detail.value : event;
+    const selectedManufacturer = this.getBrandManufacturer(brandId);
+
+    if (!brandId || brandId === 'OHF') {
+      this.fg.patchValue({ Manufacturer: selectedManufacturer || '', Lot: '', Expiry: null }, { emitEvent: true });
       return;
     }
 
-    const brandId = event && event.detail ? event.detail.value : event;
-    if (!brandId || brandId === 'OHF') {
-      this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
-      return;
-    }
+    this.fg.patchValue({ Manufacturer: selectedManufacturer || '' }, { emitEvent: true });
 
     if (!this.clinicId) {
+      this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
       return;
     }
 
@@ -503,6 +507,19 @@ export class FillPage implements OnInit {
         this.toastService.create('Unable to load batch/expiry for selected brand', 'danger');
       }
     );
+  }
+
+  private getBrandManufacturer(brandId: any): string {
+    if (!brandId || brandId === 'OHF') {
+      return '';
+    }
+
+    const selectedBrand = (this.brandName || []).find((brand) => brand && brand.Id == brandId);
+    if (!selectedBrand) {
+      return '';
+    }
+
+    return selectedBrand.Manufacturer || selectedBrand.manufacturer || '';
   }
 
   private getTravelFieldStorageKey(): string {

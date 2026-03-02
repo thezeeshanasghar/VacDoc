@@ -80,7 +80,7 @@
       </ion-text>
     </ion-item>
   </div>
-  <div *ngIf="Type === 'travel'">
+  <div>
     <ion-item>
       <ion-label color="primary" position="floating">Manufacturer</ion-label>
       <ion-input type="text" placeholder="Manufacturer" formControlName="Manufacturer"></ion-input>
@@ -121,7 +121,7 @@
       </ion-text>
     </ion-item>
 
-    <ion-item>
+    <ion-item *ngIf="Type === 'travel'">
       <ion-label color="primary" position="floating">Validity</ion-label>
       <ion-select formControlName="Validity">
         <ion-select-option value="365">1 Year</ion-select-option>
