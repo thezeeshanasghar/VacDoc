@@ -149,6 +149,7 @@ export class FillPage implements OnInit {
         if (res.IsSuccess) {
           this.vaccineData = res.ResponseData;
           console.log(this.vaccineData);
+          this.clinicId = this.resolveClinicId(this.vaccineData) || this.clinicId;
           this.Validity = this.vaccineData.Dose.Vaccine.Validity;
           this.fg.controls['Validity'].setValue(this.Validity + '');
           this.MinAge = this.vaccineData.Dose.Vaccine.MinAge;
@@ -221,6 +222,7 @@ export class FillPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.vaccineData = res.ResponseData;
+          this.childData = res.ResponseData;
           console.log(this.vaccineData);
           // this.MinAge = this.vaccineData.Dose.Vaccine.MinAge;
           // this.MinGap = this.vaccineData.Dose.MinGap;
@@ -228,7 +230,7 @@ export class FillPage implements OnInit {
           // console.log(this.vaccineData.ChildId);
           this.childId = this.vaccineData.Id; // Assuming ChildId is the correct property to use
           this.Type = this.vaccineData.Type; // Retaining this line as it seems necessary
-          this.clinicId = this.vaccineData.ClinicId;
+          this.clinicId = this.resolveClinicId(this.vaccineData) || this.clinicId;
           console.log(this.vaccineData.Type);
           this.Validity = this.vaccineData.Validity; // Retaining this line as it seems necessary
           console.log(this.vaccineData.validity);
@@ -488,16 +490,41 @@ export class FillPage implements OnInit {
 
     this.fg.patchValue({ Manufacturer: selectedManufacturer || '' }, { emitEvent: true });
 
-    if (!this.clinicId) {
+    const parsedBrandId = Number(brandId);
+    if (!parsedBrandId || isNaN(parsedBrandId)) {
       this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
       return;
     }
 
-    this.stockService.getLatestStock(brandId, this.clinicId).subscribe(
+    const resolvedClinicId = this.resolveClinicId(this.vaccineData)
+      || this.resolveClinicId(this.childData)
+      || this.clinicId;
+
+    if (resolvedClinicId) {
+      this.clinicId = resolvedClinicId;
+      this.loadLatestStockForBrand(parsedBrandId, resolvedClinicId);
+      return;
+    }
+
+    this.storage.get(environment.CLINIC_Id).then((storedClinicId) => {
+      const fallbackClinicId = Number(storedClinicId);
+      if (fallbackClinicId && !isNaN(fallbackClinicId)) {
+        this.clinicId = fallbackClinicId;
+        this.loadLatestStockForBrand(parsedBrandId, fallbackClinicId);
+      } else {
+        this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
+      }
+    });
+  }
+
+  private loadLatestStockForBrand(brandId: number, clinicId: number): void {
+    this.stockService.getLatestStock(brandId, clinicId).subscribe(
       res => {
-        if (res && res.IsSuccess && res.ResponseData) {
-          const batchLot = res.ResponseData.BatchLot || '';
-          const expiry = res.ResponseData.Expiry ? new Date(res.ResponseData.Expiry) : null;
+        const stock: any = res && res.ResponseData ? res.ResponseData : null;
+        if (res && res.IsSuccess && stock) {
+          const batchLot = stock.BatchLot || stock.batchLot || '';
+          const expiryValue = stock.Expiry || stock.expiry;
+          const expiry = expiryValue ? new Date(expiryValue) : null;
           this.fg.patchValue({ Lot: batchLot, Expiry: expiry }, { emitEvent: true });
         } else {
           this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
@@ -507,6 +534,21 @@ export class FillPage implements OnInit {
         this.toastService.create('Unable to load batch/expiry for selected brand', 'danger');
       }
     );
+  }
+
+  private resolveClinicId(payload: any): number {
+    if (!payload) {
+      return null;
+    }
+
+    const rawClinicId =
+      payload.ClinicId
+      || payload.clinicId
+      || (payload.Child && (payload.Child.ClinicId || payload.Child.clinicId))
+      || (payload.child && (payload.child.ClinicId || payload.child.clinicId));
+
+    const clinicId = Number(rawClinicId);
+    return clinicId && !isNaN(clinicId) ? clinicId : null;
   }
 
   private getBrandManufacturer(brandId: any): string {
