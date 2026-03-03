@@ -10,6 +10,9 @@ ion-item ion-input {
 .expiry-input {
     width: 100%;
     color: #d0d0d0 !important;
+    background: transparent;
+    border: 0 !important;
+    text-align: right;
 }
 
 :host ::ng-deep .mat-input-element {
@@ -19,6 +22,10 @@ ion-item ion-input {
 
 :host ::ng-deep .mat-form-field-label {
     color: gray !important;
+}
+
+ion-item input[matInput] {
+    color: #d0d0d0 !important;
 }
 
 .example-full-width {

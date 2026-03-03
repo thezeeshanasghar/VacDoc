@@ -168,26 +168,26 @@ export class FillPage implements OnInit {
           this.Date = moment(this.Date, 'DD-MM-YYYY').format('YYYY-MM-DD');
           // this.isScheduleDateValid(this.Date);
           this.fg.controls.GivenDate.setValue(this.Date);
-          this.fg.patchValue(
-            {
-              Manufacturer: this.vaccineData.Manufacturer || '',
-              Lot: this.vaccineData.Lot || '',
-              Expiry: this.vaccineData.Expiry ? new Date(this.vaccineData.Expiry) : null
-            },
-            { emitEvent: false }
-          );
 
           this.restoreTravelFieldState();
 
+          const scheduleBrandId = this.vaccineData.BrandId;
           const matchedBrand = (this.vaccinesData || []).find(x => x && x.vaccineId == res.ResponseData.Dose.VaccineId && x.brandId != null);
           const matchedBrandExists = this.brandName.some(b => b && b.Id == (matchedBrand ? matchedBrand.brandId : null));
-          if (matchedBrand && matchedBrandExists) {
+          if (scheduleBrandId && this.brandName.some(b => b && b.Id == scheduleBrandId)) {
+            this.fg.controls['BrandId'].setValue(scheduleBrandId);
+            const selectedBrand = (this.brandName || []).find(b => b && b.Id == scheduleBrandId);
+            this.brandSearchTerm = selectedBrand ? selectedBrand.Name : '';
+            this.onBrandChange(scheduleBrandId);
+          } else if (matchedBrand && matchedBrandExists) {
             this.fg.controls['BrandId'].setValue(matchedBrand.brandId);
             const preselectedBrand = (this.brandName || []).find(b => b && b.Id == matchedBrand.brandId);
             this.brandSearchTerm = preselectedBrand ? preselectedBrand.Name : '';
+            this.onBrandChange(matchedBrand.brandId);
           } else if (matchedBrand && matchedBrand.brandId === 'OHF') {
             this.fg.controls['BrandId'].setValue('OHF');
             this.brandSearchTerm = 'OHF';
+            this.onBrandChange('OHF');
           }
           this.ref.detectChanges();
           loading.dismiss();
