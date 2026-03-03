@@ -2,6 +2,25 @@ input {
     border: 0;
 }
 
+ion-item ion-input {
+    --color: #d0d0d0;
+    --placeholder-color: gray;
+}
+
+.expiry-input {
+    width: 100%;
+    color: #d0d0d0 !important;
+}
+
+:host ::ng-deep .mat-input-element {
+    color: #d0d0d0 !important;
+    caret-color: #d0d0d0 !important;
+}
+
+:host ::ng-deep .mat-form-field-label {
+    color: gray !important;
+}
+
 .example-full-width {
     width: 100%;
 }
