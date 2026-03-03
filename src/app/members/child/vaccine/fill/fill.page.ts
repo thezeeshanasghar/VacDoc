@@ -74,6 +74,18 @@ export class FillPage implements OnInit {
     this.storage.get(environment.DOCTOR_Id).then((val) => {
       this.doctorId = val;
     });
+    this.storage.get(environment.ON_CLINIC).then((onlineClinic) => {
+      const onlineClinicId = onlineClinic && onlineClinic.Id ? Number(onlineClinic.Id) : null;
+      if (onlineClinicId && !isNaN(onlineClinicId)) {
+        this.clinicId = onlineClinicId;
+      }
+    });
+    this.storage.get(environment.CLINIC_Id).then((storedClinicId) => {
+      const clinicId = Number(storedClinicId);
+      if (!this.clinicId && clinicId && !isNaN(clinicId)) {
+        this.clinicId = clinicId;
+      }
+    });
     this.storage.get('BirthYear').then((val) => {
       this.birthYear = moment(val, "DD-MM-YYYY").format("YYYY-MM-DD");
     });
@@ -502,24 +514,33 @@ export class FillPage implements OnInit {
       return;
     }
 
-    const resolvedClinicId = this.resolveClinicId(this.vaccineData)
-      || this.resolveClinicId(this.childData)
-      || this.clinicId;
-
-    if (resolvedClinicId) {
-      this.clinicId = resolvedClinicId;
-      this.loadLatestStockForBrand(parsedBrandId, resolvedClinicId);
-      return;
-    }
-
-    this.storage.get(environment.CLINIC_Id).then((storedClinicId) => {
-      const fallbackClinicId = Number(storedClinicId);
-      if (fallbackClinicId && !isNaN(fallbackClinicId)) {
-        this.clinicId = fallbackClinicId;
-        this.loadLatestStockForBrand(parsedBrandId, fallbackClinicId);
-      } else {
-        this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
+    this.storage.get(environment.ON_CLINIC).then((onlineClinic) => {
+      const onlineClinicId = onlineClinic && onlineClinic.Id ? Number(onlineClinic.Id) : null;
+      if (onlineClinicId && !isNaN(onlineClinicId)) {
+        this.clinicId = onlineClinicId;
+        this.loadLatestStockForBrand(parsedBrandId, onlineClinicId);
+        return;
       }
+
+      this.storage.get(environment.CLINIC_Id).then((storedClinicId) => {
+        const preferredClinicId = Number(storedClinicId);
+        if (preferredClinicId && !isNaN(preferredClinicId)) {
+          this.clinicId = preferredClinicId;
+          this.loadLatestStockForBrand(parsedBrandId, preferredClinicId);
+          return;
+        }
+
+        const fallbackClinicId = this.resolveClinicId(this.vaccineData)
+          || this.resolveClinicId(this.childData)
+          || this.clinicId;
+
+        if (fallbackClinicId) {
+          this.clinicId = fallbackClinicId;
+          this.loadLatestStockForBrand(parsedBrandId, fallbackClinicId);
+        } else {
+          this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
+        }
+      });
     });
   }
 
