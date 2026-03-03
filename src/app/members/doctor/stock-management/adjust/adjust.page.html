@@ -40,7 +40,9 @@
               [(ngModel)]="adjustment.brandName"
               name="brandName" 
               [matAutocomplete]="brandAuto"
-              (focus)="showAllBrands()"
+              #brandTrigger="matAutocompleteTrigger"
+              (focus)="showAllBrands(); brandTrigger.openPanel()"
+              (click)="showAllBrands(); brandTrigger.openPanel()"
               (ngModelChange)="filterBrands($event)"
               required
               placeholder="Search brand"

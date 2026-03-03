@@ -104,7 +104,9 @@
                                         matInput 
                                         [(ngModel)]="item.brandName"
                                         [matAutocomplete]="brandAuto"
-                                        (focus)="showAllBrands()"
+                                        #brandTrigger="matAutocompleteTrigger"
+                                        (focus)="showAllBrands(); brandTrigger.openPanel()"
+                                        (click)="showAllBrands(); brandTrigger.openPanel()"
                                         (ngModelChange)="filterBrands($event)" 
                                         placeholder="Search brand"
                                         style="font-size: 15px;">
