@@ -168,6 +168,14 @@ export class FillPage implements OnInit {
           this.Date = moment(this.Date, 'DD-MM-YYYY').format('YYYY-MM-DD');
           // this.isScheduleDateValid(this.Date);
           this.fg.controls.GivenDate.setValue(this.Date);
+          this.fg.patchValue(
+            {
+              Manufacturer: this.vaccineData.Manufacturer || '',
+              Lot: this.vaccineData.Lot || '',
+              Expiry: this.vaccineData.Expiry ? new Date(this.vaccineData.Expiry) : null
+            },
+            { emitEvent: false }
+          );
 
           this.restoreTravelFieldState();
 
@@ -221,19 +229,19 @@ export class FillPage implements OnInit {
     this.childService.getChildById(childId).subscribe(
       res => {
         if (res.IsSuccess) {
-          this.vaccineData = res.ResponseData;
           this.childData = res.ResponseData;
-          console.log(this.vaccineData);
+          const childRecord = this.childData;
+          console.log(childRecord);
           // this.MinAge = this.vaccineData.Dose.Vaccine.MinAge;
           // this.MinGap = this.vaccineData.Dose.MinGap;
           // console.log(this.vaccineData);
           // console.log(this.vaccineData.ChildId);
-          this.childId = this.vaccineData.Id; // Assuming ChildId is the correct property to use
-          this.Type = this.vaccineData.Type; // Retaining this line as it seems necessary
-          this.clinicId = this.resolveClinicId(this.vaccineData) || this.clinicId;
-          console.log(this.vaccineData.Type);
-          this.Validity = this.vaccineData.Validity; // Retaining this line as it seems necessary
-          console.log(this.vaccineData.validity);
+          this.childId = childRecord.Id; // Assuming ChildId is the correct property to use
+          this.Type = childRecord.Type; // Retaining this line as it seems necessary
+          this.clinicId = this.resolveClinicId(childRecord) || this.clinicId;
+          console.log(childRecord.Type);
+          this.Validity = childRecord.Validity; // Retaining this line as it seems necessary
+          console.log(childRecord.validity);
           // this.vaccineName = this.vaccineData.Dose.Vaccine.Name;
           // this.brandName = this.vaccineData.Brands;
           // this.Date = this.vaccineData.Date;
