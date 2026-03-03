@@ -77,6 +77,7 @@ export class EditPage implements OnInit {
   error: string = null;
   isPaid: boolean = false;
   filteredBrands = [];
+  brandSearchTerm: string = '';
   bill: string;
   brandId: number; // To store the brand ID from the route
   brandData: any; // To store the data for the brand being edited
@@ -173,7 +174,17 @@ export class EditPage implements OnInit {
   }
 
   showAllBrands() {
+    this.brandSearchTerm = '';
     this.filteredBrands = [...this.brands];
+  }
+
+  selectBrandById(brandId: number, item: StockItem) {
+    const selectedBrand = this.brands.find(brand => brand.id === brandId);
+    if (selectedBrand) {
+      item.brandId = selectedBrand.id;
+      item.brandName = selectedBrand.name;
+      item.price = selectedBrand.price as number;
+    }
   }
 
   selectBrand(event: MatAutocompleteSelectedEvent, item: StockItem) {

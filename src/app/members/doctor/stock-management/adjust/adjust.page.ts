@@ -36,6 +36,7 @@ export class AdjustPage implements OnInit {
   };
   brands = [];
   filteredBrands: any[] = [];
+  brandSearchTerm: string = '';
   doctorId: number;
   DoctorId: any;
   clinicid: string;
@@ -161,7 +162,17 @@ export class AdjustPage implements OnInit {
   }
 
   showAllBrands() {
+    this.brandSearchTerm = '';
     this.filteredBrands = [...this.brands];
+  }
+
+  selectBrandById(brandId: number) {
+    const selectedBrand = this.brands.find(brand => brand.id === brandId);
+    if (selectedBrand) {
+      this.adjustment.brandId = selectedBrand.id;
+      this.adjustment.brandName = selectedBrand.name;
+      this.adjustment.price = selectedBrand.price;
+    }
   }
 
   selectBrand(event: any) {

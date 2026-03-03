@@ -81,6 +81,7 @@ export class AddPage implements OnInit {
   error: string = null;
   isPaid: boolean = false;
   filteredBrands = [];
+  brandSearchTerm: string = '';
   bill: string;
   agents: string[] = [];
   originalAgents: any[];
@@ -480,7 +481,17 @@ export class AddPage implements OnInit {
   }
 
   showAllBrands() {
+    this.brandSearchTerm = '';
     this.filteredBrands = [...this.brands];
+  }
+
+  selectBrandById(brandId: number, item: StockItem) {
+    const selectedBrand = this.brands.find(brand => brand.id === brandId);
+    if (selectedBrand) {
+      item.brandId = selectedBrand.id;
+      item.brandName = selectedBrand.name;
+      item.price = selectedBrand.price as number;
+    }
   }
 
   selectBrand(event: MatAutocompleteSelectedEvent, item: StockItem) {

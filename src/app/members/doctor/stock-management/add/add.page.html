@@ -99,22 +99,25 @@
                         <tr *ngFor="let item of stockItems; let i = index">
                             <td>
                                 <mat-form-field class="example-full-width">
-                                    <input type="text" 
-                                        aria-label="Brand" 
-                                        matInput 
-                                        [(ngModel)]="item.brandName"
-                                        [matAutocomplete]="brandAuto"
-                                        #brandTrigger="matAutocompleteTrigger"
-                                        (focus)="showAllBrands(); brandTrigger.openPanel()"
-                                        (click)="showAllBrands(); brandTrigger.openPanel()"
-                                        (ngModelChange)="filterBrands($event)" 
-                                        placeholder="Search brand"
-                                        style="font-size: 15px;">
-                                    <mat-autocomplete #brandAuto="matAutocomplete" autoActiveFirstOption (optionSelected)="selectBrand($event, item)">
-                                        <mat-option *ngFor="let brand of filteredBrands" [value]="brand.displayName">
+                                    <mat-select
+                                        [(ngModel)]="item.brandId"
+                                        (openedChange)="showAllBrands()"
+                                        (selectionChange)="selectBrandById($event.value, item)"
+                                        placeholder="Select brand">
+                                        <mat-option disabled>
+                                            <input
+                                                matInput
+                                                [(ngModel)]="brandSearchTerm"
+                                                (ngModelChange)="filterBrands($event)"
+                                                (click)="$event.stopPropagation()"
+                                                (keydown)="$event.stopPropagation()"
+                                                placeholder="Search brand"
+                                                style="font-size: 15px;">
+                                        </mat-option>
+                                        <mat-option *ngFor="let brand of filteredBrands" [value]="brand.id">
                                             {{brand.displayName}}
                                         </mat-option>
-                                    </mat-autocomplete>
+                                    </mat-select>
                                 </mat-form-field>
                             </td>
                             <td>
