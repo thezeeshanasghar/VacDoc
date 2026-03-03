@@ -216,27 +216,55 @@ export class AdjustPage implements OnInit {
         message: 'Loading brands...'
       });
       await loading.present();
-      this.brandService.getBrandAmount(this.clinicId).subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            console.log('Brands:', response.ResponseData);
-            this.brands = response.ResponseData.map(brand => ({
-              id: brand.BrandId,
-              name: brand.BrandName,
-              price: brand.Amount,       
-              vaccineName: brand.VaccineName || '',
-              displayName: brand.VaccineName ? `${brand.BrandName} (${brand.VaccineName})` : brand.BrandName
-            }));
+      this.brandService.getBrands().subscribe({
+        next: (brandResponse) => {
+          if (!brandResponse?.IsSuccess || !brandResponse?.ResponseData) {
+            loading.dismiss();
+            this.toastService.create(brandResponse?.Message || 'Failed to load brands', 'danger');
+            return;
+          }
+
+          const allBrands = (brandResponse.ResponseData || []).map((brand: any) => ({
+            id: brand.Id,
+            name: brand.Name,
+            price: 0,
+            vaccineName: '',
+            displayName: brand.Name
+          }));
+
+          if (!this.clinicId) {
+            this.brands = allBrands;
             this.filteredBrands = [...this.brands];
             loading.dismiss();
-          } else {
-            loading.dismiss();
-            this.toastService.create(response.Message, 'danger');
+            return;
           }
+
+          this.brandService.getBrandAmount(this.clinicId).subscribe({
+            next: (amountResponse) => {
+              const amountMap = new Map<number, any>();
+              if (amountResponse?.IsSuccess && amountResponse?.ResponseData) {
+                (amountResponse.ResponseData || []).forEach((b: any) => {
+                  amountMap.set(b.BrandId, b.PurchasedAmt ?? b.Amount ?? 0);
+                });
+              }
+
+              this.brands = allBrands.map((brand: any) => ({
+                ...brand,
+                price: amountMap.has(brand.id) ? amountMap.get(brand.id) : 0
+              }));
+              this.filteredBrands = [...this.brands];
+              loading.dismiss();
+            },
+            error: () => {
+              this.brands = allBrands;
+              this.filteredBrands = [...this.brands];
+              loading.dismiss();
+            }
+          });
         },
         error: (error) => {
           loading.dismiss();
-          console.error('Error fetching brand amounts:', error);
+          console.error('Error fetching brands:', error);
           this.toastService.create('Failed to load brands', 'danger');
         }
       });
