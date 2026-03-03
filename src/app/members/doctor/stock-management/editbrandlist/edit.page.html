@@ -67,14 +67,28 @@
     </ion-item>
   
       <!-- Stock Items -->
-      <!-- <div *ngFor="let item of stockItems; let i = index">
+      <div *ngFor="let item of stockItems; let i = index">
         <ion-item>
           <ion-label position="floating">Brand Name</ion-label>
-          <ion-input
-            [(ngModel)]="item.brandName"
-            [ngModelOptions]="{standalone: true}"
-            placeholder="Enter brand name"
-          ></ion-input>
+          <mat-form-field class="example-full-width" style="width: 100%;">
+            <input
+              type="text"
+              aria-label="Brand"
+              matInput
+              [(ngModel)]="item.brandName"
+              [ngModelOptions]="{standalone: true}"
+              [matAutocomplete]="brandAuto"
+              (focus)="showAllBrands()"
+              (ngModelChange)="filterBrands($event)"
+              placeholder="Search brand"
+              style="font-size: 15px;"
+            />
+            <mat-autocomplete #brandAuto="matAutocomplete" autoActiveFirstOption (optionSelected)="selectBrand($event, item)">
+              <mat-option *ngFor="let brand of filteredBrands" [value]="brand.displayName">
+                {{ brand.displayName }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
         </ion-item>
         <ion-item>
           <ion-label position="floating">Quantity</ion-label>
@@ -100,7 +114,7 @@
       <ion-button expand="block" (click)="addNewRow()" color="primary">
         <ion-icon name="add" slot="start"></ion-icon>
         Add New Item
-      </ion-button> -->
+      </ion-button>
   
       <!-- Total Amount -->
       <!-- <ion-item lines="none">

@@ -466,11 +466,21 @@ export class AddPage implements OnInit {
   }
 
   filterBrands(event: string) {
-    const filterValue = event.toLowerCase();
+    const filterValue = (event || '').toLowerCase().trim();
+    if (!filterValue) {
+      this.filteredBrands = [...this.brands];
+      return;
+    }
+
     this.filteredBrands = this.brands.filter(brand => 
+        (brand.displayName && brand.displayName.toLowerCase().includes(filterValue)) ||
         brand.name.toLowerCase().includes(filterValue) || 
         (brand.vaccineName && brand.vaccineName.toLowerCase().includes(filterValue))
     );
+  }
+
+  showAllBrands() {
+    this.filteredBrands = [...this.brands];
   }
 
   selectBrand(event: MatAutocompleteSelectedEvent, item: StockItem) {

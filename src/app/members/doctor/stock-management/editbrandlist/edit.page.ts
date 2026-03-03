@@ -47,6 +47,8 @@ interface Brand {
   price: number;
   id: number;
   name: string;
+  vaccineName?: string;
+  displayName?: string;
   PurchasedAmt?: number;
   [key: string]: string | number | undefined;
 }
@@ -114,8 +116,75 @@ export class EditPage implements OnInit {
       paidDate: [''],
       isPaid: [false],
     });
+    this.loadBrands();
   
     this.loadBrandData();
+  }
+
+  async loadBrands() {
+    try {
+      const loading = await this.loadingController.create({
+        message: 'Loading brands...'
+      });
+      await loading.present();
+      this.clinicId = await this.storage.get(environment.CLINIC_Id);
+      this.brandService.getBrandAmount(this.clinicId).subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.brands = response.ResponseData.map(brand => ({
+              id: brand.BrandId,
+              name: brand.BrandName,
+              price: brand.PurchasedAmt,
+              vaccineName: brand.VaccineName || '',
+              displayName: brand.VaccineName ? `${brand.BrandName} (${brand.VaccineName})` : brand.BrandName
+            }));
+            this.filteredBrands = [...this.brands];
+            loading.dismiss();
+          } else {
+            loading.dismiss();
+            this.toastService.create(response.Message, 'danger');
+          }
+        },
+        error: (error) => {
+          loading.dismiss();
+          console.error('Error fetching brand amounts:', error);
+          this.toastService.create('Failed to load brands', 'danger');
+        }
+      });
+  
+    } catch (error) {
+      console.error('Error in loadBrands:', error);
+      this.toastService.create('An unexpected error occurred', 'danger');
+    }
+  }
+
+  filterBrands(event: string) {
+    const filterValue = (event || '').toLowerCase().trim();
+    if (!filterValue) {
+      this.filteredBrands = [...this.brands];
+      return;
+    }
+
+    this.filteredBrands = this.brands.filter(brand => 
+      (brand.displayName && brand.displayName.toLowerCase().includes(filterValue)) ||
+      brand.name.toLowerCase().includes(filterValue) || 
+      (brand.vaccineName && brand.vaccineName.toLowerCase().includes(filterValue))
+    );
+  }
+
+  showAllBrands() {
+    this.filteredBrands = [...this.brands];
+  }
+
+  selectBrand(event: MatAutocompleteSelectedEvent, item: StockItem) {
+    const selectedBrand = this.brands.find(
+      brand => brand.displayName === event.option.value || brand.name === event.option.value
+    );
+    if (selectedBrand) {
+      item.brandId = selectedBrand.id;
+      item.brandName = selectedBrand.name;
+      item.price = selectedBrand.price as number;
+    }
   }
   
   async loadBrandData() {

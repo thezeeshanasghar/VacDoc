@@ -29,9 +29,9 @@
           </ion-label>
           <!-- <form [formGroup]="fg1"> -->
             <mat-form-field class="example-full-width">
-              <input type="text" aria-label="Supplier" matInput  [(ngModel)]="supplierName" [matAutocomplete]="auto"
+                            <input type="text" aria-label="Supplier" matInput  [(ngModel)]="supplierName" [matAutocomplete]="supplierAuto"
               (ngModelChange)="filterSuppliers($event)"  style="font-size: 15px;">
-              <mat-autocomplete #auto="matAutocomplete" class="no-indent">
+                            <mat-autocomplete #supplierAuto="matAutocomplete" class="no-indent" autoActiveFirstOption>
                 <mat-option *ngFor="let option of agents" [value]="option">
                   {{option}}
                 </mat-option>
@@ -103,10 +103,12 @@
                                         aria-label="Brand" 
                                         matInput 
                                         [(ngModel)]="item.brandName"
-                                        [matAutocomplete]="auto"
+                                        [matAutocomplete]="brandAuto"
+                                        (focus)="showAllBrands()"
                                         (ngModelChange)="filterBrands($event)" 
+                                        placeholder="Search brand"
                                         style="font-size: 15px;">
-                                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectBrand($event, item)">
+                                    <mat-autocomplete #brandAuto="matAutocomplete" autoActiveFirstOption (optionSelected)="selectBrand($event, item)">
                                         <mat-option *ngFor="let brand of filteredBrands" [value]="brand.displayName">
                                             {{brand.displayName}}
                                         </mat-option>

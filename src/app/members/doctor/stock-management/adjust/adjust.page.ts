@@ -147,14 +147,27 @@ export class AdjustPage implements OnInit {
   }
 
   filterBrands(event: string) {
-    const filterValue = event.toLowerCase();
+    const filterValue = (event || '').toLowerCase().trim();
+    if (!filterValue) {
+      this.filteredBrands = [...this.brands];
+      return;
+    }
+
     this.filteredBrands = this.brands.filter(brand =>
-      brand.name.toLowerCase().includes(filterValue)
+      (brand.displayName && brand.displayName.toLowerCase().includes(filterValue)) ||
+      brand.name.toLowerCase().includes(filterValue) ||
+      (brand.vaccineName && brand.vaccineName.toLowerCase().includes(filterValue))
     );
   }
 
+  showAllBrands() {
+    this.filteredBrands = [...this.brands];
+  }
+
   selectBrand(event: any) {
-    const selectedBrand = this.brands.find(brand => brand.name === event.option.value);
+    const selectedBrand = this.brands.find(
+      brand => brand.displayName === event.option.value || brand.name === event.option.value
+    );
     if (selectedBrand) {
       this.adjustment.brandId = selectedBrand.id;
       this.adjustment.brandName = selectedBrand.name;
