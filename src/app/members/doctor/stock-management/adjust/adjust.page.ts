@@ -218,9 +218,9 @@ export class AdjustPage implements OnInit {
       await loading.present();
       this.brandService.getBrands().subscribe({
         next: (brandResponse) => {
-          if (!brandResponse?.IsSuccess || !brandResponse?.ResponseData) {
+          if (!brandResponse || !brandResponse.IsSuccess || !brandResponse.ResponseData) {
             loading.dismiss();
-            this.toastService.create(brandResponse?.Message || 'Failed to load brands', 'danger');
+            this.toastService.create((brandResponse && brandResponse.Message) ? brandResponse.Message : 'Failed to load brands', 'danger');
             return;
           }
 
@@ -242,9 +242,9 @@ export class AdjustPage implements OnInit {
           this.brandService.getBrandAmount(this.clinicId).subscribe({
             next: (amountResponse) => {
               const amountMap = new Map<number, any>();
-              if (amountResponse?.IsSuccess && amountResponse?.ResponseData) {
+              if (amountResponse && amountResponse.IsSuccess && amountResponse.ResponseData) {
                 (amountResponse.ResponseData || []).forEach((b: any) => {
-                  amountMap.set(b.BrandId, b.PurchasedAmt ?? b.Amount ?? 0);
+                  amountMap.set(b.BrandId, b.PurchasedAmt != null ? b.PurchasedAmt : (b.Amount != null ? b.Amount : 0));
                 });
               }
 
