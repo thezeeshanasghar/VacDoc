@@ -64,14 +64,28 @@
       <ion-input type="text" placeholder="Disease"></ion-input>
     </ion-item> -->
 
-    <ion-item *ngFor="let user of bulkData; let i = index;">
-      <ion-label color="primary">Brands</ion-label>
-      <!-- <ion-select formControlName="BrandId{{i}}"> -->
-      <ion-select [(ngModel)]="BrandIds[i]" [ngModelOptions]="{standalone: true}"  [interfaceOptions]="customActionSheetOptions" interface="action-sheet" placeholder="Select Brand">
-        <ion-select-option *ngFor="let user1 of user.Brands; let i = index;" selected [value]="user1.Id">{{user1.Name}}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
+    <div *ngFor="let user of bulkData; let i = index;" class="bulk-brand-row">
+      <div class="bulk-dose-hint">{{ getBrandFieldHint(user, i) }}</div>
+      <mat-form-field appearance="outline" class="example-full-width custom-input-item">
+        <mat-label *ngIf="!brandSearchTerms[i]" class="brand-label">Brands ({{ user?.Dose?.Name }})</mat-label>
+        <input
+          type="text"
+          matInput
+          placeholder="Brands"
+          [matAutocomplete]="brandAuto"
+          [(ngModel)]="brandSearchTerms[i]"
+          [ngModelOptions]="{ standalone: true }"
+          (ngModelChange)="onBrandSearchChange(i, $event)"
+          (keydown.enter)="onBrandEnterKey(i, $event)"
+          style="font-size: 15px;"
+        >
+        <mat-autocomplete #brandAuto="matAutocomplete" class="no-indent" (optionSelected)="onBrandOptionSelected(i, $event.option.value)">
+          <mat-option *ngFor="let brand of filteredBrandOptions[i]" [value]="brand.Name">
+            {{ brand.Name }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
  
     <!-- <ion-item>
       <ion-datetime picker-format="DD-MM-YYYY" value="{{currentDate}}" formControlName="GivenDate"></ion-datetime>
@@ -84,6 +98,6 @@
       <mat-datepicker #picker disabled="false"></mat-datepicker>
     </ion-item>
 
-    <ion-button [disabled]="isScheduleDateValid()" type="submit">Submit</ion-button>
+    <ion-button [disabled]="isScheduleDateValid() || isSubmitDisabled()" type="submit">Submit</ion-button>
   </form>
 </ion-content> 

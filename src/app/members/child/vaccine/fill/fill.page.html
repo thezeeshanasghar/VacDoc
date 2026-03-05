@@ -21,6 +21,7 @@
           [(ngModel)]="brandSearchTerm"
           [ngModelOptions]="{ standalone: true }"
           (ngModelChange)="onBrandSearchChange($event)"
+          (keydown.enter)="onBrandEnterKey($event)"
           style="font-size: 15px;"
         >
         <mat-autocomplete #brandAuto="matAutocomplete" class="no-indent" (optionSelected)="onBrandOptionSelected($event.option.value)">

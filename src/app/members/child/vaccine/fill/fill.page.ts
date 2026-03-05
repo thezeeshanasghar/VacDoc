@@ -98,6 +98,10 @@ export class FillPage implements OnInit {
       if (user) {
         console.log('Retrieved user from storage:', user);
         this.usertype = user.UserType; // Ensure this is set correctly
+        const actorId = user.UserType === 'PA' ? Number(user.PAId) : Number(user.DoctorId);
+        if (actorId && !isNaN(actorId)) {
+          this.doctorId = actorId;
+        }
       } else {
         console.error('No user data found in storage.');
       }
@@ -443,6 +447,24 @@ export class FillPage implements OnInit {
     }
 
     this.applyBrandFilter();
+  }
+
+  onBrandEnterKey(event: KeyboardEvent): void {
+    event.preventDefault();
+    const term = (this.brandSearchTerm || '').toLowerCase().trim();
+    if (!term) {
+      return;
+    }
+
+    const exactMatch = (this.brandName || []).find(
+      (brand) => ((brand && brand.Name) || '').toLowerCase() === term
+    );
+
+    if (exactMatch) {
+      this.brandSearchTerm = exactMatch.Name;
+      this.fg.controls['BrandId'].setValue(exactMatch.Id);
+      this.onBrandChange(exactMatch.Id);
+    }
   }
 
   onBrandOptionSelected(selectedBrandName: string): void {

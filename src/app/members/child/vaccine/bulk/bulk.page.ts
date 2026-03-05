@@ -25,6 +25,8 @@ export class BulkPage implements OnInit {
   fg: FormGroup;
   todaydate: any;
   BrandIds = [];
+  brandSearchTerms: string[] = [];
+  filteredBrandOptions: any[][] = [];
   customActionSheetOptions: any = {
     header: 'Select Brand',
     cssClass: 'action-sheet-class'
@@ -74,6 +76,10 @@ export class BulkPage implements OnInit {
       if (user) {
         console.log('Retrieved user from storage:', user);
         this.usertype = user.UserType; // Ensure this is set correctly
+        const actorId = user.UserType === 'PA' ? Number(user.PAId) : Number(user.DoctorId);
+        if (actorId && !isNaN(actorId)) {
+          this.doctorId = actorId;
+        }
       } else {
         console.error('No user data found in storage.');
       }
@@ -90,6 +96,7 @@ export class BulkPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.bulkData = res.ResponseData;
+          this.initializeBrandSearch();
           console.log(this.bulkData);
         } else {
           this.toastService.create(res.Message, "danger");
@@ -102,6 +109,98 @@ export class BulkPage implements OnInit {
       }
     );
 
+  }
+
+  private initializeBrandSearch(): void {
+    const schedules = this.bulkData || [];
+    this.brandSearchTerms = [];
+    this.filteredBrandOptions = [];
+    this.BrandIds = [];
+
+    schedules.forEach((schedule, index) => {
+      const brands = this.getSortedBrands(schedule);
+      this.filteredBrandOptions[index] = brands;
+
+      const scheduleBrandId = schedule && schedule.BrandId ? Number(schedule.BrandId) : null;
+      const selectedBrand = scheduleBrandId
+        ? brands.find((brand) => brand && Number(brand.Id) === scheduleBrandId)
+        : null;
+
+      this.BrandIds[index] = selectedBrand ? selectedBrand.Id : null;
+      this.brandSearchTerms[index] = selectedBrand ? selectedBrand.Name : '';
+    });
+  }
+
+  onBrandSearchChange(index: number, value: string): void {
+    const term = (value || '').toString();
+    this.brandSearchTerms[index] = term;
+
+    const brands = this.getSortedBrands(this.bulkData && this.bulkData[index]);
+    const normalized = term.toLowerCase().trim();
+    this.filteredBrandOptions[index] = normalized
+      ? brands.filter((brand) => ((brand && brand.Name) || '').toLowerCase().includes(normalized))
+      : brands;
+
+    const exactMatch = brands.find(
+      (brand) => ((brand && brand.Name) || '').toLowerCase() === normalized
+    );
+    this.BrandIds[index] = exactMatch ? exactMatch.Id : null;
+  }
+
+  onBrandOptionSelected(index: number, selectedBrandName: string): void {
+    this.brandSearchTerms[index] = selectedBrandName || '';
+    const brands = this.getSortedBrands(this.bulkData && this.bulkData[index]);
+    const selectedBrand = brands.find(
+      (brand) => brand && brand.Name === this.brandSearchTerms[index]
+    );
+    this.BrandIds[index] = selectedBrand ? selectedBrand.Id : null;
+  }
+
+  onBrandEnterKey(index: number, event: KeyboardEvent): void {
+    event.preventDefault();
+    const term = ((this.brandSearchTerms[index] || '') + '').toLowerCase().trim();
+    if (!term) {
+      return;
+    }
+
+    const brands = this.getSortedBrands(this.bulkData && this.bulkData[index]);
+    const exactMatch = brands.find(
+      (brand) => ((brand && brand.Name) || '').toLowerCase() === term
+    );
+
+    if (exactMatch) {
+      this.brandSearchTerms[index] = exactMatch.Name;
+      this.BrandIds[index] = exactMatch.Id;
+    }
+  }
+
+  private getSortedBrands(schedule: any): any[] {
+    const brands = (schedule && schedule.Brands) ? schedule.Brands : [];
+    return [...brands].sort((a, b) =>
+      (((a && a.Name) || '').toLowerCase()).localeCompare((((b && b.Name) || '').toLowerCase()))
+    );
+  }
+
+  getBrandFieldHint(schedule: any, index: number): string {
+    const vaccineName = ((schedule && schedule.Dose && schedule.Dose.Vaccine && schedule.Dose.Vaccine.Name) || '').trim();
+    const doseName = ((schedule && schedule.Dose && schedule.Dose.Name) || '').trim();
+    const doseOrder = schedule && schedule.Dose && schedule.Dose.DoseOrder
+      ? `Dose ${schedule.Dose.DoseOrder}`
+      : `Item ${index + 1}`;
+
+    if (vaccineName && doseName && vaccineName.toLowerCase() !== doseName.toLowerCase()) {
+      return `${doseOrder}: ${vaccineName} (${doseName})`;
+    }
+
+    if (doseName) {
+      return `${doseOrder}: ${doseName}`;
+    }
+
+    if (vaccineName) {
+      return `${doseOrder}: ${vaccineName}`;
+    }
+
+    return `${doseOrder}: Select brand`;
   }
 
   onSubmit() {
