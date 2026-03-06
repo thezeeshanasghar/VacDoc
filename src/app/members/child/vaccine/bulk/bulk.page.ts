@@ -237,6 +237,9 @@ export class BulkPage implements OnInit {
         brands.push({ BrandId: null, ScheduleId: element.Id });
       } else if (this.BrandIds[i]) {
         brands.push({ BrandId: this.BrandIds[i], ScheduleId: element.Id });
+      } else {
+        // Keep bulk behavior aligned with fill: brand is optional.
+        brands.push({ BrandId: null, ScheduleId: element.Id });
       }
       i++;
     });
@@ -413,12 +416,7 @@ export class BulkPage implements OnInit {
   }
 
   isSubmitDisabled(): boolean {
-    for (let i = 0; i < this.BrandIds.length; i++) {
-      if (this.BrandIds[i] || this.ohfSelections[i]) {
-        return false;
-      }
-    }
-    return true;
+    return false;
   }
 
 
