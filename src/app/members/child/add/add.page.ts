@@ -832,17 +832,27 @@ filterCountryCodes(value: string) {
 
   async moveNextStep() {
     console.log("Form Group Value:", this.fg1.value);
+    const cityControl = this.fg1.get("city");
+    const city2Control = this.fg1.get("City2");
+    const agentControl = this.fg1.get("agent");
+    const agent2Control = this.fg1.get("Agent2");
+    const nationalityControl = this.fg1.get("Nationality");
+
     const selectedCity = (
-      this.fg1.get("city")?.value || this.fg1.get("City2")?.value || ""
+      (cityControl ? cityControl.value : "")
+      || (city2Control ? city2Control.value : "")
+      || ""
     )
       .toString()
       .trim();
     const selectedAgent = (
-      this.fg1.get("agent")?.value || this.fg1.get("Agent2")?.value || ""
+      (agentControl ? agentControl.value : "")
+      || (agent2Control ? agent2Control.value : "")
+      || ""
     )
       .toString()
       .trim();
-    const selectedNationality = (this.fg1.get("Nationality")?.value || "")
+    const selectedNationality = ((nationalityControl ? nationalityControl.value : "") || "")
       .toString()
       .trim();
 
