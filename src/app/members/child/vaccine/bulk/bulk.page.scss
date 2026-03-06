@@ -12,3 +12,38 @@ input
     color: var(--ion-color-medium);
     margin: 0 8px 4px;
 }
+
+.brand-label {
+    color: #c3d4ff !important;
+}
+
+/* Dark theme fixes for Angular Material controls on this page */
+:host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline,
+:host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-thick {
+    color: #3f79ff !important;
+}
+
+:host ::ng-deep .mat-form-field-label,
+:host ::ng-deep .mat-mdc-form-field .mdc-floating-label,
+:host ::ng-deep .brand-label {
+    color: #c3d4ff !important;
+}
+
+:host ::ng-deep .mat-input-element,
+:host ::ng-deep .mat-mdc-input-element,
+:host ::ng-deep input[matinput],
+:host ::ng-deep input[matInput] {
+    color: #f5f8ff !important;
+    caret-color: #f5f8ff !important;
+}
+
+:host ::ng-deep .mat-autocomplete-panel,
+:host ::ng-deep .mat-mdc-autocomplete-panel {
+    background: #14151a !important;
+}
+
+:host ::ng-deep .mat-option,
+:host ::ng-deep .mat-option-text,
+:host ::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
+    color: #f5f8ff !important;
+}
