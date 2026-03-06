@@ -31,6 +31,9 @@ import { PaService } from "src/app/services/pa.service";
   styleUrls: ["./add.page.scss"],
 })
 export class AddPage implements OnInit {
+  private readonly LAST_SELECTED_NATIONALITY_KEY =
+    "LAST_SELECTED_NATIONALITY";
+  private readonly LAST_SELECTED_AGENT_KEY = "LAST_SELECTED_AGENT";
   isRadioDisabled: boolean = true;
   fg1: FormGroup;
   fg2: FormGroup;
@@ -246,6 +249,16 @@ filterCountryCodes(value: string) {
        if (val != null && val !== "") {
         this.fg1.controls["city"].setValue(val);
         console.log("Loaded previous city from storage:", val);
+      }
+    });
+    this.storage.get(this.LAST_SELECTED_NATIONALITY_KEY).then((val) => {
+      if (val != null && val !== "") {
+        this.fg1.controls["Nationality"].setValue(val);
+      }
+    });
+    this.storage.get(this.LAST_SELECTED_AGENT_KEY).then((val) => {
+      if (val != null && val !== "") {
+        this.fg1.controls["agent"].setValue(val);
       }
     });
     this.storage.get(environment.DOCTOR).then((doc) => {
@@ -819,6 +832,30 @@ filterCountryCodes(value: string) {
 
   async moveNextStep() {
     console.log("Form Group Value:", this.fg1.value);
+    const selectedCity = (
+      this.fg1.get("city")?.value || this.fg1.get("City2")?.value || ""
+    )
+      .toString()
+      .trim();
+    const selectedAgent = (
+      this.fg1.get("agent")?.value || this.fg1.get("Agent2")?.value || ""
+    )
+      .toString()
+      .trim();
+    const selectedNationality = (this.fg1.get("Nationality")?.value || "")
+      .toString()
+      .trim();
+
+    if (selectedCity) {
+      await this.setCity(selectedCity);
+    }
+    if (selectedAgent) {
+      await this.setLastAgent(selectedAgent);
+    }
+    if (selectedNationality) {
+      await this.setLastNationality(selectedNationality);
+    }
+
     this.fg1.value.DOB = await moment(this.fg1.value.DOB, "YYYY-MM-DD").format(
       "DD-MM-YYYY"
     );
@@ -990,6 +1027,14 @@ filterCountryCodes(value: string) {
 
   async setCity(city: any) {
     this.storage.set(environment.CITY, city);
+  }
+
+  async setLastNationality(nationality: string) {
+    this.storage.set(this.LAST_SELECTED_NATIONALITY_KEY, nationality);
+  }
+
+  async setLastAgent(agent: string) {
+    this.storage.set(this.LAST_SELECTED_AGENT_KEY, agent);
   }
 
   async checkEpi() {
