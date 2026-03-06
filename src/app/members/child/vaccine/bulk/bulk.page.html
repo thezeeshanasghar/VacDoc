@@ -80,6 +80,7 @@
           style="font-size: 15px;"
         >
         <mat-autocomplete #brandAuto="matAutocomplete" class="no-indent" (optionSelected)="onBrandOptionSelected(i, $event.option.value)">
+          <mat-option [value]="'OHF'">OHF</mat-option>
           <mat-option *ngFor="let brand of filteredBrandOptions[i]" [value]="brand.Name">
             {{ brand.Name }}
           </mat-option>

@@ -25,6 +25,7 @@ export class BulkPage implements OnInit {
   fg: FormGroup;
   todaydate: any;
   BrandIds = [];
+  ohfSelections: boolean[] = [];
   brandSearchTerms: string[] = [];
   filteredBrandOptions: any[][] = [];
   customActionSheetOptions: any = {
@@ -116,6 +117,7 @@ export class BulkPage implements OnInit {
     this.brandSearchTerms = [];
     this.filteredBrandOptions = [];
     this.BrandIds = [];
+    this.ohfSelections = [];
 
     schedules.forEach((schedule, index) => {
       const brands = this.getSortedBrands(schedule);
@@ -128,6 +130,7 @@ export class BulkPage implements OnInit {
 
       this.BrandIds[index] = selectedBrand ? selectedBrand.Id : null;
       this.brandSearchTerms[index] = selectedBrand ? selectedBrand.Name : '';
+      this.ohfSelections[index] = false;
     });
   }
 
@@ -137,6 +140,13 @@ export class BulkPage implements OnInit {
 
     const brands = this.getSortedBrands(this.bulkData && this.bulkData[index]);
     const normalized = term.toLowerCase().trim();
+    if (normalized === 'ohf') {
+      this.ohfSelections[index] = true;
+      this.BrandIds[index] = null;
+      return;
+    }
+
+    this.ohfSelections[index] = false;
     this.filteredBrandOptions[index] = normalized
       ? brands.filter((brand) => ((brand && brand.Name) || '').toLowerCase().includes(normalized))
       : brands;
@@ -149,6 +159,13 @@ export class BulkPage implements OnInit {
 
   onBrandOptionSelected(index: number, selectedBrandName: string): void {
     this.brandSearchTerms[index] = selectedBrandName || '';
+    if ((this.brandSearchTerms[index] || '').toLowerCase().trim() === 'ohf') {
+      this.ohfSelections[index] = true;
+      this.BrandIds[index] = null;
+      return;
+    }
+
+    this.ohfSelections[index] = false;
     const brands = this.getSortedBrands(this.bulkData && this.bulkData[index]);
     const selectedBrand = brands.find(
       (brand) => brand && brand.Name === this.brandSearchTerms[index]
@@ -162,6 +179,15 @@ export class BulkPage implements OnInit {
     if (!term) {
       return;
     }
+
+    if (term === 'ohf') {
+      this.ohfSelections[index] = true;
+      this.BrandIds[index] = null;
+      this.brandSearchTerms[index] = 'OHF';
+      return;
+    }
+
+    this.ohfSelections[index] = false;
 
     const brands = this.getSortedBrands(this.bulkData && this.bulkData[index]);
     const exactMatch = brands.find(
@@ -207,8 +233,11 @@ export class BulkPage implements OnInit {
     var brands = [];
     var i = 0;
     this.bulkData.forEach(element => {
-      if (this.BrandIds[i])
+      if (this.ohfSelections[i]) {
+        brands.push({ BrandId: null, ScheduleId: element.Id });
+      } else if (this.BrandIds[i]) {
         brands.push({ BrandId: this.BrandIds[i], ScheduleId: element.Id });
+      }
       i++;
     });
     console.log(this.usertype)
@@ -368,8 +397,8 @@ export class BulkPage implements OnInit {
   }
 
   isSubmitDisabled(): boolean {
-    for (let brandId of this.BrandIds) {
-      if (brandId) {
+    for (let i = 0; i < this.BrandIds.length; i++) {
+      if (this.BrandIds[i] || this.ohfSelections[i]) {
         return false;
       }
     }
