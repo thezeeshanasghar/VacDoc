@@ -297,15 +297,31 @@ export class BulkPage implements OnInit {
           this.validationOfInfiniteVaccine();
           loading.dismiss();
         } else {
-          this.toastService.create("Error: failed to fill vaccine", "danger");
+          const message = this.getApiErrorMessage(res, "Error: failed to fill vaccine");
+          this.toastService.create(message, "danger");
           loading.dismiss();
         }
       },
       err => {
-        this.toastService.create("Error: server failure", "danger");
+        const message = this.getApiErrorMessage(err, "Error: server failure");
+        this.toastService.create(message, "danger");
         loading.dismiss();
       }
     );
+  }
+
+  private getApiErrorMessage(source: any, fallback: string): string {
+    const directMessage = source && source.Message;
+    if (typeof directMessage === "string" && directMessage.trim()) {
+      return directMessage;
+    }
+
+    const nestedMessage = source && source.error && source.error.Message;
+    if (typeof nestedMessage === "string" && nestedMessage.trim()) {
+      return nestedMessage;
+    }
+
+    return fallback;
   }
 
   async validationOfInfiniteVaccine() {
