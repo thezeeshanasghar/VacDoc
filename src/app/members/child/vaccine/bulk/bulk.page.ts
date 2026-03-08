@@ -33,6 +33,7 @@ export class BulkPage implements OnInit {
     cssClass: 'action-sheet-class'
   };
   usertype: any;
+  allowInventory: boolean = true;
   constructor(
     private loadingController: LoadingController,
     private activatedRoute: ActivatedRoute,
@@ -77,6 +78,7 @@ export class BulkPage implements OnInit {
       if (user) {
         console.log('Retrieved user from storage:', user);
         this.usertype = user.UserType; // Ensure this is set correctly
+        this.allowInventory = user.AllowInventory !== false;
         const actorId = user.UserType === 'PA' ? Number(user.PAId) : Number(user.DoctorId);
         if (actorId && !isNaN(actorId)) {
           this.doctorId = actorId;
@@ -256,6 +258,8 @@ export class BulkPage implements OnInit {
       GivenDate: this.fg.value.GivenDate,
       Height: this.fg.value.Height,
       Weight: this.fg.value.Weight,
+      Lot: this.allowInventory ? this.fg.value.Lot : '',
+      Expiry: this.allowInventory ? this.fg.value.Expiry : null,
       IsDone: true,
       ScheduleBrands: brands,
       Id: this.bulkData[0].Id,

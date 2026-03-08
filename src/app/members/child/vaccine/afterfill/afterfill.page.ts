@@ -46,6 +46,7 @@ export class AfterFillPage implements OnInit {
   vaccine: any;
   doseId: any;
   usertype: any;
+  allowInventory: boolean = true;
   scheduleDatecheck: string;
 
   constructor(
@@ -76,6 +77,7 @@ export class AfterFillPage implements OnInit {
       if (user) {
         console.log('Retrieved user from storage:', user);
         this.usertype = user.UserType; 
+        this.allowInventory = user.AllowInventory !== false;
       } else {
         console.error('No user data found in storage.');
       }
@@ -182,6 +184,10 @@ export class AfterFillPage implements OnInit {
     console.log(this.fg.value);
     this.fg.value.DoctorId = this.doctorId;
     this.fg.value.ChildId = this.childId;
+    if (!this.allowInventory) {
+      this.fg.value.Lot = '';
+      this.fg.value.Expiry = null;
+    }
 
     await this.vaccineService.AfterfillUpChildVaccine(this.fg.value).subscribe(
       res => {

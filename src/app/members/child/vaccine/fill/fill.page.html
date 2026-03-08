@@ -95,7 +95,7 @@
       </ion-text>
     </ion-item>
   
-    <ion-item>
+    <ion-item *ngIf="allowInventory">
       <ion-label color="primary" position="floating">Batch/Lot</ion-label>
       <ion-input type="text" placeholder="Lot" formControlName="Lot"></ion-input>
       <ion-text color="danger" *ngIf="fg.get('Lot').invalid && (fg.get('Lot').dirty || fg.get('Lot').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
@@ -108,7 +108,7 @@
       </ion-text>
     </ion-item>
 
-    <ion-item (click)="expiryPicker.open()">
+    <ion-item *ngIf="allowInventory" (click)="expiryPicker.open()">
       <ion-label color="primary">Expiry</ion-label>
       <input formControlName="Expiry" matInput [matDatepicker]="expiryPicker" class="expiry-input">
       <mat-datepicker-toggle matSuffix [for]="expiryPicker"></mat-datepicker-toggle>

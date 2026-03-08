@@ -324,6 +324,11 @@ export class FillPage implements OnInit {
     loading.dismiss();
     this.fg.value.GivenDate = moment(this.fg.value.GivenDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
 
+    if (!this.allowInventory) {
+      this.fg.value.Lot = '';
+      this.fg.value.Expiry = null;
+    }
+
     if (this.fg.value.Expiry) {
       this.fg.value.Expiry = moment(this.fg.value.Expiry, 'YYYY-MM-DD').format('YYYY-MM-DD');
     } else {
