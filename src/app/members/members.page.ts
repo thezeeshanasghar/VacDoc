@@ -586,6 +586,7 @@ export class MembersPage implements OnInit {
       async (res) => {
         if (res.IsSuccess) {
           this.doctorData = res.ResponseData;
+          const inventoryAllowed = this.doctorData.AllowInventory !== false;
           this.profileImagePath = this.doctorData.ProfileImage;
           this.Name = this.doctorData.DisplayName;
           const clinics = this.doctorData.Clinics;
@@ -611,7 +612,7 @@ export class MembersPage implements OnInit {
               });
             }
 
-            if (AllowStock) {
+            if (AllowStock && inventoryAllowed) {
               this.appPages.push({
                 title: "Stock Management",
                 icon: "cube-outline",
@@ -738,12 +739,15 @@ export class MembersPage implements OnInit {
                 title: "Personal Assistant",
                 url: "/members/doctor/personal-assistant",
                 icon: "wallet-outline"
-              },
-              {
-                title: "Stock Management",
-                icon: "cube-outline",
-                url: "/members/doctor/brand-amount",
               });
+
+              if (inventoryAllowed) {
+                this.appPages.push({
+                  title: "Stock Management",
+                  icon: "cube-outline",
+                  url: "/members/doctor/brand-amount",
+                });
+              }
             }
           } else {
             this.doctorPages = [

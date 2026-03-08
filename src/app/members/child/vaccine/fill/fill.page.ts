@@ -52,6 +52,7 @@ export class FillPage implements OnInit {
   vaccine: any;
   doseId: any;
   usertype: any;
+  allowInventory: boolean = true;
   scheduleDatecheck: string;
   private readonly travelFieldStorageSuffix = 'travel-vaccine-fill-state';
 
@@ -98,6 +99,7 @@ export class FillPage implements OnInit {
       if (user) {
         console.log('Retrieved user from storage:', user);
         this.usertype = user.UserType; // Ensure this is set correctly
+        this.allowInventory = user.AllowInventory !== false;
         const actorId = user.UserType === 'PA' ? Number(user.PAId) : Number(user.DoctorId);
         if (actorId && !isNaN(actorId)) {
           this.doctorId = actorId;
@@ -532,6 +534,11 @@ export class FillPage implements OnInit {
 
     const parsedBrandId = Number(brandId);
     if (!parsedBrandId || isNaN(parsedBrandId)) {
+      this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
+      return;
+    }
+
+    if (!this.allowInventory) {
       this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
       return;
     }
