@@ -58,8 +58,9 @@ export class ChildService extends BaseService {
       );
   }
 
-  deleteChild(id: string): Observable<any> {
-    const url = `${this.API_CHILD}child/${id}`;
+  deleteChild(id: string, userType?: string): Observable<any> {
+    const type = encodeURIComponent(userType || '');
+    const url = `${this.API_CHILD}child/${id}${type ? `?userType=${type}` : ''}`;
     return this.http.delete(url, this.httpOptions)
       .pipe(
         catchError(this.handleError)
