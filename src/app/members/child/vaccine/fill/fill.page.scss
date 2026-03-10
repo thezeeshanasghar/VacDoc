@@ -49,10 +49,10 @@ ion-item input[matInput] {
     color: gray !important;
 }
 
-/* Dark theme fixes for Angular Material controls on this page */
+/* Light theme defaults for Angular Material controls on this page */
 :host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline,
 :host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-thick {
-    color: #3f79ff !important;
+    color: #111111 !important;
 }
 
 :host ::ng-deep .mat-form-field-label,
@@ -61,31 +61,83 @@ ion-item input[matInput] {
 :host ::ng-deep .mat-mdc-form-field.mat-focused .mdc-floating-label,
 :host ::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-label,
 :host ::ng-deep .brand-label {
-    color: #c3d4ff !important;
+    color: #000000 !important;
 }
 
 :host ::ng-deep .mat-input-element,
 :host ::ng-deep .mat-mdc-input-element,
 :host ::ng-deep input[matinput],
 :host ::ng-deep input[matInput] {
-    color: #f5f8ff !important;
-    -webkit-text-fill-color: #f5f8ff !important;
-    caret-color: #f5f8ff !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    caret-color: #000000 !important;
 }
 
 :host ::ng-deep .mat-input-element::placeholder,
 :host ::ng-deep .mat-mdc-input-element::placeholder,
 :host ::ng-deep input[matInput]::placeholder {
-    color: gray !important;
+    color: #6b7280 !important;
 }
 
 :host ::ng-deep .mat-autocomplete-panel,
 :host ::ng-deep .mat-mdc-autocomplete-panel {
-    background: #14151a !important;
+    background: #ffffff !important;
 }
 
 :host ::ng-deep .mat-option,
 :host ::ng-deep .mat-option-text,
 :host ::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
+    color: #000000 !important;
+}
+
+/* Dark theme overrides */
+:host-context(body.dark) ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline,
+:host-context(body.dark) ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-thick,
+:host-context(.dark) ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline,
+:host-context(.dark) ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-thick {
+    color: #3f79ff !important;
+}
+
+:host-context(body.dark) ::ng-deep .mat-form-field-label,
+:host-context(body.dark) ::ng-deep .mat-mdc-form-field .mdc-floating-label,
+:host-context(body.dark) ::ng-deep .mat-mdc-form-field .mdc-floating-label.mdc-floating-label--float-above,
+:host-context(body.dark) ::ng-deep .mat-mdc-form-field.mat-focused .mdc-floating-label,
+:host-context(body.dark) ::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-label,
+:host-context(body.dark) ::ng-deep .brand-label,
+:host-context(.dark) ::ng-deep .mat-form-field-label,
+:host-context(.dark) ::ng-deep .mat-mdc-form-field .mdc-floating-label,
+:host-context(.dark) ::ng-deep .mat-mdc-form-field .mdc-floating-label.mdc-floating-label--float-above,
+:host-context(.dark) ::ng-deep .mat-mdc-form-field.mat-focused .mdc-floating-label,
+:host-context(.dark) ::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-label,
+:host-context(.dark) ::ng-deep .brand-label {
+    color: #c3d4ff !important;
+}
+
+:host-context(body.dark) ::ng-deep .mat-input-element,
+:host-context(body.dark) ::ng-deep .mat-mdc-input-element,
+:host-context(body.dark) ::ng-deep input[matinput],
+:host-context(body.dark) ::ng-deep input[matInput],
+:host-context(.dark) ::ng-deep .mat-input-element,
+:host-context(.dark) ::ng-deep .mat-mdc-input-element,
+:host-context(.dark) ::ng-deep input[matinput],
+:host-context(.dark) ::ng-deep input[matInput] {
+    color: #f5f8ff !important;
+    -webkit-text-fill-color: #f5f8ff !important;
+    caret-color: #f5f8ff !important;
+}
+
+:host-context(body.dark) ::ng-deep .mat-autocomplete-panel,
+:host-context(body.dark) ::ng-deep .mat-mdc-autocomplete-panel,
+:host-context(.dark) ::ng-deep .mat-autocomplete-panel,
+:host-context(.dark) ::ng-deep .mat-mdc-autocomplete-panel {
+    background: #14151a !important;
+}
+
+:host-context(body.dark) ::ng-deep .mat-option,
+:host-context(body.dark) ::ng-deep .mat-option-text,
+:host-context(body.dark) ::ng-deep .mat-mdc-option .mdc-list-item__primary-text,
+:host-context(.dark) ::ng-deep .mat-option,
+:host-context(.dark) ::ng-deep .mat-option-text,
+:host-context(.dark) ::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
     color: #f5f8ff !important;
 }
