@@ -186,7 +186,7 @@ export class UnapprovePage {
       message: "Loading"
     });
     await loading.present();
-    await this.childService.deleteChild(id, this.usertype?.UserType).subscribe(
+    await this.childService.deleteChild(id, this.usertype ? this.usertype.UserType : null).subscribe(
       res => {
         if (res.IsSuccess) {
           this.toastService.create(res.Message);
