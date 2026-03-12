@@ -49,6 +49,31 @@ export class BulkPage implements OnInit {
       || fullName.includes('vitamin a');
   }
 
+  private resolveNextDoseGapDays(element: any): number {
+    const dose = element && element.Dose ? element.Dose : null;
+    const doseName = ((dose && dose.Name) || '').toString().toLowerCase();
+
+    const minGap = Number(dose && dose.MinGap);
+    if (!isNaN(minGap) && minGap > 0) {
+      return minGap;
+    }
+
+    const maxAge = Number(dose && dose.MaxAge);
+    if (!isNaN(maxAge) && maxAge > 0) {
+      return maxAge;
+    }
+
+    if (doseName.startsWith('typhoid')) {
+      return 1095;
+    }
+
+    if (doseName.startsWith('flu') || doseName.startsWith('vitamin a')) {
+      return 365;
+    }
+
+    return 0;
+  }
+
   constructor(
     private loadingController: LoadingController,
     private activatedRoute: ActivatedRoute,
@@ -377,15 +402,19 @@ export class BulkPage implements OnInit {
   }
 
   async addNewVaccineInScheduleTable(element): Promise<void> {
-    let scheduleDate: Date = this.addDays(this.fg.value.GivenDate, element.Dose.MinGap, element.Dose.Id);
+    const gapDays = this.resolveNextDoseGapDays(element);
+    let scheduleDate: Date = this.addDays(this.fg.value.GivenDate, gapDays, element.Dose.Id);
     
     // Normalize date to midnight (remove time portion)
     scheduleDate.setHours(0, 0, 0, 0);
 
+    const scheduleDateText = moment(scheduleDate).format("DD-MM-YYYY");
+    const givenDateText = moment(this.fg.value.GivenDate, ["YYYY-MM-DD", "DD-MM-YYYY", moment.ISO_8601]).format("DD-MM-YYYY");
+
     let VaccineData = {
-      Date: scheduleDate,
+      Date: scheduleDateText,
       DoctorId: this.doctorId,
-      GivenDate: this.fg.value.GivenDate,
+      GivenDate: givenDateText,
       Height: this.fg.value.Height,
       Weight: this.fg.value.Weight,
       IsDone: false,
@@ -425,11 +454,14 @@ export class BulkPage implements OnInit {
 
 
   addDays(date, days, doseId) {
-    var myDate = new Date(date);
-    if (doseId === 30 && days === 1095) {
+    var myDate = this.toLocalDate(date);
+    const safeDays = Number(days);
+    const gapDays = !isNaN(safeDays) ? safeDays : 0;
+
+    if (doseId === 30 && gapDays === 1095) {
       myDate.setFullYear(myDate.getFullYear() + 3);
     } else {
-      myDate.setDate(myDate.getDate() + days);
+      myDate.setDate(myDate.getDate() + gapDays);
     }
 
     // Handle leap year for future vaccines
@@ -438,6 +470,30 @@ export class BulkPage implements OnInit {
     }
 
     return myDate;
+  }
+
+  private toLocalDate(input: any): Date {
+    if (input instanceof Date) {
+      return new Date(input.getFullYear(), input.getMonth(), input.getDate());
+    }
+
+    if (typeof input === 'string') {
+      const ddmmyyyy = /^(\d{2})-(\d{2})-(\d{4})$/;
+      const yyyymmdd = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+      let m = input.match(ddmmyyyy);
+      if (m) {
+        return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+      }
+
+      m = input.match(yyyymmdd);
+      if (m) {
+        return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+      }
+    }
+
+    const fallback = new Date(input);
+    return new Date(fallback.getFullYear(), fallback.getMonth(), fallback.getDate());
   }
 
   isLeapYear(year) {
