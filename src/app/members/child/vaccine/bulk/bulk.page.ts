@@ -34,6 +34,21 @@ export class BulkPage implements OnInit {
   };
   usertype: any;
   allowInventory: boolean = true;
+
+  private isInfiniteVaccineElement(element: any): boolean {
+    const dose = element && element.Dose ? element.Dose : null;
+    const vaccine = dose && dose.Vaccine ? dose.Vaccine : null;
+    const isInfiniteFlag = !!(vaccine && vaccine.isInfinite);
+    const doseName = ((dose && dose.Name) || '').toString().toLowerCase();
+    const vaccineName = ((vaccine && vaccine.Name) || '').toString().toLowerCase();
+    const fullName = `${doseName} ${vaccineName}`;
+
+    return isInfiniteFlag
+      || doseName.startsWith('flu')
+      || doseName.startsWith('typhoid')
+      || fullName.includes('vitamin a');
+  }
+
   constructor(
     private loadingController: LoadingController,
     private activatedRoute: ActivatedRoute,
@@ -343,7 +358,7 @@ export class BulkPage implements OnInit {
     // Collect all promises for infinite vaccines
     const promises = [];
     this.bulkData.forEach(element => {
-      if (element.Dose.Vaccine.isInfinite) {
+      if (this.isInfiniteVaccineElement(element)) {
         promises.push(this.addNewVaccineInScheduleTable(element));
       }
     });
@@ -387,13 +402,21 @@ export class BulkPage implements OnInit {
             resolve();
           }
           else {
-            this.toastService.create("Error: failed to add injection", "danger");
-            reject(new Error("Failed to add injection"));
+            const message = this.getApiErrorMessage(
+              res,
+              `Error: failed to add injection for ${element.Dose.Name}`
+            );
+            this.toastService.create(message, "danger");
+            reject(new Error(message));
           }
         },
         err => {
-          this.toastService.create("Error: server failure", "danger");
-          reject(err);
+          const message = this.getApiErrorMessage(
+            err,
+            `Error: server failure while adding ${element.Dose.Name}`
+          );
+          this.toastService.create(message, "danger");
+          reject(new Error(message));
         }
       );
     });
