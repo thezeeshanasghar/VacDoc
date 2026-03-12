@@ -109,7 +109,7 @@
     </ion-item>
 
     <ion-item *ngIf="allowInventory" (click)="expiryPicker.open()" class="date-field-item">
-      <ion-label color="primary" position="floating">Expiry Date</ion-label>
+      <ion-label color="primary" position="stacked">Expiry Date</ion-label>
       <input formControlName="Expiry" matInput [matDatepicker]="expiryPicker" class="date-input">
       <mat-datepicker-toggle matSuffix [for]="expiryPicker" slot="end"></mat-datepicker-toggle>
       <mat-datepicker #expiryPicker></mat-datepicker>
@@ -180,7 +180,7 @@
       <!-- <ion-datetime  picker-format="DD-MM-YYYY" value="{{Date}}" formControlName="GivenDate" max = "{{todaydate}}"></ion-datetime> -->
       <!-- <mat-form-field appearance="fill"> -->
       <!-- <mat-label>Choose a date</mat-label> -->
-      <ion-label color="primary" position="floating">Given Date</ion-label>
+      <ion-label color="primary" position="stacked">Given Date</ion-label>
       <input formControlName="GivenDate" matInput [matDatepicker]="picker" value="{{Date}}" max="{{todaydate}}" class="date-input">
       <mat-datepicker-toggle matSuffix [for]="picker" slot="end"></mat-datepicker-toggle>
       <mat-datepicker #picker disabled="false"></mat-datepicker>
