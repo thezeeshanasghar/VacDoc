@@ -7,12 +7,16 @@ ion-item ion-input {
     --placeholder-color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.6);
 }
 
-.expiry-input {
+.date-input {
     width: 100%;
     color: var(--ion-text-color, #000000) !important;
     background: transparent;
     border: 0 !important;
     text-align: right;
+}
+
+.date-field-item {
+    --inner-padding-end: 0;
 }
 
 :host ::ng-deep .mat-input-element {
