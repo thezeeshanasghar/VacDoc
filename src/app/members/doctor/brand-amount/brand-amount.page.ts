@@ -247,13 +247,19 @@ export class BrandAmountPage implements OnInit {
   }
  
 async downloadPDF() {
+  const clinicId = Number(this.selectedClinicId || this.clinicId);
+  if (!clinicId) {
+    this.toastService.create('Please select a clinic first', 'warning');
+    return;
+  }
+
   try {
     const loading = await this.loadingController.create({
       message: 'Downloading PDF...'
     });
     await loading.present();
-    // const doctorId = await this.storage.get(environment.DOCTOR_Id);
-    this.brandService.downloadPdf(this.clinicId, { observe: 'response', responseType: 'blob' }).subscribe(
+
+    this.brandService.downloadPdf(clinicId, { observe: 'response', responseType: 'blob' }).subscribe(
       (response) => {
         const blob = response.body;
         const url = window.URL.createObjectURL(blob);
@@ -273,6 +279,44 @@ async downloadPDF() {
     );
   } catch (error) {
     console.error('Error in downloadPDF:', error);
+    this.toastService.create('An unexpected error occurred', 'danger');
+    this.loadingController.dismiss();
+  }
+}
+
+async downloadExpiryPDF() {
+  const clinicId = Number(this.selectedClinicId || this.clinicId);
+  if (!clinicId) {
+    this.toastService.create('Please select a clinic first', 'warning');
+    return;
+  }
+
+  try {
+    const loading = await this.loadingController.create({
+      message: 'Downloading Expiry Report...'
+    });
+    await loading.present();
+
+    this.brandService.downloadExpiryPdf(clinicId, { observe: 'response', responseType: 'blob' }).subscribe(
+      (response) => {
+        const blob = response.body;
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `brand-expiry-report-${new Date().toISOString().split('T')[0]}.pdf`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        loading.dismiss();
+        this.toastService.create('Expiry report downloaded successfully', 'success');
+      },
+      error => {
+        loading.dismiss();
+        console.error('Error downloading Expiry report:', error);
+        this.toastService.create('Failed to download expiry report', 'danger');
+      }
+    );
+  } catch (error) {
+    console.error('Error in downloadExpiryPDF:', error);
     this.toastService.create('An unexpected error occurred', 'danger');
     this.loadingController.dismiss();
   }

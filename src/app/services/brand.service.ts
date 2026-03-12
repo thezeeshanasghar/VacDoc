@@ -63,6 +63,17 @@ export class BrandService extends BaseService {
       });
     }
 
+  downloadExpiryPdf(dId: number, options: any): Observable<HttpResponse<Blob>> {
+      const apiUrl = `${this.API_BRAND}Brandamount/brandamountclinicwiseexpirypdf/${dId}`;
+      return this.http.get(apiUrl, {
+        responseType: 'blob',
+        observe: 'response',
+        headers: new HttpHeaders({
+          'Accept': 'application/pdf'
+        })
+      });
+    }
+
 }
 
 interface Response<T> {
