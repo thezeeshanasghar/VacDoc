@@ -8,7 +8,8 @@ ion-item ion-input {
 }
 
 .date-input {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
     color: var(--ion-text-color, #000000) !important;
     background: transparent;
     border: 0 !important;
@@ -17,6 +18,14 @@ ion-item ion-input {
 
 .date-field-item {
     --inner-padding-end: 0;
+}
+
+:host ::ng-deep .date-field-item .item-inner {
+    flex-wrap: nowrap;
+}
+
+:host ::ng-deep .date-field-item .mat-datepicker-toggle {
+    margin-left: 8px;
 }
 
 :host ::ng-deep .mat-input-element {
