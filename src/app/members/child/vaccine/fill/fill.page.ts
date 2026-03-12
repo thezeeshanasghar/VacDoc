@@ -362,12 +362,12 @@ export class FillPage implements OnInit {
           }
           loading.dismiss();
         } else {
-          this.toastService.create("Error: Failed to update injection");
+          this.toastService.create(res.Message || "Error: Failed to update injection", 'danger');
           loading.dismiss();
         }
       },
       err => {
-        this.toastService.create("Error: Server Failure");
+        this.toastService.create("Error: Server Failure", 'danger');
         loading.dismiss();
       }
     );
@@ -400,12 +400,12 @@ export class FillPage implements OnInit {
           loading.dismiss();
         } else {
           loading.dismiss();
-          this.toastService.create("Error: Failed to Add injection");
+          this.toastService.create(res.Message || "Error: Failed to Add injection", 'danger');
         }
       },
       err => {
         loading.dismiss();
-        this.toastService.create("Error: Server Failure");
+        this.toastService.create("Error: Server Failure", 'danger');
       }
     );
   }
