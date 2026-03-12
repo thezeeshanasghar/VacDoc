@@ -70,6 +70,8 @@ export class BulkPage implements OnInit {
       BrandId2: [null],
       BrandId3: [null],
       //  BrandId: this.BrandId,
+      Lot: [''],
+      Expiry: [null],
       GivenDate: this.currentDate,
       IsPAApprove: [null]
     });

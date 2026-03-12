@@ -3,6 +3,18 @@ input
     border:0
 }
 
+.date-input {
+    width: 100%;
+    color: var(--ion-text-color, #000000) !important;
+    background: transparent;
+    border: 0 !important;
+    text-align: right;
+}
+
+.date-field-item {
+    --inner-padding-end: 0;
+}
+
 .bulk-brand-row {
     margin-top: 8px;
 }
