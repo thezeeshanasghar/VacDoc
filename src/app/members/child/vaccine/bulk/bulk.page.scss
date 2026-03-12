@@ -4,8 +4,8 @@ input
 }
 
 .date-input {
-    flex: 1;
-    min-width: 0;
+    width: 110px;
+    min-width: 110px;
     color: var(--ion-text-color, #000000) !important;
     background: transparent;
     border: 0 !important;
@@ -13,28 +13,35 @@ input
 }
 
 .date-field-item {
-    --inner-padding-end: 0;
-    --min-height: 72px;
+    --inner-padding-end: 8px;
+    --min-height: 56px;
 }
 
-:host ::ng-deep .date-field-item .item-inner {
-    flex-wrap: nowrap;
+.date-end {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-:host ::ng-deep .date-field-item .mat-datepicker-toggle {
-    margin-left: 8px;
+:host ::ng-deep .date-end .mat-datepicker-toggle {
+    display: flex;
+    align-items: center;
+    margin: 0;
 }
 
-:host ::ng-deep .date-field-item [slot="end"] {
-    align-self: flex-end;
-    margin-bottom: 8px;
-}
-
-:host ::ng-deep .date-field-item .mat-datepicker-toggle button,
-:host ::ng-deep .date-field-item .mat-mdc-icon-button {
+:host ::ng-deep .date-end .mat-datepicker-toggle button,
+:host ::ng-deep .date-end .mat-mdc-icon-button {
+    width: 28px;
+    height: 28px;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+:host ::ng-deep .date-end .mat-datepicker-toggle-default-icon {
+    width: 20px;
+    height: 20px;
 }
 
 .bulk-brand-row {

@@ -93,16 +93,20 @@
     </ion-item> -->
 
     <ion-item *ngIf="allowInventory" (click)="expiryPicker.open()" class="date-field-item">
-      <ion-label color="primary" position="stacked">Expiry Date</ion-label>
-      <input formControlName="Expiry" matInput [matDatepicker]="expiryPicker" class="date-input">
-      <mat-datepicker-toggle matSuffix [for]="expiryPicker" slot="end"></mat-datepicker-toggle>
+      <ion-label color="primary">Expiry Date</ion-label>
+      <div class="date-end" slot="end">
+        <input formControlName="Expiry" matInput [matDatepicker]="expiryPicker" class="date-input">
+        <mat-datepicker-toggle matSuffix [for]="expiryPicker"></mat-datepicker-toggle>
+      </div>
       <mat-datepicker #expiryPicker></mat-datepicker>
     </ion-item>
 
     <ion-item (click)="picker.open()" class="date-field-item">
-      <ion-label color="primary" position="stacked">Given Date</ion-label>
-      <input formControlName="GivenDate" matInput [matDatepicker]="picker" value="{{currentDate1}}" max="{{todaydate}}" class="date-input">
-      <mat-datepicker-toggle matSuffix [for]="picker" slot="end"></mat-datepicker-toggle>
+      <ion-label color="primary">Given Date</ion-label>
+      <div class="date-end" slot="end">
+        <input formControlName="GivenDate" matInput [matDatepicker]="picker" value="{{currentDate1}}" max="{{todaydate}}" class="date-input">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      </div>
       <mat-datepicker #picker disabled="false"></mat-datepicker>
     </ion-item>
 
