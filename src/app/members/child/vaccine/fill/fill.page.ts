@@ -57,9 +57,11 @@ export class FillPage implements OnInit {
   private readonly travelFieldStorageSuffix = 'travel-vaccine-fill-state';
 
   private isInfiniteVaccine(data: any): boolean {
-    const flag = !!data?.Dose?.Vaccine?.isInfinite;
-    const doseName = (data?.Dose?.Name || '').toString().toLowerCase();
-    const vaccineName = (data?.Dose?.Vaccine?.Name || '').toString().toLowerCase();
+    const dose = data && data.Dose ? data.Dose : null;
+    const vaccine = dose && dose.Vaccine ? dose.Vaccine : null;
+    const flag = !!(vaccine && vaccine.isInfinite);
+    const doseName = ((dose && dose.Name) || '').toString().toLowerCase();
+    const vaccineName = ((vaccine && vaccine.Name) || '').toString().toLowerCase();
     const fullName = `${doseName} ${vaccineName}`;
 
     return flag
