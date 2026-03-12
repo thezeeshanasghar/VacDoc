@@ -37,6 +37,19 @@ export class VaccinePage {
   usertype: any;
   retryCount = 0; // add this as a class property
   maxRetries = 3;
+
+  private isInfiniteVaccine(data: any): boolean {
+    const flag = !!data?.Dose?.Vaccine?.isInfinite;
+    const doseName = (data?.Dose?.Name || '').toString().toLowerCase();
+    const vaccineName = (data?.Dose?.Vaccine?.Name || '').toString().toLowerCase();
+    const fullName = `${doseName} ${vaccineName}`;
+
+    return flag
+      || doseName.startsWith('flu')
+      || doseName.startsWith('typhoid')
+      || fullName.includes('vitamin a');
+  }
+
   constructor(
     public loadingController: LoadingController,
     public route: ActivatedRoute,
@@ -499,7 +512,7 @@ this.downloadSpecialPdf();
       .subscribe(
         res => {
           if (res.IsSuccess) {
-            if (res.ResponseData.Dose.Vaccine.isInfinite) {
+            if (this.isInfiniteVaccine(res.ResponseData)) {
               var cId = res.ResponseData.ChildId;
               var dId = res.ResponseData.Dose.Id;
               var dSchedule = res.ResponseData.Date;
@@ -564,7 +577,7 @@ this.downloadSpecialPdf();
       res => {
         if (res.IsSuccess) {
           this.toastService.create('Success: Skipped ' + res.ResponseData.Dose.Name, 'success', false, 3000);
-          if (res.ResponseData.Dose.Vaccine.isInfinite) {
+          if (this.isInfiniteVaccine(res.ResponseData)) {
             let scheduleDate: any = this.addDays(res.ResponseData.Date, res.ResponseData.Dose.MinGap);
             // this.addNewVaccineInScheduleTable(scheduleDate, res.ResponseData);
             this.getVaccination();
@@ -641,7 +654,7 @@ this.downloadSpecialPdf();
         if (res.IsSuccess) {
           // console.log(res.ResponseData)
           this.toastService.create('Success: Unskipped ' + doseName, 'success', false, 3000);
-          if (res.ResponseData.Dose.Vaccine.isInfinite) {
+          if (this.isInfiniteVaccine(res.ResponseData)) {
             var cId = res.ResponseData.ChildId;
             var dId = res.ResponseData.Dose.Id;
             var dSchedule = res.ResponseData.Date;

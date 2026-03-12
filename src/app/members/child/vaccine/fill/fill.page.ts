@@ -56,6 +56,18 @@ export class FillPage implements OnInit {
   scheduleDatecheck: string;
   private readonly travelFieldStorageSuffix = 'travel-vaccine-fill-state';
 
+  private isInfiniteVaccine(data: any): boolean {
+    const flag = !!data?.Dose?.Vaccine?.isInfinite;
+    const doseName = (data?.Dose?.Name || '').toString().toLowerCase();
+    const vaccineName = (data?.Dose?.Vaccine?.Name || '').toString().toLowerCase();
+    const fullName = `${doseName} ${vaccineName}`;
+
+    return flag
+      || doseName.startsWith('flu')
+      || doseName.startsWith('typhoid')
+      || fullName.includes('vitamin a');
+  }
+
   constructor(
     public loadingController: LoadingController,
     private formBuilder: FormBuilder,
@@ -172,7 +184,7 @@ export class FillPage implements OnInit {
           this.fg.controls['Validity'].setValue(this.Validity + '');
           this.MinAge = this.vaccineData.Dose.Vaccine.MinAge;
           this.MinGap = this.vaccineData.Dose.MinGap;
-          this.vaccine=this.vaccineData.Dose.Vaccine.isInfinite;
+          this.vaccine = this.isInfiniteVaccine(this.vaccineData);
           this.childId=this.vaccineData.ChildId;
           this.doseId=this.vaccineData.DoseId;
           this.getChildData(this.childId)
