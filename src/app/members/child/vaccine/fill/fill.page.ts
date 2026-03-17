@@ -56,6 +56,16 @@ export class FillPage implements OnInit {
   scheduleDatecheck: string;
   private readonly travelFieldStorageSuffix = 'travel-vaccine-fill-state';
 
+  private getTodayIsoDate(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  private applyTravelGivenDateToday(): void {
+    if (this.Type === 'travel' && this.fg) {
+      this.fg.controls.GivenDate.setValue(this.getTodayIsoDate());
+    }
+  }
+
   private isInfiniteVaccine(data: any): boolean {
     const dose = data && data.Dose ? data.Dose : null;
     const vaccine = dose && dose.Vaccine ? dose.Vaccine : null;
@@ -270,6 +280,7 @@ export class FillPage implements OnInit {
           // console.log(this.vaccineData.ChildId);
           this.childId = childRecord.Id; // Assuming ChildId is the correct property to use
           this.Type = childRecord.Type; // Retaining this line as it seems necessary
+          this.applyTravelGivenDateToday();
           this.clinicId = this.resolveClinicId(childRecord) || this.clinicId;
           console.log(childRecord.Type);
           this.Validity = childRecord.Validity; // Retaining this line as it seems necessary
@@ -317,6 +328,8 @@ export class FillPage implements OnInit {
     } else {
       this.fg.value.IsPAApprove = false;
     }
+    this.applyTravelGivenDateToday();
+
     this.fg.value.Id = this.route.snapshot.paramMap.get('id');
     this.fg.value.DoctorId = this.doctorId;
     this.fg.value.IsDone = true;

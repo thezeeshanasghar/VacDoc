@@ -10,6 +10,7 @@ import { environment } from "src/environments/environment";
 import * as moment from "moment";
 import { AlertController } from '@ionic/angular';
 import { VaccineService } from "src/app/services/vaccine.service";
+import { ChildService } from "src/app/services/child.service";
 
 @Component({
   selector: "app-bulk",
@@ -34,6 +35,21 @@ export class BulkPage implements OnInit {
   };
   usertype: any;
   allowInventory: boolean = true;
+  childType: string = '';
+
+  private getTodayIsoDate(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  get isTravelType(): boolean {
+    return (this.childType || '').toLowerCase() === 'travel';
+  }
+
+  private applyTravelGivenDateToday(): void {
+    if (this.isTravelType && this.fg) {
+      this.fg.controls['GivenDate'].setValue(this.getTodayIsoDate());
+    }
+  }
 
   private isInfiniteVaccineElement(element: any): boolean {
     const dose = element && element.Dose ? element.Dose : null;
@@ -83,7 +99,8 @@ export class BulkPage implements OnInit {
     private toastService: ToastService,
     private storage: Storage,
     public alertController: AlertController,
-    private vaccineService: VaccineService
+    private vaccineService: VaccineService,
+    private childService: ChildService
   ) { }
 
   ngOnInit() {
@@ -98,6 +115,7 @@ export class BulkPage implements OnInit {
     this.todaydate = moment(this.todaydate, 'DD-MM-YYYY').format("YYYY-MM-DD");
 
     this.getBulk();
+    this.getChildType();
 
     this.fg = this.formBuilder.group({
       DoctorId: [""],
@@ -115,6 +133,8 @@ export class BulkPage implements OnInit {
       GivenDate: this.currentDate,
       IsPAApprove: [null]
     });
+
+    this.applyTravelGivenDateToday();
 
     this.storage.get(environment.USER).then((user) => {
       if (user) {
@@ -154,6 +174,20 @@ export class BulkPage implements OnInit {
       }
     );
 
+  }
+
+  private getChildType(): void {
+    this.childService.getChildById(this.childId).subscribe(
+      (res) => {
+        if (res && res.IsSuccess && res.ResponseData) {
+          this.childType = (res.ResponseData.Type || '').toString();
+          this.applyTravelGivenDateToday();
+        }
+      },
+      () => {
+        this.childType = '';
+      }
+    );
   }
 
   private initializeBrandSearch(): void {
@@ -274,6 +308,8 @@ export class BulkPage implements OnInit {
   }
 
   onSubmit() {
+    this.applyTravelGivenDateToday();
+
     var brands = [];
     var i = 0;
     this.bulkData.forEach(element => {
@@ -319,6 +355,8 @@ export class BulkPage implements OnInit {
   }
 
   async fillVaccine(data) {
+    this.applyTravelGivenDateToday();
+
     data.GivenDate = moment(this.fg.value.GivenDate, "YYYY-MM-DD").format("DD-MM-YYYY");
     const loading = await this.loadingController.create({
       message: "Filling Vaccine"
