@@ -680,22 +680,87 @@ this.downloadSpecialPdf();
     );
   }
 
-  // New method to unfill all vaccines
+  // Keep MinGap conversion aligned with backend ScheduleController.calculateDate
   addDays(date, days) {
-    console.log("days");
-    // console.log(days);
-    console.log("date");
-    // console.log(date);
+    const baseDate = this.toLocalDate(date);
+    const safeDays = Number(days);
+    const gapDays = !isNaN(safeDays) ? safeDays : 0;
 
-    let momentVariable = moment(date, 'DD-MM-YYYY');
-    var stringvalue = momentVariable.format('YYYY-MM-DD');
-    var myDate = new Date(stringvalue);
-    myDate.setDate(myDate.getDate() + days);
+    if (gapDays === 30 || gapDays === 31) {
+      return this.addMonths(baseDate, 1);
+    }
 
-    console.log("schedule date")
-    // console.log(myDate)
+    if (gapDays === 150) {
+      return this.addMonths(baseDate, 5);
+    }
 
-    return myDate;
+    if (gapDays === 84) {
+      return this.addMonths(baseDate, 3);
+    }
+
+    if (gapDays === 3315) {
+      return this.addMonths(this.addYears(baseDate, 9), 1);
+    }
+
+    if (gapDays === 3833) {
+      return this.addMonths(this.addYears(baseDate, 10), 6);
+    }
+
+    if (gapDays >= 365 && gapDays <= 9125 && gapDays % 365 === 0) {
+      return this.addYears(baseDate, Math.floor(gapDays / 365));
+    }
+
+    if (gapDays >= 168 && gapDays <= 334) {
+      return this.addMonths(baseDate, Math.floor(gapDays / 28));
+    }
+
+    if (gapDays >= 395 && gapDays <= 608) {
+      return this.addMonths(baseDate, Math.floor(gapDays / 29));
+    }
+
+    if (gapDays >= 639 && gapDays <= 1795) {
+      return this.addMonths(baseDate, Math.floor(gapDays / 30));
+    }
+
+    const nextDate = new Date(baseDate);
+    nextDate.setDate(nextDate.getDate() + gapDays);
+    return nextDate;
+  }
+
+  private toLocalDate(input: any): Date {
+    if (input instanceof Date) {
+      return new Date(input.getFullYear(), input.getMonth(), input.getDate());
+    }
+
+    if (typeof input === 'string') {
+      const ddmmyyyy = /^(\d{2})-(\d{2})-(\d{4})$/;
+      const yyyymmdd = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+      let m = input.match(ddmmyyyy);
+      if (m) {
+        return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+      }
+
+      m = input.match(yyyymmdd);
+      if (m) {
+        return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+      }
+    }
+
+    const fallback = new Date(input);
+    return new Date(fallback.getFullYear(), fallback.getMonth(), fallback.getDate());
+  }
+
+  private addMonths(date: Date, months: number): Date {
+    const nextDate = new Date(date);
+    nextDate.setMonth(nextDate.getMonth() + months);
+    return nextDate;
+  }
+
+  private addYears(date: Date, years: number): Date {
+    const nextDate = new Date(date);
+    nextDate.setFullYear(nextDate.getFullYear() + years);
+    return nextDate;
   }
 
   async updateScheduleApproval(scheduleId: number) {

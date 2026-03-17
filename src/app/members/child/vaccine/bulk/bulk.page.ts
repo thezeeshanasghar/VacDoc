@@ -403,7 +403,7 @@ export class BulkPage implements OnInit {
 
   async addNewVaccineInScheduleTable(element): Promise<void> {
     const gapDays = this.resolveNextDoseGapDays(element);
-    let scheduleDate: Date = this.addDays(this.fg.value.GivenDate, gapDays, element.Dose.Id);
+    let scheduleDate: Date = this.calculateDateByMinGap(this.fg.value.GivenDate, gapDays);
     
     // Normalize date to midnight (remove time portion)
     scheduleDate.setHours(0, 0, 0, 0);
@@ -453,23 +453,62 @@ export class BulkPage implements OnInit {
 
 
 
-  addDays(date, days, doseId) {
-    var myDate = this.toLocalDate(date);
+  private calculateDateByMinGap(date: any, days: number): Date {
+    const baseDate = this.toLocalDate(date);
     const safeDays = Number(days);
     const gapDays = !isNaN(safeDays) ? safeDays : 0;
 
-    if (doseId === 30 && gapDays === 1095) {
-      myDate.setFullYear(myDate.getFullYear() + 3);
-    } else {
-      myDate.setDate(myDate.getDate() + gapDays);
+    if (gapDays === 30 || gapDays === 31) {
+      return this.addMonths(baseDate, 1);
     }
 
-    // Handle leap year for future vaccines
-    if (myDate.getMonth() === 1 && myDate.getDate() === 29 && !this.isLeapYear(myDate.getFullYear())) {
-      myDate.setDate(28); // Adjust to February 28 if not a leap year
+    if (gapDays === 150) {
+      return this.addMonths(baseDate, 5);
     }
 
-    return myDate;
+    if (gapDays === 84) {
+      return this.addMonths(baseDate, 3);
+    }
+
+    if (gapDays === 3315) {
+      return this.addMonths(this.addYears(baseDate, 9), 1);
+    }
+
+    if (gapDays === 3833) {
+      return this.addMonths(this.addYears(baseDate, 10), 6);
+    }
+
+    if (gapDays >= 365 && gapDays <= 9125 && gapDays % 365 === 0) {
+      return this.addYears(baseDate, Math.floor(gapDays / 365));
+    }
+
+    if (gapDays >= 168 && gapDays <= 334) {
+      return this.addMonths(baseDate, Math.floor(gapDays / 28));
+    }
+
+    if (gapDays >= 395 && gapDays <= 608) {
+      return this.addMonths(baseDate, Math.floor(gapDays / 29));
+    }
+
+    if (gapDays >= 639 && gapDays <= 1795) {
+      return this.addMonths(baseDate, Math.floor(gapDays / 30));
+    }
+
+    const nextDate = new Date(baseDate);
+    nextDate.setDate(nextDate.getDate() + gapDays);
+    return nextDate;
+  }
+
+  private addMonths(date: Date, months: number): Date {
+    const nextDate = new Date(date);
+    nextDate.setMonth(nextDate.getMonth() + months);
+    return nextDate;
+  }
+
+  private addYears(date: Date, years: number): Date {
+    const nextDate = new Date(date);
+    nextDate.setFullYear(nextDate.getFullYear() + years);
+    return nextDate;
   }
 
   private toLocalDate(input: any): Date {
@@ -494,10 +533,6 @@ export class BulkPage implements OnInit {
 
     const fallback = new Date(input);
     return new Date(fallback.getFullYear(), fallback.getMonth(), fallback.getDate());
-  }
-
-  isLeapYear(year) {
-    return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
   }
 
   isSubmitDisabled(): boolean {
