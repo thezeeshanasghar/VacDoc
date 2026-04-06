@@ -12,6 +12,8 @@ import { AlertController } from '@ionic/angular';
 import { elementAt } from 'rxjs/operators';
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 import { Platform } from '@ionic/angular';
+import { ChildService } from "src/app/services/child.service";
+import { ClinicService } from "src/app/services/clinic.service";
 @Component({
   selector: "app-bulk",
   templateUrl: "./bulk.page.html",
@@ -42,7 +44,9 @@ export class BulkInvoicePage implements OnInit {
     public alertController: AlertController,
     private downloader: Downloader,
     public platform: Platform,
-    private invoiceService: InvoiceService
+    private invoiceService: InvoiceService,
+    private childService: ChildService,
+    private clinicService: ClinicService
   ) { }
 
   hasActiveValidations(): boolean {
@@ -74,11 +78,8 @@ export class BulkInvoicePage implements OnInit {
       IsConsultationFee: false,
       ConsultationFee: [null, Validators.pattern('^[0-9]*$')] // Add Validators.pattern to allow only numbers
     });
+    this.loadConsultationFeeFromRegisteredClinic();
 
-    this.storage.get(environment.ON_CLINIC).then(val => {
-      this.fg.controls['ConsultationFee'].setValue(val.ConsultationFee);
-      // this.fg.value.ConsultationFee = val.ConsultationFee;
-    });
     this.storage.get(environment.USER).then((user) => {
       if (user) {
         // console.log('Retrieved user from storage:', user);
@@ -89,6 +90,28 @@ export class BulkInvoicePage implements OnInit {
     });
     // this.loadInvoiceData();
     // this.getInvoiceId(this.childId, this.doseId);
+  }
+
+  loadConsultationFeeFromRegisteredClinic() {
+    this.childService.getChildById(this.childId).subscribe(
+      childRes => {
+        const clinicId = childRes?.ResponseData?.ClinicId;
+        if (!childRes?.IsSuccess || !clinicId) {
+          return;
+        }
+
+        this.clinicService.getClinicById(clinicId.toString()).subscribe(
+          clinicRes => {
+            const consultationFee = clinicRes?.ResponseData?.ConsultationFee;
+            if (clinicRes?.IsSuccess && consultationFee != null) {
+              this.fg.controls['ConsultationFee'].setValue(consultationFee);
+            }
+          },
+          () => {}
+        );
+      },
+      () => {}
+    );
   }
 //   loadInvoiceData() {
 //     const storedInvoiceId = localStorage.getItem('invoiceId');
