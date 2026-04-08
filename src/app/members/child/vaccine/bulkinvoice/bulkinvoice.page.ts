@@ -12,8 +12,8 @@ import { AlertController } from '@ionic/angular';
 import { elementAt } from 'rxjs/operators';
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 import { Platform } from '@ionic/angular';
-import { ChildService } from "src/app/services/child.service";
 import { ClinicService } from "src/app/services/clinic.service";
+import { PaService } from "src/app/services/pa.service";
 @Component({
   selector: "app-bulk",
   templateUrl: "./bulk.page.html",
@@ -45,8 +45,8 @@ export class BulkInvoicePage implements OnInit {
     private downloader: Downloader,
     public platform: Platform,
     private invoiceService: InvoiceService,
-    private childService: ChildService,
-    private clinicService: ClinicService
+    private clinicService: ClinicService,
+    private paService: PaService
   ) { }
 
   hasActiveValidations(): boolean {
@@ -78,7 +78,7 @@ export class BulkInvoicePage implements OnInit {
       IsConsultationFee: false,
       ConsultationFee: [null, Validators.pattern('^[0-9]*$')] // Add Validators.pattern to allow only numbers
     });
-    this.loadConsultationFeeFromRegisteredClinic();
+    this.loadConsultationFeeFromOnlineClinic();
 
     this.storage.get(environment.USER).then((user) => {
       if (user) {
@@ -92,26 +92,67 @@ export class BulkInvoicePage implements OnInit {
     // this.getInvoiceId(this.childId, this.doseId);
   }
 
-  loadConsultationFeeFromRegisteredClinic() {
-    this.childService.getChildById(this.childId).subscribe(
-      childRes => {
-        const clinicId = childRes?.ResponseData?.ClinicId;
-        if (!childRes?.IsSuccess || !clinicId) {
-          return;
-        }
+  loadConsultationFeeFromOnlineClinic() {
+    this.storage.get(environment.USER).then((user) => {
+      if (!user) {
+        this.loadConsultationFeeFromStoredOnlineClinic();
+        return;
+      }
 
-        this.clinicService.getClinicById(clinicId.toString()).subscribe(
-          clinicRes => {
-            const consultationFee = clinicRes?.ResponseData?.ConsultationFee;
-            if (clinicRes?.IsSuccess && consultationFee != null) {
-              this.fg.controls['ConsultationFee'].setValue(consultationFee);
+      if (user.UserType === 'PA' && user.PAId) {
+        this.paService.getPaClinics(Number(user.PAId)).subscribe(
+          (res) => {
+            if (res?.IsSuccess && Array.isArray(res.ResponseData)) {
+              const onlineClinic = res.ResponseData.find((clinic) => clinic.IsOnline) || res.ResponseData[0];
+              this.setConsultationFeeFromClinic(onlineClinic);
+            } else {
+              this.loadConsultationFeeFromStoredOnlineClinic();
             }
           },
-          () => {}
+          () => this.loadConsultationFeeFromStoredOnlineClinic()
         );
-      },
-      () => {}
-    );
+        return;
+      }
+
+      const doctorId = user.DoctorId || this.doctorId;
+      if (!doctorId) {
+        this.loadConsultationFeeFromStoredOnlineClinic();
+        return;
+      }
+
+      this.clinicService.getClinics(Number(doctorId)).subscribe(
+        (res) => {
+          if (res?.IsSuccess && Array.isArray(res.ResponseData)) {
+            const onlineClinic = res.ResponseData.find((clinic) => clinic.IsOnline) || res.ResponseData[0];
+            this.setConsultationFeeFromClinic(onlineClinic);
+          } else {
+            this.loadConsultationFeeFromStoredOnlineClinic();
+          }
+        },
+        () => this.loadConsultationFeeFromStoredOnlineClinic()
+      );
+    });
+  }
+
+  loadConsultationFeeFromStoredOnlineClinic() {
+    this.storage.get(environment.ON_CLINIC).then((clinic) => {
+      this.setConsultationFeeFromClinic(clinic);
+    });
+  }
+
+  setConsultationFeeFromClinic(clinic: any) {
+    if (!clinic) {
+      return;
+    }
+
+    if (clinic.Id) {
+      this.storage.set(environment.ON_CLINIC, clinic);
+      this.storage.set(environment.CLINIC_Id, clinic.Id);
+    }
+
+    if (clinic.ConsultationFee != null) {
+      this.fg.controls['ConsultationFee'].setValue(clinic.ConsultationFee);
+    }
   }
 //   loadInvoiceData() {
 //     const storedInvoiceId = localStorage.getItem('invoiceId');
