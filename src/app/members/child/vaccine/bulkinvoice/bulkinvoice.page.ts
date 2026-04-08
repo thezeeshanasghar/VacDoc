@@ -102,7 +102,7 @@ export class BulkInvoicePage implements OnInit {
       if (user.UserType === 'PA' && user.PAId) {
         this.paService.getPaClinics(Number(user.PAId)).subscribe(
           (res) => {
-            if (res?.IsSuccess && Array.isArray(res.ResponseData)) {
+            if (res && res.IsSuccess && Array.isArray(res.ResponseData)) {
               const onlineClinic = res.ResponseData.find((clinic) => clinic.IsOnline) || res.ResponseData[0];
               this.setConsultationFeeFromClinic(onlineClinic);
             } else {
@@ -122,7 +122,7 @@ export class BulkInvoicePage implements OnInit {
 
       this.clinicService.getClinics(Number(doctorId)).subscribe(
         (res) => {
-          if (res?.IsSuccess && Array.isArray(res.ResponseData)) {
+          if (res && res.IsSuccess && Array.isArray(res.ResponseData)) {
             const onlineClinic = res.ResponseData.find((clinic) => clinic.IsOnline) || res.ResponseData[0];
             this.setConsultationFeeFromClinic(onlineClinic);
           } else {
