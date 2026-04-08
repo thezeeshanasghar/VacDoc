@@ -64,7 +64,8 @@ ion-toolbar {
 }
 @media (max-width: 450px) {
   .vaccine-action-icon {
-    display: none;
+    height: 18px;
+    width: auto;
   }
 }
 @media (max-width: 400px) {
