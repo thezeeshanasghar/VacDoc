@@ -124,6 +124,7 @@
                                 <ion-input
                                     type="text"
                                     [(ngModel)]="item.batchLot"
+                                    (ngModelChange)="onBatchLotChange(item, $event)"
                                     placeholder="Enter batch / lot">
                                 </ion-input>
                             </td>

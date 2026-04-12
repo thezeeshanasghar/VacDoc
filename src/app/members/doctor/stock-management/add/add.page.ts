@@ -62,6 +62,10 @@ interface Brand {
   styleUrls: ["./add.page.scss"]
 })
 export class AddPage implements OnInit {
+  private readonly BATCH_LOT_BY_BRAND_KEY = 'stock_batch_lot_by_brand';
+  private readonly LAST_BATCH_LOT_KEY = 'stock_last_batch_lot';
+  private batchLotByBrand: { [brandId: string]: string } = {};
+  private lastBatchLot: string = '';
   suppliers: string[] =[];
   filteredSuppliers: string[];
   fg1: FormGroup;
@@ -129,11 +133,54 @@ export class AddPage implements OnInit {
     this.loadBrands();
     this.fetchAgent();
     await this.loadClinics();
+    await this.loadBatchLotCache();
     this.fg1 = this.fb.group({
       agent: [''],
       city: [''], // Initialize form controls
       City2: ['']
     });
+  }
+
+  private async loadBatchLotCache() {
+    const savedByBrand = await this.storage.get(this.BATCH_LOT_BY_BRAND_KEY);
+    this.batchLotByBrand = (savedByBrand && typeof savedByBrand === 'object') ? savedByBrand : {};
+
+    const savedLast = await this.storage.get(this.LAST_BATCH_LOT_KEY);
+    this.lastBatchLot = typeof savedLast === 'string' ? savedLast : '';
+  }
+
+  onBatchLotChange(item: StockItem, value: string) {
+    item.batchLot = value;
+    const batchLot = (value || '').trim();
+
+    if (!batchLot) {
+      return;
+    }
+
+    this.lastBatchLot = batchLot;
+    this.storage.set(this.LAST_BATCH_LOT_KEY, this.lastBatchLot);
+
+    if (item.brandId) {
+      this.batchLotByBrand[item.brandId.toString()] = batchLot;
+      this.storage.set(this.BATCH_LOT_BY_BRAND_KEY, this.batchLotByBrand);
+    }
+  }
+
+  private persistBatchLotMappings() {
+    this.stockItems.forEach((item) => {
+      const batchLot = (item.batchLot || '').trim();
+      if (!batchLot) {
+        return;
+      }
+
+      this.lastBatchLot = batchLot;
+      if (item.brandId) {
+        this.batchLotByBrand[item.brandId.toString()] = batchLot;
+      }
+    });
+
+    this.storage.set(this.LAST_BATCH_LOT_KEY, this.lastBatchLot);
+    this.storage.set(this.BATCH_LOT_BY_BRAND_KEY, this.batchLotByBrand);
   }
 
   // async loadSuppliers() {
@@ -266,6 +313,8 @@ export class AddPage implements OnInit {
 
   async saveStock() {
     try {
+      this.persistBatchLotMappings();
+
       const loading = await this.loadingController.create({
         message: 'Saving purchase...'
       });
@@ -520,6 +569,17 @@ export class AddPage implements OnInit {
       item.brandId = selectedBrand.id;
       item.brandName = selectedBrand.name;
       item.price = selectedBrand.price as number;
+
+      const savedBatchLot = this.batchLotByBrand[selectedBrand.id.toString()];
+      if ((!item.batchLot || !item.batchLot.trim()) && savedBatchLot) {
+        item.batchLot = savedBatchLot;
+      }
+
+      const currentBatchLot = (item.batchLot || '').trim();
+      if (currentBatchLot) {
+        this.batchLotByBrand[selectedBrand.id.toString()] = currentBatchLot;
+        this.storage.set(this.BATCH_LOT_BY_BRAND_KEY, this.batchLotByBrand);
+      }
     }
   }
 
@@ -538,7 +598,7 @@ export class AddPage implements OnInit {
           brandName: '',
           quantity: null,
         price: null,
-        batchLot: '',
+        batchLot: this.lastBatchLot || '',
         expiry: ''
       });
   }  
