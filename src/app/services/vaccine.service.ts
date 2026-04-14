@@ -64,6 +64,14 @@ export class VaccineService extends BaseService {
     );
   }
 
+  getBrandsByVaccineId(vaccineId: number | string): Observable<any> {
+    const url = `${this.API_VACCINE}vaccine/${vaccineId}/brands`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
   fillUpChildVaccine(data): Observable<any> {
     const url = `${this.API_VACCINE}schedule/child-schedule`;
     return this.http.put(url, data, this.httpOptions)

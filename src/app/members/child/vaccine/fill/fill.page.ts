@@ -1,7 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VaccineService } from 'src/app/services/vaccine.service';
-import { BrandService } from 'src/app/services/brand.service';
 import { StockService } from 'src/app/services/stock.service';
 import { ChildService } from 'src/app/services/child.service';
 import { ToastService } from 'src/app/shared/toast.service';
@@ -86,7 +85,6 @@ export class FillPage implements OnInit {
     private storage: Storage,
     private route: ActivatedRoute,
     private vaccineService: VaccineService,
-    private brandService: BrandService,
     private stockService: StockService,
     private toastService: ToastService,
     private router: Router,
@@ -204,7 +202,7 @@ export class FillPage implements OnInit {
           this.brandName = this.vaccineData.Brands || this.vaccineData.brands || [];
           this.applyBrandFilter();
           if (!this.brandName || this.brandName.length === 0) {
-            this.loadAllBrands();
+            this.loadSuggestedBrandsByVaccineId(this.vaccineData.Dose.VaccineId);
           }
           this.Date = this.vaccineData.Date;
           this.Date = moment(this.Date, 'DD-MM-YYYY').format('YYYY-MM-DD');
@@ -568,8 +566,14 @@ export class FillPage implements OnInit {
     this.onBrandChange(brandId);
   }
 
-  private loadAllBrands(): void {
-    this.brandService.getBrands().subscribe(
+  private loadSuggestedBrandsByVaccineId(vaccineId: number): void {
+    if (!vaccineId) {
+      this.brandName = [];
+      this.filteredBrandName = [];
+      return;
+    }
+
+    this.vaccineService.getBrandsByVaccineId(vaccineId).subscribe(
       res => {
         this.brandName = (res && res.ResponseData) ? res.ResponseData : [];
         this.applyBrandFilter();
