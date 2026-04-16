@@ -86,6 +86,11 @@ export class StockService {
     return this.http.get<Response<StockDTO>>(url);
   }
 
+  getBatchLotsByBrand(brandId: number, clinicId: number): Observable<Response<StockDTO[]>> {
+    const url = `${this.apiUrl}stock/batch-lots?brandId=${brandId}&clinicId=${clinicId}`;
+    return this.http.get<Response<StockDTO[]>>(url);
+  }
+
   getSuppliers(): Observable<Response<Supplier[]>> {
     let url = `${this.apiUrl}Bill/Suppliers`;
     return this.http.get<Response<Supplier[]>>(url);

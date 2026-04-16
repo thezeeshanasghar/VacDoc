@@ -97,7 +97,11 @@
   
     <ion-item *ngIf="allowInventory">
       <ion-label color="primary" position="floating">Batch/Lot</ion-label>
-      <ion-input type="text" placeholder="Lot" formControlName="Lot"></ion-input>
+      <ion-select formControlName="Lot" placeholder="Select batch / lot" (ionChange)="onLotChange($event)">
+        <ion-select-option *ngFor="let lot of availableBatchLots" [value]="lot.BatchLot">
+          {{ lot.BatchLot }}
+        </ion-select-option>
+      </ion-select>
       <ion-text color="danger" *ngIf="fg.get('Lot').invalid && (fg.get('Lot').dirty || fg.get('Lot').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
         <ng-container *ngIf="fg.get('Lot').errors.required">
           Batch/Lot is required
