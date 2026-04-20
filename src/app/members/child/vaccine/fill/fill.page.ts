@@ -30,6 +30,8 @@ export class FillPage implements OnInit {
   brandName: any;
   filteredBrandName: any[] = [];
   availableBatchLots: StockDTO[] = [];
+  availableLots: string[] = [];
+  availableExpiries: string[] = [];
   brandSearchTerm: string = '';
   Date: any;
   todaydate: any;
@@ -613,6 +615,8 @@ export class FillPage implements OnInit {
 
     if (!brandId || brandId === 'OHF') {
       this.availableBatchLots = [];
+      this.availableLots = [];
+      this.availableExpiries = [];
       this.fg.patchValue({ Manufacturer: selectedManufacturer || '', Lot: '', Expiry: null }, { emitEvent: true });
       return;
     }
@@ -622,12 +626,16 @@ export class FillPage implements OnInit {
     const parsedBrandId = Number(brandId);
     if (!parsedBrandId || isNaN(parsedBrandId)) {
       this.availableBatchLots = [];
+      this.availableLots = [];
+      this.availableExpiries = [];
       this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
       return;
     }
 
     if (!this.allowInventory) {
       this.availableBatchLots = [];
+      this.availableLots = [];
+      this.availableExpiries = [];
       this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
       return;
     }
@@ -637,7 +645,6 @@ export class FillPage implements OnInit {
       if (onlineClinicId && !isNaN(onlineClinicId)) {
         this.clinicId = onlineClinicId;
         this.loadBatchLotsForBrand(parsedBrandId, onlineClinicId);
-        this.loadLatestStockForBrand(parsedBrandId, onlineClinicId);
         return;
       }
 
@@ -646,7 +653,6 @@ export class FillPage implements OnInit {
         if (preferredClinicId && !isNaN(preferredClinicId)) {
           this.clinicId = preferredClinicId;
           this.loadBatchLotsForBrand(parsedBrandId, preferredClinicId);
-          this.loadLatestStockForBrand(parsedBrandId, preferredClinicId);
           return;
         }
 
@@ -657,32 +663,14 @@ export class FillPage implements OnInit {
         if (fallbackClinicId) {
           this.clinicId = fallbackClinicId;
           this.loadBatchLotsForBrand(parsedBrandId, fallbackClinicId);
-          this.loadLatestStockForBrand(parsedBrandId, fallbackClinicId);
         } else {
           this.availableBatchLots = [];
+          this.availableLots = [];
+          this.availableExpiries = [];
           this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
         }
       });
     });
-  }
-
-  private loadLatestStockForBrand(brandId: number, clinicId: number): void {
-    this.stockService.getLatestStock(brandId, clinicId).subscribe(
-      res => {
-        const stock: any = res && res.ResponseData ? res.ResponseData : null;
-        if (res && res.IsSuccess && stock) {
-          const batchLot = stock.BatchLot || stock.batchLot || '';
-          const expiryValue = stock.Expiry || stock.expiry;
-          const expiry = expiryValue ? new Date(expiryValue) : null;
-          this.fg.patchValue({ Lot: batchLot, Expiry: expiry }, { emitEvent: true });
-        } else {
-          this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
-        }
-      },
-      () => {
-        this.toastService.create('Unable to load batch/expiry for selected brand', 'danger');
-      }
-    );
   }
 
   private loadBatchLotsForBrand(brandId: number, clinicId: number): void {
@@ -690,36 +678,87 @@ export class FillPage implements OnInit {
       res => {
         const lots = (res && res.IsSuccess && res.ResponseData) ? res.ResponseData : [];
         this.availableBatchLots = Array.isArray(lots) ? lots : [];
+        this.availableLots = Array.from(
+          new Set(
+            this.availableBatchLots
+              .map((x: any) => (x && x.BatchLot ? String(x.BatchLot).trim() : ''))
+              .filter((x: string) => !!x)
+          )
+        );
 
-        const currentLot = (this.fg.get('Lot') && this.fg.get('Lot').value) ? this.fg.get('Lot').value : '';
-        if (currentLot && this.availableBatchLots.some(x => (x.BatchLot || '') === currentLot)) {
+        const lotControl = this.fg.get('Lot');
+        const currentLot = (lotControl && lotControl.value) ? String(lotControl.value) : '';
+        const selectedLot = currentLot && this.availableLots.some((x: string) => x === currentLot)
+          ? currentLot
+          : (this.availableLots.length > 0 ? this.availableLots[0] : '');
+
+        if (!selectedLot) {
+          this.availableExpiries = [];
+          this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
           return;
         }
 
-        if (this.availableBatchLots.length > 0) {
-          const first = this.availableBatchLots[0];
-          this.fg.patchValue({
-            Lot: first.BatchLot || '',
-            Expiry: first.Expiry ? new Date(first.Expiry) : null
-          }, { emitEvent: true });
-        }
+        this.fg.patchValue({ Lot: selectedLot }, { emitEvent: true });
+        this.refreshExpiryOptionsForLot(selectedLot);
       },
       () => {
         this.availableBatchLots = [];
+        this.availableLots = [];
+        this.availableExpiries = [];
       }
     );
   }
 
   onLotChange(event: any): void {
     const lotValue = event && event.detail ? event.detail.value : event;
-    const selectedLot = (this.availableBatchLots || []).find(x => (x.BatchLot || '') === lotValue);
-    if (!selectedLot) {
+    if (!lotValue) {
+      this.availableExpiries = [];
+      this.fg.patchValue({ Expiry: null }, { emitEvent: true });
       return;
     }
 
-    this.fg.patchValue({
-      Expiry: selectedLot.Expiry ? new Date(selectedLot.Expiry) : null
-    }, { emitEvent: true });
+    this.refreshExpiryOptionsForLot(String(lotValue));
+  }
+
+  private refreshExpiryOptionsForLot(lotValue: string): void {
+    const expiryOptions = Array.from(
+      new Set(
+        (this.availableBatchLots || [])
+          .filter((x: any) => (x && x.BatchLot ? String(x.BatchLot).trim() : '') === lotValue)
+          .map((x: any) => this.toExpiryKey(x ? x.Expiry : null))
+          .filter((x: string) => !!x)
+      )
+    );
+
+    this.availableExpiries = expiryOptions;
+
+    const expiryControl = this.fg.get('Expiry');
+    const currentExpiryValue = expiryControl ? expiryControl.value : null;
+    const currentExpiryKey = this.toExpiryKey(currentExpiryValue);
+
+    if (currentExpiryKey && this.availableExpiries.some((x: string) => x === currentExpiryKey)) {
+      this.fg.patchValue({ Expiry: currentExpiryKey }, { emitEvent: true });
+      return;
+    }
+
+    const nextExpiry = this.availableExpiries.length > 0 ? this.availableExpiries[0] : null;
+    this.fg.patchValue({ Expiry: nextExpiry }, { emitEvent: true });
+  }
+
+  private toExpiryKey(value: any): string {
+    if (!value) {
+      return '';
+    }
+
+    const date = new Date(value);
+    if (isNaN(date.getTime())) {
+      return '';
+    }
+
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
   }
 
   private resolveClinicId(payload: any): number {
