@@ -73,7 +73,11 @@
   
     <ion-item *ngIf="allowInventory">
       <ion-label color="primary" position="floating">Batch/Lot</ion-label>
-      <ion-input type="text" placeholder="Lot" formControlName="Lot"></ion-input>
+      <ion-select formControlName="Lot" placeholder="Select batch / lot" (ionChange)="onLotChange($event)">
+        <ion-select-option *ngFor="let lot of availableLots" [value]="lot">
+          {{ lot }}
+        </ion-select-option>
+      </ion-select>
       <ion-text color="danger" *ngIf="fg.get('Lot').invalid && (fg.get('Lot').dirty || fg.get('Lot').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
         <ng-container *ngIf="fg.get('Lot').errors.required">
           Batch/Lot is required
@@ -84,11 +88,13 @@
       </ion-text>
     </ion-item>
 
-    <ion-item *ngIf="allowInventory" (click)="expiryPicker.open()">
-      <ion-label color="primary">Expiry</ion-label>
-      <input formControlName="Expiry" matInput [matDatepicker]="expiryPicker" >
-      <mat-datepicker-toggle matSuffix [for]="expiryPicker"></mat-datepicker-toggle>
-      <mat-datepicker #expiryPicker></mat-datepicker>
+    <ion-item *ngIf="allowInventory">
+      <ion-label color="primary" position="floating">Expiry Date</ion-label>
+      <ion-select formControlName="Expiry" placeholder="Select expiry date" [disabled]="!availableExpiries.length">
+        <ion-select-option *ngFor="let expiry of availableExpiries" [value]="expiry">
+          {{ expiry }}
+        </ion-select-option>
+      </ion-select>
       <ion-text color="danger"
         *ngIf="fg.get('Expiry')?.invalid && (fg.get('Expiry').dirty || fg.get('Expiry').touched)"
         style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
