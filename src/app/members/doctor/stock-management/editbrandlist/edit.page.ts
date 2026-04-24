@@ -22,7 +22,6 @@ import { FilePath } from '@ionic-native/file-path/ngx';
 import { StockService, StockDTO } from 'src/app/services/stock.service';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { UploadService } from 'src/app/services/upload.service';
-import { firstValueFrom } from 'rxjs';
 declare var google;
 
 interface StockItem {
@@ -608,7 +607,7 @@ export class EditPage implements OnInit {
         }
 
         for (const stockId of this.removedStockIds) {
-          await firstValueFrom(this.stockService.deleteStock(stockId));
+          await this.stockService.deleteStock(stockId).toPromise();
         }
 
         const payload: StockDTO[] = validItems.map(item => ({
