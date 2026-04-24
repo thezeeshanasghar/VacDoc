@@ -16,11 +16,19 @@ export interface AdjustStockDTO {
 }
 
 export interface StockDTO {
+  Id?: number;
   BrandId: number;
+  BrandName?: string;
+  BillId?: number;
   BillNo: string;
   Supplier: string;
-  Date: Date;
+  Date?: Date;
+  BillDate?: Date | string;
   IsPaid: boolean;
+  PaidDate?: Date | string;
+  DoctorId?: number;
+  ClinicId?: number;
+  IsPAApprove?: boolean;
   Quantity: number;
   StockAmount: number;
   BatchLot?: string;
@@ -91,18 +99,23 @@ export class StockService {
     return this.http.get<Response<StockDTO[]>>(url);
   }
 
-  getSuppliers(): Observable<Response<Supplier[]>> {
+  getSuppliers(): Observable<Response<string[]>> {
     let url = `${this.apiUrl}Bill/Suppliers`;
-    return this.http.get<Response<Supplier[]>>(url);
+    return this.http.get<Response<string[]>>(url);
   }
   
   patchIsApproved(scheduleId: number ): Observable<any> {
     const url = `${this.apiUrl}Bill/${scheduleId}/ispaapprove`;
     return this.http.patch(url, scheduleId);
   }
-  editStocks(id:number,stockDTOs: StockDTO[]): Observable<Response<StockDTO[]>> {
-    const url = `${this.apiUrl}Bill/${id}`; // Replace with the correct endpoint if different
-    return this.http.patch<Response<StockDTO[]>>(url, stockDTOs);
+  editStocks(stockDTOs: StockDTO[]): Observable<Response<StockDTO[]>> {
+    const url = `${this.apiUrl}Stock`;
+    return this.http.put<Response<StockDTO[]>>(url, stockDTOs);
+  }
+
+  deleteStock(id: number): Observable<Response<StockDTO>> {
+    const url = `${this.apiUrl}Stock/${id}`;
+    return this.http.delete<Response<StockDTO>>(url);
   }
   getSalesReportFile(clinicId: string, fromDate: Date, toDate: Date): Observable<Blob> {
     const url = `${this.apiUrl}Schedule/clinic-report-pdf/${clinicId}?fromDate=${fromDate.toISOString()}&toDate=${toDate.toISOString()}`;

@@ -4,11 +4,12 @@ import { VaccineService } from 'src/app/services/vaccine.service';
 import { StockService, StockDTO } from 'src/app/services/stock.service';
 import { ChildService } from 'src/app/services/child.service';
 import { ToastService } from 'src/app/shared/toast.service';
-import { LoadingController } from '@ionic/angular';
+import { LoadingController, AlertController } from '@ionic/angular';
 import * as moment from 'moment';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
+import { ClinicService } from 'src/app/services/clinic.service';
 
 @Component({
   selector: 'app-fill',
@@ -44,6 +45,9 @@ export class FillPage implements OnInit {
   isScheduleDateInvalid: boolean = false;
   childId: number;
   clinicId: number;
+  onlineClinicId: number;
+  onlineClinicName: string = '';
+  onlineClinicDoctorId: number;
   // childService: any;
   childData: any;
   Type: any;
@@ -94,6 +98,8 @@ export class FillPage implements OnInit {
     private ref: ChangeDetectorRef,
     private childService: ChildService,
     private activatedRoute: ActivatedRoute,
+    private alertController: AlertController,
+    private clinicService: ClinicService,
   ) { }
 
   ngOnInit() {
@@ -104,6 +110,13 @@ export class FillPage implements OnInit {
       const onlineClinicId = onlineClinic && onlineClinic.Id ? Number(onlineClinic.Id) : null;
       if (onlineClinicId && !isNaN(onlineClinicId)) {
         this.clinicId = onlineClinicId;
+        this.onlineClinicId = onlineClinicId;
+      }
+
+      this.onlineClinicName = (onlineClinic && onlineClinic.Name) ? String(onlineClinic.Name) : '';
+      const onlineDoctorId = onlineClinic && onlineClinic.DoctorId ? Number(onlineClinic.DoctorId) : null;
+      if (onlineDoctorId && !isNaN(onlineDoctorId)) {
+        this.onlineClinicDoctorId = onlineDoctorId;
       }
     });
     this.storage.get(environment.CLINIC_Id).then((storedClinicId) => {
@@ -316,6 +329,11 @@ export class FillPage implements OnInit {
   }
 
   async fillVaccine() {
+    const canProceed = await this.confirmAndHandleClinicMismatch();
+    if (!canProceed) {
+      return;
+    }
+
     const loading = await this.loadingController.create({
       message: 'Updating'
     });
@@ -346,7 +364,7 @@ export class FillPage implements OnInit {
     currentDate.setHours(0, 0, 0, 0);
     if (givenDate > currentDate) {
       this.toastService.create("Given date is not today. Cannot update injection.", 'danger');
-      loading.dismiss();66
+      loading.dismiss();
       return;
     }
     loading.dismiss();
@@ -385,6 +403,100 @@ export class FillPage implements OnInit {
         loading.dismiss();
       }
     );
+  }
+
+  private getRegisteredClinicId(): number {
+    return this.resolveClinicId(this.childData)
+      || this.resolveClinicId(this.vaccineData)
+      || null;
+  }
+
+  private async confirmAndHandleClinicMismatch(): Promise<boolean> {
+    const onlineClinicId = this.onlineClinicId || this.clinicId;
+    const registeredClinicId = this.getRegisteredClinicId();
+
+    if (!onlineClinicId || !registeredClinicId || onlineClinicId === registeredClinicId) {
+      return true;
+    }
+
+    const registeredClinicName = await this.getClinicNameById(registeredClinicId);
+    const clinicDisplay = registeredClinicName || `ID ${registeredClinicId}`;
+    const alert = await this.alertController.create({
+      header: 'Different Registered Clinic',
+      message: `This patient is registered in a different clinic (${clinicDisplay}). Do you want to change the patient's base clinic to ${this.onlineClinicName || `ID ${onlineClinicId}`} and continue?`,
+      buttons: [
+        {
+          text: 'No: proceed with injection and use stock from online clinic',
+          role: 'cancel'
+        },
+        {
+          text: 'Yes, Change',
+          role: 'confirm'
+        }
+      ]
+    });
+
+    await alert.present();
+    const result = await alert.onDidDismiss();
+    const shouldChangeClinic = result && result.role === 'confirm';
+
+    if (!shouldChangeClinic) {
+      return true;
+    }
+
+    return this.updatePatientBaseClinicToOnlineClinic();
+  }
+
+  private async getClinicNameById(clinicId: number): Promise<string> {
+    return new Promise((resolve) => {
+      this.clinicService.getClinicById(String(clinicId)).subscribe(
+        (res) => {
+          if (res && res.IsSuccess && res.ResponseData && res.ResponseData.Name) {
+            resolve(String(res.ResponseData.Name));
+            return;
+          }
+          resolve('');
+        },
+        () => resolve('')
+      );
+    });
+  }
+
+  private async updatePatientBaseClinicToOnlineClinic(): Promise<boolean> {
+    const onlineClinicId = this.onlineClinicId || this.clinicId;
+    const effectiveDoctorId = this.onlineClinicDoctorId || this.doctorId;
+
+    if (!this.childId || !effectiveDoctorId || !onlineClinicId) {
+      this.toastService.create('Unable to change patient clinic. Missing clinic or doctor context.', 'danger');
+      return false;
+    }
+
+    const loading = await this.loadingController.create({
+      message: 'Changing patient base clinic'
+    });
+    await loading.present();
+
+    return new Promise((resolve) => {
+      this.childService.updateChildClinicId(effectiveDoctorId, this.childId, onlineClinicId).subscribe(
+        () => {
+          if (this.childData) {
+            this.childData.ClinicId = onlineClinicId;
+          }
+          if (this.vaccineData && this.vaccineData.Child) {
+            this.vaccineData.Child.ClinicId = onlineClinicId;
+          }
+          this.toastService.create('Patient base clinic updated successfully.', 'success');
+          loading.dismiss();
+          resolve(true);
+        },
+        (err) => {
+          const message = (err && err.error) ? err.error : 'Failed to update patient base clinic.';
+          this.toastService.create(message, 'danger');
+          loading.dismiss();
+          resolve(false);
+        }
+      );
+    });
   }
 
   async addNewVaccineInScheduleTable(scheduleDate) {

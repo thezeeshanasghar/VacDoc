@@ -27,7 +27,28 @@
       <!-- Supplier Name -->
       <ion-item>
         <ion-label position="floating">Supplier Name</ion-label>
-        <ion-input formControlName="supplier" placeholder="Enter supplier name"></ion-input>
+        <mat-form-field class="example-full-width" style="width: 100%;">
+          <input
+            type="text"
+            aria-label="Supplier"
+            matInput
+            formControlName="supplier"
+            [matAutocomplete]="supplierAuto"
+            (input)="filterSuppliers($any($event.target).value)"
+            placeholder="Select supplier"
+            style="font-size: 15px;"
+          />
+          <mat-autocomplete
+            #supplierAuto="matAutocomplete"
+            class="no-indent"
+            autoActiveFirstOption
+            (optionSelected)="selectSupplier($event)"
+          >
+            <mat-option *ngFor="let option of agents" [value]="option">
+              {{ option }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
       </ion-item>
   
       <!-- Purchase Date -->

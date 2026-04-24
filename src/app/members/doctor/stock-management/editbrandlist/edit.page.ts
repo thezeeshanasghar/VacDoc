@@ -22,14 +22,18 @@ import { FilePath } from '@ionic-native/file-path/ngx';
 import { StockService, StockDTO } from 'src/app/services/stock.service';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { UploadService } from 'src/app/services/upload.service';
+import { firstValueFrom } from 'rxjs';
 declare var google;
 
 interface StockItem {
+  id?: number;
   brandName: string;
   brandId?: number;
   quantity: number;
   price: number;
   billNo?: string;
+  batchLot?: string;
+  expiry?: string;
 }
 
 interface BrandAmountDTO {
@@ -61,6 +65,9 @@ export class EditPage implements OnInit {
   stockDTOs: StockDTO[] = []; 
   suppliers: string[] =[];
   filteredSuppliers: string[];
+  agents: string[] = [];
+  originalAgents: string[] = [];
+  removedStockIds: number[] = [];
   fg1: FormGroup;
   cities: string[] = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'];
   filteredCities: string[];
@@ -85,6 +92,7 @@ export class EditPage implements OnInit {
   id: any;
   billId: number;
   clinicId: any;
+  doctorId: number;
   constructor(
     private route: ActivatedRoute,
     private brandService: BrandService,
@@ -103,8 +111,8 @@ export class EditPage implements OnInit {
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.billId = +params['brandId']; // Get brandId from route
-      console.log('Brand ID from route:', this.brandId);
-      if (this.brandId) {
+      console.log('Bill ID from route:', this.billId);
+      if (this.billId) {
         this.loadBrandData(); // Load data for the brand
       }
     });
@@ -118,8 +126,37 @@ export class EditPage implements OnInit {
       isPaid: [false],
     });
     this.loadBrands();
-  
-    this.loadBrandData();
+    this.fetchAgent();
+  }
+
+  fetchAgent() {
+    this.stockService.getSuppliers().subscribe(
+      (response: any) => {
+        this.agents = response?.ResponseData || [];
+        this.originalAgents = [...this.agents];
+      },
+      (error: any) => {
+        console.error('Error fetching suppliers:', error);
+      }
+    );
+  }
+
+  filterSuppliers(value: string) {
+    if (!value || !value.trim()) {
+      this.agents = [...this.originalAgents];
+      return;
+    }
+
+    this.agents = this.originalAgents.filter(agent =>
+      agent.toLowerCase().includes(value.toLowerCase())
+    );
+  }
+
+  selectSupplier(event: MatAutocompleteSelectedEvent) {
+    const selectedSupplier = event.option.value;
+    if (selectedSupplier) {
+      this.fg1.patchValue({ supplier: selectedSupplier });
+    }
   }
 
   async loadBrands() {
@@ -240,10 +277,11 @@ export class EditPage implements OnInit {
           if (response.IsSuccess) {
             this.brandData = response.ResponseData;
             console.log('Brand data loaded:', this.brandData);
-  this.paid= this.brandData[0].IsPaid;
-  // this.clinicId= this.brandData[0].ClinicId;
+            this.paid= this.brandData[0].IsPaid;
             // Populate the form with the loaded data
             this.id=this.brandData[0].BillId;
+            this.doctorId = this.brandData[0].DoctorId;
+            this.clinicId = this.brandData[0].ClinicId;
             this.fg1.patchValue({
               id: this.brandData[0].BillId,
               billNo: this.brandData[0].BillNo || '',
@@ -252,7 +290,16 @@ export class EditPage implements OnInit {
               paidDate: this.brandData[0].PaidDate || '',
               isPaid: this.brandData[0].IsPaid || false,
             });
-            this.stockItems = this.brandData[0].Items || [];
+            this.stockItems = (this.brandData || []).map((item: any) => ({
+              id: item.Id,
+              brandId: item.BrandId,
+              brandName: item.BrandName,
+              quantity: item.Quantity,
+              price: item.StockAmount,
+              batchLot: item.BatchLot,
+              expiry: item.Expiry,
+              billNo: item.BillNo
+            }));
           } else {
             this.toastService.create(response.Message, 'danger');
           }
@@ -514,9 +561,12 @@ export class EditPage implements OnInit {
 
     addNewRow() {
         this.stockItems.push({
+        id: 0,
             brandName: '',
             quantity: null,
-            price: null
+        price: null,
+        batchLot: '',
+        expiry: ''
         });
     }  
 
@@ -529,30 +579,70 @@ export class EditPage implements OnInit {
 //   }
 
     removeRow(index: number) {
+        const removedItem = this.stockItems[index];
+        if (removedItem && removedItem.id) {
+          this.removedStockIds.push(removedItem.id);
+        }
         this.stockItems.splice(index, 1);
     }
 
-    saveStock() {
-      console.log('Saving stock with items:', this.fg1.value);
-      console.log('Stock items:', this.id);
-      // console.log('Stock items:', this.clinicId);
-      this.stockService.editStocks(this.id,this.fg1.value).subscribe(
-        (response) => {
-          // if (response.Message) {
-          //   console.log('Stocks updated successfully:', response.ResponseData);
-            this.toastService.create(response.message, 'success');
-            // this.router.navigate(["/members/doctor/stock-management/brandlist/${this.id}"]);
-            this.router.navigate(['/members/doctor/stock-management/brandlist', this.id]);
-          // } else {
-          //   console.error('Failed to update stocks:', response.Message);
-          //   this.toastService.create(response.Message, 'danger');
-          // }
-        },
-        (error) => {
-          console.error('Error updating stocks:', error);
-          this.toastService.create('An error occurred while updating stocks.', 'danger');
+    async saveStock() {
+      try {
+        const supplier = (this.fg1.value.supplier || '').trim();
+        const billNo = (this.fg1.value.billNo || '').trim();
+
+        if (!supplier || !billNo) {
+          this.toastService.create('Bill number and supplier are required.', 'danger');
+          return;
         }
-      );
+
+        const validItems = this.stockItems.filter(item => item.id && item.brandId && item.quantity > 0 && item.price > 0);
+        if (!validItems.length) {
+          this.toastService.create('No valid bill line items to update.', 'danger');
+          return;
+        }
+
+        const newItems = this.stockItems.filter(item => !item.id);
+        if (newItems.length > 0) {
+          this.toastService.create('Adding new line items is not supported on edit yet. Only existing rows were updated.', 'warning');
+        }
+
+        for (const stockId of this.removedStockIds) {
+          await firstValueFrom(this.stockService.deleteStock(stockId));
+        }
+
+        const payload: StockDTO[] = validItems.map(item => ({
+          Id: item.id,
+          BrandId: item.brandId,
+          BrandName: item.brandName || '',
+          Quantity: Number(item.quantity),
+          StockAmount: Number(item.price),
+          BillId: this.id,
+          BillNo: billNo,
+          Supplier: supplier,
+          BillDate: this.fg1.value.billDate,
+          IsPaid: !!this.fg1.value.isPaid,
+          PaidDate: this.fg1.value.paidDate,
+          DoctorId: this.doctorId,
+          ClinicId: this.clinicId,
+          BatchLot: item.batchLot,
+          Expiry: item.expiry,
+        } as StockDTO));
+
+        this.stockService.editStocks(payload).subscribe(
+          (response: any) => {
+            this.toastService.create(response?.message || response?.Message || 'Stocks updated successfully.', 'success');
+            this.router.navigate(['/members/doctor/stock-management/brandlist', this.id]);
+          },
+          (error: any) => {
+            console.error('Error updating stocks:', error);
+            this.toastService.create('An error occurred while updating stocks.', 'danger');
+          }
+        );
+      } catch (error) {
+        console.error('Error updating stocks:', error);
+        this.toastService.create('An error occurred while updating stocks.', 'danger');
+      }
     }
 
 // Set the value of the checkbox programmatically
