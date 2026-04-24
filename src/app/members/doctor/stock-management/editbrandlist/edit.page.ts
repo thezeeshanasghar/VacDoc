@@ -132,7 +132,7 @@ export class EditPage implements OnInit {
   fetchAgent() {
     this.stockService.getSuppliers().subscribe(
       (response: any) => {
-        this.agents = response?.ResponseData || [];
+        this.agents = (response && response.ResponseData) ? response.ResponseData : [];
         this.originalAgents = [...this.agents];
       },
       (error: any) => {
@@ -631,7 +631,10 @@ export class EditPage implements OnInit {
 
         this.stockService.editStocks(payload).subscribe(
           (response: any) => {
-            this.toastService.create(response?.message || response?.Message || 'Stocks updated successfully.', 'success');
+            const successMessage = (response && (response.message || response.Message))
+              ? (response.message || response.Message)
+              : 'Stocks updated successfully.';
+            this.toastService.create(successMessage, 'success');
             this.router.navigate(['/members/doctor/stock-management/brandlist', this.id]);
           },
           (error: any) => {
