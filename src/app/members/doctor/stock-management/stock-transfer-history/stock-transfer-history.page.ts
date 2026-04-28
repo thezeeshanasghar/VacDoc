@@ -20,13 +20,13 @@ export class StockTransferHistoryPage implements OnInit {
   clinics: any[] = [];
   brands: any[] = [];
 
-  filterClinicId: number | null = null;
-  filterBrandId: number | null = null;
+  filterClinicId: any = null;
+  filterBrandId: any = null;
   filterFromDate = '';
   filterToDate = '';
   searchBrand = '';
 
-  private doctorId: number;
+  private doctorId: any;
   private usertype: any;
 
   constructor(
@@ -48,11 +48,12 @@ export class StockTransferHistoryPage implements OnInit {
   }
 
   async loadClinics() {
-    const obs = this.usertype?.UserType === 'PA'
+    const isPA = this.usertype && this.usertype.UserType === 'PA';
+    const obs = isPA
       ? this.paService.getPaClinics(Number(this.usertype.PAId))
       : this.clinicService.getClinics(this.doctorId);
     obs.subscribe({
-      next: (res: any) => { if (res?.IsSuccess) this.clinics = res.ResponseData || []; },
+      next: (res: any) => { if (res && res.IsSuccess) { this.clinics = res.ResponseData || []; } },
       error: () => {}
     });
   }
@@ -60,7 +61,7 @@ export class StockTransferHistoryPage implements OnInit {
   async loadBrands() {
     this.brandService.getBrands().subscribe({
       next: (res: any) => {
-        if (res?.IsSuccess) {
+        if (res && res.IsSuccess) {
           this.brands = (res.ResponseData || []).map((b: any) => ({ id: b.Id, name: b.Name }));
         }
       },
@@ -73,19 +74,20 @@ export class StockTransferHistoryPage implements OnInit {
     await loader.present();
 
     const params: any = { doctorId: this.doctorId };
-    if (this.filterClinicId) params.fromClinicId = this.filterClinicId;
-    if (this.filterBrandId) params.brandId = this.filterBrandId;
-    if (this.filterFromDate) params.fromDate = this.filterFromDate;
-    if (this.filterToDate) params.toDate = this.filterToDate;
+    if (this.filterClinicId) { params.fromClinicId = this.filterClinicId; }
+    if (this.filterBrandId) { params.brandId = this.filterBrandId; }
+    if (this.filterFromDate) { params.fromDate = this.filterFromDate; }
+    if (this.filterToDate) { params.toDate = this.filterToDate; }
 
     this.transferService.getHistory(params).subscribe({
       next: (res) => {
         loader.dismiss();
-        if (res?.IsSuccess) {
+        if (res && res.IsSuccess) {
           this.records = res.ResponseData || [];
           this.applySearch();
         } else {
-          this.toastService.create(res?.Message || 'Failed to load history', 'danger');
+          const msg = res && res.Message ? res.Message : 'Failed to load history';
+          this.toastService.create(msg, 'danger');
         }
       },
       error: () => { loader.dismiss(); this.toastService.create('Failed to load history', 'danger'); }
@@ -96,7 +98,7 @@ export class StockTransferHistoryPage implements OnInit {
     const term = (this.searchBrand || '').toLowerCase().trim();
     this.filteredRecords = term
       ? this.records.filter(r => r.BrandName.toLowerCase().includes(term))
-      : [...this.records];
+      : this.records.slice();
   }
 
   onSearchChange() {
@@ -121,6 +123,7 @@ export class StockTransferHistoryPage implements OnInit {
   }
 
   getClinicName(id: number): string {
-    return this.clinics.find(c => c.Id === id)?.Name ?? id?.toString() ?? '';
+    const clinic = this.clinics.find(c => c.Id === id);
+    return clinic ? clinic.Name : (id ? id.toString() : '');
   }
 }
