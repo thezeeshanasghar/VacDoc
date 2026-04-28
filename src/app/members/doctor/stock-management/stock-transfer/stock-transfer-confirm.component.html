@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Confirm Transfer</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-list>
+    <ion-item>
+      <ion-label>
+        <h3>From Clinic</h3>
+        <p>{{ fromClinicName }}</p>
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>
+        <h3>To Clinic</h3>
+        <p>{{ toClinicName }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-list-header>
+    <ion-label>Items to Transfer</ion-label>
+  </ion-list-header>
+
+  <ion-list>
+    <ion-item *ngFor="let row of transferRows">
+      <ion-label>
+        <h3>{{ row.brandName }}</h3>
+        <p>Batch: {{ row.batchLot || '—' }} &nbsp;|&nbsp; Qty: <strong>{{ row.transferQty }}</strong></p>
+        <p>Cost: Rs {{ row.costPrice | number:'1.2-2' }} &nbsp;|&nbsp; Value: Rs {{ (row.transferQty * row.costPrice) | number:'1.2-2' }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-item lines="none" style="margin-top: 8px;">
+    <ion-label><strong>Total Value</strong></ion-label>
+    <ion-text slot="end" color="primary"><strong>Rs {{ totalTransferValue | number:'1.2-2' }}</strong></ion-text>
+  </ion-item>
+
+  <ion-note color="warning" style="padding: 8px 16px; display:block; margin-top: 8px;">
+    This is an internal transfer. Stock will move at cost price — no sale price involved.
+  </ion-note>
+
+  <ion-row style="margin-top: 16px;">
+    <ion-col>
+      <ion-button expand="block" color="medium" fill="outline" (click)="cancel()">Cancel</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button expand="block" color="primary" (click)="confirm()">
+        <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+        Confirm Transfer
+      </ion-button>
+    </ion-col>
+  </ion-row>
+
+</ion-content>

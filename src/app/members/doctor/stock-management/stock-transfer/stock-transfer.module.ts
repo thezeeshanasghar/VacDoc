@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { StockTransferPage } from './stock-transfer.page';
+import { StockTransferConfirmComponent } from './stock-transfer-confirm.component';
 
 const routes: Routes = [{ path: '', component: StockTransferPage }];
 
@@ -20,6 +21,7 @@ const routes: Routes = [{ path: '', component: StockTransferPage }];
     MatSelectModule,
     MatInputModule,
   ],
-  declarations: [StockTransferPage]
+  declarations: [StockTransferPage, StockTransferConfirmComponent],
+  entryComponents: [StockTransferConfirmComponent]
 })
 export class StockTransferPageModule {}

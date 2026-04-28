@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingController } from '@ionic/angular';
+import { LoadingController, ModalController } from '@ionic/angular';
+import { StockTransferConfirmComponent } from './stock-transfer-confirm.component';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
 import { ClinicService } from 'src/app/services/clinic.service';
@@ -42,13 +43,12 @@ export class StockTransferPage implements OnInit {
 
   transferRows: TransferRow[] = [];
 
-  showConfirmModal = false;
-
   private doctorId: any;
   private usertype: any;
 
   constructor(
     private loadingCtrl: LoadingController,
+    private modalCtrl: ModalController,
     private storage: Storage,
     private clinicService: ClinicService,
     private brandService: BrandService,
@@ -207,14 +207,24 @@ export class StockTransferPage implements OnInit {
     return null;
   }
 
-  openConfirmModal() {
+  async openConfirmModal() {
     const err = this.validate();
     if (err) { this.toastService.create(err, 'danger'); return; }
-    this.showConfirmModal = true;
-  }
 
-  cancelConfirm() {
-    this.showConfirmModal = false;
+    const modal = await this.modalCtrl.create({
+      component: StockTransferConfirmComponent,
+      componentProps: {
+        fromClinicName: this.getClinicName(this.fromClinicId),
+        toClinicName: this.getClinicName(this.toClinicId),
+        transferRows: this.transferRows,
+        totalTransferValue: this.totalTransferValue
+      }
+    });
+    await modal.present();
+    const { data } = await modal.onDidDismiss();
+    if (data && data.confirmed) {
+      await this.confirmTransfer();
+    }
   }
 
   getClinicName(id: number): string {
@@ -223,7 +233,6 @@ export class StockTransferPage implements OnInit {
   }
 
   async confirmTransfer() {
-    this.showConfirmModal = false;
     const loader = await this.loadingCtrl.create({ message: 'Transferring stock...' });
     await loader.present();
 

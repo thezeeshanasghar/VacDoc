@@ -69,7 +69,7 @@
       <ion-item *ngIf="availableBatches.length > 0">
         <ion-label position="floating">Select Batches</ion-label>
         <ion-select [(ngModel)]="selectedBatchLots" (ionChange)="onBatchSelectionChange($event.detail.value)" multiple="true" placeholder="Select one or more batches">
-          <ion-select-option *ngFor="let b of availableBatches" [value]="b.BatchLot ?? ''">
+          <ion-select-option *ngFor="let b of availableBatches" [value]="b.BatchLot || ''">
             {{ b.BatchLot || '(No batch)' }} — Exp: {{ b.Expiry ? (b.Expiry | date:'dd/MM/yyyy') : 'N/A' }} — Avail: {{ b.AvailableQuantity }}
           </ion-select-option>
         </ion-select>
@@ -152,72 +152,3 @@
   </ion-button>
 
 </ion-content>
-
-<!-- ── CONFIRMATION MODAL ── -->
-<ion-modal [isOpen]="showConfirmModal" (didDismiss)="cancelConfirm()">
-  <ng-template>
-    <ion-header>
-      <ion-toolbar color="primary">
-        <ion-title>Confirm Transfer</ion-title>
-        <ion-buttons slot="end">
-          <ion-button (click)="cancelConfirm()">
-            <ion-icon name="close"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content class="ion-padding">
-
-      <ion-list>
-        <ion-item>
-          <ion-label>
-            <h3>From Clinic</h3>
-            <p>{{ getClinicName(fromClinicId) }}</p>
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>
-            <h3>To Clinic</h3>
-            <p>{{ getClinicName(toClinicId) }}</p>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-
-      <ion-list-header>
-        <ion-label>Items to Transfer</ion-label>
-      </ion-list-header>
-
-      <ion-list>
-        <ion-item *ngFor="let row of transferRows">
-          <ion-label>
-            <h3>{{ row.brandName }}</h3>
-            <p>Batch: {{ row.batchLot || '—' }} &nbsp;|&nbsp; Qty: <strong>{{ row.transferQty }}</strong></p>
-            <p>Cost: Rs {{ row.costPrice | number:'1.2-2' }} &nbsp;|&nbsp; Value: Rs {{ (row.transferQty * row.costPrice) | number:'1.2-2' }}</p>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-
-      <ion-item lines="none" style="margin-top: 8px;">
-        <ion-label><strong>Total Value</strong></ion-label>
-        <ion-text slot="end" color="primary"><strong>Rs {{ totalTransferValue | number:'1.2-2' }}</strong></ion-text>
-      </ion-item>
-
-      <ion-note color="warning" style="padding: 8px 16px; display:block; margin-top: 8px;">
-        This is an internal transfer. Stock will move at cost price — no sale price involved.
-      </ion-note>
-
-      <ion-row style="margin-top: 16px;">
-        <ion-col>
-          <ion-button expand="block" color="medium" fill="outline" (click)="cancelConfirm()">Cancel</ion-button>
-        </ion-col>
-        <ion-col>
-          <ion-button expand="block" color="primary" (click)="confirmTransfer()">
-            <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
-            Confirm Transfer
-          </ion-button>
-        </ion-col>
-      </ion-row>
-
-    </ion-content>
-  </ng-template>
-</ion-modal>
