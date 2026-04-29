@@ -109,7 +109,9 @@
         PID
       </ion-button>
       &nbsp; &nbsp;
-      <ion-button size="small" fill="solid" color="secondary" (click)="openCardMenu(child)">
+      <ion-button size="small" fill="solid" color="secondary"
+        [routerLink]="['/members/child/immunization-card', child.Id]"
+        [queryParams]="{ name: child.Name }">
         <ion-icon name="card-outline" slot="start" style="font-size:14px;"></ion-icon>
         Card
       </ion-button>

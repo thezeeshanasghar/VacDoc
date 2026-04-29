@@ -1,0 +1,77 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/child"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Immunization Cards{{ childName ? ' — ' + childName : '' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <p class="page-sub">Select a card type to download as A5 PDF</p>
+
+  <!-- ── FRONT SIDE ── -->
+  <ion-card class="card-option">
+    <div class="card-stripe stripe-blue"></div>
+    <ion-card-content>
+      <div class="card-row">
+        <div class="card-icon-wrap blue-bg">
+          <ion-icon name="id-card-outline"></ion-icon>
+        </div>
+        <div class="card-text">
+          <h2>Front Side</h2>
+          <p>Patient info + standard Pakistan immunization schedule. Suitable for wallet / folder.</p>
+        </div>
+      </div>
+      <ion-button expand="block" class="dl-btn" color="primary"
+        [disabled]="downloading.front" (click)="download('front')">
+        <ion-icon name="download-outline" slot="start"></ion-icon>
+        {{ downloading.front ? 'Generating...' : 'Download Front Side' }}
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- ── VACCINE WISE ── -->
+  <ion-card class="card-option">
+    <div class="card-stripe stripe-green"></div>
+    <ion-card-content>
+      <div class="card-row">
+        <div class="card-icon-wrap green-bg">
+          <ion-icon name="medical-outline"></ion-icon>
+        </div>
+        <div class="card-text">
+          <h2>Vaccine Wise</h2>
+          <p>Record sheet grouped by vaccine type with dose numbers, age milestones and sign-off columns.</p>
+        </div>
+      </div>
+      <ion-button expand="block" class="dl-btn" color="secondary"
+        [disabled]="downloading.vaccine" (click)="download('vaccine')">
+        <ion-icon name="download-outline" slot="start"></ion-icon>
+        {{ downloading.vaccine ? 'Generating...' : 'Download Vaccine Wise' }}
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- ── AGE WISE ── -->
+  <ion-card class="card-option">
+    <div class="card-stripe stripe-orange"></div>
+    <ion-card-content>
+      <div class="card-row">
+        <div class="card-icon-wrap orange-bg">
+          <ion-icon name="calendar-outline"></ion-icon>
+        </div>
+        <div class="card-text">
+          <h2>Age Wise</h2>
+          <p>Record sheet grouped by age milestone with all vaccines due at each visit.</p>
+        </div>
+      </div>
+      <ion-button expand="block" class="dl-btn" color="tertiary"
+        [disabled]="downloading.age" (click)="download('age')">
+        <ion-icon name="download-outline" slot="start"></ion-icon>
+        {{ downloading.age ? 'Generating...' : 'Download Age Wise' }}
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

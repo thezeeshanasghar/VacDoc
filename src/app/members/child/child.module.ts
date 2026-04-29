@@ -47,6 +47,10 @@ const routes: Routes = [
   {
     path: 'special/:id',
     loadChildren: () => import('./specialCase/specialCase.module').then(m => m.SpecialCasePageModule)
+  },
+  {
+    path: 'immunization-card/:childId',
+    loadChildren: () => import('./immunization-card/immunization-card.module').then(m => m.ImmunizationCardPageModule)
   }
 ];
 

@@ -1,0 +1,74 @@
+.page-sub {
+  color: var(--ion-color-medium);
+  font-size: 13px;
+  margin: 0 0 16px;
+  text-align: center;
+}
+
+.card-option {
+  border-radius: 16px !important;
+  overflow: hidden;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(21,101,192,0.12) !important;
+  padding: 0 !important;
+}
+
+.card-stripe {
+  height: 5px;
+  width: 100%;
+}
+.stripe-blue   { background: linear-gradient(90deg, #0D47A1, #1E88E5); }
+.stripe-green  { background: linear-gradient(90deg, #1B5E20, #43A047); }
+.stripe-orange { background: linear-gradient(90deg, #8B0000, #FF4500); }
+
+.card-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.card-icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 26px;
+    color: #ffffff;
+  }
+}
+
+.blue-bg   { background: linear-gradient(135deg, #0D47A1, #1565C0); }
+.green-bg  { background: linear-gradient(135deg, #1B5E20, #2E7D32); }
+.orange-bg { background: linear-gradient(135deg, #8B0000, #C62828); }
+
+.card-text {
+  flex: 1;
+
+  h2 {
+    font-size: 17px;
+    font-weight: 800;
+    color: #111827;
+    margin: 0 0 4px;
+  }
+
+  p {
+    font-size: 13px;
+    color: #4B5563;
+    margin: 0;
+    line-height: 1.45;
+  }
+}
+
+.dl-btn {
+  --border-radius: 12px;
+  font-weight: 700;
+  height: 46px;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+}

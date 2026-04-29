@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { IonInfiniteScroll } from '@ionic/angular';
-import { LoadingController, ActionSheetController } from '@ionic/angular';
+import { LoadingController } from '@ionic/angular';
 import { ChildService } from 'src/app/services/child.service';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { ToastService } from 'src/app/shared/toast.service';
@@ -44,7 +44,6 @@ export class ChildPage {
     private callNumber: CallNumber,
     private paService: PaService,
     public clinicService: ClinicService,
-    private actionSheetCtrl: ActionSheetController,
   ) {
     this.fg = this.formBuilder.group({
       Name: ["", Validators.required],
@@ -373,55 +372,4 @@ onClinicChange() {
     });
   }
 
-  async openCardMenu(child: any) {
-    const sheet = await this.actionSheetCtrl.create({
-      header: 'Immunization Card — ' + child.Name,
-      buttons: [
-        {
-          text: 'Front Side',
-          icon: 'document-text-outline',
-          handler: () => { this.downloadImmunizationCard(child.Id, 'front', child.Name); }
-        },
-        {
-          text: 'Vaccine Wise Card',
-          icon: 'medical-outline',
-          handler: () => { this.downloadImmunizationCard(child.Id, 'vaccine', child.Name); }
-        },
-        {
-          text: 'Age Wise Card',
-          icon: 'calendar-outline',
-          handler: () => { this.downloadImmunizationCard(child.Id, 'age', child.Name); }
-        },
-        {
-          text: 'Cancel',
-          icon: 'close',
-          role: 'cancel'
-        }
-      ]
-    });
-    await sheet.present();
-  }
-
-  downloadImmunizationCard(childId: number, type: any, childName: string) {
-    this.childService.downloadImmunizationCard(childId, type).subscribe(
-      (response: HttpResponse<Blob>) => {
-        const blob = new Blob([response.body], { type: 'application/pdf' });
-        const link = document.createElement('a');
-        link.href = window.URL.createObjectURL(blob);
-        const contentDisposition = response.headers.get('Content-Disposition');
-        let filename = childName.replace(/ /g, '_') + '_Card.pdf';
-        if (contentDisposition) {
-          const m = /filename=(.*?)(;|$)/.exec(contentDisposition);
-          if (m && m[1]) { filename = m[1].replace(/["']/g, ''); }
-        }
-        link.download = filename;
-        link.click();
-        window.URL.revokeObjectURL(link.href);
-      },
-      (err) => {
-        console.error('Error downloading immunization card', err);
-        this.toastService.create('Failed to download card', 'danger');
-      }
-    );
-  }
 }
