@@ -1,19 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastService } from 'src/app/shared/toast.service';
 import { BrandService } from 'src/app/services/brand.service';
-import { StockService, AdjustStockDTO } from 'src/app/services/stock.service';
+import { StockService } from 'src/app/services/stock.service';
+import { StockTransferService, AvailableBatchDTO } from 'src/app/services/stock-transfer.service';
 import { LoadingController } from '@ionic/angular';
 import { ClinicService } from 'src/app/services/clinic.service';
-import { Storage } from "@ionic/storage";
-import { environment } from "src/environments/environment";
-import { PaService } from "src/app/services/pa.service";
-interface StockAdjustment {
-  brandName: any;
-  brandId: number;
-  type: 'increase' | 'decrease';
-  date: string;
-  quantity: number;
-  price: number;
+import { Storage } from '@ionic/storage';
+import { environment } from 'src/environments/environment';
+import { PaService } from 'src/app/services/pa.service';
+
+interface AdjustRow {
+  brandId: any;
+  brandName: string;
+  brandSearchTerm: string;
+  filteredBrands: any[];
+  batches: AvailableBatchDTO[];
+  batchLot: string;
+  expiry: string;
+  availableQty: number;
+  costPrice: number;
+  adjustQty: any;
+  price: any;
   reason: string;
 }
 
@@ -23,33 +30,23 @@ interface StockAdjustment {
   styleUrls: ['./adjust.page.scss']
 })
 export class AdjustPage implements OnInit {
-    isIncrease: boolean = false;
-    isDecrease: boolean = false;
-    adjustment: StockAdjustment = {
-    brandName: null,
-    brandId: null,
-    type: null,
-    date: new Date().toISOString(),
-    quantity: null,
-    price: null,
-    reason: ''
-  };
-  brands = [];
-  filteredBrands: any[] = [];
-  brandSearchTerm: string = '';
-  doctorId: number;
-  DoctorId: any;
-  clinicid: string;
-  selectedClinic: string = '';
-  clinic: string = '';
+  isIncrease = false;
+  isDecrease = false;
+
+  selectedClinic: any = null;
   clinics: any[] = [];
+  brands: any[] = [];
+
+  rows: AdjustRow[] = [];
+
+  doctorId: any;
   usertype: any;
-  selectedClinicId: any;
   clinicId: any;
 
   constructor(
     private brandService: BrandService,
     private stockService: StockService,
+    private transferService: StockTransferService,
     private toastService: ToastService,
     private loadingController: LoadingController,
     private clinicService: ClinicService,
@@ -59,307 +56,208 @@ export class AdjustPage implements OnInit {
 
   async ngOnInit() {
     this.usertype = await this.storage.get(environment.USER);
-    console.log('User Type:', this.usertype);
-     this.clinicId = await this.storage.get(environment.CLINIC_Id);
-    console.log('Clinic ID:', this.clinicId);
-    this.loadBrands()
+    this.clinicId = await this.storage.get(environment.CLINIC_Id);
     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
-    console.log('Doctor ID:', this.doctorId);
+    await this.loadBrands();
     await this.loadClinics();
+    this.addRow();
   }
-  // async ngOnInit() {
-  //   try {
-  //     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
-  //     this.clinicId = await this.storage.get(environment.CLINIC_Id);
-  //     this.usertype = await this.storage.get(environment.USER);
 
-  //     if (!this.doctorId || !this.usertype) {
-  //       console.error("Doctor ID or User Type not found in storage.");
-  //       this.toastService.create("Failed to load user data", "danger");
-  //       return;
-  //     }
-
-  //     console.log("Doctor ID:", this.doctorId);
-  //     console.log("Clinic ID:", this.clinicId);
-  //     console.log("User Type:", this.usertype);
-
-  //     await this.loadClinics();
-  //   } catch (error) {
-  //     console.error("Error during initialization:", error);
-  //     this.toastService.create("An unexpected error occurred", "danger");
-  //   }
-  // }
-
+  // ── Clinics ──────────────────────────────────────────────────────────────
   async loadClinics() {
-    const loading = await this.loadingController.create({
-      message: "Loading clinics...",
+    const loading = await this.loadingController.create({ message: 'Loading clinics...' });
+    await loading.present();
+    try {
+      const isPA = this.usertype && this.usertype.UserType === 'PA';
+      const obs = isPA
+        ? this.paService.getPaClinics(Number(this.usertype.PAId))
+        : this.clinicService.getClinics(Number(this.doctorId));
+
+      obs.subscribe({
+        next: (response: any) => {
+          loading.dismiss();
+          if (response && response.IsSuccess) {
+            this.clinics = response.ResponseData || [];
+            this.selectedClinic = this.clinicId || (this.clinics.length > 0 ? this.clinics[0].Id : null);
+          } else {
+            this.toastService.create(response && response.Message ? response.Message : 'Failed to load clinics', 'danger');
+          }
+        },
+        error: () => { loading.dismiss(); this.toastService.create('Failed to load clinics', 'danger'); }
+      });
+    } catch (e) { loading.dismiss(); }
+  }
+
+  onClinicChange() {
+    this.rows.forEach(r => { r.batches = []; r.batchLot = ''; r.expiry = ''; r.availableQty = 0; });
+  }
+
+  // ── Brands ───────────────────────────────────────────────────────────────
+  async loadBrands() {
+    const loading = await this.loadingController.create({ message: 'Loading brands...' });
+    await loading.present();
+    this.clinicId = this.clinicId || await this.storage.get(environment.CLINIC_Id);
+
+    this.brandService.getBrands().subscribe({
+      next: (res: any) => {
+        if (!res || !res.IsSuccess) { loading.dismiss(); return; }
+        const allBrands = (res.ResponseData || []).map((b: any) => ({
+          id: b.Id, name: b.Name, price: 0, displayName: b.Name
+        }));
+
+        if (!this.clinicId) {
+          this.brands = allBrands;
+          loading.dismiss();
+          return;
+        }
+
+        this.brandService.getBrandAmount(this.clinicId).subscribe({
+          next: (amtRes: any) => {
+            const map = new Map<number, number>();
+            if (amtRes && amtRes.IsSuccess) {
+              (amtRes.ResponseData || []).forEach((b: any) => map.set(b.BrandId, b.PurchasedAmt || 0));
+            }
+            this.brands = allBrands.map((b: any) => ({ ...b, price: map.has(b.id) ? map.get(b.id) : 0 }));
+            loading.dismiss();
+            this.rows.forEach(r => { r.filteredBrands = this.brands.slice(); });
+          },
+          error: () => { this.brands = allBrands; loading.dismiss(); }
+        });
+      },
+      error: () => loading.dismiss()
     });
+  }
+
+  // ── Row management ────────────────────────────────────────────────────────
+  addRow() {
+    this.rows.push({
+      brandId: null, brandName: '', brandSearchTerm: '',
+      filteredBrands: this.brands.slice(),
+      batches: [], batchLot: '', expiry: '',
+      availableQty: 0, costPrice: 0,
+      adjustQty: null, price: null, reason: ''
+    });
+  }
+
+  removeRow(index: number) { this.rows.splice(index, 1); }
+
+  // ── Brand selection ───────────────────────────────────────────────────────
+  showAllBrands(row: AdjustRow) {
+    row.brandSearchTerm = '';
+    row.filteredBrands = this.brands.slice();
+  }
+
+  filterBrands(row: AdjustRow, term: string) {
+    const t = (term || '').toLowerCase().trim();
+    row.filteredBrands = t
+      ? this.brands.filter(b => b.displayName.toLowerCase().includes(t))
+      : this.brands.slice();
+  }
+
+  async onBrandSelected(row: AdjustRow, brandId: number) {
+    const brand = this.brands.find(b => b.id === brandId);
+    if (brand) {
+      row.brandName = brand.name;
+      row.price = brand.price || null;
+    }
+    row.batches = [];
+    row.batchLot = '';
+    row.expiry = '';
+    row.availableQty = 0;
+    row.costPrice = 0;
+
+    if (!this.selectedClinic) return;
+
+    const loader = await this.loadingController.create({ message: 'Loading batches...' });
+    await loader.present();
+    this.transferService.getAvailableBatches(brandId, this.selectedClinic).subscribe({
+      next: (res) => {
+        loader.dismiss();
+        if (res && res.IsSuccess) { row.batches = res.ResponseData || []; }
+      },
+      error: () => loader.dismiss()
+    });
+  }
+
+  onBatchSelected(row: AdjustRow, batchLot: string) {
+    const batch = row.batches.find(b => (b.BatchLot || '') === batchLot);
+    if (batch) {
+      row.expiry = batch.Expiry || '';
+      row.availableQty = batch.AvailableQuantity;
+      row.costPrice = batch.CostPrice;
+      if (!row.price) { row.price = batch.CostPrice; }
+    }
+  }
+
+  // ── Adjustment type ───────────────────────────────────────────────────────
+  onIncreaseChange() { if (this.isIncrease) { this.isDecrease = false; } }
+  onDecreaseChange() { if (this.isDecrease) { this.isIncrease = false; } }
+
+  // ── Total ─────────────────────────────────────────────────────────────────
+  get totalValue(): number {
+    return this.rows.reduce((s, r) => s + ((r.adjustQty || 0) * (r.price || 0)), 0);
+  }
+
+  // ── Submit ────────────────────────────────────────────────────────────────
+  private validate(): any {
+    if (!this.selectedClinic) { return 'Please select a clinic.'; }
+    if (!this.isIncrease && !this.isDecrease) { return 'Please select Increase or Decrease.'; }
+    if (!this.rows.length) { return 'Add at least one item.'; }
+    for (let i = 0; i < this.rows.length; i++) {
+      const r = this.rows[i];
+      if (!r.brandId) { return 'Row ' + (i + 1) + ': Please select a brand.'; }
+      if (!r.adjustQty || r.adjustQty <= 0) { return 'Row ' + (i + 1) + ': Quantity must be > 0.'; }
+      if (!r.price || r.price <= 0) { return 'Row ' + (i + 1) + ': Price must be > 0.'; }
+      if (!r.reason || r.reason.trim() === '') { return 'Row ' + (i + 1) + ': Reason is required.'; }
+      if (this.isDecrease && r.availableQty > 0 && r.adjustQty > r.availableQty) {
+        return 'Row ' + (i + 1) + ': Quantity exceeds available stock (' + r.availableQty + ').';
+      }
+    }
+    return null;
+  }
+
+  async onSubmit() {
+    const err = this.validate();
+    if (err) { this.toastService.create(err, 'danger'); return; }
+
+    const loading = await this.loadingController.create({ message: 'Adjusting stock...' });
     await loading.present();
 
-    try {
-      if (this.usertype.UserType === "DOCTOR") {
-        this.clinicService.getClinics(Number(this.doctorId)).subscribe({
-          next: (response) => {
-            loading.dismiss();
-            if (response.IsSuccess) {
-              this.clinics = response.ResponseData;
-              console.log("Clinics:", this.clinics);
-              this.selectedClinic = this.clinicId || (this.clinics.length > 0 ? this.clinics[0].Id : null);
-              // if (this.selectedClinicId) {
-              //   this.getBill(this.selectedClinicId);
-              // }
-            } else {
-              this.toastService.create(response.Message, "danger");
-            }
-          },
-          error: (error) => {
-            loading.dismiss();
-            console.error("Error fetching clinics:", error);
-            this.toastService.create("Failed to load clinics", "danger");
-          },
-        });
-      } else if (this.usertype.UserType === "PA") {
-        this.paService.getPaClinics(Number(this.usertype.PAId)).subscribe({
-          next: (response) => {
-            loading.dismiss();
-            if (response.IsSuccess) {
-              this.clinics = response.ResponseData;
-              console.log("PA Clinics:", this.clinics);
-              this.selectedClinic = this.clinics.length > 0 ? this.clinics[0].Id : null;
-              // if (this.selectedClinicId) {
-              //   this.getBill(this.selectedClinicId);
-              // }
-            } else {
-              this.toastService.create(response.Message, "danger");
-            }
-          },
-          error: (error) => {
-            loading.dismiss();
-            console.error("Error fetching PA clinics:", error);
-            this.toastService.create("Failed to load clinics", "danger");
-          },
-        });
-      }
-    } catch (error) {
-      loading.dismiss();
-      console.error("Error in loadClinics:", error);
-      this.toastService.create("An unexpected error occurred", "danger");
-    }
-  }
+    const sign = this.isDecrease ? -1 : 1;
+    const payload = this.rows.map(r => ({
+      DoctorId: Number(this.doctorId),
+      BrandId: r.brandId,
+      ClinicId: this.selectedClinic,
+      Adjustment: sign * Number(r.adjustQty),
+      Price: Number(r.price),
+      Reason: r.reason,
+      Date: new Date(),
+      BatchLot: r.batchLot || null,
+      ExpiryDate: r.expiry ? new Date(r.expiry) : null,
+      BrandName: r.brandName,
+      VaccineName: '',
+      ClinicName: '',
+      DoctorName: ''
+    }));
 
-  filterBrands(event: string) {
-    const filterValue = (event || '').toLowerCase().trim();
-    if (!filterValue) {
-      this.filteredBrands = [...this.brands];
-      return;
-    }
-
-    this.filteredBrands = this.brands.filter(brand =>
-      (brand.displayName && brand.displayName.toLowerCase().includes(filterValue)) ||
-      brand.name.toLowerCase().includes(filterValue) ||
-      (brand.vaccineName && brand.vaccineName.toLowerCase().includes(filterValue))
-    );
-  }
-
-  showAllBrands() {
-    this.brandSearchTerm = '';
-    this.filteredBrands = [...this.brands];
-  }
-
-  selectBrandById(brandId: number) {
-    const selectedBrand = this.brands.find(brand => brand.id === brandId);
-    if (selectedBrand) {
-      this.adjustment.brandId = selectedBrand.id;
-      this.adjustment.brandName = selectedBrand.name;
-      this.adjustment.price = selectedBrand.price;
-    }
-  }
-
-  selectBrand(event: any) {
-    const selectedBrand = this.brands.find(
-      brand => brand.displayName === event.option.value || brand.name === event.option.value
-    );
-    if (selectedBrand) {
-      this.adjustment.brandId = selectedBrand.id;
-      this.adjustment.brandName = selectedBrand.name;
-      this.adjustment.price = selectedBrand.price; 
-    }
-  }
-
-  // async loadBrands() {
-  //   try {
-  //     this.brandService.getBrands().subscribe({
-  //       next: (response) => {
-  //         if (response.IsSuccess) {
-  //           console.log('Brands:', response.ResponseData);
-  //           this.brands = response.ResponseData.map(brand => ({
-  //             id: brand.Id,
-  //             name: brand.Name
-  //           }));
-  //         } else {
-  //           this.toastService.create(response.Message, 'danger');
-  //         }
-  //       },
-  //       error: (error) => {
-  //         console.error('Error fetching brands:', error);
-  //         this.toastService.create('Failed to load brands', 'danger');
-  //       }
-  //     });
-  //   } catch (error) {
-  //     console.error('Error in loadBrands:', error);
-  //     this.toastService.create('An unexpected error occurred', 'danger');
-  //   }
-  // }
-  async loadBrands() {
-    try {
-      const loading = await this.loadingController.create({
-        message: 'Loading brands...'
-      });
-      await loading.present();
-      this.brandService.getBrands().subscribe({
-        next: (brandResponse) => {
-          if (!brandResponse || !brandResponse.IsSuccess || !brandResponse.ResponseData) {
-            loading.dismiss();
-            this.toastService.create((brandResponse && brandResponse.Message) ? brandResponse.Message : 'Failed to load brands', 'danger');
-            return;
-          }
-
-          const allBrands = (brandResponse.ResponseData || []).map((brand: any) => ({
-            id: brand.Id,
-            name: brand.Name,
-            price: 0,
-            vaccineName: '',
-            displayName: brand.Name
-          }));
-
-          if (!this.clinicId) {
-            this.brands = allBrands;
-            this.filteredBrands = [...this.brands];
-            loading.dismiss();
-            return;
-          }
-
-          this.brandService.getBrandAmount(this.clinicId).subscribe({
-            next: (amountResponse) => {
-              const amountMap = new Map<number, any>();
-              if (amountResponse && amountResponse.IsSuccess && amountResponse.ResponseData) {
-                (amountResponse.ResponseData || []).forEach((b: any) => {
-                  amountMap.set(b.BrandId, b.PurchasedAmt != null ? b.PurchasedAmt : (b.Amount != null ? b.Amount : 0));
-                });
-              }
-
-              this.brands = allBrands.map((brand: any) => ({
-                ...brand,
-                price: amountMap.has(brand.id) ? amountMap.get(brand.id) : 0
-              }));
-              this.filteredBrands = [...this.brands];
-              loading.dismiss();
-            },
-            error: () => {
-              this.brands = allBrands;
-              this.filteredBrands = [...this.brands];
-              loading.dismiss();
-            }
-          });
-        },
-        error: (error) => {
-          loading.dismiss();
-          console.error('Error fetching brands:', error);
-          this.toastService.create('Failed to load brands', 'danger');
+    this.stockService.adjustStockBulk(payload).subscribe({
+      next: (response: any) => {
+        loading.dismiss();
+        if (response && response.IsSuccess) {
+          this.toastService.create(response.Message || 'Stock adjusted successfully', 'success');
+          this.resetForm();
+        } else {
+          this.toastService.create(response && response.Message ? response.Message : 'Adjustment failed', 'danger', true);
         }
-      });
-  
-    } catch (error) {
-      console.error('Error in loadBrands:', error);
-      this.toastService.create('An unexpected error occurred', 'danger');
-    }
-  }
-  onIncreaseChange() {
-    if (this.isIncrease) {
-        this.isDecrease = false;
-        this.adjustment.type = 'increase';
-    }
-}
-
-onDecreaseChange() {
-    if (this.isDecrease) {
-        this.isIncrease = false;
-        this.adjustment.type = 'decrease';
-    }
-}
-async onSubmit() {
-    if (!this.isValid()) {
-      return;
-    }
-    try {
-      const loading = await this.loadingController.create({
-        message: 'Adjusting stock...'
-      });
-      await loading.present();
-
-      const dto: AdjustStockDTO = {
-        DoctorId: this.doctorId,
-        brandId: this.adjustment.brandId,
-        adjustment: this.isIncrease ? this.adjustment.quantity : -this.adjustment.quantity,
-        clinicId: this.selectedClinic,
-        price: this.adjustment.price,
-        reason: this.adjustment.reason,
-        date: new Date(this.adjustment.date)
-      };
-
-      this.stockService.adjustStock(dto).subscribe({
-        next: (response) => {
-          loading.dismiss();
-          if (response.IsSuccess) {
-            this.toastService.create(response.Message, 'success');
-            this.resetForm();
-          } else {
-            this.toastService.create(response.Message, 'danger');
-          }
-        },
-        error: (error) => {
-          loading.dismiss();
-          console.error('Error adjusting stock:', error);
-          this.toastService.create('Failed to adjust stock', 'danger');
-        }
-      });
-    } catch (error) {
-      console.error('Error in onSubmit:', error);
-      this.toastService.create('An unexpected error occurred', 'danger');
-    }
-  }
-
-  private isValid(): boolean {
-    if (!this.adjustment.brandId) {
-      this.toastService.create('Please select a brand', 'warning');
-      return false;
-    }
-    if (!this.adjustment.quantity || this.adjustment.quantity <= 0) {
-      this.toastService.create('Please enter a valid quantity', 'warning');
-      return false;
-    }
-    if (!this.adjustment.reason) {
-      this.toastService.create('Please enter a reason for adjustment', 'warning');
-      return false;
-    }
-    if (!this.isIncrease && !this.isDecrease) {
-      this.toastService.create('Please select adjustment type', 'warning');
-      return false;
-    }
-    return true;
+      },
+      error: () => { loading.dismiss(); this.toastService.create('Failed to adjust stock', 'danger'); }
+    });
   }
 
   private resetForm() {
-    this.adjustment = {
-      brandName: null,
-      brandId: null,
-      type: null,
-      date: new Date().toISOString(),
-      quantity: null,
-      price: null,
-      reason: ''
-    };
     this.isIncrease = false;
     this.isDecrease = false;
+    this.rows = [];
+    this.addRow();
   }
 }

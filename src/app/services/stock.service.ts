@@ -72,7 +72,19 @@ export class StockService {
   constructor(private http: HttpClient) {}
 
   adjustStock(dto: AdjustStockDTO): Observable<Response<AdjustStockDTO>> {
-    return this.http.post<Response<AdjustStockDTO>>(`${this.apiUrl}AdjustStock`, dto);
+    return this.http.post<Response<AdjustStockDTO>>(`${this.apiUrl}AdjustStock`, [dto]);
+  }
+
+  adjustStockBulk(dtos: any[]): Observable<Response<any[]>> {
+    return this.http.post<Response<any[]>>(`${this.apiUrl}AdjustStock`, dtos);
+  }
+
+  getAdjustHistory(params: any): Observable<Response<any[]>> {
+    const q = Object.keys(params)
+      .filter(function(k) { return params[k] !== undefined && params[k] !== null && params[k] !== ''; })
+      .map(function(k) { return k + '=' + encodeURIComponent(params[k]); })
+      .join('&');
+    return this.http.get<Response<any[]>>(`${this.apiUrl}AdjustStock/history${q ? '?' + q : ''}`);
   }
 
   createBill(stocks: StockDTO[]): Observable<Response<StockDTO[]>> {

@@ -17,6 +17,7 @@ const routes: Routes = [
   { path: 'brandlist/edit/:brandId', loadChildren: () => import('./editbrandlist/edit.module').then(m => m.EditPageModule) },
   { path: 'stock-transfer', loadChildren: () => import('./stock-transfer/stock-transfer.module').then(m => m.StockTransferPageModule) },
   { path: 'stock-transfer-history', loadChildren: () => import('./stock-transfer-history/stock-transfer-history.module').then(m => m.StockTransferHistoryPageModule) },
+  { path: 'adjust-history', loadChildren: () => import('./adjust-history/adjust-history.module').then(m => m.AdjustHistoryPageModule) },
 ];
 
 @NgModule({

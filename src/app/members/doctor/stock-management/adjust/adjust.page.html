@@ -1,138 +1,214 @@
 <ion-header>
-    <ion-toolbar color="primary">
-        <ion-buttons slot="start">
-            <ion-back-button></ion-back-button>
-        </ion-buttons>
-        <ion-title>Adjust Stock</ion-title>
-    </ion-toolbar>
-    <ion-toolbar color="primary" >
-        <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
-          <ion-icon style="margin-left: 10%" routerLink="/members/doctor/brand-amount"  name="bar-chart-outline" size="large" > </ion-icon>
-          <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/add"  name="add-circle-outline" size="large" > </ion-icon>
-          <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management" name="document-text-outline" size="large" > </ion-icon>
-          <!-- <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/adjust" name="sync-outline" size="large" > </ion-icon> -->
-          <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/stock-transfer" name="swap-horizontal-outline" size="large" ></ion-icon>
-          <ion-menu-button style="margin-left: 10%"></ion-menu-button>
-        </ion-buttons>
-    </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Adjust Stock</ion-title>
+  </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/brand-amount" name="bar-chart-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/add" name="add-circle-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management" name="document-text-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/stock-transfer" name="swap-horizontal-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/adjust-history" name="time-outline" size="large"></ion-icon>
+      <ion-menu-button style="margin-left: 10%"></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-    <form #adjustForm="ngForm" (ngSubmit)="onSubmit()">
-      <ion-list>
-        <!-- Brand Selection -->
-        <ion-item>
-            <ion-checkbox [(ngModel)]="isIncrease" required name="increaseCheckbox" (ionChange)="onIncreaseChange()"
-                [disabled]="isDecrease">
-            </ion-checkbox>
-            <ion-label class="ion-padding-start">Increase Stock</ion-label>
-       
-            <ion-checkbox [(ngModel)]="isDecrease" required name="decreaseCheckbox" (ionChange)="onDecreaseChange()"
-                [disabled]="isIncrease">
-            </ion-checkbox>
-            <ion-label class="ion-padding-start">Decrease Stock</ion-label>
-        </ion-item>
-        <ion-item>
-          <mat-form-field class="example-full-width">
-            <mat-select
-              [(ngModel)]="adjustment.brandId"
-              name="brandId"
-              (openedChange)="showAllBrands()"
-              (selectionChange)="selectBrandById($event.value)"
-              required
-              placeholder="Select brand"
-            >
-              <mat-option disabled>
-                <input
-                  matInput
-                  [(ngModel)]="brandSearchTerm"
-                  [ngModelOptions]="{ standalone: true }"
-                  (ngModelChange)="filterBrands($event)"
-                  (click)="$event.stopPropagation()"
-                  (keydown)="$event.stopPropagation()"
-                  placeholder="Search brand"
-                  style="font-size: 15px;"
-                />
-              </mat-option>
-              <mat-option *ngFor="let brand of filteredBrands" [value]="brand.id">
-                {{ brand.displayName }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </ion-item>
-  
-        <!-- Date -->
-        <ion-item>
-          <ion-label position="floating">Date</ion-label>
-          <ion-datetime
-            [(ngModel)]="adjustment.date"
-            name="date" 
-            display-format="DD/MM/YYYY"
-            required
-          >
-          </ion-datetime>
-        </ion-item>
-  
-        <!-- Quantity -->
-        <ion-item>
-          <ion-label position="floating">Quantity</ion-label>
-          <ion-input
-            type="number"
-            [(ngModel)]="adjustment.quantity"
-            name="quantity" 
-            required
-            min="1"
-          >
-          </ion-input>
-        </ion-item>
-  
-        <!-- Price -->
-        <ion-item>
-          <ion-label position="floating">Price</ion-label>
-          <ion-input
-            type="number"
-            [(ngModel)]="adjustment.price"
-            name="price" 
-            required
-            min="0.01"
-            step="0.01"
-            placeholder="Enter price per unit"
-          >
-          </ion-input>
-        </ion-item>
-  
-        <!-- Clinics -->
-        <ion-item>
-          <ion-label position="floating">Clinics <span class="required-asterisk"></span></ion-label>
-          <ion-select [(ngModel)]="selectedClinic" name="clinic" style="margin-left: 55px;">
-            <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
-              {{ clinic.Name }}
-            </ion-select-option>
-          </ion-select>
-        </ion-item>
-  
-        <!-- Reason -->
-        <ion-item>
-          <ion-label position="floating">Reason for Adjustment</ion-label>
-          <ion-textarea
-            [(ngModel)]="adjustment.reason"
-            name="reason"
-            rows="3"
-            required
-            placeholder="Enter reason for stock adjustment"
-          >
-          </ion-textarea>
-        </ion-item>
-      </ion-list>
-  
-      <ion-button
-        expand="block"
-        type="submit"
-        class="ion-margin-top"
-        [color]="isIncrease ? 'success' : 'danger'"
-        [disabled]="!adjustForm.valid"
-      >
-        {{ isIncrease ? 'Add Stock' : 'Remove Stock' }}
-      </ion-button>
-    </form>
-  </ion-content>
+
+  <!-- ── CLINIC + TYPE ── -->
+  <ion-card>
+    <ion-card-header color="primary">
+      <ion-card-title>Adjustment Settings</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+
+      <ion-item>
+        <ion-label position="floating">Clinic <span style="color:red">*</span></ion-label>
+        <ion-select [(ngModel)]="selectedClinic" (ionChange)="onClinicChange()" placeholder="Select clinic">
+          <ion-select-option *ngFor="let c of clinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item lines="none" style="margin-top: 8px;">
+        <ion-label>Adjustment Type <span style="color:red">*</span></ion-label>
+        <ion-segment [(ngModel)]="isIncrease" (ionChange)="onIncreaseChange()" slot="end" style="max-width: 220px;">
+          <ion-segment-button [value]="true">
+            <ion-label>
+              <ion-icon name="add-circle-outline"></ion-icon> Increase
+            </ion-label>
+          </ion-segment-button>
+          <ion-segment-button [value]="false">
+            <ion-label>
+              <ion-icon name="remove-circle-outline"></ion-icon> Decrease
+            </ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </ion-item>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- ── DYNAMIC ROWS TABLE ── -->
+  <ion-card>
+    <ion-card-header color="primary">
+      <ion-card-title>Stock Items</ion-card-title>
+    </ion-card-header>
+    <ion-card-content style="padding: 0;">
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Brand</th>
+              <th>Batch / Lot</th>
+              <th>Expiry</th>
+              <th>Available</th>
+              <th>Qty</th>
+              <th>Price/Unit</th>
+              <th>Value</th>
+              <th>Reason</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of rows; let i = index">
+
+              <!-- Brand dropdown with search -->
+              <td style="min-width: 160px;">
+                <mat-form-field class="table-field">
+                  <mat-select
+                    [(ngModel)]="row.brandId"
+                    (openedChange)="showAllBrands(row)"
+                    (selectionChange)="onBrandSelected(row, $event.value)"
+                    placeholder="Brand">
+                    <mat-option disabled>
+                      <input matInput
+                        [(ngModel)]="row.brandSearchTerm"
+                        [ngModelOptions]="{standalone: true}"
+                        (ngModelChange)="filterBrands(row, $event)"
+                        (click)="$event.stopPropagation()"
+                        (keydown)="$event.stopPropagation()"
+                        placeholder="Search..."
+                        style="font-size:14px;">
+                    </mat-option>
+                    <mat-option *ngFor="let b of row.filteredBrands" [value]="b.id">
+                      {{ b.displayName }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </td>
+
+              <!-- Batch dropdown -->
+              <td style="min-width: 140px;">
+                <ion-select
+                  [(ngModel)]="row.batchLot"
+                  (ionChange)="onBatchSelected(row, $event.detail.value)"
+                  placeholder="Batch"
+                  [disabled]="!row.batches.length"
+                  style="font-size:13px; max-width:130px;">
+                  <ion-select-option value="">— None —</ion-select-option>
+                  <ion-select-option *ngFor="let b of row.batches" [value]="b.BatchLot || ''">
+                    {{ b.BatchLot || '(No batch)' }}
+                  </ion-select-option>
+                </ion-select>
+              </td>
+
+              <!-- Expiry (auto-filled) -->
+              <td style="min-width: 100px;">
+                <ion-input
+                  type="date"
+                  [(ngModel)]="row.expiry"
+                  style="font-size:13px; min-width:100px;">
+                </ion-input>
+              </td>
+
+              <!-- Available qty -->
+              <td style="text-align:center; color: #555; font-size:13px;">
+                {{ row.availableQty || '—' }}
+              </td>
+
+              <!-- Adjust qty -->
+              <td style="min-width: 70px;">
+                <ion-input
+                  type="number"
+                  [(ngModel)]="row.adjustQty"
+                  min="1"
+                  placeholder="Qty"
+                  style="font-size:13px; min-width:65px;">
+                </ion-input>
+                <ion-note color="danger"
+                  *ngIf="isDecrease && row.availableQty > 0 && row.adjustQty > row.availableQty"
+                  style="font-size:10px; display:block;">
+                  Max {{ row.availableQty }}
+                </ion-note>
+              </td>
+
+              <!-- Price -->
+              <td style="min-width: 80px;">
+                <ion-input
+                  type="number"
+                  [(ngModel)]="row.price"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="Price"
+                  style="font-size:13px; min-width:75px;">
+                </ion-input>
+              </td>
+
+              <!-- Value -->
+              <td style="text-align:right; font-size:13px; white-space:nowrap;">
+                Rs {{ ((row.adjustQty || 0) * (row.price || 0)) | number:'1.2-2' }}
+              </td>
+
+              <!-- Reason -->
+              <td style="min-width: 140px;">
+                <ion-input
+                  type="text"
+                  [(ngModel)]="row.reason"
+                  placeholder="Reason"
+                  style="font-size:13px; min-width:130px;">
+                </ion-input>
+              </td>
+
+              <!-- Remove -->
+              <td>
+                <ion-button fill="clear" color="danger" (click)="removeRow(i)" [disabled]="rows.length === 1">
+                  <ion-icon name="trash"></ion-icon>
+                </ion-button>
+              </td>
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Add row + Total -->
+      <div style="padding: 10px 12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <ion-button fill="outline" color="primary" size="small" (click)="addRow()">
+          <ion-icon name="add" slot="start"></ion-icon>
+          Add Item
+        </ion-button>
+        <ion-text color="primary" style="font-weight:700; font-size:15px;">
+          Total: Rs {{ totalValue | number:'1.2-2' }}
+        </ion-text>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- ── SUBMIT ── -->
+  <ion-button
+    expand="block"
+    class="ion-margin-top"
+    [color]="isDecrease ? 'danger' : 'success'"
+    [disabled]="!rows.length"
+    (click)="onSubmit()">
+    <ion-icon [name]="isDecrease ? 'remove-circle-outline' : 'add-circle-outline'" slot="start"></ion-icon>
+    {{ isDecrease ? 'Remove Stock' : 'Add Stock' }}
+  </ion-button>
+
+</ion-content>

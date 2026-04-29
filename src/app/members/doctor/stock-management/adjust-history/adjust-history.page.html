@@ -1,0 +1,132 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Adjust Stock History</ion-title>
+  </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/brand-amount" name="bar-chart-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/add" name="add-circle-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management" name="document-text-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/adjust" name="sync-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/stock-transfer" name="swap-horizontal-outline" size="large"></ion-icon>
+      <ion-menu-button style="margin-left: 10%"></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- ── FILTERS ── -->
+  <ion-card>
+    <ion-card-header color="primary">
+      <ion-card-title>Filters</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+
+      <ion-item>
+        <ion-label position="floating">Clinic</ion-label>
+        <ion-select [(ngModel)]="filterClinicId" placeholder="All clinics">
+          <ion-select-option [value]="null">All</ion-select-option>
+          <ion-select-option *ngFor="let c of clinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Brand</ion-label>
+        <ion-select [(ngModel)]="filterBrandId" placeholder="All brands">
+          <ion-select-option [value]="null">All</ion-select-option>
+          <ion-select-option *ngFor="let b of brands" [value]="b.id">{{ b.name }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">From Date</ion-label>
+        <ion-input type="date" [(ngModel)]="filterFromDate"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">To Date</ion-label>
+        <ion-input type="date" [(ngModel)]="filterToDate"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Search by Brand</ion-label>
+        <ion-input type="text" [(ngModel)]="searchBrand" (ionInput)="onSearchChange()" placeholder="Type to search..."></ion-input>
+      </ion-item>
+
+      <ion-row style="margin-top: 8px;">
+        <ion-col>
+          <ion-button expand="block" color="primary" (click)="applyFilters()">
+            <ion-icon name="search-outline" slot="start"></ion-icon>
+            Apply
+          </ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button expand="block" color="medium" fill="outline" (click)="clearFilters()">
+            <ion-icon name="refresh-outline" slot="start"></ion-icon>
+            Clear
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- ── SUMMARY ── -->
+  <ion-item *ngIf="filteredRecords.length > 0" lines="none" style="margin-bottom: 8px;">
+    <ion-label color="medium">{{ filteredRecords.length }} record(s)</ion-label>
+    <ion-text slot="end" color="primary">
+      <strong>Total Value: Rs {{ getTotalValue() | number:'1.2-2' }}</strong>
+    </ion-text>
+  </ion-item>
+
+  <!-- ── TABLE ── -->
+  <div *ngIf="filteredRecords.length > 0" class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Clinic</th>
+          <th>Brand</th>
+          <th>Batch</th>
+          <th>Expiry</th>
+          <th>Type</th>
+          <th>Qty</th>
+          <th>Price</th>
+          <th>Value</th>
+          <th>Reason</th>
+          <th>By</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of filteredRecords">
+          <td>{{ r.Date | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>{{ r.ClinicName || r.ClinicId }}</td>
+          <td>{{ r.BrandName }}</td>
+          <td>{{ r.BatchLot || '—' }}</td>
+          <td>{{ r.ExpiryDate ? (r.ExpiryDate | date:'dd/MM/yyyy') : '—' }}</td>
+          <td>
+            <ion-badge [color]="getAdjColor(r.Adjustment)">
+              {{ getAdjType(r.Adjustment) }}
+            </ion-badge>
+          </td>
+          <td><strong>{{ r.Adjustment > 0 ? '+' : '' }}{{ r.Adjustment }}</strong></td>
+          <td>Rs {{ r.Price | number:'1.2-2' }}</td>
+          <td>Rs {{ (absVal(r.Adjustment) * r.Price) | number:'1.2-2' }}</td>
+          <td style="max-width:150px; white-space:normal; font-size:12px;">{{ r.Reason }}</td>
+          <td>{{ r.DoctorName || '—' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ion-card *ngIf="filteredRecords.length === 0" style="text-align:center; margin-top:32px;">
+    <ion-card-content>
+      <ion-icon name="sync-outline" size="large" color="medium"></ion-icon>
+      <p style="color: var(--ion-color-medium);">No adjustment records found.</p>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
