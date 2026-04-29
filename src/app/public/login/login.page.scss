@@ -1,48 +1,256 @@
-ion-content {
-    --background: #fff url('../../../assets/login.jpg') no-repeat center center / cover;
+// ── Palette ──────────────────────────────────────────────────────────────────
+$lava-red:     #C62828;
+$lava-dark:    #8B0000;
+$lava-orange:  #FF4500;
+$logo-blue:    #1565C0;
+$logo-blue-dp: #0D47A1;
+$logo-green:   #2E7D32;
+$logo-green-lt:#43A047;
+$white:        #FFFFFF;
+$near-black:   #0D0D12;
+$input-bg:     #F5F7FF;
+$input-border: #DDE3F4;
+$text-dark:    #111827;
+$text-mid:     #4B5563;
+$text-light:   rgba(255,255,255,0.72);
+
+ion-content { --background: transparent; }
+
+// ── Background ────────────────────────────────────────────────────────────────
+.login-bg {
+  position: relative;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse 70% 55% at 10% 5%,   rgba(13,71,161,0.55) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 90% 95%,  rgba(139,0,0,0.50) 0%,   transparent 68%),
+    radial-gradient(ellipse 80% 60% at 50% 50%,  rgba(13,13,18,0.96) 0%,  $near-black 100%);
+  background-color: $near-black;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-ion-card {
-    margin-top: 15%;
-    align-content: center;
-    width: 80%;
-    margin-left: 10%;
-    background-color: rgba(255, 255, 255, 0.73);
+// ── Blobs ─────────────────────────────────────────────────────────────────────
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(72px);
+  pointer-events: none;
+  z-index: 0;
+}
+.blob-top-left {
+  width: 320px; height: 320px; top: -100px; left: -100px;
+  background: radial-gradient(circle, rgba($logo-blue, 0.50) 0%, transparent 70%);
+}
+.blob-top-right {
+  width: 220px; height: 220px; top: -60px; right: -60px;
+  background: radial-gradient(circle, rgba($logo-green-lt, 0.38) 0%, transparent 70%);
+}
+.blob-bottom {
+  width: 380px; height: 280px; bottom: -100px; left: 50%; transform: translateX(-50%);
+  background: radial-gradient(ellipse, rgba($lava-red, 0.42) 0%, rgba($lava-orange, 0.18) 50%, transparent 70%);
 }
 
-ion-input {
-    border-bottom: 1px solid rgb(255, 255, 255);
-    --padding-start: 7px;
-    background-color: transparent;
-    color: white;
+// ── Overlay ───────────────────────────────────────────────────────────────────
+.login-overlay {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px 32px;
 }
 
+// ── Brand ─────────────────────────────────────────────────────────────────────
+.brand-wrap { text-align: center; margin-bottom: 36px; }
 
-.item.item-trns {
-    border-color: rgba(0, 0, 0, 0);
-    background-color: rgba(0, 0, 0, 0);
-    color: white;
+.brand-icon {
+  position: relative;
+  width: 90px; height: 90px;
+  margin: 0 auto 18px;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: conic-gradient(
+      $logo-blue 0deg 90deg,
+      $logo-green-lt 90deg 180deg,
+      $lava-orange 180deg 270deg,
+      $lava-red 270deg 360deg
+    );
+    animation: spin 8s linear infinite;
+    opacity: 0.6;
+  }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.brand-icon-ring {
+  position: relative;
+  z-index: 1;
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, $logo-blue-dp 0%, $logo-green 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 3px $near-black, 0 8px 32px rgba($logo-blue, 0.55), 0 2px 8px rgba(0,0,0,0.6);
 }
 
-h2 {
-    color: #ffffff;
+.brand-main-icon { font-size: 42px; color: $white; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4)); }
+
+.brand-name {
+  font-size: 34px; font-weight: 900; color: $white;
+  margin: 0 0 4px; letter-spacing: 1px;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+}
+.brand-pk    { color: $lava-orange; }
+.brand-role  { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.88); margin: 0 0 4px; letter-spacing: 2px; text-transform: uppercase; }
+.brand-sub   { font-size: 12px; color: $text-light; margin: 0 0 14px; letter-spacing: 0.4px; }
+
+.brand-dots  { display: flex; justify-content: center; gap: 8px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.dot-blue   { background: $logo-blue; }
+.dot-green  { background: $logo-green-lt; }
+.dot-orange { background: $lava-orange; }
+
+// ── Card ──────────────────────────────────────────────────────────────────────
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  background: $white;
+  border-radius: 28px;
+  padding: 0 0 26px;
+  box-shadow: 0 2px 0 rgba($logo-blue,0.15), 0 20px 60px rgba(0,0,0,0.70), 0 4px 16px rgba($lava-red,0.18);
+  overflow: hidden;
 }
 
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+.card-header-bar { display: flex; height: 5px; margin-bottom: 28px; }
+.bar-segment     { flex: 1; }
+.bar-blue        { background: $logo-blue; }
+.bar-green       { background: $logo-green-lt; }
+.bar-orange      { background: linear-gradient(90deg, $lava-orange, $lava-red); }
+
+.login-title    { font-size: 23px; font-weight: 800; color: $text-dark; margin: 0 0 4px; text-align: center; }
+.login-subtitle { font-size: 13px; color: $text-mid; text-align: center; margin: 0 0 24px; }
+
+// ── Inputs ────────────────────────────────────────────────────────────────────
+.input-group {
+  display: flex;
+  align-items: center;
+  background: $input-bg;
+  border: 1.5px solid $input-border;
+  border-radius: 14px;
+  margin: 0 24px 14px;
+  overflow: hidden;
+  transition: border-color 0.22s, box-shadow 0.22s;
+  &:focus-within {
+    border-color: $logo-blue;
+    box-shadow: 0 0 0 3px rgba($logo-blue, 0.14);
+    background: #F0F4FF;
+  }
+}
+.input-icon {
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  color: $logo-blue;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.input-body {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+.country-select {
+  color: $text-dark;
+  font-size: 14px;
+  font-weight: 600;
+  --padding-start: 0;
+  --padding-end: 4px;
+  width: 72px;
+  flex-shrink: 0;
+}
+.divider-v {
+  width: 1px; height: 22px;
+  background: $input-border;
+  margin: 0 8px 0 0;
+  flex-shrink: 0;
+}
+.text-input {
+  --padding-start: 4px;
+  --padding-end: 10px;
+  --color: #{$text-dark};
+  --placeholder-color: #9CA3AF;
+  font-size: 15px;
+  flex: 1;
+}
+.eye-btn {
+  --color: #{$text-mid};
+  --padding-start: 6px;
+  --padding-end: 10px;
+  height: 100%;
+  flex-shrink: 0;
 }
 
-.invalid-input {
-    border-color: red;
+// ── Errors ────────────────────────────────────────────────────────────────────
+.error-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: $lava-red;
+  font-size: 12px;
+  margin: -8px 24px 12px;
+  ion-icon { font-size: 14px; }
 }
 
-ion-button ion-icon {
-    color: white;
+// ── Button ────────────────────────────────────────────────────────────────────
+.login-btn {
+  --background: linear-gradient(135deg, #{$lava-dark} 0%, #{$lava-red} 40%, #{$lava-orange} 100%);
+  --background-activated: #{$lava-dark};
+  --color: #{$white};
+  --border-radius: 14px;
+  --box-shadow: 0 6px 22px rgba(198,40,40,0.48), 0 2px 6px rgba(255,69,0,0.30);
+  height: 52px;
+  font-size: 16px;
+  font-weight: 800;
+  margin: 6px 24px 0;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
-ion-button.icon-filled ion-icon {
-    color: black;
+// ── Auth links ────────────────────────────────────────────────────────────────
+.auth-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 20px;
+  padding: 0 16px;
+}
+.auth-link {
+  color: $logo-blue;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  &:hover { color: $lava-orange; text-decoration: underline; }
+}
+.auth-sep { color: #CBD5E1; font-size: 12px; }
+
+// ── Footer ────────────────────────────────────────────────────────────────────
+.footer-note {
+  margin-top: 28px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.6px;
+  text-align: center;
 }
