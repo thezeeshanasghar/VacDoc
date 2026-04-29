@@ -587,6 +587,7 @@ export class MembersPage implements OnInit {
         if (res.IsSuccess) {
           this.doctorData = res.ResponseData;
           const inventoryAllowed = this.doctorData.AllowInventory !== false;
+          const financialAllowed = this.doctorData.AllowFinancial === true;
           this.profileImagePath = this.doctorData.ProfileImage;
           this.Name = this.doctorData.DisplayName;
           const clinics = this.doctorData.Clinics;
@@ -746,6 +747,14 @@ export class MembersPage implements OnInit {
                   title: "Stock Management",
                   icon: "cube-outline",
                   url: "/members/doctor/brand-amount",
+                });
+              }
+
+              if (financialAllowed) {
+                this.appPages.push({
+                  title: "Financial",
+                  icon: "bar-chart-outline",
+                  url: "/members/doctor/financial",
                 });
               }
             }
