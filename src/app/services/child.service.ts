@@ -92,6 +92,19 @@ export class ChildService extends BaseService {
     });
   }
 
+  downloadImmunizationCard(childId: number, type: 'front' | 'vaccine' | 'age'): Observable<HttpResponse<Blob>> {
+    const endpoint = type === 'front'
+      ? 'immunization-card-front'
+      : type === 'vaccine'
+      ? 'immunization-card-vaccine'
+      : 'immunization-card-age';
+    return this.http.get(`${this.API_CHILD}Child/${childId}/${endpoint}`, {
+      responseType: 'blob',
+      observe: 'response',
+      headers: new HttpHeaders({ 'Accept': 'application/pdf' })
+    });
+  }
+
   getAgent(childId: number): Observable<any> {
     const url = `${this.API_CHILD}Child/agents/${childId}`;
     return this.http.get(url, this.httpOptions).pipe(
