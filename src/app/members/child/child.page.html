@@ -100,10 +100,6 @@
         Follow Up
       </ion-button>
       &nbsp; &nbsp;
-      <ion-button disabled size="small" fill="outline" color="primary" routerLink="/members/child/invoice/{{child.Id}}">
-        Invoice
-      </ion-button>
-      &nbsp; &nbsp;
       <ion-button size="small" fill="outline" [color]="child.IsInactive ? 'success' : 'danger'"
         (click)="toggleChildActiveStatus(child.Id)">
         {{ child.IsInactive ? 'Activate' : 'Deactivate' }}
