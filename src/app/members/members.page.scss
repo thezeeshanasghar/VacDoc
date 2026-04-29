@@ -1,15 +1,72 @@
+// ── Side menu shell ───────────────────────────────────────────────────────────
+ion-menu {
+  --background: #0D0D12;
+}
+
+ion-menu ion-header ion-toolbar {
+  --background: linear-gradient(135deg, #0D47A1 0%, #1565C0 100%);
+}
+
+ion-menu ion-header ion-title {
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #ffffff;
+}
+
+ion-menu ion-content {
+  --background: #0D0D12;
+}
+
+ion-menu ion-list.menu {
+  background: transparent;
+  padding: 8px 0;
+}
+
+// ── Menu items ────────────────────────────────────────────────────────────────
+ion-menu ion-item {
+  --background:         transparent;
+  --background-activated: rgba(21, 101, 192, 0.20);
+  --color:              rgba(255, 255, 255, 0.85);
+  --border-color:       transparent;
+  --inner-border-width: 0;
+  --padding-start:      14px;
+  margin: 2px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+ion-menu ion-item ion-icon {
+  color: #1E88E5 !important;
+  font-size: 20px;
+}
+
+ion-menu ion-item ion-label {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+ion-menu ion-avatar ion-icon {
+  color: #1E88E5 !important;
+  font-size: 32px;
+}
+
+// ── Submenu indentation ───────────────────────────────────────────────────────
 .sub-menu {
-  padding-left: 20px;
+  padding-left: 16px;
+  background: transparent;
 }
 
 .sub-sub-menu {
-  padding-left: 40px;
+  padding-left: 32px;
+  background: transparent;
 }
 
 .sub-item {
-  font-size: 0.95em;
+  font-size: 0.92em;
+  margin: 1px 10px !important;
+  border-radius: 10px !important;
 }
 
 .sub-sub-item {
-  font-size: 0.9em;
+  font-size: 0.88em;
 }

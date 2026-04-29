@@ -1,35 +1,229 @@
-/*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
- */
-
-/* Core CSS required for Ionic components to work properly */
+/* Core Ionic CSS */
 @import "~@ionic/angular/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
 @import "~@ionic/angular/css/normalize.css";
 @import "~@ionic/angular/css/structure.css";
 @import "~@ionic/angular/css/typography.css";
 @import '~@ionic/angular/css/display.css';
-
-/* Optional CSS utils that can be commented out */
 @import "~@ionic/angular/css/padding.css";
 @import "~@ionic/angular/css/float-elements.css";
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
 
-.mat-form-field-appearance-fill .mat-form-field-flex {
-    background-color: white !important;
-    padding: 2% 12% !important;
-  }
+// ── App-wide palette tokens ─────────────────────────────────────────────────
+:root {
+  --vac-blue:       #1565C0;
+  --vac-blue-dp:    #0D47A1;
+  --vac-blue-lt:    #1E88E5;
+  --vac-green:      #2E7D32;
+  --vac-green-lt:   #43A047;
+  --vac-lava:       #FF4500;
+  --vac-red:        #C62828;
+  --vac-red-dark:   #8B0000;
+  --vac-near-black: #0D0D12;
+  --vac-card-bg:    #FFFFFF;
+  --vac-surface:    #F4F6FC;
+}
 
-  .mat-icon-button {
-    color: #3880ff;
+// ── Toolbar ──────────────────────────────────────────────────────────────────
+ion-toolbar[color="primary"] {
+  --background: var(--vac-blue);
+  --color:      #ffffff;
+}
+
+// Second toolbar (icon bar) — slightly darker
+ion-header ion-toolbar[color="primary"] + ion-toolbar[color="primary"] {
+  --background: var(--vac-blue-dp);
+}
+
+ion-toolbar ion-title {
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+// ── Cards ────────────────────────────────────────────────────────────────────
+ion-card {
+  border-radius: 16px !important;
+  box-shadow: 0 2px 12px rgba(21, 101, 192, 0.10),
+              0 1px 4px  rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid rgba(21, 101, 192, 0.08);
+  background: var(--vac-card-bg);
+}
+
+ion-card-header[color="primary"] {
+  background: linear-gradient(135deg, var(--vac-blue) 0%, var(--vac-blue-lt) 100%);
+  border-radius: 16px 16px 0 0;
+  padding: 12px 16px;
+}
+
+ion-card-header[color="primary"] ion-card-title {
+  color: #ffffff !important;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+ion-card-content {
+  padding-top: 12px !important;
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+ion-button[color="primary"] {
+  --background:           var(--vac-blue);
+  --background-activated: var(--vac-blue-dp);
+  --border-radius:        10px;
+  font-weight: 700;
+}
+
+// Main submit/action buttons — lava gradient
+ion-button.lava-btn,
+ion-button[expand="block"][color="primary"],
+ion-button[expand="full"][color="primary"] {
+  --background: linear-gradient(135deg, var(--vac-red-dark) 0%, var(--vac-red) 45%, var(--vac-lava) 100%);
+  --background-activated: var(--vac-red-dark);
+  --border-radius: 12px;
+  --box-shadow: 0 4px 16px rgba(198, 40, 40, 0.35);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+// Keep "success" and "danger" buttons their own colours
+ion-button[color="success"] {
+  --background: var(--vac-green);
+  --background-activated: var(--vac-green-dp);
+  --border-radius: 10px;
+}
+
+ion-button[color="danger"] {
+  --background: var(--vac-red);
+  --border-radius: 10px;
+}
+
+ion-button[fill="clear"][color="danger"] {
+  --background: transparent;
+  --color: var(--vac-red);
+}
+
+ion-button[fill="outline"][color="primary"] {
+  --border-color: var(--vac-blue);
+  --color: var(--vac-blue);
+  --background: transparent;
+  --border-radius: 10px;
+}
+
+// ── Inputs / Items ───────────────────────────────────────────────────────────
+ion-item {
+  --border-color:      rgba(21, 101, 192, 0.15);
+  --highlight-color-focused: var(--vac-blue);
+}
+
+ion-input, ion-textarea, ion-select {
+  --color:             #111827;
+  --placeholder-color: #9CA3AF;
+}
+
+// ── Badges ───────────────────────────────────────────────────────────────────
+ion-badge[color="primary"]  { background: var(--vac-blue); }
+ion-badge[color="success"]  { background: var(--vac-green); }
+ion-badge[color="danger"]   { background: var(--vac-red); }
+ion-badge[color="warning"]  { background: #F57C00; }
+
+// ── Menu sidebar ─────────────────────────────────────────────────────────────
+ion-menu ion-toolbar[color="primary"] {
+  --background: linear-gradient(135deg, var(--vac-blue-dp) 0%, var(--vac-blue) 100%);
+}
+
+ion-menu ion-content {
+  --background: var(--vac-near-black);
+}
+
+ion-menu ion-list.menu {
+  background: transparent;
+}
+
+ion-menu ion-item {
+  --background:           transparent;
+  --background-activated: rgba(21, 101, 192, 0.18);
+  --color:                rgba(255, 255, 255, 0.85);
+  --border-color:         rgba(255, 255, 255, 0.06);
+  font-size: 15px;
+  font-weight: 500;
+  margin: 2px 8px;
+  border-radius: 10px;
+}
+
+ion-menu ion-item ion-icon {
+  color: var(--vac-blue-lt) !important;
+}
+
+ion-menu ion-item ion-label {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+// Avatar / profile row in menu
+ion-menu ion-avatar ion-icon {
+  font-size: 32px;
+  color: var(--vac-blue-lt) !important;
+}
+
+// ── Tables (stock management pages) ─────────────────────────────────────────
+table {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+table th {
+  background: linear-gradient(135deg, var(--vac-blue) 0%, var(--vac-blue-lt) 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  padding: 10px 12px !important;
+}
+
+table td {
+  border-bottom: 1px solid rgba(21, 101, 192, 0.08) !important;
+}
+
+table tr:hover td {
+  background-color: rgba(21, 101, 192, 0.04);
+}
+
+// ── Segment controls ────────────────────────────────────────────────────────
+ion-segment {
+  --background: rgba(21, 101, 192, 0.08);
+}
+
+ion-segment-button {
+  --color-checked:    var(--vac-blue);
+  --indicator-color:  var(--vac-blue);
+  font-weight: 600;
+}
+
+// ── Search bar ───────────────────────────────────────────────────────────────
+ion-searchbar {
+  --background:      var(--vac-surface);
+  --border-radius:   12px;
+  --box-shadow:      0 2px 8px rgba(21, 101, 192, 0.08);
+  --color:           #111827;
+  --placeholder-color: #9CA3AF;
+  --icon-color:      var(--vac-blue);
+}
+
+// ── Material components ───────────────────────────────────────────────────────
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: #F4F6FC !important;
+  padding: 2% 4% !important;
+  border-radius: 8px !important;
+}
+
+.mat-select-panel {
+  border-radius: 10px !important;
+}
+
+.mat-icon-button { color: var(--vac-blue); }
+
+// ── Scrollbar (webkit) ───────────────────────────────────────────────────────
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(21, 101, 192, 0.35);
+  border-radius: 3px;
 }
