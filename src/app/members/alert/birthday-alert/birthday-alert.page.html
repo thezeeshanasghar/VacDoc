@@ -1,10 +1,9 @@
 <ion-header>
   <ion-toolbar color="primary">
-     <ion-title 
-  *ngIf="clinicService.OnlineClinic.Name" 
-  routerLink="/members/doctor/clinic" 
+     <ion-title
+  routerLink="/members/doctor/clinic"
   style="cursor: pointer; text-align: center; width: 100%;">
-  {{clinicService.OnlineClinic.Name}}
+  {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name : 'Birthday Alerts' }}
 </ion-title>
   </ion-toolbar>
   

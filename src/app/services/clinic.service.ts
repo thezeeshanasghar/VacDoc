@@ -22,11 +22,22 @@ export class ClinicService extends BaseService {
 
   constructor(protected http: HttpClient, private storage: Storage) {
     super(http);
-    // this.loadclinics();
+    // Eagerly restore OnlineClinic from storage so all pages see it
+    // even when navigating directly without going through the dashboard first.
+    this.storage.get(environment.ON_CLINIC).then(clinic => {
+      if (clinic && !this.OnlineClinic) {
+        this.OnlineClinic = clinic;
+        this.OnlineClinicId = clinic.Id;
+      }
+    });
   }
 
-   updateClinic(clinic) {
-   this.OnlineClinic = clinic;
+  updateClinic(clinic) {
+    this.OnlineClinic = clinic;
+    if (clinic) {
+      this.OnlineClinicId = clinic.Id;
+      this.storage.set(environment.ON_CLINIC, clinic);
+    }
   }
 
   getClinics(id: number): Observable<any> {
