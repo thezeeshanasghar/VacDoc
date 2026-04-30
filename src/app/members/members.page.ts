@@ -16,7 +16,7 @@
 // export class MembersPage implements OnInit {
 //   doctorData: any;
 //   DoctorId: any;
-//   profileImagePath: string;
+//   profileImagePath: string = '';
 //   Name: any;
 //   hasClinics: boolean = false; // Flag to check if clinics are available
 //   defaultImageUrl: string = 'assets/male.png';
@@ -485,7 +485,7 @@ import { PaService } from "src/app/services/pa.service";
 export class MembersPage implements OnInit {
   doctorData: any;
   DoctorId: any;
-  profileImagePath: string;
+  profileImagePath: string = '';
   Name: any;
   hasClinics: boolean = false; // Flag to check if clinics are available
   defaultImageUrl: string = 'assets/male.png';
@@ -754,7 +754,7 @@ export class MembersPage implements OnInit {
                 this.appPages.push({
                   title: "Financial",
                   icon: "bar-chart-outline",
-                  url: "/members/doctor/financial",
+                  url: "/members/doctor/financial/reporting",
                 });
               }
             }

@@ -1,0 +1,123 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start"><ion-back-button defaultHref="/members/dashboard"></ion-back-button></ion-buttons>
+    <ion-title>Financial Reports</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Clinic + Date range (shared across all reports) -->
+  <ion-card>
+    <ion-card-header color="primary"><ion-card-title>Common Filters</ion-card-title></ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="floating">Clinic</ion-label>
+        <ion-select [(ngModel)]="selectedClinicId" placeholder="Select clinic">
+          <ion-select-option *ngFor="let c of clinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <form [formGroup]="form">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0;">
+          <ion-item>
+            <ion-label position="floating">From Date</ion-label>
+            <ion-input type="date" formControlName="fromDate"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">To Date</ion-label>
+            <ion-input type="date" formControlName="toDate"></ion-input>
+          </ion-item>
+        </div>
+      </form>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- 1. Sales Report -->
+  <div class="report-card">
+    <div class="rc-left">
+      <div class="rc-icon" style="background: linear-gradient(135deg,#0D47A1,#1565C0);">
+        <ion-icon name="stats-chart-outline"></ion-icon>
+      </div>
+      <div>
+        <div class="rc-title">Sales Report</div>
+        <div class="rc-desc">Vaccination income by date range — all injections administered</div>
+      </div>
+    </div>
+    <ion-button size="small" color="primary" fill="solid" (click)="getSalesReport()">
+      <ion-icon name="download-outline" slot="start"></ion-icon>PDF
+    </ion-button>
+  </div>
+
+  <!-- 2. Item Report (needs brand) -->
+  <div class="report-card">
+    <div class="rc-left">
+      <div class="rc-icon" style="background: linear-gradient(135deg,#1B5E20,#2E7D32);">
+        <ion-icon name="file-tray-outline"></ion-icon>
+      </div>
+      <div>
+        <div class="rc-title">Item Report</div>
+        <div class="rc-desc">Per vaccine sales analysis — select brand below</div>
+      </div>
+    </div>
+    <ion-button size="small" color="secondary" fill="solid" (click)="getItemReport()">
+      <ion-icon name="download-outline" slot="start"></ion-icon>PDF
+    </ion-button>
+  </div>
+
+  <!-- 3. Item Purchase Report (needs brand) -->
+  <div class="report-card">
+    <div class="rc-left">
+      <div class="rc-icon" style="background: linear-gradient(135deg,#8B0000,#C62828);">
+        <ion-icon name="cart-outline"></ion-icon>
+      </div>
+      <div>
+        <div class="rc-title">Item Purchase Report</div>
+        <div class="rc-desc">Purchase history per vaccine — select brand below</div>
+      </div>
+    </div>
+    <ion-button size="small" color="danger" fill="solid" (click)="getItemPurchaseReport()">
+      <ion-icon name="download-outline" slot="start"></ion-icon>PDF
+    </ion-button>
+  </div>
+
+  <!-- Brand selector for Item reports -->
+  <ion-item style="margin: 0 0 8px;">
+    <ion-label position="floating">Brand (for Item / Purchase reports)</ion-label>
+    <mat-form-field class="full-w">
+      <mat-select [(ngModel)]="selectedBrandId" (openedChange)="showAllBrands()"
+        placeholder="Select brand">
+        <mat-option disabled>
+          <input matInput [(ngModel)]="brandSearchTerm" (ngModelChange)="filterBrands($event)"
+            (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"
+            placeholder="Search brand" style="font-size:14px;">
+        </mat-option>
+        <mat-option *ngFor="let b of filteredBrands" [value]="b.id">{{ b.displayName }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </ion-item>
+
+  <!-- 4. Supplier Report (needs supplier) -->
+  <div class="report-card">
+    <div class="rc-left">
+      <div class="rc-icon" style="background: linear-gradient(135deg,#E65100,#FF4500);">
+        <ion-icon name="folder-outline"></ion-icon>
+      </div>
+      <div>
+        <div class="rc-title">Supplier Report</div>
+        <div class="rc-desc">Purchases grouped by supplier — select supplier below</div>
+      </div>
+    </div>
+    <ion-button size="small" color="tertiary" fill="solid" (click)="getSupplierReport()">
+      <ion-icon name="download-outline" slot="start"></ion-icon>PDF
+    </ion-button>
+  </div>
+
+  <!-- Supplier selector -->
+  <ion-item style="margin-bottom: 16px;">
+    <ion-label position="floating">Supplier (for Supplier report)</ion-label>
+    <ion-select [(ngModel)]="selectedAgent" placeholder="Select supplier">
+      <ion-select-option *ngFor="let a of agents" [value]="a">{{ a }}</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+</ion-content>

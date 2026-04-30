@@ -193,6 +193,13 @@ export class AdjustPage implements OnInit {
   onIncreaseChange() { if (this.isIncrease) { this.isDecrease = false; } }
   onDecreaseChange() { if (this.isDecrease) { this.isIncrease = false; } }
 
+  onTypeChange() {
+    // Stock loss always has zero price
+    if (this.isIncrease === false) {
+      this.rows.forEach(r => { r.price = 0; });
+    }
+  }
+
   // ── Total ─────────────────────────────────────────────────────────────────
   get totalValue(): number {
     return this.rows.reduce((s, r) => s + ((r.adjustQty || 0) * (r.price || 0)), 0);
@@ -229,7 +236,7 @@ export class AdjustPage implements OnInit {
       BrandId: r.brandId,
       ClinicId: this.selectedClinic,
       Adjustment: sign * Number(r.adjustQty),
-      Price: Number(r.price),
+      Price: this.isDecrease ? 0 : Number(r.price),
       Reason: r.reason,
       Date: new Date(),
       BatchLot: r.batchLot || null,

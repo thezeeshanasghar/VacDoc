@@ -12,6 +12,7 @@
       <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management" name="document-text-outline" size="large"></ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/stock-transfer" name="swap-horizontal-outline" size="large"></ion-icon>
       <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/adjust-history" name="time-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/direct-sale" name="bag-handle-outline" size="large"></ion-icon>
       <ion-menu-button style="margin-left: 10%"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
@@ -35,7 +36,7 @@
 
       <ion-item lines="none" style="margin-top: 8px;">
         <ion-label>Adjustment Type <span style="color:red">*</span></ion-label>
-        <ion-segment [(ngModel)]="isIncrease" (ionChange)="onIncreaseChange()" slot="end" style="max-width: 220px;">
+        <ion-segment [(ngModel)]="isIncrease" (ionChange)="onTypeChange()" slot="end" style="max-width: 220px;">
           <ion-segment-button [value]="true">
             <ion-label>
               <ion-icon name="add-circle-outline"></ion-icon> Increase
@@ -43,11 +44,16 @@
           </ion-segment-button>
           <ion-segment-button [value]="false">
             <ion-label>
-              <ion-icon name="remove-circle-outline"></ion-icon> Decrease
+              <ion-icon name="remove-circle-outline"></ion-icon> Stock Loss
             </ion-label>
           </ion-segment-button>
         </ion-segment>
       </ion-item>
+
+      <ion-note *ngIf="isIncrease === false" color="danger" style="padding: 6px 16px; display:block; font-size:12px;">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        &nbsp;Stock Loss (stolen / expired / damaged) — no sale value. Price is always zero.
+      </ion-note>
 
     </ion-card-content>
   </ion-card>
@@ -147,15 +153,17 @@
                 </ion-note>
               </td>
 
-              <!-- Price -->
+              <!-- Price: 0 and locked for Stock Loss -->
               <td style="min-width: 80px;">
                 <ion-input
                   type="number"
                   [(ngModel)]="row.price"
-                  min="0.01"
+                  [value]="isIncrease === false ? 0 : row.price"
+                  [disabled]="isIncrease === false"
+                  min="0"
                   step="0.01"
                   placeholder="Price"
-                  style="font-size:13px; min-width:75px;">
+                  style="font-size:13px; min-width:75px; opacity: {{ isIncrease === false ? 0.5 : 1 }}">
                 </ion-input>
               </td>
 

@@ -1,0 +1,140 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start"><ion-back-button></ion-back-button></ion-buttons>
+    <ion-title>Direct Sale</ion-title>
+  </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-buttons class="ion-justify-content-center" style="border-radius:5px;">
+      <ion-icon style="margin-left:10%" routerLink="/members/doctor/brand-amount" name="bar-chart-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left:10%" routerLink="/members/doctor/stock-management/add" name="add-circle-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left:10%" routerLink="/members/doctor/stock-management" name="document-text-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left:10%" routerLink="/members/doctor/stock-management/adjust" name="sync-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left:10%" routerLink="/members/doctor/stock-management/stock-transfer" name="swap-horizontal-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left:10%" routerLink="/members/doctor/stock-management/direct-sale-history" name="time-outline" size="large"></ion-icon>
+      <ion-menu-button style="margin-left:10%"></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Clinic + Brand -->
+  <ion-card>
+    <ion-card-header color="primary"><ion-card-title>Sale Details</ion-card-title></ion-card-header>
+    <ion-card-content>
+
+      <ion-item>
+        <ion-label position="floating">Clinic <span style="color:red">*</span></ion-label>
+        <ion-select [(ngModel)]="selectedClinic" (ionChange)="onClinicChange()" placeholder="Select clinic">
+          <ion-select-option *ngFor="let c of clinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Brand <span style="color:red">*</span></ion-label>
+        <mat-form-field class="full-w">
+          <mat-select [(ngModel)]="selectedBrandId" (openedChange)="showAllBrands()"
+            (selectionChange)="onBrandSelected($event.value)" placeholder="Select brand">
+            <mat-option disabled>
+              <input matInput [(ngModel)]="brandSearchTerm" (ngModelChange)="filterBrands($event)"
+                (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"
+                placeholder="Search brand" style="font-size:15px;">
+            </mat-option>
+            <mat-option *ngFor="let b of filteredBrands" [value]="b.id">{{ b.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ion-item>
+
+      <ion-item *ngIf="availableBatches.length > 0">
+        <ion-label position="floating">Batch / Lot</ion-label>
+        <ion-select [(ngModel)]="selectedBatch" (ionChange)="onBatchSelected($event.detail.value)" placeholder="Select batch">
+          <ion-select-option value="">— No specific batch —</ion-select-option>
+          <ion-select-option *ngFor="let b of availableBatches" [value]="b.BatchLot || ''">
+            {{ b.BatchLot || '(No batch)' }} — Avail: {{ b.AvailableQuantity }} — Exp: {{ b.Expiry ? (b.Expiry | date:'dd/MM/yyyy') : 'N/A' }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <div class="two-col" *ngIf="selectedBrandId">
+        <ion-item>
+          <ion-label position="floating">Expiry</ion-label>
+          <ion-input type="date" [(ngModel)]="expiry" [disabled]="!!selectedBatch"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Available</ion-label>
+          <ion-input type="number" [value]="availableQty" disabled></ion-input>
+        </ion-item>
+      </div>
+
+      <div class="two-col">
+        <ion-item>
+          <ion-label position="floating">Sale Price / Unit <span style="color:red">*</span></ion-label>
+          <ion-input type="number" [(ngModel)]="salePrice" min="0.01" step="0.01" placeholder="Rs"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Quantity <span style="color:red">*</span></ion-label>
+          <ion-input type="number" [(ngModel)]="quantity" min="1" placeholder="Units"></ion-input>
+        </ion-item>
+      </div>
+
+      <ion-note *ngIf="quantity > availableQty && availableQty > 0" color="danger" style="padding:6px 16px; display:block; font-size:12px;">
+        Quantity exceeds available stock ({{ availableQty }})
+      </ion-note>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Financials summary -->
+  <ion-card *ngIf="quantity > 0 && salePrice > 0">
+    <ion-card-header color="primary"><ion-card-title>Sale Summary</ion-card-title></ion-card-header>
+    <ion-card-content>
+      <div class="summary-row">
+        <span>Sale Value</span>
+        <span class="summary-val blue">Rs {{ totalSaleValue | number:'1.2-2' }}</span>
+      </div>
+      <div class="summary-row">
+        <span>Cost (Purchase Price)</span>
+        <span class="summary-val">Rs {{ totalCost | number:'1.2-2' }}</span>
+      </div>
+      <div class="summary-row profit-row">
+        <span><strong>Profit</strong></span>
+        <span class="summary-val" [style.color]="profit >= 0 ? '#2E7D32' : '#C62828'">
+          <strong>Rs {{ profit | number:'1.2-2' }}</strong>
+        </span>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Client & payment -->
+  <ion-card>
+    <ion-card-header color="primary"><ion-card-title>Client & Payment</ion-card-title></ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="floating">Client Name (optional)</ion-label>
+        <ion-input type="text" [(ngModel)]="clientName" placeholder="Client name"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Payment Mode</ion-label>
+        <ion-select [(ngModel)]="paymentMode">
+          <ion-select-option value="Cash">Cash</ion-select-option>
+          <ion-select-option value="Bank Transfer">Bank Transfer</ion-select-option>
+          <ion-select-option value="Cheque">Cheque</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Sale Date</ion-label>
+        <ion-input type="date" [(ngModel)]="saleDate"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Notes (optional)</ion-label>
+        <ion-textarea [(ngModel)]="notes" rows="2" placeholder="Any notes..."></ion-textarea>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="block" class="ion-margin-top submit-btn" (click)="onSubmit()">
+    <ion-icon name="bag-handle-outline" slot="start"></ion-icon>
+    Record Sale
+  </ion-button>
+
+</ion-content>

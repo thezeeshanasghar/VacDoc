@@ -18,6 +18,8 @@ const routes: Routes = [
   { path: 'stock-transfer', loadChildren: () => import('./stock-transfer/stock-transfer.module').then(m => m.StockTransferPageModule) },
   { path: 'stock-transfer-history', loadChildren: () => import('./stock-transfer-history/stock-transfer-history.module').then(m => m.StockTransferHistoryPageModule) },
   { path: 'adjust-history', loadChildren: () => import('./adjust-history/adjust-history.module').then(m => m.AdjustHistoryPageModule) },
+  { path: 'direct-sale', loadChildren: () => import('./direct-sale/direct-sale.module').then(m => m.DirectSalePageModule) },
+  { path: 'direct-sale-history', loadChildren: () => import('./direct-sale-history/direct-sale-history.module').then(m => m.DirectSaleHistoryPageModule) },
 ];
 
 @NgModule({
