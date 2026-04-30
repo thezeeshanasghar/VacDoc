@@ -1,162 +1,235 @@
 <ion-header>
-    <ion-toolbar color="primary">
-        <ion-buttons slot="start">
-            <ion-back-button></ion-back-button>
-        </ion-buttons>
-        <ion-title>Edit Stock</ion-title>
-    </ion-toolbar>
-    <ion-toolbar color="primary" >
-        <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
-          <ion-icon style="margin-left: 10%" routerLink="/members/doctor/brand-amount"  name="bar-chart-outline" size="large" > </ion-icon>
-          <!-- <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/add"  name="add-circle-outline" size="large" > </ion-icon> -->
-          <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management" name="document-text-outline" size="large" > </ion-icon>
-          <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/adjust" name="sync-outline" size="large" > </ion-icon>
-          <ion-menu-button style="margin-left: 10%"></ion-menu-button>
-        </ion-buttons>
-    </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/stock-management"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ editMode ? 'Edit Bill' : 'Bill Details' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="toggleEdit()" *ngIf="!editMode">
+        <ion-icon name="create-outline" style="color:white; font-size:22px;"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
 </ion-header>
-  
-<ion-content>
-    <form [formGroup]="fg1">
-      <!-- Bill Number -->
-      <ion-item>
-        <ion-label position="floating">Bill No.</ion-label>
-        <ion-input formControlName="billNo" placeholder="Enter bill number"></ion-input>
-      </ion-item>
-  
-      <!-- Supplier Name -->
-      <ion-item>
-        <ion-label position="floating">Supplier Name</ion-label>
-        <mat-form-field class="example-full-width" style="width: 100%;">
-          <input
-            type="text"
-            aria-label="Supplier"
-            matInput
-            formControlName="supplier"
-            [matAutocomplete]="supplierAuto"
-            (input)="filterSuppliers($any($event.target).value)"
-            placeholder="Select supplier"
-            style="font-size: 15px;"
-          />
-          <mat-autocomplete
-            #supplierAuto="matAutocomplete"
-            class="no-indent"
-            autoActiveFirstOption
-            (optionSelected)="selectSupplier($event)"
-          >
-            <mat-option *ngFor="let option of agents" [value]="option">
-              {{ option }}
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-      </ion-item>
-  
-      <!-- Purchase Date -->
-      <ion-item>
-        <ion-label position="floating">Purchase Date</ion-label>
-        <ion-datetime
-          formControlName="billDate"
-          displayFormat="DD/MM/YYYY"
-          placeholder="Select purchase date"
-        ></ion-datetime>
-      </ion-item>
-  
-      <!-- Payment Date -->
-      <!-- <ion-item>
-        <ion-label position="floating">Payment Date</ion-label>
-        <ion-datetime
-          formControlName="paymentDate"
-          display-format="YYYY-MM-DD"
-          placeholder="Select payment date"
-        ></ion-datetime>
-      </ion-item>
-  
-      
-      <ion-item>
-        <ion-label>Is Paid</ion-label>
-        <ion-checkbox formControlName="isPaid"></ion-checkbox>
-      </ion-item> -->
-    <ion-item>
-        <ion-label>Payment Status</ion-label>
-        <ion-checkbox slot="end" formControlName="isPaid" ></ion-checkbox>
-    </ion-item>
-    
-    <ion-item *ngIf="fg1.get('isPaid')?.value">
-        <ion-label position="floating">Payment Date</ion-label>
-        <ion-datetime formControlName="paidDate" displayFormat="DD/MM/YYYY" min="2020" max="2025" [value]="defaultDate"
-            required></ion-datetime>
-    </ion-item>
-  
-      <!-- Stock Items -->
-      <div *ngFor="let item of stockItems; let i = index">
-        <ion-item>
-          <ion-label position="floating">Brand Name</ion-label>
-          <mat-form-field class="example-full-width" style="width: 100%;">
-            <mat-select
-              [(ngModel)]="item.brandId"
-              [ngModelOptions]="{standalone: true}"
-              (openedChange)="showAllBrands()"
-              (selectionChange)="selectBrandById($event.value, item)"
-              placeholder="Select brand"
-            >
-              <mat-option disabled>
-                <input
-                  matInput
-                  [(ngModel)]="brandSearchTerm"
-                  [ngModelOptions]="{ standalone: true }"
-                  (ngModelChange)="filterBrands($event)"
-                  (click)="$event.stopPropagation()"
-                  (keydown)="$event.stopPropagation()"
-                  placeholder="Search brand"
-                  style="font-size: 15px;"
-                />
-              </mat-option>
-              <mat-option *ngFor="let brand of filteredBrands" [value]="brand.id">
-                {{ brand.displayName }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating">Quantity</ion-label>
-          <ion-input
-            [(ngModel)]="item.quantity"
-            [ngModelOptions]="{standalone: true}"
-            placeholder="Enter quantity"
-          ></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating">Price</ion-label>
-          <ion-input
-            [(ngModel)]="item.price"
-            [ngModelOptions]="{standalone: true}"
-            placeholder="Enter price"
-          ></ion-input>
-        </ion-item>
-        <ion-button fill="clear" color="danger" (click)="removeRow(i)">
-          <ion-icon name="trash"></ion-icon>
-        </ion-button>
+
+<ion-content class="ion-padding">
+
+  <!-- ── BILL HEADER CARD ── -->
+  <div class="bill-header-card">
+    <div class="bh-top">
+      <div>
+        <div class="bh-supplier">{{ fg1.get('supplier').value || 'No Supplier' }}</div>
+        <div class="bh-billno">Bill No: {{ fg1.get('billNo').value || '—' }}</div>
+      </div>
+      <span class="bh-badge" [ngClass]="fg1.get('isPaid').value ? 'badge-paid' : 'badge-unpaid'">
+        {{ fg1.get('isPaid').value ? 'PAID' : 'UNPAID' }}
+      </span>
+    </div>
+    <div class="bh-amount">Rs {{ calculateTotal() | number:'1.2-2' }}</div>
+    <div class="bh-date">{{ fg1.get('billDate').value | date:'dd MMM yyyy' }}</div>
+  </div>
+
+  <!-- ── VIEW MODE ── -->
+  <div *ngIf="!editMode">
+
+    <!-- Bill info -->
+    <div class="section-card">
+      <div class="section-title">Bill Information</div>
+      <div class="info-row">
+        <span class="info-label">Bill No.</span>
+        <span class="info-value">{{ fg1.get('billNo').value || '—' }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Supplier</span>
+        <span class="info-value">{{ fg1.get('supplier').value || '—' }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Date</span>
+        <span class="info-value">{{ fg1.get('billDate').value | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Payment</span>
+        <span class="info-value" [style.color]="fg1.get('isPaid').value ? '#2E7D32' : '#C62828'">
+          {{ fg1.get('isPaid').value ? 'Paid' : 'Unpaid' }}
+        </span>
+      </div>
+      <div class="info-row" *ngIf="fg1.get('isPaid').value">
+        <span class="info-label">Paid On</span>
+        <span class="info-value">{{ fg1.get('paidDate').value | date:'dd/MM/yyyy' }}</span>
+      </div>
+    </div>
+
+    <!-- Items -->
+    <div class="section-card">
+      <div class="section-title">Billed Items</div>
+      <div *ngFor="let item of stockItems; let i = index" class="item-view-row">
+        <div class="item-num">{{ i + 1 }}</div>
+        <div class="item-details">
+          <div class="item-brand">{{ item.brandName || 'Unknown Brand' }}</div>
+          <div class="item-meta">
+            Qty: {{ item.quantity }} &nbsp;·&nbsp; Price: Rs {{ item.price }}
+            <span *ngIf="item.batchLot"> &nbsp;·&nbsp; Batch: {{ item.batchLot }}</span>
+            <span *ngIf="item.expiry"> &nbsp;·&nbsp; Exp: {{ item.expiry | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+        <div class="item-total">Rs {{ (item.quantity * item.price) | number:'1.2-2' }}</div>
       </div>
 
-      <ion-button expand="block" (click)="addNewRow()" color="primary">
-        <ion-icon name="add" slot="start"></ion-icon>
-        Add New Item
-      </ion-button>
-  
-      <!-- Total Amount -->
-      <!-- <ion-item lines="none">
-        <ion-label>
-          <h2>Total Amount</h2>
-        </ion-label>
-        <ion-text slot="end" color="primary">
-          <h2>Rs {{ calculateTotal() }}</h2>
-        </ion-text>
-      </ion-item> -->
-  
-      <!-- Save Button -->
-      <ion-button expand="block" (click)="saveStock()">
-        <ion-icon name="save" slot="start"></ion-icon>
-        Save Stock
-      </ion-button>
+      <div class="total-row">
+        <span>Total</span>
+        <span class="total-amount">Rs {{ calculateTotal() | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── EDIT MODE ── -->
+  <div *ngIf="editMode">
+    <form [formGroup]="fg1">
+
+      <!-- Bill info -->
+      <div class="section-card">
+        <div class="section-title">Bill Information</div>
+
+        <div class="edit-field">
+          <ion-label class="field-label">Bill No.</ion-label>
+          <ion-input formControlName="billNo" placeholder="Bill number" class="field-input"></ion-input>
+        </div>
+
+        <div class="edit-field">
+          <ion-label class="field-label">Supplier</ion-label>
+          <mat-form-field class="full-width">
+            <input type="text" matInput formControlName="supplier"
+              [matAutocomplete]="supplierAuto"
+              (input)="filterSuppliers($any($event.target).value)"
+              placeholder="Supplier name" style="font-size:15px;">
+            <mat-autocomplete #supplierAuto="matAutocomplete" autoActiveFirstOption
+              (optionSelected)="selectSupplier($event)">
+              <mat-option *ngFor="let a of agents" [value]="a">{{ a }}</mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+
+        <div class="edit-field">
+          <ion-label class="field-label">Bill Date</ion-label>
+          <ion-datetime formControlName="billDate" displayFormat="DD/MM/YYYY"
+            placeholder="Select date" class="field-input"></ion-datetime>
+        </div>
+
+        <div class="edit-field" style="flex-direction:row; align-items:center; justify-content:space-between;">
+          <ion-label class="field-label">Paid</ion-label>
+          <ion-checkbox slot="end" formControlName="isPaid"></ion-checkbox>
+        </div>
+
+        <div class="edit-field" *ngIf="fg1.get('isPaid').value">
+          <ion-label class="field-label">Payment Date</ion-label>
+          <ion-datetime formControlName="paidDate" displayFormat="DD/MM/YYYY"
+            class="field-input"></ion-datetime>
+        </div>
+      </div>
+
+      <!-- Stock items -->
+      <div class="section-card">
+        <div class="section-title">Billed Items</div>
+
+        <div *ngFor="let item of stockItems; let i = index" class="edit-item-card">
+          <div class="edit-item-header">
+            <span class="edit-item-num">#{{ i + 1 }}</span>
+            <ion-button fill="clear" color="danger" size="small" (click)="removeRow(i)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </div>
+
+          <!-- Brand -->
+          <div class="edit-field">
+            <ion-label class="field-label">Brand</ion-label>
+            <mat-form-field class="full-width">
+              <mat-select [(ngModel)]="item.brandId" [ngModelOptions]="{standalone:true}"
+                (openedChange)="showAllBrands()"
+                (selectionChange)="selectBrandById($event.value, item)"
+                placeholder="Select brand">
+                <mat-option disabled>
+                  <input matInput [(ngModel)]="brandSearchTerm" [ngModelOptions]="{standalone:true}"
+                    (ngModelChange)="filterBrands($event)"
+                    (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"
+                    placeholder="Search brand" style="font-size:14px;">
+                </mat-option>
+                <mat-option *ngFor="let b of filteredBrands" [value]="b.id">{{ b.displayName }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- Qty + Price -->
+          <div class="two-col">
+            <div class="edit-field">
+              <ion-label class="field-label">Quantity</ion-label>
+              <ion-input type="number" [(ngModel)]="item.quantity" [ngModelOptions]="{standalone:true}"
+                placeholder="Qty" class="field-input"></ion-input>
+            </div>
+            <div class="edit-field">
+              <ion-label class="field-label">Price / Unit</ion-label>
+              <ion-input type="number" [(ngModel)]="item.price" [ngModelOptions]="{standalone:true}"
+                placeholder="Price" step="0.01" class="field-input"></ion-input>
+            </div>
+          </div>
+
+          <!-- Batch + Expiry -->
+          <div class="two-col">
+            <div class="edit-field">
+              <ion-label class="field-label">Batch / Lot</ion-label>
+              <ion-input type="text" [(ngModel)]="item.batchLot" [ngModelOptions]="{standalone:true}"
+                placeholder="Batch no." class="field-input"></ion-input>
+            </div>
+            <div class="edit-field">
+              <ion-label class="field-label">Expiry</ion-label>
+              <ion-input type="date" [(ngModel)]="item.expiry" [ngModelOptions]="{standalone:true}"
+                class="field-input"></ion-input>
+            </div>
+          </div>
+
+          <div class="item-subtotal">
+            Subtotal: <strong>Rs {{ (item.quantity * item.price) | number:'1.2-2' }}</strong>
+          </div>
+        </div>
+
+        <ion-button expand="block" fill="outline" color="primary" (click)="addNewRow()" class="add-item-btn">
+          <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+          Add Item
+        </ion-button>
+
+        <div class="total-row">
+          <span>Total</span>
+          <span class="total-amount">Rs {{ calculateTotal() | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
     </form>
-  </ion-content>
+  </div>
+
+</ion-content>
+
+<!-- ── BOTTOM BAR ── -->
+<div class="bottom-bar">
+  <!-- View mode -->
+  <ng-container *ngIf="!editMode">
+    <ion-button expand="block" class="btn-delete" (click)="confirmDelete()">
+      <ion-icon name="trash-outline" slot="start"></ion-icon>
+      Delete
+    </ion-button>
+    <ion-button expand="block" class="btn-edit" (click)="toggleEdit()">
+      <ion-icon name="create-outline" slot="start"></ion-icon>
+      Edit
+    </ion-button>
+  </ng-container>
+
+  <!-- Edit mode -->
+  <ng-container *ngIf="editMode">
+    <ion-button expand="block" class="btn-cancel" fill="outline" (click)="toggleEdit()">
+      Cancel
+    </ion-button>
+    <ion-button expand="block" class="btn-save" (click)="saveStock()">
+      <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+      Save
+    </ion-button>
+  </ng-container>
+</div>

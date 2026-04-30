@@ -129,6 +129,10 @@ export class StockService {
     const url = `${this.apiUrl}Stock/${id}`;
     return this.http.delete<Response<StockDTO>>(url);
   }
+
+  deleteBillWithReversal(billId: number): Observable<Response<any>> {
+    return this.http.delete<Response<any>>(`${this.apiUrl}Bill/${billId}/reverse`);
+  }
   getSalesReportFile(clinicId: string, fromDate: Date, toDate: Date): Observable<Blob> {
     const url = `${this.apiUrl}Schedule/clinic-report-pdf/${clinicId}?fromDate=${fromDate.toISOString()}&toDate=${toDate.toISOString()}`;
     return this.http.get(url, { responseType: 'blob' });

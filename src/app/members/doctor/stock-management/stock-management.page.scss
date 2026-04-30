@@ -1,109 +1,86 @@
-.inventory-card {
-    margin: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    height: 100%;  // Makes all cards take full height of their container
-    display: flex;
-    flex-direction: column;
-    
-    ion-card-header {
-      flex-shrink: 0;  // Prevents header from shrinking
-      
-      ion-card-title {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: white;
-        padding: 10px;
-      }
-    }
-  
-    ion-card-content {
-      flex: 1;  // Takes remaining space
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 16px;
-    }
-  
-    ion-list {
-      width: 100%;
-    }
-  
-    ion-item {
-      --padding-start: 0;
-      margin-bottom: 8px;
-      width: 100%;
-  
-      h3 {
-        font-weight: 500;
-        margin-bottom: 4px;
-        color: var(--ion-color-medium);
-      }
-  
-      p {
-        font-size: 1.1rem;
-        font-weight: bold;
-        color: var(--ion-color-dark);
-      }
-    }
-  
-    ion-badge {
-      padding: 8px 12px;
-      border-radius: 4px;
-    }
-  }
-  
-  // Add these to ensure grid columns are equal
-  ion-grid {
-    ion-row {
-      display: flex;
-      flex-wrap: wrap;
-    }
-  
-    ion-col {
-      display: flex;
-      flex-direction: column;
-    }
-  }
-  // .card-header-with-button {
-  //   display: flex;
-  //   justify-content: space-between;
-  //   align-items: center;
-  //   padding: 12px;
-  
-  //   ion-card-title {
-  //     margin: 0;
-  //     font-size: 1.2rem;
-  //     color: white;
-  //   }
-  
-  //   ion-button {
-  //     --padding-start: 8px;
-  //     --padding-end: 8px;
-  //     margin: 0;
-  //   }
-  // }
-  ion-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px;
-  
-    ion-button {
-      margin: 0;
-      --padding-start: 4px;
-      --padding-end: 4px;
-      
-      ion-card-title {
-        color: white;
-        font-size: 1.2rem;
-        margin: 0;
-        text-align: left;
-      }
-  
-      &:first-child {
-        flex: 1;
-        justify-content: flex-start;
-      }
-    }
-  }
+// ── Summary card ──────────────────────────────────────────────────────────────
+.summary-card {
+  background: linear-gradient(135deg, #0D47A1 0%, #1565C0 100%);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(13,71,161,0.30);
+}
+.summary-row   { display: flex; align-items: center; justify-content: space-between; }
+.summary-item  { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.summary-label { font-size: 11px; color: rgba(255,255,255,0.70); letter-spacing: 0.3px; }
+.summary-value { font-size: 17px; font-weight: 800; color: #ffffff; }
+.summary-value.blue { color: #90CAF9; }
+.summary-value.red  { color: #EF9A9A; }
+.summary-divider    { width: 1px; height: 36px; background: rgba(255,255,255,0.20); }
+
+// ── Bill cards ────────────────────────────────────────────────────────────────
+.bill-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 14px 16px 10px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 10px rgba(21,101,192,0.10), 0 1px 3px rgba(0,0,0,0.06);
+  border-left: 4px solid #1565C0;
+}
+
+.bill-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+.bill-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+.supplier-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+.bill-badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+.badge-paid    { background: #E8F5E9; color: #2E7D32; }
+.badge-unpaid  { background: #FFEBEE; color: #C62828; }
+.badge-partial { background: #FFF3E0; color: #E65100; }
+
+.bill-date   { font-size: 12px; color: #6B7280; font-weight: 500; }
+.bill-amount { font-size: 22px; font-weight: 900; color: #0D47A1; margin-bottom: 3px; }
+.bill-sub    { font-size: 12px; color: #9CA3AF; margin-bottom: 8px; }
+
+.bill-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+  border-top: 1px solid #F3F4F6;
+  padding-top: 6px;
+}
+.act-btn {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  height: 36px;
+  ion-icon { font-size: 20px; }
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #9CA3AF;
+  ion-icon { font-size: 56px; display: block; margin: 0 auto 12px; }
+  p { font-size: 14px; }
+}

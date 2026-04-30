@@ -1,84 +1,109 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-    </ion-buttons>
-    <ion-title>Purchase Report</ion-title>
+    <ion-title class="ion-text-center" style="cursor:pointer" routerLink="/members/doctor/clinic">
+      {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name : 'Purchase Report' }}
+    </ion-title>
   </ion-toolbar>
-  <ion-toolbar color="primary" >
+  <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/brand-amount"  name="bar-chart-outline" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/add"  name="add-circle-outline" size="large" > </ion-icon>
-      <!-- <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management" name="document-text-outline" size="large" > </ion-icon> -->
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/adjust" name="sync-outline" size="large" > </ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/stock-transfer" name="swap-horizontal-outline" size="large" ></ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/brand-amount" name="bar-chart-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/add" name="add-circle-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/adjust" name="sync-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/stock-transfer" name="swap-horizontal-outline" size="large"></ion-icon>
       <ion-menu-button style="margin-left: 10%"></ion-menu-button>
     </ion-buttons>
-</ion-toolbar>
+  </ion-toolbar>
 </ion-header>
+
 <ion-content class="ion-padding">
-  <ion-item>
-    <ion-label position="floating">Select Clinic</ion-label>
+
+  <!-- Clinic selector for PA -->
+  <ion-item *ngIf="usertype && usertype.UserType === 'PA'" style="margin-bottom: 12px;">
+    <ion-label>Clinic</ion-label>
     <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)">
-      <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
-        {{ clinic.Name }}
-      </ion-select-option>
+      <ion-select-option *ngFor="let c of clinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
     </ion-select>
   </ion-item>
-  <ion-grid>
-    <ion-row>
-      <ion-col size="12" size-sm="6" size-md="4" *ngFor="let b of data">
-        <ion-card class="inventory-card">
-          <ion-card-header color="primary" class="card-header-with-button">
-            <ion-button fill="clear" color="light" [routerLink]="['/members/doctor/stock-management/brandlist/', b.Id]">
-              <ion-card-title>{{b.BillNo}}</ion-card-title>
-              <ion-icon name="arrow-forward" slot="icon-only"></ion-icon>
-            </ion-button>
-            <ion-button *ngIf="usertype === 'DOCTOR' && !b.IsPAApprove"
-              color="success" class="approve-button" (click)="approvePurchase(b.Id)">
-              Approve
-            </ion-button>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-list lines="none">
-              <ion-item>
-                <ion-label>
-                  <h3>Date</h3>
-                  <p>{{b.BillDate | date:'dd/MM/yyyy'}}</p>
-                </ion-label>
-              </ion-item>
-              <!-- <ion-item>
-                <ion-label>
-                  <h3>Total Purchase Price</h3>
-                  <p>{{b.PurchasedAmt}} Rs</p>
-                </ion-label>
-              </ion-item> -->
-              <ion-item>
-                <ion-label>
-                  <h3>Supplier Name</h3>
-                  <p>{{b.Supplier? b.Supplier : 'not enter'}}</p>
-                </ion-label>
-                <ion-badge slot="end" [color]="b.IsPaid ? 'success' : 'danger'">
-                  {{b.IsPaid ? 'Paid' : 'Unpaid'}}
-                </ion-badge>
-              </ion-item>
-              <!-- <ion-item>
-                <ion-label>
-                  <h3>Payment Status</h3>
-                  <p>{{b.IsPaid ? 'Paid' : 'Unpaid'}}</p>
-                </ion-label>
-                <ion-badge slot="end" [color]="b.IsPaid ? 'success' : 'danger'">
-                  {{b.IsPaid ? 'Paid' : 'Unpaid'}}
-                </ion-badge>
-              </ion-item> -->
-            </ion-list>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-  <!-- <ion-fab horizontal="end" vertical="bottom" slot="fixed">
-    <ion-fab-button routerLink="/members/doctor/stock-management/add" color="primary">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab> -->
+  <ion-item *ngIf="usertype && usertype.UserType === 'DOCTOR'" style="margin-bottom: 12px;">
+    <ion-label>Clinic</ion-label>
+    <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)">
+      <ion-select-option *ngFor="let c of clinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <!-- Total summary card -->
+  <div class="summary-card" *ngIf="data && data.length">
+    <div class="summary-row">
+      <div class="summary-item">
+        <span class="summary-label">Total Purchase</span>
+        <span class="summary-value blue">Rs {{ getTotalPurchase() | number:'1.2-2' }}</span>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-item">
+        <span class="summary-label">Bills</span>
+        <span class="summary-value">{{ data.length }}</span>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-item">
+        <span class="summary-label">Unpaid</span>
+        <span class="summary-value red">{{ getUnpaidCount() }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bill cards -->
+  <div *ngFor="let b of data" class="bill-card">
+
+    <!-- Top row: supplier + badge + date -->
+    <div class="bill-header">
+      <div class="bill-header-left">
+        <span class="supplier-name">{{ b.Supplier || 'No Supplier' }}</span>
+        <span class="bill-badge" [ngClass]="b.IsPaid ? 'badge-paid' : 'badge-unpaid'">
+          {{ b.IsPaid ? 'PAID' : 'UNPAID' }}
+        </span>
+      </div>
+      <div class="bill-header-right">
+        <span class="bill-date">{{ b.BillDate | date:'dd MMM, yy' }}</span>
+      </div>
+    </div>
+
+    <!-- Amount -->
+    <div class="bill-amount">Rs {{ b.TotalAmount | number:'1.2-2' }}</div>
+    <div class="bill-sub">{{ b.BillNo }} &nbsp;·&nbsp; {{ b.TotalItems }} item(s)</div>
+
+    <!-- Action icons -->
+    <div class="bill-actions">
+      <ion-button fill="clear" class="act-btn" (click)="printBill(b)" title="Print">
+        <ion-icon name="print-outline" color="medium"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" class="act-btn" (click)="shareBill(b)" title="Share">
+        <ion-icon name="share-outline" color="medium"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" class="act-btn" (click)="openBillMenu(b)" title="More">
+        <ion-icon name="ellipsis-vertical" color="medium"></ion-icon>
+      </ion-button>
+    </div>
+
+    <!-- Approve button for PA -->
+    <ion-button *ngIf="usertype && usertype.UserType === 'DOCTOR' && !b.IsPAApprove"
+      size="small" color="success" fill="outline" (click)="approvePurchase(b.Id)"
+      style="margin-top: 6px;">
+      Approve
+    </ion-button>
+
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!data || !data.length" class="empty-state">
+    <ion-icon name="receipt-outline"></ion-icon>
+    <p>No purchase bills found for this clinic.</p>
+  </div>
+
 </ion-content>
+
+<!-- Floating add button -->
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button color="tertiary" routerLink="/members/doctor/stock-management/add">
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

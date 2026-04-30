@@ -1,58 +1,198 @@
-.table-container {
-    overflow-x: auto;
-    margin: 16px 0;
-    
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      // background: white;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      
-      th, td {
-        padding: 12px;
-        text-align: left;
-        border-bottom: 1px solid var(--ion-color-light-shade);
-      }
-      
-      th {
-        background: var(--ion-color-primary);
-        color: white;
-        font-weight: 500;
-        font-size: 0.9rem;
-        text-transform: uppercase;
-      }
-      
-      td {
-        font-size: 0.95rem;
-        
-        ion-badge {
-          padding: 4px 8px;
-          border-radius: 4px;
-        }
-      }
-      
-      tr:hover {
-        background-color: var(--ion-color-light);
-      }
-    }
-  }
-  ion-card {
-    margin: 8px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  
-    ion-card-header {
-      padding: 16px;
-  
-      ion-card-subtitle {
-        font-size: 14px;
-        color: gray;
-      }
-  
-      ion-card-title {
-        font-size: 24px;
-        font-weight: bold;
-        color: var(--ion-color-primary);
-      }
-    }
-  }
+// ── Bill header card ──────────────────────────────────────────────────────────
+.bill-header-card {
+  background: linear-gradient(135deg, #0D47A1 0%, #1565C0 100%);
+  border-radius: 18px;
+  padding: 18px 20px 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 6px 20px rgba(13,71,161,0.30);
+  color: #fff;
+}
+.bh-top       { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.bh-supplier  { font-size: 18px; font-weight: 800; }
+.bh-billno    { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 2px; }
+.bh-amount    { font-size: 28px; font-weight: 900; margin-bottom: 4px; }
+.bh-date      { font-size: 12px; color: rgba(255,255,255,0.65); }
+
+.bh-badge {
+  font-size: 10px; font-weight: 800; padding: 4px 10px;
+  border-radius: 20px; letter-spacing: 0.5px; flex-shrink: 0;
+}
+.badge-paid   { background: rgba(255,255,255,0.20); color: #A5D6A7; }
+.badge-unpaid { background: rgba(198,40,40,0.25);   color: #EF9A9A; }
+
+// ── Section cards ─────────────────────────────────────────────────────────────
+.section-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 10px rgba(21,101,192,0.08);
+}
+.section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1565C0;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 12px;
+}
+
+// ── View mode ─────────────────────────────────────────────────────────────────
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #F3F4F6;
+  &:last-of-type { border-bottom: none; }
+}
+.info-label { font-size: 13px; color: #6B7280; }
+.info-value { font-size: 13px; font-weight: 600; color: #111827; }
+
+.item-view-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #F3F4F6;
+  &:last-of-type { border-bottom: none; }
+}
+.item-num    { width: 22px; height: 22px; border-radius: 50%; background: #1565C0; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.item-details { flex: 1; }
+.item-brand  { font-size: 14px; font-weight: 600; color: #111827; }
+.item-meta   { font-size: 11px; color: #9CA3AF; margin-top: 2px; }
+.item-total  { font-size: 13px; font-weight: 700; color: #0D47A1; flex-shrink: 0; }
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 2px solid #E5E7EB;
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+}
+.total-amount { font-size: 18px; color: #0D47A1; font-weight: 900; }
+
+// ── Edit mode ─────────────────────────────────────────────────────────────────
+.edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+.field-label {
+  font-size: 12px !important;
+  color: #6B7280 !important;
+  font-weight: 600;
+}
+.field-input {
+  border: 1.5px solid #DDE3F4;
+  border-radius: 10px;
+  --padding-start: 10px;
+  --padding-end: 10px;
+  background: #F4F6FC;
+  min-height: 40px;
+  font-size: 14px;
+  &:focus-within { border-color: #1565C0; }
+}
+.full-width { width: 100%; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.edit-item-card {
+  background: #F8FAFF;
+  border: 1.5px solid #DDE3F4;
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+.edit-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.edit-item-num {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1565C0;
+  background: rgba(21,101,192,0.10);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.item-subtotal {
+  text-align: right;
+  font-size: 12px;
+  color: #6B7280;
+  margin-top: 4px;
+  strong { color: #0D47A1; }
+}
+
+.add-item-btn {
+  --border-radius: 12px;
+  margin: 4px 0 12px;
+  height: 44px;
+}
+
+// ── Bottom bar ────────────────────────────────────────────────────────────────
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 0;
+  z-index: 100;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.10);
+}
+
+.btn-delete {
+  flex: 1;
+  --background: #C62828;
+  --background-activated: #8B0000;
+  --color: #fff;
+  --border-radius: 0;
+  margin: 0;
+  height: 54px;
+  font-weight: 700;
+  font-size: 15px;
+}
+.btn-edit {
+  flex: 1;
+  --background: #1565C0;
+  --background-activated: #0D47A1;
+  --color: #fff;
+  --border-radius: 0;
+  margin: 0;
+  height: 54px;
+  font-weight: 700;
+  font-size: 15px;
+}
+.btn-cancel {
+  flex: 1;
+  --border-color: #6B7280;
+  --color: #6B7280;
+  --border-radius: 0;
+  margin: 0;
+  height: 54px;
+  font-weight: 700;
+  background: #fff;
+}
+.btn-save {
+  flex: 1;
+  --background: linear-gradient(135deg, #FF4500 0%, #C62828 100%);
+  --background-activated: #8B0000;
+  --color: #fff;
+  --border-radius: 0;
+  margin: 0;
+  height: 54px;
+  font-weight: 800;
+  font-size: 15px;
+}
+
+ion-content { --padding-bottom: 60px; }
+
+::ng-deep .mat-form-field-wrapper { padding-bottom: 0; }
