@@ -227,3 +227,148 @@ ion-searchbar {
   background: rgba(21, 101, 192, 0.35);
   border-radius: 3px;
 }
+
+// ── Alert popups (ion-select default + ion-alert) ────────────────────────────
+.alert-wrapper {
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  box-shadow: 0 12px 40px rgba(21, 101, 192, 0.22),
+              0 2px 10px rgba(0, 0, 0, 0.14) !important;
+  min-width: 290px !important;
+}
+
+.alert-head {
+  background: linear-gradient(135deg, var(--vac-blue) 0%, var(--vac-blue-lt) 100%) !important;
+  padding: 18px 20px 14px !important;
+}
+
+.alert-title {
+  color: #ffffff !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2px;
+}
+
+.alert-sub-title {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 13px !important;
+}
+
+.alert-message {
+  color: #374151 !important;
+  font-size: 14px !important;
+  padding: 14px 20px !important;
+}
+
+.alert-radio-group,
+.alert-checkbox-group {
+  border-top: none !important;
+  border-bottom: 1px solid rgba(21, 101, 192, 0.10) !important;
+  padding: 6px 0 !important;
+  max-height: 260px;
+}
+
+// Row hover
+.alert-radio-button:hover,
+.alert-checkbox-button:hover {
+  background: rgba(21, 101, 192, 0.05) !important;
+}
+
+// Selected option label
+[aria-checked="true"] .alert-radio-label,
+[aria-checked="true"] .alert-checkbox-label {
+  color: var(--vac-blue) !important;
+  font-weight: 600 !important;
+}
+
+// Radio dot / checkbox fill — use primary colour
+.alert-radio-inner  { background: var(--vac-blue) !important; }
+.alert-checkbox-icon { background: var(--vac-blue) !important;
+                        border-color: var(--vac-blue) !important; }
+
+// Checked radio outer ring
+[aria-checked="true"] .alert-radio-icon { border-color: var(--vac-blue) !important; }
+
+// Button bar
+.alert-button-group {
+  padding: 10px 14px 14px !important;
+  gap: 8px !important;
+  justify-content: flex-end !important;
+}
+
+// CANCEL-style button
+.alert-button {
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  padding: 8px 18px !important;
+  min-width: 80px !important;
+  color: var(--vac-blue) !important;
+  border: 1.5px solid rgba(21, 101, 192, 0.30) !important;
+  background: transparent !important;
+  margin: 0 2px !important;
+}
+
+// OK / confirm button (last in group) — filled blue
+.alert-button:last-child,
+.alert-button.alert-button-role-confirm {
+  background: var(--vac-blue) !important;
+  color: #ffffff !important;
+  border-color: var(--vac-blue) !important;
+  box-shadow: 0 3px 10px rgba(21, 101, 192, 0.40) !important;
+}
+
+// ── Action sheets (country-code pickers etc.) ─────────────────────────────────
+.action-sheet-group {
+  border-radius: 16px 16px 0 0 !important;
+  overflow: hidden !important;
+}
+
+.action-sheet-title.sc-ion-action-sheet-md,
+.action-sheet-title.sc-ion-action-sheet-ios {
+  background: linear-gradient(135deg, var(--vac-blue) 0%, var(--vac-blue-lt) 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  padding: 16px 20px !important;
+}
+
+.action-sheet-button.sc-ion-action-sheet-md,
+.action-sheet-button.sc-ion-action-sheet-ios {
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  color: #111827 !important;
+}
+
+.action-sheet-button.sc-ion-action-sheet-md:hover,
+.action-sheet-button.sc-ion-action-sheet-ios:hover {
+  background: rgba(21, 101, 192, 0.07) !important;
+}
+
+// Cancel button in action sheet
+.action-sheet-cancel.sc-ion-action-sheet-md,
+.action-sheet-cancel.sc-ion-action-sheet-ios {
+  color: var(--vac-blue) !important;
+  font-weight: 700 !important;
+}
+
+// ── Popover selects ───────────────────────────────────────────────────────────
+.popover-content {
+  border-radius: 14px !important;
+  box-shadow: 0 8px 28px rgba(21, 101, 192, 0.18),
+              0 2px 8px rgba(0, 0, 0, 0.10) !important;
+  overflow: hidden !important;
+}
+
+ion-popover ion-item {
+  --border-color: rgba(21, 101, 192, 0.08) !important;
+}
+
+ion-popover ion-item.item-radio-checked,
+ion-popover ion-item[aria-checked="true"] {
+  --background: rgba(21, 101, 192, 0.07) !important;
+  --color: var(--vac-blue) !important;
+  font-weight: 600;
+}
