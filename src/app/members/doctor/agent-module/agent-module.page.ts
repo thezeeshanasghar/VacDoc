@@ -1,0 +1,136 @@
+import { Component, OnInit } from '@angular/core';
+import { AlertController, LoadingController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { AgentService } from 'src/app/services/agent.service';
+import { ToastService } from 'src/app/shared/toast.service';
+
+@Component({
+  selector: 'app-agent-module',
+  templateUrl: './agent-module.page.html',
+  styleUrls: ['./agent-module.page.scss'],
+})
+export class AgentModulePage implements OnInit {
+  agents: any[] = [];
+
+  constructor(
+    private agentService: AgentService,
+    private alertController: AlertController,
+    private loadingCtrl: LoadingController,
+    private toastService: ToastService,
+    private router: Router
+  ) {}
+
+  ngOnInit() {
+    this.loadAgents();
+  }
+
+  async loadAgents() {
+    const loader = await this.loadingCtrl.create({ message: 'Loading...' });
+    await loader.present();
+    this.agentService.getAllAgents().subscribe(
+      (data: any) => {
+        this.agents = data;
+        loader.dismiss();
+      },
+      (err: any) => {
+        loader.dismiss();
+        this.toastService.create('Failed to load agents', 'danger');
+      }
+    );
+  }
+
+  async addAgent() {
+    const alert = await this.alertController.create({
+      header: 'Add Agent',
+      inputs: [
+        { name: 'name', type: 'text', placeholder: 'Agent Name *' },
+        { name: 'phone', type: 'tel', placeholder: 'Phone Number' },
+        { name: 'fee', type: 'number', placeholder: 'Referral Fee per Client (Rs.)' },
+      ],
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Add',
+          handler: (data: any) => {
+            if (!data.name || !data.name.trim()) {
+              this.toastService.create('Agent name is required', 'danger');
+              return false;
+            }
+            const agent = {
+              Name: data.name.trim(),
+              PhoneNumber: data.phone || '',
+              ReferralFeePerClient: parseFloat(data.fee) || 0
+            };
+            this.agentService.addAgent(agent).subscribe(
+              () => { this.loadAgents(); },
+              (err: any) => { this.toastService.create('Failed to add agent', 'danger'); }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async editAgent(agent: any) {
+    const alert = await this.alertController.create({
+      header: 'Edit Agent',
+      inputs: [
+        { name: 'name', type: 'text', placeholder: 'Agent Name *', value: agent.Name || agent.name },
+        { name: 'phone', type: 'tel', placeholder: 'Phone Number', value: agent.PhoneNumber || agent.phoneNumber },
+        { name: 'fee', type: 'number', placeholder: 'Referral Fee per Client (Rs.)', value: agent.ReferralFeePerClient || agent.referralFeePerClient },
+      ],
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Save',
+          handler: (data: any) => {
+            if (!data.name || !data.name.trim()) {
+              this.toastService.create('Agent name is required', 'danger');
+              return false;
+            }
+            const id = agent.Id || agent.id;
+            const updated = {
+              Id: id,
+              Name: data.name.trim(),
+              PhoneNumber: data.phone || '',
+              ReferralFeePerClient: parseFloat(data.fee) || 0
+            };
+            this.agentService.updateAgent(id, updated).subscribe(
+              () => { this.loadAgents(); },
+              (err: any) => { this.toastService.create('Failed to update agent', 'danger'); }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  viewReport(agent: any) {
+    const id = agent.Id || agent.id;
+    this.router.navigate(['/members/doctor/agent-module/report', id]);
+  }
+
+  async deleteAgent(agent: any) {
+    const confirm = await this.alertController.create({
+      header: 'Delete Agent',
+      message: 'Delete "' + (agent.Name || agent.name) + '"? This cannot be undone.',
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Delete',
+          role: 'destructive',
+          handler: () => {
+            const id = agent.Id || agent.id;
+            this.agentService.deleteAgent(id).subscribe(
+              () => { this.loadAgents(); },
+              (err: any) => { this.toastService.create('Failed to delete agent', 'danger'); }
+            );
+          }
+        }
+      ]
+    });
+    await confirm.present();
+  }
+}

@@ -1,0 +1,60 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Agent Module</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-list *ngIf="agents.length > 0">
+    <ion-card *ngFor="let agent of agents" style="margin: 8px 0;">
+      <ion-card-content style="padding: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="flex: 1;">
+            <div style="font-size: 16px; font-weight: 600; color: #1565C0;">
+              {{ agent.Name || agent.name }}
+            </div>
+            <div style="font-size: 13px; color: #555; margin-top: 2px;" *ngIf="agent.PhoneNumber || agent.phoneNumber">
+              <ion-icon name="call-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
+              {{ agent.PhoneNumber || agent.phoneNumber }}
+            </div>
+            <div style="font-size: 13px; color: #2E7D32; margin-top: 2px;">
+              <ion-icon name="cash-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
+              Rs. {{ agent.ReferralFeePerClient || agent.referralFeePerClient || 0 }} / client (first visit)
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-end;">
+            <ion-button size="small" fill="solid" color="primary" (click)="viewReport(agent)">
+              <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
+              Report
+            </ion-button>
+            <div style="display: flex; gap: 4px;">
+              <ion-button size="small" fill="outline" color="medium" (click)="editAgent(agent)">
+                <ion-icon name="create-outline"></ion-icon>
+              </ion-button>
+              <ion-button size="small" fill="outline" color="danger" (click)="deleteAgent(agent)">
+                <ion-icon name="trash-outline"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
+
+  <div *ngIf="agents.length === 0" style="text-align: center; margin-top: 60px; color: #888;">
+    <ion-icon name="people-outline" style="font-size: 48px; color: #ccc;"></ion-icon>
+    <p>No agents added yet.</p>
+    <p style="font-size: 13px;">Tap + to add your first referring agent.</p>
+  </div>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button style="--background: linear-gradient(135deg, #C62828, #FF4500);" (click)="addAgent()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>

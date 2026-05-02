@@ -8,6 +8,8 @@ import { BaseService } from './base.service';
 export interface Agent {
   id: number;
   name: string;
+  phoneNumber: string;
+  referralFeePerClient: number;
 }
 
 @Injectable({
@@ -15,43 +17,47 @@ export interface Agent {
 })
 export class AgentService extends BaseService {
   private readonly API_URL = `${environment.BASE_URL}Agent`;
-  private readonly API_URL2 = `${environment.BASE_URL}Agent/names`;
 
-  constructor(protected http: HttpClient) { 
+  constructor(protected http: HttpClient) {
     super(http);
   }
 
-  getAllagents(): Observable<Agent[]> {
+  getAllAgents(): Observable<Agent[]> {
     return this.http.get<Agent[]>(this.API_URL).pipe(catchError(this.handleError));
   }
 
-  addAgent(agent): Observable<any> {
-    return this.http.post(this.API_URL, agent).pipe(catchError(this.handleError));
-  }
-  getAgents(): Observable<Agent[]> {
-    return this.http.get<Agent[]>(this.API_URL2).pipe(catchError(this.handleError));
+  getAgentNames(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.API_URL}/names`).pipe(catchError(this.handleError));
   }
 
-  deleteCity(id: number): Observable<any> {
+  addAgent(agent: any): Observable<any> {
+    return this.http.post(this.API_URL, agent).pipe(catchError(this.handleError));
+  }
+
+  updateAgent(id: number, agent: any): Observable<any> {
+    return this.http.put(`${this.API_URL}/${id}`, agent).pipe(catchError(this.handleError));
+  }
+
+  deleteAgent(id: number): Observable<any> {
     return this.http.delete(`${this.API_URL}/${id}`).pipe(catchError(this.handleError));
   }
+
+  getAgentReport(id: number, from: string, to: string): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/${id}/report?from=${from}&to=${to}`)
+      .pipe(catchError(this.handleError));
+  }
+
   othercity = false;
   agents = [];
 
   loadAgents(): void {
-    this.getAgents().subscribe(
-      (data: any) => {
-        this.agents = data;
-      },
-      (error: any) => {
-        console.error('Error loading cities', error);
-      }
+    this.getAgentNames().subscribe(
+      (data: any) => { this.agents = data; },
+      (error: any) => { console.error('Error loading agents', error); }
     );
   }
 
   protected handleError(error: any): Observable<never> {
-    // handle error
     throw error;
   }
 }
-

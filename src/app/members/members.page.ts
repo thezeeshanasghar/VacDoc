@@ -589,6 +589,7 @@ export class MembersPage implements OnInit {
           const inventoryAllowed = this.doctorData.AllowInventory !== false;
           const supplierAllowed  = this.doctorData.AllowSupplier  === true;
           const financialAllowed = this.doctorData.AllowFinancial === true;
+          const agentAllowed     = this.doctorData.AllowAgent     === true;
           this.profileImagePath = this.doctorData.ProfileImage;
           this.Name = this.doctorData.DisplayName;
           const clinics = this.doctorData.Clinics;
@@ -737,11 +738,19 @@ export class MembersPage implements OnInit {
               }
             ];
             if (this.DoctorId === 1) {
-              this.appPages.push(  {
+              this.appPages.push({
                 title: "Personal Assistant",
                 url: "/members/doctor/personal-assistant",
                 icon: "wallet-outline"
               });
+
+              if (agentAllowed) {
+                this.appPages.push({
+                  title: "Agent Module",
+                  icon: "people-outline",
+                  url: "/members/doctor/agent-module",
+                });
+              }
 
               if (inventoryAllowed) {
                 this.appPages.push({
