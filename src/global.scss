@@ -229,29 +229,54 @@ ion-searchbar {
 }
 
 // ── Alert popups (ion-select default + ion-alert) ────────────────────────────
+
+// Outer wrapper — deep shadow using all three brand hues
 .alert-wrapper {
   border-radius: 18px !important;
   overflow: hidden !important;
-  box-shadow: 0 12px 40px rgba(21, 101, 192, 0.22),
-              0 2px 10px rgba(0, 0, 0, 0.14) !important;
+  box-shadow:
+    0 0 0 2px rgba(255, 69, 0, 0.18),
+    0 12px 40px rgba(21, 101, 192, 0.22),
+    0 2px 10px rgba(0, 0, 0, 0.14) !important;
   min-width: 290px !important;
 }
 
+// Header — blue→green gradient (blue = brand, green = logo)
 .alert-head {
-  background: linear-gradient(135deg, var(--vac-blue) 0%, var(--vac-blue-lt) 100%) !important;
-  padding: 18px 20px 14px !important;
+  background: linear-gradient(135deg,
+    var(--vac-blue-dp) 0%,
+    var(--vac-blue)    45%,
+    var(--vac-green)   100%
+  ) !important;
+  padding: 0 !important;
+}
+
+// Lava accent stripe across the top of the header
+.alert-head::before {
+  content: '' !important;
+  display: block !important;
+  height: 4px !important;
+  background: linear-gradient(90deg,
+    var(--vac-red-dark) 0%,
+    var(--vac-red)      35%,
+    var(--vac-lava)     65%,
+    #FF8C00             100%
+  ) !important;
 }
 
 .alert-title {
   color: #ffffff !important;
   font-size: 16px !important;
   font-weight: 700 !important;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.3px !important;
+  padding: 14px 20px 14px !important;
+  display: block !important;
 }
 
 .alert-sub-title {
-  color: rgba(255, 255, 255, 0.8) !important;
+  color: rgba(255, 255, 255, 0.82) !important;
   font-size: 13px !important;
+  padding: 0 20px 12px !important;
 }
 
 .alert-message {
@@ -260,34 +285,42 @@ ion-searchbar {
   padding: 14px 20px !important;
 }
 
+// Options list
 .alert-radio-group,
 .alert-checkbox-group {
   border-top: none !important;
-  border-bottom: 1px solid rgba(21, 101, 192, 0.10) !important;
+  border-bottom: 2px solid rgba(46, 125, 50, 0.12) !important;
   padding: 6px 0 !important;
   max-height: 260px;
 }
 
-// Row hover
+// Row hover — subtle green tint (positive interaction)
 .alert-radio-button:hover,
 .alert-checkbox-button:hover {
-  background: rgba(21, 101, 192, 0.05) !important;
+  background: rgba(46, 125, 50, 0.06) !important;
 }
 
-// Selected option label
+// Selected row — green highlight (selection = positive = green)
+[aria-checked="true"] .alert-radio-button,
+[aria-checked="true"] .alert-checkbox-button {
+  background: rgba(46, 125, 50, 0.09) !important;
+}
+
 [aria-checked="true"] .alert-radio-label,
 [aria-checked="true"] .alert-checkbox-label {
-  color: var(--vac-blue) !important;
-  font-weight: 600 !important;
+  color: var(--vac-green) !important;
+  font-weight: 700 !important;
 }
 
-// Radio dot / checkbox fill — use primary colour
-.alert-radio-inner  { background: var(--vac-blue) !important; }
-.alert-checkbox-icon { background: var(--vac-blue) !important;
-                        border-color: var(--vac-blue) !important; }
+// Radio dot + outer ring — green
+.alert-radio-inner                       { background: var(--vac-green) !important; }
+[aria-checked="true"] .alert-radio-icon  { border-color: var(--vac-green) !important; }
 
-// Checked radio outer ring
-[aria-checked="true"] .alert-radio-icon { border-color: var(--vac-blue) !important; }
+// Checkbox fill — green
+.alert-checkbox-icon {
+  background: var(--vac-green) !important;
+  border-color: var(--vac-green) !important;
+}
 
 // Button bar
 .alert-button-group {
@@ -296,28 +329,32 @@ ion-searchbar {
   justify-content: flex-end !important;
 }
 
-// CANCEL-style button
+// CANCEL — blue outlined
 .alert-button {
   border-radius: 8px !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   font-size: 13px !important;
   text-transform: uppercase !important;
   letter-spacing: 0.5px !important;
-  padding: 8px 18px !important;
-  min-width: 80px !important;
+  padding: 8px 20px !important;
+  min-width: 84px !important;
   color: var(--vac-blue) !important;
-  border: 1.5px solid rgba(21, 101, 192, 0.30) !important;
+  border: 1.5px solid rgba(21, 101, 192, 0.35) !important;
   background: transparent !important;
   margin: 0 2px !important;
 }
 
-// OK / confirm button (last in group) — filled blue
+// OK / confirm — lava gradient (matches main submit buttons)
 .alert-button:last-child,
 .alert-button.alert-button-role-confirm {
-  background: var(--vac-blue) !important;
+  background: linear-gradient(135deg,
+    var(--vac-red-dark) 0%,
+    var(--vac-red)      45%,
+    var(--vac-lava)     100%
+  ) !important;
   color: #ffffff !important;
-  border-color: var(--vac-blue) !important;
-  box-shadow: 0 3px 10px rgba(21, 101, 192, 0.40) !important;
+  border: none !important;
+  box-shadow: 0 3px 12px rgba(255, 69, 0, 0.45) !important;
 }
 
 // ── Action sheets (country-code pickers etc.) ─────────────────────────────────
@@ -326,13 +363,32 @@ ion-searchbar {
   overflow: hidden !important;
 }
 
+// Lava top stripe on action sheet title
+.action-sheet-title.sc-ion-action-sheet-md::before,
+.action-sheet-title.sc-ion-action-sheet-ios::before {
+  content: '' !important;
+  display: block !important;
+  height: 4px !important;
+  background: linear-gradient(90deg,
+    var(--vac-red-dark) 0%,
+    var(--vac-red)      35%,
+    var(--vac-lava)     65%,
+    #FF8C00             100%
+  ) !important;
+  margin: 0 -20px !important;
+}
+
 .action-sheet-title.sc-ion-action-sheet-md,
 .action-sheet-title.sc-ion-action-sheet-ios {
-  background: linear-gradient(135deg, var(--vac-blue) 0%, var(--vac-blue-lt) 100%) !important;
+  background: linear-gradient(135deg,
+    var(--vac-blue-dp) 0%,
+    var(--vac-blue)    50%,
+    var(--vac-green)   100%
+  ) !important;
   color: #ffffff !important;
   font-weight: 700 !important;
   font-size: 16px !important;
-  padding: 16px 20px !important;
+  padding: 18px 20px 16px !important;
 }
 
 .action-sheet-button.sc-ion-action-sheet-md,
@@ -344,31 +400,34 @@ ion-searchbar {
 
 .action-sheet-button.sc-ion-action-sheet-md:hover,
 .action-sheet-button.sc-ion-action-sheet-ios:hover {
-  background: rgba(21, 101, 192, 0.07) !important;
+  background: rgba(46, 125, 50, 0.07) !important;
 }
 
-// Cancel button in action sheet
+// Cancel button in action sheet — lava tint
 .action-sheet-cancel.sc-ion-action-sheet-md,
 .action-sheet-cancel.sc-ion-action-sheet-ios {
-  color: var(--vac-blue) !important;
+  color: var(--vac-lava) !important;
   font-weight: 700 !important;
+  border-top: 1px solid rgba(255, 69, 0, 0.15) !important;
 }
 
 // ── Popover selects ───────────────────────────────────────────────────────────
 .popover-content {
   border-radius: 14px !important;
-  box-shadow: 0 8px 28px rgba(21, 101, 192, 0.18),
-              0 2px 8px rgba(0, 0, 0, 0.10) !important;
+  box-shadow:
+    0 0 0 2px rgba(255, 69, 0, 0.14),
+    0 8px 28px rgba(21, 101, 192, 0.18),
+    0 2px 8px rgba(0, 0, 0, 0.10) !important;
   overflow: hidden !important;
 }
 
 ion-popover ion-item {
-  --border-color: rgba(21, 101, 192, 0.08) !important;
+  --border-color: rgba(46, 125, 50, 0.10) !important;
 }
 
 ion-popover ion-item.item-radio-checked,
 ion-popover ion-item[aria-checked="true"] {
-  --background: rgba(21, 101, 192, 0.07) !important;
-  --color: var(--vac-blue) !important;
+  --background: rgba(46, 125, 50, 0.08) !important;
+  --color: var(--vac-green) !important;
   font-weight: 600;
 }
