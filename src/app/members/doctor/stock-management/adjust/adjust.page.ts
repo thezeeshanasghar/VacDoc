@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ToastService } from 'src/app/shared/toast.service';
 import { BrandService } from 'src/app/services/brand.service';
 import { StockService } from 'src/app/services/stock.service';
@@ -50,7 +50,8 @@ export class AdjustPage implements OnInit {
     private loadingController: LoadingController,
     private clinicService: ClinicService,
     private storage: Storage,
-    private paService: PaService
+    private paService: PaService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
@@ -182,6 +183,7 @@ export class AdjustPage implements OnInit {
             row.batchLot = row.batches[0].BatchLot || '';
             this.onBatchSelected(row, row.batchLot);
           }
+          this.cdr.detectChanges();
         }
       },
       error: () => loader.dismiss()
@@ -195,7 +197,17 @@ export class AdjustPage implements OnInit {
       row.availableQty = batch.AvailableQuantity;
       row.costPrice = batch.CostPrice;
       if (!row.price) { row.price = batch.CostPrice; }
+    } else {
+      row.expiry = '';
+      row.availableQty = 0;
     }
+  }
+
+  formatExpiry(expiry: string | null): string {
+    if (!expiry) return '—';
+    const d = new Date(expiry);
+    if (isNaN(d.getTime())) return expiry;
+    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
   }
 
   // ── Adjustment type ───────────────────────────────────────────────────────

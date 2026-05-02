@@ -116,20 +116,15 @@
                   placeholder="Batch"
                   [disabled]="!row.batches.length"
                   style="font-size:13px; max-width:130px;">
-                  <ion-select-option value="">— None —</ion-select-option>
                   <ion-select-option *ngFor="let b of row.batches" [value]="b.BatchLot || ''">
-                    {{ b.BatchLot || '(No batch)' }}
+                    {{ b.BatchLot || '(No batch)' }} — {{ formatExpiry(b.Expiry) }}
                   </ion-select-option>
                 </ion-select>
               </td>
 
-              <!-- Expiry (auto-filled) -->
-              <td style="min-width: 100px;">
-                <ion-input
-                  type="date"
-                  [(ngModel)]="row.expiry"
-                  style="font-size:13px; min-width:100px;">
-                </ion-input>
+              <!-- Expiry (auto-filled from batch) -->
+              <td style="min-width: 100px; text-align:center; font-size:13px; color:#333; white-space:nowrap;">
+                {{ formatExpiry(row.expiry) }}
               </td>
 
               <!-- Available qty -->
