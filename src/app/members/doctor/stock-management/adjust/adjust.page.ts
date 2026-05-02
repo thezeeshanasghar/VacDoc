@@ -30,8 +30,7 @@ interface AdjustRow {
   styleUrls: ['./adjust.page.scss']
 })
 export class AdjustPage implements OnInit {
-  isIncrease = false;
-  isDecrease = false;
+  adjustmentType: string | null = null;
 
   selectedClinic: any = null;
   clinics: any[] = [];
@@ -173,7 +172,17 @@ export class AdjustPage implements OnInit {
     this.transferService.getAvailableBatches(brandId, this.selectedClinic).subscribe({
       next: (res) => {
         loader.dismiss();
-        if (res && res.IsSuccess) { row.batches = res.ResponseData || []; }
+        if (res && res.IsSuccess) {
+          row.batches = (res.ResponseData || []).sort((a: AvailableBatchDTO, b: AvailableBatchDTO) => {
+            const da = a.Expiry ? new Date(a.Expiry).getTime() : Infinity;
+            const db = b.Expiry ? new Date(b.Expiry).getTime() : Infinity;
+            return da - db;
+          });
+          if (row.batches.length > 0) {
+            row.batchLot = row.batches[0].BatchLot || '';
+            this.onBatchSelected(row, row.batchLot);
+          }
+        }
       },
       error: () => loader.dismiss()
     });
@@ -190,12 +199,10 @@ export class AdjustPage implements OnInit {
   }
 
   // ── Adjustment type ───────────────────────────────────────────────────────
-  onIncreaseChange() { if (this.isIncrease) { this.isDecrease = false; } }
-  onDecreaseChange() { if (this.isDecrease) { this.isIncrease = false; } }
+  get isStockLoss(): boolean { return this.adjustmentType === 'stockloss'; }
 
   onTypeChange() {
-    // Stock loss always has zero price
-    if (this.isIncrease === false) {
+    if (this.adjustmentType === 'stockloss') {
       this.rows.forEach(r => { r.price = 0; });
     }
   }
@@ -208,15 +215,17 @@ export class AdjustPage implements OnInit {
   // ── Submit ────────────────────────────────────────────────────────────────
   private validate(): any {
     if (!this.selectedClinic) { return 'Please select a clinic.'; }
-    if (!this.isIncrease && !this.isDecrease) { return 'Please select Increase or Decrease.'; }
+    if (!this.adjustmentType) { return 'Please select Increase or Stock Loss.'; }
     if (!this.rows.length) { return 'Add at least one item.'; }
     for (let i = 0; i < this.rows.length; i++) {
       const r = this.rows[i];
       if (!r.brandId) { return 'Row ' + (i + 1) + ': Please select a brand.'; }
       if (!r.adjustQty || r.adjustQty <= 0) { return 'Row ' + (i + 1) + ': Quantity must be > 0.'; }
-      if (!r.price || r.price <= 0) { return 'Row ' + (i + 1) + ': Price must be > 0.'; }
+      if (this.adjustmentType === 'increase' && (!r.price || r.price <= 0)) {
+        return 'Row ' + (i + 1) + ': Price must be > 0.';
+      }
       if (!r.reason || r.reason.trim() === '') { return 'Row ' + (i + 1) + ': Reason is required.'; }
-      if (this.isDecrease && r.availableQty > 0 && r.adjustQty > r.availableQty) {
+      if (this.isStockLoss && r.availableQty > 0 && r.adjustQty > r.availableQty) {
         return 'Row ' + (i + 1) + ': Quantity exceeds available stock (' + r.availableQty + ').';
       }
     }
@@ -230,13 +239,13 @@ export class AdjustPage implements OnInit {
     const loading = await this.loadingController.create({ message: 'Adjusting stock...' });
     await loading.present();
 
-    const sign = this.isDecrease ? -1 : 1;
+    const sign = this.isStockLoss ? -1 : 1;
     const payload = this.rows.map(r => ({
       DoctorId: Number(this.doctorId),
       BrandId: r.brandId,
       ClinicId: this.selectedClinic,
       Adjustment: sign * Number(r.adjustQty),
-      Price: this.isDecrease ? 0 : Number(r.price),
+      Price: this.isStockLoss ? 0 : Number(r.price),
       Reason: r.reason,
       Date: new Date(),
       BatchLot: r.batchLot || null,
@@ -262,8 +271,7 @@ export class AdjustPage implements OnInit {
   }
 
   private resetForm() {
-    this.isIncrease = false;
-    this.isDecrease = false;
+    this.adjustmentType = null;
     this.rows = [];
     this.addRow();
   }

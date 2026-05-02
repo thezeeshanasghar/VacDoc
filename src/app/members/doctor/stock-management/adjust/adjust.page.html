@@ -36,21 +36,21 @@
 
       <ion-item lines="none" style="margin-top: 8px;">
         <ion-label>Adjustment Type <span style="color:red">*</span></ion-label>
-        <ion-segment [(ngModel)]="isIncrease" (ionChange)="onTypeChange()" slot="end" style="max-width: 220px;">
-          <ion-segment-button [value]="true">
+        <ion-segment [(ngModel)]="adjustmentType" (ionChange)="onTypeChange()" slot="end" style="max-width: 220px;">
+          <ion-segment-button value="increase">
             <ion-label>
-              <ion-icon name="add-circle-outline"></ion-icon> Increase
+              <ion-icon name="add-circle-outline"></ion-icon> INCREASE
             </ion-label>
           </ion-segment-button>
-          <ion-segment-button [value]="false">
+          <ion-segment-button value="stockloss">
             <ion-label>
-              <ion-icon name="remove-circle-outline"></ion-icon> Stock Loss
+              <ion-icon name="remove-circle-outline"></ion-icon> STOCK LOSS
             </ion-label>
           </ion-segment-button>
         </ion-segment>
       </ion-item>
 
-      <ion-note *ngIf="isIncrease === false" color="danger" style="padding: 6px 16px; display:block; font-size:12px;">
+      <ion-note *ngIf="isStockLoss" color="danger" style="padding: 6px 16px; display:block; font-size:12px;">
         <ion-icon name="alert-circle-outline"></ion-icon>
         &nbsp;Stock Loss (stolen / expired / damaged) — no sale value. Price is always zero.
       </ion-note>
@@ -147,7 +147,7 @@
                   style="font-size:13px; min-width:65px;">
                 </ion-input>
                 <ion-note color="danger"
-                  *ngIf="isDecrease && row.availableQty > 0 && row.adjustQty > row.availableQty"
+                  *ngIf="isStockLoss && row.availableQty > 0 && row.adjustQty > row.availableQty"
                   style="font-size:10px; display:block;">
                   Max {{ row.availableQty }}
                 </ion-note>
@@ -158,12 +158,13 @@
                 <ion-input
                   type="number"
                   [(ngModel)]="row.price"
-                  [value]="isIncrease === false ? 0 : row.price"
-                  [disabled]="isIncrease === false"
+                  [value]="isStockLoss ? 0 : row.price"
+                  [disabled]="isStockLoss"
                   min="0"
                   step="0.01"
                   placeholder="Price"
-                  style="font-size:13px; min-width:75px; opacity: {{ isIncrease === false ? 0.5 : 1 }}">
+                  [style.opacity]="isStockLoss ? 0.5 : 1"
+                  style="font-size:13px; min-width:75px;">
                 </ion-input>
               </td>
 
@@ -212,11 +213,12 @@
   <ion-button
     expand="block"
     class="ion-margin-top"
-    [color]="isDecrease ? 'danger' : 'success'"
+    [color]="isStockLoss ? 'danger' : 'success'"
+    [style.--background]="isStockLoss ? '#c0392b' : ''"
     [disabled]="!rows.length"
     (click)="onSubmit()">
-    <ion-icon [name]="isDecrease ? 'remove-circle-outline' : 'add-circle-outline'" slot="start"></ion-icon>
-    {{ isDecrease ? 'Remove Stock' : 'Add Stock' }}
+    <ion-icon [name]="isStockLoss ? 'remove-circle-outline' : 'add-circle-outline'" slot="start"></ion-icon>
+    {{ isStockLoss ? 'Stock Loss' : 'Add Stock' }}
   </ion-button>
 
 </ion-content>
