@@ -77,7 +77,7 @@ export class PaService extends BaseService {
     );
   }
 
-  editPa(id: String,data): Observable<any> {
+  editPa(id: any, data: any): Observable<any> {
     const url = `${this.API_PA}PersonalAssistant/${id}`;
     return this.http.put(url, data, this.httpOptions)
       .pipe(
@@ -125,6 +125,16 @@ export class PaService extends BaseService {
       .pipe(
         catchError(this.handleError)
       );
+  }
+
+  updatePaProfile(paId: number, data: { Name: string; Email: string; MobileNumber: string }): Observable<any> {
+    const url = `${this.API_PA}PersonalAssistant/${paId}/profile`;
+    return this.http.put(url, data, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  togglePaActive(paId: number): Observable<any> {
+    const url = `${this.API_PA}PersonalAssistant/${paId}/toggle-active`;
+    return this.http.put(url, {}, this.httpOptions).pipe(catchError(this.handleError));
   }
 
   updatePaClinicOnlineStatus(paAccessId: number, isOnline: boolean): Observable<any> {

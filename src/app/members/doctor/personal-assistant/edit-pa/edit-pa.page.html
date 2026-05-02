@@ -1,0 +1,68 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/personal-assistant"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Edit PA Profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <div class="pa-header-card">
+    <ion-icon name="person-circle-outline" class="pa-avatar"></ion-icon>
+    <div>
+      <div class="pa-label">Editing profile for</div>
+      <div class="pa-name-display">{{ paName || 'Personal Assistant' }}</div>
+    </div>
+  </div>
+
+  <form [formGroup]="fg">
+
+    <div class="field-group">
+      <ion-label class="field-label">Full Name <span style="color:#C62828">*</span></ion-label>
+      <div class="field-wrap">
+        <ion-icon name="person-outline" class="field-icon"></ion-icon>
+        <ion-input formControlName="Name" type="text" placeholder="Full name" class="field-input"></ion-input>
+      </div>
+      <div class="error-text" *ngIf="fg.get('Name').invalid && fg.get('Name').touched">
+        Name is required.
+      </div>
+    </div>
+
+    <div class="field-group">
+      <ion-label class="field-label">Email Address <span style="color:#C62828">*</span></ion-label>
+      <div class="field-wrap">
+        <ion-icon name="mail-outline" class="field-icon"></ion-icon>
+        <ion-input formControlName="Email" type="email" placeholder="email@example.com" class="field-input"></ion-input>
+      </div>
+      <div class="error-text" *ngIf="fg.get('Email').invalid && fg.get('Email').touched">
+        Valid email is required.
+      </div>
+    </div>
+
+    <div class="field-group">
+      <ion-label class="field-label">Mobile Number <span style="color:#C62828">*</span></ion-label>
+      <div class="field-wrap">
+        <ion-icon name="call-outline" class="field-icon"></ion-icon>
+        <ion-input formControlName="MobileNumber" type="tel" placeholder="10-digit mobile number" class="field-input"></ion-input>
+      </div>
+      <div class="error-text" *ngIf="fg.get('MobileNumber').invalid && fg.get('MobileNumber').touched">
+        Enter a valid 10-digit mobile number.
+      </div>
+    </div>
+
+  </form>
+
+</ion-content>
+
+<div class="bottom-bar">
+  <ion-button expand="block" class="btn-cancel" fill="outline"
+    routerLink="/members/doctor/personal-assistant">
+    Cancel
+  </ion-button>
+  <ion-button expand="block" class="btn-save" (click)="save()" [disabled]="fg.invalid">
+    <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+    Save Changes
+  </ion-button>
+</div>

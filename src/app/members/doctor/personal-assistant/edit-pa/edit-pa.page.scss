@@ -1,0 +1,48 @@
+.pa-header-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, #0D47A1, #1565C0);
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 24px;
+}
+.pa-avatar    { font-size: 48px; color: rgba(255,255,255,0.9); flex-shrink: 0; }
+.pa-label     { font-size: 11px; color: rgba(255,255,255,0.65); text-transform: uppercase; letter-spacing: 0.5px; }
+.pa-name-display { font-size: 18px; font-weight: 800; color: #fff; }
+
+.field-group  { margin-bottom: 18px; }
+.field-label  { font-size: 12px; font-weight: 700; color: #6B7280; margin-bottom: 6px; display: block; }
+
+.field-wrap {
+  display: flex;
+  align-items: center;
+  background: #F4F6FC;
+  border: 1.5px solid #DDE3F4;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+  &:focus-within { border-color: #1565C0; background: #F0F4FF; }
+}
+.field-icon   { font-size: 18px; color: #1565C0; padding: 0 12px; flex-shrink: 0; }
+.field-input  { --padding-start: 0; --padding-end: 12px; --color: #111827; --placeholder-color: #9CA3AF; font-size: 15px; flex: 1; }
+
+.error-text   { color: #C62828; font-size: 12px; margin-top: 4px; }
+
+.bottom-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  display: flex;
+  z-index: 100;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.10);
+}
+.btn-cancel {
+  flex: 1; --border-color: #6B7280; --color: #6B7280;
+  --border-radius: 0; margin: 0; height: 54px; font-weight: 700; background: #fff;
+}
+.btn-save {
+  flex: 1;
+  --background: linear-gradient(135deg, #8B0000 0%, #C62828 40%, #FF4500 100%);
+  --color: #fff; --border-radius: 0; margin: 0; height: 54px; font-weight: 800;
+}
+ion-content { --padding-bottom: 60px; }

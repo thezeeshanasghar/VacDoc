@@ -21,7 +21,7 @@ import { AbstractControl, ValidatorFn } from '@angular/forms';
 })
 export class PaPage implements OnInit {
 
-  fg: FormGroup;
+  fg: any;
   clinics: any = [];
 
   DoctorId: any;
@@ -144,8 +144,12 @@ export class PaPage implements OnInit {
       next: (res) => {
         loading.dismiss();
         if (res.IsSuccess) {
-          this.toastService.create('Assistant added successfully', 'success');
-          this.router.navigate(['/members/doctor/personal-assistant']);
+          this.toastService.create('Assistant added! Now assign clinic access.', 'success');
+          const newPaId = res.ResponseData && res.ResponseData.Id ? res.ResponseData.Id : null;
+          this.router.navigate(
+            ['/members/doctor/personal-assistant/access'],
+            newPaId ? { queryParams: { paId: newPaId } } : {}
+          );
         } else {
           this.toastService.create(res.Message, 'danger');
         }

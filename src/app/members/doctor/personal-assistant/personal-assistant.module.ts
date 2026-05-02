@@ -18,9 +18,13 @@ const routes: Routes = [
     path: 'signup', 
     loadChildren: () => import('./pa/pa.module').then(m => m.PaPageModule) 
   },
-  { 
-    path: 'access', 
-    loadChildren: () => import('./paacces/paaccess.module').then(m => m.PaAccessPageModule) 
+  {
+    path: 'access',
+    loadChildren: () => import('./paacces/paaccess.module').then(m => m.PaAccessPageModule)
+  },
+  {
+    path: 'edit/:paId',
+    loadChildren: () => import('./edit-pa/edit-pa.module').then(m => m.EditPaPageModule)
   },
 ];
 

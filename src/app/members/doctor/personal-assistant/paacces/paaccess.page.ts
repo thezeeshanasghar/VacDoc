@@ -5,7 +5,7 @@ import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 import { LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { PaService } from 'src/app/services/pa.service';
 
 @Component({
@@ -14,10 +14,10 @@ import { PaService } from 'src/app/services/pa.service';
   styleUrls: ["./paaccess.page.scss"],
 })
 export class PaAccessPage implements OnInit {
-  fg: FormGroup;
+  fg: any;
   personalAssistants: any[] = [];
   clinics: any[] = [];
-  selectedPA: string = "";
+  selectedPA: any = "";
   selectedClinic: string = "";
   clinicId: any;
   selectedClinicId: any;
@@ -27,11 +27,12 @@ export class PaAccessPage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    public loadingController: LoadingController, 
-    private storage: Storage, 
-    private paService: PaService, 
-    private toastService: ToastService, 
-    private clinicService: ClinicService) 
+    public loadingController: LoadingController,
+    private storage: Storage,
+    private route: ActivatedRoute,
+    private paService: PaService,
+    private toastService: ToastService,
+    private clinicService: ClinicService)
     {}
 
   ngOnInit() {
@@ -39,10 +40,17 @@ export class PaAccessPage implements OnInit {
       pa: ["", Validators.required],
       clinic: ["", Validators.required],
     });
+
+    // Pre-select PA if redirected from signup
+    const preselectedPaId = this.route.snapshot.queryParamMap.get('paId');
+    if (preselectedPaId) {
+      this.selectedPA = preselectedPaId;
+      this.fg.patchValue({ pa: preselectedPaId });
+    }
+
     this.loadPersonalAssistants();
     this.fetchPersonalAssistants();
     this.storage.get(environment.DOCTOR_Id).then((val) => {
-      console.log("Doctor ID:", val);
       this.doctorId = val;
       this.loadClinics(this.doctorId);
     });

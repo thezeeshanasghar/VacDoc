@@ -13,20 +13,20 @@ import { ClinicService } from 'src/app/services/clinic.service';
   styleUrls: ['./personal-assistant.page.scss'],
 })
 export class PersonalAssistantPage implements OnInit {
-  doctorId: string;
+  doctorId: any = null;
   personalAssistants: any[] = [];
-  AllowAlert: boolean;
-  AllowAnalytics: boolean;
-  AllowClinic: boolean;
-  AllowChild: boolean;
-  AllowSchedule: boolean;
-  AllowStock: boolean;
-  AllowVacation: boolean;
-  IsVerified: boolean;
-  clinics: any;
+  AllowAlert: any = false;
+  AllowAnalytics: any = false;
+  AllowClinic: any = false;
+  AllowChild: any = false;
+  AllowSchedule: any = false;
+  AllowStock: any = false;
+  AllowVacation: any = false;
+  IsVerified: any = false;
+  clinics: any = [];
   selectedClinicId: any;
   usertype: any;
-  paAccessId: any; // Store PaAccessId for PA users
+  paAccessId: any;
 
   constructor(
     private paService: PaService,
@@ -107,6 +107,31 @@ export class PersonalAssistantPage implements OnInit {
     });
   }
   
+  navigateToEdit(pa: any) {
+    this.router.navigate(
+      ['/members/doctor/personal-assistant/edit', pa.Id],
+      { queryParams: {
+          name:   pa.Name  || '',
+          email:  pa.Email || '',
+          mobile: pa.User  ? pa.User.MobileNumber : ''
+      }}
+    );
+  }
+
+  async toggleActive(pa: any) {
+    const loading = await this.loadingController.create({ message: pa.IsActive ? 'Deactivating...' : 'Activating...' });
+    await loading.present();
+    this.paService.togglePaActive(pa.Id).subscribe({
+      next: (res: any) => {
+        loading.dismiss();
+        pa.IsActive = !pa.IsActive;
+        const status = pa.IsActive ? 'activated' : 'deactivated';
+        this.toastService.create('PA ' + status + ' successfully', 'success');
+      },
+      error: () => { loading.dismiss(); this.toastService.create('Failed to update status', 'danger'); }
+    });
+  }
+
   async deletepa(Id: number) {
     const loading = await this.loadingController.create({
       message: "Delete PA...",
@@ -142,13 +167,13 @@ console.log("Deleting PA with ID:", Id);
               this.clinics = response.ResponseData;
               console.log('Clinics:', this.clinics);
               // Check if there's already an online clinic from storage or API response
-              let onlineClinic = this.clinics.find(clinic => clinic.IsOnline);
+              let onlineClinic = this.clinics.find((clinic: any) => clinic.IsOnline);
               
               // If no online clinic found in API response, check storage
               if (!onlineClinic) {
                 this.storage.get(environment.ON_CLINIC).then(storedOnlineClinic => {
                   if (storedOnlineClinic) {
-                    onlineClinic = this.clinics.find(clinic => clinic.Id === storedOnlineClinic.Id);
+                    onlineClinic = this.clinics.find((clinic: any) => clinic.Id === storedOnlineClinic.Id);
                     if (onlineClinic) {
                       this.selectedClinicId = onlineClinic.Id;
                       this.clinicService.updateClinic(onlineClinic);
@@ -187,13 +212,13 @@ console.log("Deleting PA with ID:", Id);
               this.clinics = response.ResponseData;
               console.log('PA Clinics:', this.clinics);
               // Check if there's already an online clinic from storage or API response
-              let onlineClinic = this.clinics.find(clinic => clinic.IsOnline);
+              let onlineClinic = this.clinics.find((clinic: any) => clinic.IsOnline);
               
               // If no online clinic found in API response, check storage
               if (!onlineClinic) {
                 this.storage.get(environment.ON_CLINIC).then(storedOnlineClinic => {
                   if (storedOnlineClinic) {
-                    onlineClinic = this.clinics.find(clinic => clinic.Id === storedOnlineClinic.Id);
+                    onlineClinic = this.clinics.find((clinic: any) => clinic.Id === storedOnlineClinic.Id);
                     if (onlineClinic) {
                       this.selectedClinicId = onlineClinic.Id;
                       this.paAccessId = onlineClinic.PaAccessId; // Store PaAccessId
@@ -212,7 +237,7 @@ console.log("Deleting PA with ID:", Id);
               } else {
                 this.selectedClinicId = (this.clinics.length > 0 ? this.clinics[0].Id : null);
                 if (this.selectedClinicId) {
-                  const selectedClinic = this.clinics.find(c => c.Id === this.selectedClinicId);
+                  const selectedClinic = this.clinics.find((c: any) => c.Id === this.selectedClinicId);
                   if (selectedClinic) {
                     this.paAccessId = selectedClinic.PaAccessId;
                   }
@@ -244,7 +269,7 @@ console.log("Deleting PA with ID:", Id);
     this.selectedClinicId = clinicId;
     // Find and store PaAccessId for PA users
     if (this.usertype.UserType === 'PA' && this.clinics) {
-      const selectedClinic = this.clinics.find(c => c.Id === clinicId);
+      const selectedClinic = this.clinics.find((c: any) => c.Id === clinicId);
       if (selectedClinic) {
         this.paAccessId = selectedClinic.PaAccessId;
       }
@@ -260,7 +285,7 @@ console.log("Deleting PA with ID:", Id);
       // For PA users, use PaAccess endpoint
       if (!this.paAccessId) {
         // Find PaAccessId from clinics list
-        const clinic = this.clinics ? this.clinics.find(c => c.Id === clinicId) : null;
+        const clinic = this.clinics ? this.clinics.find((c: any) => c.Id === clinicId) : null;
         if (clinic && clinic.PaAccessId) {
           this.paAccessId = clinic.PaAccessId;
         } else {
@@ -276,7 +301,7 @@ console.log("Deleting PA with ID:", Id);
             loading.dismiss();
             // Update local storage
             this.storage.set(environment.CLINIC_Id, clinicId);
-            const selectedClinic = this.clinics.find(c => c.Id === clinicId);
+            const selectedClinic = this.clinics.find((c: any) => c.Id === clinicId);
             if (selectedClinic) {
               this.storage.set(environment.ON_CLINIC, selectedClinic);
               this.clinicService.updateClinic(selectedClinic);
@@ -306,7 +331,7 @@ console.log("Deleting PA with ID:", Id);
               // Update local storage
               this.storage.set(environment.CLINIC_Id, data.Id);
               this.storage.get(environment.CLINICS).then((clinics) => {
-                const selectedClinic = clinics.find((clinic) => clinic.Id === data.Id);
+                const selectedClinic = clinics.find((clinic: any) => clinic.Id === data.Id);
                 this.storage.set(environment.ON_CLINIC, selectedClinic);
                 this.clinicService.updateClinic(selectedClinic);
               });

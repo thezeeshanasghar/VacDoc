@@ -15,6 +15,13 @@
  </ion-header>
   
   <ion-content class="ion-padding">
+
+    <!-- Guidance banner shown after PA creation -->
+    <ion-note color="primary" style="display:block; background:#E3F0FF; border-radius:10px; padding:10px 14px; margin-bottom:12px; font-size:13px;" *ngIf="selectedPA">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      &nbsp;PA created successfully. Now select a clinic to grant access, then tap <strong>Submit</strong>.
+    </ion-note>
+
     <form [formGroup]="fg">
       <ion-item>
         <ion-label position="floating">Select PA</ion-label>
