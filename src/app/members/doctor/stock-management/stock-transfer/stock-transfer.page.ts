@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { LoadingController, ModalController } from '@ionic/angular';
 import { StockTransferConfirmComponent } from './stock-transfer-confirm.component';
 import { Storage } from '@ionic/storage';
@@ -10,17 +10,21 @@ import { ToastService } from 'src/app/shared/toast.service';
 import {
   StockTransferService,
   AvailableBatchDTO,
-  StockTransferItemDTO
+  StockTransferItemDTO,
+  StockTransferHistoryDTO
 } from 'src/app/services/stock-transfer.service';
 
 interface TransferRow {
-  brandId: number;
+  brandId: any;
   brandName: string;
+  brandSearchTerm: string;
+  filteredBrands: any[];
+  batches: AvailableBatchDTO[];
   batchLot: string;
   expiry: string;
   availableQty: number;
   costPrice: number;
-  transferQty: number;
+  transferQty: any;
 }
 
 @Component({
@@ -31,17 +35,15 @@ interface TransferRow {
 export class StockTransferPage implements OnInit {
   clinics: any[] = [];
   brands: any[] = [];
-  filteredBrands: any[] = [];
-  brandSearchTerm = '';
 
   fromClinicId: any = null;
   toClinicId: any = null;
 
-  selectedBrandId: any = null;
-  availableBatches: AvailableBatchDTO[] = [];
-  selectedBatchLots: string[] = [];
+  rows: TransferRow[] = [];
 
-  transferRows: TransferRow[] = [];
+  completedTransfer: StockTransferHistoryDTO[] | null = null;
+  completedFromClinic = '';
+  completedToClinic = '';
 
   private doctorId: any;
   private usertype: any;
@@ -54,7 +56,8 @@ export class StockTransferPage implements OnInit {
     private brandService: BrandService,
     private paService: PaService,
     private toastService: ToastService,
-    private transferService: StockTransferService
+    private transferService: StockTransferService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
@@ -62,8 +65,10 @@ export class StockTransferPage implements OnInit {
     this.usertype = await this.storage.get(environment.USER);
     await this.loadClinics();
     await this.loadBrands();
+    this.addRow();
   }
 
+  // ── Clinics ───────────────────────────────────────────────────────────────
   async loadClinics() {
     const loader = await this.loadingCtrl.create({ message: 'Loading clinics...' });
     await loader.present();
@@ -78,8 +83,7 @@ export class StockTransferPage implements OnInit {
         if (res && res.IsSuccess) {
           this.clinics = res.ResponseData || [];
         } else {
-          const msg = res && res.Message ? res.Message : 'Failed to load clinics';
-          this.toastService.create(msg, 'danger');
+          this.toastService.create(res && res.Message ? res.Message : 'Failed to load clinics', 'danger');
         }
       },
       error: () => { loader.dismiss(); this.toastService.create('Failed to load clinics', 'danger'); }
@@ -91,7 +95,7 @@ export class StockTransferPage implements OnInit {
       next: (res: any) => {
         if (res && res.IsSuccess) {
           this.brands = (res.ResponseData || []).map((b: any) => ({ id: b.Id, name: b.Name }));
-          this.filteredBrands = this.brands.slice();
+          this.rows.forEach(r => { r.filteredBrands = this.brands.slice(); });
         }
       },
       error: () => {}
@@ -104,28 +108,57 @@ export class StockTransferPage implements OnInit {
 
   onFromClinicChange() {
     this.toClinicId = null;
-    this.resetBrandSelection();
+    this.rows.forEach(r => {
+      r.batches = [];
+      r.batchLot = '';
+      r.expiry = '';
+      r.availableQty = 0;
+    });
   }
 
-  filterBrands(term: string) {
+  // ── Row management ────────────────────────────────────────────────────────
+  addRow() {
+    this.rows.push({
+      brandId: null,
+      brandName: '',
+      brandSearchTerm: '',
+      filteredBrands: this.brands.slice(),
+      batches: [],
+      batchLot: '',
+      expiry: '',
+      availableQty: 0,
+      costPrice: 0,
+      transferQty: null
+    });
+  }
+
+  removeRow(i: number) { this.rows.splice(i, 1); }
+
+  // ── Brand ─────────────────────────────────────────────────────────────────
+  showAllBrands(row: TransferRow) {
+    row.brandSearchTerm = '';
+    row.filteredBrands = this.brands.slice();
+  }
+
+  filterBrands(row: TransferRow, term: string) {
     const t = (term || '').toLowerCase().trim();
-    this.filteredBrands = t
+    row.filteredBrands = t
       ? this.brands.filter(b => b.name.toLowerCase().includes(t))
       : this.brands.slice();
   }
 
-  showAllBrands() {
-    this.brandSearchTerm = '';
-    this.filteredBrands = this.brands.slice();
-  }
-
-  async onBrandSelected(brandId: number) {
+  async onBrandSelected(row: TransferRow, brandId: number) {
     if (!this.fromClinicId) {
       this.toastService.create('Please select From Clinic first.', 'danger');
       return;
     }
-    this.selectedBatchLots = [];
-    this.availableBatches = [];
+    const brand = this.brands.find(b => b.id === brandId);
+    if (brand) { row.brandName = brand.name; }
+    row.batches = [];
+    row.batchLot = '';
+    row.expiry = '';
+    row.availableQty = 0;
+    row.costPrice = 0;
 
     const loader = await this.loadingCtrl.create({ message: 'Loading batches...' });
     await loader.present();
@@ -134,79 +167,76 @@ export class StockTransferPage implements OnInit {
       next: (res) => {
         loader.dismiss();
         if (res && res.IsSuccess) {
-          this.availableBatches = res.ResponseData || [];
-          if (!this.availableBatches.length) {
-            this.toastService.create('No stock found for this brand in selected clinic.', 'danger');
+          row.batches = (res.ResponseData || []).sort((a: AvailableBatchDTO, b: AvailableBatchDTO) => {
+            const da = a.Expiry ? new Date(a.Expiry).getTime() : Infinity;
+            const db = b.Expiry ? new Date(b.Expiry).getTime() : Infinity;
+            return da - db;
+          });
+          if (row.batches.length > 0) {
+            row.batchLot = row.batches[0].BatchLot || '';
+            this.onBatchSelected(row, row.batchLot);
+          } else {
+            this.toastService.create('No stock found for this brand in the selected clinic.', 'danger');
           }
-        } else {
-          const msg = res && res.Message ? res.Message : 'Failed to load batches';
-          this.toastService.create(msg, 'danger');
+          this.cdr.detectChanges();
         }
       },
       error: () => { loader.dismiss(); this.toastService.create('Failed to load batches', 'danger'); }
     });
   }
 
-  onBatchSelectionChange(selectedLots: string[]) {
-    this.transferRows = this.transferRows.filter(r =>
-      r.brandId !== this.selectedBrandId ||
-      selectedLots.includes(r.batchLot || '')
-    );
-
-    for (const lot of selectedLots) {
-      const alreadyAdded = this.transferRows.some(
-        r => r.brandId === this.selectedBrandId && (r.batchLot || '') === lot
-      );
-      if (!alreadyAdded) {
-        const batch = this.availableBatches.find(b => (b.BatchLot || '') === lot);
-        if (batch) {
-          const brand = this.brands.find(b => b.id === this.selectedBrandId);
-          this.transferRows.push({
-            brandId: this.selectedBrandId,
-            brandName: brand ? brand.name : '',
-            batchLot: batch.BatchLot || '',
-            expiry: batch.Expiry || '',
-            availableQty: batch.AvailableQuantity,
-            costPrice: batch.CostPrice,
-            transferQty: 0
-          });
-        }
-      }
+  onBatchSelected(row: TransferRow, batchLot: string) {
+    const batch = row.batches.find(b => (b.BatchLot || '') === batchLot);
+    if (batch) {
+      row.expiry = batch.Expiry || '';
+      row.availableQty = batch.AvailableQuantity;
+      row.costPrice = batch.CostPrice;
+    } else {
+      row.expiry = '';
+      row.availableQty = 0;
     }
   }
 
-  private resetBrandSelection() {
-    this.selectedBrandId = null;
-    this.selectedBatchLots = [];
-    this.availableBatches = [];
-    this.brandSearchTerm = '';
-    this.filteredBrands = this.brands.slice();
+  formatExpiry(expiry: string | null): string {
+    if (!expiry) { return '—'; }
+    const d = new Date(expiry);
+    if (isNaN(d.getTime())) { return expiry; }
+    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
   }
 
-  removeRow(index: number) {
-    this.transferRows.splice(index, 1);
-  }
-
+  // ── Totals ────────────────────────────────────────────────────────────────
   get totalTransferValue(): number {
-    return this.transferRows.reduce((s, r) => s + (r.transferQty * r.costPrice), 0);
+    return this.rows.reduce((s, r) => s + ((r.transferQty || 0) * (r.costPrice || 0)), 0);
   }
 
-  validate(): any {
+  get completedTotal(): number {
+    if (!this.completedTransfer) { return 0; }
+    return this.completedTransfer.reduce((s, t) => s + t.TotalValue, 0);
+  }
+
+  get completedTotalQty(): number {
+    if (!this.completedTransfer) { return 0; }
+    return this.completedTransfer.reduce((s, t) => s + t.Quantity, 0);
+  }
+
+  // ── Validate ──────────────────────────────────────────────────────────────
+  validate(): string | null {
     if (!this.fromClinicId) { return 'Please select From Clinic.'; }
     if (!this.toClinicId) { return 'Please select To Clinic.'; }
     if (this.fromClinicId === this.toClinicId) { return 'From and To clinics must be different.'; }
-    if (!this.transferRows.length) { return 'Please add at least one item to transfer.'; }
-    for (const row of this.transferRows) {
-      if (!row.transferQty || row.transferQty <= 0) {
-        return 'Transfer quantity must be > 0 for ' + row.brandName + ' (' + (row.batchLot || 'N/A') + ').';
-      }
-      if (row.transferQty > row.availableQty) {
-        return 'Transfer quantity exceeds available (' + row.availableQty + ') for ' + row.brandName + ' (' + (row.batchLot || 'N/A') + ').';
+    if (!this.rows.length) { return 'Add at least one item.'; }
+    for (let i = 0; i < this.rows.length; i++) {
+      const r = this.rows[i];
+      if (!r.brandId) { return `Row ${i + 1}: Please select a brand.`; }
+      if (!r.transferQty || r.transferQty <= 0) { return `Row ${i + 1}: Quantity must be > 0.`; }
+      if (r.transferQty > r.availableQty) {
+        return `Row ${i + 1}: Quantity exceeds available stock (${r.availableQty}).`;
       }
     }
     return null;
   }
 
+  // ── Submit ────────────────────────────────────────────────────────────────
   async openConfirmModal() {
     const err = this.validate();
     if (err) { this.toastService.create(err, 'danger'); return; }
@@ -216,7 +246,7 @@ export class StockTransferPage implements OnInit {
       componentProps: {
         fromClinicName: this.getClinicName(this.fromClinicId),
         toClinicName: this.getClinicName(this.toClinicId),
-        transferRows: this.transferRows,
+        transferRows: this.rows,
         totalTransferValue: this.totalTransferValue
       }
     });
@@ -236,12 +266,12 @@ export class StockTransferPage implements OnInit {
     const loader = await this.loadingCtrl.create({ message: 'Transferring stock...' });
     await loader.present();
 
-    const items: StockTransferItemDTO[] = this.transferRows.map(r => ({
+    const items: StockTransferItemDTO[] = this.rows.map(r => ({
       BrandId: r.brandId,
       BrandName: r.brandName,
       BatchNumber: r.batchLot || null,
       ExpiryDate: r.expiry || null,
-      Quantity: r.transferQty,
+      Quantity: Number(r.transferQty),
       CostPrice: r.costPrice
     }));
 
@@ -254,21 +284,47 @@ export class StockTransferPage implements OnInit {
       next: (res) => {
         loader.dismiss();
         if (res && res.IsSuccess) {
+          this.completedFromClinic = this.getClinicName(this.fromClinicId);
+          this.completedToClinic = this.getClinicName(this.toClinicId);
+          this.completedTransfer = res.ResponseData || [];
           this.toastService.create('Stock transferred successfully!', 'success');
-          this.resetAll();
         } else {
-          const msg = res && res.Message ? res.Message : 'Transfer failed';
-          this.toastService.create(msg, 'danger', true);
+          this.toastService.create(res && res.Message ? res.Message : 'Transfer failed', 'danger', true);
         }
       },
       error: () => { loader.dismiss(); this.toastService.create('Transfer failed. Please try again.', 'danger'); }
     });
   }
 
-  private resetAll() {
+  // ── PDF ───────────────────────────────────────────────────────────────────
+  async downloadPdf() {
+    if (!this.completedTransfer || !this.completedTransfer.length) { return; }
+    const ids = this.completedTransfer.map(t => t.Id).join(',');
+    const loader = await this.loadingCtrl.create({ message: 'Generating PDF...' });
+    await loader.present();
+    this.transferService.downloadTransferPdf(ids).subscribe({
+      next: (blob) => {
+        loader.dismiss();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `StockTransfer_${new Date().toISOString().split('T')[0]}.pdf`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        this.toastService.create('PDF downloaded successfully', 'success');
+      },
+      error: () => { loader.dismiss(); this.toastService.create('Failed to download PDF', 'danger'); }
+    });
+  }
+
+  // ── Reset ─────────────────────────────────────────────────────────────────
+  startNewTransfer() {
+    this.completedTransfer = null;
+    this.completedFromClinic = '';
+    this.completedToClinic = '';
     this.fromClinicId = null;
     this.toClinicId = null;
-    this.transferRows = [];
-    this.resetBrandSelection();
+    this.rows = [];
+    this.addRow();
   }
 }

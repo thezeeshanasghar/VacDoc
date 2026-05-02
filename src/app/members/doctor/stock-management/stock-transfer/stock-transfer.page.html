@@ -6,149 +6,271 @@
     <ion-title>Transfer Stock Between Clinics</ion-title>
   </ion-toolbar>
   <ion-toolbar color="primary">
-    <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/brand-amount" name="bar-chart-outline" size="large"></ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/add" name="add-circle-outline" size="large"></ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management" name="document-text-outline" size="large"></ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/adjust" name="sync-outline" size="large"></ion-icon>
-      <ion-icon style="margin-left: 10%" routerLink="/members/doctor/stock-management/stock-transfer-history" name="time-outline" size="large"></ion-icon>
-      <ion-menu-button style="margin-left: 10%"></ion-menu-button>
+    <ion-buttons class="ion-justify-content-center">
+      <ion-icon style="margin-left:10%" routerLink="/members/doctor/brand-amount" name="bar-chart-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left:10%" routerLink="/members/doctor/stock-management/add" name="add-circle-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left:10%" routerLink="/members/doctor/stock-management" name="document-text-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left:10%" routerLink="/members/doctor/stock-management/adjust" name="sync-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left:10%" routerLink="/members/doctor/stock-management/stock-transfer-history" name="time-outline" size="large"></ion-icon>
+      <ion-menu-button style="margin-left:10%"></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
 
-  <!-- ── CLINIC SELECTION ── -->
-  <ion-card>
-    <ion-card-header color="primary">
-      <ion-card-title>Select Clinics</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-item>
-        <ion-label position="floating">From Clinic <span style="color:red">*</span></ion-label>
-        <ion-select [(ngModel)]="fromClinicId" (ionChange)="onFromClinicChange()" placeholder="Select source clinic">
-          <ion-select-option *ngFor="let c of clinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
-        </ion-select>
-      </ion-item>
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- SUCCESS STATE                                                          -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <ng-container *ngIf="completedTransfer">
 
-      <ion-item>
-        <ion-label position="floating">To Clinic <span style="color:red">*</span></ion-label>
-        <ion-select [(ngModel)]="toClinicId" placeholder="Select destination clinic" [disabled]="!fromClinicId">
-          <ion-select-option *ngFor="let c of toClinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
-        </ion-select>
-      </ion-item>
-    </ion-card-content>
-  </ion-card>
+    <ion-card>
+      <ion-card-header color="primary">
+        <ion-card-title>Transfer Complete</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
 
-  <!-- ── BRAND & BATCH SELECTOR ── -->
-  <ion-card>
-    <ion-card-header color="primary">
-      <ion-card-title>Add Stock Items</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
+        <!-- Green tick + route summary -->
+        <div style="text-align:center; padding:20px 0 12px;">
+          <ion-icon name="checkmark-circle" style="font-size:64px; color:var(--vac-green);"></ion-icon>
+          <p style="font-size:17px; font-weight:700; margin:10px 0 4px; color:var(--vac-green);">Stock transferred successfully!</p>
+          <p style="font-size:14px; color:#555;">
+            <strong>{{ completedFromClinic }}</strong>
+            &nbsp;
+            <ion-icon name="arrow-forward-outline" style="vertical-align:middle;"></ion-icon>
+            &nbsp;
+            <strong>{{ completedToClinic }}</strong>
+          </p>
+        </div>
 
-      <ion-item>
-        <ion-label position="floating">Brand</ion-label>
-        <mat-form-field class="example-full-width" style="width:100%">
-          <mat-select
-            [(ngModel)]="selectedBrandId"
-            (openedChange)="showAllBrands()"
-            (selectionChange)="onBrandSelected($event.value)"
-            placeholder="Select brand">
-            <mat-option disabled>
-              <input matInput [(ngModel)]="brandSearchTerm" (ngModelChange)="filterBrands($event)"
-                (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"
-                placeholder="Search brand" style="font-size:15px;">
-            </mat-option>
-            <mat-option *ngFor="let b of filteredBrands" [value]="b.id">{{ b.name }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </ion-item>
+        <!-- Summary table -->
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Brand</th>
+                <th>Batch / Lot</th>
+                <th>Expiry</th>
+                <th>Qty</th>
+                <th>Cost Price</th>
+                <th>Total Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let t of completedTransfer; let i = index">
+                <td style="text-align:center;">{{ i + 1 }}</td>
+                <td>{{ t.BrandName }}</td>
+                <td>{{ t.BatchNumber || '—' }}</td>
+                <td style="text-align:center; white-space:nowrap;">{{ formatExpiry(t.ExpiryDate) }}</td>
+                <td style="text-align:center;">{{ t.Quantity }}</td>
+                <td style="text-align:right; white-space:nowrap;">Rs {{ t.CostPrice | number:'1.2-2' }}</td>
+                <td style="text-align:right; white-space:nowrap;">Rs {{ t.TotalValue | number:'1.2-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-      <ion-item *ngIf="availableBatches.length > 0">
-        <ion-label position="floating">Select Batches</ion-label>
-        <ion-select [(ngModel)]="selectedBatchLots" (ionChange)="onBatchSelectionChange($event.detail.value)" multiple="true" placeholder="Select one or more batches">
-          <ion-select-option *ngFor="let b of availableBatches" [value]="b.BatchLot || ''">
-            {{ b.BatchLot || '(No batch)' }} — Exp: {{ b.Expiry ? (b.Expiry | date:'dd/MM/yyyy') : 'N/A' }} — Avail: {{ b.AvailableQuantity }}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
+        <!-- Totals row -->
+        <div style="padding:10px 12px 4px; display:flex; justify-content:flex-end; gap:24px; flex-wrap:wrap;">
+          <ion-text color="primary" style="font-weight:700; font-size:14px;">
+            Total Items: {{ completedTransfer.length }}
+          </ion-text>
+          <ion-text color="primary" style="font-weight:700; font-size:14px;">
+            Total Qty: {{ completedTotalQty }}
+          </ion-text>
+          <ion-text color="primary" style="font-weight:800; font-size:15px;">
+            Total Value: Rs {{ completedTotal | number:'1.2-2' }}
+          </ion-text>
+        </div>
 
-      <ion-note *ngIf="selectedBrandId && !availableBatches.length" color="medium" style="padding: 8px 16px; display:block;">
-        No batches found for this brand in the selected source clinic.
-      </ion-note>
+      </ion-card-content>
+    </ion-card>
 
-    </ion-card-content>
-  </ion-card>
+    <!-- Action buttons -->
+    <ion-row class="ion-margin-top">
+      <ion-col>
+        <ion-button expand="block" fill="outline" color="primary" (click)="startNewTransfer()">
+          <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+          New Transfer
+        </ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button expand="block" color="success" (click)="downloadPdf()">
+          <ion-icon name="document-text-outline" slot="start"></ion-icon>
+          Download PDF
+        </ion-button>
+      </ion-col>
+    </ion-row>
 
-  <!-- ── TRANSFER ROWS TABLE ── -->
-  <ion-card *ngIf="transferRows.length > 0">
-    <ion-card-header color="primary">
-      <ion-card-title>Transfer Items</ion-card-title>
-    </ion-card-header>
-    <ion-card-content style="padding: 0;">
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Brand</th>
-              <th>Batch</th>
-              <th>Expiry</th>
-              <th>Available</th>
-              <th>Cost Price</th>
-              <th>Transfer Qty</th>
-              <th>Total Value</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let row of transferRows; let i = index">
-              <td>{{ row.brandName }}</td>
-              <td>{{ row.batchLot || '—' }}</td>
-              <td>{{ row.expiry ? (row.expiry | date:'dd/MM/yyyy') : '—' }}</td>
-              <td>{{ row.availableQty }}</td>
-              <td>Rs {{ row.costPrice | number:'1.2-2' }}</td>
-              <td>
-                <ion-input
-                  type="number"
-                  [(ngModel)]="row.transferQty"
-                  min="1"
-                  [max]="row.availableQty"
-                  placeholder="Qty"
-                  style="min-width: 70px;">
-                </ion-input>
-                <ion-note color="danger" *ngIf="row.transferQty > row.availableQty" style="font-size:11px;">
-                  Max {{ row.availableQty }}
-                </ion-note>
-              </td>
-              <td>Rs {{ (row.transferQty * row.costPrice) | number:'1.2-2' }}</td>
-              <td>
-                <ion-button fill="clear" color="danger" (click)="removeRow(i)">
-                  <ion-icon name="trash"></ion-icon>
-                </ion-button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  </ng-container>
 
-      <ion-item lines="none" style="margin-top: 8px;">
-        <ion-label><strong>Total Transfer Value</strong></ion-label>
-        <ion-text slot="end" color="primary"><strong>Rs {{ totalTransferValue | number:'1.2-2' }}</strong></ion-text>
-      </ion-item>
-    </ion-card-content>
-  </ion-card>
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- TRANSFER FORM                                                          -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <ng-container *ngIf="!completedTransfer">
 
-  <!-- ── SUBMIT BUTTON ── -->
-  <ion-button
-    expand="block"
-    color="primary"
-    class="ion-margin-top"
-    [disabled]="!transferRows.length"
-    (click)="openConfirmModal()">
-    <ion-icon name="swap-horizontal-outline" slot="start"></ion-icon>
-    Review & Transfer
-  </ion-button>
+    <!-- ── CLINIC SELECTION ──────────────────────────────────────────────── -->
+    <ion-card>
+      <ion-card-header color="primary">
+        <ion-card-title>Select Clinics</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+
+        <ion-item>
+          <ion-label position="floating">From Clinic <span style="color:red">*</span></ion-label>
+          <ion-select [(ngModel)]="fromClinicId" (ionChange)="onFromClinicChange()" placeholder="Select source clinic">
+            <ion-select-option *ngFor="let c of clinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">To Clinic <span style="color:red">*</span></ion-label>
+          <ion-select [(ngModel)]="toClinicId" placeholder="Select destination clinic" [disabled]="!fromClinicId">
+            <ion-select-option *ngFor="let c of toClinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ── STOCK ITEMS TABLE ─────────────────────────────────────────────── -->
+    <ion-card>
+      <ion-card-header color="primary">
+        <ion-card-title>Stock Items to Transfer</ion-card-title>
+      </ion-card-header>
+      <ion-card-content style="padding:0;">
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Brand</th>
+                <th>Batch / Lot</th>
+                <th>Expiry</th>
+                <th>Available</th>
+                <th>Transfer Qty</th>
+                <th>Cost Price</th>
+                <th>Total Value</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of rows; let i = index">
+
+                <!-- Brand with search -->
+                <td style="min-width:165px;">
+                  <mat-form-field class="table-field">
+                    <mat-select
+                      [(ngModel)]="row.brandId"
+                      (openedChange)="showAllBrands(row)"
+                      (selectionChange)="onBrandSelected(row, $event.value)"
+                      placeholder="Brand">
+                      <mat-option disabled>
+                        <input matInput
+                          [(ngModel)]="row.brandSearchTerm"
+                          [ngModelOptions]="{standalone: true}"
+                          (ngModelChange)="filterBrands(row, $event)"
+                          (click)="$event.stopPropagation()"
+                          (keydown)="$event.stopPropagation()"
+                          placeholder="Search..."
+                          style="font-size:14px;">
+                      </mat-option>
+                      <mat-option *ngFor="let b of row.filteredBrands" [value]="b.id">
+                        {{ b.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </td>
+
+                <!-- Batch / Lot -->
+                <td style="min-width:150px;">
+                  <ion-select
+                    [(ngModel)]="row.batchLot"
+                    (ionChange)="onBatchSelected(row, $event.detail.value)"
+                    placeholder="Batch"
+                    [disabled]="!row.batches.length"
+                    style="font-size:13px; max-width:140px;">
+                    <ion-select-option *ngFor="let b of row.batches" [value]="b.BatchLot || ''">
+                      {{ b.BatchLot || '(No batch)' }} — {{ formatExpiry(b.Expiry) }}
+                    </ion-select-option>
+                  </ion-select>
+                </td>
+
+                <!-- Expiry (read-only, auto-filled) -->
+                <td style="min-width:90px; text-align:center; font-size:13px; color:#333; white-space:nowrap;">
+                  {{ formatExpiry(row.expiry) }}
+                </td>
+
+                <!-- Available qty -->
+                <td style="text-align:center; font-size:13px; color:#555;">
+                  {{ row.availableQty || '—' }}
+                </td>
+
+                <!-- Transfer qty -->
+                <td style="min-width:80px;">
+                  <ion-input
+                    type="number"
+                    [(ngModel)]="row.transferQty"
+                    min="1"
+                    [max]="row.availableQty"
+                    placeholder="Qty"
+                    style="font-size:13px; min-width:70px;">
+                  </ion-input>
+                  <ion-note color="danger"
+                    *ngIf="row.transferQty > row.availableQty"
+                    style="font-size:10px; display:block;">
+                    Max {{ row.availableQty }}
+                  </ion-note>
+                </td>
+
+                <!-- Cost price -->
+                <td style="text-align:right; font-size:13px; white-space:nowrap;">
+                  Rs {{ row.costPrice | number:'1.2-2' }}
+                </td>
+
+                <!-- Row total -->
+                <td style="text-align:right; font-size:13px; white-space:nowrap;">
+                  Rs {{ ((row.transferQty || 0) * (row.costPrice || 0)) | number:'1.2-2' }}
+                </td>
+
+                <!-- Remove -->
+                <td>
+                  <ion-button fill="clear" color="danger" (click)="removeRow(i)" [disabled]="rows.length === 1">
+                    <ion-icon name="trash"></ion-icon>
+                  </ion-button>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Add row + grand total -->
+        <div style="padding:10px 12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <ion-button fill="outline" color="primary" size="small" (click)="addRow()">
+            <ion-icon name="add" slot="start"></ion-icon>
+            Add Item
+          </ion-button>
+          <ion-text color="primary" style="font-weight:700; font-size:15px;">
+            Total: Rs {{ totalTransferValue | number:'1.2-2' }}
+          </ion-text>
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ── SUBMIT ─────────────────────────────────────────────────────────── -->
+    <ion-button
+      expand="block"
+      color="primary"
+      class="ion-margin-top"
+      [disabled]="!rows.length"
+      (click)="openConfirmModal()">
+      <ion-icon name="swap-horizontal-outline" slot="start"></ion-icon>
+      Review &amp; Transfer
+    </ion-button>
+
+  </ng-container>
 
 </ion-content>

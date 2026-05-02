@@ -68,6 +68,10 @@ export class StockTransferService {
     return this.http.post<TransferResponse<StockTransferHistoryDTO[]>>(`${this.base}StockTransfer`, dto);
   }
 
+  downloadTransferPdf(ids: string): Observable<Blob> {
+    return this.http.get(`${this.base}StockTransfer/pdf?ids=${ids}`, { responseType: 'blob' });
+  }
+
   getHistory(params: {
     fromClinicId?: number;
     toClinicId?: number;
