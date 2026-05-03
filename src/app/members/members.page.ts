@@ -656,18 +656,7 @@ export class MembersPage implements OnInit {
             }
 
             if (AllowChild) {
-              this.childPages = [
-                {
-                  title: "Patients",
-                  url: "/members/child",
-                  icon: "accessibility-outline"
-                },
-                {
-                  title: "Add",
-                  url: "/members/child/add",
-                  icon: "person-add-outline"
-                }
-              ];
+              this.childPages = [];
             }
           } else if (this.hasClinics) {
             this.profile = [
@@ -725,18 +714,7 @@ export class MembersPage implements OnInit {
               },
             ];
 
-            this.childPages = [
-              {
-                title: "Patients",
-                url: "/members/child",
-                icon: "accessibility-outline"
-              },
-              {
-                title: "Add",
-                url: "/members/child/add",
-                icon: "person-add-outline"
-              }
-            ];
+            this.childPages = [];
             if (this.DoctorId === 1) {
               this.appPages.push({
                 title: "Personal Assistant",
