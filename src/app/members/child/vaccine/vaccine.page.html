@@ -42,22 +42,20 @@
             </ion-img>
   
             <!-- Bulk Reschedule Option -->
-            <span *ngIf="!allVaccinesGiven(item.value)" style="position:relative;display:inline-flex;align-items:center;">
-              <ion-icon
-                color="primary"
-                name="calendar"
-                (click)="bpicker.open()"
-                size="small"
-                style="cursor:pointer;"
-              ></ion-icon>
+            <ion-icon
+              *ngIf="!allVaccinesGiven(item.value)"
+              color="primary"
+              name="calendar"
+              (click)="picker.open()"
+              size="small"
+            >
               <input
-                [matDatepicker]="bpicker"
+                [matDatepicker]="picker"
                 value="{{ item.key }}"
                 (dateChange)="updateBulkDate($event, item.value[0].Id)"
-                style="width:0;height:0;opacity:0;position:absolute;pointer-events:none;"
               />
-              <mat-datepicker #bpicker [touchUi]="true"></mat-datepicker>
-            </span>
+              <mat-datepicker #picker></mat-datepicker>
+            </ion-icon>
           </div>
           <ion-icon
             style="margin-bottom: 10px;"
@@ -97,21 +95,20 @@
             >
               Disease Year: {{ v.DiseaseYear }}
             </p>
-            <span *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip" style="position:relative;display:inline-flex;align-items:center;">
-              <ion-icon
-                color="primary"
-                name="calendar"
-                (click)="vpicker.open()"
-                style="font-size: 18px; cursor: pointer;"
-              ></ion-icon>
+            <ion-icon
+              *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip"
+              color="primary"
+              name="calendar"
+              (click)="picker.open()"
+              style="font-size: 18px;"
+            >
               <input
-                [matDatepicker]="vpicker"
+                [matDatepicker]="picker"
                 value="{{ v.Date }}"
                 (dateChange)="updateDate($event, v.Id)"
-                style="width:0;height:0;opacity:0;position:absolute;pointer-events:none;"
               />
-              <mat-datepicker #vpicker [touchUi]="true"></mat-datepicker>
-            </span>
+              <mat-datepicker #picker></mat-datepicker>
+            </ion-icon>
             <ion-img
               *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip"
               style="height: 20px;"
