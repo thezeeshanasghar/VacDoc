@@ -434,34 +434,45 @@ ion-popover ion-item[aria-checked="true"] {
 
 // ── Material Datepicker Popup ────────────────────────────────────────────────
 
-// Outer container — rounded + shadow
+// Outer container — allow full height, rounded border + lava shadow
 .mat-datepicker-content,
 .mat-datepicker-content-touch {
   border-radius: 16px !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   box-shadow:
-    0 0 0 2px rgba(255, 69, 0, 0.18),
+    0 0 0 2px rgba(255, 69, 0, 0.22),
     0 12px 40px rgba(21, 101, 192, 0.22),
     0 2px 10px rgba(0, 0, 0, 0.14) !important;
 }
 
-// Header — blue→green gradient (matches alert-head)
+// Touch dialog — ensure full calendar is visible, no clipping
+.mat-datepicker-content-touch {
+  max-height: 95vh !important;
+  overflow-y: auto !important;
+}
+
+.mat-datepicker-content-touch .mat-calendar {
+  height: auto !important;
+  min-height: unset !important;
+}
+
+// ── Header — compact, blue→green gradient ──────────────────────────────────
 .mat-calendar-header {
   background: linear-gradient(135deg,
     var(--vac-blue-dp) 0%,
     var(--vac-blue)    50%,
     var(--vac-green)   100%
   ) !important;
-  padding: 4px 12px 8px !important;
+  padding: 0 8px 2px !important;
   position: relative;
 }
 
-// Lava stripe at the top of the header
+// Lava stripe at very top of header
 .mat-calendar-header::before {
   content: '';
   display: block;
   height: 4px;
-  margin: -4px -12px 6px;
+  margin: 0 -8px 2px;
   background: linear-gradient(90deg,
     var(--vac-red-dark) 0%,
     var(--vac-red)      35%,
@@ -470,50 +481,74 @@ ion-popover ion-item[aria-checked="true"] {
   );
 }
 
+// Shrink the controls row margin
+.mat-calendar-controls {
+  margin: 2px 0 !important;
+}
+
 // Month/year button — white bold
 .mat-calendar-period-button {
   color: #ffffff !important;
   font-weight: 700 !important;
   font-size: 15px !important;
+  line-height: 32px !important;
+  height: 32px !important;
 }
 
-// Nav arrows — white
+// Nav arrows — white, compact
 .mat-calendar-previous-button,
 .mat-calendar-next-button {
   color: #ffffff !important;
+  width: 32px !important;
+  height: 32px !important;
 }
 
-// Weekday header row — blue bold
-.mat-calendar-table-header th {
-  color: var(--vac-blue) !important;
+// ── Weekday header row — clear background, readable dark text ──────────────
+.mat-calendar-table-header,
+.mat-calendar-table-header tr {
+  background: transparent !important;
+}
+
+.mat-calendar-table-header th:not(.mat-calendar-table-header-divider) {
+  background: transparent !important;
+  color: #444444 !important;
   font-weight: 700 !important;
+  font-size: 12px !important;
+  padding: 6px 0 4px !important;
 }
 
-// Hide the duplicate month label inside the grid (e.g. "JUL" row below weekday headers)
-.mat-calendar-body-label {
+// Remove the divider bar under weekday names
+.mat-calendar-table-header-divider {
+  display: none !important;
+}
+
+// ── Month label row (e.g. "JUL") — make invisible, keep layout intact ──────
+td.mat-calendar-body-label {
+  background: transparent !important;
   color: transparent !important;
   pointer-events: none !important;
 }
 
+// ── Date cells ────────────────────────────────────────────────────────────
 // Selected date — lava orange circle
 .mat-calendar-body-selected {
   background-color: var(--vac-lava) !important;
   color: #ffffff !important;
 }
 
-// Today's date outline — lava orange
+// Today outline — lava orange
 .mat-calendar-body-today:not(.mat-calendar-body-selected) {
   border-color: var(--vac-lava) !important;
   color: var(--vac-lava) !important;
 }
 
-// Hover on date cells — lava tint
+// Hover — lava tint
 .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover
   > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
   background-color: rgba(255, 69, 0, 0.12) !important;
 }
 
-// Actions bar (OK / Cancel buttons in touchUi dialog)
+// ── Actions bar (OK / Cancel) ─────────────────────────────────────────────
 .mat-datepicker-actions {
   padding: 8px 16px 12px !important;
   gap: 8px !important;
