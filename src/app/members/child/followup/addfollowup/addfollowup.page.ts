@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FollowupService } from 'src/app/services/followup.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { LoadingController } from '@ionic/angular';
+import { VaccineService } from 'src/app/services/vaccine.service';
 
 @Component({
   selector: 'app-addfollowup',
@@ -27,7 +28,8 @@ export class AddfollowupPage implements OnInit {
     private formBuilder: FormBuilder,
     private followupService: FollowupService,
     private toastService: ToastService,
-    private storage: Storage
+    private storage: Storage,
+    private vaccineService: VaccineService
   ) {
     this.minDate = moment().format('YYYY-MM-DD');
     this.maxDate = moment().add(20, 'years').format('YYYY-MM-DD');
@@ -49,6 +51,56 @@ export class AddfollowupPage implements OnInit {
       'BloodSugar': [null],
       'BloodPressure': [null],
     });
+    this.loadVaccineDefaults();
+  }
+
+  loadVaccineDefaults() {
+    var childId = this.route.snapshot.paramMap.get('id');
+    if (!childId) { return; }
+    this.vaccineService.getVaccinationById(childId).subscribe(
+      res => {
+        if (!res.IsSuccess || !res.ResponseData || !res.ResponseData.length) { return; }
+        var schedules: any[] = res.ResponseData;
+
+        this.fg.controls['Disease'].setValue('Vaccination');
+
+        // Find most recently given vaccine (for Weight/Height/OFC)
+        var given: any[] = schedules.filter(function(s) { return s.IsDone && !s.Due2EPI; });
+        var latestGiven: any = null;
+        for (var i = 0; i < given.length; i++) {
+          if (!latestGiven) {
+            latestGiven = given[i];
+          } else {
+            var a = moment(latestGiven.GivenDate, 'DD-MM-YYYY');
+            var b = moment(given[i].GivenDate, 'DD-MM-YYYY');
+            if (b.isAfter(a)) { latestGiven = given[i]; }
+          }
+        }
+        if (latestGiven) {
+          if (latestGiven.Weight) { this.fg.controls['Weight'].setValue(latestGiven.Weight); }
+          if (latestGiven.Height) { this.fg.controls['Height'].setValue(latestGiven.Height); }
+          if (latestGiven.Circle) { this.fg.controls['OFC'].setValue(latestGiven.Circle); }
+        }
+
+        // Find earliest upcoming vaccine (for NextVisitDate)
+        var upcoming: any[] = schedules.filter(function(s) { return !s.IsDone && !s.IsSkip; });
+        var nextVaccine: any = null;
+        for (var j = 0; j < upcoming.length; j++) {
+          if (!nextVaccine) {
+            nextVaccine = upcoming[j];
+          } else {
+            var c = moment(nextVaccine.Date, 'DD-MM-YYYY');
+            var d = moment(upcoming[j].Date, 'DD-MM-YYYY');
+            if (d.isBefore(c)) { nextVaccine = upcoming[j]; }
+          }
+        }
+        if (nextVaccine && nextVaccine.Date) {
+          var nextDate = moment(nextVaccine.Date, 'DD-MM-YYYY').toDate();
+          this.fg.controls['NextVisitDate'].setValue(nextDate);
+        }
+      },
+      function(_err) {}
+    );
   }
 
   async addFollowUp() {
