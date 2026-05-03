@@ -431,3 +431,120 @@ ion-popover ion-item[aria-checked="true"] {
   --color: var(--vac-green) !important;
   font-weight: 600;
 }
+
+// ── Material Datepicker Popup ────────────────────────────────────────────────
+
+// Outer container — rounded + shadow
+.mat-datepicker-content,
+.mat-datepicker-content-touch {
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  box-shadow:
+    0 0 0 2px rgba(255, 69, 0, 0.18),
+    0 12px 40px rgba(21, 101, 192, 0.22),
+    0 2px 10px rgba(0, 0, 0, 0.14) !important;
+}
+
+// Header — blue→green gradient (matches alert-head)
+.mat-calendar-header {
+  background: linear-gradient(135deg,
+    var(--vac-blue-dp) 0%,
+    var(--vac-blue)    50%,
+    var(--vac-green)   100%
+  ) !important;
+  padding: 4px 12px 8px !important;
+  position: relative;
+}
+
+// Lava stripe at the top of the header
+.mat-calendar-header::before {
+  content: '';
+  display: block;
+  height: 4px;
+  margin: -4px -12px 6px;
+  background: linear-gradient(90deg,
+    var(--vac-red-dark) 0%,
+    var(--vac-red)      35%,
+    var(--vac-lava)     65%,
+    #FF8C00             100%
+  );
+}
+
+// Month/year button — white bold
+.mat-calendar-period-button {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+}
+
+// Nav arrows — white
+.mat-calendar-previous-button,
+.mat-calendar-next-button {
+  color: #ffffff !important;
+}
+
+// Weekday header row — blue bold
+.mat-calendar-table-header th {
+  color: var(--vac-blue) !important;
+  font-weight: 700 !important;
+}
+
+// Hide the duplicate month label inside the grid (e.g. "JUL" row below weekday headers)
+.mat-calendar-body-label {
+  color: transparent !important;
+  pointer-events: none !important;
+}
+
+// Selected date — lava orange circle
+.mat-calendar-body-selected {
+  background-color: var(--vac-lava) !important;
+  color: #ffffff !important;
+}
+
+// Today's date outline — lava orange
+.mat-calendar-body-today:not(.mat-calendar-body-selected) {
+  border-color: var(--vac-lava) !important;
+  color: var(--vac-lava) !important;
+}
+
+// Hover on date cells — lava tint
+.mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover
+  > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+  background-color: rgba(255, 69, 0, 0.12) !important;
+}
+
+// Actions bar (OK / Cancel buttons in touchUi dialog)
+.mat-datepicker-actions {
+  padding: 8px 16px 12px !important;
+  gap: 8px !important;
+  justify-content: flex-end !important;
+  border-top: 2px solid rgba(255, 69, 0, 0.15) !important;
+}
+
+.mat-datepicker-actions button {
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  padding: 8px 20px !important;
+}
+
+// Cancel — blue outlined
+.mat-datepicker-actions button:first-child {
+  color: var(--vac-blue) !important;
+  border: 1.5px solid rgba(21, 101, 192, 0.35) !important;
+  background: transparent !important;
+}
+
+// OK — lava gradient
+.mat-datepicker-actions button:last-child {
+  background: linear-gradient(135deg,
+    var(--vac-red-dark) 0%,
+    var(--vac-red)      45%,
+    var(--vac-lava)     100%
+  ) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 3px 12px rgba(255, 69, 0, 0.45) !important;
+}
