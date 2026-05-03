@@ -774,6 +774,38 @@ export class MembersPage implements OnInit {
             ];
             this.appPages = [];
             this.childPages = [];
+
+            if (agentAllowed) {
+              this.appPages.push({
+                title: "Agent Module",
+                icon: "people-outline",
+                url: "/members/doctor/agent-module",
+              });
+            }
+
+            if (inventoryAllowed) {
+              this.appPages.push({
+                title: "Stock Management",
+                icon: "cube-outline",
+                url: "/members/doctor/brand-amount",
+              });
+            }
+
+            if (supplierAllowed) {
+              this.appPages.push({
+                title: "Suppliers",
+                icon: "business-outline",
+                url: "/members/doctor/financial/suppliers",
+              });
+            }
+
+            if (financialAllowed) {
+              this.appPages.push({
+                title: "Financial",
+                icon: "bar-chart-outline",
+                url: "/members/doctor/financial/reporting",
+              });
+            }
           }
         }
           loading.dismiss();
