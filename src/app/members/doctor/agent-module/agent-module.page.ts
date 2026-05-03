@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AgentService } from 'src/app/services/agent.service';
@@ -9,7 +9,7 @@ import { ToastService } from 'src/app/shared/toast.service';
   templateUrl: './agent-module.page.html',
   styleUrls: ['./agent-module.page.scss'],
 })
-export class AgentModulePage implements OnInit {
+export class AgentModulePage {
   agents: any[] = [];
 
   constructor(
@@ -20,7 +20,7 @@ export class AgentModulePage implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit() {
+  ionViewWillEnter() {
     this.loadAgents();
   }
 
@@ -32,7 +32,7 @@ export class AgentModulePage implements OnInit {
         this.agents = data;
         loader.dismiss();
       },
-      (err: any) => {
+      (_err: any) => {
         loader.dismiss();
         this.toastService.create('Failed to load agents', 'danger');
       }
@@ -63,7 +63,7 @@ export class AgentModulePage implements OnInit {
             };
             this.agentService.addAgent(agent).subscribe(
               () => { this.loadAgents(); },
-              (err: any) => { this.toastService.create('Failed to add agent', 'danger'); }
+              (_err: any) => { this.toastService.create('Failed to add agent', 'danger'); }
             );
           }
         }
@@ -98,7 +98,7 @@ export class AgentModulePage implements OnInit {
             };
             this.agentService.updateAgent(id, updated).subscribe(
               () => { this.loadAgents(); },
-              (err: any) => { this.toastService.create('Failed to update agent', 'danger'); }
+              (_err: any) => { this.toastService.create('Failed to update agent', 'danger'); }
             );
           }
         }
@@ -125,7 +125,7 @@ export class AgentModulePage implements OnInit {
             const id = agent.Id || agent.id;
             this.agentService.deleteAgent(id).subscribe(
               () => { this.loadAgents(); },
-              (err: any) => { this.toastService.create('Failed to delete agent', 'danger'); }
+              (_err: any) => { this.toastService.create('Failed to delete agent', 'danger'); }
             );
           }
         }
