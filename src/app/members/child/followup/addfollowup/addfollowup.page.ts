@@ -55,7 +55,12 @@ export class AddfollowupPage implements OnInit {
   }
 
   loadVaccineDefaults() {
-    var childId = this.route.snapshot.paramMap.get('id');
+    var childId: any = null;
+    var pathFromRoot = this.route.snapshot.pathFromRoot;
+    for (var k = 0; k < pathFromRoot.length; k++) {
+      var paramId = pathFromRoot[k].paramMap.get('id');
+      if (paramId) { childId = paramId; break; }
+    }
     if (!childId) { return; }
     this.vaccineService.getVaccinationById(childId).subscribe(
       res => {
