@@ -56,7 +56,11 @@ const routes: Routes = [
   },
   {
     path: "financial/suppliers",
-    loadChildren: () => import('./analytics/itemsupplier/itemsupplier.module').then(m => m.ItemSupplierPageModule)
+    loadChildren: () => import('./financial/supplier-list/supplier-list.module').then(m => m.SupplierListPageModule)
+  },
+  {
+    path: "financial/supplier-edit/:id",
+    loadChildren: () => import('./financial/supplier-edit/supplier-edit.module').then(m => m.SupplierEditPageModule)
   },
   {
     path: "agent-module",

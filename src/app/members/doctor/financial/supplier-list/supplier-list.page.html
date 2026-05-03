@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Suppliers</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list *ngIf="suppliers.length > 0">
+    <ion-item *ngFor="let s of suppliers" button detail (click)="goToEdit(s.Id)">
+      <ion-icon slot="start" name="business-outline" color="primary"></ion-icon>
+      <ion-label>
+        <h2>{{ s.Name }}</h2>
+        <p *ngIf="s.Phone">{{ s.Phone }}</p>
+        <p *ngIf="s.ContactPerson">{{ s.ContactPerson }}</p>
+      </ion-label>
+      <ion-badge slot="end" [color]="s.IsActive ? 'success' : 'medium'">
+        {{ s.IsActive ? 'Active' : 'Inactive' }}
+      </ion-badge>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="suppliers.length === 0" style="text-align: center; margin-top: 40px; color: #888;">
+    <ion-icon name="business-outline" style="font-size: 48px;"></ion-icon>
+    <p>No suppliers yet. Tap + to add one.</p>
+  </div>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="addNew()" color="primary">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

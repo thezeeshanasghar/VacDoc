@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/financial/suppliers"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ isNew ? 'Add Supplier' : 'Edit Supplier' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="fg">
+
+    <ion-item>
+      <ion-label position="floating" color="primary">Name *</ion-label>
+      <ion-input formControlName="Name" type="text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating" color="primary">Contact Person</ion-label>
+      <ion-input formControlName="ContactPerson" type="text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating" color="primary">Phone</ion-label>
+      <ion-input formControlName="Phone" type="tel"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating" color="primary">Email</ion-label>
+      <ion-input formControlName="Email" type="email"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating" color="primary">Address</ion-label>
+      <ion-input formControlName="Address" type="text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating" color="primary">NTN</ion-label>
+      <ion-input formControlName="NTN" type="text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating" color="primary">STRN</ion-label>
+      <ion-input formControlName="STRN" type="text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating" color="primary">Opening Balance (Rs)</ion-label>
+      <ion-input formControlName="OpeningBalance" type="number"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label color="primary">Active</ion-label>
+      <ion-toggle formControlName="IsActive" slot="end"></ion-toggle>
+    </ion-item>
+
+    <div style="margin-top: 20px;">
+      <ion-button expand="block" (click)="save()">
+        <ion-icon name="save-outline" slot="start"></ion-icon>
+        Save
+      </ion-button>
+    </div>
+
+  </form>
+</ion-content>
