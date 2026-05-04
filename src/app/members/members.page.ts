@@ -515,7 +515,6 @@ export class MembersPage implements OnInit {
       if (this.user.UserType === "PA") {
         const permissions = await this.checkPermissions(this.user.PAId);
         if (permissions) {
-          const { AllowStock, AllowAlert, AllowSchedule, AllowVacation, AllowAnalytics, AllowClinic, AllowChild } = permissions;
           console.log('Permissions:', permissions);
         }
       }
@@ -607,14 +606,6 @@ export class MembersPage implements OnInit {
               }
             ];
 
-            if (AllowAlert) {
-              this.appPages.push({
-                title: "Alerts",
-                icon: "alert",
-                url: "/members/alert",
-              });
-            }
-
             if (AllowStock && inventoryAllowed) {
               this.appPages.push({
                 title: "Stock Management",
@@ -674,11 +665,6 @@ export class MembersPage implements OnInit {
                 url: "/members/dashboard",
                 icon: "home-outline"
               },
-              {
-                title: "Alerts",
-                url: "/members/alert",
-                icon: "alert"
-              },
               // {
               //   title: "Messages",
               //   url: "/members/message",
@@ -714,13 +700,7 @@ export class MembersPage implements OnInit {
               },
             ];
 
-            this.childPages = [
-              {
-                title: "Patients",
-                url: "/members/child",
-                icon: "accessibility-outline"
-              }
-            ];
+            this.childPages = [];
             if (this.DoctorId === 1) {
               this.appPages.push({
                 title: "Personal Assistant",
