@@ -1,33 +1,3 @@
-<ion-header>
-  <!-- <ion-toolbar>
-    <ion-item>
-      <ion-label position="floating"></ion-label>
-      <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)" class="clinic-select"
-      >
-        <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
-          {{ clinic.Name }}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-  </ion-toolbar> -->
-  <ion-toolbar color="primary">
-    <ion-title class="ion-text-center" style="cursor: pointer" routerLink="/members/doctor/clinic">
-      {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name :'Add Patient' }}
-    </ion-title>
-  </ion-toolbar>
-  <ion-toolbar color="primary">
-    <ion-buttons class="ion-justify-content-center" style="border-radius: 5px">
-      <ion-icon style="margin-left: 10%; cursor: pointer" routerLink="/members/child/add" name="person-add"
-        size="large">
-      </ion-icon>
-      <ion-icon style="margin-left: 10%; cursor: pointer" routerLink="/members/alert" name="alert" size="large">
-      </ion-icon>
-      <ion-icon style="margin-left: 10%;cursor: pointer;" routerLink="/members/child" name="accessibility-outline"
-        size="large"> </ion-icon>
-      <ion-menu-button style="margin-left: 10%; cursor: pointer"></ion-menu-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
 
 <ion-content *ngIf="fg1" class="ion-padding">
   <ion-card>

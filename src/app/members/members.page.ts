@@ -24,7 +24,7 @@
 //   constructor(
 //     public loadingController: LoadingController,
 //     private storage: Storage,
-//     private clinicService: ClinicService,
+//     public clinicService: ClinicService,
 //     private toastService: ToastService,
 //     private doctorService: DoctorService,
 //     private paService: PaService
@@ -498,7 +498,7 @@ export class MembersPage implements OnInit {
   constructor(
     public loadingController: LoadingController,
     private storage: Storage,
-    private clinicService: ClinicService,
+    public clinicService: ClinicService,
     private toastService: ToastService,
     private doctorService: DoctorService,
     private paService: PaService
