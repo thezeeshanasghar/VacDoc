@@ -7,13 +7,15 @@
       <ion-icon style="margin-left: 10%; cursor: pointer; color: white;" routerLink="/members/doctor/stock-management/stock-transfer" name="swap-horizontal-outline" size="large"></ion-icon>
       <ion-icon style="margin-left: 10%; cursor: pointer; color: white;" routerLink="/members/doctor/stock-management/direct-sale" name="bag-handle-outline" size="large"></ion-icon>
     </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button (click)="downloadPDF()">
-        <img src="../../../../assets/pdf.png" alt="Download PDF" class="pdf-icon" />
-      </ion-button>
-      <ion-button (click)="downloadExpiryPDF()" title="Download Expiry Report">
-        <ion-icon name="calendar-clear-outline" style="color: white;"></ion-icon>
-      </ion-button>
+    <ion-buttons slot="end" style="margin-right:6px; gap:6px;">
+      <button class="pdf-pill pdf-pill--blue" (click)="downloadPDF()">
+        <ion-icon name="document-outline"></ion-icon>
+        <span>Stock</span>
+      </button>
+      <button class="pdf-pill pdf-pill--green" (click)="downloadExpiryPDF()">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <span>Expiry</span>
+      </button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
