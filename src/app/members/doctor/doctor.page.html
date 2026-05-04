@@ -3,17 +3,48 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>
-      Doctor
-    </ion-title>
+    <ion-title>Doctor</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
-  <ion-button routerLink="/members/doctor/clinic">
-    Clinics
-  </ion-button>
-  <ion-button routerLink="/members/doctor/profile">
-    Edit Profile
-  </ion-button>
+<ion-content class="doc-content">
+  <div class="doc-grid">
+
+    <div routerLink="/members/doctor/clinic" class="doc-card card-clinics">
+      <div class="doc-card-icon">
+        <ion-icon name="business-outline"></ion-icon>
+      </div>
+      <span class="doc-card-label">Clinics</span>
+      <span class="doc-card-sub">Manage your locations</span>
+      <ion-icon name="chevron-forward-outline" class="doc-card-arrow"></ion-icon>
+    </div>
+
+    <div routerLink="/members/doctor/profile" class="doc-card card-profile">
+      <div class="doc-card-icon">
+        <ion-icon name="person-circle-outline"></ion-icon>
+      </div>
+      <span class="doc-card-label">Edit Profile</span>
+      <span class="doc-card-sub">Update your details</span>
+      <ion-icon name="chevron-forward-outline" class="doc-card-arrow"></ion-icon>
+    </div>
+
+    <div routerLink="/members/doctor/personal-assistant" class="doc-card card-pa">
+      <div class="doc-card-icon">
+        <ion-icon name="people-circle-outline"></ion-icon>
+      </div>
+      <span class="doc-card-label">Assistants</span>
+      <span class="doc-card-sub">Manage PAs</span>
+      <ion-icon name="chevron-forward-outline" class="doc-card-arrow"></ion-icon>
+    </div>
+
+    <div routerLink="/members/doctor/password" class="doc-card card-password">
+      <div class="doc-card-icon">
+        <ion-icon name="lock-closed-outline"></ion-icon>
+      </div>
+      <span class="doc-card-label">Password</span>
+      <span class="doc-card-sub">Change credentials</span>
+      <ion-icon name="chevron-forward-outline" class="doc-card-arrow"></ion-icon>
+    </div>
+
+  </div>
 </ion-content>

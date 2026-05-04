@@ -11,6 +11,23 @@ $app-theme:   mat-light-theme($app-primary, $app-accent, $app-warn);
 
 /** Ionic CSS Variables **/
 :root {
+  // ── Brand palette tokens ────────────────────────────────────────────────
+  --vac-navy:      #0A3D79;
+  --vac-blue:      #1565C0;
+  --vac-sky:       #1E88E5;
+  --vac-green:     #2E7D32;
+  --vac-green2:    #43A047;
+  --vac-orange:    #FF4500;
+  --vac-orange2:   #FF6B35;
+  --vac-red:       #C62828;
+  --vac-red-dark:  #8B0000;
+  --vac-black:     #1A1A2E;
+  --vac-surface:   #EEF2F7;
+  --vac-card:      #FFFFFF;
+  --vac-border:    #D0DCF0;
+  --vac-shadow:    0 4px 24px rgba(10, 61, 121, 0.13);
+  --vac-shadow-lg: 0 8px 32px rgba(10, 61, 121, 0.22);
+
   // ── Primary: Logo Blue ──────────────────────────────────────────────────
   --ion-color-primary:          #1565C0;
   --ion-color-primary-rgb:      21, 101, 192;

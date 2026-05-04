@@ -1,135 +1,95 @@
-
-
+// ── Child gender card borders ─────────────────────────────────────────────────
 .girl {
-    border: rgb(245, 12, 167) 2px solid
+  border-left: 4px solid #E91E9A !important;
+  box-shadow: 0 2px 12px rgba(233, 30, 154, 0.12) !important;
 }
 
 .boy {
-    border: rgb(8, 28, 206) 2px solid
+  border-left: 4px solid #1565C0 !important;
+  box-shadow: 0 2px 12px rgba(21, 101, 192, 0.12) !important;
 }
+
+// ── Child card header bar (icon row) ─────────────────────────────────────────
+.icons {
+  background: linear-gradient(135deg, #0A3D79 0%, #1565C0 100%);
+  border-radius: 12px 12px 0 0;
+  padding: 8px 12px;
+  color: #fff;
+}
+
 .iconchild {
-    margin-left: 6%;
+  margin-left: 8px;
+  color: rgba(255,255,255,0.90) !important;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+
+  &:active { transform: scale(0.92); }
 }
 
-.icons{
-    --background: rgb(0, 0, 0, 0.155); /* Replace 'your-color' with the desired background color */
-    border-radius: 2px;
-    color: #fff;
+// ── Patient name label in header ──────────────────────────────────────────────
+.icons ion-item {
+  --background: transparent;
+  --color: #ffffff;
+  --border-color: transparent;
+  --inner-border-width: 0;
+  --padding-start: 0;
+
+  ion-label {
+    color: #ffffff !important;
+    font-weight: 700;
+    font-size: 16px;
+  }
 }
 
-.gender-image {
-    width: 100px; /* Adjust width as needed */
-    height: auto; /* Maintain aspect ratio */
-  }
-  
-  .gender-image path {
-    fill: blue; /* Default color for male */
-  }
-  
-  .gender-image.girl path {
-    fill: pink; /* Color for female */
-  }
-  @media (max-width: 642px) { /* Adjust the breakpoint as needed */
-    .icons {
-      display: block !important;
-    font-size: 0px;
-    }
- 
-  }
-
-  ::slotted(ion-icon) {
-    color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.54);
-    font-size: 18px;
+.icons ion-item ion-thumbnail img {
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.45);
 }
+
+// ── Card content area ─────────────────────────────────────────────────────────
+ion-card ion-card-content {
+  padding: 12px 14px 14px;
+  color: #374151;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+ion-card ion-card-content ion-icon {
+  color: #1565C0;
+  vertical-align: middle;
+  margin-right: 3px;
+}
+
+// ── Search bar area ───────────────────────────────────────────────────────────
+form ion-item {
+  --border-radius: 12px;
+  --background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.08);
+  margin-bottom: 14px;
+}
+
+// ── Utility ───────────────────────────────────────────────────────────────────
 .error-message {
-  color: red;
-  font-size: 14px;
-  margin-left: 10px;
-  margin-top: 10px;
-}
-.mat-datepicker-toggle-default-icon {
-  color: #3880ff;
-}
-input {
-  border: 0;
-  margin-left: 7%;
-  width: 40%;
-}
-#dob{
-  margin-left: 5%;
-}
-ion-list-header{
-  color: #3880ff;
-}
-
-.example-form {
-  min-width: 150px;
-  max-width: 500px;
-  width: 100%;
-}
-
-.example-full-width {
-  width: 100%;
-}
-
-.no-indent .mat-option {
-  padding-left: 0;
-  margin-left: 0;
-}
-
-.custom-item-background1 {
-  --background: rgba(8, 8, 8, 0.162);
-  color: #fff;
-}
-
-
-.custom-item-background2 {
-  --background: rgba(8, 8, 8, 0);
-  color: #fff;
-}
-
-.custom-item-background3 {
-  --background: rgb(0, 0, 0);
-  color: #fff;
-}
-
-
-#EPI{
-  height: auto;
-}
-.city{
-  
-}
-
-.input-group {
-  flex-direction: row;
-  flex-wrap: nowrap;
-}
-.country-code-container {
-  width: 100%;
-}
-
-@media (max-width: 375px) {
-  .country-code-container {
-    width: 200%;
-  }
-
-  .country-label, .mobile-label {
-    font-size: 14px;
-  }
-  
-  .country-code-select, .number-input {
-    font-size: 14px;
-  }
+  color: #C62828;
+  font-size: 13px;
+  margin: 4px 10px;
 }
 
 .required-asterisk {
-  color: red;
-  margin-left: 2px; 
+  color: #C62828;
+  margin-left: 2px;
 }
+
 .clinic-select::part(text) {
   text-align: center;
   justify-content: center;
   width: 100%;
 }
 
+@media (max-width: 642px) {
+  .icons {
+    display: block !important;
+    font-size: 0px;
+  }
+}

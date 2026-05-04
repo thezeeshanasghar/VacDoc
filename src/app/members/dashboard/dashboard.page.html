@@ -1,12 +1,69 @@
 <ion-content class="dashboard-content">
-  <div class="welcome-section">
-    <ion-card class="welcome-card animated fadeIn">
-      <div class="header-image-container">
-        <ion-img src="/assets/vaccinepk.jpg" class="header-img"></ion-img>
-        <div class="welcome-overlay">
-          <h1>Welcome to Dashboard</h1>
+  <div class="dash-wrap">
+
+    <div class="dash-greeting">
+      <p class="dash-hello">Welcome back, Doctor</p>
+      <p class="dash-tagline">
+        {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name : 'Baby Medics / Vaccine.pk' }}
+      </p>
+    </div>
+
+    <div class="dash-grid">
+
+      <div routerLink="/members/child" class="dash-card card-patients">
+        <div class="dash-card-icon">
+          <ion-icon name="people-outline"></ion-icon>
         </div>
+        <span class="dash-card-label">Patients</span>
+        <span class="dash-card-sub">Children records</span>
+        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
-    </ion-card>
+
+      <div routerLink="/members/alert" class="dash-card card-alerts">
+        <div class="dash-card-icon">
+          <ion-icon name="notifications-outline"></ion-icon>
+        </div>
+        <span class="dash-card-label">Alerts</span>
+        <span class="dash-card-sub">Due vaccines & follow-ups</span>
+        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
+      </div>
+
+      <div routerLink="/members/doctor/stock-management" class="dash-card card-stock">
+        <div class="dash-card-icon">
+          <ion-icon name="cube-outline"></ion-icon>
+        </div>
+        <span class="dash-card-label">Stock</span>
+        <span class="dash-card-sub">Purchase & inventory</span>
+        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
+      </div>
+
+      <div routerLink="/members/doctor/analytics" class="dash-card card-analytics">
+        <div class="dash-card-icon">
+          <ion-icon name="bar-chart-outline"></ion-icon>
+        </div>
+        <span class="dash-card-label">Analytics</span>
+        <span class="dash-card-sub">Reports & insights</span>
+        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
+      </div>
+
+      <div routerLink="/members/doctor/schedule" class="dash-card card-schedule">
+        <div class="dash-card-icon">
+          <ion-icon name="calendar-outline"></ion-icon>
+        </div>
+        <span class="dash-card-label">Schedule</span>
+        <span class="dash-card-sub">Vaccine schedules</span>
+        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
+      </div>
+
+      <div routerLink="/members/doctor/clinic" class="dash-card card-clinic">
+        <div class="dash-card-icon">
+          <ion-icon name="business-outline"></ion-icon>
+        </div>
+        <span class="dash-card-label">Clinics</span>
+        <span class="dash-card-sub">Manage locations</span>
+        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
+      </div>
+
+    </div>
   </div>
 </ion-content>

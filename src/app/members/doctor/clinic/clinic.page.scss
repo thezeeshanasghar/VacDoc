@@ -1,15 +1,55 @@
-
-.timing-info {
-    display: block;
-    padding: 5px; /* Adjust as needed */
-  }
-
-  .timing-details {
-    display: block;
-    padding: 5px; /* Adjust as needed */
-  }
-.clinic-select {
-  text-align: center;        /* center text */
-  justify-content: center;   /* center flex container */
+// ── Clinic card ───────────────────────────────────────────────────────────────
+ion-card {
+  border-radius: 16px !important;
+  border-left: 4px solid #1565C0;
+  box-shadow: 0 3px 14px rgba(21, 101, 192, 0.12), 0 1px 4px rgba(0,0,0,0.06) !important;
+  background: #ffffff;
+  margin: 0 0 14px;
+  overflow: hidden;
 }
 
+// ── Clinic name row ────────────────────────────────────────────────────────────
+ion-card > ion-item {
+  --background: linear-gradient(135deg, #0A3D79 0%, #1565C0 100%);
+  --color: #ffffff;
+  --border-color: transparent;
+  --inner-border-width: 0;
+  border-radius: 12px 12px 0 0;
+
+  ion-label {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    letter-spacing: 0.2px;
+  }
+
+  ion-icon {
+    color: rgba(255,255,255,0.80) !important;
+    font-size: 22px;
+  }
+}
+
+// ── Card content ──────────────────────────────────────────────────────────────
+ion-card-content {
+  padding: 14px 16px 16px !important;
+  background: #ffffff;
+
+  p {
+    font-size: 13px;
+    color: #374151;
+    margin: 4px 0;
+
+    &:before {
+      content: '';
+    }
+  }
+}
+
+// ── Online badge ──────────────────────────────────────────────────────────────
+ion-badge[color="success"] {
+  background: #E8F5E9;
+  color: #2E7D32;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 20px;
+}

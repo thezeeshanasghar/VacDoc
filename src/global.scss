@@ -15,14 +15,19 @@
   --vac-blue:       #1565C0;
   --vac-blue-dp:    #0D47A1;
   --vac-blue-lt:    #1E88E5;
+  --vac-navy:       #0A3D79;
   --vac-green:      #2E7D32;
   --vac-green-lt:   #43A047;
   --vac-lava:       #FF4500;
+  --vac-lava-lt:    #FF6B35;
   --vac-red:        #C62828;
   --vac-red-dark:   #8B0000;
   --vac-near-black: #0D0D12;
   --vac-card-bg:    #FFFFFF;
-  --vac-surface:    #F4F6FC;
+  --vac-surface:    #EEF2F7;
+  --vac-border:     #D0DCF0;
+  --vac-shadow:     0 4px 24px rgba(10, 61, 121, 0.13);
+  --vac-shadow-lg:  0 8px 32px rgba(10, 61, 121, 0.22);
 }
 
 // ── Toolbar ──────────────────────────────────────────────────────────────────
@@ -227,6 +232,39 @@ ion-searchbar {
 }
 
 .mat-icon-button { color: var(--vac-blue); }
+
+// ── Global page background ───────────────────────────────────────────────────
+ion-content {
+  --background: var(--vac-surface);
+}
+
+// ── FAB buttons ──────────────────────────────────────────────────────────────
+ion-fab-button {
+  --background: linear-gradient(135deg, var(--vac-red-dark) 0%, var(--vac-red) 45%, var(--vac-lava) 100%);
+  --background-activated: var(--vac-red-dark);
+  --box-shadow: 0 4px 16px rgba(255, 69, 0, 0.45);
+  --color: #ffffff;
+}
+
+ion-fab-button[color="success"] {
+  --background: var(--vac-green);
+  --background-activated: var(--vac-green-lt);
+}
+
+ion-fab-button[color="danger"] {
+  --background: var(--vac-red);
+  --background-activated: var(--vac-red-dark);
+}
+
+ion-fab-button[color="primary"] {
+  --background: linear-gradient(135deg, var(--vac-blue-dp) 0%, var(--vac-blue) 100%);
+  --background-activated: var(--vac-blue-dp);
+}
+
+ion-fab-button[color="tertiary"] {
+  --background: linear-gradient(135deg, var(--vac-red-dark) 0%, var(--vac-red) 45%, var(--vac-lava) 100%);
+  --background-activated: var(--vac-red-dark);
+}
 
 // ── Scrollbar (webkit) ───────────────────────────────────────────────────────
 ::-webkit-scrollbar { width: 6px; height: 6px; }
