@@ -20,6 +20,10 @@ export class PaAuditLogPage implements OnInit {
   pageSize: number = 50;
   loading: boolean = false;
 
+  get totalPages(): number {
+    return this.pageSize > 0 ? Math.ceil(this.total / this.pageSize) : 1;
+  }
+
   constructor(
     private paService: PaService,
     private storage: Storage,
