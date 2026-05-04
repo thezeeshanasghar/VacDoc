@@ -1,21 +1,19 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar style="--background: linear-gradient(135deg, #8B0000 0%, #C62828 45%, #FF4500 100%);">
+    <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
+      <ion-icon style="margin-left: 10%; cursor: pointer; color: white;" routerLink="/members/doctor/stock-management/add" name="add-circle-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left: 10%; cursor: pointer; color: white;" routerLink="/members/doctor/stock-management" name="document-text-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left: 10%; cursor: pointer; color: white;" routerLink="/members/doctor/stock-management/adjust" name="sync-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left: 10%; cursor: pointer; color: white;" routerLink="/members/doctor/stock-management/stock-transfer" name="swap-horizontal-outline" size="large"></ion-icon>
+      <ion-icon style="margin-left: 10%; cursor: pointer; color: white;" routerLink="/members/doctor/stock-management/direct-sale" name="bag-handle-outline" size="large"></ion-icon>
+    </ion-buttons>
     <ion-buttons slot="end">
       <ion-button (click)="downloadPDF()">
         <img src="../../../../assets/pdf.png" alt="Download PDF" class="pdf-icon" />
       </ion-button>
       <ion-button (click)="downloadExpiryPDF()" title="Download Expiry Report">
-        <ion-icon name="calendar-clear-outline" class="expiry-icon"></ion-icon>
+        <ion-icon name="calendar-clear-outline" style="color: white;"></ion-icon>
       </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-  <ion-toolbar color="primary">
-    <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
-      <ion-icon style="margin-left: 10%;cursor: pointer;" routerLink="/members/doctor/stock-management/add" name="add-circle-outline" size="large"></ion-icon>
-      <ion-icon style="margin-left: 10%;cursor: pointer;" routerLink="/members/doctor/stock-management" name="document-text-outline" size="large"></ion-icon>
-      <ion-icon style="margin-left: 10%;cursor: pointer;" routerLink="/members/doctor/stock-management/adjust" name="sync-outline" size="large"></ion-icon>
-      <ion-icon style="margin-left: 10%;cursor: pointer;" routerLink="/members/doctor/stock-management/stock-transfer" name="swap-horizontal-outline" size="large"></ion-icon>
-      <ion-icon style="margin-left: 10%;cursor: pointer;" routerLink="/members/doctor/stock-management/direct-sale" name="bag-handle-outline" size="large"></ion-icon>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
