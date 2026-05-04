@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
-import { VacDatePickerService } from 'src/app/shared/vac-datepicker/vac-datepicker.service';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { Storage } from '@ionic/storage';
 import { ToastService } from 'src/app/shared/toast.service';
@@ -36,8 +35,7 @@ export class VacationPage implements OnInit {
     private vacationService: VacationService,
     private toastService: ToastService,
     private http: HttpClient,
-    private paService: PaService,
-    private datePicker: VacDatePickerService
+    private paService: PaService
 
   ) {
     this.todaydate = new Date().toISOString().slice(0, 10);
@@ -64,17 +62,6 @@ export class VacationPage implements OnInit {
     this.fg2.controls['ToDate'].setValue($event.detail.value);
   }
 
-
-  openFromDate() {
-    this.datePicker.open(this.fg2.get('formDate').value).subscribe((date: Date | null) => {
-      if (date) { this.fg2.patchValue({ formDate: date }); }
-    });
-  }
-  openToDate() {
-    this.datePicker.open(this.fg2.get('ToDate').value).subscribe((date: Date | null) => {
-      if (date) { this.fg2.patchValue({ ToDate: date }); }
-    });
-  }
   getChildVaccinefromUser() {
     this.addVacation()
   }

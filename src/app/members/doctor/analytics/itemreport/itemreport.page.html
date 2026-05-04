@@ -59,15 +59,17 @@
   </ion-item>
 
   <div [formGroup]="salesReportForm">
-    <ion-item (click)="openFromDate()">
+    <ion-item>
       <ion-label>From Date</ion-label>
-      <input matInput readonly [value]="salesReportForm.get('fromDate').value | date:'dd/MM/yyyy'" placeholder="Select Date" style="cursor:pointer">
-      <ion-icon slot="end" name="calendar-outline" color="primary" style="cursor:pointer"></ion-icon>
+      <input formControlName="fromDate" matInput [matDatepicker]="fromDatePicker" value="{{todaydate}}">
+      <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #fromDatePicker></mat-datepicker>
     </ion-item>
-    <ion-item (click)="openToDate()">
+    <ion-item>
       <ion-label>To Date</ion-label>
-      <input matInput readonly [value]="salesReportForm.get('toDate').value | date:'dd/MM/yyyy'" placeholder="Select Date" style="cursor:pointer">
-      <ion-icon slot="end" name="calendar-outline" color="primary" style="cursor:pointer"></ion-icon>
+      <input formControlName="toDate" matInput [matDatepicker]="toDatePicker" value="{{todaydate}}">
+      <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #toDatePicker></mat-datepicker>
     </ion-item>
   </div>
 

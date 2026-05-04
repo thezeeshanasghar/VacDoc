@@ -185,7 +185,6 @@ filterCountryCodes(value: string) {
     }
   }
 
-
   ionViewWillEnter() {
     this.storage.set(environment.MESSAGES, this.Messages);
     this.todaydate = new Date();

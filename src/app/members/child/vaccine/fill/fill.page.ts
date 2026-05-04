@@ -1,6 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { VacDatePickerService } from 'src/app/shared/vac-datepicker/vac-datepicker.service';
 import { VaccineService } from 'src/app/services/vaccine.service';
 import { StockService, StockDTO } from 'src/app/services/stock.service';
 import { ChildService } from 'src/app/services/child.service';
@@ -101,15 +100,8 @@ export class FillPage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private alertController: AlertController,
     private clinicService: ClinicService,
-    private datePicker: VacDatePickerService
   ) { }
 
-
-  openGivenDate() {
-    this.datePicker.open(this.fg.get('GivenDate').value, { max: new Date() }).subscribe((date: Date | null) => {
-      if (date) { this.fg.patchValue({ GivenDate: date }); }
-    });
-  }
   ngOnInit() {
     this.storage.get(environment.DOCTOR_Id).then((val) => {
       this.doctorId = val;

@@ -1,3 +1,43 @@
+<ion-header>
+  <!-- <ion-toolbar>
+     <ion-item>
+    <ion-label position="floating"></ion-label>
+    <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)"  class="clinic-select">
+      <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+        {{ clinic.Name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+</ion-toolbar>  -->
+  <ion-toolbar color="primary">
+<ion-title 
+  *ngIf="clinicService.OnlineClinic?.Name" 
+  routerLink="/members/doctor/clinic" 
+  style="cursor: pointer; text-align: center; width: 100%;">
+  {{clinicService.OnlineClinic.Name || 'Alert Page'}}
+</ion-title>
+  </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
+            <ion-icon
+        style="margin-left: 10%; cursor: pointer"
+        routerLink="/members/child/add"
+        name="person-add"
+        size="large"
+      >
+      </ion-icon>
+      <ion-icon
+        style="margin-left: 10%; cursor: pointer"
+        routerLink="/members/alert"
+        name="alert"
+        size="large"
+      >
+      </ion-icon>
+       <ion-icon style="margin-left: 10%;cursor: pointer;" routerLink="/members/child" name="accessibility-outline" size="large"> </ion-icon>
+      <ion-menu-button style="margin-left: 10%;cursor: pointer;"></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 <ion-content class="ion-padding">
   <ion-toolbar>
     <ion-buttons slot="start">
@@ -5,9 +45,10 @@
       <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-item (click)="openDate()">
-        <input matInput readonly [value]="selectedDate | date:'dd/MM/yyyy'" placeholder="Select Date">
-        <ion-icon slot="end" name="calendar-outline" color="primary" style="cursor:pointer"></ion-icon>
+      <ion-item (click)="picker.open()">
+        <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChange($event)">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
       </ion-item>
     </ion-buttons>
   </ion-toolbar>

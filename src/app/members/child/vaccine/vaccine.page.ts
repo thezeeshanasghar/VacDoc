@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { LoadingController, IonContent } from "@ionic/angular";
-import { VacDatePickerService } from 'src/app/shared/vac-datepicker/vac-datepicker.service';
 import { VaccineService } from "src/app/services/vaccine.service";
 import { ScheduleService } from "src/app/services/schedule.service";
 import { ToastService } from "src/app/shared/toast.service";
@@ -66,21 +65,10 @@ export class VaccinePage {
     public platform: Platform,
     private formBuilder: FormBuilder,
     private scheduleService: ScheduleService,
-    private datePicker: VacDatePickerService,
+    // private invoiceService: InvoiceService
+    // private document: DocumentViewer,
   ) {
     this.type = '';
-  }
-
-  openVacDate(dateStr: string, vacId: number) {
-    this.datePicker.open(dateStr).subscribe((date: Date | null) => {
-      if (date) { this.updateDate({ value: date }, vacId); }
-    });
-  }
-
-  openBulkDate(dateStr: string, vacId: number) {
-    this.datePicker.open(dateStr).subscribe((date: Date | null) => {
-      if (date) { this.updateBulkDate({ value: date }, vacId); }
-    });
   }
 
   ionViewWillEnter() {

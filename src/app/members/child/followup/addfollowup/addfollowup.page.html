@@ -14,13 +14,12 @@
     </ion-item>
     <ion-item>
       <ion-label color="primary" position="floating">Next Visit Date</ion-label>
-      <ion-input readonly
-        [value]="fg.get('NextVisitDate').value | date:'dd/MM/yyyy'"
-        placeholder="Choose a date"
-        (click)="openNextVisit()"
-        style="cursor:pointer">
-      </ion-input>
-      <ion-icon slot="end" name="calendar-outline" color="primary" (click)="openNextVisit()" style="cursor:pointer"></ion-icon>
+      <mat-form-field>
+        <input matInput [matDatepicker]="picker" formControlName="NextVisitDate" 
+          [min]="minDate" [max]="maxDate" placeholder="Choose a date">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
     </ion-item>
     <ion-item>
       <ion-label color="primary" position="floating">weight</ion-label>

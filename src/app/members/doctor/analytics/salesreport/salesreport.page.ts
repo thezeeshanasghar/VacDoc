@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { VacDatePickerService } from 'src/app/shared/vac-datepicker/vac-datepicker.service';
 import { StockService } from 'src/app/services/stock.service';
 import { LoadingController } from '@ionic/angular';
 import { ToastService } from 'src/app/shared/toast.service';
@@ -37,8 +36,7 @@ clinicid: any;
     private toastService: ToastService,
     private clinicService: ClinicService,
     private paService: PaService,
-    private formBuilder: FormBuilder,
-    private datePicker: VacDatePickerService
+    private formBuilder: FormBuilder
   ) {
     this.todaydate = new Date().toISOString().slice(0, 10);
     this.salesReportForm = this.formBuilder.group({
@@ -47,17 +45,6 @@ clinicid: any;
     });
   }
 
-
-  openFromDate() {
-    this.datePicker.open(this.salesReportForm.get('fromDate').value).subscribe((date: Date | null) => {
-      if (date) { this.salesReportForm.patchValue({ fromDate: date }); }
-    });
-  }
-  openToDate() {
-    this.datePicker.open(this.salesReportForm.get('toDate').value).subscribe((date: Date | null) => {
-      if (date) { this.salesReportForm.patchValue({ toDate: date }); }
-    });
-  }
   async ngOnInit() {
     this.usertype = await this.storage.get(environment.USER);
     console.log('User Type:', this.usertype);

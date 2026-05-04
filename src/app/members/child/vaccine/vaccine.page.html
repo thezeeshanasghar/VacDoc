@@ -43,13 +43,19 @@
   
             <!-- Bulk Reschedule Option -->
             <ion-icon
-              *ngIf="!allVaccinesGiven(item.value)"
+              *ngIf="!allVaccinesGiven(item.value)" 
               color="primary"
               name="calendar"
+              (click)="picker.open()"
               size="small"
-              style="cursor:pointer;"
-              (click)="openBulkDate(item.key, item.value[0].Id)"
-            ></ion-icon>
+            >
+              <input
+                [matDatepicker]="picker"
+                value="{{ item.key }}"
+                (dateChange)="updateBulkDate($event, item.value[0].Id)"
+              />
+              <mat-datepicker #picker></mat-datepicker>
+            </ion-icon>
           </div>
           <ion-icon
             style="margin-bottom: 10px;"
@@ -93,9 +99,16 @@
               *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip"
               color="primary"
               name="calendar"
-              style="font-size: 18px; cursor:pointer;"
-              (click)="openVacDate(v.Date, v.Id)"
-            ></ion-icon>
+              (click)="picker.open()"
+              style="font-size: 18px;"
+            >
+              <input
+                [matDatepicker]="picker"
+                value="{{ v.Date }}"
+                (dateChange)="updateDate($event, v.Id)"
+              />
+              <mat-datepicker #picker></mat-datepicker>
+            </ion-icon>
             <ion-img
               *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip"
               style="height: 20px;"

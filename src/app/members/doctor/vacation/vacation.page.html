@@ -1,18 +1,63 @@
+<ion-header>
+  <!-- <ion-toolbar>
+     <ion-item>
+    <ion-label position="floating"> </ion-label>
+    <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange($event)" class="clinic-select">
+      <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+        {{ clinic.Name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+</ion-toolbar>  -->
+  <ion-toolbar color="primary">
+    <ion-title
+      class="ion-text-center"
+      style="cursor: pointer"
+      routerLink="/members/doctor/clinic"
+    >
+      {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name :'Vacation' }}
+    </ion-title>
+  </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-buttons class="ion-justify-content-center" style="border-radius: 5px">
+      <ion-icon
+        style="margin-left: 10%; cursor: pointer"
+        routerLink="/members/child/add"
+        name="person-add"
+        size="large"
+      >
+      </ion-icon>
+      <ion-icon
+        style="margin-left: 10%; cursor: pointer"
+        routerLink="/members/alert"
+        name="alert"
+        size="large"
+      >
+      </ion-icon>
+       <ion-icon style="margin-left: 10%;cursor: pointer;" routerLink="/members/child" name="accessibility-outline" size="large"> </ion-icon>
+      <ion-menu-button
+        style="margin-left: 10%; cursor: pointer"
+      ></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 
 <ion-content class="ion-padding">
 
   <form [formGroup]="fg2">
   
-    <ion-item (click)="openFromDate()">
-      <ion-label color="primary">From Date</ion-label>
-      <input matInput readonly [value]="fg2.get('formDate').value | date:'dd/MM/yyyy'" placeholder="Select Date" style="cursor:pointer">
-      <ion-icon slot="end" name="calendar-outline" color="primary" style="cursor:pointer"></ion-icon>
+    <ion-item (click)="picker.open()"> 
+      <ion-label color="primary" >From Date</ion-label>
+       <input formControlName="formDate" matInput [matDatepicker]="picker" value="{{todaydate}}" >
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker disabled="false"></mat-datepicker>
     </ion-item>
 
-    <ion-item (click)="openToDate()">
-      <ion-label color="primary">To Date</ion-label>
-      <input matInput readonly [value]="fg2.get('ToDate').value | date:'dd/MM/yyyy'" placeholder="Select Date" style="cursor:pointer">
-      <ion-icon slot="end" name="calendar-outline" color="primary" style="cursor:pointer"></ion-icon>
+    <ion-item (click)="picker.open()"> 
+      <ion-label color="primary" >To Date</ion-label>
+       <input disabled formControlName="ToDate" matInput [matDatepicker]="picker1" value="{{todaydate}}" >
+      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+      <mat-datepicker #picker1 disabled="false"></mat-datepicker>
     </ion-item>
   
 

@@ -1,11 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VacDatePickerModule } from 'src/app/shared/vac-datepicker/vac-datepicker.module';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
-
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
-
+import { MatNativeDateModule } from '@angular/material/core';
 import { IonicModule } from '@ionic/angular';
 import { Downloader } from '@ionic-native/downloader/ngx';
 import { FollowUpPage } from './follow-up.page';
@@ -23,10 +22,9 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    VacDatePickerModule,
-    
+    MatDatepickerModule,
     MatInputModule,
-    
+    MatNativeDateModule,
   ],
   declarations: [FollowUpPage],
   providers: [

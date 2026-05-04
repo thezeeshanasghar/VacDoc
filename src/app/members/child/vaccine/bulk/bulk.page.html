@@ -92,20 +92,22 @@
       <ion-datetime picker-format="DD-MM-YYYY" value="{{currentDate}}" formControlName="GivenDate"></ion-datetime>
     </ion-item> -->
 
-    <ion-item *ngIf="allowInventory" (click)="openExpiry()" class="date-field-item">
+    <ion-item *ngIf="allowInventory" (click)="expiryPicker.open()" class="date-field-item">
       <ion-label color="primary">Expiry Date</ion-label>
       <div class="date-end" slot="end">
-        <input matInput readonly class="date-input" [value]="fg.get('Expiry').value | date:'dd/MM/yyyy'" placeholder="Select">
-        <ion-icon name="calendar-outline" color="primary" style="cursor:pointer;font-size:20px;"></ion-icon>
+        <input formControlName="Expiry" matInput [matDatepicker]="expiryPicker" class="date-input">
+        <mat-datepicker-toggle matSuffix [for]="expiryPicker"></mat-datepicker-toggle>
       </div>
+      <mat-datepicker #expiryPicker></mat-datepicker>
     </ion-item>
 
-    <ion-item (click)="openGivenDate()" class="date-field-item">
+    <ion-item (click)="picker.open()" class="date-field-item">
       <ion-label color="primary">Given Date</ion-label>
       <div class="date-end" slot="end">
-        <input matInput readonly class="date-input" [value]="fg.get('GivenDate').value | date:'dd/MM/yyyy'" placeholder="Select">
-        <ion-icon name="calendar-outline" color="primary" style="cursor:pointer;font-size:20px;"></ion-icon>
+        <input formControlName="GivenDate" matInput [matDatepicker]="picker" value="{{currentDate1}}" max="{{todaydate}}" class="date-input">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       </div>
+      <mat-datepicker #picker disabled="false"></mat-datepicker>
     </ion-item>
 
     <ion-button [disabled]="isScheduleDateValid()" type="submit">Submit</ion-button>

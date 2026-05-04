@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VacDatePickerModule } from 'src/app/shared/vac-datepicker/vac-datepicker.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule, Routes } from '@angular/router';
@@ -22,7 +21,7 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
-    
+    MatDatepickerModule,
     MatFormFieldModule,
     MatInputModule,
     RouterModule.forChild(routes)

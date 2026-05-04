@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { VacDatePickerService } from 'src/app/shared/vac-datepicker/vac-datepicker.service';
 import * as moment from 'moment';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
@@ -30,19 +29,12 @@ export class AddfollowupPage implements OnInit {
     private followupService: FollowupService,
     private toastService: ToastService,
     private storage: Storage,
-    private vaccineService: VaccineService,
-    private datePicker: VacDatePickerService
+    private vaccineService: VaccineService
   ) {
     this.minDate = moment().format('YYYY-MM-DD');
     this.maxDate = moment().add(20, 'years').format('YYYY-MM-DD');
   }
 
-
-  openNextVisit() {
-    this.datePicker.open(this.fg.get('NextVisitDate').value, { min: new Date(this.minDate), max: new Date(this.maxDate) }).subscribe((date: Date | null) => {
-      if (date) { this.fg.patchValue({ NextVisitDate: date }); }
-    });
-  }
   ngOnInit() {
     this.storage.get(environment.DOCTOR_Id).then((val) => {
       this.doctorId = val;
