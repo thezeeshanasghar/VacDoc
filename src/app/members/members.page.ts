@@ -714,7 +714,13 @@ export class MembersPage implements OnInit {
               },
             ];
 
-            this.childPages = [];
+            this.childPages = [
+              {
+                title: "Patients",
+                url: "/members/child",
+                icon: "accessibility-outline"
+              }
+            ];
             if (this.DoctorId === 1) {
               this.appPages.push({
                 title: "Personal Assistant",
