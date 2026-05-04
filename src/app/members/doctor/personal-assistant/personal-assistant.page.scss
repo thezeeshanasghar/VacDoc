@@ -1,58 +1,119 @@
-.table-container {
-  overflow-x: auto;
-  margin: 16px 0;
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-
-    th, td {
-      padding: 10px 12px;
-      text-align: left;
-      border-bottom: 1px solid var(--ion-color-light-shade);
-      white-space: nowrap;
-    }
-
-    th {
-      background: linear-gradient(135deg, #0D47A1 0%, #1565C0 100%);
-      color: white;
-      font-weight: 600;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    td {
-      font-size: 0.9rem;
-    }
-
-    tr:hover td { background-color: #F4F6FC; }
-  }
+// ── PA Card ───────────────────────────────────────────────────────────────────
+ion-card {
+  border-radius: 14px;
+  margin: 12px 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+  border: 1px solid #E5E7EB;
+  transition: opacity 0.2s;
 }
 
-// ── Inactive row dimmed ───────────────────────────────────────────────────────
-.row-inactive td {
-  opacity: 0.50;
+.card-inactive {
+  opacity: 0.55;
 }
-.row-inactive .pa-name { opacity: 1; }
+
+// ── Card header row ───────────────────────────────────────────────────────────
+.pa-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 14px 6px;
+}
+
+.pa-avatar {
+  font-size: 42px;
+  color: #1565C0;
+  flex-shrink: 0;
+}
+
+.pa-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 
 .pa-name {
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   color: #111827;
+}
+
+.pa-mobile, .pa-email {
+  font-size: 12px;
+  color: #6B7280;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  ion-icon { font-size: 12px; }
+}
+
+.status-badge {
+  flex-shrink: 0;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 20px;
+}
+
+// ── Clinics row ───────────────────────────────────────────────────────────────
+.pa-clinics {
   display: flex;
   align-items: center;
   gap: 6px;
+  padding: 4px 14px 8px;
+  font-size: 12px;
+  color: #1565C0;
+  font-weight: 600;
+
+  ion-icon { font-size: 14px; flex-shrink: 0; }
+
+  &.no-clinics {
+    color: #9CA3AF;
+    font-weight: 400;
+  }
 }
 
-.inactive-badge {
-  font-size: 10px;
+// ── Permissions ───────────────────────────────────────────────────────────────
+.perm-section {
+  padding: 0 10px 4px;
+  border-top: 1px solid #F3F4F6;
+  margin-top: 4px;
+}
+
+.perm-label {
+  font-size: 11px;
   font-weight: 700;
-  background: #F3F4F6;
-  color: #6B7280;
-  padding: 2px 6px;
-  border-radius: 10px;
-  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #9CA3AF;
+  margin: 8px 4px 2px;
+}
+
+.perm-grid {
+  --ion-grid-padding: 0;
+}
+
+.perm-item {
+  --padding-start: 4px;
+  --inner-padding-end: 0;
+  --min-height: 34px;
+  font-size: 13px;
+
+  ion-label { font-size: 13px; color: #374151; }
+}
+
+// ── Actions row ───────────────────────────────────────────────────────────────
+.pa-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px 12px;
+  border-top: 1px solid #F3F4F6;
+  margin-top: 4px;
+
+  ion-button { font-size: 12px; }
+
+  ion-button:last-child { margin-left: auto; }
 }
 
 // ── Lava FAB ──────────────────────────────────────────────────────────────────
@@ -61,7 +122,5 @@
   --background-activated: #8B0000;
   --box-shadow:           0 6px 20px rgba(198,40,40,0.45);
 }
-
-ion-checkbox { margin: 0 auto; display: block; }
 
 ion-fab { z-index: 10; }

@@ -15,6 +15,7 @@ import { ClinicService } from 'src/app/services/clinic.service';
 export class PersonalAssistantPage implements OnInit {
   doctorId: any = null;
   personalAssistants: any[] = [];
+  paAccessRecords: any[] = [];
   AllowAlert: any = false;
   AllowAnalytics: any = false;
   AllowClinic: any = false;
@@ -38,18 +39,28 @@ export class PersonalAssistantPage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.fetchPersonalAssistants();
-    await this.storage.get(environment.DOCTOR_Id).then((id) => {
-      this.doctorId = id;
-      console.log('Doctor ID:', this.doctorId);
-      if (this.doctorId) {
-        this.fetchPersonalAssistants();
-      } else {
-        this.toastService.create('Doctor ID not found', 'danger');
-      }
-    });
+    this.doctorId = await this.storage.get(environment.DOCTOR_Id);
     this.usertype = await this.storage.get(environment.USER);
+    if (this.doctorId) {
+      await this.fetchPersonalAssistants();
+      this.loadPAAccessRecords();
+    } else {
+      this.toastService.create('Doctor ID not found', 'danger');
+    }
     await this.loadClinics();
+  }
+
+  loadPAAccessRecords() {
+    this.paService.getPaaccess(this.doctorId).subscribe({
+      next: (res) => { this.paAccessRecords = res || []; },
+      error: () => { this.paAccessRecords = []; }
+    });
+  }
+
+  getClinicsForPA(paId: number): string[] {
+    return this.paAccessRecords
+      .filter(r => (r.PersonalAssistantId === paId || r.PAId === paId) && r.Clinic)
+      .map(r => r.Clinic.Name || r.ClinicName || '');
   }
 
   async updatePA(pa: any) {

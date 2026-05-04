@@ -8,79 +8,127 @@
 
 <ion-content>
 
-  <div class="table-container">
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Edit</th>
-          <th>Alert</th>
-          <th>Analytics</th>
-          <th>Clinic</th>
-          <th>Child</th>
-          <th>Schedule</th>
-          <th>Stock</th>
-          <th>Vacation</th>
-          <th>Verified</th>
-          <th>Status</th>
-          <th>Save</th>
-          <th>Delete</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let pa of personalAssistants"
-            [ngClass]="pa.IsActive ? '' : 'row-inactive'">
-          <td class="pa-name">
-            {{ pa.Name }}
-            <span class="inactive-badge" *ngIf="!pa.IsActive">Inactive</span>
-          </td>
-          <td>
-            <ion-button size="small" fill="clear" color="primary" (click)="navigateToEdit(pa)">
-              <ion-icon name="create-outline" slot="icon-only"></ion-icon>
-            </ion-button>
-          </td>
-          <td><ion-checkbox [(ngModel)]="pa.AllowAlert"></ion-checkbox></td>
-          <td><ion-checkbox [(ngModel)]="pa.AllowAnalytics"></ion-checkbox></td>
-          <td><ion-checkbox [(ngModel)]="pa.AllowClinic"></ion-checkbox></td>
-          <td><ion-checkbox [(ngModel)]="pa.AllowChild"></ion-checkbox></td>
-          <td><ion-checkbox [(ngModel)]="pa.AllowSchedule"></ion-checkbox></td>
-          <td><ion-checkbox [(ngModel)]="pa.AllowStock"></ion-checkbox></td>
-          <td><ion-checkbox [(ngModel)]="pa.AllowVacation"></ion-checkbox></td>
-          <td><ion-checkbox [(ngModel)]="pa.IsVerified"></ion-checkbox></td>
+  <ion-card *ngFor="let pa of personalAssistants" [class.card-inactive]="!pa.IsActive">
 
-          <!-- Active / Inactive toggle -->
-          <td>
-            <ion-button size="small" fill="outline"
-              [color]="pa.IsActive ? 'success' : 'medium'"
-              (click)="toggleActive(pa)">
-              <ion-icon [name]="pa.IsActive ? 'checkmark-circle-outline' : 'ban-outline'" slot="start"></ion-icon>
-              {{ pa.IsActive ? 'Active' : 'Inactive' }}
-            </ion-button>
-          </td>
+    <!-- ── Top: name, status, mobile ──────────────────────────── -->
+    <div class="pa-card-header">
+      <ion-icon name="person-circle-outline" class="pa-avatar"></ion-icon>
+      <div class="pa-meta">
+        <span class="pa-name">{{ pa.Name }}</span>
+        <span class="pa-mobile" *ngIf="pa.User?.MobileNumber">
+          <ion-icon name="call-outline"></ion-icon> {{ pa.User.MobileNumber }}
+        </span>
+        <span class="pa-email" *ngIf="pa.Email">
+          <ion-icon name="mail-outline"></ion-icon> {{ pa.Email }}
+        </span>
+      </div>
+      <ion-badge [color]="pa.IsActive ? 'success' : 'medium'" class="status-badge">
+        {{ pa.IsActive ? 'Active' : 'Inactive' }}
+      </ion-badge>
+    </div>
 
-          <td>
-            <ion-button color="primary" size="small" (click)="updatePA(pa)">
-              <ion-icon name="save" slot="icon-only"></ion-icon>
-            </ion-button>
-          </td>
-          <td>
-            <ion-button color="danger" fill="clear" size="small" (click)="deletepa(pa.Id)">
-              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-            </ion-button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <!-- ── Clinics assigned ───────────────────────────────────── -->
+    <div class="pa-clinics" *ngIf="getClinicsForPA(pa.Id).length">
+      <ion-icon name="business-outline"></ion-icon>
+      <span>{{ getClinicsForPA(pa.Id).join(' · ') }}</span>
+    </div>
+    <div class="pa-clinics no-clinics" *ngIf="!getClinicsForPA(pa.Id).length">
+      <ion-icon name="business-outline"></ion-icon>
+      <span>No clinic assigned</span>
+    </div>
 
-  <div *ngIf="!personalAssistants || !personalAssistants.length" style="text-align:center; padding:40px; color:#9CA3AF;">
+    <!-- ── Permissions ───────────────────────────────────────── -->
+    <div class="perm-section">
+      <p class="perm-label">Permissions</p>
+      <ion-grid class="perm-grid">
+        <ion-row>
+          <ion-col size="6">
+            <ion-item lines="none" class="perm-item">
+              <ion-checkbox slot="start" [(ngModel)]="pa.AllowAlert" (ionChange)="updatePA(pa)"></ion-checkbox>
+              <ion-label>Alerts</ion-label>
+            </ion-item>
+          </ion-col>
+          <ion-col size="6">
+            <ion-item lines="none" class="perm-item">
+              <ion-checkbox slot="start" [(ngModel)]="pa.AllowAnalytics" (ionChange)="updatePA(pa)"></ion-checkbox>
+              <ion-label>Analytics</ion-label>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="6">
+            <ion-item lines="none" class="perm-item">
+              <ion-checkbox slot="start" [(ngModel)]="pa.AllowClinic" (ionChange)="updatePA(pa)"></ion-checkbox>
+              <ion-label>Clinic</ion-label>
+            </ion-item>
+          </ion-col>
+          <ion-col size="6">
+            <ion-item lines="none" class="perm-item">
+              <ion-checkbox slot="start" [(ngModel)]="pa.AllowChild" (ionChange)="updatePA(pa)"></ion-checkbox>
+              <ion-label>Patients</ion-label>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="6">
+            <ion-item lines="none" class="perm-item">
+              <ion-checkbox slot="start" [(ngModel)]="pa.AllowSchedule" (ionChange)="updatePA(pa)"></ion-checkbox>
+              <ion-label>Schedule</ion-label>
+            </ion-item>
+          </ion-col>
+          <ion-col size="6">
+            <ion-item lines="none" class="perm-item">
+              <ion-checkbox slot="start" [(ngModel)]="pa.AllowStock" (ionChange)="updatePA(pa)"></ion-checkbox>
+              <ion-label>Stock</ion-label>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="6">
+            <ion-item lines="none" class="perm-item">
+              <ion-checkbox slot="start" [(ngModel)]="pa.AllowVacation" (ionChange)="updatePA(pa)"></ion-checkbox>
+              <ion-label>Vacation</ion-label>
+            </ion-item>
+          </ion-col>
+          <ion-col size="6">
+            <ion-item lines="none" class="perm-item">
+              <ion-checkbox slot="start" [(ngModel)]="pa.IsVerified" (ionChange)="updatePA(pa)"></ion-checkbox>
+              <ion-label>Verified</ion-label>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+    <!-- ── Actions ───────────────────────────────────────────── -->
+    <div class="pa-actions">
+      <ion-button fill="outline" size="small"
+        [color]="pa.IsActive ? 'success' : 'medium'"
+        (click)="toggleActive(pa)">
+        <ion-icon [name]="pa.IsActive ? 'checkmark-circle-outline' : 'ban-outline'" slot="start"></ion-icon>
+        {{ pa.IsActive ? 'Active' : 'Inactive' }}
+      </ion-button>
+
+      <ion-button fill="outline" size="small" color="primary" (click)="navigateToEdit(pa)">
+        <ion-icon name="create-outline" slot="start"></ion-icon>
+        Edit
+      </ion-button>
+
+      <ion-button fill="clear" size="small" color="danger" (click)="deletepa(pa.Id)">
+        <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+
+  </ion-card>
+
+  <div *ngIf="!personalAssistants || !personalAssistants.length"
+       style="text-align:center; padding:40px; color:#9CA3AF;">
     <ion-icon name="people-outline" style="font-size:48px; display:block; margin:0 auto 12px;"></ion-icon>
     <p>No Personal Assistants found. Tap + to add one.</p>
   </div>
 
 </ion-content>
 
-<!-- Single lava-orange FAB button -->
 <ion-fab vertical="bottom" horizontal="end" slot="fixed">
   <ion-fab-button routerLink="signup" class="lava-fab">
     <ion-icon name="add"></ion-icon>
