@@ -16,8 +16,8 @@
 ion-img{
     width: 70px;
 }
-span{
-        float: right;
+ion-card-content > div > span {
+    float: right;
 }
 
 // ── Vaccine toolbar layout ────────────────────────────────────────────────────
@@ -36,8 +36,6 @@ ion-title {
   right: 0 !important;
   width: 100% !important;
   text-align: center !important;
-  font-size: 16px !important;
-  font-weight: 700 !important;
   color: #ffffff !important;
   pointer-events: none;
 }
