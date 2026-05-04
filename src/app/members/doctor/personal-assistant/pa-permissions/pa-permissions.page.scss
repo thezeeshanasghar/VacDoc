@@ -1,14 +1,48 @@
+.section-wrap {
+  margin: 8px 10px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #2a2a3e;
+}
+
 .section-header {
-  --background: #1a1a2e;
-  --color: #fff;
-  font-weight: 600;
-  ion-label h2 { color: #fff; font-size: 15px; font-weight: 600; }
-  ion-label p  { color: #aaa; font-size: 12px; }
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #1a1a2e;
+  padding: 12px 14px;
+  cursor: pointer;
+  user-select: none;
 }
 
 .section-icon {
   color: #FF4500;
   font-size: 20px;
+  flex-shrink: 0;
+}
+
+.section-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.section-title {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.section-count {
+  color: #888;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.chevron {
+  color: #888;
+  font-size: 18px;
+  flex-shrink: 0;
 }
 
 .section-body {

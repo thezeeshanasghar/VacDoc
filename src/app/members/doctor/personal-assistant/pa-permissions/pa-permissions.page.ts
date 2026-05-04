@@ -13,6 +13,7 @@ export class PaPermissionsPage implements OnInit {
   paId: number = 0;
   paName: string = '';
   perm: any = {};
+  expanded: any = {};
 
   sections = [
     {
@@ -168,7 +169,12 @@ export class PaPermissionsPage implements OnInit {
   ngOnInit() {
     this.paId = Number(this.route.snapshot.paramMap.get('paId'));
     this.paName = this.route.snapshot.queryParamMap.get('name') || 'PA';
+    this.sections.forEach((s: any) => { this.expanded[s.key] = true; });
     this.loadPermissions();
+  }
+
+  toggleSection(key: string) {
+    this.expanded[key] = !this.expanded[key];
   }
 
   async loadPermissions() {
