@@ -1,24 +1,19 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>Vaccinations</ion-title>
+    <ion-title>
+      <div class="vax-title-block">
+        <span class="vax-title-main">Vaccinations</span>
+        <span class="vax-title-sub" *ngIf="ChildName">{{ChildName}}</span>
+      </div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-icon (click)="printdata()" class="vax-print-icon" name="print-outline"></ion-icon>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-toolbar color="primary">
-  <ion-title>
-    <h3 *ngIf="ChildName" style="text-align: center; margin-right: 8rem;">
-      {{ChildName}}
-    </h3>
-  </ion-title>
-  <ion-buttons slot="end" style="font-size: 25px; margin-right: 25px;">
-    <ion-icon (click)="printdata()" style="cursor: pointer" name="print-outline" size="medium"></ion-icon>
-    <!-- <ion-button (click)="downloadTravelPdf()" color="secondary" style="font-size: 25px; margin-left: 10px;">
-      <ion-icon name="download-outline" color="white"></ion-icon>
-    </ion-button> -->
-  </ion-buttons>
-</ion-toolbar>
 <ion-content class="ion-padding">
   <div *ngFor="let item of dataGrouping | keyvalue; let i = index">
     <ion-card style="margin-bottom: -7px;">
