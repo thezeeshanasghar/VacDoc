@@ -1,4 +1,42 @@
-// ── Side menu shell ───────────────────────────────────────────────────────────
+// ── Shell main wrapper (right side of split-pane only) ────────────────────────
+// No ion-page class — avoids justify-content:space-between collapsing the outlet
+.shell-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+// Router outlet takes all remaining height below the 2 shell toolbars
+.shell-outlet {
+  flex: 1 !important;
+  min-height: 0 !important;
+  position: relative !important;
+  display: block;
+  overflow: hidden;
+}
+
+// ── Shell Toolbar 1 — Logo Blue ───────────────────────────────────────────────
+.toolbar-blue {
+  --background: #1565C0;
+  --color: #ffffff;
+  --min-height: 44px;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+// ── Shell Toolbar 2 — Logo Green ─────────────────────────────────────────────
+.toolbar-green {
+  --background: #2E7D32;
+  --color: #ffffff;
+  --min-height: 44px;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+// ── Side menu ─────────────────────────────────────────────────────────────────
 ion-menu {
   --background: #0D0D12;
 }
@@ -24,12 +62,12 @@ ion-menu ion-list.menu {
 
 // ── Menu items ────────────────────────────────────────────────────────────────
 ion-menu ion-item {
-  --background:         transparent;
+  --background:           transparent;
   --background-activated: rgba(21, 101, 192, 0.20);
-  --color:              rgba(255, 255, 255, 0.85);
-  --border-color:       transparent;
-  --inner-border-width: 0;
-  --padding-start:      14px;
+  --color:                rgba(255, 255, 255, 0.85);
+  --border-color:         transparent;
+  --inner-border-width:   0;
+  --padding-start:        14px;
   margin: 2px 10px;
   border-radius: 12px;
   font-size: 14px;

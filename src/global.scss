@@ -36,6 +36,14 @@ ion-header ion-toolbar[color="primary"] + ion-toolbar[color="primary"] {
   --background: var(--vac-blue-dp);
 }
 
+// ── Toolbar 3 — Lava (page-owned toolbars inside the router outlet) ───────────
+// Targets every page's own ion-header toolbar automatically.
+// Shell toolbars use .toolbar-blue / .toolbar-green so they are unaffected.
+.shell-outlet ion-header ion-toolbar {
+  --background: linear-gradient(135deg, var(--vac-red-dark) 0%, var(--vac-red) 45%, var(--vac-lava) 100%);
+  --color: #ffffff;
+}
+
 ion-toolbar ion-title {
   font-weight: 700;
   letter-spacing: 0.2px;
