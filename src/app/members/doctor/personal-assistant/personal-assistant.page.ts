@@ -133,7 +133,7 @@ export class PersonalAssistantPage implements OnInit {
     const loading = await this.loadingController.create({ message: pa.IsActive ? 'Deactivating...' : 'Activating...' });
     await loading.present();
     this.paService.togglePaActive(pa.Id).subscribe({
-      next: (res: any) => {
+      next: () => {
         loading.dismiss();
         pa.IsActive = !pa.IsActive;
         const status = pa.IsActive ? 'activated' : 'deactivated';
@@ -150,11 +150,10 @@ export class PersonalAssistantPage implements OnInit {
     await loading.present();
 console.log("Deleting PA with ID:", Id);
     this.paService.deletePA(Id).subscribe({
-      next: (res) => {
+      next: () => {
         loading.dismiss();
-          this.toastService.create("PA deleted successfully", "success");
-          loading.dismiss();
-          this.fetchPersonalAssistants();
+        this.toastService.create("PA deleted successfully", "success");
+        this.fetchPersonalAssistants();
       },
       error: (err) => {
         loading.dismiss();
@@ -200,9 +199,6 @@ console.log("Deleting PA with ID:", Id);
                 console.log('Found online clinic from API:', onlineClinic.Name);
               } else {
                 this.selectedClinicId = (this.clinics.length > 0 ? this.clinics[0].Id : null);
-                if (this.selectedClinicId) {
-                  this.setOnlineClinic(this.selectedClinicId);
-                }
               }
               console.log('Selected Clinic ID:', this.selectedClinicId);
             } else {
@@ -242,7 +238,7 @@ console.log("Deleting PA with ID:", Id);
               
               if (onlineClinic) {
                 this.selectedClinicId = onlineClinic.Id;
-                this.paAccessId = onlineClinic.PaAccessId; // Store PaAccessId
+                this.paAccessId = onlineClinic.PaAccessId;
                 this.clinicService.updateClinic(onlineClinic);
                 console.log('Found online clinic from API:', onlineClinic.Name);
               } else {
@@ -252,7 +248,6 @@ console.log("Deleting PA with ID:", Id);
                   if (selectedClinic) {
                     this.paAccessId = selectedClinic.PaAccessId;
                   }
-                  this.setOnlineClinic(this.selectedClinicId);
                 }
               }
               console.log('Selected PA Clinic ID:', this.selectedClinicId);
@@ -335,7 +330,7 @@ console.log("Deleting PA with ID:", Id);
       let data = { DoctorId: this.doctorId, Id: clinicId, IsOnline: "true" };
       
       try {
-        await this.clinicService.changeOnlineClinic(data).subscribe(
+        this.clinicService.changeOnlineClinic(data).subscribe(
           (res) => {
             if (res.IsSuccess) {
               loading.dismiss();
