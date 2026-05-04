@@ -2,13 +2,9 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
+      <span class="vax-label">Vaccinations</span>
     </ion-buttons>
-    <ion-title>
-      <div class="vax-title-block">
-        <span class="vax-title-main">Vaccinations</span>
-        <span class="vax-title-sub" *ngIf="ChildName">{{ChildName}}</span>
-      </div>
-    </ion-title>
+    <ion-title>{{ChildName}}</ion-title>
     <ion-buttons slot="end">
       <ion-icon (click)="printdata()" class="vax-print-icon" name="print-outline"></ion-icon>
     </ion-buttons>
