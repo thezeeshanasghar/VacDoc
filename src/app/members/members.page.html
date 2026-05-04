@@ -1,18 +1,3 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title class="ion-text-center" style="cursor: pointer" routerLink="/members/doctor/clinic">
-      {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name : 'Baby Medics/ Vaccine.pk' }}
-    </ion-title>
-  </ion-toolbar>
-  <ion-toolbar color="primary">
-    <ion-buttons class="ion-justify-content-center" style="border-radius: 5px">
-      <ion-icon style="margin-left: 10%; cursor: pointer" routerLink="/members/child/add" name="person-add" size="large"></ion-icon>
-      <ion-icon style="margin-left: 10%; cursor: pointer" routerLink="/members/alert" name="alert" size="large"></ion-icon>
-      <ion-icon style="margin-left: 10%; cursor: pointer" routerLink="/members/child" name="accessibility-outline" size="large"></ion-icon>
-      <ion-menu-button style="margin-left: 10%"></ion-menu-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
 <ion-split-pane contentId="main">
   <ion-menu contentId="main" type="overlay">
     <ion-header>
@@ -21,18 +6,15 @@
       </ion-toolbar>
     </ion-header>
 
-
     <ion-content>
       <ion-list class="menu">
         <ion-menu-toggle auto-hide="false" *ngFor="let p of profile">
           <ion-item [routerDirection]="'root'" [routerLink]="[p.url]">
-
-            <ion-avatar slot="start"> <!-- Use ion-avatar for displaying profile images -->
-              <img [src]="p.imageUrl" *ngIf="p.imageUrl" /> <!-- Display image if URL exists -->
-              <ion-icon color="primary" *ngIf="!p.imageUrl" [name]="p.icon"></ion-icon> <!-- Display icon if no image URL -->
+            <ion-avatar slot="start">
+              <img [src]="p.imageUrl" *ngIf="p.imageUrl" />
+              <ion-icon color="primary" *ngIf="!p.imageUrl" [name]="p.icon"></ion-icon>
             </ion-avatar>
             <ion-label>
-
              {{p.title}}
             </ion-label>
           </ion-item>
@@ -45,44 +27,32 @@
             </ion-label>
           </ion-item>
         </ion-menu-toggle>
-        
 
-        <!-- <ion-item-divider color="light">
-          <ion-label color="primary">
-            Doctor
-          </ion-label>
-        </ion-item-divider> -->
         <ion-menu-toggle auto-hide="false" *ngFor="let p of doctorPages">
-          <!-- Regular menu items without children -->
           <ion-item lines="none" *ngIf="!p.children" [routerDirection]="'root'" [routerLink]="[p.url]">
             <ion-icon slot="start" [name]="p.icon" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
             <ion-label>{{p.title}}</ion-label>
           </ion-item>
-        
-          <!-- Parent items with children -->
+
           <ion-item lines="none" *ngIf="p.children" (click)="p.isOpen = !p.isOpen" detail="false">
             <ion-icon slot="start" [name]="p.icon" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
             <ion-label>{{p.title}}</ion-label>
             <ion-icon slot="end" [name]="p.isOpen ? 'chevron-down' : 'chevron-forward'"></ion-icon>
           </ion-item>
-        
-          <!-- First level children -->
+
           <ion-list *ngIf="p.isOpen" class="sub-menu">
             <ion-menu-toggle auto-hide="false" *ngFor="let sub of p.children">
-              <!-- Sub-items without children -->
               <ion-item lines="none" *ngIf="!sub.children" class="sub-item" [routerDirection]="'root'" [routerLink]="[sub.url]">
                 <ion-icon slot="start" [name]="sub.icon" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
                 <ion-label>{{sub.title}}</ion-label>
               </ion-item>
-        
-              <!-- Sub-items with children -->
+
               <ion-item lines="none" *ngIf="sub.children" class="sub-item" (click)="sub.isOpen = !sub.isOpen" detail="false">
                 <ion-icon slot="start" [name]="sub.icon" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
                 <ion-label>{{sub.title}}</ion-label>
                 <ion-icon slot="end" [name]="sub.isOpen ? 'chevron-down' : 'chevron-forward'"></ion-icon>
               </ion-item>
-        
-              <!-- Second level children -->
+
               <ion-list *ngIf="sub.isOpen" class="sub-sub-menu">
                 <ion-menu-toggle auto-hide="false" *ngFor="let subSub of sub.children">
                   <ion-item lines="none" class="sub-sub-item" [routerDirection]="'root'" [routerLink]="[subSub.url]">
@@ -95,11 +65,6 @@
           </ion-list>
         </ion-menu-toggle>
 
-        <!-- <ion-item-divider color="light">
-          <ion-label color="primary">
-            Child
-          </ion-label>
-        </ion-item-divider> -->
         <ion-menu-toggle auto-hide="false" *ngFor="let p of childPages">
           <ion-item lines="none" [routerDirection]="'root'" [routerLink]="[p.url]">
             <ion-icon color="primary" slot="start" [name]="p.icon"></ion-icon>
@@ -116,8 +81,25 @@
 
         <ion-menu-toggle></ion-menu-toggle>
       </ion-list>
-
     </ion-content>
   </ion-menu>
-  <ion-router-outlet id="main" main></ion-router-outlet>
+
+  <div id="main" class="ion-page">
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title class="ion-text-center" style="cursor: pointer" routerLink="/members/doctor/clinic">
+          {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name : 'Baby Medics/ Vaccine.pk' }}
+        </ion-title>
+      </ion-toolbar>
+      <ion-toolbar color="primary">
+        <ion-buttons class="ion-justify-content-center" style="border-radius: 5px">
+          <ion-icon style="margin-left: 10%; cursor: pointer" routerLink="/members/child/add" name="person-add" size="large"></ion-icon>
+          <ion-icon style="margin-left: 10%; cursor: pointer" routerLink="/members/alert" name="alert" size="large"></ion-icon>
+          <ion-icon style="margin-left: 10%; cursor: pointer" routerLink="/members/child" name="accessibility-outline" size="large"></ion-icon>
+          <ion-menu-button style="margin-left: 10%"></ion-menu-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-router-outlet></ion-router-outlet>
+  </div>
 </ion-split-pane>
