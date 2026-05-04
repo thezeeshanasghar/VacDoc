@@ -9,64 +9,100 @@
   box-shadow: 0 2px 12px rgba(21, 101, 192, 0.12) !important;
 }
 
-// ── Child card header bar (icon row) ─────────────────────────────────────────
+// ── Compact card header bar ───────────────────────────────────────────────────
 .icons {
   background: linear-gradient(135deg, #0A3D79 0%, #1565C0 100%);
   border-radius: 12px 12px 0 0;
-  padding: 8px 12px;
-  color: #fff;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.icons-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.icons-thumb {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+
+  ion-img {
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.45);
+    width: 34px;
+    height: 34px;
+  }
+}
+
+.icons-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.icons-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
 }
 
 .iconchild {
-  margin-left: 8px;
-  color: rgba(255,255,255,0.90) !important;
+  font-size: 22px;
+  color: #ffffff !important;
   cursor: pointer;
   transition: transform 0.15s ease;
 
   &:active { transform: scale(0.92); }
 }
 
-// ── Patient name label in header ──────────────────────────────────────────────
-.icons ion-item {
-  --background: transparent;
-  --color: #ffffff;
-  --border-color: transparent;
-  --inner-border-width: 0;
-  --padding-start: 0;
-
-  ion-label {
-    color: #ffffff !important;
-    font-weight: 700;
-    font-size: 16px;
-  }
+// ── Toolbar end icon ──────────────────────────────────────────────────────────
+.toolbar-end-icon {
+  font-size: 24px;
+  color: #ffffff;
+  cursor: pointer;
+  margin-right: 12px;
 }
 
-.icons ion-item ion-thumbnail img {
-  border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.45);
+// ── PA clinic selector ────────────────────────────────────────────────────────
+.clinic-select-item {
+  --border-radius: 12px;
+  --background: #ffffff;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.08);
 }
 
-// ── Card content area ─────────────────────────────────────────────────────────
-ion-card ion-card-content {
-  padding: 12px 14px 14px;
-  color: #374151;
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-ion-card ion-card-content ion-icon {
-  color: #1565C0;
-  vertical-align: middle;
-  margin-right: 3px;
-}
-
-// ── Search bar area ───────────────────────────────────────────────────────────
+// ── Search bar ────────────────────────────────────────────────────────────────
 form ion-item {
   --border-radius: 12px;
   --background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(21, 101, 192, 0.08);
   margin-bottom: 14px;
+}
+
+// ── Card content area ─────────────────────────────────────────────────────────
+ion-card ion-card-content {
+  padding: 10px 14px 12px;
+  color: #374151;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+ion-card ion-card-content ion-icon {
+  color: #1565C0;
+  vertical-align: middle;
+  margin-right: 3px;
 }
 
 // ── Utility ───────────────────────────────────────────────────────────────────
@@ -85,11 +121,4 @@ form ion-item {
   text-align: center;
   justify-content: center;
   width: 100%;
-}
-
-@media (max-width: 642px) {
-  .icons {
-    display: block !important;
-    font-size: 0px;
-  }
 }
