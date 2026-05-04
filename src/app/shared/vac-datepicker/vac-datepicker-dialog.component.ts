@@ -21,6 +21,8 @@ import { Subscription } from 'rxjs';
       <mat-calendar
         [selected]="selectedDate"
         [startAt]="viewDate"
+        [minDate]="minDate"
+        [maxDate]="maxDate"
         (selectedChange)="onSelect($event)">
       </mat-calendar>
     </div>
@@ -36,6 +38,8 @@ export class VacDatePickerDialogComponent implements AfterViewInit, OnDestroy {
 
   selectedDate: Date;
   viewDate: Date;
+  minDate: Date;
+  maxDate: Date;
   isYearView = false;
 
   private readonly MONTHS = [
@@ -50,11 +54,13 @@ export class VacDatePickerDialogComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     private dialogRef: MatDialogRef<VacDatePickerDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) data: { date: string },
+    @Inject(MAT_DIALOG_DATA) data: { date?: any; min?: Date; max?: Date },
     private cdr: ChangeDetectorRef
   ) {
     this.selectedDate = data && data.date ? new Date(data.date) : new Date();
     this.viewDate = new Date(this.selectedDate);
+    this.minDate = data && data.min ? new Date(data.min) : null;
+    this.maxDate = data && data.max ? new Date(data.max) : null;
   }
 
   ngAfterViewInit() {

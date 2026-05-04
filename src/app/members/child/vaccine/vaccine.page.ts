@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { LoadingController, IonContent } from "@ionic/angular";
-import { MatDialog } from '@angular/material/dialog';
-import { VacDatePickerDialogComponent } from './vaccine-datepicker-dialog.component';
+import { VacDatePickerService } from 'src/app/shared/vac-datepicker/vac-datepicker.service';
 import { VaccineService } from "src/app/services/vaccine.service";
 import { ScheduleService } from "src/app/services/schedule.service";
 import { ToastService } from "src/app/shared/toast.service";
@@ -67,31 +66,19 @@ export class VaccinePage {
     public platform: Platform,
     private formBuilder: FormBuilder,
     private scheduleService: ScheduleService,
-    private matDialog: MatDialog,
-    // private invoiceService: InvoiceService
-    // private document: DocumentViewer,
+    private datePicker: VacDatePickerService,
   ) {
     this.type = '';
   }
 
   openVacDate(dateStr: string, vacId: number) {
-    this.matDialog.open(VacDatePickerDialogComponent, {
-      data: { date: dateStr },
-      panelClass: 'vac-datepicker-panel',
-      width: '320px',
-      autoFocus: false,
-    }).afterClosed().subscribe((date: Date) => {
+    this.datePicker.open(dateStr).subscribe((date: Date | null) => {
       if (date) { this.updateDate({ value: date }, vacId); }
     });
   }
 
   openBulkDate(dateStr: string, vacId: number) {
-    this.matDialog.open(VacDatePickerDialogComponent, {
-      data: { date: dateStr },
-      panelClass: 'vac-datepicker-panel',
-      width: '320px',
-      autoFocus: false,
-    }).afterClosed().subscribe((date: Date) => {
+    this.datePicker.open(dateStr).subscribe((date: Date | null) => {
       if (date) { this.updateBulkDate({ value: date }, vacId); }
     });
   }

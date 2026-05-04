@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Route, ActivatedRoute, Router } from "@angular/router";
+import { VacDatePickerService } from 'src/app/shared/vac-datepicker/vac-datepicker.service';
 import { LoadingController } from "@ionic/angular";
 import { BulkService } from "src/app/services/bulk.service";
 import { ToastService } from "src/app/shared/toast.service";
@@ -100,9 +101,21 @@ export class BulkPage implements OnInit {
     private storage: Storage,
     public alertController: AlertController,
     private vaccineService: VaccineService,
-    private childService: ChildService
+    private childService: ChildService,
+    private datePicker: VacDatePickerService
   ) { }
 
+
+  openExpiry() {
+    this.datePicker.open(this.fg.get('Expiry').value).subscribe((date: Date | null) => {
+      if (date) { this.fg.patchValue({ Expiry: date }); }
+    });
+  }
+  openGivenDate() {
+    this.datePicker.open(this.fg.get('GivenDate').value, { max: new Date() }).subscribe((date: Date | null) => {
+      if (date) { this.fg.patchValue({ GivenDate: date }); }
+    });
+  }
   ngOnInit() {
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;

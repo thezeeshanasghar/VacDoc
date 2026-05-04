@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { LoadingController } from "@ionic/angular";
+import { VacDatePickerService } from 'src/app/shared/vac-datepicker/vac-datepicker.service';
 import { ToastService } from "src/app/shared/toast.service";
 import { environment } from "src/environments/environment";
 import { Storage } from "@ionic/storage";
@@ -31,8 +32,15 @@ export class FollowUpPage implements OnInit {
     public platform: Platform,
     private downloader: Downloader,
     public clinicService: ClinicService,
+    private datePicker: VacDatePickerService
   ) { }
   
+
+  openDate() {
+    this.datePicker.open(this.selectedDate).subscribe((date: Date | null) => {
+      if (date) { this.onDateChange({ value: date }); }
+    });
+  }
   ngOnInit() {
     this.storage.get(environment.CLINIC_Id).then(clinicId => {
       this.clinicId = clinicId;

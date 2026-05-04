@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
+import { VacDatePickerService } from 'src/app/shared/vac-datepicker/vac-datepicker.service';
 import {
   FormGroup,
   FormBuilder,
@@ -86,7 +87,8 @@ export class AddPage implements OnInit {
     public alertCtrl: AlertController,
     private http: HttpClient,
     private paService: PaService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private datePicker: VacDatePickerService
   ) {}
 
   async ngOnInit() {
@@ -185,6 +187,16 @@ filterCountryCodes(value: string) {
     }
   }
 
+
+  openDOB() {
+    this.datePicker.open(this.fg1.get('DOB').value, { max: new Date() }).subscribe((date: Date | null) => {
+      if (date) {
+        this.fg1.patchValue({ DOB: date });
+        this.fg1.get('DOB').markAsTouched();
+        this.checkEpi();
+      }
+    });
+  }
   ionViewWillEnter() {
     this.storage.set(environment.MESSAGES, this.Messages);
     this.todaydate = new Date();

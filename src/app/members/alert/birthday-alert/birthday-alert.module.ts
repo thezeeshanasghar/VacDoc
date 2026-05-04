@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { VacDatePickerModule } from 'src/app/shared/vac-datepicker/vac-datepicker.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+
 import { MatInputModule } from '@angular/material/input';
-import { MatNativeDateModule } from '@angular/material/core';
+
 import { BirthdayAlertPage } from './birthday-alert.page';
 import { Downloader } from '@ionic-native/downloader/ngx';
 
@@ -22,9 +23,10 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    MatDatepickerModule,
+    VacDatePickerModule,
+    
     MatInputModule,
-    MatNativeDateModule,
+    
     ReactiveFormsModule
   ],
   providers: [

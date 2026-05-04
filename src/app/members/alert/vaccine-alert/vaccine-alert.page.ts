@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { LoadingController } from "@ionic/angular";
+import { VacDatePickerService } from 'src/app/shared/vac-datepicker/vac-datepicker.service';
 import { AlertService } from "src/app/services/alert.service";
 import { ToastService } from "src/app/shared/toast.service";
 import { Storage } from "@ionic/storage";
@@ -52,7 +53,8 @@ export class VaccineAlertPage implements OnInit {
     public platform: Platform,
     private vaccineService: VaccineService,
     public clinicService: ClinicService,
-    private paService: PaService
+    private paService: PaService,
+    private datePicker: VacDatePickerService
   ) {}
 
   async ngOnInit() {
@@ -546,6 +548,12 @@ export class VaccineAlertPage implements OnInit {
     this.getAlerts(this.selectedDate);
   }
 
+
+  openDate() {
+    this.datePicker.open(this.selectedDate).subscribe((date: Date | null) => {
+      if (date) { this.onDateChange({ value: date }); }
+    });
+  }
   getAlerts(date: string) {
     const formattedDate = this.formatDateToString(date);
     // Always fetch from all clinics
