@@ -84,8 +84,8 @@
     </ion-content>
   </ion-menu>
 
-  <div id="main" class="ion-page">
-    <ion-header>
+  <div id="main" class="shell-main">
+    <ion-header class="shell-header">
       <ion-toolbar color="primary">
         <ion-title class="ion-text-center" style="cursor: pointer" routerLink="/members/doctor/clinic">
           {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name : 'Baby Medics/ Vaccine.pk' }}
@@ -96,10 +96,11 @@
           <ion-icon style="margin-left: 10%; cursor: pointer" routerLink="/members/child/add" name="person-add" size="large"></ion-icon>
           <ion-icon style="margin-left: 10%; cursor: pointer" routerLink="/members/alert" name="alert" size="large"></ion-icon>
           <ion-icon style="margin-left: 10%; cursor: pointer" routerLink="/members/child" name="accessibility-outline" size="large"></ion-icon>
+          <ion-icon style="margin-left: 10%; cursor: pointer" routerLink="/members/child/unapprove" name="close-circle-outline" size="large"></ion-icon>
           <ion-menu-button style="margin-left: 10%"></ion-menu-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
-    <ion-router-outlet></ion-router-outlet>
+    <ion-router-outlet class="shell-outlet"></ion-router-outlet>
   </div>
 </ion-split-pane>

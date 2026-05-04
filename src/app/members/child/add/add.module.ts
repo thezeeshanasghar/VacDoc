@@ -6,7 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { AddPage } from './add.page';
-import {MatDatepickerModule} from '@angular/material/datepicker';
+import { VacDatePickerModule } from 'src/app/shared/vac-datepicker/vac-datepicker.module';
 import { MatFormFieldModule , MatInputModule } from '@angular/material';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
@@ -24,7 +24,7 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes),
     ReactiveFormsModule,
-    MatDatepickerModule,
+    VacDatePickerModule,
     MatFormFieldModule,
     MatInputModule,
     MatAutocompleteModule
