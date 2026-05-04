@@ -148,6 +148,27 @@ export class PaService extends BaseService {
     );
   }
 
+  getPaPermissions(paId: number): Observable<any> {
+    const url = `${this.API_PA}PaPermission/${paId}`;
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  updatePaPermissions(paId: number, data: any): Observable<any> {
+    const url = `${this.API_PA}PaPermission/${paId}`;
+    return this.http.put(url, data, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  getAuditLog(doctorId: number, paId?: number, page: number = 1, pageSize: number = 50): Observable<any> {
+    let url = `${this.API_PA}PaActivityLog/doctor/${doctorId}?page=${page}&pageSize=${pageSize}`;
+    if (paId) { url += `&paId=${paId}`; }
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  addAuditLog(log: any): Observable<any> {
+    const url = `${this.API_PA}PaActivityLog`;
+    return this.http.post(url, log, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
 //   putDoctorSchedule(data): Observable<any> {
 //     const url = `${this.API_SCHEDULE}doctorschedule`;
 //     return this.http

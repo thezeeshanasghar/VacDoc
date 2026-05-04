@@ -26,6 +26,14 @@ const routes: Routes = [
     path: 'edit/:paId',
     loadChildren: () => import('./edit-pa/edit-pa.module').then(m => m.EditPaPageModule)
   },
+  {
+    path: 'permissions/:paId',
+    loadChildren: () => import('./pa-permissions/pa-permissions.module').then(m => m.PaPermissionsPageModule)
+  },
+  {
+    path: 'audit-log',
+    loadChildren: () => import('./pa-audit-log/pa-audit-log.module').then(m => m.PaAuditLogPageModule)
+  },
 ];
 
 @NgModule({

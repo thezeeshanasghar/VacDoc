@@ -1,0 +1,43 @@
+.section-header {
+  --background: #1a1a2e;
+  --color: #fff;
+  font-weight: 600;
+  ion-label h2 { color: #fff; font-size: 15px; font-weight: 600; }
+  ion-label p  { color: #aaa; font-size: 12px; }
+}
+
+.section-icon {
+  color: #FF4500;
+  font-size: 20px;
+}
+
+.section-body {
+  background: #111;
+  padding: 0 8px 8px;
+}
+
+.section-bulk-actions {
+  display: flex;
+  gap: 8px;
+  padding: 8px 4px 4px;
+}
+
+.perm-row {
+  --background: #1c1c2e;
+  --color: #e0e0e0;
+  border-radius: 6px;
+  margin: 3px 0;
+}
+
+.perm-label-text {
+  font-size: 13px;
+  color: #ddd;
+  white-space: normal;
+}
+
+.lava-btn {
+  --background: linear-gradient(135deg, #C62828, #FF4500);
+  --color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}

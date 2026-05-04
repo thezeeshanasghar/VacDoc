@@ -1,0 +1,98 @@
+.filter-bar {
+  --background: #1a1a2e;
+  --color: #fff;
+  ion-label { color: #aaa; font-size: 13px; }
+}
+
+.log-summary {
+  padding: 6px 16px;
+  font-size: 12px;
+  color: #888;
+  text-align: right;
+}
+
+.log-card {
+  --background: #1c1c2e;
+  margin: 8px 10px;
+  border-radius: 10px;
+}
+
+.log-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.action-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.reversal-badge {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.log-date {
+  margin-left: auto;
+  font-size: 11px;
+  color: #888;
+}
+
+.log-pa {
+  font-size: 13px;
+  color: #ccc;
+  margin: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.log-desc {
+  font-size: 14px;
+  color: #e0e0e0;
+  margin: 4px 0;
+}
+
+.log-notes {
+  font-size: 12px;
+  color: #aaa;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.log-reversal-ref {
+  font-size: 11px;
+  color: #FF4500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #555;
+  ion-icon { font-size: 48px; display: block; margin: 0 auto 12px; }
+  p { font-size: 14px; }
+}
+
+.pagination-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+}
+
+.page-label {
+  font-size: 14px;
+  color: #aaa;
+  min-width: 30px;
+  text-align: center;
+}

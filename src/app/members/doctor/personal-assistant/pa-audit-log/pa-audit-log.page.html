@@ -1,0 +1,70 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/personal-assistant"></ion-back-button>
+    </ion-buttons>
+    <ion-title>PA Audit Log</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <!-- Filter bar -->
+  <ion-item lines="full" class="filter-bar">
+    <ion-label>Filter by PA</ion-label>
+    <ion-select [(ngModel)]="selectedPaId" (ionChange)="onFilterChange()" placeholder="All PAs" interface="popover">
+      <ion-select-option [value]="null">All PAs</ion-select-option>
+      <ion-select-option *ngFor="let pa of personalAssistants" [value]="pa.Id">
+        {{ pa.Name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <div class="log-summary" *ngIf="total > 0">
+    {{ total }} total actions &nbsp;|&nbsp; Page {{ page }} of {{ Math.ceil(total / pageSize) }}
+  </div>
+
+  <!-- Log entries -->
+  <ion-card *ngFor="let log of logs" class="log-card">
+    <ion-card-header>
+      <div class="log-top">
+        <ion-badge [color]="getActionColor(log)" class="action-badge">
+          {{ log.ActionCode }}
+        </ion-badge>
+        <ion-badge *ngIf="log.IsReversal" color="warning" class="reversal-badge">
+          REVERSAL
+        </ion-badge>
+        <span class="log-date">{{ log.ActionDate | date:'dd MMM yyyy, HH:mm' }}</span>
+      </div>
+    </ion-card-header>
+    <ion-card-content>
+      <p class="log-pa"><ion-icon name="person-outline"></ion-icon> {{ log.PaName }}</p>
+      <p class="log-desc">{{ log.Description }}</p>
+      <p class="log-notes" *ngIf="log.Notes">
+        <ion-icon name="information-circle-outline"></ion-icon> {{ log.Notes }}
+      </p>
+      <p class="log-reversal-ref" *ngIf="log.ReversalOfLogId">
+        <ion-icon name="arrow-undo-outline"></ion-icon> Reversal of log #{{ log.ReversalOfLogId }}
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+  <div *ngIf="!loading && logs.length === 0" class="empty-state">
+    <ion-icon name="document-text-outline"></ion-icon>
+    <p>No activity logged yet.</p>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-row" *ngIf="total > pageSize">
+    <ion-button fill="outline" size="small" (click)="prevPage()" [disabled]="page === 1">
+      <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+    <span class="page-label">{{ page }}</span>
+    <ion-button fill="outline" size="small" (click)="nextPage()" [disabled]="page * pageSize >= total">
+      <ion-icon name="chevron-forward-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+
+  <div style="height: 40px;"></div>
+
+</ion-content>

@@ -1,0 +1,61 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/personal-assistant"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ paName }} — Permissions</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="save()" fill="solid" color="warning" style="font-weight:600;">
+        <ion-icon name="save-outline" slot="start"></ion-icon>
+        Save
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-accordion-group [multiple]="true">
+
+    <ion-accordion *ngFor="let section of sections" [value]="section.key">
+      <ion-item slot="header" class="section-header">
+        <ion-icon [name]="section.icon" slot="start" class="section-icon"></ion-icon>
+        <ion-label>
+          <h2>{{ section.label }}</h2>
+          <p>{{ countGranted(section) }} / {{ section.fields.length }} permitted</p>
+        </ion-label>
+      </ion-item>
+
+      <div slot="content" class="section-body">
+        <div class="section-bulk-actions">
+          <ion-button fill="outline" size="small" color="success" (click)="selectAll(section)">
+            <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
+            All
+          </ion-button>
+          <ion-button fill="outline" size="small" color="medium" (click)="clearAll(section)">
+            <ion-icon name="close-outline" slot="start"></ion-icon>
+            None
+          </ion-button>
+        </div>
+
+        <ion-item *ngFor="let field of section.fields" lines="none" class="perm-row">
+          <ion-toggle [(ngModel)]="perm[field.key]" slot="start" color="success"></ion-toggle>
+          <ion-label class="perm-label-text">{{ field.label }}</ion-label>
+        </ion-item>
+      </div>
+    </ion-accordion>
+
+  </ion-accordion-group>
+
+  <div style="height: 80px;"></div>
+
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-button expand="block" class="lava-btn" (click)="save()">
+      <ion-icon name="save-outline" slot="start"></ion-icon>
+      Save All Permissions
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

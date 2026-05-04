@@ -16,14 +16,6 @@ export class PersonalAssistantPage implements OnInit {
   doctorId: any = null;
   personalAssistants: any[] = [];
   paAccessRecords: any[] = [];
-  AllowAlert: any = false;
-  AllowAnalytics: any = false;
-  AllowClinic: any = false;
-  AllowChild: any = false;
-  AllowSchedule: any = false;
-  AllowStock: any = false;
-  AllowVacation: any = false;
-  IsVerified: any = false;
   clinics: any = [];
   selectedClinicId: any;
   usertype: any;
@@ -63,38 +55,11 @@ export class PersonalAssistantPage implements OnInit {
       .map(r => r.Clinic.Name || r.ClinicName || '');
   }
 
-  async updatePA(pa: any) {
-    console.log('Update PA button clicked for:', pa);
-    const loading = await this.loadingController.create({ message: "Loading" });
-    await loading.present();
-    const updatedData = {
-      Id: pa.Id,
-      AllowAlert: pa.AllowAlert,
-      AllowAnalytics: pa.AllowAnalytics,
-      AllowClinic: pa.AllowClinic,
-      AllowChild: pa.AllowChild,
-      AllowSchedule: pa.AllowSchedule,
-      AllowStock: pa.AllowStock,
-      AllowVacation: pa.AllowVacation,
-      IsVerified: pa.IsVerified,
-    };
-  
-    console.log('Updated Data:', updatedData);
-
-    this.paService.editPa(updatedData.Id,updatedData).subscribe({
-      next: (res) => {
-      loading.dismiss();
-      console.log('Response:', res);
-      console.log('Response:', res.Message);
-      this.toastService.create(res.Message, 'success');
-      this.fetchPersonalAssistants();
-      },
-      error: (err) => {
-        loading.dismiss();
-        this.toastService.create('Error fetching Personal Assistants', 'danger');
-        console.error(err);
-      },
-    });
+  navigateToPermissions(pa: any) {
+    this.router.navigate(
+      ['/members/doctor/personal-assistant/permissions', pa.Id],
+      { queryParams: { name: pa.Name || '' } }
+    );
   }
 
   async fetchPersonalAssistants() {
