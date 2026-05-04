@@ -32,9 +32,14 @@ ion-card-content > div > span {
 // Force child name to be absolutely centred across the full toolbar width
 ion-title {
   position: absolute !important;
+  top: 0 !important;
+  bottom: 0 !important;
   left: 0 !important;
   right: 0 !important;
   width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   text-align: center !important;
   color: #ffffff !important;
   pointer-events: none;
