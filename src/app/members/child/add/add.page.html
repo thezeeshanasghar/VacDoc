@@ -61,9 +61,12 @@
         </ion-grid>
       </ion-radio-group>
       <ion-item>
-        <mat-form-field appearance="outline" class="custom-input-item" (click)="openDOB()">
-          <input matInput readonly [value]="fg1.get('DOB').value | date:'dd/MM/yyyy'"
-            placeholder="Date of Birth *" class="custom-input" style="cursor:pointer" />
+        <mat-form-field appearance="outline" class="custom-input-item" (click)="picker.open()">
+          <!-- <mat-label>Date of Birth <span class="required-asterisk">*</span></mat-label> -->
+          <input matInput formControlName="DOB" [matDatepicker]="picker" placeholder="Date of Birth *" [max]="todaydate"
+            (dateChange)="checkEpi()" class="custom-input" />
+          <!-- <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle> -->
+          <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
         <div class="validation-errors" style="margin-bottom: 20px;">
           <ng-container *ngFor="let validation of validation_messages.DOB">
