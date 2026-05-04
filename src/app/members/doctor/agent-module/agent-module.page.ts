@@ -44,7 +44,9 @@ export class AgentModulePage {
       header: 'Add Agent',
       inputs: [
         { name: 'name', type: 'text', placeholder: 'Agent Name *' },
-        { name: 'phone', type: 'tel', placeholder: 'Phone Number' },
+        { name: 'phone', type: 'tel', placeholder: 'Phone Number (used as Login ID) *' },
+        { name: 'email', type: 'email', placeholder: 'Email Address *' },
+        { name: 'password', type: 'password', placeholder: 'Initial Password (min 4 characters) *' },
         { name: 'fee', type: 'number', placeholder: 'Referral Fee per Client (Rs.)' },
       ],
       buttons: [
@@ -56,13 +58,33 @@ export class AgentModulePage {
               this.toastService.create('Agent name is required', 'danger');
               return false;
             }
+            if (!data.phone || !data.phone.trim()) {
+              this.toastService.create('Phone number is required (used as login ID)', 'danger');
+              return false;
+            }
+            if (!data.email || !data.email.trim()) {
+              this.toastService.create('Email address is required', 'danger');
+              return false;
+            }
+            if (!data.password || data.password.length < 4) {
+              this.toastService.create('Password must be at least 4 characters', 'danger');
+              return false;
+            }
             const agent = {
               Name: data.name.trim(),
-              PhoneNumber: data.phone || '',
+              PhoneNumber: data.phone.trim(),
+              Email: data.email.trim(),
+              Password: data.password,
               ReferralFeePerClient: parseFloat(data.fee) || 0
             };
             this.agentService.addAgent(agent).subscribe(
-              () => { this.loadAgents(); },
+              (res: any) => {
+                this.loadAgents();
+                const code = (res && res.agentCode) ? res.agentCode : '';
+                if (code) {
+                  this.toastService.create('Agent added. Agent Code: ' + code, 'success');
+                }
+              },
               (_err: any) => { this.toastService.create('Failed to add agent', 'danger'); }
             );
           }
@@ -77,7 +99,8 @@ export class AgentModulePage {
       header: 'Edit Agent',
       inputs: [
         { name: 'name', type: 'text', placeholder: 'Agent Name *', value: agent.Name || agent.name },
-        { name: 'phone', type: 'tel', placeholder: 'Phone Number', value: agent.PhoneNumber || agent.phoneNumber },
+        { name: 'phone', type: 'tel', placeholder: 'Phone Number (Login ID)', value: agent.PhoneNumber || agent.phoneNumber },
+        { name: 'email', type: 'email', placeholder: 'Email Address', value: agent.Email || agent.email || '' },
         { name: 'fee', type: 'number', placeholder: 'Referral Fee per Client (Rs.)', value: agent.ReferralFeePerClient || agent.referralFeePerClient },
       ],
       buttons: [
@@ -94,6 +117,9 @@ export class AgentModulePage {
               Id: id,
               Name: data.name.trim(),
               PhoneNumber: data.phone || '',
+              Email: data.email || '',
+              Password: agent.Password || agent.password || '',
+              AgentCode: agent.AgentCode || agent.agentCode || '',
               ReferralFeePerClient: parseFloat(data.fee) || 0
             };
             this.agentService.updateAgent(id, updated).subscribe(

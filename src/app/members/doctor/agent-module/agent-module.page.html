@@ -17,9 +17,17 @@
             <div style="font-size: 16px; font-weight: 600; color: #1565C0;">
               {{ agent.Name || agent.name }}
             </div>
+            <div style="font-size: 12px; color: #888; margin-top: 1px;" *ngIf="agent.AgentCode || agent.agentCode">
+              <ion-icon name="id-card-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
+              Agent Code: <strong>{{ agent.AgentCode || agent.agentCode }}</strong>
+            </div>
             <div style="font-size: 13px; color: #555; margin-top: 2px;" *ngIf="agent.PhoneNumber || agent.phoneNumber">
               <ion-icon name="call-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
               {{ agent.PhoneNumber || agent.phoneNumber }}
+            </div>
+            <div style="font-size: 13px; color: #555; margin-top: 2px;" *ngIf="agent.Email || agent.email">
+              <ion-icon name="mail-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
+              {{ agent.Email || agent.email }}
             </div>
             <div style="font-size: 13px; color: #2E7D32; margin-top: 2px;">
               <ion-icon name="cash-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>

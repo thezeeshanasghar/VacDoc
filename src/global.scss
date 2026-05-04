@@ -446,12 +446,63 @@ ion-popover ion-item[aria-checked="true"] {
     0 4px 16px rgba(0, 0, 0, 0.16) !important;
 }
 
-// Hide mat-calendar's own header (we have our custom one)
-.vac-datepicker-panel .mat-calendar-header {
-  display: none !important;
+// Hide mat-calendar header by default (we use our custom year/month nav)
+.vac-cal-wrapper .mat-calendar-header {
+  display: none;
+}
+
+// Show mat-calendar header in year/multi-year view (styled to match theme)
+.vac-cal-wrapper.year-view-active .mat-calendar-header {
+  display: block !important;
+  background: linear-gradient(135deg,
+    var(--vac-blue-dp) 0%,
+    var(--vac-blue)    55%,
+    var(--vac-green)   100%
+  );
+  padding: 2px 8px 4px;
+  position: relative;
+}
+
+.vac-cal-wrapper.year-view-active .mat-calendar-header::before {
+  content: '';
+  display: block;
+  height: 4px;
+  margin: -2px -8px 2px;
+  background: linear-gradient(90deg,
+    var(--vac-red-dark) 0%,
+    var(--vac-red)      35%,
+    var(--vac-lava)     65%,
+    #FF8C00             100%
+  );
+}
+
+.vac-cal-wrapper.year-view-active .mat-calendar-period-button {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+}
+
+.vac-cal-wrapper.year-view-active .mat-calendar-previous-button,
+.vac-cal-wrapper.year-view-active .mat-calendar-next-button {
+  color: #ffffff !important;
 }
 
 // ── Year strip — thin blue→green gradient with lava top stripe ──
+.vac-dp-year-caret {
+  font-size: 9px;
+  margin-left: 6px;
+  opacity: 0.8;
+  vertical-align: middle;
+}
+
+.vac-dp-year-bar {
+  cursor: pointer;
+}
+
+.vac-dp-year-bar:hover {
+  opacity: 0.9;
+}
+
 .vac-dp-year-bar {
   background: linear-gradient(135deg,
     var(--vac-blue-dp) 0%,
@@ -512,37 +563,37 @@ ion-popover ion-item[aria-checked="true"] {
 }
 
 // ── Calendar weekday row ──────────────────────────────────────────
-.vac-datepicker-panel .mat-calendar-table-header th {
+.vac-cal-wrapper .mat-calendar-table-header th {
   color: #888888 !important;
   font-weight: 600 !important;
   font-size: 11px !important;
   background: transparent !important;
 }
 
-.vac-datepicker-panel .mat-calendar-table-header-divider::after {
+.vac-cal-wrapper .mat-calendar-table-header-divider::after {
   display: none !important;
 }
 
-// Hide month label inside grid (e.g. "MAY" row)
-.vac-datepicker-panel td.mat-calendar-body-label {
+// Hide month/year label inside grid (e.g. "MAY" row in month view)
+.vac-cal-wrapper td.mat-calendar-body-label {
   color: transparent !important;
   background: transparent !important;
 }
 
-// ── Selected date — light lava orange ────────────────────────────
-.vac-datepicker-panel .mat-calendar-body-selected {
+// ── Selected date / year / month — light lava orange ─────────────
+.vac-cal-wrapper .mat-calendar-body-selected {
   background-color: rgba(255, 69, 0, 0.72) !important;
   color: #ffffff !important;
 }
 
 // Today — lava orange ring
-.vac-datepicker-panel .mat-calendar-body-today:not(.mat-calendar-body-selected) {
+.vac-cal-wrapper .mat-calendar-body-today:not(.mat-calendar-body-selected) {
   border-color: var(--vac-lava) !important;
   color: var(--vac-lava) !important;
 }
 
 // Hover — lava tint
-.vac-datepicker-panel .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover
+.vac-cal-wrapper .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover
   > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
   background-color: rgba(255, 69, 0, 0.10) !important;
 }
