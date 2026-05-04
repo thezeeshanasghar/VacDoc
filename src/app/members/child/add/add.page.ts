@@ -1,5 +1,4 @@
 import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
-import { VacDatePickerService } from 'src/app/shared/vac-datepicker/vac-datepicker.service';
 import {
   FormGroup,
   FormBuilder,
@@ -87,8 +86,7 @@ export class AddPage implements OnInit {
     public alertCtrl: AlertController,
     private http: HttpClient,
     private paService: PaService,
-    private cd: ChangeDetectorRef,
-    private datePicker: VacDatePickerService
+    private cd: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
@@ -185,17 +183,6 @@ filterCountryCodes(value: string) {
       console.error("Error in loadClinics:", error);
       this.toastService.create("An unexpected error occurred", "danger");
     }
-  }
-
-  openDOB() {
-    const dobControl = this.fg1.get('DOB');
-    this.datePicker.open(dobControl ? dobControl.value : null, { max: new Date() }).subscribe((date: Date | null) => {
-      if (date) {
-        this.fg1.patchValue({ DOB: date });
-        if (dobControl) { dobControl.markAsTouched(); }
-        this.checkEpi();
-      }
-    });
   }
 
   ionViewWillEnter() {
