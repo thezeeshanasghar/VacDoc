@@ -1,3 +1,10 @@
+// ── Shell header — thinner toolbars ──────────────────────────────────────────
+#main > ion-header ion-toolbar {
+  --min-height: 42px;
+  --padding-top: 0px;
+  --padding-bottom: 0px;
+}
+
 // ── Side menu shell ───────────────────────────────────────────────────────────
 ion-menu {
   --background: #0D0D12;
