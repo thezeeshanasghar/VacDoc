@@ -18,123 +18,271 @@
 
 <ion-content class="ion-padding">
 
-  <!-- Clinic + Brand -->
-  <ion-card>
-    <ion-card-header color="primary"><ion-card-title>Sale Details</ion-card-title></ion-card-header>
-    <ion-card-content>
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!-- SUCCESS STATE                                                            -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <ng-container *ngIf="completedSales">
 
-      <ion-item>
-        <ion-label position="floating">Clinic <span style="color:red">*</span></ion-label>
-        <ion-select [(ngModel)]="selectedClinic" (ionChange)="onClinicChange()" placeholder="Select clinic">
-          <ion-select-option *ngFor="let c of clinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
-        </ion-select>
-      </ion-item>
+    <ion-card>
+      <ion-card-header color="primary">
+        <ion-card-title>Sale Complete</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
 
-      <ion-item>
-        <ion-label position="floating">Brand <span style="color:red">*</span></ion-label>
-        <mat-form-field class="full-w">
-          <mat-select [(ngModel)]="selectedBrandId" (openedChange)="showAllBrands()"
-            (selectionChange)="onBrandSelected($event.value)" placeholder="Select brand">
-            <mat-option disabled>
-              <input matInput [(ngModel)]="brandSearchTerm" (ngModelChange)="filterBrands($event)"
-                (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"
-                placeholder="Search brand" style="font-size:15px;">
-            </mat-option>
-            <mat-option *ngFor="let b of filteredBrands" [value]="b.id">{{ b.name }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </ion-item>
+        <div style="text-align:center; padding:20px 0 12px;">
+          <ion-icon name="checkmark-circle" style="font-size:64px; color:var(--vac-green);"></ion-icon>
+          <p style="font-size:17px; font-weight:700; margin:10px 0 4px; color:var(--vac-green);">Sale recorded successfully!</p>
+          <p style="font-size:14px; color:#555;"><strong>{{ completedClinicName }}</strong></p>
+        </div>
 
-      <ion-item *ngIf="availableBatches.length > 0">
-        <ion-label position="floating">Batch / Lot</ion-label>
-        <ion-select [(ngModel)]="selectedBatch" (ionChange)="onBatchSelected($event.detail.value)" placeholder="Select batch">
-          <ion-select-option value="">— No specific batch —</ion-select-option>
-          <ion-select-option *ngFor="let b of availableBatches" [value]="b.BatchLot || ''">
-            {{ b.BatchLot || '(No batch)' }} — Avail: {{ b.AvailableQuantity }} — Exp: {{ b.Expiry ? (b.Expiry | date:'dd/MM/yyyy') : 'N/A' }}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Brand</th>
+                <th>Batch / Lot</th>
+                <th>Expiry</th>
+                <th>Qty</th>
+                <th>Sale Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let s of completedSales; let i = index">
+                <td style="text-align:center;">{{ i + 1 }}</td>
+                <td>{{ s.BrandName }}</td>
+                <td>{{ s.BatchLot || '—' }}</td>
+                <td style="text-align:center; white-space:nowrap;">{{ formatExpiry(s.ExpiryDate) }}</td>
+                <td style="text-align:center;">{{ s.Quantity }}</td>
+                <td style="text-align:right; white-space:nowrap;">Rs {{ s.SalePricePerUnit | number:'1.2-2' }}</td>
+                <td style="text-align:right; white-space:nowrap;">Rs {{ s.TotalSaleValue | number:'1.2-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-      <div class="two-col" *ngIf="selectedBrandId">
+        <div style="padding:10px 12px 4px; display:flex; justify-content:flex-end; gap:24px; flex-wrap:wrap;">
+          <ion-text color="primary" style="font-weight:700; font-size:14px;">
+            Total Items: {{ completedSales.length }}
+          </ion-text>
+          <ion-text color="primary" style="font-weight:700; font-size:14px;">
+            Total Qty: {{ completedTotalQty }}
+          </ion-text>
+          <ion-text color="primary" style="font-weight:800; font-size:15px;">
+            Grand Total: Rs {{ completedGrandTotal | number:'1.2-2' }}
+          </ion-text>
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+
+    <ion-row class="ion-margin-top">
+      <ion-col>
+        <ion-button expand="block" fill="outline" color="primary" (click)="startNewSale()">
+          <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+          New Sale
+        </ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button expand="block" color="success" (click)="downloadPdf()">
+          <ion-icon name="document-text-outline" slot="start"></ion-icon>
+          Download Invoice
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
+  </ng-container>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!-- SALE FORM                                                                -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <ng-container *ngIf="!completedSales">
+
+    <!-- ── CLINIC ──────────────────────────────────────────────────────────── -->
+    <ion-card>
+      <ion-card-header color="primary">
+        <ion-card-title>Select Clinic</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
         <ion-item>
-          <ion-label position="floating">Expiry</ion-label>
-          <ion-input type="date" [(ngModel)]="expiry" [disabled]="!!selectedBatch"></ion-input>
+          <ion-label position="floating">Clinic <span style="color:red">*</span></ion-label>
+          <ion-select [(ngModel)]="selectedClinic" (ionChange)="onClinicChange()" placeholder="Select clinic">
+            <ion-select-option *ngFor="let c of clinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ── STOCK ITEMS TABLE ───────────────────────────────────────────────── -->
+    <ion-card>
+      <ion-card-header color="primary">
+        <ion-card-title>Sale Items</ion-card-title>
+      </ion-card-header>
+      <ion-card-content style="padding:0;">
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Brand</th>
+                <th>Batch / Lot</th>
+                <th>Expiry</th>
+                <th>Avail</th>
+                <th>Sale Price</th>
+                <th>Qty</th>
+                <th>Total</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of rows; let i = index">
+
+                <!-- Brand with search -->
+                <td style="min-width:165px;">
+                  <mat-form-field class="table-field">
+                    <mat-select
+                      [(ngModel)]="row.brandId"
+                      (openedChange)="showAllBrands(row)"
+                      (selectionChange)="onBrandSelected(row, $event.value)"
+                      placeholder="Brand">
+                      <mat-option disabled>
+                        <input matInput
+                          [(ngModel)]="row.brandSearchTerm"
+                          [ngModelOptions]="{standalone: true}"
+                          (ngModelChange)="filterBrands(row, $event)"
+                          (click)="$event.stopPropagation()"
+                          (keydown)="$event.stopPropagation()"
+                          placeholder="Search..."
+                          style="font-size:14px;">
+                      </mat-option>
+                      <mat-option *ngFor="let b of row.filteredBrands" [value]="b.id">
+                        {{ b.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </td>
+
+                <!-- Batch / Lot -->
+                <td style="min-width:150px;">
+                  <ion-select
+                    [(ngModel)]="row.batchLot"
+                    (ionChange)="onBatchSelected(row, $event.detail.value)"
+                    placeholder="Batch"
+                    [disabled]="!row.batches.length"
+                    style="font-size:13px; max-width:140px;">
+                    <ion-select-option *ngFor="let b of row.batches" [value]="b.BatchLot || ''">
+                      {{ b.BatchLot || '(No batch)' }} — {{ formatExpiry(b.Expiry) }}
+                    </ion-select-option>
+                  </ion-select>
+                </td>
+
+                <!-- Expiry (auto-filled, read-only display) -->
+                <td style="min-width:85px; text-align:center; font-size:13px; color:#333; white-space:nowrap;">
+                  {{ formatExpiry(row.expiry) }}
+                </td>
+
+                <!-- Available qty -->
+                <td style="text-align:center; font-size:13px; color:#555;">
+                  {{ row.availableQty || '—' }}
+                </td>
+
+                <!-- Sale price (auto-filled, editable) -->
+                <td style="min-width:90px;">
+                  <ion-input
+                    type="number"
+                    [(ngModel)]="row.salePrice"
+                    min="0.01"
+                    step="0.01"
+                    placeholder="Rs"
+                    style="font-size:13px; min-width:80px;">
+                  </ion-input>
+                </td>
+
+                <!-- Qty -->
+                <td style="min-width:75px;">
+                  <ion-input
+                    type="number"
+                    [(ngModel)]="row.qty"
+                    min="1"
+                    [max]="row.availableQty"
+                    placeholder="Qty"
+                    style="font-size:13px; min-width:65px;">
+                  </ion-input>
+                  <ion-note color="danger"
+                    *ngIf="row.qty > row.availableQty && row.availableQty > 0"
+                    style="font-size:10px; display:block;">
+                    Max {{ row.availableQty }}
+                  </ion-note>
+                </td>
+
+                <!-- Row total -->
+                <td style="text-align:right; font-size:13px; white-space:nowrap;">
+                  Rs {{ ((row.qty || 0) * (row.salePrice || 0)) | number:'1.2-2' }}
+                </td>
+
+                <!-- Remove -->
+                <td>
+                  <ion-button fill="clear" color="danger" (click)="removeRow(i)" [disabled]="rows.length === 1">
+                    <ion-icon name="trash"></ion-icon>
+                  </ion-button>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="padding:10px 12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <ion-button fill="outline" color="primary" size="small" (click)="addRow()">
+            <ion-icon name="add" slot="start"></ion-icon>
+            Add Item
+          </ion-button>
+          <ion-text color="primary" style="font-weight:700; font-size:15px;">
+            Total: Rs {{ grandTotal | number:'1.2-2' }}
+          </ion-text>
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ── CLIENT & PAYMENT ────────────────────────────────────────────────── -->
+    <ion-card>
+      <ion-card-header color="primary"><ion-card-title>Client &amp; Payment</ion-card-title></ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="floating">Client Name (optional)</ion-label>
+          <ion-input type="text" [(ngModel)]="clientName" placeholder="Client name"></ion-input>
         </ion-item>
         <ion-item>
-          <ion-label position="floating">Available</ion-label>
-          <ion-input type="number" [value]="availableQty" disabled></ion-input>
-        </ion-item>
-      </div>
-
-      <div class="two-col">
-        <ion-item>
-          <ion-label position="floating">Sale Price / Unit <span style="color:red">*</span></ion-label>
-          <ion-input type="number" [(ngModel)]="salePrice" min="0.01" step="0.01" placeholder="Rs"></ion-input>
+          <ion-label position="floating">Payment Mode</ion-label>
+          <ion-select [(ngModel)]="paymentMode">
+            <ion-select-option value="Cash">Cash</ion-select-option>
+            <ion-select-option value="Bank Transfer">Bank Transfer</ion-select-option>
+            <ion-select-option value="Cheque">Cheque</ion-select-option>
+          </ion-select>
         </ion-item>
         <ion-item>
-          <ion-label position="floating">Quantity <span style="color:red">*</span></ion-label>
-          <ion-input type="number" [(ngModel)]="quantity" min="1" placeholder="Units"></ion-input>
+          <ion-label position="floating">Sale Date</ion-label>
+          <ion-input type="date" [(ngModel)]="saleDate"></ion-input>
         </ion-item>
-      </div>
+        <ion-item>
+          <ion-label position="floating">Notes (optional)</ion-label>
+          <ion-textarea [(ngModel)]="notes" rows="2" placeholder="Any notes..."></ion-textarea>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
 
-      <ion-note *ngIf="quantity > availableQty && availableQty > 0" color="danger" style="padding:6px 16px; display:block; font-size:12px;">
-        Quantity exceeds available stock ({{ availableQty }})
-      </ion-note>
+    <!-- ── SUBMIT ──────────────────────────────────────────────────────────── -->
+    <ion-button
+      expand="block"
+      class="ion-margin-top submit-btn"
+      [disabled]="!rows.length"
+      (click)="onSubmit()">
+      <ion-icon name="bag-handle-outline" slot="start"></ion-icon>
+      Record Sale
+    </ion-button>
 
-    </ion-card-content>
-  </ion-card>
-
-  <!-- Financials summary -->
-  <ion-card *ngIf="quantity > 0 && salePrice > 0">
-    <ion-card-header color="primary"><ion-card-title>Sale Summary</ion-card-title></ion-card-header>
-    <ion-card-content>
-      <div class="summary-row">
-        <span>Sale Value</span>
-        <span class="summary-val blue">Rs {{ totalSaleValue | number:'1.2-2' }}</span>
-      </div>
-      <div class="summary-row">
-        <span>Cost (Purchase Price)</span>
-        <span class="summary-val">Rs {{ totalCost | number:'1.2-2' }}</span>
-      </div>
-      <div class="summary-row profit-row">
-        <span><strong>Profit</strong></span>
-        <span class="summary-val" [style.color]="profit >= 0 ? '#2E7D32' : '#C62828'">
-          <strong>Rs {{ profit | number:'1.2-2' }}</strong>
-        </span>
-      </div>
-    </ion-card-content>
-  </ion-card>
-
-  <!-- Client & payment -->
-  <ion-card>
-    <ion-card-header color="primary"><ion-card-title>Client & Payment</ion-card-title></ion-card-header>
-    <ion-card-content>
-      <ion-item>
-        <ion-label position="floating">Client Name (optional)</ion-label>
-        <ion-input type="text" [(ngModel)]="clientName" placeholder="Client name"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label position="floating">Payment Mode</ion-label>
-        <ion-select [(ngModel)]="paymentMode">
-          <ion-select-option value="Cash">Cash</ion-select-option>
-          <ion-select-option value="Bank Transfer">Bank Transfer</ion-select-option>
-          <ion-select-option value="Cheque">Cheque</ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-item>
-        <ion-label position="floating">Sale Date</ion-label>
-        <ion-input type="date" [(ngModel)]="saleDate"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label position="floating">Notes (optional)</ion-label>
-        <ion-textarea [(ngModel)]="notes" rows="2" placeholder="Any notes..."></ion-textarea>
-      </ion-item>
-    </ion-card-content>
-  </ion-card>
-
-  <ion-button expand="block" class="ion-margin-top submit-btn" (click)="onSubmit()">
-    <ion-icon name="bag-handle-outline" slot="start"></ion-icon>
-    Record Sale
-  </ion-button>
+  </ng-container>
 
 </ion-content>

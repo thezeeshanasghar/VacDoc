@@ -24,6 +24,25 @@ export interface DirectSaleDTO {
   SaleDate: string;
 }
 
+export interface DirectSaleItemDTO {
+  BrandId: number;
+  BrandName?: string;
+  BatchLot?: string;
+  ExpiryDate?: string;
+  Quantity: number;
+  SalePricePerUnit: number;
+}
+
+export interface BulkDirectSaleRequestDTO {
+  ClinicId: number;
+  DoctorId: number;
+  ClientName?: string;
+  PaymentMode: string;
+  Notes?: string;
+  SaleDate: string;
+  Items: DirectSaleItemDTO[];
+}
+
 export interface DirectSaleResponse<T> {
   IsSuccess: boolean;
   Message: string;
@@ -40,13 +59,22 @@ export class DirectSaleService {
     return this.http.post<DirectSaleResponse<DirectSaleDTO>>(`${this.base}DirectSale`, dto);
   }
 
+  createBulkSale(dto: BulkDirectSaleRequestDTO): Observable<DirectSaleResponse<DirectSaleDTO[]>> {
+    return this.http.post<DirectSaleResponse<DirectSaleDTO[]>>(`${this.base}DirectSale/bulk`, dto);
+  }
+
+  downloadPdf(ids: string): Observable<Blob> {
+    return this.http.get(`${this.base}DirectSale/pdf?ids=${ids}`, { responseType: 'blob' });
+  }
+
   getHistory(params: {
     clinicId?: number; brandId?: number; doctorId?: number;
     fromDate?: string; toDate?: string;
   }): Observable<DirectSaleResponse<DirectSaleDTO[]>> {
-    const q = Object.keys(params)
-      .filter(k => params[k] !== undefined && params[k] !== null && params[k] !== '')
-      .map(k => `${k}=${encodeURIComponent(params[k])}`)
+    const p: any = params;
+    const q = Object.keys(p)
+      .filter(k => p[k] !== undefined && p[k] !== null && p[k] !== '')
+      .map(k => `${k}=${encodeURIComponent(p[k])}`)
       .join('&');
     return this.http.get<DirectSaleResponse<DirectSaleDTO[]>>(
       `${this.base}DirectSale/history${q ? '?' + q : ''}`

@@ -1,21 +1,46 @@
-.full-w { width: 100%; }
-
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
-
-.summary-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #F3F4F6;
-  font-size: 14px;
-  color: #374151;
-  &:last-of-type { border-bottom: none; }
+.table-container {
+  overflow-x: auto;
+  padding: 8px;
 }
-.profit-row { padding-top: 10px; margin-top: 4px; border-top: 2px solid #E5E7EB; border-bottom: none !important; }
 
-.summary-val { font-weight: 700; font-size: 15px; }
-.summary-val.blue { color: #1565C0; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th {
+    background-color: var(--ion-color-primary);
+    color: white;
+    padding: 8px 10px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+  }
+
+  tr:nth-child(even) td {
+    background-color: #f9f9f9;
+  }
+}
+
+.table-field {
+  width: 100%;
+  font-size: 13px;
+}
+
+ion-input {
+  --padding-start: 6px;
+  --padding-end: 6px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-height: 36px;
+}
+
+ion-card-header[color="primary"] ion-card-title { color: white; font-size: 15px; font-weight: 700; }
 
 .submit-btn {
   --background: linear-gradient(135deg, #8B0000 0%, #C62828 45%, #FF4500 100%);
@@ -27,5 +52,3 @@
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
-
-ion-card-header[color="primary"] ion-card-title { color: white; font-size: 15px; font-weight: 700; }
