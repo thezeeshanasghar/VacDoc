@@ -38,7 +38,11 @@
       </ion-row>
       <ion-row *ngFor="let b of brandAmounts" class="data-row">
         <ion-col class="center-text" style="margin-top: 10px;">{{b.BrandName}}</ion-col>
-        <ion-col class="center-text" style="margin-top: 10px;">{{b.Count}}</ion-col>
+        <ion-col class="center-text"
+          style="margin-top: 10px; cursor: pointer;"
+          [style.color]="isCumulative(b) ? '#1B5E20' : null"
+          [style.font-weight]="isCumulative(b) ? 'bold' : null"
+          (click)="openBatchPopup(b)">{{b.Count}}</ion-col>
         <ion-col class="center-text">
           <ion-input [(ngModel)]="b.Amount" [ngModelOptions]="{standalone: true}" type="tel" #amountInput="ngModel" required pattern="^[0-9]*$"></ion-input>
           <div *ngIf="amountInput.invalid && (amountInput.dirty || amountInput.touched)">
@@ -53,5 +57,22 @@
       <ion-icon name="checkmark"></ion-icon>
     </ion-fab-button>
   </ion-fab>
+
+  <div class="batch-overlay" *ngIf="showBatchPopup" (click)="closeBatchPopup()">
+    <div class="batch-popup" (click)="$event.stopPropagation()">
+      <div class="batch-popup-header">
+        <span class="batch-popup-title">{{ selectedBrandName }}</span>
+        <ion-icon name="close-outline" class="batch-close-icon" (click)="closeBatchPopup()"></ion-icon>
+      </div>
+      <div class="batch-row" *ngFor="let batch of selectedBatches">
+        <span class="batch-name">{{ batch.BrandName }}</span>
+        <span class="batch-count">{{ batch.Count }} units</span>
+      </div>
+      <div class="batch-total-row">
+        <span>Total</span>
+        <span class="batch-total-count">{{ selectedBrandTotal }} units</span>
+      </div>
+    </div>
+  </div>
 </ion-content>
 

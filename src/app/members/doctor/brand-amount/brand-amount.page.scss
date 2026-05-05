@@ -107,3 +107,80 @@ ion-fab-button {
   font-size: 0.8em;
   text-align: center;
 }
+
+// ── Batch breakdown popup ─────────────────────────────────────────────────────
+.batch-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.batch-popup {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  min-width: 260px;
+  max-width: 88%;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+}
+
+.batch-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #1B5E20;
+}
+
+.batch-popup-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1B5E20;
+}
+
+.batch-close-icon {
+  font-size: 22px;
+  cursor: pointer;
+  color: #555;
+}
+
+.batch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+  color: #333;
+}
+
+.batch-name {
+  flex: 1;
+  padding-right: 12px;
+}
+
+.batch-count {
+  font-weight: 600;
+  color: #1565C0;
+  white-space: nowrap;
+}
+
+.batch-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1B5E20;
+}
+
+.batch-total-count {
+  color: #1B5E20;
+}

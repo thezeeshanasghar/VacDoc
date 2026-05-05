@@ -15,15 +15,20 @@ import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 })
 export class BrandAmountPage implements OnInit {
   brandAmounts: BrandAmountDTO[] = [];
-  originalBrandAmounts: BrandAmountDTO[] = []; // Store original data for updates
-  brandGroupMap: Map<string, BrandAmountDTO[]> = new Map(); // Map merged brands to originals
+  originalBrandAmounts: BrandAmountDTO[] = [];
+  brandGroupMap: Map<string, BrandAmountDTO[]> = new Map();
   fg: FormGroup
   clinics: any;
   selectedClinicId: any;
   doctorId: any;
-  usertype: any; 
+  usertype: any;
   online: Promise<any>;
   clinicId: any;
+
+  showBatchPopup = false;
+  selectedBrandName = '';
+  selectedBatches: BrandAmountDTO[] = [];
+  selectedBrandTotal = 0;
   constructor(
     public loadingController: LoadingController,
     private storage: Storage,
@@ -199,6 +204,22 @@ export class BrandAmountPage implements OnInit {
   private extractBaseBrandName(brandName: string): string {
     // Remove anything in parentheses and trim
     return brandName.replace(/\s*\([^)]*\)\s*/g, '').trim();
+  }
+
+  isCumulative(brand: BrandAmountDTO): boolean {
+    const group = this.brandGroupMap.get(brand.BrandName);
+    return group ? group.length > 1 : false;
+  }
+
+  openBatchPopup(brand: BrandAmountDTO) {
+    this.selectedBrandName = brand.BrandName;
+    this.selectedBatches = this.brandGroupMap.get(brand.BrandName) || [];
+    this.selectedBrandTotal = brand.Count;
+    this.showBatchPopup = true;
+  }
+
+  closeBatchPopup() {
+    this.showBatchPopup = false;
   }
 
   onClinicChange(event: any) {
