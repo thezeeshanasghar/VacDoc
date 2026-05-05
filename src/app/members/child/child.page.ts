@@ -122,7 +122,8 @@ export class ChildPage {
       message: "Loading"
     });
     await loading.present();
-    await this.childService.deleteChild(id, this.usertype ? this.usertype.UserType : null).subscribe(
+    const paId = (this.usertype && this.usertype.UserType === 'PA') ? this.usertype.PAId : undefined;
+    await this.childService.deleteChild(id, this.usertype ? this.usertype.UserType : null, paId).subscribe(
       res => {
         if (res.IsSuccess) {
           this.toastService.create(res.Message);

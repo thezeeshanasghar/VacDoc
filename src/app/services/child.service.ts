@@ -58,9 +58,11 @@ export class ChildService extends BaseService {
       );
   }
 
-  deleteChild(id: string, userType?: string): Observable<any> {
-    const type = encodeURIComponent(userType || '');
-    const url = `${this.API_CHILD}child/${id}${type ? `?userType=${type}` : ''}`;
+  deleteChild(id: string, userType?: string, paId?: number): Observable<any> {
+    let params = '';
+    if (userType) { params += `?userType=${encodeURIComponent(userType)}`; }
+    if (paId) { params += `${params ? '&' : '?'}paId=${paId}`; }
+    const url = `${this.API_CHILD}child/${id}${params}`;
     return this.http.delete(url, this.httpOptions)
       .pipe(
         catchError(this.handleError)

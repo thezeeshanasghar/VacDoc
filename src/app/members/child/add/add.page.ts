@@ -905,8 +905,10 @@ filterCountryCodes(value: string) {
     await loading.present();
     if (this.usertype.UserType === "DOCTOR") {
       this.fg1.value.IsPAApprove = true;
+      this.fg1.value.AddedByPaId = null;
     } else {
       this.fg1.value.IsPAApprove = false;
+      this.fg1.value.AddedByPaId = this.usertype.PAId || null;
     }
     if (this.usertype.UserType === "DOCTOR") {
       this.fg1.value.ClinicId = this.clinic.Id;
