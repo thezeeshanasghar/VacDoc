@@ -63,6 +63,11 @@ export class BrandService extends BaseService {
       });
     }
 
+  getBatchBreakdown(clinicId: number): Observable<Response<BatchBreakdownDTO[]>> {
+    const url = `${this.API_BRAND}brandamount/clinic/${clinicId}/batches`;
+    return this.http.get<Response<BatchBreakdownDTO[]>>(url, this.httpOptions);
+  }
+
   downloadExpiryPdf(dId: number, options: any): Observable<HttpResponse<Blob>> {
       const apiUrl = `${this.API_BRAND}Brandamount/brandamountclinicwiseexpirypdf/${dId}`;
       return this.http.get(apiUrl, {
@@ -89,5 +94,12 @@ export interface BrandAmountDTO {
   BrandId: number;
   VaccineName: string;
   Count: number;
-  // Add other properties as needed
+}
+
+export interface BatchBreakdownDTO {
+  BrandId: number;
+  BrandName: string;
+  BatchLot: string;
+  Expiry: string | null;
+  Quantity: number;
 }

@@ -64,14 +64,28 @@
         <span class="batch-popup-title">{{ selectedBrandName }}</span>
         <ion-icon name="close-outline" class="batch-close-icon" (click)="closeBatchPopup()"></ion-icon>
       </div>
-      <div class="batch-row" *ngFor="let batch of selectedBatches">
-        <span class="batch-name">{{ batch.BrandName }}</span>
-        <span class="batch-count">{{ batch.Count }} units</span>
-      </div>
-      <div class="batch-total-row">
-        <span>Total</span>
-        <span class="batch-total-count">{{ selectedBrandTotal }} units</span>
-      </div>
+
+      <ng-container *ngIf="selectedBatches.length > 0; else noBatches">
+        <div class="batch-table-header">
+          <span class="col-lot">Lot / Batch</span>
+          <span class="col-expiry">Expiry</span>
+          <span class="col-qty">Units</span>
+        </div>
+        <div class="batch-row" *ngFor="let batch of selectedBatches">
+          <span class="col-lot">{{ batch.BatchLot || '—' }}</span>
+          <span class="col-expiry">{{ batch.Expiry ? (batch.Expiry | date:'MMM yyyy') : '—' }}</span>
+          <span class="col-qty">{{ batch.Quantity }}</span>
+        </div>
+        <div class="batch-total-row">
+          <span class="col-lot">Total</span>
+          <span class="col-expiry"></span>
+          <span class="col-qty batch-total-count">{{ selectedBrandTotal }}</span>
+        </div>
+      </ng-container>
+
+      <ng-template #noBatches>
+        <p class="batch-empty">No batch records found.</p>
+      </ng-template>
     </div>
   </div>
 </ion-content>

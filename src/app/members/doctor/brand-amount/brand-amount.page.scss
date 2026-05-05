@@ -132,7 +132,7 @@ ion-fab-button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   padding-bottom: 10px;
   border-bottom: 2px solid #1B5E20;
 }
@@ -149,38 +149,56 @@ ion-fab-button {
   color: #555;
 }
 
-.batch-row {
-  display: flex;
-  justify-content: space-between;
+// shared 3-column layout
+.batch-table-header,
+.batch-row,
+.batch-total-row {
+  display: grid;
+  grid-template-columns: 1fr 80px 52px;
   align-items: center;
+  gap: 4px;
+}
+
+.batch-table-header {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #666;
+  padding-bottom: 6px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.batch-row {
   padding: 7px 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f5f5f5;
   font-size: 13px;
   color: #333;
+  &:last-of-type { border-bottom: none; }
 }
 
-.batch-name {
-  flex: 1;
-  padding-right: 12px;
-}
-
-.batch-count {
-  font-weight: 600;
-  color: #1565C0;
-  white-space: nowrap;
-}
+.col-lot   { word-break: break-all; }
+.col-expiry { font-size: 12px; color: #666; text-align: center; }
+.col-qty   { text-align: right; font-weight: 600; color: #1565C0; }
 
 .batch-total-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 10px;
+  padding-top: 9px;
   margin-top: 4px;
+  border-top: 2px solid #e8f5e9;
   font-size: 14px;
   font-weight: 700;
   color: #1B5E20;
 }
 
 .batch-total-count {
+  text-align: right;
   color: #1B5E20;
+}
+
+.batch-empty {
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+  margin: 8px 0 4px;
 }

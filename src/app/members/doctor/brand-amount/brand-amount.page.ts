@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
-import { BrandService, BrandAmountDTO } from 'src/app/services/brand.service';
+import { BrandService, BrandAmountDTO, BatchBreakdownDTO } from 'src/app/services/brand.service';
 import { ClinicService } from 'src/app/services/clinic.service'; 
 import { PaService } from 'src/app/services/pa.service';
 import { ToastService } from 'src/app/shared/toast.service';
@@ -25,9 +25,10 @@ export class BrandAmountPage implements OnInit {
   online: Promise<any>;
   clinicId: any;
 
+  allBatches: BatchBreakdownDTO[] = [];
   showBatchPopup = false;
   selectedBrandName = '';
-  selectedBatches: BrandAmountDTO[] = [];
+  selectedBatches: BatchBreakdownDTO[] = [];
   selectedBrandTotal = 0;
   constructor(
     public loadingController: LoadingController,
@@ -124,13 +125,10 @@ export class BrandAmountPage implements OnInit {
       (res: { IsSuccess: boolean; ResponseData: BrandAmountDTO[]; Message: string }) => {
         loading.dismiss();
         if (res.IsSuccess) {
-          // Store original data
           this.originalBrandAmounts = res.ResponseData;
-          
-          // Group brands by base name (remove vaccine name in parentheses)
           const grouped = this.groupBrandsByBaseName(res.ResponseData);
           this.brandAmounts = grouped.sort((a, b) => a.BrandName.localeCompare(b.BrandName));
-          console.log('Grouped Brand Amounts:', this.brandAmounts);
+          this.loadBatchBreakdown(Number(id));
         } else {
           this.toastService.create(res.Message || 'Failed to fetch brand amounts', 'danger');
         }
@@ -140,6 +138,19 @@ export class BrandAmountPage implements OnInit {
         console.error('Error fetching brand amounts:', err);
         this.toastService.create('Failed to fetch brand amounts', 'danger');
       }
+    );
+  }
+
+  private loadBatchBreakdown(clinicId: number) {
+    this.brandService.getBatchBreakdown(clinicId).subscribe(
+      (res) => {
+        if (res.IsSuccess && res.ResponseData) {
+          this.allBatches = res.ResponseData;
+        } else {
+          this.allBatches = [];
+        }
+      },
+      () => { this.allBatches = []; }
     );
   }
 
@@ -212,8 +223,10 @@ export class BrandAmountPage implements OnInit {
   }
 
   openBatchPopup(brand: BrandAmountDTO) {
+    const group = this.brandGroupMap.get(brand.BrandName) || [];
+    const brandIds = new Set(group.map(b => b.BrandId));
     this.selectedBrandName = brand.BrandName;
-    this.selectedBatches = this.brandGroupMap.get(brand.BrandName) || [];
+    this.selectedBatches = this.allBatches.filter(b => brandIds.has(b.BrandId));
     this.selectedBrandTotal = brand.Count;
     this.showBatchPopup = true;
   }
