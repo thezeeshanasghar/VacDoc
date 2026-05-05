@@ -81,7 +81,7 @@ export class PaAuditLogPage implements OnInit {
   getActionColor(log: any): string {
     if (log.IsReversal) { return 'warning'; }
     const code: string = log.ActionCode || '';
-    if (code.toLowerCase().indexOf('delete') >= 0) { return 'danger'; }
+    if (code === 'InvoiceEdit' || code.toLowerCase().indexOf('delete') >= 0) { return 'danger'; }
     if (code.toLowerCase().indexOf('give') >= 0 || code.toLowerCase().indexOf('add') >= 0) { return 'success'; }
     return 'primary';
   }

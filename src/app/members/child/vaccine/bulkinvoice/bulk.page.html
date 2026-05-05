@@ -8,39 +8,67 @@
 </ion-header>
 
 <ion-content>
+
+  <!-- Invoice edit status banner (PA only) -->
+  <div *ngIf="paId" class="invoice-status-bar">
+    <ng-container *ngIf="!invoiceStatus.isSubmitted">
+      <ion-badge color="success">New Invoice — prices freely editable</ion-badge>
+    </ng-container>
+    <ng-container *ngIf="invoiceStatus.isSubmitted && invoiceStatus.canEdit">
+      <ion-badge color="warning">Submitted — 1 edit remaining today</ion-badge>
+    </ng-container>
+    <ng-container *ngIf="invoiceStatus.isSubmitted && !invoiceStatus.canEdit">
+      <ion-badge color="danger">Locked — invoice already edited once or submitted on a previous day</ion-badge>
+    </ng-container>
+  </div>
+
   <form [formGroup]="fg" (ngSubmit)="onSubmit()">
     <ion-card *ngFor="let bulk of bulkData">
-    <ion-item >
-      <b style="padding-right:10%">vaccine</b> {{bulk.Dose.Name}}
+      <ion-item>
+        <b style="padding-right:10%">Vaccine</b> {{bulk.Dose.Name}}
       </ion-item>
-      <ion-item >
-        <b style="padding-right:10%">brand</b> <ion-select [(ngModel)]="bulk.BrandId" [ngModelOptions]="{standalone: true}" disabled>
-          <ion-select-option *ngFor="let user1 of bulk.Brands; let i = index;" selected [value]="user1.Id">{{user1.Name}}
+      <ion-item>
+        <b style="padding-right:10%">Brand</b>
+        <ion-select [(ngModel)]="bulk.BrandId" [ngModelOptions]="{standalone: true}" disabled>
+          <ion-select-option *ngFor="let user1 of bulk.Brands; let i = index;" selected [value]="user1.Id">
+            {{user1.Name}}
           </ion-select-option>
         </ion-select>
-        </ion-item>
-        <ion-item >
-          <b style="padding-right:10%">Amount</b>
-          <ion-input [(ngModel)]="bulk.Amount" 
-                     placeholder="Enter Amount" 
-                     position="end" 
-                     type="text" 
-                     [ngModelOptions]="{standalone: true}" 
-                     (input)="validateInput($event)"
-                     [disabled]="usertype === 'PA' && !!bulk.InvoiceId">
-          </ion-input>
-          <div *ngIf="!isValidInput" style="color: red;">Please enter only numbers.</div>
-                    </ion-item>
-      </ion-card>
-     
-      <ion-item style="padding:10px 0 10px" >
-        <b style="padding-right:10%">Consultation Fee</b>
-        <ion-input formControlName="ConsultationFee" placeholder="Enter Amount" position="end" type="text" [disabled]="usertype === 'PA'&& fg.get('IsConsultationFee').value === true"></ion-input>
-        <div *ngIf="fg.get('ConsultationFee').hasError('invalidNumber') && (fg.get('ConsultationFee').dirty || fg.get('ConsultationFee').touched)">
-          <ion-text color="danger">Please enter only numbers.</ion-text>
-        </div>
-          <ion-checkbox [disabled]="usertype === 'PA'&& fg.get('IsConsultationFee').value === true" formControlName="IsConsultationFee"></ion-checkbox>
-        </ion-item>
-        <ion-button [disabled]="hasActiveValidations()" (click)="saveanddownload()">Save & Download</ion-button>
+      </ion-item>
+      <ion-item>
+        <b style="padding-right:10%">Amount</b>
+        <ion-input [(ngModel)]="bulk.Amount"
+                   placeholder="Enter Amount"
+                   position="end"
+                   type="text"
+                   [ngModelOptions]="{standalone: true}"
+                   (input)="validateInput($event)"
+                   [disabled]="paId && invoiceStatus.isSubmitted && !invoiceStatus.canEdit">
+        </ion-input>
+        <div *ngIf="!isValidInput" style="color: red;">Please enter only numbers.</div>
+      </ion-item>
+    </ion-card>
+
+    <ion-item style="padding:10px 0 10px">
+      <b style="padding-right:10%">Consultation Fee</b>
+      <ion-input formControlName="ConsultationFee"
+                 placeholder="Enter Amount"
+                 position="end"
+                 type="text"
+                 [disabled]="paId && invoiceStatus.isSubmitted && !invoiceStatus.canEdit">
+      </ion-input>
+      <div *ngIf="fg.get('ConsultationFee').hasError('invalidNumber') && (fg.get('ConsultationFee').dirty || fg.get('ConsultationFee').touched)">
+        <ion-text color="danger">Please enter only numbers.</ion-text>
+      </div>
+      <ion-checkbox formControlName="IsConsultationFee"
+                    [disabled]="paId && invoiceStatus.isSubmitted && !invoiceStatus.canEdit">
+      </ion-checkbox>
+    </ion-item>
+
+    <ion-button [disabled]="hasActiveValidations() || (paId && invoiceStatus.isSubmitted && !invoiceStatus.canEdit)"
+                (click)="saveanddownload()">
+      Save &amp; Download
+    </ion-button>
+
   </form>
 </ion-content>

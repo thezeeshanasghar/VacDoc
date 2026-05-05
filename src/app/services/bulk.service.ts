@@ -42,4 +42,9 @@ export class BulkService extends BaseService {
       .put(url, data, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
+
+  getInvoiceStatus(childId: number, doctorId: number, invoiceDate: string): Observable<any> {
+    const url = `${this.API_BULK}schedule/invoice-status?childId=${childId}&doctorId=${doctorId}&invoiceDate=${invoiceDate}`;
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
 }

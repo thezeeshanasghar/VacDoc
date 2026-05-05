@@ -32,6 +32,8 @@ export class BulkInvoicePage implements OnInit {
   usertype: any;
   invoiceData: any;
   bulkDatadiff: any;
+  invoiceStatus: any = { isSubmitted: false, editCount: 0, canEdit: true };
+  paId: any = null;
   // invoiceNumber: string;
   constructor(
     private loadingController: LoadingController,
@@ -67,6 +69,7 @@ export class BulkInvoicePage implements OnInit {
   ngOnInit() {
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
+      this.loadInvoiceStatus();
     });
     this.childId = this.activatedRoute.snapshot.paramMap.get("id");
     this.currentDate = this.activatedRoute.snapshot.paramMap.get("childId");
@@ -82,14 +85,23 @@ export class BulkInvoicePage implements OnInit {
 
     this.storage.get(environment.USER).then((user) => {
       if (user) {
-        // console.log('Retrieved user from storage:', user);
-        this.usertype = user.UserType; // Ensure this is set correctly
+        this.usertype = user.UserType;
+        if (user.UserType === 'PA') {
+          this.paId = user.PAId || null;
+        }
       } else {
         console.error('No user data found in storage.');
       }
     });
-    // this.loadInvoiceData();
-    // this.getInvoiceId(this.childId, this.doseId);
+  }
+
+  loadInvoiceStatus() {
+    if (!this.doctorId || !this.childId || !this.currentDate) { return; }
+    const dateStr = new Date(this.currentDate).toISOString().split('T')[0];
+    this.bulkService.getInvoiceStatus(this.childId, this.doctorId, dateStr).subscribe({
+      next: (res: any) => { this.invoiceStatus = res || { isSubmitted: false, editCount: 0, canEdit: true }; },
+      error: () => {}
+    });
   }
 
   loadConsultationFeeFromOnlineClinic() {
@@ -203,27 +215,35 @@ export class BulkInvoicePage implements OnInit {
     );
   }
 
-  onSubmit() {
-    let data = [];
-    this.bulkData.forEach(schedule => {
-      let obj = {
-        Id: schedule.Id,
-        Amount: schedule.Amount
-      }
-      data.push(obj);
-    });
-    this.fillVaccine(data);
+  buildInvoiceDTO(consultationFee: number): any {
+    const schedules = (this.bulkData || []).map((schedule: any) => ({
+      Id: schedule.Id,
+      Amount: schedule.Amount
+    }));
+    return {
+      Schedules: schedules,
+      ChildId: Number(this.childId),
+      DoctorId: Number(this.doctorId),
+      PaId: this.paId ? Number(this.paId) : null,
+      ClinicId: null,
+      InvoiceDate: this.currentDate1 || new Date(),
+      ConsultationFee: consultationFee
+    };
   }
 
-  async fillVaccine(data) {
-    const loading = await this.loadingController.create({
-      message: "Loading"
-    });
+  onSubmit() {
+    const dto = this.buildInvoiceDTO(this.fg.value.IsConsultationFee ? Number(this.fg.value.ConsultationFee) : 0);
+    this.fillVaccine(dto);
+  }
+
+  async fillVaccine(dto: any) {
+    const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
-    await this.bulkService.updateVaccineInvoice(data).subscribe(
-      res => {
+    await this.bulkService.updateVaccineInvoice(dto).subscribe(
+      (res: any) => {
         if (res.IsSuccess) {
           this.toastService.create("Successfully Updated");
+          this.loadInvoiceStatus();
           this.router.navigate(["/members/child/vaccine/" + this.childId]);
           loading.dismiss();
         } else {
@@ -231,7 +251,7 @@ export class BulkInvoicePage implements OnInit {
           this.toastService.create(res.Message, "danger");
         }
       },
-      err => {
+      (err: any) => {
         loading.dismiss();
         this.toastService.create(err, "danger");
       }
@@ -239,29 +259,15 @@ export class BulkInvoicePage implements OnInit {
   }
 
   async saveanddownload() {
-    if (this.fg.value.IsConsultationFee) {
-      this.consultationfee = this.fg.value.ConsultationFee;
-    }
-    else
-      this.consultationfee = 0;
-
-    let data = [];
-    this.bulkData.forEach(schedule => {
-      let obj = {
-        Id: schedule.Id,
-        Amount: schedule.Amount
-      }
-      data.push(obj);
-    });
-
-    const loading = await this.loadingController.create({
-      message: "Loading"
-    });
+    this.consultationfee = this.fg.value.IsConsultationFee ? Number(this.fg.value.ConsultationFee) : 0;
+    const dto = this.buildInvoiceDTO(this.consultationfee);
+    const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
-    this.bulkService.updateVaccineInvoice(data).subscribe(
-      res => {
+    this.bulkService.updateVaccineInvoice(dto).subscribe(
+      (res: any) => {
         if (res.IsSuccess) {
           loading.dismiss();
+          this.loadInvoiceStatus();
           this.download(this.childId, this.currentDate, this.consultationfee);
           this.router.navigate(["/members/child/vaccine/" + this.childId]);
         } else {
@@ -269,7 +275,7 @@ export class BulkInvoicePage implements OnInit {
           this.toastService.create(res.Message, "danger");
         }
       },
-      err => {
+      (err: any) => {
         loading.dismiss();
         this.toastService.create(err, "danger");
       }
