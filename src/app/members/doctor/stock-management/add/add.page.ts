@@ -183,8 +183,8 @@ export class AddPage implements OnInit {
     );
   }
 
-  filterSuppliers(value: string) {
-    if (!value || !value.trim()) {
+  filterSuppliers(value: any) {
+    if (!value || typeof value !== 'string' || !value.trim()) {
       this.agents = [...this.originalAgents];
     } else {
       this.agents = this.originalAgents.filter((s: any) =>

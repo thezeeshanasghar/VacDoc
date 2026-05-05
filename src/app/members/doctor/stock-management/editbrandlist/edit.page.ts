@@ -136,8 +136,8 @@ export class EditPage implements OnInit {
     });
   }
 
-  filterSuppliers(value: string) {
-    if (!value || !value.trim()) { this.agents = [...this.originalAgents]; return; }
+  filterSuppliers(value: any) {
+    if (!value || typeof value !== 'string' || !value.trim()) { this.agents = [...this.originalAgents]; return; }
     this.agents = this.originalAgents.filter((s: any) =>
       s.Name.toLowerCase().includes(value.toLowerCase())
     );
