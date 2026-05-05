@@ -63,6 +63,10 @@ const routes: Routes = [
     loadChildren: () => import('./financial/supplier-edit/supplier-edit.module').then(m => m.SupplierEditPageModule)
   },
   {
+    path: "financial/supplier-ledger/:id",
+    loadChildren: () => import('./financial/supplier-ledger/supplier-ledger.module').then(m => m.SupplierLedgerPageModule)
+  },
+  {
     path: "agent-module",
     loadChildren: () => import('./agent-module/agent-module.module').then(m => m.AgentModulePageModule)
   }

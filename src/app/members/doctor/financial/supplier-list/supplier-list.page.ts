@@ -47,6 +47,10 @@ export class SupplierListPage {
     this.router.navigate(['/members/doctor/financial/supplier-edit', id]);
   }
 
+  goToLedger(id: number) {
+    this.router.navigate(['/members/doctor/financial/supplier-ledger', id]);
+  }
+
   addNew() {
     this.router.navigate(['/members/doctor/financial/supplier-edit', 'new']);
   }

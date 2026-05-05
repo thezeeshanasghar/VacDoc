@@ -8,6 +8,7 @@ import { ToastService } from "src/app/shared/toast.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { LoadingController, AlertController } from "@ionic/angular";
 import { StockService, StockDTO } from 'src/app/services/stock.service';
+import { SupplierService } from 'src/app/services/supplier.service';
 
 interface StockItem {
   id?: number;
@@ -34,8 +35,9 @@ export class EditPage implements OnInit {
   brands: any[] = [];
   filteredBrands: any[] = [];
   brandSearchTerm = '';
-  agents: string[] = [];
-  originalAgents: string[] = [];
+  agents: any[] = [];
+  originalAgents: any[] = [];
+  selectedSupplierId: number | null = null;
 
   billId: number;
   billData: any;
@@ -50,18 +52,20 @@ export class EditPage implements OnInit {
     private loadingController: LoadingController,
     private alertCtrl: AlertController,
     private stockService: StockService,
+    private supplierService: SupplierService,
     private fb: FormBuilder,
     private storage: Storage,
   ) {}
 
   ngOnInit() {
     this.fg1 = this.fb.group({
-      id:       [''],
-      billNo:   [''],
-      supplier: [''],
-      billDate: [''],
-      paidDate: [''],
-      isPaid:   [false],
+      id:        [''],
+      billNo:    [''],
+      supplier:  [''],
+      billDate:  [''],
+      paidDate:  [''],
+      isPaid:    [false],
+      awtAmount: [null],
     });
 
     this.route.params.subscribe(params => {
@@ -70,7 +74,7 @@ export class EditPage implements OnInit {
     });
 
     this.loadBrands();
-    this.fetchAgents();
+    this.loadSuppliers();
   }
 
   toggleEdit() {
@@ -92,13 +96,15 @@ export class EditPage implements OnInit {
           this.doctorId = first.DoctorId;
           this.clinicId = first.ClinicId;
 
+          this.selectedSupplierId = first.SupplierId || null;
           this.fg1.patchValue({
-            id:       first.BillId,
-            billNo:   first.BillNo || '',
-            supplier: first.Supplier || '',
-            billDate: first.BillDate || '',
-            paidDate: first.PaidDate || '',
-            isPaid:   first.IsPaid || false,
+            id:        first.BillId,
+            billNo:    first.BillNo || '',
+            supplier:  first.Supplier || '',
+            billDate:  first.BillDate || '',
+            paidDate:  first.PaidDate || '',
+            isPaid:    first.IsPaid || false,
+            awtAmount: first.AwtAmount || null,
           });
 
           this.stockItems = data.map((item: any) => ({
@@ -118,11 +124,13 @@ export class EditPage implements OnInit {
     });
   }
 
-  fetchAgents() {
-    this.stockService.getSuppliers().subscribe({
+  loadSuppliers() {
+    this.supplierService.getAll().subscribe({
       next: (res: any) => {
-        this.agents = res && res.ResponseData ? res.ResponseData : [];
-        this.originalAgents = [...this.agents];
+        if (res.IsSuccess) {
+          this.agents = (res.ResponseData || []).filter((s: any) => s.IsActive);
+          this.originalAgents = [...this.agents];
+        }
       },
       error: () => {}
     });
@@ -130,11 +138,16 @@ export class EditPage implements OnInit {
 
   filterSuppliers(value: string) {
     if (!value || !value.trim()) { this.agents = [...this.originalAgents]; return; }
-    this.agents = this.originalAgents.filter(a => a.toLowerCase().includes(value.toLowerCase()));
+    this.agents = this.originalAgents.filter((s: any) =>
+      s.Name.toLowerCase().includes(value.toLowerCase())
+    );
   }
 
   selectSupplier(event: MatAutocompleteSelectedEvent) {
-    this.fg1.patchValue({ supplier: event.option.value });
+    const name: string = event.option.value;
+    this.fg1.patchValue({ supplier: name });
+    const found = this.originalAgents.find((s: any) => s.Name === name);
+    this.selectedSupplierId = found ? found.Id : null;
   }
 
   async loadBrands() {
@@ -210,22 +223,24 @@ export class EditPage implements OnInit {
 
     const f = this.fg1.value;
     const payload: StockDTO[] = this.stockItems.map(item => ({
-      Id:        item.id || 0,
-      BrandId:   item.brandId,
-      BrandName: item.brandName,
-      BillId:    f.id,
-      BillNo:    f.billNo,
-      Supplier:  f.supplier,
-      BillDate:  f.billDate ? new Date(f.billDate) : new Date(),
-      IsPaid:    f.isPaid,
-      PaidDate:  f.paidDate ? new Date(f.paidDate) : null,
-      DoctorId:  this.doctorId,
-      ClinicId:  this.clinicId,
+      Id:          item.id || 0,
+      BrandId:     item.brandId || 0,
+      BrandName:   item.brandName,
+      BillId:      f.id,
+      BillNo:      f.billNo,
+      Supplier:    f.supplier,
+      SupplierId:  this.selectedSupplierId,
+      AwtAmount:   f.awtAmount || null,
+      BillDate:    f.billDate ? new Date(f.billDate) : new Date(),
+      IsPaid:      f.isPaid,
+      PaidDate:    f.paidDate ? new Date(f.paidDate) : null,
+      DoctorId:    this.doctorId,
+      ClinicId:    this.clinicId,
       IsPAApprove: true,
-      Quantity:  Number(item.quantity),
+      Quantity:    Number(item.quantity),
       StockAmount: Number(item.price),
-      BatchLot:  item.batchLot || '',
-      Expiry:    item.expiry ? new Date(item.expiry) : null,
+      BatchLot:    item.batchLot || '',
+      Expiry:      item.expiry ? new Date(item.expiry) : null,
     }));
 
     this.stockService.editStocks(payload).subscribe({

@@ -9,16 +9,19 @@
 
 <ion-content class="ion-padding">
   <ion-list *ngIf="suppliers.length > 0">
-    <ion-item *ngFor="let s of suppliers" button detail (click)="goToEdit(s.Id)">
+    <ion-item *ngFor="let s of suppliers">
       <ion-icon slot="start" name="business-outline" color="primary"></ion-icon>
-      <ion-label>
+      <ion-label (click)="goToEdit(s.Id)" style="cursor:pointer;">
         <h2>{{ s.Name }}</h2>
         <p *ngIf="s.Phone">{{ s.Phone }}</p>
         <p *ngIf="s.ContactPerson">{{ s.ContactPerson }}</p>
       </ion-label>
-      <ion-badge slot="end" [color]="s.IsActive ? 'success' : 'medium'">
+      <ion-badge slot="end" [color]="s.IsActive ? 'success' : 'medium'" style="margin-right:8px;">
         {{ s.IsActive ? 'Active' : 'Inactive' }}
       </ion-badge>
+      <ion-button slot="end" fill="clear" color="primary" (click)="goToLedger(s.Id)" title="View Ledger">
+        <ion-icon name="receipt-outline" slot="icon-only"></ion-icon>
+      </ion-button>
     </ion-item>
   </ion-list>
 

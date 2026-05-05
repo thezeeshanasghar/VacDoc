@@ -57,6 +57,12 @@
         <span class="info-label">Paid On</span>
         <span class="info-value">{{ fg1.get('paidDate').value | date:'dd/MM/yyyy' }}</span>
       </div>
+      <div class="info-row" *ngIf="fg1.get('awtAmount').value">
+        <span class="info-label">AWT</span>
+        <span class="info-value" style="color:#e65100;">
+          Rs {{ fg1.get('awtAmount').value | number:'1.2-2' }}
+        </span>
+      </div>
     </div>
 
     <!-- Items -->
@@ -105,9 +111,15 @@
               placeholder="Supplier name" style="font-size:15px;">
             <mat-autocomplete #supplierAuto="matAutocomplete" autoActiveFirstOption
               (optionSelected)="selectSupplier($event)">
-              <mat-option *ngFor="let a of agents" [value]="a">{{ a }}</mat-option>
+              <mat-option *ngFor="let s of agents" [value]="s.Name">{{ s.Name }}</mat-option>
             </mat-autocomplete>
           </mat-form-field>
+        </div>
+
+        <div class="edit-field">
+          <ion-label class="field-label">AWT Amount (Rs)</ion-label>
+          <ion-input formControlName="awtAmount" type="number" min="0" step="0.01"
+            placeholder="Optional" class="field-input"></ion-input>
         </div>
 
         <div class="edit-field">

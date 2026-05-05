@@ -35,8 +35,6 @@ export class SupplierEditPage implements OnInit {
       Phone: [null],
       Email: [null],
       Address: [null],
-      NTN: [null],
-      STRN: [null],
       OpeningBalance: [null],
       IsActive: [true],
     });

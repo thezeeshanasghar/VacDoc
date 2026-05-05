@@ -31,11 +31,12 @@
           </ion-label>
           <!-- <form [formGroup]="fg1"> -->
             <mat-form-field class="example-full-width">
-                            <input type="text" aria-label="Supplier" matInput  [(ngModel)]="supplierName" [matAutocomplete]="supplierAuto"
-              (ngModelChange)="filterSuppliers($event)"  style="font-size: 15px;">
-                            <mat-autocomplete #supplierAuto="matAutocomplete" class="no-indent" autoActiveFirstOption>
+              <input type="text" aria-label="Supplier" matInput [(ngModel)]="supplierName"
+                [matAutocomplete]="supplierAuto" (ngModelChange)="filterSuppliers($event)" style="font-size: 15px;">
+              <mat-autocomplete #supplierAuto="matAutocomplete" class="no-indent" autoActiveFirstOption
+                (optionSelected)="selectSupplier($event)">
                 <mat-option *ngFor="let option of agents" [value]="option">
-                  {{option}}
+                  {{option.Name}}
                 </mat-option>
               </mat-autocomplete>
             </mat-form-field>
@@ -79,7 +80,12 @@
             </ion-select>
         </ion-item>
 
-            <ion-button expand="block" (click)="addNewRow()" color="primary" class="ion-margin-bottom">
+            <ion-item>
+          <ion-label position="floating">AWT Amount (Rs) — Optional</ion-label>
+          <ion-input type="number" [(ngModel)]="awtAmount" min="0" step="0.01" placeholder="0.00"></ion-input>
+        </ion-item>
+
+        <ion-button expand="block" (click)="addNewRow()" color="primary" class="ion-margin-bottom">
                 <ion-icon name="add" slot="start"></ion-icon>
                 Add New Item
             </ion-button>

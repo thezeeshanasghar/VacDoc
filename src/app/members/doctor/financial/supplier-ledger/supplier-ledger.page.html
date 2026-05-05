@@ -1,0 +1,151 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/financial/suppliers"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ ledger ? ledger.SupplierName : 'Supplier Ledger' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Clinic selector (only if multiple clinics) -->
+  <ion-item *ngIf="clinics.length > 1">
+    <ion-label>Clinic</ion-label>
+    <ion-select [(ngModel)]="clinicId" (ionChange)="onClinicChange()">
+      <ion-select-option *ngFor="let c of clinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ng-container *ngIf="ledger">
+
+    <!-- Summary cards -->
+    <ion-grid class="ion-no-padding" style="margin: 12px 0;">
+      <ion-row>
+        <ion-col size="6">
+          <div class="summary-card danger-card">
+            <p class="card-label">Total Bills</p>
+            <p class="card-amount">Rs {{ ledger.TotalBills | number:'1.0-0' }}</p>
+          </div>
+        </ion-col>
+        <ion-col size="6">
+          <div class="summary-card warning-card">
+            <p class="card-label">AWT Deducted</p>
+            <p class="card-amount">Rs {{ ledger.TotalAWT | number:'1.0-0' }}</p>
+          </div>
+        </ion-col>
+        <ion-col size="6">
+          <div class="summary-card success-card">
+            <p class="card-label">Total Paid</p>
+            <p class="card-amount">Rs {{ ledger.TotalPaid | number:'1.0-0' }}</p>
+          </div>
+        </ion-col>
+        <ion-col size="6">
+          <div class="summary-card" [ngClass]="ledger.OutstandingBalance > 0 ? 'danger-card' : 'success-card'">
+            <p class="card-label">Outstanding</p>
+            <p class="card-amount">Rs {{ ledger.OutstandingBalance | number:'1.0-0' }}</p>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- Ledger table -->
+    <div class="ledger-table" *ngIf="ledger.Entries.length > 0">
+      <div class="ledger-header">
+        <span class="col-date">Date</span>
+        <span class="col-desc">Description</span>
+        <span class="col-amount">Debit</span>
+        <span class="col-amount">Credit</span>
+        <span class="col-balance">Balance</span>
+        <span class="col-action"></span>
+      </div>
+      <div *ngFor="let entry of ledger.Entries" class="ledger-row">
+        <span class="col-date">
+          <small>{{ entry.Type === 'OpeningBalance' ? '—' : (entry.Date | date:'dd/MM/yy') }}</small>
+        </span>
+        <span class="col-desc">
+          <ion-badge [color]="entryColor(entry.Type)" style="font-size: 9px; margin-right: 4px;">
+            {{ entry.Type === 'OpeningBalance' ? 'OB' : entry.Type === 'AWT' ? 'AWT' : entry.Type.charAt(0) }}
+          </ion-badge>
+          <small>{{ entry.Description }}</small>
+        </span>
+        <span class="col-amount" [style.color]="entry.Debit > 0 ? '#eb445a' : '#ccc'">
+          <small>{{ entry.Debit > 0 ? (entry.Debit | number:'1.0-0') : '—' }}</small>
+        </span>
+        <span class="col-amount" [style.color]="entry.Credit > 0 ? '#2dd36f' : '#ccc'">
+          <small>{{ entry.Credit > 0 ? (entry.Credit | number:'1.0-0') : '—' }}</small>
+        </span>
+        <span class="col-balance">
+          <small [style.color]="entry.Balance > 0 ? '#eb445a' : '#2dd36f'">
+            {{ entry.Balance | number:'1.0-0' }}
+          </small>
+        </span>
+        <span class="col-action">
+          <ion-button *ngIf="entry.Type === 'Payment'" fill="clear" size="small" color="danger"
+            (click)="confirmDelete(entry.ReferenceId)">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </span>
+      </div>
+    </div>
+
+    <div *ngIf="ledger.Entries.length === 0" style="text-align:center; margin-top:40px; color:#888;">
+      <ion-icon name="receipt-outline" style="font-size:48px;"></ion-icon>
+      <p>No transactions yet.</p>
+    </div>
+
+    <!-- Record payment inline form -->
+    <div *ngIf="showPaymentForm" class="payment-form ion-padding">
+      <h4 style="margin: 0 0 12px;">Record Payment</h4>
+
+      <ion-item>
+        <ion-label position="floating" color="primary">Amount (Rs) *</ion-label>
+        <ion-input type="number" [(ngModel)]="payment.amount" min="0.01" step="0.01"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating" color="primary">Payment Date</ion-label>
+        <ion-input type="date" [(ngModel)]="payment.paymentDate"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label color="primary">Method</ion-label>
+        <ion-select [(ngModel)]="payment.paymentMethod" slot="end">
+          <ion-select-option *ngFor="let m of paymentMethods" [value]="m">{{ m }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating" color="primary">Notes (optional)</ion-label>
+        <ion-input type="text" [(ngModel)]="payment.notes"></ion-input>
+      </ion-item>
+
+      <ion-row style="margin-top: 12px;">
+        <ion-col>
+          <ion-button expand="block" color="medium" fill="outline" (click)="togglePaymentForm()">
+            Cancel
+          </ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button expand="block" color="success" (click)="savePayment()">
+            <ion-icon name="save-outline" slot="start"></ion-icon>
+            Save
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </div>
+
+  </ng-container>
+
+  <div *ngIf="!ledger && clinicId" style="text-align:center; margin-top:60px; color:#888;">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <!-- FAB to add payment -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="ledger && !showPaymentForm">
+    <ion-fab-button color="success" (click)="togglePaymentForm()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>

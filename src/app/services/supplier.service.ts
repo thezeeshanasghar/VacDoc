@@ -24,4 +24,24 @@ export class SupplierService {
   update(id: number, dto: any): Observable<any> {
     return this.http.put(this.apiUrl + '/' + id, dto);
   }
+
+  getLedger(supplierId: number, clinicId: number): Observable<any> {
+    return this.http.get(`${this.paymentUrl}/ledger?supplierId=${supplierId}&clinicId=${clinicId}`);
+  }
+
+  getPayments(supplierId: number, clinicId: number): Observable<any> {
+    return this.http.get(`${this.paymentUrl}?supplierId=${supplierId}&clinicId=${clinicId}`);
+  }
+
+  createPayment(dto: any): Observable<any> {
+    return this.http.post(this.paymentUrl, dto);
+  }
+
+  deletePayment(id: number): Observable<any> {
+    return this.http.delete(`${this.paymentUrl}/${id}`);
+  }
+
+  private get paymentUrl() {
+    return environment.BASE_URL + 'SupplierPayment';
+  }
 }

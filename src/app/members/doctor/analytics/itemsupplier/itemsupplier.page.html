@@ -34,11 +34,12 @@
       </ion-label>
       <!-- <form [formGroup]="fg1"> -->
         <mat-form-field class="example-full-width">
-          <input type="text" aria-label="Supplier" matInput  [(ngModel)]="supplierName" [matAutocomplete]="auto"
-          (ngModelChange)="filterSuppliers($event)"  style="font-size: 15px;">
-          <mat-autocomplete #auto="matAutocomplete" class="no-indent">
+          <input type="text" aria-label="Supplier" matInput [(ngModel)]="supplierName"
+            [matAutocomplete]="auto" (ngModelChange)="filterSuppliers($event)" style="font-size: 15px;">
+          <mat-autocomplete #auto="matAutocomplete" class="no-indent"
+            (optionSelected)="selectSupplier($event)">
             <mat-option *ngFor="let option of agents" [value]="option">
-              {{option}}
+              {{option.Name}}
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>

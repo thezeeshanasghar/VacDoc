@@ -24,6 +24,7 @@ import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-nati
 import { UploadService } from 'src/app/services/upload.service';
 import { ClinicService } from "src/app/services/clinic.service";
 import { PaService } from 'src/app/services/pa.service';
+import { SupplierService } from 'src/app/services/supplier.service';
 declare var google;
 
 interface StockItem {
@@ -62,8 +63,8 @@ interface Brand {
   styleUrls: ["./add.page.scss"]
 })
 export class AddPage implements OnInit {
-  suppliers: string[] =[];
-  filteredSuppliers: string[];
+  suppliers: any[] = [];
+  filteredSuppliers: any[] = [];
   fg1: FormGroup;
   cities: string[] = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'];
   filteredCities: string[];
@@ -80,14 +81,16 @@ export class AddPage implements OnInit {
   loading: boolean = false;
   error: string = null;
   isPaid: boolean = false;
-  filteredBrands = [];
+  filteredBrands: any[] = [];
   brandSearchTerm: string = '';
-  bill: string;
-  agents: string[] = [];
-  originalAgents: any[];
-  filteredClinics: any[] = []; // Filtered clinics for autocomplete
+  bill: string = '';
+  agents: any[] = [];
+  originalAgents: any[] = [];
+  selectedSupplierId: number | null = null;
+  awtAmount: number | null = null;
+  filteredClinics: any[] = [];
   clinic: string = '';
-  clinics: any[] = []; // All clinics
+  clinics: any[] = [];
   doctorId: string = '';
   clinicid: any;
   usertype: any;
@@ -97,6 +100,7 @@ export class AddPage implements OnInit {
     private toastService: ToastService,
     private loadingController: LoadingController,
     private stockService: StockService,
+    private supplierService: SupplierService,
     private fb: FormBuilder,
     private storage: Storage,
     private clinicService: ClinicService,
@@ -127,7 +131,7 @@ export class AddPage implements OnInit {
     this.clinicId = await this.storage.get(environment.CLINIC_Id);
     console.log('Clinic ID:', this.clinicId);
     this.loadBrands();
-    this.fetchAgent();
+    this.loadSuppliers();
     await this.loadClinics();
     this.fg1 = this.fb.group({
       agent: [''],
@@ -167,27 +171,24 @@ export class AddPage implements OnInit {
   //     this.toastService.create('An unexpected error occurred', 'danger');
   //   }
   // }
-  fetchAgent() {
-    this.stockService.getSuppliers().subscribe(
-      (agents: any) => {
-        console.log('Fetched agents:', agents);
-        this.agents = agents.ResponseData;
-        this.originalAgents = [...this.agents]; // Store original agents for filtering
-        console.log('Fetched agents:', agents.ResponseData); 
-        console.log('Fetched agents:', agents.ResponseData.length);
+  loadSuppliers() {
+    this.supplierService.getAll().subscribe(
+      (res: any) => {
+        if (res.IsSuccess) {
+          this.agents = res.ResponseData.filter((s: any) => s.IsActive);
+          this.originalAgents = [...this.agents];
+        }
       },
-      (error: any) => {
-        console.error('Error fetching agents:', error);
-      }
+      (error: any) => console.error('Error fetching suppliers:', error)
     );
   }
 
   filterSuppliers(value: string) {
-    if (!value.trim()) {
-      this.agents = [...this.originalAgents]; // Restore original agents if input is empty
+    if (!value || !value.trim()) {
+      this.agents = [...this.originalAgents];
     } else {
-      this.agents = this.originalAgents.filter(agent =>
-        agent.toLowerCase().includes(value.toLowerCase())
+      this.agents = this.originalAgents.filter((s: any) =>
+        s.Name.toLowerCase().includes(value.toLowerCase())
       );
     }
   }
@@ -212,10 +213,10 @@ export class AddPage implements OnInit {
   // }
 
   selectSupplier(event: MatAutocompleteSelectedEvent) {
-    const selectedSupplier = event.option.value;
-    if (selectedSupplier) {
-      this.supplierName = selectedSupplier;
-      console.log('Selected supplier:', selectedSupplier);
+    const s = event.option.value;
+    if (s) {
+      this.supplierName = s.Name;
+      this.selectedSupplierId = s.Id;
     }
   }
   // saveStock() {
@@ -282,7 +283,9 @@ export class AddPage implements OnInit {
           BrandId: item.brandId,
           BillNo: billNo,
           Supplier: this.supplierName,
-          BillDate: new Date(this.purchaseDate), // Renamed from Date to BillDate
+          SupplierId: this.selectedSupplierId,
+          AwtAmount: this.awtAmount || null,
+          BillDate: new Date(this.purchaseDate),
           clinicId: this.selectedClinic,
           IsPaid: this.isPaid,
           Quantity: item.quantity,
@@ -327,9 +330,11 @@ export class AddPage implements OnInit {
     this.bill = '';
     this.stockItems = [];
     this.supplierName = '';
-    this.purchaseDate = new Date().toISOString(); // Reset Bill Date
-    this.paymentDate =  new Date().toISOString(); // Reset Payment Date
-    this.isPaid = false; // Reset Payment Status
+    this.selectedSupplierId = null;
+    this.awtAmount = null;
+    this.purchaseDate = new Date().toISOString();
+    this.paymentDate = new Date().toISOString();
+    this.isPaid = false;
   }
 
   async loadBrands() {

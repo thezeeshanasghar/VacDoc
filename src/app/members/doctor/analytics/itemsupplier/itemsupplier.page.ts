@@ -11,6 +11,7 @@ import { Storage } from '@ionic/storage';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
+import { SupplierService } from 'src/app/services/supplier.service';
 
 @Component({
   selector: 'app-itemsupplier',
@@ -29,13 +30,15 @@ export class ItemSupplierPage implements OnInit {
   clinicid: any;
   brands: { id: number; name: string; price: number; vaccineName?: string; displayName: string }[] = [];
   adjustment: { brandName: string; brandId?: number } = { brandName: '', brandId: null };
-  agents: any;
-  originalAgents: any[];
+  agents: any[] = [];
+  originalAgents: any[] = [];
   supplierName: any;
+  selectedSupplierId: number | null = null;
   constructor(
     private route: ActivatedRoute,
     private brandService: BrandService,
     private stockService: StockService,
+    private supplierService: SupplierService,
     public loadingController: LoadingController,
     private storage: Storage,
     private toastService: ToastService,
@@ -63,8 +66,7 @@ export class ItemSupplierPage implements OnInit {
       console.log('Clinic ID:', this.clinicid);
       console.log('Doctor ID:', this.doctorId);
       await this.loadClinics();
-      // this.loadBrands();
-      this.fetchAgent(); 
+      this.loadSuppliers();
       this.filteredBrands = this.brands;
     } catch (error) {
       console.error('Error during initialization:', error);
@@ -91,36 +93,33 @@ export class ItemSupplierPage implements OnInit {
     }
   }
 
-  fetchAgent() {
-    this.stockService.getSuppliers().subscribe(
-      (agents: any) => {
-        console.log('Fetched agents:', agents);
-        this.agents = agents.ResponseData;
-        this.originalAgents = [...this.agents]; // Store original agents for filtering
-        console.log('Fetched agents:', agents.ResponseData); 
-        console.log('Fetched agents:', agents.ResponseData.length);
+  loadSuppliers() {
+    this.supplierService.getAll().subscribe(
+      (res: any) => {
+        if (res.IsSuccess) {
+          this.agents = res.ResponseData.filter((s: any) => s.IsActive);
+          this.originalAgents = [...this.agents];
+        }
       },
-      (error: any) => {
-        console.error('Error fetching agents:', error);
-      }
+      (error: any) => console.error('Error fetching suppliers:', error)
     );
   }
 
   filterSuppliers(value: string) {
-    if (!value.trim()) {
-      this.agents = [...this.originalAgents]; // Restore original agents if input is empty
+    if (!value || !value.trim()) {
+      this.agents = [...this.originalAgents];
     } else {
-      this.agents = this.originalAgents.filter(agent =>
-        agent.toLowerCase().includes(value.toLowerCase())
+      this.agents = this.originalAgents.filter((s: any) =>
+        s.Name.toLowerCase().includes(value.toLowerCase())
       );
     }
   }
 
   selectSupplier(event: MatAutocompleteSelectedEvent) {
-    const selectedSupplier = event.option.value;
-    if (selectedSupplier) {
-      this.supplierName = selectedSupplier;
-      console.log('Selected supplier:', selectedSupplier);
+    const s = event.option.value;
+    if (s) {
+      this.supplierName = s.Name;
+      this.selectedSupplierId = s.Id;
     }
   }
 

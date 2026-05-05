@@ -1,0 +1,59 @@
+.summary-card {
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 4px;
+  text-align: center;
+
+  .card-label {
+    margin: 0;
+    font-size: 11px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .card-amount {
+    margin: 4px 0 0;
+    font-size: 16px;
+    font-weight: 700;
+  }
+}
+
+.danger-card  { background: #fef0f0; .card-amount { color: #eb445a; } }
+.success-card { background: #f0fef4; .card-amount { color: #2dd36f; } }
+.warning-card { background: #fffbf0; .card-amount { color: #ffc409; } }
+
+.ledger-table {
+  margin-top: 8px;
+  font-size: 12px;
+  overflow-x: auto;
+}
+
+.ledger-header, .ledger-row {
+  display: flex;
+  align-items: center;
+  padding: 6px 4px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ledger-header {
+  font-weight: 600;
+  font-size: 11px;
+  color: #888;
+  background: #f8f8f8;
+  border-radius: 4px 4px 0 0;
+}
+
+.ledger-row:hover { background: #fafafa; }
+
+.col-date    { flex: 0 0 56px; }
+.col-desc    { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.col-amount  { flex: 0 0 64px; text-align: right; }
+.col-balance { flex: 0 0 70px; text-align: right; font-weight: 600; }
+.col-action  { flex: 0 0 36px; text-align: center; }
+
+.payment-form {
+  margin-top: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fafafa;
+}
