@@ -15,13 +15,15 @@ interface AdjustRow {
   brandSearchTerm: string;
   filteredBrands: any[];
   batches: AvailableBatchDTO[];
-  batchLot: string;
+  batchKey: string;       // compound key "BatchLot|Expiry" used for select binding
+  batchLot: string;       // actual lot number for payload
   expiry: string;
   availableQty: number;
   costPrice: number;
   adjustQty: any;
   price: any;
   reason: string;
+  hasExpiryConflict: boolean;
 }
 
 @Component({
@@ -89,7 +91,7 @@ export class AdjustPage implements OnInit {
   }
 
   onClinicChange() {
-    this.rows.forEach(r => { r.batches = []; r.batchLot = ''; r.expiry = ''; r.availableQty = 0; });
+    this.rows.forEach(r => { r.batches = []; r.batchKey = ''; r.batchLot = ''; r.expiry = ''; r.availableQty = 0; r.hasExpiryConflict = false; });
   }
 
   // ── Brands ───────────────────────────────────────────────────────────────
@@ -133,9 +135,10 @@ export class AdjustPage implements OnInit {
     this.rows.push({
       brandId: null, brandName: '', brandSearchTerm: '',
       filteredBrands: this.brands.slice(),
-      batches: [], batchLot: '', expiry: '',
+      batches: [], batchKey: '', batchLot: '', expiry: '',
       availableQty: 0, costPrice: 0,
-      adjustQty: null, price: null, reason: ''
+      adjustQty: null, price: null, reason: '',
+      hasExpiryConflict: false
     });
   }
 
@@ -161,10 +164,12 @@ export class AdjustPage implements OnInit {
       row.price = brand.price || null;
     }
     row.batches = [];
+    row.batchKey = '';
     row.batchLot = '';
     row.expiry = '';
     row.availableQty = 0;
     row.costPrice = 0;
+    row.hasExpiryConflict = false;
 
     if (!this.selectedClinic) return;
 
@@ -180,8 +185,17 @@ export class AdjustPage implements OnInit {
             return da - db;
           });
           if (row.batches.length > 0) {
-            row.batchLot = row.batches[0].BatchLot || '';
-            this.onBatchSelected(row, row.batchLot);
+            const firstLot = row.batches[0].BatchLot || '';
+            const sameLotsCount = row.batches.filter(b => (b.BatchLot || '') === firstLot).length;
+            if (sameLotsCount > 1) {
+              // Same batch lot has multiple expiry dates — flag conflict, do not auto-select expiry
+              row.batchLot = firstLot;
+              row.hasExpiryConflict = true;
+            } else {
+              // Clean data — auto-select FEFO batch + expiry
+              row.batchKey = firstLot + '|' + (row.batches[0].Expiry || '');
+              this.onBatchSelected(row, row.batchKey);
+            }
           }
           this.cdr.detectChanges();
         }
@@ -190,14 +204,18 @@ export class AdjustPage implements OnInit {
     });
   }
 
-  onBatchSelected(row: AdjustRow, batchLot: string) {
-    const batch = row.batches.find(b => (b.BatchLot || '') === batchLot);
+  onBatchSelected(row: AdjustRow, batchKey: string) {
+    const [lot, expiry] = batchKey.split('|');
+    const batch = row.batches.find(b => (b.BatchLot || '') === lot && (b.Expiry || '') === expiry);
     if (batch) {
+      row.batchLot = batch.BatchLot || '';
       row.expiry = batch.Expiry || '';
       row.availableQty = batch.AvailableQuantity;
       row.costPrice = batch.CostPrice;
+      row.hasExpiryConflict = false;
       if (!row.price) { row.price = batch.CostPrice; }
     } else {
+      row.batchLot = '';
       row.expiry = '';
       row.availableQty = 0;
     }
@@ -232,6 +250,7 @@ export class AdjustPage implements OnInit {
     for (let i = 0; i < this.rows.length; i++) {
       const r = this.rows[i];
       if (!r.brandId) { return 'Row ' + (i + 1) + ': Please select a brand.'; }
+      if (r.hasExpiryConflict) { return 'Row ' + (i + 1) + ': Batch "' + r.batchLot + '" has multiple expiry dates — please select one.'; }
       if (!r.adjustQty || r.adjustQty <= 0) { return 'Row ' + (i + 1) + ': Quantity must be > 0.'; }
       if (this.adjustmentType === 'increase' && (!r.price || r.price <= 0)) {
         return 'Row ' + (i + 1) + ': Price must be > 0.';

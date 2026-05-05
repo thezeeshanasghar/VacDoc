@@ -111,15 +111,18 @@
               <!-- Batch dropdown -->
               <td style="min-width: 140px;">
                 <ion-select
-                  [(ngModel)]="row.batchLot"
+                  [(ngModel)]="row.batchKey"
                   (ionChange)="onBatchSelected(row, $event.detail.value)"
                   placeholder="Batch"
                   [disabled]="!row.batches.length"
                   style="font-size:13px; max-width:130px;">
-                  <ion-select-option *ngFor="let b of row.batches" [value]="b.BatchLot || ''">
+                  <ion-select-option *ngFor="let b of row.batches" [value]="(b.BatchLot || '') + '|' + (b.Expiry || '')">
                     {{ b.BatchLot || '(No batch)' }} — {{ formatExpiry(b.Expiry) }}
                   </ion-select-option>
                 </ion-select>
+                <ion-note *ngIf="row.hasExpiryConflict" color="warning" style="font-size:10px; display:block; margin-top:2px;">
+                  <ion-icon name="alert-circle-outline"></ion-icon> Multiple expiry dates — select one
+                </ion-note>
               </td>
 
               <!-- Expiry (auto-filled from batch) -->
