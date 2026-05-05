@@ -297,8 +297,8 @@ export class AddPage implements OnInit {
         };
         if (this.isPaid) {
           data.PaidDate = new Date(this.paymentDate);
-        }else {
-          data.PaidDate = "01-01-0001"; // Set to null if not paid   
+        } else {
+          data.PaidDate = null;
         }
         return data;
       });
