@@ -230,7 +230,7 @@ export class EditPage implements OnInit {
       BillId:      f.id,
       BillNo:      f.billNo,
       Supplier:    f.supplier,
-      SupplierId:    this.selectedSupplierId ?? undefined,
+      SupplierId:    this.selectedSupplierId !== null ? this.selectedSupplierId : undefined,
       AwtAmount:     f.awtAmount || null,
       AmountPaid:    f.amountPaid || null,
       PaymentMethod: f.amountPaid ? (f.paymentMethod || null) : null,
