@@ -280,7 +280,7 @@ export class AdjustPage implements OnInit {
       Reason: r.reason,
       Date: new Date(),
       BatchLot: r.batchLot || null,
-      ExpiryDate: r.expiry ? new Date(r.expiry) : null,
+      ExpiryDate: r.expiry ? r.expiry.split('T')[0] + 'T00:00:00' : null,
       BrandName: r.brandName,
       VaccineName: '',
       ClinicName: '',
