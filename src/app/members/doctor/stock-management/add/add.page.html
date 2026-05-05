@@ -53,22 +53,6 @@
                 required>
             </ion-datetime>
         </ion-item>
-        <ion-item>
-            <ion-label>Payment Status</ion-label>
-            <ion-checkbox slot="end" [(ngModel)]="isPaid" name="paymentStatus"></ion-checkbox>
-        </ion-item>
-          
-        <ion-item *ngIf="isPaid">
-            <ion-label position="floating">Payment Date</ion-label>
-            <ion-datetime 
-              [(ngModel)]="paymentDate"
-              displayFormat="DD/MM/YYYY"
-              min="2020"
-              max="2025"
-              [value]="defaultDate"
-              required>
-            </ion-datetime>
-        </ion-item>
 
         <ion-item>
             <ion-label position="floating"> Clinics <span class="required-asterisk"></span>
@@ -180,12 +164,29 @@
             </div>
             <div class="total-section ion-margin-top">
                 <ion-item lines="none">
-                    <ion-label>
-                        <h2>Total Amount</h2>
-                    </ion-label>
-                    <ion-text slot="end" color="primary">
-                        <h2>Rs {{calculateTotal()}}</h2>
-                    </ion-text>
+                    <ion-label><h2>Total Amount</h2></ion-label>
+                    <ion-text slot="end" color="primary"><h2>Rs {{calculateTotal()}}</h2></ion-text>
+                </ion-item>
+
+                <ion-item>
+                    <ion-label position="floating">Paid Amount (Rs)</ion-label>
+                    <ion-input type="number" [(ngModel)]="amountPaid" min="0" step="0.01"
+                        placeholder="Leave empty if unpaid"></ion-input>
+                </ion-item>
+
+                <ion-item *ngIf="amountPaid > 0">
+                    <ion-label>Payment Mode</ion-label>
+                    <ion-select [(ngModel)]="paymentMode" placeholder="Select" slot="end">
+                        <ion-select-option *ngFor="let m of paymentModes" [value]="m">{{m}}</ion-select-option>
+                    </ion-select>
+                </ion-item>
+
+                <ion-item lines="none" *ngIf="stockItems.length > 0">
+                    <ion-label>Status</ion-label>
+                    <ion-badge slot="end"
+                        [color]="!amountPaid ? 'medium' : amountPaid >= calculateTotal() ? 'success' : 'warning'">
+                        {{ !amountPaid ? 'Unpaid' : amountPaid >= calculateTotal() ? 'Paid' : 'Partially Paid' }}
+                    </ion-badge>
                 </ion-item>
             </div>
             <ion-button expand="block" class="ion-margin-top" (click)="saveStock()" [disabled]="!stockItems.length">

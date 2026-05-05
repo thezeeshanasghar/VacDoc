@@ -48,14 +48,21 @@
         <span class="info-value">{{ fg1.get('billDate').value | date:'dd/MM/yyyy' }}</span>
       </div>
       <div class="info-row">
-        <span class="info-label">Payment</span>
-        <span class="info-value" [style.color]="fg1.get('isPaid').value ? '#2E7D32' : '#C62828'">
-          {{ fg1.get('isPaid').value ? 'Paid' : 'Unpaid' }}
+        <span class="info-label">Status</span>
+        <span class="info-value"
+          [style.color]="!fg1.get('amountPaid').value ? '#C62828' :
+                         fg1.get('amountPaid').value >= calculateTotal() ? '#2E7D32' : '#E65100'">
+          {{ !fg1.get('amountPaid').value ? 'Unpaid' :
+             fg1.get('amountPaid').value >= calculateTotal() ? 'Paid' : 'Partially Paid' }}
         </span>
       </div>
-      <div class="info-row" *ngIf="fg1.get('isPaid').value">
-        <span class="info-label">Paid On</span>
-        <span class="info-value">{{ fg1.get('paidDate').value | date:'dd/MM/yyyy' }}</span>
+      <div class="info-row" *ngIf="fg1.get('amountPaid').value">
+        <span class="info-label">Amount Paid</span>
+        <span class="info-value">Rs {{ fg1.get('amountPaid').value | number:'1.2-2' }}</span>
+      </div>
+      <div class="info-row" *ngIf="fg1.get('paymentMethod').value">
+        <span class="info-label">Method</span>
+        <span class="info-value">{{ fg1.get('paymentMethod').value }}</span>
       </div>
       <div class="info-row" *ngIf="fg1.get('awtAmount').value">
         <span class="info-label">AWT</span>
@@ -128,15 +135,27 @@
             placeholder="Select date" class="field-input"></ion-datetime>
         </div>
 
-        <div class="edit-field" style="flex-direction:row; align-items:center; justify-content:space-between;">
-          <ion-label class="field-label">Paid</ion-label>
-          <ion-checkbox slot="end" formControlName="isPaid"></ion-checkbox>
+        <div class="edit-field">
+          <ion-label class="field-label">Paid Amount (Rs)</ion-label>
+          <ion-input formControlName="amountPaid" type="number" min="0" step="0.01"
+            placeholder="Leave empty if unpaid" class="field-input"></ion-input>
         </div>
 
-        <div class="edit-field" *ngIf="fg1.get('isPaid').value">
-          <ion-label class="field-label">Payment Date</ion-label>
-          <ion-datetime formControlName="paidDate" displayFormat="DD/MM/YYYY"
-            class="field-input"></ion-datetime>
+        <div class="edit-field" *ngIf="fg1.get('amountPaid').value > 0">
+          <ion-label class="field-label">Payment Mode</ion-label>
+          <ion-select formControlName="paymentMethod" placeholder="Select" class="field-input">
+            <ion-select-option *ngFor="let m of paymentModes" [value]="m">{{m}}</ion-select-option>
+          </ion-select>
+        </div>
+
+        <div class="edit-field" style="align-items:center; justify-content:space-between;">
+          <ion-label class="field-label">Status</ion-label>
+          <ion-badge
+            [color]="!fg1.get('amountPaid').value ? 'medium' :
+                     fg1.get('amountPaid').value >= calculateTotal() ? 'success' : 'warning'">
+            {{ !fg1.get('amountPaid').value ? 'Unpaid' :
+               fg1.get('amountPaid').value >= calculateTotal() ? 'Paid' : 'Partially Paid' }}
+          </ion-badge>
         </div>
       </div>
 

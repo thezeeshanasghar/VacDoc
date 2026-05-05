@@ -24,9 +24,11 @@ export interface StockDTO {
   Supplier: string;
   SupplierId?: number;
   AwtAmount?: number;
+  AmountPaid?: number;
+  PaymentMethod?: string;
   Date?: Date;
   BillDate?: Date | string;
-  IsPaid: boolean;
+  IsPaid?: boolean;
   PaidDate?: Date | string;
   DoctorId?: number;
   ClinicId?: number;

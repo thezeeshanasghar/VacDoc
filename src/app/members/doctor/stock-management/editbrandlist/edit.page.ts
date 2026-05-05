@@ -38,6 +38,7 @@ export class EditPage implements OnInit {
   agents: any[] = [];
   originalAgents: any[] = [];
   selectedSupplierId: number | null = null;
+  paymentModes: string[] = ['Cash', 'Online Transfer'];
 
   billId: number;
   billData: any;
@@ -59,13 +60,13 @@ export class EditPage implements OnInit {
 
   ngOnInit() {
     this.fg1 = this.fb.group({
-      id:        [''],
-      billNo:    [''],
-      supplier:  [''],
-      billDate:  [''],
-      paidDate:  [''],
-      isPaid:    [false],
-      awtAmount: [null],
+      id:            [''],
+      billNo:        [''],
+      supplier:      [''],
+      billDate:      [''],
+      awtAmount:     [null],
+      amountPaid:    [null],
+      paymentMethod: [''],
     });
 
     this.route.params.subscribe(params => {
@@ -98,13 +99,13 @@ export class EditPage implements OnInit {
 
           this.selectedSupplierId = first.SupplierId || null;
           this.fg1.patchValue({
-            id:        first.BillId,
-            billNo:    first.BillNo || '',
-            supplier:  first.Supplier || '',
-            billDate:  first.BillDate || '',
-            paidDate:  first.PaidDate || '',
-            isPaid:    first.IsPaid || false,
-            awtAmount: first.AwtAmount || null,
+            id:            first.BillId,
+            billNo:        first.BillNo || '',
+            supplier:      first.Supplier || '',
+            billDate:      first.BillDate || '',
+            awtAmount:     first.AwtAmount || null,
+            amountPaid:    first.AmountPaid || null,
+            paymentMethod: first.PaymentMethod || '',
           });
 
           this.stockItems = data.map((item: any) => ({
@@ -229,12 +230,12 @@ export class EditPage implements OnInit {
       BillId:      f.id,
       BillNo:      f.billNo,
       Supplier:    f.supplier,
-      SupplierId:  this.selectedSupplierId,
-      AwtAmount:   f.awtAmount || null,
-      BillDate:    f.billDate ? new Date(f.billDate) : new Date(),
-      IsPaid:      f.isPaid,
-      PaidDate:    f.paidDate ? new Date(f.paidDate) : null,
-      DoctorId:    this.doctorId,
+      SupplierId:    this.selectedSupplierId ?? undefined,
+      AwtAmount:     f.awtAmount || null,
+      AmountPaid:    f.amountPaid || null,
+      PaymentMethod: f.amountPaid ? (f.paymentMethod || null) : null,
+      BillDate:      f.billDate ? new Date(f.billDate) : new Date(),
+      DoctorId:      this.doctorId,
       ClinicId:    this.clinicId,
       IsPAApprove: true,
       Quantity:    Number(item.quantity),

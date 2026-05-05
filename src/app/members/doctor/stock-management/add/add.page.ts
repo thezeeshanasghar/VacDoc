@@ -80,7 +80,9 @@ export class AddPage implements OnInit {
   brands: Brand[] = [];
   loading: boolean = false;
   error: string = null;
-  isPaid: boolean = false;
+  amountPaid: number | null = null;
+  paymentMode: string = '';
+  paymentModes: string[] = ['Cash', 'Online Transfer'];
   filteredBrands: any[] = [];
   brandSearchTerm: string = '';
   bill: string = '';
@@ -285,9 +287,10 @@ export class AddPage implements OnInit {
           Supplier: this.supplierName,
           SupplierId: this.selectedSupplierId,
           AwtAmount: this.awtAmount || null,
+          AmountPaid: this.amountPaid || null,
+          PaymentMethod: this.amountPaid ? this.paymentMode : null,
           BillDate: new Date(this.purchaseDate),
           clinicId: this.selectedClinic,
-          IsPaid: this.isPaid,
           Quantity: item.quantity,
           StockAmount: item.price,
           BatchLot: item.batchLot ? item.batchLot.trim() : '',
@@ -295,11 +298,6 @@ export class AddPage implements OnInit {
           DoctorId: doctorIdNumber,
           IsPAApprove: this.usertype === 'DOCTOR' ? true : false,
         };
-        if (this.isPaid) {
-          data.PaidDate = new Date(this.paymentDate);
-        } else {
-          data.PaidDate = null;
-        }
         return data;
       });
       console.log('Purchase Data:', purchaseData);
@@ -332,9 +330,9 @@ export class AddPage implements OnInit {
     this.supplierName = '';
     this.selectedSupplierId = null;
     this.awtAmount = null;
+    this.amountPaid = null;
+    this.paymentMode = '';
     this.purchaseDate = new Date().toISOString();
-    this.paymentDate = new Date().toISOString();
-    this.isPaid = false;
   }
 
   async loadBrands() {
