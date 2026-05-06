@@ -182,21 +182,24 @@
 
               <div class="summary-divider"></div>
 
-              <div *ngFor="let p of payments; let i = index" class="payment-row">
+              <div class="payment-row">
                 <span class="summary-label">Paid</span>
-                <ion-input type="number" [(ngModel)]="p.amount" min="0" step="0.01" placeholder="0.00" class="paid-input"></ion-input>
-                <ion-select [(ngModel)]="p.mode" interface="popover" class="mode-select">
-                  <ion-select-option *ngFor="let m of paymentModes" [value]="m">{{ m }}</ion-select-option>
-                </ion-select>
-                <ion-button *ngIf="payments.length > 1" fill="clear" color="danger" size="small" (click)="removePaymentRow(i)">
-                  <ion-icon name="close-circle-outline"></ion-icon>
-                </ion-button>
+                <ion-input type="number" [(ngModel)]="paidAmount" min="0" step="0.01" placeholder="0.00" class="paid-input"></ion-input>
               </div>
 
-              <ion-button fill="clear" color="primary" size="small" (click)="addPaymentRow()" class="add-payment-btn">
-                <ion-icon name="add-outline" slot="start"></ion-icon>
-                Add Payment Type
-              </ion-button>
+              <div class="summary-row">
+                <span class="summary-label">Payment Type</span>
+                <ion-select [(ngModel)]="paymentType" interface="popover" class="mode-select">
+                  <ion-select-option value="Cash">Cash</ion-select-option>
+                  <ion-select-option value="Cheque">Cheque</ion-select-option>
+                  <ion-select-option value="Online Transfer">Online Transfer</ion-select-option>
+                </ion-select>
+              </div>
+
+              <div class="summary-row" *ngIf="paymentType === 'Online Transfer'">
+                <span class="summary-label">Service</span>
+                <ion-input type="text" [(ngModel)]="onlineService" placeholder="e.g. JazzCash, EasyPaisa" class="service-input"></ion-input>
+              </div>
 
               <div class="summary-divider"></div>
 

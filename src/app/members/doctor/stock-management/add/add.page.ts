@@ -80,8 +80,9 @@ export class AddPage implements OnInit {
   brands: Brand[] = [];
   loading: boolean = false;
   error: string = null;
-  payments: any[] = [{ amount: null, mode: 'Cash' }];
-  paymentModes: string[] = ['Cash', 'Online Transfer'];
+  paidAmount: number | null = null;
+  paymentType: string = 'Cash';
+  onlineService: string = '';
   awtPercent: number | null = null;
   filteredBrands: any[] = [];
   brandSearchTerm: string = '';
@@ -134,6 +135,7 @@ export class AddPage implements OnInit {
     this.loadBrands();
     this.loadSuppliers();
     await this.loadClinics();
+    this.loadBillNumbers();
     this.fg1 = this.fb.group({
       agent: [''],
       city: [''], // Initialize form controls
@@ -287,7 +289,7 @@ export class AddPage implements OnInit {
           SupplierId: this.selectedSupplierId,
           AwtAmount: this.calculateAWT() || null,
           AmountPaid: this.calculateTotalPaid() || null,
-          PaymentMethod: this.calculateTotalPaid() > 0 ? this.payments.filter((p: any) => p.amount && p.mode).map((p: any) => p.mode).join(', ') : null,
+          PaymentMethod: this.calculateTotalPaid() > 0 ? (this.paymentType === 'Online Transfer' && this.onlineService ? 'Online Transfer – ' + this.onlineService : this.paymentType) : null,
           IsPaid: this.calculateBalanceDue() <= 0,
           BillDate: new Date(this.purchaseDate),
           clinicId: this.selectedClinic,
@@ -325,13 +327,41 @@ export class AddPage implements OnInit {
   }
 
   private resetForm() {
-    this.bill = '';
     this.stockItems = [];
     this.supplierName = '';
     this.selectedSupplierId = null;
     this.awtPercent = null;
-    this.payments = [{ amount: null, mode: 'Cash' }];
+    this.paidAmount = null;
+    this.paymentType = 'Cash';
+    this.onlineService = '';
     this.purchaseDate = new Date().toISOString();
+    this.loadBillNumbers();
+  }
+
+  loadBillNumbers() {
+    const clinicId = this.clinicId || this.selectedClinic;
+    if (!clinicId) { this.bill = '1001'; return; }
+    this.stockService.getBills(Number(clinicId)).subscribe({
+      next: (res: any) => {
+        const used: number[] = [];
+        let maxNo = 1000;
+        if (res && res.IsSuccess && res.ResponseData) {
+          (res.ResponseData || []).forEach((b: any) => {
+            const raw = (b.BillNo || b.billNo || '').replace('BILL-', '');
+            const num = parseInt(raw, 10);
+            if (!isNaN(num)) {
+              used.push(num);
+              if (num > maxNo) { maxNo = num; }
+            }
+          });
+        }
+        let next = maxNo + 1;
+        if (next < 1001) { next = 1001; }
+        while (used.indexOf(next) !== -1) { next++; }
+        this.bill = next.toString();
+      },
+      error: () => { this.bill = '1001'; }
+    });
   }
 
   async loadBrands() {
@@ -563,20 +593,12 @@ export class AddPage implements OnInit {
   }
 
   calculateTotalPaid(): number {
-    return this.payments.reduce((sum: number, p: any) => sum + (Number(p.amount) || 0), 0);
+    return Number(this.paidAmount) || 0;
   }
 
   calculateBalanceDue(): number {
     const due = this.calculateFinalPayable() - this.calculateTotalPaid();
     return due < 0 ? 0 : due;
-  }
-
-  addPaymentRow() {
-    this.payments.push({ amount: null, mode: 'Cash' });
-  }
-
-  removePaymentRow(i: number) {
-    this.payments.splice(i, 1);
   }
 
   removeRow(index: number) {

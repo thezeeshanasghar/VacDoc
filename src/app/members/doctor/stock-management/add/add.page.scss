@@ -73,9 +73,18 @@
     }
 
     .awt-percent {
-      width: 65px;
+      width: 80px;
+      max-width: 80px;
       --padding-start: 8px;
       --padding-end: 4px;
+      border: 1px solid var(--ion-color-medium);
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .service-input {
+      flex: 1;
+      --padding-start: 8px;
       border: 1px solid var(--ion-color-medium);
       border-radius: 6px;
       font-size: 14px;
