@@ -82,50 +82,27 @@
     </ion-item>
   </div>
   <div>
-    <ion-item>
-      <ion-label color="primary" position="floating">Manufacturer</ion-label>
-      <ion-input type="text" placeholder="Manufacturer" formControlName="Manufacturer"></ion-input>
-      <ion-text color="danger" *ngIf="fg.get('Manufacturer').invalid && (fg.get('Manufacturer').dirty || fg.get('Manufacturer').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-        <ng-container *ngIf="fg.get('Manufacturer').errors.required">
-          Manufacturer is required
-        </ng-container>
-      </ion-text>
-      <ion-text color="success" *ngIf="fg.get('Manufacturer').valid && (fg.get('Manufacturer').dirty || fg.get('Manufacturer').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-        <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon>
-      </ion-text>
+    <ion-item lines="none" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
+      <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Manufacturer</ion-label>
+      <ion-input type="text" readonly formControlName="Manufacturer" style="font-size: 12px; color: #444;"></ion-input>
     </ion-item>
-  
-    <ion-item *ngIf="allowInventory">
-      <ion-label color="primary" position="floating">Batch/Lot</ion-label>
-      <ion-select formControlName="Lot" placeholder="Select batch / lot" (ionChange)="onLotChange($event)">
+
+    <ion-item *ngIf="allowInventory" lines="none" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
+      <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Batch/Lot</ion-label>
+      <ion-select formControlName="Lot" placeholder="—" style="font-size: 12px;" (ionChange)="onLotChange($event)">
         <ion-select-option *ngFor="let lot of availableLots" [value]="lot">
           {{ lot }}
         </ion-select-option>
       </ion-select>
-      <ion-text color="danger" *ngIf="fg.get('Lot').invalid && (fg.get('Lot').dirty || fg.get('Lot').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-        <ng-container *ngIf="fg.get('Lot').errors.required">
-          Batch/Lot is required
-        </ng-container>
-      </ion-text>
-      <ion-text color="success" *ngIf="fg.get('Lot').valid && (fg.get('Lot').dirty || fg.get('Lot').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-        <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon>
-      </ion-text>
     </ion-item>
 
-    <ion-item *ngIf="allowInventory">
-      <ion-label color="primary" position="floating">Expiry Date</ion-label>
-      <ion-select formControlName="Expiry" placeholder="Select expiry date" [disabled]="!availableExpiries.length">
+    <ion-item *ngIf="allowInventory" lines="full" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
+      <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Expiry</ion-label>
+      <ion-select formControlName="Expiry" placeholder="—" style="font-size: 12px;" [disabled]="!availableExpiries.length">
         <ion-select-option *ngFor="let expiry of availableExpiries" [value]="expiry">
           {{ expiry }}
         </ion-select-option>
       </ion-select>
-      <ion-text color="danger"
-        *ngIf="fg.get('Expiry')?.invalid && (fg.get('Expiry').dirty || fg.get('Expiry').touched)"
-        style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-        <ng-container *ngIf="fg.get('Expiry')?.errors.required">
-          Expiry is required
-        </ng-container>
-      </ion-text>
     </ion-item>
 
     <ion-item *ngIf="Type === 'travel'">
