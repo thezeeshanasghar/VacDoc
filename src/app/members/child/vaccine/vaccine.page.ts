@@ -609,7 +609,7 @@ this.downloadSpecialPdf();
   }
 
   allVaccinesGiven(vaccines: any[]): boolean {
-    return vaccines.every(vaccine => vaccine.IsDone); // Returns true if all vaccines are given
+    return vaccines.every(vaccine => vaccine.IsDone);
   }
 
   async addNewVaccineInScheduleTable(scheduleDate, unfillData) {
