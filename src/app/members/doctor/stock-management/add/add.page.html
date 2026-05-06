@@ -64,12 +64,7 @@
             </ion-select>
         </ion-item>
 
-            <ion-item>
-          <ion-label position="floating">AWT Amount (Rs) — Optional</ion-label>
-          <ion-input type="number" [(ngModel)]="awtAmount" min="0" step="0.01" placeholder="0.00"></ion-input>
-        </ion-item>
-
-        <ion-button expand="block" (click)="addNewRow()" color="primary" class="ion-margin-bottom">
+            <ion-button expand="block" (click)="addNewRow()" color="primary" class="ion-margin-bottom">
                 <ion-icon name="add" slot="start"></ion-icon>
                 Add New Item
             </ion-button>
@@ -162,32 +157,54 @@
                     </tbody>
                 </table>
             </div>
-            <div class="total-section ion-margin-top">
-                <ion-item lines="none">
-                    <ion-label><h2>Total Amount</h2></ion-label>
-                    <ion-text slot="end" color="primary"><h2>Rs {{calculateTotal()}}</h2></ion-text>
-                </ion-item>
+            <div class="bill-summary">
 
-                <ion-item>
-                    <ion-label position="floating">Paid Amount (Rs)</ion-label>
-                    <ion-input type="number" [(ngModel)]="amountPaid" min="0" step="0.01"
-                        placeholder="Leave empty if unpaid"></ion-input>
-                </ion-item>
+              <div class="summary-row">
+                <span class="summary-label">Total Amount</span>
+                <span class="summary-value">Rs {{ calculateTotal() | number:'1.2-2' }}</span>
+              </div>
 
-                <ion-item *ngIf="amountPaid > 0">
-                    <ion-label>Payment Mode</ion-label>
-                    <ion-select [(ngModel)]="paymentMode" placeholder="Select" slot="end">
-                        <ion-select-option *ngFor="let m of paymentModes" [value]="m">{{m}}</ion-select-option>
-                    </ion-select>
-                </ion-item>
+              <div class="summary-row">
+                <span class="summary-label">AWT</span>
+                <div class="awt-field">
+                  <ion-input type="number" [(ngModel)]="awtPercent" min="0" max="100" step="0.1" placeholder="0" class="awt-percent"></ion-input>
+                  <span class="pct-sym">%</span>
+                </div>
+                <span class="awt-val">+ Rs {{ calculateAWT() | number:'1.2-2' }}</span>
+              </div>
 
-                <ion-item lines="none" *ngIf="stockItems.length > 0">
-                    <ion-label>Status</ion-label>
-                    <ion-badge slot="end"
-                        [color]="!amountPaid ? 'medium' : amountPaid >= calculateTotal() ? 'success' : 'warning'">
-                        {{ !amountPaid ? 'Unpaid' : amountPaid >= calculateTotal() ? 'Paid' : 'Partially Paid' }}
-                    </ion-badge>
-                </ion-item>
+              <div class="summary-divider"></div>
+
+              <div class="summary-row final-row">
+                <span class="final-label">Final Payable</span>
+                <span class="final-value">Rs {{ calculateFinalPayable() | number:'1.2-2' }}</span>
+              </div>
+
+              <div class="summary-divider"></div>
+
+              <div *ngFor="let p of payments; let i = index" class="payment-row">
+                <span class="summary-label">Paid</span>
+                <ion-input type="number" [(ngModel)]="p.amount" min="0" step="0.01" placeholder="0.00" class="paid-input"></ion-input>
+                <ion-select [(ngModel)]="p.mode" interface="popover" class="mode-select">
+                  <ion-select-option *ngFor="let m of paymentModes" [value]="m">{{ m }}</ion-select-option>
+                </ion-select>
+                <ion-button *ngIf="payments.length > 1" fill="clear" color="danger" size="small" (click)="removePaymentRow(i)">
+                  <ion-icon name="close-circle-outline"></ion-icon>
+                </ion-button>
+              </div>
+
+              <ion-button fill="clear" color="primary" size="small" (click)="addPaymentRow()" class="add-payment-btn">
+                <ion-icon name="add-outline" slot="start"></ion-icon>
+                Add Payment Type
+              </ion-button>
+
+              <div class="summary-divider"></div>
+
+              <div class="summary-row balance-row">
+                <span class="balance-label">Balance Due</span>
+                <span class="balance-value">Rs {{ calculateBalanceDue() | number:'1.2-2' }}</span>
+              </div>
+
             </div>
             <ion-button expand="block" class="ion-margin-top" (click)="saveStock()" [disabled]="!stockItems.length">
                 <ion-icon name="save" slot="start"></ion-icon>

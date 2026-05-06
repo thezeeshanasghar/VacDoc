@@ -34,14 +34,129 @@
     padding-left: 16px;
   }
   
-  .total-section {
+  .bill-summary {
     background: var(--ion-color-light);
+    border-radius: 12px;
     padding: 16px;
-    border-radius: 8px;
-    
-    h2 {
-      margin: 0;
-      font-weight: bold;
+    margin-top: 16px;
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+    }
+
+    .summary-label {
+      font-size: 15px;
+      color: var(--ion-color-medium-shade);
+      flex: 1;
+    }
+
+    .summary-value {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .summary-divider {
+      height: 1px;
+      background: #ddd;
+      margin: 4px 0;
+    }
+
+    .awt-field {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .awt-percent {
+      width: 65px;
+      --padding-start: 8px;
+      --padding-end: 4px;
+      border: 1px solid var(--ion-color-medium);
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .pct-sym {
+      font-size: 14px;
+      color: var(--ion-color-medium);
+    }
+
+    .awt-val {
+      font-size: 14px;
+      font-weight: 600;
+      color: #E65100;
+    }
+
+    .final-row {
+      background: rgba(21, 101, 192, 0.08);
+      padding: 12px;
+      border-radius: 8px;
+      margin: 4px 0;
+    }
+
+    .final-label {
+      font-size: 16px;
+      font-weight: 700;
+      flex: 1;
+    }
+
+    .final-value {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1565C0;
+    }
+
+    .payment-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 0;
+    }
+
+    .paid-input {
+      flex: 1;
+      --padding-start: 8px;
+      border: 1px solid var(--ion-color-primary);
+      border-radius: 6px;
+      max-width: 120px;
+      font-size: 14px;
+    }
+
+    .mode-select {
+      border: 1px solid var(--ion-color-medium);
+      border-radius: 6px;
+      padding: 4px 8px;
+      min-width: 105px;
+      font-size: 13px;
+    }
+
+    .add-payment-btn {
+      margin: 2px 0 4px;
+    }
+
+    .balance-row {
+      background: rgba(46, 125, 50, 0.08);
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 4px;
+    }
+
+    .balance-label {
+      font-size: 16px;
+      font-weight: 700;
+      color: #2E7D32;
+      flex: 1;
+    }
+
+    .balance-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #2E7D32;
     }
   }
   

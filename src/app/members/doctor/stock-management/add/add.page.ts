@@ -80,16 +80,15 @@ export class AddPage implements OnInit {
   brands: Brand[] = [];
   loading: boolean = false;
   error: string = null;
-  amountPaid: number | null = null;
-  paymentMode: string = '';
+  payments: any[] = [{ amount: null, mode: 'Cash' }];
   paymentModes: string[] = ['Cash', 'Online Transfer'];
+  awtPercent: number | null = null;
   filteredBrands: any[] = [];
   brandSearchTerm: string = '';
   bill: string = '';
   agents: any[] = [];
   originalAgents: any[] = [];
   selectedSupplierId: number | null = null;
-  awtAmount: number | null = null;
   filteredClinics: any[] = [];
   clinic: string = '';
   clinics: any[] = [];
@@ -286,9 +285,10 @@ export class AddPage implements OnInit {
           BillNo: billNo,
           Supplier: this.supplierName,
           SupplierId: this.selectedSupplierId,
-          AwtAmount: this.awtAmount || null,
-          AmountPaid: this.amountPaid || null,
-          PaymentMethod: this.amountPaid ? this.paymentMode : null,
+          AwtAmount: this.calculateAWT() || null,
+          AmountPaid: this.calculateTotalPaid() || null,
+          PaymentMethod: this.calculateTotalPaid() > 0 ? this.payments.filter((p: any) => p.amount && p.mode).map((p: any) => p.mode).join(', ') : null,
+          IsPaid: this.calculateBalanceDue() <= 0,
           BillDate: new Date(this.purchaseDate),
           clinicId: this.selectedClinic,
           Quantity: item.quantity,
@@ -329,9 +329,8 @@ export class AddPage implements OnInit {
     this.stockItems = [];
     this.supplierName = '';
     this.selectedSupplierId = null;
-    this.awtAmount = null;
-    this.amountPaid = null;
-    this.paymentMode = '';
+    this.awtPercent = null;
+    this.payments = [{ amount: null, mode: 'Cash' }];
     this.purchaseDate = new Date().toISOString();
   }
 
@@ -552,6 +551,32 @@ export class AddPage implements OnInit {
         const quantity = Number(item.quantity) || 0;
         return total + (price * quantity);
     }, 0);
+  }
+
+  calculateAWT(): number {
+    if (!this.awtPercent || this.awtPercent <= 0) { return 0; }
+    return Math.round(this.calculateTotal() * this.awtPercent) / 100;
+  }
+
+  calculateFinalPayable(): number {
+    return this.calculateTotal() + this.calculateAWT();
+  }
+
+  calculateTotalPaid(): number {
+    return this.payments.reduce((sum: number, p: any) => sum + (Number(p.amount) || 0), 0);
+  }
+
+  calculateBalanceDue(): number {
+    const due = this.calculateFinalPayable() - this.calculateTotalPaid();
+    return due < 0 ? 0 : due;
+  }
+
+  addPaymentRow() {
+    this.payments.push({ amount: null, mode: 'Cash' });
+  }
+
+  removePaymentRow(i: number) {
+    this.payments.splice(i, 1);
   }
 
   removeRow(index: number) {
