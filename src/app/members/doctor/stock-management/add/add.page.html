@@ -146,7 +146,7 @@
                                 </div>
                             </td>
                             <td style="text-align: center" class="ion-margin-top">
-                                <ion-text slot="end">Rs {{item.quantity * item.price}}</ion-text>
+                                <ion-text slot="end">Rs {{ item.quantity * item.price | number:'1.0-0' }}</ion-text>
                             </td>
                             <td>
                                 <ion-button fill="clear" color="danger" (click)="removeRow(i)">
@@ -177,7 +177,7 @@
 
               <div class="summary-row final-row">
                 <span class="final-label">Final Payable</span>
-                <span class="final-value">Rs {{ calculateFinalPayable() | number:'1.2-2' }}</span>
+                <span class="final-value">Rs {{ calculateFinalPayable() | number:'1.0-0' }}</span>
               </div>
 
               <div class="summary-divider"></div>
@@ -201,7 +201,7 @@
 
               <div class="summary-row balance-row">
                 <span class="balance-label">Balance Due</span>
-                <span class="balance-value">Rs {{ calculateBalanceDue() | number:'1.2-2' }}</span>
+                <span class="balance-value">Rs {{ calculateBalanceDue() | number:'1.0-0' }}</span>
               </div>
 
             </div>

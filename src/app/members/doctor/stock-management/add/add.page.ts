@@ -589,7 +589,7 @@ export class AddPage implements OnInit {
   }
 
   calculateFinalPayable(): number {
-    return this.calculateTotal() + this.calculateAWT();
+    return Math.round(this.calculateTotal() + this.calculateAWT());
   }
 
   calculateTotalPaid(): number {
