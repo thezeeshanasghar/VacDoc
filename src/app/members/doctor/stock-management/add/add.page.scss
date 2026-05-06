@@ -73,13 +73,14 @@
     }
 
     .awt-percent {
-      width: 80px;
-      max-width: 80px;
-      --padding-start: 8px;
-      --padding-end: 4px;
-      border: 1px solid var(--ion-color-medium);
+      width: 110px;
+      padding: 7px 10px;
+      border: 1px solid #aaa;
       border-radius: 6px;
       font-size: 14px;
+      background: #fff;
+      color: #000;
+      outline: none;
     }
 
     .service-input {
@@ -142,15 +143,15 @@
     }
 
     .mode-select {
+      width: 110px;
+      padding: 7px 8px;
       border: 1px solid #aaa;
       border-radius: 6px;
-      padding: 7px 8px;
       font-size: 13px;
       background: #fff;
       color: #000;
       outline: none;
       cursor: pointer;
-      flex: 1;
     }
 
     .balance-row {
