@@ -790,6 +790,12 @@ export class FillPage implements OnInit {
       res => {
         const lots = (res && res.IsSuccess && res.ResponseData) ? res.ResponseData : [];
         this.availableBatchLots = Array.isArray(lots) ? lots : [];
+        // FEFO: sort by expiry date ascending so earliest-expiring stock appears first
+        this.availableBatchLots.sort((a: any, b: any) => {
+          const dateA = a && a.Expiry ? new Date(a.Expiry).getTime() : Infinity;
+          const dateB = b && b.Expiry ? new Date(b.Expiry).getTime() : Infinity;
+          return dateA - dateB;
+        });
         this.availableLots = Array.from(
           new Set(
             this.availableBatchLots
@@ -841,6 +847,8 @@ export class FillPage implements OnInit {
           .filter((x: string) => !!x)
       )
     );
+
+    expiryOptions.sort((a: string, b: string) => new Date(a).getTime() - new Date(b).getTime());
 
     this.availableExpiries = expiryOptions;
 

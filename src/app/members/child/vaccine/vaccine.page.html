@@ -16,7 +16,7 @@
       <ion-card-content>
         <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
           <span>{{ item.key | date }}</span>
-          <div *ngIf="istravel">
+          <div>
             <ion-img
               *ngIf="checkVaccineIsDon(item.value)"
               style="height: 20px; display: inline-block;"
@@ -109,7 +109,7 @@
             >
             </ion-img>
             <ion-img
-              *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && usertype === 'DOCTOR'"
+              *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && (usertype === 'DOCTOR' || (usertype === 'PA' && isFilledToday(v.DoneAt)))"
               style="height: 20px;"
               src="../../assets/injectionFilled.png"
               [title]="'Ungive Vaccine'"

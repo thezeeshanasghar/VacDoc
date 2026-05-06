@@ -38,6 +38,13 @@ export class VaccinePage {
   retryCount = 0; // add this as a class property
   maxRetries = 3;
 
+  isFilledToday(doneAt: any): boolean {
+    if (!doneAt) return false;
+    const today = new Date().toISOString().split('T')[0];
+    const done = String(doneAt).split('T')[0];
+    return done === today;
+  }
+
   private isInfiniteVaccine(data: any): boolean {
     const dose = data && data.Dose ? data.Dose : null;
     const vaccine = dose && dose.Vaccine ? dose.Vaccine : null;
