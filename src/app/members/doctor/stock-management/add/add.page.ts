@@ -344,19 +344,14 @@ export class AddPage implements OnInit {
     this.stockService.getBills(Number(clinicId)).subscribe({
       next: (res: any) => {
         const used: number[] = [];
-        let maxNo = 1000;
         if (res && res.IsSuccess && res.ResponseData) {
           (res.ResponseData || []).forEach((b: any) => {
             const raw = (b.BillNo || b.billNo || '').replace('BILL-', '');
             const num = parseInt(raw, 10);
-            if (!isNaN(num)) {
-              used.push(num);
-              if (num > maxNo) { maxNo = num; }
-            }
+            if (!isNaN(num)) { used.push(num); }
           });
         }
-        let next = maxNo + 1;
-        if (next < 1001) { next = 1001; }
+        let next = 1001;
         while (used.indexOf(next) !== -1) { next++; }
         this.bill = next.toString();
       },
