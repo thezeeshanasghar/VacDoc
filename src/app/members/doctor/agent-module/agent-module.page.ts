@@ -45,8 +45,8 @@ export class AgentModulePage {
       inputs: [
         { name: 'name', type: 'text', placeholder: 'Agent Name *' },
         { name: 'phone', type: 'tel', placeholder: 'Phone Number (used as Login ID) *' },
-        { name: 'email', type: 'email', placeholder: 'Email Address *' },
-        { name: 'password', type: 'password', placeholder: 'Initial Password (min 4 characters) *' },
+        { name: 'email', type: 'email', placeholder: 'Email Address *', attributes: { autocomplete: 'off' } },
+        { name: 'password', type: 'password', placeholder: 'Initial Password (min 4 characters) *', attributes: { autocomplete: 'new-password' } },
         { name: 'fee', type: 'number', placeholder: 'Referral Fee per Client (Rs.)' },
       ],
       buttons: [
@@ -100,7 +100,8 @@ export class AgentModulePage {
       inputs: [
         { name: 'name', type: 'text', placeholder: 'Agent Name *', value: agent.Name || agent.name },
         { name: 'phone', type: 'tel', placeholder: 'Phone Number (Login ID)', value: agent.PhoneNumber || agent.phoneNumber },
-        { name: 'email', type: 'email', placeholder: 'Email Address', value: agent.Email || agent.email || '' },
+        { name: 'email', type: 'email', placeholder: 'Email Address', value: agent.Email || agent.email || '', attributes: { autocomplete: 'off' } },
+        { name: 'password', type: 'password', placeholder: 'New Password (leave blank to keep current)', attributes: { autocomplete: 'new-password' } },
         { name: 'fee', type: 'number', placeholder: 'Referral Fee per Client (Rs.)', value: agent.ReferralFeePerClient || agent.referralFeePerClient },
       ],
       buttons: [
@@ -118,7 +119,7 @@ export class AgentModulePage {
               Name: data.name.trim(),
               PhoneNumber: data.phone || '',
               Email: data.email || '',
-              Password: agent.Password || agent.password || '',
+              Password: (data.password && data.password.length >= 4) ? data.password : (agent.Password || agent.password || ''),
               AgentCode: agent.AgentCode || agent.agentCode || '',
               ReferralFeePerClient: parseFloat(data.fee) || 0
             };

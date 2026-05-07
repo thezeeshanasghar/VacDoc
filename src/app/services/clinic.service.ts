@@ -104,4 +104,11 @@ export class ClinicService extends BaseService {
       .put(url, data, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
+
+  transferPatients(fromClinicId: any, toClinicId: any): Observable<any> {
+    const url = `${this.API_CLINIC}${fromClinicId}/transfer/${toClinicId}`;
+    return this.http
+      .post(url, {}, this.httpOptions)
+      .pipe(catchError(this.handleError));
+  }
 }

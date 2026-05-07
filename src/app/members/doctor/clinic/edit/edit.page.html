@@ -993,4 +993,36 @@
 
     <ion-button [disabled]="!fg1.valid||usertype==='PA'" (click)="getdata()">Update</ion-button>
   </form>
+
+  <div *ngIf="usertype !== 'PA'" style="margin-top: 32px; padding-bottom: 24px;">
+
+    <ion-card *ngIf="otherClinics.length > 0" style="border-left: 4px solid #F59E0B;">
+      <ion-item color="warning">
+        <ion-icon slot="start" name="swap-horizontal-outline"></ion-icon>
+        <ion-label><strong>Transfer Patients &amp; Close Clinic</strong></ion-label>
+      </ion-item>
+      <ion-card-content>
+        <p style="color: #555; margin-bottom: 12px;">
+          Move all patients from this clinic to another clinic, then permanently close this one.
+        </p>
+        <ion-item>
+          <ion-label position="floating">Transfer patients to</ion-label>
+          <ion-select [(ngModel)]="selectedTransferClinicId" placeholder="Select a clinic">
+            <ion-select-option *ngFor="let c of otherClinics" [value]="c.Id">{{c.Name}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-button expand="block" color="warning" style="margin-top: 12px;"
+          [disabled]="!selectedTransferClinicId" (click)="confirmTransfer()">
+          <ion-icon slot="start" name="swap-horizontal-outline"></ion-icon>
+          Transfer &amp; Close This Clinic
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-button expand="block" color="danger" style="margin-top: 12px;" (click)="confirmDelete()">
+      <ion-icon slot="start" name="trash-outline"></ion-icon>
+      Delete This Clinic
+    </ion-button>
+
+  </div>
 </ion-content>

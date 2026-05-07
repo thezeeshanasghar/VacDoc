@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { LoadingController, Platform } from "@ionic/angular";
+import { AlertService } from "src/app/shared/alert.service";
 import { ClinicService } from "src/app/services/clinic.service";
 import { ToastService } from "src/app/shared/toast.service";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -36,6 +37,8 @@ export class EditPage implements OnInit {
   uploading = false;
   resourceURL = environment.RESOURCE_URL;
   RegNo: any;
+  otherClinics: any[] = [];
+  selectedTransferClinicId: any = null;
 
   private readonly DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm";
   usertype: any;
@@ -57,6 +60,7 @@ export class EditPage implements OnInit {
     private base64: Base64,
     private http: HttpClient,
     private platform: Platform,
+    private alertService: AlertService,
   ) {
     this.isWeb = !this.platform.is('cordova');
     console.log(this.isWeb)
@@ -181,6 +185,11 @@ export class EditPage implements OnInit {
       this.doctorId = val;
     });
     this.getClinic();
+    this.storage.get(environment.CLINICS).then(clinics => {
+      if (clinics) {
+        this.otherClinics = clinics.filter((c: any) => String(c.Id) !== String(this.clinicId));
+      }
+    });
   }
 
   private previewMonogramImage(file: FileList, imagePath: string) {
@@ -1271,6 +1280,79 @@ export class EditPage implements OnInit {
     }
   }
 
+
+  async confirmTransfer() {
+    if (!this.selectedTransferClinicId) return;
+    const target = this.otherClinics.find((c: any) => c.Id == this.selectedTransferClinicId);
+    const targetName = target ? target.Name : '';
+    const yes = await this.alertService.confirmAlert(
+      `Transfer all patients to "${targetName}" and permanently close this clinic? This cannot be undone.`,
+      'Confirm Transfer'
+    );
+    if (yes) this.doTransferAndDelete();
+  }
+
+  async doTransferAndDelete() {
+    const loading = await this.loadingController.create({ message: 'Transferring patients...' });
+    await loading.present();
+    this.clinicService.transferPatients(this.clinicId, this.selectedTransferClinicId).subscribe(
+      res => {
+        if (res.IsSuccess) {
+          this.clinicService.deleteClinic(this.clinicId).subscribe(
+            delRes => {
+              loading.dismiss();
+              if (delRes.IsSuccess) {
+                this.storage.get(environment.CLINICS).then(clinics => {
+                  if (clinics) {
+                    this.storage.set(environment.CLINICS, clinics.filter((c: any) => String(c.Id) !== String(this.clinicId)));
+                  }
+                });
+                this.toastService.create('Patients transferred and clinic closed');
+                this.router.navigate(['/members/doctor/clinic'], { queryParams: { refresh: true } });
+              } else {
+                this.toastService.create(delRes.Message, 'danger');
+              }
+            },
+            err => { loading.dismiss(); this.toastService.create(err, 'danger'); }
+          );
+        } else {
+          loading.dismiss();
+          this.toastService.create(res.Message, 'danger');
+        }
+      },
+      err => { loading.dismiss(); this.toastService.create(err, 'danger'); }
+    );
+  }
+
+  async confirmDelete() {
+    const yes = await this.alertService.confirmAlert(
+      'Delete this clinic permanently? All bills, stock and timings linked to it will be removed.',
+      'Delete Clinic'
+    );
+    if (yes) this.doDeleteClinic();
+  }
+
+  async doDeleteClinic() {
+    const loading = await this.loadingController.create({ message: 'Deleting...' });
+    await loading.present();
+    this.clinicService.deleteClinic(this.clinicId).subscribe(
+      res => {
+        loading.dismiss();
+        if (res.IsSuccess) {
+          this.storage.get(environment.CLINICS).then(clinics => {
+            if (clinics) {
+              this.storage.set(environment.CLINICS, clinics.filter((c: any) => String(c.Id) !== String(this.clinicId)));
+            }
+          });
+          this.toastService.create('Clinic deleted');
+          this.router.navigate(['/members/doctor/clinic'], { queryParams: { refresh: true } });
+        } else {
+          this.toastService.create(res.Message, 'danger');
+        }
+      },
+      err => { loading.dismiss(); this.toastService.create(err, 'danger'); }
+    );
+  }
 
   validation_messages = {
     Name: [{ type: "required", message: "Name is required." }],

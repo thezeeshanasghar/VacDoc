@@ -18,9 +18,12 @@
   <ion-card *ngFor="let clinic of Clinics">
     <ion-item> 
       <ion-label color="dark">{{clinic.Name}}</ion-label>
-      <ion-icon slot="end" routerLink="/members/doctor/clinic/edit/{{clinic.Id}}" color="primary" name="create">
-      </ion-icon>
-      <ion-icon slot="end" *ngIf="type !== 'PA'" (click)="alertDeleteClinic(clinic.Id)" color="primary" name="trash"></ion-icon>
+      <ion-button fill="clear" slot="end" [routerLink]="['/members/doctor/clinic/edit', clinic.Id]" class="header-icon-btn">
+        <ion-icon slot="icon-only" name="pencil-outline"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" slot="end" *ngIf="type !== 'PA'" (click)="alertDeleteClinic(clinic.Id)" class="header-icon-btn">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
     </ion-item>
 
     <ion-card-content color="primary">
