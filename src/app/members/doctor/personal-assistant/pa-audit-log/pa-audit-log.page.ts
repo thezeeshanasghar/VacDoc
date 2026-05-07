@@ -39,9 +39,22 @@ export class PaAuditLogPage implements OnInit {
 
   loadPaList() {
     this.paService.getPAsByDoctorId(this.doctorId).subscribe({
-      next: (res: any) => { this.personalAssistants = Array.isArray(res) ? res : []; },
-      error: () => {}
+      next: (res: any) => {
+        this.personalAssistants = Array.isArray(res) ? res : [];
+        if (!this.personalAssistants.length) { this.buildPaListFromLogs(); }
+      },
+      error: () => { this.buildPaListFromLogs(); }
     });
+  }
+
+  buildPaListFromLogs() {
+    const seen = new Map<number, string>();
+    this.logs.forEach(log => {
+      if (log.PaId && !seen.has(log.PaId)) { seen.set(log.PaId, log.PaName || ''); }
+    });
+    if (seen.size) {
+      this.personalAssistants = Array.from(seen.entries()).map(([Id, Name]) => ({ Id, Name }));
+    }
   }
 
   async loadLogs() {
@@ -55,6 +68,7 @@ export class PaAuditLogPage implements OnInit {
         this.loading = false;
         this.total = res.total || 0;
         this.logs = res.logs || [];
+        if (!this.personalAssistants.length) { this.buildPaListFromLogs(); }
       },
       error: () => {
         load.dismiss();
