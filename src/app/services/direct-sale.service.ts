@@ -20,6 +20,8 @@ export interface DirectSaleDTO {
   Profit?: number;
   ClientName?: string;
   PaymentMode: string;
+  OnlineService?: string;
+  IsPaymentApproved?: boolean;
   Notes?: string;
   SaleDate: string;
 }
@@ -38,6 +40,7 @@ export interface BulkDirectSaleRequestDTO {
   DoctorId: number;
   ClientName?: string;
   PaymentMode: string;
+  OnlineService?: string;
   Notes?: string;
   SaleDate: string;
   Items: DirectSaleItemDTO[];

@@ -167,6 +167,18 @@
       <mat-datepicker #picker disabled="false"></mat-datepicker>
     </ion-item>
 
+    <div class="payment-row">
+      <span class="payment-label">Payment</span>
+      <select [(ngModel)]="paymentMode" [ngModelOptions]="{standalone: true}" class="mode-select">
+        <option value="Cash">Cash</option>
+        <option value="Online Transfer">Online Transfer</option>
+      </select>
+    </div>
+    <div class="payment-row" *ngIf="paymentMode === 'Online Transfer'">
+      <span class="payment-label">Service</span>
+      <input type="text" [(ngModel)]="onlineService" [ngModelOptions]="{standalone: true}" placeholder="e.g. JazzCash, EasyPaisa" class="service-input" />
+    </div>
+
     <ion-button [disabled]="isScheduleDateValid()" type="submit">Submit</ion-button>
   </form>
 </ion-content>

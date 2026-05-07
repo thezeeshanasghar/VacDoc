@@ -60,6 +60,8 @@ export class FillPage implements OnInit {
   usertype: any;
   allowInventory: boolean = true;
   scheduleDatecheck: string;
+  paymentMode: string = 'Cash';
+  onlineService: string = '';
   private readonly travelFieldStorageSuffix = 'travel-vaccine-fill-state';
 
   private getTodayIsoDate(): string {
@@ -381,6 +383,8 @@ export class FillPage implements OnInit {
       this.fg.value.Expiry = null;
     }
 
+    this.fg.value.PaymentMode = this.paymentMode;
+    this.fg.value.OnlineService = this.paymentMode === 'Online Transfer' ? this.onlineService : null;
 
     await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
       res => {

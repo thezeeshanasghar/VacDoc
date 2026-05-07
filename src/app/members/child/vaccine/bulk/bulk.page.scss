@@ -3,6 +3,41 @@ input
     border:0
 }
 
+.payment-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+}
+
+.payment-label {
+  font-size: 14px;
+  min-width: 70px;
+}
+
+.mode-select {
+  width: 110px;
+  padding: 7px 8px;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  font-size: 13px;
+  background: #fff;
+  color: #000;
+  outline: none;
+  cursor: pointer;
+}
+
+.service-input {
+  flex: 1;
+  padding: 7px 10px;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+  color: #000;
+  outline: none;
+}
+
 .date-input {
     width: 110px;
     min-width: 110px;

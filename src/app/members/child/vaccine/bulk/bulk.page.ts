@@ -37,6 +37,8 @@ export class BulkPage implements OnInit {
   usertype: any;
   allowInventory: boolean = true;
   childType: string = "";
+  paymentMode: string = 'Cash';
+  onlineService: string = '';
   childData: any = null;
 
   // Per-row inventory state
@@ -467,7 +469,9 @@ export class BulkPage implements OnInit {
       ScheduleBrands: brands,
       Id: this.bulkData[0].Id,
       IsPAApprove: this.fg.value.IsPAApprove,
-      Validity: this.isTravelType ? (this.fg.value.Validity || "") : null
+      Validity: this.isTravelType ? (this.fg.value.Validity || "") : null,
+      PaymentMode: this.paymentMode,
+      OnlineService: this.paymentMode === 'Online Transfer' ? this.onlineService : null
     };
 
     this.fillVaccine(data);

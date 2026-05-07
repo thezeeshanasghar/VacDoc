@@ -37,6 +37,7 @@ export class DirectSalePage implements OnInit {
 
   clientName = '';
   paymentMode = 'Cash';
+  onlineService = '';
   notes = '';
   saleDate = new Date().toISOString().split('T')[0];
 
@@ -264,6 +265,7 @@ export class DirectSalePage implements OnInit {
       DoctorId: this.doctorId,
       ClientName: this.clientName || undefined,
       PaymentMode: this.paymentMode,
+      OnlineService: this.paymentMode === 'Online Transfer' ? this.onlineService : undefined,
       Notes: this.notes || undefined,
       SaleDate: this.saleDate,
       Items: items
@@ -315,6 +317,7 @@ export class DirectSalePage implements OnInit {
     this.selectedClinic = null;
     this.clientName = '';
     this.paymentMode = 'Cash';
+    this.onlineService = '';
     this.notes = '';
     this.saleDate = new Date().toISOString().split('T')[0];
     this.rows = [];
