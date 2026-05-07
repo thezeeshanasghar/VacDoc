@@ -8,6 +8,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { IonRouterOutlet, Platform } from '@ionic/angular';
 import { Plugins } from '@capacitor/core';
 import { DashboardService } from "src/app/services/dashboard.service";
+import { PaService } from "src/app/services/pa.service";
 
 const { App } = Plugins;
 
@@ -33,6 +34,8 @@ export class DashboardPage implements OnInit {
   currentMonthGivenDosesCount: number = 0;
   totalRevenue: number = 0;
 
+  user: any;
+
   constructor(
     private loadingController: LoadingController,
     public clinicService: ClinicService,
@@ -41,19 +44,18 @@ export class DashboardPage implements OnInit {
     private storage: Storage,
     private androidPermissions: AndroidPermissions,
     public platform: Platform,
-    private routerOutlet: IonRouterOutlet
+    private routerOutlet: IonRouterOutlet,
+    private paService: PaService
   ) {}
 
   async ngOnInit() {
-    await this.storage.get(environment.DOCTOR_Id).then(docId => {
-      this.doctorId = docId;
-    });
+    this.doctorId = await this.storage.get(environment.DOCTOR_Id);
+    this.user = await this.storage.get(environment.USER);
 
     const loading = await this.loadingController.create({ message: "Loading ..." });
     await loading.present();
 
     try {
-      // await this.getCombinedDashboardData();
       await this.getClinics();
     } catch (error) {
       console.error("Error while loading dashboard data:", error);
@@ -86,6 +88,9 @@ export class DashboardPage implements OnInit {
   }
 
   async getClinics() {
+    if (this.user && this.user.UserType === 'PA') {
+      return this.getPaClinics();
+    }
     return new Promise<void>((resolve, reject) => {
       this.clinicService.getClinics(this.doctorId).subscribe(
         res => {
@@ -114,6 +119,36 @@ export class DashboardPage implements OnInit {
         err => {
           this.clinicsExist = false;
           this.toastService.create(err, "danger");
+          reject(err);
+        }
+      );
+    });
+  }
+
+  private getPaClinics() {
+    return new Promise<void>((resolve, reject) => {
+      this.paService.getPaClinics(Number(this.user.PAId)).subscribe(
+        res => {
+          if (res.IsSuccess) {
+            this.Clinics = res.ResponseData;
+            this.clinicCount = this.Clinics.length;
+            this.clinicsExist = this.clinicCount > 0;
+            this.storage.set(environment.CLINICS, this.Clinics);
+            for (let i = 0; i < this.Clinics.length; i++) {
+              if (this.Clinics[i].IsOnline) {
+                this.storage.set(environment.CLINIC_Id, this.Clinics[i].Id);
+                this.storage.set(environment.ON_CLINIC, this.Clinics[i]);
+                this.clinicService.updateClinic(this.Clinics[i]);
+              }
+            }
+            resolve();
+          } else {
+            this.clinicsExist = false;
+            reject(res.Message);
+          }
+        },
+        err => {
+          this.clinicsExist = false;
           reject(err);
         }
       );
