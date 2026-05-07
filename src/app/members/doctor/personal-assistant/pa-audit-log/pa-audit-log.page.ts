@@ -67,6 +67,7 @@ export class PaAuditLogPage implements OnInit {
   onFilterChange() {
     this.page = 1;
     this.logs = [];
+    this.loading = false;
     this.loadLogs();
   }
 

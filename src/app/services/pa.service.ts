@@ -160,7 +160,7 @@ export class PaService extends BaseService {
 
   getAuditLog(doctorId: number, paId?: number, page: number = 1, pageSize: number = 50): Observable<any> {
     let url = `${this.API_PA}PaActivityLog/doctor/${doctorId}?page=${page}&pageSize=${pageSize}`;
-    if (paId) { url += `&paId=${paId}`; }
+    if (paId != null) { url += `&paId=${paId}`; }
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
