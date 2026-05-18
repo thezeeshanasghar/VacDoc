@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { LoadingController, ActionSheetController, AlertController, ModalController } from "@ionic/angular";
 import { MakePaymentComponent } from './make-payment.component';
+import { DeleteBillComponent } from './delete-bill.component';
 import { Router } from "@angular/router";
 import { Storage } from "@ionic/storage";
 import { BrandService } from "src/app/services/brand.service";
@@ -156,35 +157,62 @@ export class StockManagementPage implements OnInit {
   }
 
   async confirmDelete(bill: any) {
-    const alert = await this.alertCtrl.create({
-      header: 'Delete Bill',
-      message: `This will permanently delete bill <strong>${bill.BillNo || '#' + bill.Id}</strong> and reverse all stock quantities. This cannot be undone.`,
-      buttons: [
-        { text: 'Cancel', role: 'cancel' },
-        {
-          text: 'Delete & Reverse Stock',
-          cssClass: 'danger-btn',
-          handler: () => { this.deleteBill(bill); }
+    const loading = await this.loadingController.create({ message: 'Checking stock...' });
+    await loading.present();
+
+    this.stockService.getBillConsumption(bill.Id).subscribe({
+      next: async (res: any) => {
+        loading.dismiss();
+        if (res && res.HasConsumption) {
+          // Some doses consumed — open the full modal
+          const modal = await this.modalCtrl.create({
+            component: DeleteBillComponent,
+            componentProps: { bill, consumption: res }
+          });
+          await modal.present();
+          const { data } = await modal.onDidDismiss();
+          if (data && data.deleted) {
+            this.data = this.data.filter(b => b.Id !== bill.Id);
+            this.toastService.create('Bill deleted successfully.', 'success');
+          } else if (data && data.reduced) {
+            this.getBill(this.selectedClinicId);
+            this.toastService.create('Remaining stock deleted. Bill adjusted.', 'success');
+          }
+        } else {
+          // Zero consumption — simple confirm
+          const alert = await this.alertCtrl.create({
+            header: 'Delete Bill',
+            message: `Delete <strong>${bill.BillNo}</strong> and reverse all ${res.PurchasedQty} unit(s)? This cannot be undone.`,
+            buttons: [
+              { text: 'Cancel', role: 'cancel' },
+              {
+                text: 'Delete',
+                cssClass: 'danger-btn',
+                handler: () => { this.deleteBill(bill); }
+              }
+            ]
+          });
+          await alert.present();
         }
-      ]
+      },
+      error: () => { loading.dismiss(); this.toastService.create('Failed to check bill consumption.', 'danger'); }
     });
-    await alert.present();
   }
 
   async deleteBill(bill: any) {
-    const loading = await this.loadingController.create({ message: "Deleting bill..." });
+    const loading = await this.loadingController.create({ message: 'Deleting bill...' });
     await loading.present();
     this.stockService.deleteBillWithReversal(bill.Id).subscribe({
       next: (res: any) => {
         loading.dismiss();
         if (res && res.IsSuccess) {
-          this.toastService.create("Bill deleted and stock reversed", "success");
+          this.toastService.create('Bill deleted and stock reversed.', 'success');
           this.data = this.data.filter(b => b.Id !== bill.Id);
         } else {
-          this.toastService.create(res && res.Message ? res.Message : "Failed to delete bill", "danger");
+          this.toastService.create(res && res.Message ? res.Message : 'Failed to delete bill.', 'danger');
         }
       },
-      error: () => { loading.dismiss(); this.toastService.create("Failed to delete bill", "danger"); }
+      error: () => { loading.dismiss(); this.toastService.create('Failed to delete bill.', 'danger'); }
     });
   }
 

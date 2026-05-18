@@ -5,6 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { StockManagementPage } from './stock-management.page';
 import { MakePaymentComponent } from './make-payment.component';
+import { DeleteBillComponent } from './delete-bill.component';
 
 const routes: Routes = [
   {
@@ -31,7 +32,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     ReactiveFormsModule
   ],
-  declarations: [StockManagementPage, MakePaymentComponent],
-  entryComponents: [MakePaymentComponent]
+  declarations: [StockManagementPage, MakePaymentComponent, DeleteBillComponent],
+  entryComponents: [MakePaymentComponent, DeleteBillComponent]
 })
 export class StockManagementPageModule {}  

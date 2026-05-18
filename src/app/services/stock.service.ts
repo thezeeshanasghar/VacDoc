@@ -142,6 +142,18 @@ export class StockService {
     return this.http.delete<Response<any>>(`${this.apiUrl}Bill/${billId}/reverse`);
   }
 
+  getBillConsumption(billId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}Bill/${billId}/consumption`);
+  }
+
+  reassignBillBatches(billId: number, items: { ScheduleId: number, NewBatchLot: string, NewExpiry: string }[]): Observable<any> {
+    return this.http.post(`${this.apiUrl}Bill/${billId}/reassign-batches`, items);
+  }
+
+  deleteBillRemaining(billId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}Bill/${billId}/delete-remaining`);
+  }
+
   makeBillPayment(billId: number, dto: { Amount: number, PaymentMethod: string, Notes: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}Bill/${billId}/payment`, dto);
   }
