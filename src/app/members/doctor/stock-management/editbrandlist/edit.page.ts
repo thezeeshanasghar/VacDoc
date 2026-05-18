@@ -56,9 +56,7 @@ export class EditPage implements OnInit {
     private supplierService: SupplierService,
     private fb: FormBuilder,
     private storage: Storage,
-  ) {}
-
-  ngOnInit() {
+  ) {
     this.fg1 = this.fb.group({
       id:            [''],
       billNo:        [''],
@@ -68,7 +66,9 @@ export class EditPage implements OnInit {
       amountPaid:    [null],
       paymentMethod: [''],
     });
+  }
 
+  ngOnInit() {
     this.route.params.subscribe(params => {
       this.billId = +params['brandId'];
       if (this.billId) { this.loadBillData(); }
