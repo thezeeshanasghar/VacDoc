@@ -38,7 +38,7 @@ export class EditPage implements OnInit {
   agents: any[] = [];
   originalAgents: any[] = [];
   selectedSupplierId: number | null = null;
-  paymentModes: string[] = ['Cash', 'Online Transfer'];
+  paymentModes: string[] = ['Cash', 'Cheque', 'Online Transfer'];
 
   billId: number;
   billData: any;
