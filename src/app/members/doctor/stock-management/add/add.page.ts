@@ -330,7 +330,7 @@ export class AddPage implements OnInit {
           BatchLot: item.batchLot ? item.batchLot.trim() : null,
           Expiry: item.expiry ? new Date(item.expiry) : null,
           DoctorId: doctorIdNumber,
-          IsPAApprove: this.usertype?.UserType === 'DOCTOR' ? true : false,
+          IsPAApprove: (this.usertype && this.usertype.UserType === 'DOCTOR') ? true : false,
         };
         return data;
       });

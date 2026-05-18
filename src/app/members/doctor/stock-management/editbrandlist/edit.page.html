@@ -117,8 +117,9 @@
               (input)="filterSuppliers($any($event.target).value)"
               placeholder="Supplier name" style="font-size:15px;">
             <mat-autocomplete #supplierAuto="matAutocomplete" autoActiveFirstOption
+              [displayWith]="displaySupplier"
               (optionSelected)="selectSupplier($event)">
-              <mat-option *ngFor="let s of agents" [value]="s.Name">{{ s.Name }}</mat-option>
+              <mat-option *ngFor="let s of agents" [value]="s">{{ s.Name }}</mat-option>
             </mat-autocomplete>
           </mat-form-field>
         </div>

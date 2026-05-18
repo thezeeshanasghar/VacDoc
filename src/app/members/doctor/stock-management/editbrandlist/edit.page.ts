@@ -144,11 +144,14 @@ export class EditPage implements OnInit {
     );
   }
 
+  displaySupplier(s: any): string {
+    return s ? s.Name : '';
+  }
+
   selectSupplier(event: MatAutocompleteSelectedEvent) {
-    const name: string = event.option.value;
-    this.fg1.patchValue({ supplier: name });
-    const found = this.originalAgents.find((s: any) => s.Name === name);
-    this.selectedSupplierId = found ? found.Id : null;
+    const s = event.option.value;
+    this.fg1.patchValue({ supplier: s.Name });
+    this.selectedSupplierId = s.Id || null;
   }
 
   async loadBrands() {
