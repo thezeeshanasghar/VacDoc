@@ -4,7 +4,7 @@
       <ion-item *ngFor="let dose of doses" class="schedule-item">
         <ion-checkbox [(ngModel)]="dose.IsActive" [ngModelOptions]="{standalone: true}" slot="start"></ion-checkbox>
         <ion-label>{{ dose.label }}</ion-label>
-        <ion-select [formControlName]="String(dose.doseId)" *ngIf="dose.IsActive">
+        <ion-select [formControlName]="dose.doseId + ''" *ngIf="dose.IsActive">
           <ion-select-option value="0">At Birth</ion-select-option>
           <ion-select-option value="1">1 Day</ion-select-option>
           <ion-select-option value="2">2 Days</ion-select-option>

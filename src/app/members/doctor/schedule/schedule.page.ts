@@ -69,7 +69,7 @@ export class SchedulePage implements OnInit {
         allRes.ResponseData.forEach(dose => {
           const existing = scheduleMap[dose.Id];
           const isChecked = existing ? (existing.IsActive !== false) : false;
-          const gapValue = existing ? (existing.GapInDays ?? dose.MinAge ?? 0) : (dose.MinAge ?? 0);
+          const gapValue = existing ? (existing.GapInDays != null ? existing.GapInDays : (dose.MinAge || 0)) : (dose.MinAge || 0);
 
           this.doses.push({
             doseId: dose.Id,
@@ -82,8 +82,8 @@ export class SchedulePage implements OnInit {
           });
 
           this.fg.addControl(
-            String(dose.Id),
-            new FormControl(String(gapValue), Validators.required)
+            dose.Id + '',
+            new FormControl(gapValue + '', Validators.required)
           );
         });
       }
@@ -103,7 +103,7 @@ export class SchedulePage implements OnInit {
     const toAdd = [];     // checked doses with no DoctorSchedule yet — POST
 
     this.doses.forEach(dose => {
-      const gapValue = parseInt(this.fg.value[String(dose.doseId)]);
+      const gapValue = parseInt(this.fg.value[dose.doseId + '']);
       if (dose.doctorScheduleId) {
         // already has a DoctorSchedule record — always PUT to keep IsActive in sync
         toUpdate.push({
@@ -141,7 +141,7 @@ export class SchedulePage implements OnInit {
     try {
       const loading = await this.loadingcontroller.create({ message: 'Loading clinics...' });
       await loading.present();
-      if (this.usertype?.UserType === 'DOCTOR') {
+      if (this.usertype && this.usertype.UserType === 'DOCTOR') {
         this.clinicService.getClinics(Number(this.doctorId)).subscribe({
           next: (response) => {
             loading.dismiss();
@@ -162,7 +162,7 @@ export class SchedulePage implements OnInit {
           },
           error: () => { loading.dismiss(); this.toastService.create('Failed to load clinics', 'danger'); }
         });
-      } else if (this.usertype?.UserType === 'PA') {
+      } else if (this.usertype && this.usertype.UserType === 'PA') {
         this.paService.getPaClinics(Number(this.usertype.PAId)).subscribe({
           next: (response) => {
             loading.dismiss();
