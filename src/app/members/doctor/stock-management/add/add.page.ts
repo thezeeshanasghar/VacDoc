@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ChangeDetectorRef } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import {
   FormBuilder,
@@ -35,6 +35,7 @@ interface StockItem {
   billNo?: string;
   batchLot?: string;
   expiry?: string;
+  brandSearchTerm?: string;
 }
 
 interface BrandAmountDTO {
@@ -85,7 +86,6 @@ export class AddPage implements OnInit {
   onlineService: string = '';
   awtPercent: number | null = null;
   filteredBrands: any[] = [];
-  brandSearchTerm: string = '';
   bill: string = '';
   agents: any[] = [];
   originalAgents: any[] = [];
@@ -536,22 +536,22 @@ export class AddPage implements OnInit {
     console.log('City changed:', this.fg1.get('city').value);
   }
 
-  filterBrands(event: string) {
+  filterBrands(event: string, item?: StockItem) {
+    if (item) { item.brandSearchTerm = event; }
     const filterValue = (event || '').toLowerCase().trim();
     if (!filterValue) {
       this.filteredBrands = [...this.brands];
       return;
     }
-
-    this.filteredBrands = this.brands.filter(brand => 
-        (brand.displayName && brand.displayName.toLowerCase().includes(filterValue)) ||
-        brand.name.toLowerCase().includes(filterValue) || 
-        (brand.vaccineName && brand.vaccineName.toLowerCase().includes(filterValue))
+    this.filteredBrands = this.brands.filter(brand =>
+      (brand.displayName && brand.displayName.toLowerCase().includes(filterValue)) ||
+      brand.name.toLowerCase().includes(filterValue) ||
+      (brand.vaccineName && brand.vaccineName.toLowerCase().includes(filterValue))
     );
   }
 
-  showAllBrands() {
-    this.brandSearchTerm = '';
+  showAllBrands(item?: StockItem) {
+    if (item) { item.brandSearchTerm = ''; }
     this.filteredBrands = [...this.brands];
   }
 
@@ -564,24 +564,16 @@ export class AddPage implements OnInit {
     }
   }
 
-  selectBrand(event: MatAutocompleteSelectedEvent, item: StockItem) {
-    const selectedBrand = this.brands.find(brand => brand.displayName === event.option.value || brand.name === event.option.value);
-    if (selectedBrand) {
-        item.brandId = selectedBrand.id;
-        item.brandName = selectedBrand.name; // Keep storing just the brand name
-        item.price = selectedBrand.price; // Auto-populates but can be edited
-        console.log('Selected brand with suggested price:', selectedBrand);
-    }
-  }
 
   addNewRow() {
-      this.stockItems.push({
-          brandName: '',
-          quantity: null,
-        price: null,
-        batchLot: '',
-        expiry: ''
-      });
+    this.stockItems.push({
+      brandName: '',
+      quantity: null,
+      price: null,
+      batchLot: '',
+      expiry: '',
+      brandSearchTerm: ''
+    });
   }  
 
   calculateTotal(): number {
