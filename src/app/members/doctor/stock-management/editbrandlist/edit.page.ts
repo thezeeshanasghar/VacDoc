@@ -214,6 +214,10 @@ export class EditPage implements OnInit {
     return this.stockItems.reduce((s, i) => s + ((i.quantity || 0) * (i.price || 0)), 0);
   }
 
+  calculateTotalPayable(): number {
+    return this.calculateTotal() + (Number(this.fg1.get('awtAmount').value) || 0);
+  }
+
   // ── Save ───────────────────────────────────────────────────────────────────
   async saveStock() {
     if (!this.stockItems.length) {

@@ -21,8 +21,8 @@
         <div class="bh-supplier">{{ fg1.get('supplier').value || 'No Supplier' }}</div>
         <div class="bh-billno">Bill No: {{ fg1.get('billNo').value || '—' }}</div>
       </div>
-      <span class="bh-badge" [ngClass]="fg1.get('amountPaid').value >= calculateTotal() && fg1.get('amountPaid').value > 0 ? 'badge-paid' : 'badge-unpaid'">
-        {{ fg1.get('amountPaid').value >= calculateTotal() && fg1.get('amountPaid').value > 0 ? 'PAID' : 'UNPAID' }}
+      <span class="bh-badge" [ngClass]="fg1.get('amountPaid').value >= calculateTotalPayable() && fg1.get('amountPaid').value > 0 ? 'badge-paid' : 'badge-unpaid'">
+        {{ fg1.get('amountPaid').value >= calculateTotalPayable() && fg1.get('amountPaid').value > 0 ? 'PAID' : 'UNPAID' }}
       </span>
     </div>
     <div class="bh-amount">Rs {{ calculateTotal() | number:'1.2-2' }}</div>
@@ -51,9 +51,9 @@
         <span class="info-label">Status</span>
         <span class="info-value"
           [style.color]="!fg1.get('amountPaid').value ? '#C62828' :
-                         fg1.get('amountPaid').value >= calculateTotal() ? '#2E7D32' : '#E65100'">
+                         fg1.get('amountPaid').value >= calculateTotalPayable() ? '#2E7D32' : '#E65100'">
           {{ !fg1.get('amountPaid').value ? 'Unpaid' :
-             fg1.get('amountPaid').value >= calculateTotal() ? 'Paid' : 'Partially Paid' }}
+             fg1.get('amountPaid').value >= calculateTotalPayable() ? 'Paid' : 'Partially Paid' }}
         </span>
       </div>
       <div class="info-row" *ngIf="fg1.get('amountPaid').value">
@@ -152,9 +152,9 @@
           <ion-label class="field-label">Status</ion-label>
           <ion-badge
             [color]="!fg1.get('amountPaid').value ? 'medium' :
-                     fg1.get('amountPaid').value >= calculateTotal() ? 'success' : 'warning'">
+                     fg1.get('amountPaid').value >= calculateTotalPayable() ? 'success' : 'warning'">
             {{ !fg1.get('amountPaid').value ? 'Unpaid' :
-               fg1.get('amountPaid').value >= calculateTotal() ? 'Paid' : 'Partially Paid' }}
+               fg1.get('amountPaid').value >= calculateTotalPayable() ? 'Paid' : 'Partially Paid' }}
           </ion-badge>
         </div>
       </div>
