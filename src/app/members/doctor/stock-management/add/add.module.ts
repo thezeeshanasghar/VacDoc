@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule, Routes } from '@angular/router';
 import { AddPage } from './add.page';
+import { NewSupplierComponent } from './new-supplier.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -29,6 +30,7 @@ const routes: Routes = [
     MatSelectModule,
     ReactiveFormsModule
   ],
-  declarations: [AddPage]
+  declarations: [AddPage, NewSupplierComponent],
+  entryComponents: [NewSupplierComponent]
 })
 export class AddPageModule {}
