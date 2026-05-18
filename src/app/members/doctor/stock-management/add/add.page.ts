@@ -268,14 +268,30 @@ export class AddPage implements OnInit {
   //   return purchaseData; // Return the formatted data for API submission
   // }
 
+  private validate(): string | null {
+    if (!this.selectedClinic) { return 'Please select a clinic.'; }
+    if (!this.stockItems.length) { return 'Add at least one stock item.'; }
+    for (let i = 0; i < this.stockItems.length; i++) {
+      const item = this.stockItems[i];
+      if (!item.brandId) { return `Row ${i + 1}: Please select a brand.`; }
+      if (!item.batchLot || item.batchLot.trim() === '') { return `Row ${i + 1}: Batch/Lot is required.`; }
+      if (!item.expiry) { return `Row ${i + 1}: Expiry date is required.`; }
+      if (!item.quantity || item.quantity <= 0) { return `Row ${i + 1}: Quantity must be > 0.`; }
+      if (!item.price || item.price <= 0) { return `Row ${i + 1}: Purchase price must be > 0.`; }
+    }
+    return null;
+  }
+
   async saveStock() {
+    const err = this.validate();
+    if (err) { this.toastService.create(err, 'danger'); return; }
+
     try {
       const loading = await this.loadingController.create({
         message: 'Saving purchase...'
       });
       await loading.present();
       const doctorId = await this.storage.get(environment.DOCTOR_Id);
-      console.log('Doctor ID:', doctorId);
       if (!doctorId) {
         throw new Error('Doctor ID not found');
       }
@@ -295,7 +311,7 @@ export class AddPage implements OnInit {
           clinicId: this.selectedClinic,
           Quantity: item.quantity,
           StockAmount: item.price,
-          BatchLot: item.batchLot ? item.batchLot.trim() : '',
+          BatchLot: item.batchLot ? item.batchLot.trim() : null,
           Expiry: item.expiry ? new Date(item.expiry) : null,
           DoctorId: doctorIdNumber,
           IsPAApprove: this.usertype === 'DOCTOR' ? true : false,
