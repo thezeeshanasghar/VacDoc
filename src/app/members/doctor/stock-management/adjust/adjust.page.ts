@@ -255,6 +255,15 @@ export class AdjustPage implements OnInit {
       if (this.adjustmentType === 'increase' && (!r.price || r.price <= 0)) {
         return 'Row ' + (i + 1) + ': Price must be > 0.';
       }
+      if (this.adjustmentType === 'increase' && (!r.batchLot || r.batchLot.trim() === '')) {
+        return 'Row ' + (i + 1) + ': Batch/Lot is required for stock increase.';
+      }
+      if (this.adjustmentType === 'increase' && !r.expiry) {
+        return 'Row ' + (i + 1) + ': Expiry date is required for stock increase.';
+      }
+      if (this.isStockLoss && (!r.batchLot || r.batchLot.trim() === '')) {
+        return 'Row ' + (i + 1) + ': Please select a Batch/Lot for stock loss.';
+      }
       if (!r.reason || r.reason.trim() === '') { return 'Row ' + (i + 1) + ': Reason is required.'; }
       if (this.isStockLoss && r.availableQty > 0 && r.adjustQty > r.availableQty) {
         return 'Row ' + (i + 1) + ': Quantity exceeds available stock (' + r.availableQty + ').';
