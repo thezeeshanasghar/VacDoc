@@ -20,6 +20,7 @@ interface TransferRow {
   brandSearchTerm: string;
   filteredBrands: any[];
   batches: AvailableBatchDTO[];
+  batchKey: string;   // compound key "BatchLot|Expiry" for dropdown binding
   batchLot: string;
   expiry: string;
   availableQty: number;
@@ -110,6 +111,7 @@ export class StockTransferPage implements OnInit {
     this.toClinicId = null;
     this.rows.forEach(r => {
       r.batches = [];
+      r.batchKey = '';
       r.batchLot = '';
       r.expiry = '';
       r.availableQty = 0;
@@ -124,6 +126,7 @@ export class StockTransferPage implements OnInit {
       brandSearchTerm: '',
       filteredBrands: this.brands.slice(),
       batches: [],
+      batchKey: '',
       batchLot: '',
       expiry: '',
       availableQty: 0,
@@ -155,6 +158,7 @@ export class StockTransferPage implements OnInit {
     const brand = this.brands.find(b => b.id === brandId);
     if (brand) { row.brandName = brand.name; }
     row.batches = [];
+    row.batchKey = '';
     row.batchLot = '';
     row.expiry = '';
     row.availableQty = 0;
@@ -173,8 +177,10 @@ export class StockTransferPage implements OnInit {
             return da - db;
           });
           if (row.batches.length > 0) {
-            row.batchLot = row.batches[0].BatchLot || '';
-            this.onBatchSelected(row, row.batchLot);
+            // Auto-select FEFO batch using compound key
+            const first = row.batches[0];
+            row.batchKey = (first.BatchLot || '') + '|' + (first.Expiry || '');
+            this.onBatchSelected(row, row.batchKey);
           } else {
             this.toastService.create('No stock found for this brand in the selected clinic.', 'danger');
           }
@@ -185,15 +191,19 @@ export class StockTransferPage implements OnInit {
     });
   }
 
-  onBatchSelected(row: TransferRow, batchLot: string) {
-    const batch = row.batches.find(b => (b.BatchLot || '') === batchLot);
+  onBatchSelected(row: TransferRow, batchKey: string) {
+    const [lot, expiry] = batchKey.split('|');
+    const batch = row.batches.find(b => (b.BatchLot || '') === lot && (b.Expiry || '') === expiry);
     if (batch) {
+      row.batchLot = batch.BatchLot || '';
       row.expiry = batch.Expiry || '';
       row.availableQty = batch.AvailableQuantity;
       row.costPrice = batch.CostPrice;
     } else {
+      row.batchLot = '';
       row.expiry = '';
       row.availableQty = 0;
+      row.costPrice = 0;
     }
   }
 
@@ -228,6 +238,9 @@ export class StockTransferPage implements OnInit {
     for (let i = 0; i < this.rows.length; i++) {
       const r = this.rows[i];
       if (!r.brandId) { return `Row ${i + 1}: Please select a brand.`; }
+      if (!r.batchLot || r.batchLot.trim() === '') { return `Row ${i + 1}: Please select a Batch/Lot.`; }
+      if (!r.expiry) { return `Row ${i + 1}: Expiry date is required.`; }
+      if (!r.costPrice || r.costPrice <= 0) { return `Row ${i + 1}: Cost price must be > 0.`; }
       if (!r.transferQty || r.transferQty <= 0) { return `Row ${i + 1}: Quantity must be > 0.`; }
       if (r.transferQty > r.availableQty) {
         return `Row ${i + 1}: Quantity exceeds available stock (${r.availableQty}).`;

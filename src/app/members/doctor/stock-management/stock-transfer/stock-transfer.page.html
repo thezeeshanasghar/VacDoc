@@ -186,12 +186,12 @@
                 <!-- Batch / Lot -->
                 <td style="min-width:150px;">
                   <ion-select
-                    [(ngModel)]="row.batchLot"
+                    [(ngModel)]="row.batchKey"
                     (ionChange)="onBatchSelected(row, $event.detail.value)"
                     placeholder="Batch"
                     [disabled]="!row.batches.length"
                     style="font-size:13px; max-width:140px;">
-                    <ion-select-option *ngFor="let b of row.batches" [value]="b.BatchLot || ''">
+                    <ion-select-option *ngFor="let b of row.batches" [value]="(b.BatchLot || '') + '|' + (b.Expiry || '')">
                       {{ b.BatchLot || '(No batch)' }} — {{ formatExpiry(b.Expiry) }}
                     </ion-select-option>
                   </ion-select>
