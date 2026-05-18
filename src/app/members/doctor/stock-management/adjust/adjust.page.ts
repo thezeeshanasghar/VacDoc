@@ -265,7 +265,7 @@ export class AdjustPage implements OnInit {
         return 'Row ' + (i + 1) + ': Please select a Batch/Lot for stock loss.';
       }
       if (!r.reason || r.reason.trim() === '') { return 'Row ' + (i + 1) + ': Reason is required.'; }
-      if (this.isStockLoss && r.availableQty > 0 && r.adjustQty > r.availableQty) {
+      if (this.isStockLoss && r.adjustQty > r.availableQty) {
         return 'Row ' + (i + 1) + ': Quantity exceeds available stock (' + r.availableQty + ').';
       }
     }
