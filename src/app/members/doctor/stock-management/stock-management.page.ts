@@ -113,35 +113,112 @@ export class StockManagementPage implements OnInit {
     this.toastService.create("Share coming soon", "primary");
   }
 
+  isPA(): boolean {
+    return this.usertype && this.usertype.UserType === 'PA';
+  }
+
+  isSameDay(dateStr: string): boolean {
+    if (!dateStr) { return false; }
+    const billDate = new Date(dateStr);
+    const today = new Date();
+    return billDate.getFullYear() === today.getFullYear()
+      && billDate.getMonth() === today.getMonth()
+      && billDate.getDate() === today.getDate();
+  }
+
+  canPaDeleteBill(bill: any): boolean {
+    // PA can delete only: unapproved (PA-created) + same day + no consumption checked at action time
+    return this.isPA() && !bill.IsPAApprove && this.isSameDay(bill.BillDate);
+  }
+
   async openBillMenu(bill: any) {
+    const isDoctor = !this.isPA();
+    const paCanDelete = this.canPaDeleteBill(bill);
+
+    const buttons: any[] = [];
+
+    // Payment options — doctor only
+    if (isDoctor) {
+      buttons.push({
+        text: 'Make Payment',
+        icon: 'cash-outline',
+        handler: () => { this.openPaymentModal(bill); }
+      });
+      buttons.push({
+        text: 'Payment History',
+        icon: 'time-outline',
+        handler: () => { this.toastService.create('Payment history coming soon', 'primary'); }
+      });
+    }
+
+    // Edit — doctor only
+    if (isDoctor) {
+      buttons.push({
+        text: 'Edit Bill',
+        icon: 'create-outline',
+        handler: () => { this.router.navigate(['/members/doctor/stock-management/brandlist/edit', bill.Id]); }
+      });
+    }
+
+    // Delete — doctor always, PA only if same-day own unapproved bill
+    if (isDoctor) {
+      buttons.push({
+        text: 'Delete Bill',
+        icon: 'trash-outline',
+        role: 'destructive',
+        handler: () => { this.confirmDelete(bill); }
+      });
+    } else if (paCanDelete) {
+      buttons.push({
+        text: 'Delete Bill',
+        icon: 'trash-outline',
+        role: 'destructive',
+        handler: () => { this.confirmDeletePA(bill); }
+      });
+    }
+
+    buttons.push({ text: 'Cancel', icon: 'close', role: 'cancel' });
+
     const sheet = await this.actionSheetCtrl.create({
       header: bill.Supplier || 'Bill Options',
-      buttons: [
-        {
-          text: 'Make Payment',
-          icon: 'cash-outline',
-          handler: () => { this.openPaymentModal(bill); }
-        },
-        {
-          text: 'Payment History',
-          icon: 'time-outline',
-          handler: () => { this.toastService.create("Payment history coming soon", "primary"); }
-        },
-        {
-          text: 'Edit Bill',
-          icon: 'create-outline',
-          handler: () => { this.router.navigate(['/members/doctor/stock-management/brandlist/edit', bill.Id]); }
-        },
-        {
-          text: 'Delete Bill',
-          icon: 'trash-outline',
-          role: 'destructive',
-          handler: () => { this.confirmDelete(bill); }
-        },
-        { text: 'Cancel', icon: 'close', role: 'cancel' }
-      ]
+      buttons
     });
     await sheet.present();
+  }
+
+  async confirmDeletePA(bill: any) {
+    const loading = await this.loadingController.create({ message: 'Checking stock...' });
+    await loading.present();
+
+    this.stockService.getBillConsumption(bill.Id).subscribe({
+      next: async (res: any) => {
+        loading.dismiss();
+        if (res && res.HasConsumption) {
+          // Doses already consumed — PA cannot delete, period
+          this.toastService.create(
+            `Cannot delete — ${res.ConsumedQty} dose(s) already administered. Contact the doctor to handle this bill.`,
+            'danger',
+            true
+          );
+        } else {
+          // Zero consumption — simple confirm
+          const alert = await this.alertCtrl.create({
+            header: 'Delete Bill',
+            message: `Delete <strong>${bill.BillNo}</strong>? This will reverse all ${res.PurchasedQty} unit(s). Cannot be undone.`,
+            buttons: [
+              { text: 'Cancel', role: 'cancel' },
+              {
+                text: 'Delete',
+                cssClass: 'danger-btn',
+                handler: () => { this.deleteBill(bill); }
+              }
+            ]
+          });
+          await alert.present();
+        }
+      },
+      error: () => { loading.dismiss(); this.toastService.create('Failed to check bill consumption.', 'danger'); }
+    });
   }
 
   async openPaymentModal(bill: any) {
