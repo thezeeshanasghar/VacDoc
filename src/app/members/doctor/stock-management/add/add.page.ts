@@ -67,6 +67,8 @@ export class AddPage implements OnInit {
   suppliers: any[] = [];
   filteredSuppliers: any[] = [];
   fg1: FormGroup;
+  showSupplierModal = false;
+  newSupplier = { Name: '', ContactPerson: '', Phone: '', Address: '', OpeningBalance: null, IsActive: true };
   cities: string[] = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'];
   filteredCities: string[];
   purchaseDate: string;
@@ -221,6 +223,38 @@ export class AddPage implements OnInit {
       this.supplierName = s.Name;
       this.selectedSupplierId = s.Id;
     }
+  }
+
+  openNewSupplierModal() {
+    this.newSupplier = { Name: '', ContactPerson: '', Phone: '', Address: '', OpeningBalance: null, IsActive: true };
+    this.showSupplierModal = true;
+  }
+
+  async saveNewSupplier() {
+    if (!this.newSupplier.Name || this.newSupplier.Name.trim() === '') {
+      this.toastService.create('Supplier name is required.', 'danger');
+      return;
+    }
+    const loading = await this.loadingController.create({ message: 'Saving supplier...' });
+    await loading.present();
+    this.supplierService.create(this.newSupplier).subscribe({
+      next: (res: any) => {
+        loading.dismiss();
+        if (res && res.IsSuccess) {
+          const saved = res.ResponseData;
+          // Add to local list and auto-select
+          this.agents.push(saved);
+          this.originalAgents.push(saved);
+          this.supplierName = saved.Name;
+          this.selectedSupplierId = saved.Id;
+          this.showSupplierModal = false;
+          this.toastService.create('Supplier added and selected.', 'success');
+        } else {
+          this.toastService.create(res && res.Message ? res.Message : 'Failed to save supplier.', 'danger');
+        }
+      },
+      error: () => { loading.dismiss(); this.toastService.create('Failed to save supplier.', 'danger'); }
+    });
   }
   // saveStock() {
   //   // Generate a unique bill number
