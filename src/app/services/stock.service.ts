@@ -100,6 +100,10 @@ export class StockService {
     return this.http.get<Response<BillDetails[]>>(url);
   }
 
+  getNextBillNumber(clinicId: number): Observable<Response<string>> {
+    return this.http.get<Response<string>>(`${this.apiUrl}bill/clinic/${clinicId}/next-bill-number`);
+  }
+
   getBrandBills(id:number): Observable<Response<BillDetails[]>> {
     let url = `${this.apiUrl}stock/bill/${id}`;
     return this.http.get<Response<BillDetails[]>>(url);

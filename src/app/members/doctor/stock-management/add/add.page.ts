@@ -341,22 +341,20 @@ export class AddPage implements OnInit {
   loadBillNumbers() {
     const clinicId = this.clinicId || this.selectedClinic;
     if (!clinicId) { this.bill = '1001'; return; }
-    this.stockService.getBills(Number(clinicId)).subscribe({
+    this.stockService.getNextBillNumber(Number(clinicId)).subscribe({
       next: (res: any) => {
-        const used: number[] = [];
         if (res && res.IsSuccess && res.ResponseData) {
-          (res.ResponseData || []).forEach((b: any) => {
-            const raw = (b.BillNo || b.billNo || '').replace('BILL-', '');
-            const num = parseInt(raw, 10);
-            if (!isNaN(num)) { used.push(num); }
-          });
+          this.bill = res.ResponseData;
+        } else {
+          this.bill = '1001';
         }
-        let next = 1001;
-        while (used.indexOf(next) !== -1) { next++; }
-        this.bill = next.toString();
       },
       error: () => { this.bill = '1001'; }
     });
+  }
+
+  onClinicChange() {
+    this.loadBillNumbers();
   }
 
   async loadBrands() {
