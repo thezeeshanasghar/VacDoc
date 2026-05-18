@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-import { LoadingController, ActionSheetController, AlertController } from "@ionic/angular";
+import { LoadingController, ActionSheetController, AlertController, ModalController } from "@ionic/angular";
+import { MakePaymentComponent } from './make-payment.component';
 import { Router } from "@angular/router";
 import { Storage } from "@ionic/storage";
 import { BrandService } from "src/app/services/brand.service";
@@ -26,6 +27,7 @@ export class StockManagementPage implements OnInit {
     private loadingController: LoadingController,
     private actionSheetCtrl: ActionSheetController,
     private alertCtrl: AlertController,
+    private modalCtrl: ModalController,
     private router: Router,
     private storage: Storage,
     private brandService: BrandService,
@@ -117,7 +119,7 @@ export class StockManagementPage implements OnInit {
         {
           text: 'Make Payment',
           icon: 'cash-outline',
-          handler: () => { this.toastService.create("Payment feature coming soon", "primary"); }
+          handler: () => { this.openPaymentModal(bill); }
         },
         {
           text: 'Payment History',
@@ -139,6 +141,18 @@ export class StockManagementPage implements OnInit {
       ]
     });
     await sheet.present();
+  }
+
+  async openPaymentModal(bill: any) {
+    const modal = await this.modalCtrl.create({
+      component: MakePaymentComponent,
+      componentProps: { bill }
+    });
+    await modal.present();
+    const { data } = await modal.onDidDismiss();
+    if (data && data.paid) {
+      this.getBill(this.selectedClinicId);
+    }
   }
 
   async confirmDelete(bill: any) {
