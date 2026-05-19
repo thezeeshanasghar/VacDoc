@@ -275,6 +275,15 @@ export class VaccinePage {
   }
 
   async resheduleAlert(message, data) {
+    if (message.includes('before or on the same date as the previous dose')) {
+      const alert = await this.alertController.create({
+        header: 'Cannot Reschedule',
+        message: message,
+        buttons: ['Ok']
+      });
+      await alert.present();
+      return;
+    }
     const alert = await this.alertController.create({
       header: 'Alert',
       // message: message,
@@ -349,6 +358,15 @@ export class VaccinePage {
   }
 
   async resheduleBulkAlert(message, data) {
+    if (message.includes('before or on the same date as the previous dose')) {
+      const alert = await this.alertController.create({
+        header: 'Cannot Reschedule',
+        message: message,
+        buttons: ['Ok']
+      });
+      await alert.present();
+      return;
+    }
     const alert = await this.alertController.create({
       header: 'Alert',
       message: message,
