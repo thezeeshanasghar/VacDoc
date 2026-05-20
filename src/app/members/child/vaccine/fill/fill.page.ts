@@ -685,6 +685,19 @@ export class FillPage implements OnInit {
     this.onBrandChange(brandId);
   }
 
+  private minAgeCodeToDays(code: number): number {
+    if (!code) return 0;
+    if (code >= 401 && code <= 460) return (code - 400) * 30;
+    if (code >= 3001 && code <= 3020) return (code - 3000) * 365;
+    return code;
+  }
+
+  private filterBrandsByChildAge(brands: any[]): any[] {
+    if (!brands || !this.birthYear) return brands || [];
+    const childAgeDays = Math.floor((new Date().getTime() - new Date(this.birthYear).getTime()) / (1000 * 60 * 60 * 24));
+    return brands.filter(b => !b.MinAge || childAgeDays >= this.minAgeCodeToDays(b.MinAge));
+  }
+
   private loadSuggestedBrandsByVaccineId(vaccineId: number): void {
     if (!vaccineId) {
       this.brandName = [];
@@ -694,7 +707,8 @@ export class FillPage implements OnInit {
 
     this.vaccineService.getBrandsByVaccineId(vaccineId).subscribe(
       res => {
-        this.brandName = (res && res.ResponseData) ? res.ResponseData : [];
+        const all = (res && res.ResponseData) ? res.ResponseData : [];
+        this.brandName = this.filterBrandsByChildAge(all);
         this.applyBrandFilter();
       },
       () => {
