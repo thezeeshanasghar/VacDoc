@@ -217,7 +217,8 @@ export class FillPage implements OnInit {
           this.doseId=this.vaccineData.DoseId;
           this.getChildData(this.childId)
           this.vaccineName = this.vaccineData.Dose.Vaccine.Name;
-          this.brandName = this.vaccineData.Brands || this.vaccineData.brands || [];
+          const allBrands = this.vaccineData.Brands || this.vaccineData.brands || [];
+          this.brandName = this.filterBrandsByChildAge(allBrands);
           this.applyBrandFilter();
           if (!this.brandName || this.brandName.length === 0) {
             this.loadSuggestedBrandsByVaccineId(this.vaccineData.Dose.VaccineId);
