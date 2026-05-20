@@ -227,7 +227,7 @@ export class BrandAmountPage implements OnInit {
     const brandIds = new Set(group.map(b => b.BrandId));
     this.selectedBrandName = brand.BrandName;
     this.selectedBatches = this.allBatches.filter(b => brandIds.has(b.BrandId));
-    this.selectedBrandTotal = brand.Count;
+    this.selectedBrandTotal = this.selectedBatches.reduce((s, b) => s + (b.Quantity || 0), 0);
     this.showBatchPopup = true;
   }
 
