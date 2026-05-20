@@ -192,16 +192,19 @@ export class StockTransferPage implements OnInit {
   }
 
   onBatchSelected(row: TransferRow, batchKey: string) {
-    const [lot, expiry] = batchKey.split('|');
-    const batch = row.batches.find(b => (b.BatchLot || '') === lot && (b.Expiry || '') === expiry);
+    const pipeIdx = batchKey.indexOf('|');
+    const lot = pipeIdx >= 0 ? batchKey.substring(0, pipeIdx) : batchKey;
+    const expiry = pipeIdx >= 0 ? batchKey.substring(pipeIdx + 1) : '';
+    const batch = row.batches.find(b => (b.BatchLot || '') === lot && (b.Expiry || '') === expiry)
+                ?? row.batches.find(b => (b.BatchLot || '') === lot);
     if (batch) {
       row.batchLot = batch.BatchLot || '';
       row.expiry = batch.Expiry || '';
       row.availableQty = batch.AvailableQuantity;
       row.costPrice = batch.CostPrice;
     } else {
-      row.batchLot = '';
-      row.expiry = '';
+      row.batchLot = lot;
+      row.expiry = expiry;
       row.availableQty = 0;
       row.costPrice = 0;
     }
