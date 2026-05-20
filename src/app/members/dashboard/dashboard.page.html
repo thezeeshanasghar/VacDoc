@@ -10,7 +10,7 @@
 
     <div class="dash-grid">
 
-      <div routerLink="/members/child" class="dash-card card-patients">
+      <div *ngIf="showPatients" routerLink="/members/child" class="dash-card card-patients">
         <div class="dash-card-icon">
           <ion-icon name="people-outline"></ion-icon>
         </div>
@@ -19,7 +19,7 @@
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
-      <div routerLink="/members/alert" class="dash-card card-alerts">
+      <div *ngIf="showAlerts" routerLink="/members/alert" class="dash-card card-alerts">
         <div class="dash-card-icon">
           <ion-icon name="notifications-outline"></ion-icon>
         </div>
@@ -28,7 +28,7 @@
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
-      <div routerLink="/members/doctor/stock-management" class="dash-card card-stock">
+      <div *ngIf="showStock" routerLink="/members/doctor/stock-management" class="dash-card card-stock">
         <div class="dash-card-icon">
           <ion-icon name="cube-outline"></ion-icon>
         </div>
@@ -37,7 +37,7 @@
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
-      <div routerLink="/members/doctor/analytics" class="dash-card card-analytics">
+      <div *ngIf="showAnalytics" routerLink="/members/doctor/analytics" class="dash-card card-analytics">
         <div class="dash-card-icon">
           <ion-icon name="bar-chart-outline"></ion-icon>
         </div>
@@ -46,7 +46,7 @@
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
-      <div routerLink="/members/doctor/schedule" class="dash-card card-schedule">
+      <div *ngIf="showSchedule" routerLink="/members/doctor/schedule" class="dash-card card-schedule">
         <div class="dash-card-icon">
           <ion-icon name="calendar-outline"></ion-icon>
         </div>
@@ -55,7 +55,7 @@
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
-      <div routerLink="/members/doctor/clinic" class="dash-card card-clinic">
+      <div *ngIf="showClinics" routerLink="/members/doctor/clinic" class="dash-card card-clinic">
         <div class="dash-card-icon">
           <ion-icon name="business-outline"></ion-icon>
         </div>
