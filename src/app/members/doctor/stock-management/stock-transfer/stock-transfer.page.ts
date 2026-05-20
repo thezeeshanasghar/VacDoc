@@ -196,7 +196,7 @@ export class StockTransferPage implements OnInit {
     const lot = pipeIdx >= 0 ? batchKey.substring(0, pipeIdx) : batchKey;
     const expiry = pipeIdx >= 0 ? batchKey.substring(pipeIdx + 1) : '';
     const batch = row.batches.find(b => (b.BatchLot || '') === lot && (b.Expiry || '') === expiry)
-                ?? row.batches.find(b => (b.BatchLot || '') === lot);
+                || row.batches.find(b => (b.BatchLot || '') === lot);
     if (batch) {
       row.batchLot = batch.BatchLot || '';
       row.expiry = batch.Expiry || '';
