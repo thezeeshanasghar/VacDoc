@@ -19,6 +19,7 @@ table {
     padding: 6px 10px;
     border-bottom: 1px solid #eee;
     white-space: nowrap;
+    vertical-align: top;
   }
 
   tr:nth-child(even) td {
@@ -32,7 +33,8 @@ ion-card-header {
 }
 
 .brand-cell {
-  max-width: 200px;
+  max-width: 180px;
   white-space: normal;
   word-break: break-word;
+  line-height: 1.5;
 }

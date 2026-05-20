@@ -92,7 +92,9 @@
           <td style="white-space:nowrap;">{{ g.createdAt | date:'dd/MM/yy HH:mm' }}</td>
           <td>{{ g.fromClinicName }}</td>
           <td>{{ g.toClinicName }}</td>
-          <td class="brand-cell">{{ g.brandNames }}</td>
+          <td class="brand-cell">
+            <div *ngFor="let b of g.brandNames.split(', ')">{{ b }}</div>
+          </td>
           <td style="white-space:nowrap;">Rs {{ g.totalValue | number:'1.2-2' }}</td>
           <td>{{ g.transferredByName || '—' }}</td>
           <td style="white-space:nowrap;">
