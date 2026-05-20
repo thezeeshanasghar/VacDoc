@@ -72,6 +72,14 @@ export class StockTransferService {
     return this.http.get(`${this.base}StockTransfer/pdf?ids=${ids}`, { responseType: 'blob' });
   }
 
+  editTransfer(id: number, dto: { Quantity: number; CostPrice: number; BatchNumber: string | null; ExpiryDate: string | null }): Observable<TransferResponse<string>> {
+    return this.http.put<TransferResponse<string>>(`${this.base}StockTransfer/${id}`, dto);
+  }
+
+  deleteTransfer(id: number): Observable<TransferResponse<string>> {
+    return this.http.delete<TransferResponse<string>>(`${this.base}StockTransfer/${id}`);
+  }
+
   getHistory(params: {
     fromClinicId?: number;
     toClinicId?: number;

@@ -30,3 +30,9 @@ ion-card-header {
   padding: 12px 16px;
   ion-card-title { color: white; font-size: 16px; }
 }
+
+.brand-cell {
+  max-width: 200px;
+  white-space: normal;
+  word-break: break-word;
+}
