@@ -37,9 +37,9 @@ export class FollowUpPage implements OnInit {
     this.storage.get(environment.CLINIC_Id).then(clinicId => {
       this.clinicId = clinicId;
     });
-    this.getFollowupChild( this.selectedDate);
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
+      this.getFollowupChild(this.selectedDate);
     });
     // this.storage.get(environment.USER).then(user => {
     //   if (user) {
