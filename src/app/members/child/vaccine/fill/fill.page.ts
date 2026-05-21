@@ -918,24 +918,26 @@ export class FillPage implements OnInit {
   }
 
   private autoCreateFollowUp(onDone: () => void): void {
-    const today = moment().format('DD-MM-YYYY');
-    const nextVisit = this.scheduleDatecheck
-      ? moment(this.scheduleDatecheck, 'DD-MM-YYYY').format('DD-MM-YYYY')
-      : today;
-    const payload = {
-      ChildId: Number(this.childId),
-      DoctorId: Number(this.doctorId),
-      Disease: 'Vaccination',
-      CurrentVisitDate: today,
-      NextVisitDate: nextVisit,
-      Weight: this.fg.value.Weight ? Number(this.fg.value.Weight) : null,
-      Height: this.fg.value.Height ? Number(this.fg.value.Height) : null,
-      OFC: this.fg.value.Circle ? Number(this.fg.value.Circle) : null,
-    };
-    this.followupService.addFollowupByChild(payload).subscribe(
-      () => { onDone(); },
-      err => { console.error('Auto follow-up create failed:', err); onDone(); }
-    );
+    this.storage.get(environment.DOCTOR_Id).then(realDoctorId => {
+      const today = moment().format('DD-MM-YYYY');
+      const nextVisit = this.scheduleDatecheck
+        ? moment(this.scheduleDatecheck, 'DD-MM-YYYY').format('DD-MM-YYYY')
+        : today;
+      const payload = {
+        ChildId: Number(this.childId),
+        DoctorId: Number(realDoctorId),
+        Disease: 'Vaccination',
+        CurrentVisitDate: today,
+        NextVisitDate: nextVisit,
+        Weight: this.fg.value.Weight ? Number(this.fg.value.Weight) : null,
+        Height: this.fg.value.Height ? Number(this.fg.value.Height) : null,
+        OFC: this.fg.value.Circle ? Number(this.fg.value.Circle) : null,
+      };
+      this.followupService.addFollowupByChild(payload).subscribe(
+        () => { onDone(); },
+        err => { console.error('Auto follow-up create failed:', err); onDone(); }
+      );
+    });
   }
 
   private getBrandManufacturer(brandId: any): string {
