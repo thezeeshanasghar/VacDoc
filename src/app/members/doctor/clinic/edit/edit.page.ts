@@ -75,7 +75,7 @@ export class EditPage implements OnInit {
         this.usertype = user.UserType;
         if (user.UserType === 'PA') {
           this.paService.getPaPermissions(Number(user.PAId)).subscribe(perm => {
-            this.canEdit = perm?.EditClinic ?? false;
+            this.canEdit = (perm && perm.EditClinic) || false;
             if (!this.canEdit) {
               this.toastService.create('You do not have permission to edit clinics', 'danger');
               this.router.navigate(['/members/doctor/clinic']);

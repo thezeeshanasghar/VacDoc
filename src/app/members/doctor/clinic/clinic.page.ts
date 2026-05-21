@@ -56,10 +56,10 @@ export class ClinicPage {
    if (this.type === 'PA') {
      const paId = Number(this.usertype.PAId);
      const perm = await this.paService.getPaPermissions(paId).toPromise();
-     this.canAdd       = perm?.AddClinic      ?? false;
-     this.canEdit      = perm?.EditClinic     ?? false;
-     this.canDelete    = perm?.DeleteClinic   ?? false;
-     this.canSetOnline = perm?.SetClinicOnline ?? false;
+     this.canAdd       = (perm && perm.AddClinic)       || false;
+     this.canEdit      = (perm && perm.EditClinic)      || false;
+     this.canDelete    = (perm && perm.DeleteClinic)    || false;
+     this.canSetOnline = (perm && perm.SetClinicOnline) || false;
    }
 
    // Load clinics for dropdown
