@@ -919,9 +919,9 @@ export class FillPage implements OnInit {
   }
 
   private autoCreateFollowUp(): void {
-    const today = moment().format('YYYY-MM-DDTHH:mm:ss');
+    const today = moment().format('DD-MM-YYYY');
     const nextVisit = this.scheduleDatecheck
-      ? moment(this.scheduleDatecheck, 'DD-MM-YYYY').format('YYYY-MM-DDTHH:mm:ss')
+      ? moment(this.scheduleDatecheck, 'DD-MM-YYYY').format('DD-MM-YYYY')
       : today;
     const payload = {
       ChildId: this.childId,
