@@ -924,14 +924,14 @@ export class FillPage implements OnInit {
       ? moment(this.scheduleDatecheck, 'DD-MM-YYYY').format('DD-MM-YYYY')
       : today;
     const payload = {
-      ChildId: this.childId,
-      DoctorId: this.doctorId,
+      ChildId: Number(this.childId),
+      DoctorId: Number(this.doctorId),
       Disease: 'Vaccination',
       CurrentVisitDate: today,
       NextVisitDate: nextVisit,
-      Weight: this.fg.value.Weight || null,
-      Height: this.fg.value.Height || null,
-      OFC: this.fg.value.Circle || null,
+      Weight: this.fg.value.Weight ? Number(this.fg.value.Weight) : null,
+      Height: this.fg.value.Height ? Number(this.fg.value.Height) : null,
+      OFC: this.fg.value.Circle ? Number(this.fg.value.Circle) : null,
     };
     this.followupService.addFollowupByChild(payload).subscribe(
       () => {},
