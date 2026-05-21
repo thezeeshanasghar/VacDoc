@@ -51,7 +51,9 @@ export class AddfollowupPage implements OnInit {
       'BloodSugar': [null],
       'BloodPressure': [null],
     });
-    this.loadVaccineDefaults();
+    if (this.route.snapshot.queryParamMap.get('auto') === '1') {
+      this.loadVaccineDefaults();
+    }
   }
 
   loadVaccineDefaults() {

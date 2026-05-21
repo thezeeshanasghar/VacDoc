@@ -10,6 +10,7 @@ import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
 import { ClinicService } from 'src/app/services/clinic.service';
+import { FollowupService } from 'src/app/services/followup.service';
 
 @Component({
   selector: 'app-fill',
@@ -102,6 +103,7 @@ export class FillPage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private alertController: AlertController,
     private clinicService: ClinicService,
+    private followupService: FollowupService,
   ) { }
 
   ngOnInit() {
@@ -390,6 +392,7 @@ export class FillPage implements OnInit {
     await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
       res => {
         if (res.IsSuccess) {
+          this.autoCreateFollowUp();
           if (this.vaccine) {
             loading.dismiss();
             this.addNewVaccineInScheduleTable(this.scheduleDatecheck);
@@ -913,6 +916,27 @@ export class FillPage implements OnInit {
 
     const clinicId = Number(rawClinicId);
     return clinicId && !isNaN(clinicId) ? clinicId : null;
+  }
+
+  private autoCreateFollowUp(): void {
+    const today = moment().format('YYYY-MM-DDTHH:mm:ss');
+    const nextVisit = this.scheduleDatecheck
+      ? moment(this.scheduleDatecheck, 'DD-MM-YYYY').format('YYYY-MM-DDTHH:mm:ss')
+      : today;
+    const payload = {
+      ChildId: this.childId,
+      DoctorId: this.doctorId,
+      Disease: 'Vaccination',
+      CurrentVisitDate: today,
+      NextVisitDate: nextVisit,
+      Weight: this.fg.value.Weight || null,
+      Height: this.fg.value.Height || null,
+      OFC: this.fg.value.Circle || null,
+    };
+    this.followupService.addFollowupByChild(payload).subscribe(
+      () => {},
+      err => console.error('Auto follow-up create failed:', err)
+    );
   }
 
   private getBrandManufacturer(brandId: any): string {
