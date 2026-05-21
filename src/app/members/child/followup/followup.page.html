@@ -48,14 +48,17 @@
         <span *ngIf="item.Weight" style="font-size: 13px; background: #f0f4ff; border-radius: 8px; padding: 3px 10px;">
           <ion-icon name="barbell-outline" style="vertical-align: middle; margin-right: 3px; color: #4a90d9;"></ion-icon>
           {{item.Weight}} kg
+          <span *ngIf="item.WeightMin" style="color: #999; font-size: 11px;">({{item.WeightMin}}-{{item.WeightMax}})</span>
         </span>
         <span *ngIf="item.Height" style="font-size: 13px; background: #f0f4ff; border-radius: 8px; padding: 3px 10px;">
           <ion-icon name="resize-outline" style="vertical-align: middle; margin-right: 3px; color: #4a90d9;"></ion-icon>
           {{item.Height}} cm
+          <span *ngIf="item.HeightMin" style="color: #999; font-size: 11px;">({{item.HeightMin}}-{{item.HeightMax}})</span>
         </span>
         <span *ngIf="item.OFC" style="font-size: 13px; background: #f0f4ff; border-radius: 8px; padding: 3px 10px;">
           <ion-icon name="ellipse-outline" style="vertical-align: middle; margin-right: 3px; color: #4a90d9;"></ion-icon>
           OFC: {{item.OFC}} cm
+          <span *ngIf="item.OfcMin" style="color: #999; font-size: 11px;">({{item.OfcMin}}-{{item.OfcMax}})</span>
         </span>
       </div>
 
