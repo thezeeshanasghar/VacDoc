@@ -30,10 +30,11 @@ export class FollowupPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.childId = this.route.snapshot.paramMap.get('id');
     this.storage.get(environment.DOCTOR_Id).then((val) => {
       this.doctorId = val;
+      this.getfollowupchild();
     });
-    this.childId = this.route.snapshot.paramMap.get('id');
     this.storage.get(environment.USER).then(user => {
       if (user && user.UserType === 'PA') {
         this.paService.getPaPermissions(Number(user.PAId)).subscribe(perm => {
@@ -43,7 +44,6 @@ export class FollowupPage implements OnInit {
         });
       }
     });
-    this.getfollowupchild();
   }
 
   async getfollowupchild() {

@@ -919,9 +919,9 @@ export class FillPage implements OnInit {
 
   private autoCreateFollowUp(onDone: () => void): void {
     this.storage.get(environment.DOCTOR_Id).then(realDoctorId => {
-      const today = moment().format('DD-MM-YYYY');
+      const today = moment().format('YYYY-MM-DD');
       const nextVisit = this.scheduleDatecheck
-        ? moment(this.scheduleDatecheck, 'DD-MM-YYYY').format('DD-MM-YYYY')
+        ? moment(this.scheduleDatecheck, 'DD-MM-YYYY').format('YYYY-MM-DD')
         : today;
       const payload = {
         ChildId: Number(this.childId),
