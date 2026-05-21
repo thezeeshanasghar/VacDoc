@@ -476,6 +476,7 @@ import { ClinicService } from "../services/clinic.service";
 import { ToastService } from "../shared/toast.service";
 import { DoctorService } from "src/app/services/doctor.service";
 import { PaService } from "src/app/services/pa.service";
+import { ChildService } from "src/app/services/child.service";
 
 @Component({
   selector: "app-members",
@@ -494,6 +495,7 @@ export class MembersPage implements OnInit {
   public appPages: any = [];
   public doctorPages: any = [];
   public childPages: any = [];
+  public pendingApprovalsCount: number = 0;
 
   constructor(
     public loadingController: LoadingController,
@@ -501,7 +503,8 @@ export class MembersPage implements OnInit {
     public clinicService: ClinicService,
     private toastService: ToastService,
     private doctorService: DoctorService,
-    private paService: PaService
+    private paService: PaService,
+    private childService: ChildService
   ) {}
 
   async ngOnInit() {
@@ -700,7 +703,14 @@ export class MembersPage implements OnInit {
               },
             ];
 
-            this.childPages = [];
+            this.childPages = [
+              {
+                title: "Unapproved",
+                url: "/members/child/unapprove",
+                icon: "alert-circle-outline"
+              }
+            ];
+            this.loadPendingCount();
             if (this.DoctorId === 1) {
               this.appPages.push({
                 title: "Personal Assistant",
@@ -804,6 +814,19 @@ export class MembersPage implements OnInit {
         loading.dismiss();
         this.toastService.create(err, "danger");
       }
+    );
+  }
+
+  loadPendingCount() {
+    const clinic = this.clinicService.OnlineClinic;
+    if (!clinic || !clinic.Id) { return; }
+    this.childService.getPendingCount(clinic.Id).subscribe(
+      (res) => {
+        if (res && res.IsSuccess) {
+          this.pendingApprovalsCount = res.ResponseData || 0;
+        }
+      },
+      (err) => { console.error('Error fetching pending count', err); }
     );
   }
 

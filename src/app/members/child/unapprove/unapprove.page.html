@@ -17,6 +17,20 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+
+  <ion-card *ngIf="childsByPA.length > 0" style="margin-bottom:16px;">
+    <ion-card-header>
+      <ion-card-subtitle>Pending Approvals by PA</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item *ngFor="let group of childsByPA" lines="none">
+        <ion-icon slot="start" name="person-circle-outline" color="primary"></ion-icon>
+        <ion-label>{{group.paName}}</ion-label>
+        <ion-badge slot="end" color="warning">{{group.children.length}}</ion-badge>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
   <!-- <form [formGroup]="fg">
     <ion-item>
       <ion-input type="text" placeholder="search" formControlName="Name" (keyup.Enter)="getChlidbyUser(true)"

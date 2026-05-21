@@ -68,9 +68,10 @@
         <ion-menu-toggle auto-hide="false" *ngFor="let p of childPages">
           <ion-item lines="none" [routerDirection]="'root'" [routerLink]="[p.url]">
             <ion-icon color="primary" slot="start" [name]="p.icon"></ion-icon>
-            <ion-label>
-              {{p.title}}
-            </ion-label>
+            <ion-label>{{p.title}}</ion-label>
+            <ion-badge *ngIf="p.title === 'Unapproved' && pendingApprovalsCount > 0" color="danger" slot="end">
+              {{pendingApprovalsCount}}
+            </ion-badge>
           </ion-item>
         </ion-menu-toggle>
 

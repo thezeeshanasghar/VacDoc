@@ -20,6 +20,7 @@ export class UnapprovePage {
   @ViewChild(IonInfiniteScroll, { static: false }) infiniteScroll: IonInfiniteScroll;
   fg: FormGroup;
   childs: any = [];
+  childsByPA: any[] = [];
   userId: any;
   doctorId: number;
   page: number = 0;
@@ -139,7 +140,7 @@ export class UnapprovePage {
         if (res.IsSuccess) {
           this.infiniteScroll.disabled = true;
           this.childs = res.ResponseData;
-          console.log(this.childs);
+          this.buildPaGroups();
           this.search = true;
           this.isSearchDisabled = true;
           this.infiniteScroll.complete();
@@ -155,6 +156,22 @@ export class UnapprovePage {
         console.error(err);
       },
     });
+  }
+
+  buildPaGroups() {
+    var groups: any = {};
+    for (var i = 0; i < this.childs.length; i++) {
+      var child = this.childs[i];
+      var key = child.AddedByPaId ? (child.AddedByPaName || ('PA #' + child.AddedByPaId)) : 'Doctor';
+      if (!groups[key]) { groups[key] = []; }
+      groups[key].push(child);
+    }
+    var result: any[] = [];
+    var keys = Object.keys(groups);
+    for (var j = 0; j < keys.length; j++) {
+      result.push({ paName: keys[j], children: groups[keys[j]] });
+    }
+    this.childsByPA = result;
   }
 
   getStringValue(value: any): string {
