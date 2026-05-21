@@ -24,7 +24,11 @@ export class ClinicPage {
   type: any;
   clinics: any;
   selectedClinicId: any;
-  paAccessId: any; // Store PaAccessId for PA users
+  paAccessId: any;
+  canAdd = true;
+  canEdit = true;
+  canDelete = true;
+  canSetOnline = true;
   constructor(public loadingController: LoadingController, 
     public clinicService: ClinicService,
     private toastService: ToastService, 
@@ -48,7 +52,16 @@ export class ClinicPage {
    this.usertype = await this.storage.get(environment.USER);
    console.log("User Type:", this.usertype.UserType);
    this.type= this.usertype.UserType;
-   
+
+   if (this.type === 'PA') {
+     const paId = Number(this.usertype.PAId);
+     const perm = await this.paService.getPaPermissions(paId).toPromise();
+     this.canAdd       = perm?.AddClinic      ?? false;
+     this.canEdit      = perm?.EditClinic     ?? false;
+     this.canDelete    = perm?.DeleteClinic   ?? false;
+     this.canSetOnline = perm?.SetClinicOnline ?? false;
+   }
+
    // Load clinics for dropdown
    await this.loadClinicsForDropdown();
    

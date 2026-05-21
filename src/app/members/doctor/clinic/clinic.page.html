@@ -2,7 +2,7 @@
   <ion-toolbar color="primary">
     <ion-buttons class="ion-justify-content-center" style="border-radius: 5px">
       <ion-icon
-        *ngIf="type !== 'PA'"
+        *ngIf="canAdd"
         style="margin-left: 10%; cursor: pointer"
         routerLink="/members/doctor/clinic/add"
         name="add-circle-outline"
@@ -18,10 +18,10 @@
   <ion-card *ngFor="let clinic of Clinics">
     <ion-item> 
       <ion-label color="dark">{{clinic.Name}}</ion-label>
-      <ion-button fill="clear" slot="end" [routerLink]="['/members/doctor/clinic/edit', clinic.Id]" class="header-icon-btn">
+      <ion-button fill="clear" slot="end" *ngIf="canEdit" [routerLink]="['/members/doctor/clinic/edit', clinic.Id]" class="header-icon-btn">
         <ion-icon slot="icon-only" name="pencil-outline"></ion-icon>
       </ion-button>
-      <ion-button fill="clear" slot="end" *ngIf="type !== 'PA'" (click)="alertDeleteClinic(clinic.Id)" class="header-icon-btn">
+      <ion-button fill="clear" slot="end" *ngIf="canDelete" (click)="alertDeleteClinic(clinic.Id)" class="header-icon-btn">
         <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
       </ion-button>
     </ion-item>
@@ -41,11 +41,11 @@
       <ion-button size="small" *ngIf="type !== 'PA'" fill="outline" color="primary" routerLink="/members/child">
         Patients &nbsp;<ion-badge size="small" color="primary">{{clinic.childrenCount}}</ion-badge>
       </ion-button>
-      <ion-button *ngIf="!clinic.IsOnline&& type !== 'PA'" size="small" fill="outline" color="primary"
+      <ion-button *ngIf="!clinic.IsOnline && canSetOnline" size="small" fill="outline" color="primary"
         (click)="setOnlineClinic(clinic.Id)">
         Set as Online
       </ion-button>
-      <ion-button *ngIf="clinic.IsOnline&& type !== 'PA'" size="small" color="success" enabled="false" routerLink="/members/dashboard">
+      <ion-button *ngIf="clinic.IsOnline && canSetOnline" size="small" color="success" enabled="false" routerLink="/members/dashboard">
         <ion-icon slot="start" name="checkmark"></ion-icon>
         Online
       </ion-button>

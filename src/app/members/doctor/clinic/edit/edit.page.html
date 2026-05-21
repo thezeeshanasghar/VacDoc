@@ -991,7 +991,7 @@
       </ion-card>
     </form>
 
-    <ion-button [disabled]="!fg1.valid||usertype==='PA'" (click)="getdata()">Update</ion-button>
+    <ion-button [disabled]="!fg1.valid || !canEdit" (click)="getdata()">Update</ion-button>
   </form>
 
   <div *ngIf="usertype !== 'PA'" style="margin-top: 32px; padding-bottom: 24px;">

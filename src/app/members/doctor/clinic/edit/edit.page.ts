@@ -20,6 +20,7 @@ import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-nati
 import { Base64 } from '@ionic-native/base64/ngx';
 import { HttpClient } from "@angular/common/http";
 import { UploadService } from 'src/app/services/upload.service';
+import { PaService } from 'src/app/services/pa.service';
 
 @Component({
   selector: "app-edit",
@@ -42,7 +43,7 @@ export class EditPage implements OnInit {
 
   private readonly DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm";
   usertype: any;
-  
+  canEdit = true;
 
   constructor(
     public loadingController: LoadingController,
@@ -61,6 +62,7 @@ export class EditPage implements OnInit {
     private http: HttpClient,
     private platform: Platform,
     private alertService: AlertService,
+    private paService: PaService,
   ) {
     this.isWeb = !this.platform.is('cordova');
     console.log(this.isWeb)
@@ -70,7 +72,16 @@ export class EditPage implements OnInit {
      this.storage.get(environment.USER).then((user) => {
       if (user) {
         console.log('Retrieved user from storage:', user);
-        this.usertype = user.UserType; // Ensure this is set correctly
+        this.usertype = user.UserType;
+        if (user.UserType === 'PA') {
+          this.paService.getPaPermissions(Number(user.PAId)).subscribe(perm => {
+            this.canEdit = perm?.EditClinic ?? false;
+            if (!this.canEdit) {
+              this.toastService.create('You do not have permission to edit clinics', 'danger');
+              this.router.navigate(['/members/doctor/clinic']);
+            }
+          });
+        }
       } else {
         console.error('No user data found in storage.');
       }
