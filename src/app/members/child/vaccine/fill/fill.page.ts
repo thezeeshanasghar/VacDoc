@@ -392,15 +392,14 @@ export class FillPage implements OnInit {
     await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
       res => {
         if (res.IsSuccess) {
-          this.autoCreateFollowUp();
-          if (this.vaccine) {
-            loading.dismiss();
-            this.addNewVaccineInScheduleTable(this.scheduleDatecheck);
-          } else {
-            loading.dismiss();
-            this.router.navigate(['/members/child/vaccine/' + this.childId]);
-          }
           loading.dismiss();
+          this.autoCreateFollowUp(() => {
+            if (this.vaccine) {
+              this.addNewVaccineInScheduleTable(this.scheduleDatecheck);
+            } else {
+              this.router.navigate(['/members/child/vaccine/' + this.childId]);
+            }
+          });
         } else {
           this.toastService.create(res.Message || "Error: Failed to update injection", 'danger');
           loading.dismiss();
@@ -918,7 +917,7 @@ export class FillPage implements OnInit {
     return clinicId && !isNaN(clinicId) ? clinicId : null;
   }
 
-  private autoCreateFollowUp(): void {
+  private autoCreateFollowUp(onDone: () => void): void {
     const today = moment().format('DD-MM-YYYY');
     const nextVisit = this.scheduleDatecheck
       ? moment(this.scheduleDatecheck, 'DD-MM-YYYY').format('DD-MM-YYYY')
@@ -934,8 +933,8 @@ export class FillPage implements OnInit {
       OFC: this.fg.value.Circle ? Number(this.fg.value.Circle) : null,
     };
     this.followupService.addFollowupByChild(payload).subscribe(
-      () => {},
-      err => console.error('Auto follow-up create failed:', err)
+      () => { onDone(); },
+      err => { console.error('Auto follow-up create failed:', err); onDone(); }
     );
   }
 
