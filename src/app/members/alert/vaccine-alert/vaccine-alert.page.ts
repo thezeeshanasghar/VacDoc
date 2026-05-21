@@ -36,7 +36,10 @@ export class VaccineAlertPage implements OnInit {
   selectedDate: string = new Date().toISOString();
   usertype: any;
   clinics: any;
-  allClinicIds: number[] = []; // Store all clinic IDs for the user
+  allClinicIds: number[] = [];
+  canSendEmail = true;
+  canDownloadCsv = true;
+  canWhatsApp = true;
 
   constructor(
     public loadingController: LoadingController,
@@ -60,6 +63,13 @@ export class VaccineAlertPage implements OnInit {
       this.doctorId = val;
     });
     this.usertype = await this.storage.get(environment.USER);
+    if (this.usertype && this.usertype.UserType === 'PA') {
+      this.paService.getPaPermissions(Number(this.usertype.PAId)).subscribe(perm => {
+        this.canSendEmail   = (perm && perm.SendBulkEmail)    || false;
+        this.canDownloadCsv = (perm && perm.DownloadAlertCsv) || false;
+        this.canWhatsApp    = (perm && perm.OpenWhatsApp)     || false;
+      });
+    }
     await this.storage.get(environment.CLINIC_Id).then(clinicId => {
       this.clinicId = clinicId;
     });

@@ -9,7 +9,7 @@
 
 <ion-content padding>
 
-  <form [formGroup]='fg'>
+  <form *ngIf="canManageInvoice" [formGroup]='fg'>
     <ion-item>
       <ion-label color="primary">Add Brand</ion-label>
       <ion-checkbox slot="start" formControlName="IsBrand"></ion-checkbox>

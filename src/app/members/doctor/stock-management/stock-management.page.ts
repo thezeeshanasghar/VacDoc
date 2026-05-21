@@ -23,6 +23,11 @@ export class StockManagementPage implements OnInit {
   selectedClinicId: any;
   doctorId: any;
   usertype: any;
+  canAddBill = true;
+  canAdjustStock = true;
+  canTransferStock = true;
+  canDirectSale = true;
+  canViewBrandAmount = true;
 
   constructor(
     private loadingController: LoadingController,
@@ -46,6 +51,15 @@ export class StockManagementPage implements OnInit {
       if (!this.doctorId || !this.usertype) {
         this.toastService.create("Failed to load user data", "danger");
         return;
+      }
+      if (this.usertype.UserType === 'PA') {
+        this.paService.getPaPermissions(Number(this.usertype.PAId)).subscribe(perm => {
+          this.canAddBill        = (perm && perm.AddPurchaseBill)                          || false;
+          this.canAdjustStock    = (perm && perm.AdjustStock)                              || false;
+          this.canTransferStock  = (perm && perm.TransferStock)                            || false;
+          this.canDirectSale     = (perm && perm.AddDirectSale)                            || false;
+          this.canViewBrandAmount= (perm && (perm.UpdateSalePrice || perm.DownloadStockReport)) || false;
+        });
       }
       await this.loadClinics();
     } catch (error) {

@@ -12,6 +12,7 @@ import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-nati
 import { Storage } from '@ionic/storage';
 import { Platform } from '@ionic/angular';
 import { FormBuilder, FormGroup } from "@angular/forms";
+import { PaService } from "src/app/services/pa.service";
 
 @Component({
   selector: "app-vaccine",
@@ -35,8 +36,20 @@ export class VaccinePage {
   type: string;
   istravel: boolean = true;
   usertype: any;
-  retryCount = 0; // add this as a class property
+  retryCount = 0;
   maxRetries = 3;
+  canGiveVaccine = true;
+  canUngiveVaccine = true;
+  canReschedule = true;
+  canBulkGive = true;
+  canBulkUngive = true;
+  canBulkReschedule = true;
+  canInvoice = true;
+  canAddParams = true;
+  canPrint = true;
+  canSkip = true;
+  canUnskip = true;
+  canEditSchedule = true;
 
   isFilledToday(doneAt: any): boolean {
     if (!doneAt) return false;
@@ -72,8 +85,7 @@ export class VaccinePage {
     public platform: Platform,
     private formBuilder: FormBuilder,
     private scheduleService: ScheduleService,
-    // private invoiceService: InvoiceService
-    // private document: DocumentViewer,
+    private paService: PaService,
   ) {
     this.type = '';
   }
@@ -102,8 +114,23 @@ export class VaccinePage {
   ngOnInit() {
     this.storage.get(environment.USER).then((user) => {
       if (user) {
-        // console.log('Retrieved user from storage:', user);
-        this.usertype = user.UserType; // Ensure this is set correctly
+        this.usertype = user.UserType;
+        if (user.UserType === 'PA') {
+          this.paService.getPaPermissions(Number(user.PAId)).subscribe(perm => {
+            this.canGiveVaccine    = (perm && perm.GiveVaccine)        || false;
+            this.canUngiveVaccine  = (perm && perm.UngiveVaccine)      || false;
+            this.canReschedule     = (perm && perm.RescheduleVaccine)  || false;
+            this.canBulkGive       = (perm && perm.BulkGiveVaccines)   || false;
+            this.canBulkUngive     = (perm && perm.BulkUngiveVaccines) || false;
+            this.canBulkReschedule = (perm && perm.BulkReschedule)     || false;
+            this.canInvoice        = (perm && perm.ManageInvoice)      || false;
+            this.canAddParams      = (perm && perm.AddVaccineParams)   || false;
+            this.canPrint          = (perm && perm.PrintSchedulePdf)   || false;
+            this.canSkip           = (perm && perm.SkipVaccine)        || false;
+            this.canUnskip         = (perm && perm.UnskipVaccine)      || false;
+            this.canEditSchedule   = (perm && perm.EditVaccineSchedule)|| false;
+          });
+        }
       } else {
         console.error('No user data found in storage.');
       }

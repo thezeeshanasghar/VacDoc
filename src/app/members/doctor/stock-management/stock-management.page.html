@@ -114,7 +114,7 @@
 </ion-content>
 
 <!-- Floating add button -->
-<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+<ion-fab *ngIf="canAddBill" vertical="bottom" horizontal="end" slot="fixed">
   <ion-fab-button color="tertiary" routerLink="/members/doctor/stock-management/add">
     <ion-icon name="add"></ion-icon>
   </ion-fab-button>

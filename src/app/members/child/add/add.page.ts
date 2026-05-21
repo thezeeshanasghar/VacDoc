@@ -67,6 +67,7 @@ export class AddPage implements OnInit {
   clinicid: Promise<any>;
   type: any;
   filteredCountryCodes: any[] = [];
+  canAddPatient = true;
 
   constructor(
     public loadingController: LoadingController,
@@ -102,6 +103,13 @@ export class AddPage implements OnInit {
       this.type = this.usertype.UserType;
       if (this.usertype.UserType === "PA") {
         await this.loadClinics();
+        this.paService.getPaPermissions(Number(this.usertype.PAId)).subscribe(perm => {
+          this.canAddPatient = (perm && perm.AddPatient) || false;
+          if (!this.canAddPatient) {
+            this.toastService.create('You do not have permission to add patients', 'danger');
+            this.router.navigate(['/members/child']);
+          }
+        });
       }
     } else {
       console.error("No user data found in storage.");

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
 import { LoadingController, Platform } from '@ionic/angular';
@@ -8,6 +8,7 @@ import { InvoiceService } from 'src/app/services/invoice.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import * as moment from 'moment';
 import { Downloader , DownloadRequest , NotificationVisibility } from '@ionic-native/downloader/ngx';
+import { PaService } from 'src/app/services/pa.service';
 
 //import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
 
@@ -20,6 +21,7 @@ export class InvoicePage implements OnInit {
 
   fg: FormGroup
   doctorId: any;
+  canManageInvoice = true;
   private readonly API_INVOICE = `${environment.BASE_URL}child/`;
   constructor(
     public loadingController: LoadingController,
@@ -29,7 +31,9 @@ export class InvoicePage implements OnInit {
     private invoiceService: InvoiceService,
     private toastService: ToastService,
     private platform: Platform,
-    private downloader: Downloader
+    private downloader: Downloader,
+    private paService: PaService,
+    private router: Router,
   ) { }
 
   ngOnInit() {
@@ -43,6 +47,17 @@ export class InvoicePage implements OnInit {
     })
     this.storage.get(environment.DOCTOR_Id).then((val) => {
       this.doctorId = val;
+    });
+    this.storage.get(environment.USER).then(user => {
+      if (user && user.UserType === 'PA') {
+        this.paService.getPaPermissions(Number(user.PAId)).subscribe(perm => {
+          this.canManageInvoice = (perm && perm.ManageInvoice) || false;
+          if (!this.canManageInvoice) {
+            this.toastService.create('You do not have permission to manage invoices', 'danger');
+            this.router.navigate(['/members/child']);
+          }
+        });
+      }
     });
   }
 

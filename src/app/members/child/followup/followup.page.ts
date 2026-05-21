@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { ActivatedRoute } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import { AlertService } from 'src/app/shared/alert.service';
+import { PaService } from 'src/app/services/pa.service';
 @Component({
   selector: 'app-followup',
   templateUrl: './followup.page.html'
@@ -15,6 +16,9 @@ export class FollowupPage implements OnInit {
   childData: any;
   doctorId: any;
   childId: any;
+  canAddFollowup = true;
+  canDeleteFollowup = true;
+  canDownloadFollowup = true;
   constructor(
     public route: ActivatedRoute,
     public loadingController: LoadingController,
@@ -22,6 +26,7 @@ export class FollowupPage implements OnInit {
     private toastService: ToastService,
     private storage: Storage,
     private alertService: AlertService,
+    private paService: PaService,
   ) { }
 
   ngOnInit() {
@@ -29,6 +34,15 @@ export class FollowupPage implements OnInit {
       this.doctorId = val;
     });
     this.childId = this.route.snapshot.paramMap.get('id');
+    this.storage.get(environment.USER).then(user => {
+      if (user && user.UserType === 'PA') {
+        this.paService.getPaPermissions(Number(user.PAId)).subscribe(perm => {
+          this.canAddFollowup      = (perm && perm.AddFollowUp)         || false;
+          this.canDeleteFollowup   = (perm && perm.DeleteFollowUp)      || false;
+          this.canDownloadFollowup = (perm && perm.DownloadFollowUpPdf) || false;
+        });
+      }
+    });
     this.getfollowupchild();
   }
 

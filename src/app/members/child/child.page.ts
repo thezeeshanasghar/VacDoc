@@ -33,6 +33,15 @@ export class ChildPage {
   clinics: any;
   selectedClinicId: any;
   type: any;
+  canEditPatient = true;
+  canDeletePatient = true;
+  canSmsPatient = true;
+  canCallPatient = true;
+  canToggleStatus = true;
+  canDownloadPid = true;
+  canDownloadCard = true;
+  canViewVaccine = true;
+  canViewFollowup = true;
   constructor(
     public router: Router,
     public loadingController: LoadingController,
@@ -60,6 +69,19 @@ export class ChildPage {
   this.storage.get(environment.USER).then((user) => {
     this.usertype = user;
     this.type = user.UserType;
+    if (user.UserType === 'PA') {
+      this.paService.getPaPermissions(Number(user.PAId)).subscribe(perm => {
+        this.canEditPatient   = (perm && perm.EditPatient)              || false;
+        this.canDeletePatient = (perm && perm.DeletePatient)            || false;
+        this.canSmsPatient    = (perm && perm.SendSmsPatient)           || false;
+        this.canCallPatient   = (perm && perm.CallPatient)              || false;
+        this.canToggleStatus  = (perm && (perm.ActivatePatient || perm.DeactivatePatient)) || false;
+        this.canDownloadPid   = (perm && perm.DownloadPidPdf)           || false;
+        this.canDownloadCard  = (perm && perm.DownloadImmunizationCards)|| false;
+        this.canViewVaccine   = (perm && perm.ViewSchedule)             || false;
+        this.canViewFollowup  = (perm && perm.ViewFollowUps)            || false;
+      });
+    }
   });
   this.storage.get(environment.DOCTOR_Id).then((docId) => {
     this.doctorId = docId;

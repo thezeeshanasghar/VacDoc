@@ -1,8 +1,8 @@
 <ion-content class="ion-padding">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button>
-      <ion-button color="primary" fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button>
+      <ion-button *ngIf="canSendEmail" color="primary" fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button>
+      <ion-button *ngIf="canDownloadCsv" color="primary" fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-item (click)="picker.open()">
@@ -18,12 +18,13 @@
       <ion-col>
         <ion-item *ngFor="let child of Childs">
           <ion-label style="cursor: pointer;" [routerLink]="['/members/child/vaccine', child.Child.Id]">{{child.Child.Name}}</ion-label>
-          <ion-icon slot="end" color="primary" name="mail" (click)="sendemail([child])" style="cursor: pointer;"></ion-icon>
-          <ion-icon 
-            slot="end" 
-            [color]="child.isMessageSent ? 'primary' : 'success'" 
-            name="logo-whatsapp" 
-            (click)="openWhatsApp(child.Child.User.MobileNumber, child.Child.Name, child.Dose.Name, child)" 
+          <ion-icon *ngIf="canSendEmail" slot="end" color="primary" name="mail" (click)="sendemail([child])" style="cursor: pointer;"></ion-icon>
+          <ion-icon
+            *ngIf="canWhatsApp"
+            slot="end"
+            [color]="child.isMessageSent ? 'primary' : 'success'"
+            name="logo-whatsapp"
+            (click)="openWhatsApp(child.Child.User.MobileNumber, child.Child.Name, child.Dose.Name, child)"
             style="cursor: pointer;">
           </ion-icon>
         </ion-item>        

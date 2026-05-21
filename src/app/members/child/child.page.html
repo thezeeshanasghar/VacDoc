@@ -42,13 +42,13 @@
         <span class="icons-name">{{child.Name}}</span>
       </div>
       <div class="icons-right">
-        <ion-icon class="iconchild" name="create"
+        <ion-icon class="iconchild" *ngIf="canEditPatient" name="create"
           routerLink="/members/child/edit/{{child.Id}}"></ion-icon>
-        <ion-icon class="iconchild" *ngIf="usertype!=='PA'" name="trash"
+        <ion-icon class="iconchild" *ngIf="canDeletePatient" name="trash"
           (click)="alertforDeleteChild(child.Id)"></ion-icon>
-        <ion-icon class="iconchild" name="mail"
+        <ion-icon class="iconchild" *ngIf="canSmsPatient" name="mail"
           routerLink="/members/child/cmsg/{{child.Id}}"></ion-icon>
-        <ion-icon class="iconchild" name="call"
+        <ion-icon class="iconchild" *ngIf="canCallPatient" name="call"
           (click)="callFunction(child.User.MobileNumber)"></ion-icon>
       </div>
     </div>
@@ -60,26 +60,26 @@
       &nbsp;&nbsp;
       <ion-icon name="call"></ion-icon> {{child.MobileNumber}}
       <br>
-      <ion-button size="small" fill="outline" color="primary"
+      <ion-button *ngIf="canViewVaccine" size="small" fill="outline" color="primary"
         routerLink="/members/child/vaccine/{{child.Id}}">
         Vaccine
       </ion-button>
       &nbsp;
-      <ion-button size="small" fill="outline" color="primary"
+      <ion-button *ngIf="canViewFollowup" size="small" fill="outline" color="primary"
         routerLink="/members/child/followup/{{child.Id}}">
         Follow Up
       </ion-button>
       &nbsp;
-      <ion-button size="small" fill="outline" [color]="child.IsInactive ? 'success' : 'danger'"
+      <ion-button *ngIf="canToggleStatus" size="small" fill="outline" [color]="child.IsInactive ? 'success' : 'danger'"
         (click)="toggleChildActiveStatus(child.Id)">
         {{ child.IsInactive ? 'Activate' : 'Deactivate' }}
       </ion-button>
       &nbsp;
-      <ion-button size="small" fill="outline" color="primary" (click)="downloadPdf(child.Id)">
+      <ion-button *ngIf="canDownloadPid" size="small" fill="outline" color="primary" (click)="downloadPdf(child.Id)">
         PID
       </ion-button>
       &nbsp;
-      <ion-button size="small" fill="solid" color="secondary"
+      <ion-button *ngIf="canDownloadCard" size="small" fill="solid" color="secondary"
         [routerLink]="['/members/child/immunization-card', child.Id]"
         [queryParams]="{ name: child.Name }">
         <ion-icon name="card-outline" slot="start" style="font-size:14px;"></ion-icon>

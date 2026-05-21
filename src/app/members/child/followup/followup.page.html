@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title>Follow up</ion-title>
     <ion-buttons slot="end" style="margin-right: 24px;">
-      <ion-icon color="light" name="download" (click)="downloadFollowUpPdf(childId)" style="font-size: 25px;"></ion-icon>
+      <ion-icon *ngIf="canDownloadFollowup" color="light" name="download" (click)="downloadFollowUpPdf(childId)" style="font-size: 25px;"></ion-icon>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -16,7 +16,7 @@
         <div class="icons" style="display: flex; justify-content: space-between; align-items: center;">
         <ion-card-title>{{child.Child.Name}}</ion-card-title>
         <ion-item class="ion-justify-content-center">
-          <ion-icon slot="end" color="primary" name="trash" (click)="alertforDeleteFollowup(child.Id)" style="font-size: 25px;"></ion-icon>
+          <ion-icon *ngIf="canDeleteFollowup" slot="end" color="primary" name="trash" (click)="alertforDeleteFollowup(child.Id)" style="font-size: 25px;"></ion-icon>
         </ion-item> 
         </div>
       </ion-card-header>
@@ -29,7 +29,7 @@
       </ion-card-content>
     </ion-card>
   </div>
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab *ngIf="canAddFollowup" vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button routerLink="addfollowup" color="primary">
       <ion-icon name="add" color="light" routerLink="/members/child/followup/{{childId}}/addfollowup"></ion-icon>
     </ion-fab-button>
