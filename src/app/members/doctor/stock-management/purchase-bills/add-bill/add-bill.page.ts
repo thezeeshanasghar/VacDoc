@@ -20,10 +20,20 @@ export class AddBillPage implements OnInit {
   billNo: string = '';
   billDate: string = '';
   supplierId: number = null;
+  supplierSearch: string = '';
+  supplierDropOpen: boolean = false;
   awtPercent: number = 0;
+  amountPaid: number = 0;
+  paymentMethod: string = '';
 
   suppliers: any[] = [];
   brands: any[] = [];
+
+  get filteredSuppliers(): any[] {
+    const q = (this.supplierSearch || '').toLowerCase();
+    if (!q) return this.suppliers;
+    return this.suppliers.filter((s: any) => (s.Name || '').toLowerCase().indexOf(q) >= 0);
+  }
 
   lines: any[] = [];
 
@@ -86,8 +96,41 @@ export class AddBillPage implements OnInit {
     );
   }
 
+  filteredBrands(search: string): any[] {
+    const q = (search || '').toLowerCase();
+    if (!q) return this.brands;
+    return this.brands.filter((b: any) =>
+      (b.VaccineName || '').toLowerCase().indexOf(q) >= 0 ||
+      (b.BrandName || '').toLowerCase().indexOf(q) >= 0
+    );
+  }
+
+  selectSupplier(s: any) {
+    this.supplierId = s.Id;
+    this.supplierSearch = s.Name;
+    this.supplierDropOpen = false;
+  }
+
+  clearSupplier() {
+    this.supplierId = null;
+    this.supplierSearch = '';
+    this.supplierDropOpen = false;
+  }
+
+  selectBrand(line: any, b: any) {
+    line.brandId = b.BrandId;
+    line.brandSearch = b.VaccineName + ' / ' + b.BrandName;
+    line.brandDropOpen = false;
+  }
+
+  clearLineBrand(line: any) {
+    line.brandId = null;
+    line.brandSearch = '';
+    line.brandDropOpen = false;
+  }
+
   addLine() {
-    this.lines.push({ brandId: null, batchLot: '', expiry: '', qty: null, unitPrice: null });
+    this.lines.push({ brandId: null, brandSearch: '', brandDropOpen: false, batchLot: '', expiry: '', qty: null, unitPrice: null });
   }
 
   removeLine(i: number) {
@@ -143,6 +186,8 @@ export class AddBillPage implements OnInit {
       DoctorId: this.doctorId,
       ClinicId: this.clinicId,
       AwtPercent: this.awtPercent || 0,
+      AmountPaid: this.amountPaid || 0,
+      PaymentMethod: (this.amountPaid && this.amountPaid > 0 && this.paymentMethod) ? this.paymentMethod : null,
       Lines: this.lines.map((l: any) => ({
         BrandId: l.brandId,
         BatchLot: l.batchLot,

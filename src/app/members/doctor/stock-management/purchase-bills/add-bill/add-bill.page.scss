@@ -5,27 +5,101 @@
 
 .field-label {
   display: block;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   color: #546E7A;
   margin-bottom: 6px;
 }
 
-.native-select {
+// Autocomplete widget — supplier (full-width) and brand (cell-level)
+.ac-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.ac-input {
   display: block;
   width: 100%;
-  padding: 8px 10px;
+  padding: 8px 32px 8px 10px;
   font-size: 15px;
   color: #1A1A2E;
   background: #fff;
   border: 1.5px solid #B0BEC5;
   border-radius: 8px;
   outline: none;
-  appearance: auto;
+  box-sizing: border-box;
 
   &:focus {
     border-color: #1565C0;
   }
+}
+
+.ac-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #90A4AE;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.ac-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #B0BEC5;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  z-index: 999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.ac-option {
+  padding: 9px 12px;
+  font-size: 14px;
+  color: #1A1A2E;
+  cursor: pointer;
+  border-bottom: 1px solid #F5F7FA;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:active {
+    background: #EEF2F7;
+  }
+}
+
+// Cell-level autocomplete (brand inside table row)
+.cell-ac-wrap {
+  position: relative;
+}
+
+.cell-ac-input {
+  padding-right: 20px !important;
+}
+
+.cell-ac-clear {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #90A4AE;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
 }
 
 .form-card, .totals-card {

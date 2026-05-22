@@ -97,6 +97,16 @@
   color: #0D47A1;
 }
 
+.paid-val {
+  color: #2E7D32;
+  font-weight: 600;
+}
+
+.pending-val {
+  color: #E53935;
+  font-weight: 600;
+}
+
 .bill-actions {
   display: flex;
   justify-content: flex-end;

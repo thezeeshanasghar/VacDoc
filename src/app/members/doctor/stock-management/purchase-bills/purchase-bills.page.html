@@ -18,8 +18,8 @@
   <div *ngFor="let bill of bills" class="bill-card">
     <div class="bill-header">
       <span class="bill-no">{{ bill.BillNo }}</span>
-      <ion-badge [color]="bill.IsPaid ? 'success' : 'warning'" class="paid-badge">
-        {{ bill.IsPaid ? 'Paid' : 'Unpaid' }}
+      <ion-badge [color]="bill.PaymentStatus === 'Paid' ? 'success' : bill.PaymentStatus === 'Partial' ? 'warning' : 'danger'" class="paid-badge">
+        {{ bill.PaymentStatus }}
       </ion-badge>
     </div>
     <div class="bill-meta">
@@ -40,9 +40,17 @@
         <span class="amt-label">Total Payable</span>
         <span class="amt-val">Rs {{ bill.TotalPayable | number:'1.2-2' }}</span>
       </div>
+      <div class="amt-row" *ngIf="bill.AmountPaid > 0">
+        <span class="amt-label">Paid</span>
+        <span class="amt-val paid-val">Rs {{ bill.AmountPaid | number:'1.2-2' }}</span>
+      </div>
+      <div class="amt-row" *ngIf="bill.PendingAmount > 0">
+        <span class="amt-label">Pending</span>
+        <span class="amt-val pending-val">Rs {{ bill.PendingAmount | number:'1.2-2' }}</span>
+      </div>
     </div>
     <div class="bill-actions">
-      <ion-button fill="outline" color="danger" size="small" (click)="confirmReverse(bill)" [disabled]="bill.IsPaid">
+      <ion-button fill="outline" color="danger" size="small" (click)="confirmReverse(bill)">
         <ion-icon name="refresh-outline" slot="start"></ion-icon>
         Reverse
       </ion-button>

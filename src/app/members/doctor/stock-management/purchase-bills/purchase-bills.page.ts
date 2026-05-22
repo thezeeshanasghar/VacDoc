@@ -56,13 +56,18 @@ export class PurchaseBillsPage {
   }
 
   async confirmReverse(bill: any) {
+    let message = 'This will remove all remaining stock entries for ' + bill.BillNo + '. Continue?';
+    if (bill.PaymentStatus === 'Paid' || bill.PaymentStatus === 'Partial') {
+      message = 'Rs ' + (bill.AmountPaid || 0).toFixed(2) + ' was recorded as paid for ' + bill.BillNo + '. Reversing will remove all remaining stock. Payment recovery must be handled separately. Continue?';
+    }
     const alert = await this.alertController.create({
       header: 'Reverse Bill',
-      message: 'This will remove all stock entries for ' + bill.BillNo + '. Continue?',
+      message: message,
       buttons: [
         { text: 'Cancel', role: 'cancel' },
         {
           text: 'Reverse',
+          cssClass: 'danger',
           handler: () => { this.reverseBill(bill.Id); }
         }
       ]
