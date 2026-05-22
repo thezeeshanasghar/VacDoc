@@ -195,13 +195,62 @@
   }
 }
 
-// Remove number input spinners everywhere on this page
+// Remove number input spinners — native inputs + Ionic ion-input shadow DOM
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 input[type=number] { -moz-appearance: textfield; }
+ion-input[type=number]::part(native)::-webkit-inner-spin-button,
+ion-input[type=number]::part(native)::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+// Native input (replaces ion-input for Amount Paid — avoids spinner)
+.native-input {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 15px;
+  color: #1A1A2E;
+  background: #fff;
+  border: 1.5px solid #B0BEC5;
+  border-radius: 8px;
+  outline: none;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: #1565C0;
+  }
+}
+
+// Boxed amount display in totals card
+.amt-box {
+  display: inline-block;
+  min-width: 100px;
+  text-align: right;
+  padding: 4px 10px;
+  background: #F5F7FA;
+  border: 1px solid #CFD8DC;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1A1A2E;
+}
+
+.amt-box-bold {
+  font-weight: 700;
+  font-size: 16px;
+  color: #0D47A1;
+  background: #EEF2F7;
+  border-color: #90CAF9;
+}
+
+.tot-label {
+  font-size: 14px;
+  color: #546E7A;
+}
 
 .cell-input {
   width: 100%;

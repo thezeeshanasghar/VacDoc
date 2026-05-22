@@ -98,16 +98,16 @@
   <ion-card class="totals-card">
     <ion-card-content>
       <div class="total-row">
-        <span>Subtotal</span>
-        <span>Rs {{ subtotal | number:'1.2-2' }}</span>
+        <span class="tot-label">Subtotal</span>
+        <span class="amt-box">Rs {{ subtotal | number:'1.2-2' }}</span>
       </div>
       <div class="total-row awt-input-row">
         <span class="awt-label">AWT <input type="number" [(ngModel)]="awtPercent" class="awt-pct-input" min="0" max="100" placeholder="0"> %</span>
-        <span>Rs {{ awtAmount | number:'1.2-2' }}</span>
+        <span class="amt-box">Rs {{ awtAmount | number:'1.2-2' }}</span>
       </div>
       <div class="total-row payable-row">
-        <span>Total Payable</span>
-        <span>Rs {{ totalPayable | number:'1.2-2' }}</span>
+        <span class="tot-label">Total Payable</span>
+        <span class="amt-box amt-box-bold">Rs {{ totalPayable | number:'1.2-2' }}</span>
       </div>
     </ion-card-content>
   </ion-card>

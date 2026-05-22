@@ -100,16 +100,16 @@
   <ion-card class="totals-card">
     <ion-card-content>
       <div class="total-row">
-        <span>Subtotal</span>
-        <span>Rs {{ subtotal | number:'1.2-2' }}</span>
+        <span class="tot-label">Subtotal</span>
+        <span class="amt-box">Rs {{ subtotal | number:'1.2-2' }}</span>
       </div>
       <div class="total-row awt-input-row">
         <span class="awt-label">AWT <input type="number" [(ngModel)]="awtPercent" class="awt-pct-input" min="0" max="100" placeholder="0"> %</span>
-        <span>Rs {{ awtAmount | number:'1.2-2' }}</span>
+        <span class="amt-box">Rs {{ awtAmount | number:'1.2-2' }}</span>
       </div>
       <div class="total-row payable-row">
-        <span>Total Payable</span>
-        <span>Rs {{ totalPayable | number:'1.2-2' }}</span>
+        <span class="tot-label">Total Payable</span>
+        <span class="amt-box amt-box-bold">Rs {{ totalPayable | number:'1.2-2' }}</span>
       </div>
     </ion-card-content>
   </ion-card>
@@ -118,10 +118,10 @@
   <ion-card class="form-card">
     <ion-card-content>
       <div class="section-title" style="margin-top:0; margin-bottom:8px">Payment</div>
-      <ion-item lines="full">
-        <ion-label position="stacked">Amount Paid <span class="hint">(leave 0 if not paid now)</span></ion-label>
-        <ion-input type="number" [(ngModel)]="amountPaid" placeholder="0.00" min="0"></ion-input>
-      </ion-item>
+      <div class="field-block">
+        <label class="field-label">Amount Paid <span class="hint">(leave 0 if not paid now)</span></label>
+        <input type="number" [(ngModel)]="amountPaid" class="native-input" placeholder="0.00" min="0">
+      </div>
       <div class="field-block" *ngIf="amountPaid > 0">
         <label class="field-label">Payment Method</label>
         <select [(ngModel)]="paymentMethod" class="native-select">
