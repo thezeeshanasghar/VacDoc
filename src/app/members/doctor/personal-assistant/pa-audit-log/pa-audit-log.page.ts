@@ -33,18 +33,7 @@ export class PaAuditLogPage implements OnInit {
 
   async ngOnInit() {
     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
-    this.loadPaList();
     this.loadLogs();
-  }
-
-  loadPaList() {
-    this.paService.getPAsByDoctorId(this.doctorId).subscribe({
-      next: (res: any) => {
-        this.personalAssistants = Array.isArray(res) ? res : [];
-        if (!this.personalAssistants.length) { this.buildPaListFromLogs(); }
-      },
-      error: () => { this.buildPaListFromLogs(); }
-    });
   }
 
   buildPaListFromLogs() {
@@ -68,7 +57,7 @@ export class PaAuditLogPage implements OnInit {
         this.loading = false;
         this.total = res.total || 0;
         this.logs = res.logs || [];
-        if (!this.personalAssistants.length) { this.buildPaListFromLogs(); }
+        this.buildPaListFromLogs();
       },
       error: () => {
         load.dismiss();
