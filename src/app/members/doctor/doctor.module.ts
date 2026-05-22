@@ -27,20 +27,12 @@ const routes: Routes = [
     loadChildren: () => import('./schedule/schedule.module').then(m => m.SchedulePageModule)
   },
   {
-    path: "brand-amount",
-    loadChildren: () => import('./brand-amount/brand-amount.module').then(m => m.BrandAmountPageModule)
-  },
-  {
     path: "password",
     loadChildren: () => import('./password/password.module').then(m => m.PasswordPageModule)
   },
   {
     path: "sms-setting",
     loadChildren: () => import('./sms-setting/sms-setting.module').then(m => m.SMSSettingPageModule)
-  },
-  {
-    path: "stock-management",
-    loadChildren: () => import('./stock-management/stock-management.module').then(m => m.StockManagementPageModule)
   },
   {
     path: "analytics",

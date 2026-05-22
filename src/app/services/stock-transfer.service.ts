@@ -3,97 +3,26 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
-export interface AvailableBatchDTO {
-  BrandId: number;
-  BrandName: string;
-  BatchLot: string | null;
-  Expiry: string | null;
-  AvailableQuantity: number;
-  CostPrice: number;
-}
-
-export interface StockTransferItemDTO {
-  BrandId: number;
-  BrandName?: string;
-  BatchNumber: string | null;
-  ExpiryDate: string | null;
-  Quantity: number;
-  CostPrice: number;
-}
-
-export interface StockTransferRequestDTO {
-  FromClinicId: number;
-  ToClinicId: number;
-  DoctorId: number;
-  Items: StockTransferItemDTO[];
-}
-
-export interface StockTransferHistoryDTO {
-  Id: number;
-  CreatedAt: string;
-  FromClinicId: number;
-  FromClinicName: string;
-  ToClinicId: number;
-  ToClinicName: string;
-  BrandId: number;
-  BrandName: string;
-  BatchNumber: string | null;
-  ExpiryDate: string | null;
-  Quantity: number;
-  CostPrice: number;
-  TotalValue: number;
-  CreatedBy: number;
-  TransferredByName: string;
-}
-
-export interface TransferResponse<T> {
-  IsSuccess: boolean;
-  Message: string;
-  ResponseData: T;
-}
-
+// Stub service — stock transfer API endpoints removed pending stock module rebuild
 @Injectable({ providedIn: 'root' })
 export class StockTransferService {
-  private readonly base = environment.BASE_URL;
+  private apiUrl = environment.BASE_URL;
 
   constructor(private http: HttpClient) {}
 
-  getAvailableBatches(brandId: number, clinicId: number): Observable<TransferResponse<AvailableBatchDTO[]>> {
-    return this.http.get<TransferResponse<AvailableBatchDTO[]>>(
-      `${this.base}stock/available-batches?brandId=${brandId}&clinicId=${clinicId}`
-    );
+  getHistory(params: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}stocktransfer/history`, { params });
   }
 
-  createTransfer(dto: StockTransferRequestDTO): Observable<TransferResponse<StockTransferHistoryDTO[]>> {
-    return this.http.post<TransferResponse<StockTransferHistoryDTO[]>>(`${this.base}StockTransfer`, dto);
+  create(dto: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}stocktransfer`, dto);
   }
 
-  downloadTransferPdf(ids: string): Observable<Blob> {
-    return this.http.get(`${this.base}StockTransfer/pdf?ids=${ids}`, { responseType: 'blob' });
+  editTransfer(id: number, dto: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}stocktransfer/${id}`, dto);
   }
 
-  editTransfer(id: number, dto: { Quantity: number; CostPrice: number; BatchNumber: string | null; ExpiryDate: string | null }): Observable<TransferResponse<string>> {
-    return this.http.put<TransferResponse<string>>(`${this.base}StockTransfer/${id}`, dto);
-  }
-
-  deleteTransfer(id: number): Observable<TransferResponse<string>> {
-    return this.http.delete<TransferResponse<string>>(`${this.base}StockTransfer/${id}`);
-  }
-
-  getHistory(params: {
-    fromClinicId?: number;
-    toClinicId?: number;
-    brandId?: number;
-    fromDate?: string;
-    toDate?: string;
-    doctorId?: number;
-  }): Observable<TransferResponse<StockTransferHistoryDTO[]>> {
-    const q = Object.entries(params)
-      .filter(([, v]) => v !== undefined && v !== null && v !== '')
-      .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
-      .join('&');
-    return this.http.get<TransferResponse<StockTransferHistoryDTO[]>>(
-      `${this.base}StockTransfer/history${q ? '?' + q : ''}`
-    );
+  deleteTransfer(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}stocktransfer/${id}`);
   }
 }

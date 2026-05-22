@@ -39,7 +39,6 @@ export class DashboardPage implements OnInit {
 
   showPatients: boolean = true;
   showAlerts: boolean = true;
-  showStock: boolean = true;
   showAnalytics: boolean = true;
   showSchedule: boolean = true;
   showClinics: boolean = true;
@@ -90,17 +89,13 @@ export class DashboardPage implements OnInit {
         const pa = await this.paService.getPa(this.user.PAId).toPromise();
         this.showPatients  = (pa && pa.AllowChild)    || false;
         this.showAlerts    = (pa && pa.AllowAlert)    || false;
-        this.showStock     = (pa && pa.AllowStock)    || false;
         this.showAnalytics = (pa && pa.AllowAnalytics) || false;
         this.showSchedule  = (pa && pa.AllowSchedule)  || false;
         this.showClinics   = (pa && pa.AllowClinic)   || false;
       } catch (e) {
-        this.showPatients = this.showAlerts = this.showStock =
+        this.showPatients = this.showAlerts =
           this.showAnalytics = this.showSchedule = this.showClinics = false;
       }
-    } else {
-      const doctor = await this.storage.get(environment.DOCTOR);
-      this.showStock = doctor ? doctor.AllowInventory !== false : true;
     }
   }
 

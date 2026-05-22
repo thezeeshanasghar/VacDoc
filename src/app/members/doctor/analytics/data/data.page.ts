@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { StockService,BillDetails, Response } from 'src/app/services/stock.service';
 import { LoadingController, ToastController } from "@ionic/angular";
 import { ClinicService } from "src/app/services/clinic.service";
 import { Storage } from "@ionic/storage";

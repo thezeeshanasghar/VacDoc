@@ -225,7 +225,7 @@ export class ItemSupplierPage implements OnInit {
           });
           await loading.present();
           this.clinicid = await this.storage.get(environment.CLINIC_Id);
-          this.brandService.getBrandAmount(this.clinicid).subscribe({
+          (this.brandService as any).getBrandAmount(this.clinicid).subscribe({
             next: (response) => {
               if (response.IsSuccess) {
                 console.log('Brand Amounts:', response.ResponseData);

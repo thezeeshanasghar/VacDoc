@@ -598,7 +598,7 @@ export class MembersPage implements OnInit {
           this.hasClinics = clinics && clinics.length > 0;
           const permissions = await this.checkPermissions(this.user.PAId);
           if (permissions) {
-            const { AllowStock, AllowAlert, AllowClinic, AllowAnalytics, AllowVacation, AllowSchedule, AllowChild } = permissions;      
+            const { AllowClinic, AllowAnalytics, AllowVacation, AllowSchedule, AllowChild } = permissions;
 
           if (data === "PA") {
             this.appPages = [
@@ -608,14 +608,6 @@ export class MembersPage implements OnInit {
                 icon: "home-outline",
               }
             ];
-
-            if (AllowStock && inventoryAllowed) {
-              this.appPages.push({
-                title: "Stock Management",
-                icon: "cube-outline",
-                url: "/members/doctor/brand-amount",
-              });
-            }
 
             if (AllowClinic) {
               this.appPages.push({
@@ -723,14 +715,6 @@ export class MembersPage implements OnInit {
                   title: "Agent Module",
                   icon: "people-outline",
                   url: "/members/doctor/agent-module",
-                });
-              }
-
-              if (inventoryAllowed) {
-                this.appPages.push({
-                  title: "Stock Management",
-                  icon: "cube-outline",
-                  url: "/members/doctor/brand-amount",
                 });
               }
 

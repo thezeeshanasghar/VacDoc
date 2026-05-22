@@ -48,7 +48,7 @@ export class TotalPage implements OnInit {
     });
     await loading.present();
 
-    this.brandService.getBrandAmount(id).subscribe(
+    (this.brandService as any).getBrandAmount(id).subscribe(
       (res: Response<BrandAmountDTO[]>) => {
         loading.dismiss();
         if (res.IsSuccess) {
@@ -78,7 +78,7 @@ export class TotalPage implements OnInit {
 
     await loading.present();
 
-    await this.brandService.putBrandAmount(this.brandAmounts)
+    await (this.brandService as any).putBrandAmount(this.brandAmounts)
       .subscribe(res => {
         if (res.IsSuccess) {
           loading.dismiss();
