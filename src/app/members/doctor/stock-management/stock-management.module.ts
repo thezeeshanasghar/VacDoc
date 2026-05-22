@@ -21,6 +21,14 @@ const routes: Routes = [
   {
     path: 'supplier-ledger/:id',
     loadChildren: () => import('../financial/supplier-ledger/supplier-ledger.module').then(m => m.SupplierLedgerPageModule)
+  },
+  {
+    path: 'purchase-bills',
+    loadChildren: () => import('./purchase-bills/purchase-bills.module').then(m => m.PurchaseBillsPageModule)
+  },
+  {
+    path: 'purchase-bills/add',
+    loadChildren: () => import('./purchase-bills/add-bill/add-bill.module').then(m => m.AddBillPageModule)
   }
 ];
 

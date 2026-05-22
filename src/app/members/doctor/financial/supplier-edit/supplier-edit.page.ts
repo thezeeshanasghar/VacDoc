@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
+import { Storage } from '@ionic/storage';
 import { SupplierService } from 'src/app/services/supplier.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-supplier-edit',
@@ -14,6 +16,7 @@ export class SupplierEditPage implements OnInit {
   fg: FormGroup;
   isNew: boolean = false;
   supplierId: any = null;
+  doctorId: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -22,9 +25,11 @@ export class SupplierEditPage implements OnInit {
     private supplierService: SupplierService,
     private loadingController: LoadingController,
     private toastService: ToastService,
+    private storage: Storage,
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.doctorId = await this.storage.get(environment.DOCTOR_Id);
     const idParam = this.route.snapshot.paramMap.get('id');
     this.isNew = idParam === 'new';
     this.supplierId = this.isNew ? null : Number(idParam);
@@ -71,9 +76,10 @@ export class SupplierEditPage implements OnInit {
     const loading = await this.loadingController.create({ message: 'Saving...' });
     await loading.present();
 
+    const payload = Object.assign({}, this.fg.value, { DoctorId: this.doctorId });
     const call = this.isNew
-      ? this.supplierService.create(this.fg.value)
-      : this.supplierService.update(this.supplierId, this.fg.value);
+      ? this.supplierService.create(payload)
+      : this.supplierService.update(this.supplierId, payload);
 
     call.subscribe(
       res => {

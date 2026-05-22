@@ -1,0 +1,103 @@
+.empty-state {
+  text-align: center;
+  margin-top: 60px;
+  color: #78909C;
+
+  ion-icon {
+    font-size: 56px;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 16px;
+    margin: 4px 0;
+    font-weight: 600;
+  }
+
+  .empty-sub {
+    font-size: 13px;
+    font-weight: 400;
+  }
+}
+
+.bill-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.bill-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.bill-no {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1A1A2E;
+}
+
+.paid-badge {
+  font-size: 11px;
+}
+
+.bill-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.bill-supplier {
+  font-size: 13px;
+  color: #1565C0;
+  font-weight: 600;
+}
+
+.bill-date {
+  font-size: 12px;
+  color: #78909C;
+}
+
+.bill-lines-count {
+  font-size: 12px;
+  color: #546E7A;
+  margin-bottom: 10px;
+}
+
+.bill-amounts {
+  border-top: 1px solid #EEF2F7;
+  padding-top: 8px;
+  margin-bottom: 10px;
+}
+
+.amt-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+
+.amt-label {
+  font-size: 13px;
+  color: #546E7A;
+}
+
+.amt-val {
+  font-size: 13px;
+  color: #1A1A2E;
+}
+
+.total-row .amt-label,
+.total-row .amt-val {
+  font-weight: 700;
+  font-size: 15px;
+  color: #0D47A1;
+}
+
+.bill-actions {
+  display: flex;
+  justify-content: flex-end;
+}

@@ -1,0 +1,58 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/stock-management"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Purchase Bills</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <div *ngIf="bills.length === 0" class="empty-state">
+    <ion-icon name="receipt-outline"></ion-icon>
+    <p>No purchase bills yet.</p>
+    <p class="empty-sub">Tap + to record your first stock entry.</p>
+  </div>
+
+  <div *ngFor="let bill of bills" class="bill-card">
+    <div class="bill-header">
+      <span class="bill-no">{{ bill.BillNo }}</span>
+      <ion-badge [color]="bill.IsPaid ? 'success' : 'warning'" class="paid-badge">
+        {{ bill.IsPaid ? 'Paid' : 'Unpaid' }}
+      </ion-badge>
+    </div>
+    <div class="bill-meta">
+      <span class="bill-supplier">{{ bill.SupplierName || 'No supplier' }}</span>
+      <span class="bill-date">{{ formatDate(bill.BillDate) }}</span>
+    </div>
+    <div class="bill-lines-count">{{ bill.LineCount }} line{{ bill.LineCount !== 1 ? 's' : '' }}</div>
+    <div class="bill-amounts">
+      <div class="amt-row">
+        <span class="amt-label">Subtotal</span>
+        <span class="amt-val">Rs {{ bill.TotalAmount | number:'1.2-2' }}</span>
+      </div>
+      <div class="amt-row" *ngIf="bill.AwtPercent > 0">
+        <span class="amt-label">AWT ({{ bill.AwtPercent }}%)</span>
+        <span class="amt-val">Rs {{ bill.AwtAmount | number:'1.2-2' }}</span>
+      </div>
+      <div class="amt-row total-row">
+        <span class="amt-label">Total Payable</span>
+        <span class="amt-val">Rs {{ bill.TotalPayable | number:'1.2-2' }}</span>
+      </div>
+    </div>
+    <div class="bill-actions">
+      <ion-button fill="outline" color="danger" size="small" (click)="confirmReverse(bill)" [disabled]="bill.IsPaid">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Reverse
+      </ion-button>
+    </div>
+  </div>
+
+</ion-content>
+
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button color="primary" (click)="addBill()">
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

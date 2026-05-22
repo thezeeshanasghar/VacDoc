@@ -1,0 +1,118 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/stock-management/purchase-bills"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Add Purchase Bill</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Bill Header -->
+  <ion-card class="form-card">
+    <ion-card-content>
+
+      <ion-item lines="full">
+        <ion-label position="stacked">Bill No <span class="hint">(auto if blank)</span></ion-label>
+        <ion-input [(ngModel)]="billNo" placeholder="BILL-2026-0001" clearInput></ion-input>
+      </ion-item>
+
+      <ion-item lines="full">
+        <ion-label position="stacked">Bill Date *</ion-label>
+        <ion-input type="date" [(ngModel)]="billDate"></ion-input>
+      </ion-item>
+
+      <ion-item lines="full">
+        <ion-label position="stacked">Supplier</ion-label>
+        <ion-select [(ngModel)]="supplierId" placeholder="Select supplier" interface="action-sheet">
+          <ion-select-option *ngFor="let s of suppliers" [value]="s.Id">{{ s.Name }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-label position="stacked">AWT %</ion-label>
+        <ion-input type="number" [(ngModel)]="awtPercent" min="0" max="100" placeholder="0"></ion-input>
+      </ion-item>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Line Items -->
+  <div class="section-title">Line Items</div>
+
+  <ion-card class="line-card" *ngFor="let line of lines; let i = index">
+    <ion-card-content>
+      <div class="line-header">
+        <span class="line-num">Item {{ i + 1 }}</span>
+        <ion-button fill="clear" color="danger" size="small" (click)="removeLine(i)" *ngIf="lines.length > 1">
+          <ion-icon name="close-circle-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+
+      <ion-item lines="full">
+        <ion-label position="stacked">Brand *</ion-label>
+        <ion-select [(ngModel)]="line.brandId" placeholder="Select brand" interface="action-sheet">
+          <ion-select-option *ngFor="let b of brands" [value]="b.BrandId">
+            {{ b.VaccineName }} — {{ b.BrandName }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item lines="full">
+        <ion-label position="stacked">Batch / Lot *</ion-label>
+        <ion-input [(ngModel)]="line.batchLot" placeholder="e.g. B2024-001" clearInput></ion-input>
+      </ion-item>
+
+      <ion-item lines="full">
+        <ion-label position="stacked">Expiry Date *</ion-label>
+        <ion-input type="date" [(ngModel)]="line.expiry"></ion-input>
+      </ion-item>
+
+      <div class="qty-price-row">
+        <ion-item lines="none" class="qty-item">
+          <ion-label position="stacked">Qty *</ion-label>
+          <ion-input type="number" [(ngModel)]="line.qty" min="1" placeholder="0"></ion-input>
+        </ion-item>
+        <ion-item lines="none" class="price-item">
+          <ion-label position="stacked">Unit Price *</ion-label>
+          <ion-input type="number" [(ngModel)]="line.unitPrice" min="0" step="0.01" placeholder="0.00"></ion-input>
+        </ion-item>
+      </div>
+
+      <div class="line-total" *ngIf="line.qty && line.unitPrice">
+        Line Total: <strong>Rs {{ (line.qty * line.unitPrice) | number:'1.2-2' }}</strong>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="block" fill="outline" color="primary" (click)="addLine()" style="margin-bottom: 16px;">
+    <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+    Add Item
+  </ion-button>
+
+  <!-- Totals -->
+  <ion-card class="totals-card">
+    <ion-card-content>
+      <div class="total-row">
+        <span>Subtotal</span>
+        <span>Rs {{ subtotal | number:'1.2-2' }}</span>
+      </div>
+      <div class="total-row" *ngIf="awtPercent > 0">
+        <span>AWT ({{ awtPercent }}%)</span>
+        <span>Rs {{ awtAmount | number:'1.2-2' }}</span>
+      </div>
+      <div class="total-row payable-row">
+        <span>Total Payable</span>
+        <span>Rs {{ totalPayable | number:'1.2-2' }}</span>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="block" color="primary" (click)="save()" style="margin-top: 8px; margin-bottom: 32px;">
+    <ion-icon name="save-outline" slot="start"></ion-icon>
+    Save Bill
+  </ion-button>
+
+</ion-content>

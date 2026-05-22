@@ -1,0 +1,70 @@
+.form-card, .line-card, .totals-card {
+  margin: 0 0 12px 0;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.hint {
+  font-size: 11px;
+  color: #78909C;
+  font-weight: 400;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #546E7A;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 16px 0 8px 4px;
+}
+
+.line-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.line-num {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1565C0;
+}
+
+.qty-price-row {
+  display: flex;
+  gap: 8px;
+}
+
+.qty-item {
+  flex: 1;
+}
+
+.price-item {
+  flex: 2;
+}
+
+.line-total {
+  font-size: 13px;
+  color: #546E7A;
+  text-align: right;
+  padding: 4px 0 0;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 14px;
+  color: #1A1A2E;
+}
+
+.payable-row {
+  border-top: 1px solid #EEF2F7;
+  margin-top: 6px;
+  padding-top: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0D47A1;
+}

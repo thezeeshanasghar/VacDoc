@@ -1,0 +1,171 @@
+import { Component, OnInit } from '@angular/core';
+import { LoadingController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { Storage } from '@ionic/storage';
+import { StockService } from 'src/app/services/stock.service';
+import { SupplierService } from 'src/app/services/supplier.service';
+import { BrandService } from 'src/app/services/brand.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { environment } from 'src/environments/environment';
+
+@Component({
+  selector: 'app-add-bill',
+  templateUrl: './add-bill.page.html',
+  styleUrls: ['./add-bill.page.scss'],
+})
+export class AddBillPage implements OnInit {
+  doctorId: number = 0;
+  clinicId: number = 0;
+
+  billNo: string = '';
+  billDate: string = '';
+  supplierId: number = null;
+  awtPercent: number = 0;
+
+  suppliers: any[] = [];
+  brands: any[] = [];
+
+  lines: any[] = [];
+
+  get subtotal(): number {
+    return this.lines.reduce((sum, l) => sum + (l.qty || 0) * (l.unitPrice || 0), 0);
+  }
+
+  get awtAmount(): number {
+    return Math.round(this.subtotal * (this.awtPercent || 0) / 100 * 100) / 100;
+  }
+
+  get totalPayable(): number {
+    return Math.round((this.subtotal + this.awtAmount) * 100) / 100;
+  }
+
+  constructor(
+    private stockService: StockService,
+    private supplierService: SupplierService,
+    private brandService: BrandService,
+    private loadingController: LoadingController,
+    private router: Router,
+    private storage: Storage,
+    private toastService: ToastService,
+  ) {}
+
+  async ngOnInit() {
+    this.doctorId = await this.storage.get(environment.DOCTOR_Id);
+    const clinic = await this.storage.get(environment.ON_CLINIC);
+    this.clinicId = clinic ? clinic.Id : 0;
+
+    const today = new Date();
+    const mm = (today.getMonth() + 1).toString().padStart(2, '0');
+    const dd = today.getDate().toString().padStart(2, '0');
+    this.billDate = today.getFullYear() + '-' + mm + '-' + dd;
+
+    this.addLine();
+    this.loadSuppliers();
+    this.loadBrands();
+  }
+
+  loadSuppliers() {
+    this.supplierService.getAll(this.doctorId).subscribe(
+      (res: any) => {
+        if (res.IsSuccess) {
+          this.suppliers = (res.ResponseData || []).filter((s: any) => s.IsActive);
+        }
+      },
+      () => {}
+    );
+  }
+
+  loadBrands() {
+    this.brandService.getBrandAmount(this.doctorId, this.clinicId).subscribe(
+      (res: any) => {
+        if (res.IsSuccess) {
+          this.brands = res.ResponseData || [];
+        }
+      },
+      () => {}
+    );
+  }
+
+  addLine() {
+    this.lines.push({ brandId: null, batchLot: '', expiry: '', qty: null, unitPrice: null });
+  }
+
+  removeLine(i: number) {
+    this.lines.splice(i, 1);
+  }
+
+  brandLabel(brandId: number): string {
+    const b = this.brands.find((x: any) => x.BrandId === brandId);
+    return b ? b.VaccineName + ' - ' + b.BrandName : '';
+  }
+
+  async save() {
+    if (!this.billDate) {
+      this.toastService.create('Bill date is required', 'danger');
+      return;
+    }
+    if (this.lines.length === 0) {
+      this.toastService.create('Add at least one line item', 'danger');
+      return;
+    }
+    for (let i = 0; i < this.lines.length; i++) {
+      const l = this.lines[i];
+      if (!l.brandId) {
+        this.toastService.create('Select brand for line ' + (i + 1), 'danger');
+        return;
+      }
+      if (!l.batchLot || l.batchLot.trim() === '') {
+        this.toastService.create('Batch/Lot required for line ' + (i + 1), 'danger');
+        return;
+      }
+      if (!l.expiry) {
+        this.toastService.create('Expiry date required for line ' + (i + 1), 'danger');
+        return;
+      }
+      if (!l.qty || l.qty <= 0) {
+        this.toastService.create('Quantity must be > 0 for line ' + (i + 1), 'danger');
+        return;
+      }
+      if (!l.unitPrice || l.unitPrice <= 0) {
+        this.toastService.create('Unit price must be > 0 for line ' + (i + 1), 'danger');
+        return;
+      }
+    }
+
+    const loading = await this.loadingController.create({ message: 'Saving...' });
+    await loading.present();
+
+    const payload = {
+      BillNo: this.billNo || null,
+      BillDate: this.billDate,
+      SupplierId: this.supplierId || null,
+      SupplierName: null,
+      DoctorId: this.doctorId,
+      ClinicId: this.clinicId,
+      AwtPercent: this.awtPercent || 0,
+      Lines: this.lines.map((l: any) => ({
+        BrandId: l.brandId,
+        BatchLot: l.batchLot,
+        Expiry: l.expiry,
+        Quantity: l.qty,
+        UnitPrice: l.unitPrice
+      }))
+    };
+
+    this.stockService.createBill(payload).subscribe(
+      (res: any) => {
+        loading.dismiss();
+        if (res.IsSuccess) {
+          this.toastService.create('Bill saved — ' + res.ResponseData.BillNo, 'success');
+          this.router.navigate(['/members/doctor/stock-management/purchase-bills']);
+        } else {
+          this.toastService.create(res.Message || 'Failed to save', 'danger');
+        }
+      },
+      (err: any) => {
+        loading.dismiss();
+        this.toastService.create('Failed to save bill', 'danger');
+      }
+    );
+  }
+}

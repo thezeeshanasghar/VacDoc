@@ -51,4 +51,20 @@ export class StockService {
   getItemsSupplierReportFile(clinicId: number, supplier: any, fromDate: any, toDate: any): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}stock/items-supplier-report?clinicId=${clinicId}&supplier=${supplier}&from=${fromDate}&to=${toDate}`, { observe: 'response', responseType: 'blob' as 'json' });
   }
+
+  getBills(doctorId: number, clinicId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}bill?doctorId=${doctorId}&clinicId=${clinicId}`);
+  }
+
+  getBillById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}bill/${id}`);
+  }
+
+  createBill(dto: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}bill`, dto);
+  }
+
+  reverseBill(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}bill/${id}/reverse`);
+  }
 }
