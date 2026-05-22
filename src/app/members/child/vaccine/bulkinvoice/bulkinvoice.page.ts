@@ -34,6 +34,7 @@ export class BulkInvoicePage implements OnInit {
   bulkDatadiff: any;
   invoiceStatus: any = { isSubmitted: false, editCount: 0, canEdit: true };
   paId: any = null;
+  parentDownloadedWarning: boolean = false;
   // invoiceNumber: string;
   constructor(
     private loadingController: LoadingController,
@@ -70,6 +71,7 @@ export class BulkInvoicePage implements OnInit {
     this.storage.get(environment.DOCTOR_Id).then(val => {
       this.doctorId = val;
       this.loadInvoiceStatus();
+      this.loadInvoiceWarning();
     });
     this.childId = this.activatedRoute.snapshot.paramMap.get("id");
     this.currentDate = this.activatedRoute.snapshot.paramMap.get("childId");
@@ -102,6 +104,16 @@ export class BulkInvoicePage implements OnInit {
       next: (res: any) => { this.invoiceStatus = res || { isSubmitted: false, editCount: 0, canEdit: true }; },
       error: () => {}
     });
+  }
+
+  loadInvoiceWarning() {
+    if (!this.childId || !this.currentDate) { return; }
+    const dateStr = new Date(this.currentDate).toISOString().split('T')[0];
+    const url = `${this.API_VACCINE}child/${this.childId}/${dateStr}/invoice-warning`;
+    fetch(url, { headers: { 'Content-Type': 'application/json' } })
+      .then(r => r.json())
+      .then((res: any) => { this.parentDownloadedWarning = res.parentDownloaded === true; })
+      .catch(() => {});
   }
 
   loadConsultationFeeFromOnlineClinic() {
@@ -259,6 +271,22 @@ export class BulkInvoicePage implements OnInit {
   }
 
   async saveanddownload() {
+    if (this.parentDownloadedWarning) {
+      const alert = await this.alertController.create({
+        header: 'Warning',
+        message: 'The parent has already downloaded this invoice. Saving will cancel the current invoice and issue a new invoice number. Do you want to continue?',
+        buttons: [
+          { text: 'Cancel', role: 'cancel' },
+          { text: 'Continue', handler: () => { this.doSaveAndDownload(); } }
+        ]
+      });
+      await alert.present();
+    } else {
+      this.doSaveAndDownload();
+    }
+  }
+
+  private async doSaveAndDownload() {
     this.consultationfee = this.fg.value.IsConsultationFee ? Number(this.fg.value.ConsultationFee) : 0;
     const dto = this.buildInvoiceDTO(this.consultationfee);
     const loading = await this.loadingController.create({ message: "Loading" });
