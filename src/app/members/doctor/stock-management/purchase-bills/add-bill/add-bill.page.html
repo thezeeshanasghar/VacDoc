@@ -42,50 +42,42 @@
   <!-- Line Items -->
   <div class="section-title">Line Items</div>
 
-  <ion-card class="line-card" *ngFor="let line of lines; let i = index">
-    <ion-card-content>
-      <div class="line-header">
-        <span class="line-num">Item {{ i + 1 }}</span>
-        <ion-button fill="clear" color="danger" size="small" (click)="removeLine(i)" *ngIf="lines.length > 1">
-          <ion-icon name="close-circle-outline" slot="icon-only"></ion-icon>
-        </ion-button>
-      </div>
+  <div class="lines-table-wrap">
+    <!-- Header row -->
+    <div class="lines-table-header">
+      <span class="col-brand">Brand</span>
+      <span class="col-batch">Batch</span>
+      <span class="col-expiry">Expiry</span>
+      <span class="col-qty">Qty</span>
+      <span class="col-price">Price</span>
+      <span class="col-del"></span>
+    </div>
 
-      <div class="field-block">
-        <label class="field-label">Brand *</label>
-        <select [(ngModel)]="line.brandId" class="native-select">
-          <option [ngValue]="null">— Select brand —</option>
-          <option *ngFor="let b of brands" [ngValue]="b.BrandId">{{ b.VaccineName }} — {{ b.BrandName }}</option>
+    <!-- Data rows -->
+    <div class="lines-table-row" *ngFor="let line of lines; let i = index">
+      <div class="col-brand">
+        <select [(ngModel)]="line.brandId" class="cell-select">
+          <option [ngValue]="null">— brand —</option>
+          <option *ngFor="let b of brands" [ngValue]="b.BrandId">{{ b.VaccineName }} / {{ b.BrandName }}</option>
         </select>
       </div>
-
-      <ion-item lines="full">
-        <ion-label position="stacked">Batch / Lot *</ion-label>
-        <ion-input [(ngModel)]="line.batchLot" placeholder="e.g. B2024-001" clearInput></ion-input>
-      </ion-item>
-
-      <ion-item lines="full">
-        <ion-label position="stacked">Expiry Date *</ion-label>
-        <ion-input type="date" [(ngModel)]="line.expiry"></ion-input>
-      </ion-item>
-
-      <div class="qty-price-row">
-        <ion-item lines="none" class="qty-item">
-          <ion-label position="stacked">Qty *</ion-label>
-          <ion-input type="number" [(ngModel)]="line.qty" min="1" placeholder="0"></ion-input>
-        </ion-item>
-        <ion-item lines="none" class="price-item">
-          <ion-label position="stacked">Unit Price *</ion-label>
-          <ion-input type="number" [(ngModel)]="line.unitPrice" min="0" step="0.01" placeholder="0.00"></ion-input>
-        </ion-item>
+      <div class="col-batch">
+        <input type="text" [(ngModel)]="line.batchLot" class="cell-input" placeholder="Batch">
       </div>
-
-      <div class="line-total" *ngIf="line.qty && line.unitPrice">
-        Line Total: <strong>Rs {{ (line.qty * line.unitPrice) | number:'1.2-2' }}</strong>
+      <div class="col-expiry">
+        <input type="date" [(ngModel)]="line.expiry" class="cell-input cell-date">
       </div>
-
-    </ion-card-content>
-  </ion-card>
+      <div class="col-qty">
+        <input type="number" [(ngModel)]="line.qty" class="cell-input cell-num" placeholder="0" min="1">
+      </div>
+      <div class="col-price">
+        <input type="number" [(ngModel)]="line.unitPrice" class="cell-input cell-num" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <div class="col-del">
+        <button class="del-btn" (click)="removeLine(i)" *ngIf="lines.length > 1">✕</button>
+      </div>
+    </div>
+  </div>
 
   <ion-button expand="block" fill="outline" color="primary" (click)="addLine()" style="margin-bottom: 16px;">
     <ion-icon name="add-circle-outline" slot="start"></ion-icon>

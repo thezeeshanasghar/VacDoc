@@ -28,7 +28,7 @@
   }
 }
 
-.form-card, .line-card, .totals-card {
+.form-card, .totals-card {
   margin: 0 0 12px 0;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -49,37 +49,106 @@
   margin: 16px 0 8px 4px;
 }
 
-.line-header {
-  display: flex;
-  justify-content: space-between;
+// Compact line items table
+.lines-table-wrap {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  overflow: hidden;
+  margin-bottom: 12px;
+  overflow-x: auto;
+}
+
+.lines-table-header,
+.lines-table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 60px 80px 28px;
   align-items: center;
-  margin-bottom: 4px;
+  gap: 4px;
+  padding: 0 8px;
 }
 
-.line-num {
+.lines-table-header {
+  background: #EEF2F7;
+  padding: 6px 8px;
+  border-bottom: 1px solid #CFD8DC;
+
+  span {
+    font-size: 11px;
+    font-weight: 700;
+    color: #546E7A;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+}
+
+.lines-table-row {
+  border-bottom: 1px solid #F5F7FA;
+  min-height: 44px;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.cell-select {
+  width: 100%;
+  font-size: 12px;
+  color: #1A1A2E;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 2px 0;
+  appearance: auto;
+  cursor: pointer;
+
+  &:focus {
+    background: #EEF2F7;
+    border-radius: 4px;
+  }
+}
+
+.cell-input {
+  width: 100%;
   font-size: 13px;
-  font-weight: 700;
-  color: #1565C0;
+  color: #1A1A2E;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #CFD8DC;
+  outline: none;
+  padding: 4px 2px;
+  box-sizing: border-box;
+
+  &:focus {
+    border-bottom-color: #1565C0;
+    background: #EEF2F7;
+  }
 }
 
-.qty-price-row {
-  display: flex;
-  gap: 8px;
+.cell-date {
+  font-size: 12px;
 }
 
-.qty-item {
-  flex: 1;
-}
-
-.price-item {
-  flex: 2;
-}
-
-.line-total {
-  font-size: 13px;
-  color: #546E7A;
+.cell-num {
   text-align: right;
-  padding: 4px 0 0;
+}
+
+.del-btn {
+  background: none;
+  border: none;
+  color: #E53935;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+.col-qty, .col-price {
+  text-align: right;
 }
 
 .total-row {
