@@ -50,6 +50,7 @@ export interface BillDetails {
   IsPaid: boolean;
   totalAmount: number;
   Quantity: number;
+  OriginalQuantity: number;
   StockAmount: number;
   PaidDate: Date;
   stocks: StockDTO[];

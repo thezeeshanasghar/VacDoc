@@ -112,7 +112,7 @@ export class EditPage implements OnInit {
             id:        item.Id,
             brandId:   item.BrandId,
             brandName: item.BrandName || item.VaccineName || '',
-            quantity:  item.Quantity,
+            quantity:  item.OriginalQuantity > 0 ? item.OriginalQuantity : item.Quantity,
             price:     item.StockAmount,
             batchLot:  item.BatchLot || '',
             expiry:    item.Expiry ? item.Expiry.split('T')[0] : '',
