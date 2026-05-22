@@ -47,16 +47,8 @@ const routes: Routes = [
     loadChildren: () => import('./financial/reporting/reporting.module').then(m => m.ReportingPageModule)
   },
   {
-    path: "financial/suppliers",
-    loadChildren: () => import('./financial/supplier-list/supplier-list.module').then(m => m.SupplierListPageModule)
-  },
-  {
-    path: "financial/supplier-edit/:id",
-    loadChildren: () => import('./financial/supplier-edit/supplier-edit.module').then(m => m.SupplierEditPageModule)
-  },
-  {
-    path: "financial/supplier-ledger/:id",
-    loadChildren: () => import('./financial/supplier-ledger/supplier-ledger.module').then(m => m.SupplierLedgerPageModule)
+    path: "stock-management",
+    loadChildren: () => import('./stock-management/stock-management.module').then(m => m.StockManagementPageModule)
   },
   {
     path: "agent-module",

@@ -94,7 +94,7 @@ export class ItemSupplierPage implements OnInit {
   }
 
   loadSuppliers() {
-    this.supplierService.getAll().subscribe(
+    this.supplierService.getAll(this.doctorId).subscribe(
       (res: any) => {
         if (res.IsSuccess) {
           this.agents = res.ResponseData.filter((s: any) => s.IsActive);

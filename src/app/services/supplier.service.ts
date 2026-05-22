@@ -10,8 +10,8 @@ export class SupplierService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}supplier`);
+  getAll(doctorId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}supplier?doctorId=${doctorId}`);
   }
 
   getById(id: number): Observable<any> {

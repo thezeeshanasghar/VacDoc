@@ -1,0 +1,31 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
+import { RouterModule, Routes } from '@angular/router';
+import { StockManagementPage } from './stock-management.page';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: StockManagementPage
+  },
+  {
+    path: 'suppliers',
+    loadChildren: () => import('../financial/supplier-list/supplier-list.module').then(m => m.SupplierListPageModule)
+  },
+  {
+    path: 'supplier-edit/:id',
+    loadChildren: () => import('../financial/supplier-edit/supplier-edit.module').then(m => m.SupplierEditPageModule)
+  },
+  {
+    path: 'supplier-ledger/:id',
+    loadChildren: () => import('../financial/supplier-ledger/supplier-ledger.module').then(m => m.SupplierLedgerPageModule)
+  }
+];
+
+@NgModule({
+  imports: [CommonModule, FormsModule, IonicModule, RouterModule.forChild(routes)],
+  declarations: [StockManagementPage]
+})
+export class StockManagementPageModule {}

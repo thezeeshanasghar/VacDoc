@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
+import { Storage } from '@ionic/storage';
 import { SupplierService } from 'src/app/services/supplier.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-supplier-list',
@@ -11,22 +13,25 @@ import { ToastService } from 'src/app/shared/toast.service';
 })
 export class SupplierListPage {
   suppliers: any[] = [];
+  doctorId: number = 0;
 
   constructor(
     private supplierService: SupplierService,
     private loadingController: LoadingController,
     private toastService: ToastService,
     private router: Router,
+    private storage: Storage,
   ) {}
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
+    this.doctorId = await this.storage.get(environment.DOCTOR_Id);
     this.loadSuppliers();
   }
 
   async loadSuppliers() {
     const loading = await this.loadingController.create({ message: 'Loading...' });
     await loading.present();
-    this.supplierService.getAll().subscribe(
+    this.supplierService.getAll(this.doctorId).subscribe(
       res => {
         loading.dismiss();
         if (res.IsSuccess) {
@@ -44,14 +49,14 @@ export class SupplierListPage {
   }
 
   goToEdit(id: number) {
-    this.router.navigate(['/members/doctor/financial/supplier-edit', id]);
+    this.router.navigate(['/members/doctor/stock-management/supplier-edit', id]);
   }
 
   goToLedger(id: number) {
-    this.router.navigate(['/members/doctor/financial/supplier-ledger', id]);
+    this.router.navigate(['/members/doctor/stock-management/supplier-ledger', id]);
   }
 
   addNew() {
-    this.router.navigate(['/members/doctor/financial/supplier-edit', 'new']);
+    this.router.navigate(['/members/doctor/stock-management/supplier-edit', 'new']);
   }
 }

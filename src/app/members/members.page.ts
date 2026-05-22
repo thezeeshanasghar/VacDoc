@@ -718,11 +718,11 @@ export class MembersPage implements OnInit {
                 });
               }
 
-              if (supplierAllowed) {
+              if (inventoryAllowed) {
                 this.appPages.push({
-                  title: "Suppliers",
-                  icon: "business-outline",
-                  url: "/members/doctor/financial/suppliers",
+                  title: "Stock Management",
+                  icon: "cube-outline",
+                  url: "/members/doctor/stock-management",
                 });
               }
 
@@ -767,15 +767,7 @@ export class MembersPage implements OnInit {
               this.appPages.push({
                 title: "Stock Management",
                 icon: "cube-outline",
-                url: "/members/doctor/brand-amount",
-              });
-            }
-
-            if (supplierAllowed) {
-              this.appPages.push({
-                title: "Suppliers",
-                icon: "business-outline",
-                url: "/members/doctor/financial/suppliers",
+                url: "/members/doctor/stock-management",
               });
             }
 

@@ -80,7 +80,7 @@ export class SupplierEditPage implements OnInit {
         loading.dismiss();
         if (res.IsSuccess) {
           this.toastService.create('Saved successfully', 'success');
-          this.router.navigate(['/members/doctor/financial/suppliers']);
+          this.router.navigate(['/members/doctor/stock-management/suppliers']);
         } else {
           this.toastService.create(res.Message, 'danger');
         }

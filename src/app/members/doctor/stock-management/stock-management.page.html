@@ -1,0 +1,93 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Stock Management</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="stock-content">
+  <div class="stock-wrap">
+
+    <div class="stock-grid">
+
+      <!-- Suppliers — LIVE -->
+      <div routerLink="/members/doctor/stock-management/suppliers" class="stock-card card-suppliers">
+        <div class="stock-card-icon">
+          <ion-icon name="business-outline"></ion-icon>
+        </div>
+        <span class="stock-card-label">Suppliers</span>
+        <span class="stock-card-sub">Manage supplier profiles</span>
+        <ion-icon name="chevron-forward-outline" class="stock-card-arrow"></ion-icon>
+      </div>
+
+      <!-- Purchase Bills — Coming Soon -->
+      <div class="stock-card card-soon">
+        <div class="stock-card-icon">
+          <ion-icon name="receipt-outline"></ion-icon>
+        </div>
+        <span class="stock-card-label">Purchase Bills</span>
+        <span class="stock-card-sub">Stock-in entries</span>
+        <ion-badge class="soon-badge" color="medium">Coming Soon</ion-badge>
+        <ion-icon name="chevron-forward-outline" class="stock-card-arrow"></ion-icon>
+      </div>
+
+      <!-- Stock Overview — Coming Soon -->
+      <div class="stock-card card-soon">
+        <div class="stock-card-icon">
+          <ion-icon name="cube-outline"></ion-icon>
+        </div>
+        <span class="stock-card-label">Stock Overview</span>
+        <span class="stock-card-sub">Current inventory</span>
+        <ion-badge class="soon-badge" color="medium">Coming Soon</ion-badge>
+        <ion-icon name="chevron-forward-outline" class="stock-card-arrow"></ion-icon>
+      </div>
+
+      <!-- Adjust Stock — Coming Soon -->
+      <div class="stock-card card-soon">
+        <div class="stock-card-icon">
+          <ion-icon name="options-outline"></ion-icon>
+        </div>
+        <span class="stock-card-label">Adjust Stock</span>
+        <span class="stock-card-sub">Write-up or write-off</span>
+        <ion-badge class="soon-badge" color="medium">Coming Soon</ion-badge>
+        <ion-icon name="chevron-forward-outline" class="stock-card-arrow"></ion-icon>
+      </div>
+
+      <!-- Stock Transfer — Coming Soon -->
+      <div class="stock-card card-soon">
+        <div class="stock-card-icon">
+          <ion-icon name="swap-horizontal-outline"></ion-icon>
+        </div>
+        <span class="stock-card-label">Stock Transfer</span>
+        <span class="stock-card-sub">Move between clinics</span>
+        <ion-badge class="soon-badge" color="medium">Coming Soon</ion-badge>
+        <ion-icon name="chevron-forward-outline" class="stock-card-arrow"></ion-icon>
+      </div>
+
+      <!-- Direct Sale — Coming Soon -->
+      <div class="stock-card card-soon">
+        <div class="stock-card-icon">
+          <ion-icon name="cart-outline"></ion-icon>
+        </div>
+        <span class="stock-card-label">Direct Sale</span>
+        <span class="stock-card-sub">Sell without a patient</span>
+        <ion-badge class="soon-badge" color="medium">Coming Soon</ion-badge>
+        <ion-icon name="chevron-forward-outline" class="stock-card-arrow"></ion-icon>
+      </div>
+
+      <!-- Reports — Coming Soon -->
+      <div class="stock-card card-soon">
+        <div class="stock-card-icon">
+          <ion-icon name="bar-chart-outline"></ion-icon>
+        </div>
+        <span class="stock-card-label">Reports</span>
+        <span class="stock-card-sub">Expiry, sales &amp; items</span>
+        <ion-badge class="soon-badge" color="medium">Coming Soon</ion-badge>
+        <ion-icon name="chevron-forward-outline" class="stock-card-arrow"></ion-icon>
+      </div>
+
+    </div>
+  </div>
+</ion-content>
