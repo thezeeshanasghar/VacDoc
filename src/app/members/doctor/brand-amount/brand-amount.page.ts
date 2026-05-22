@@ -30,6 +30,7 @@ export class BrandAmountPage implements OnInit {
   selectedBrandName = '';
   selectedBatches: BatchBreakdownDTO[] = [];
   selectedBrandTotal = 0;
+  allowInventory = true;
   constructor(
     public loadingController: LoadingController,
     private storage: Storage,
@@ -48,7 +49,7 @@ export class BrandAmountPage implements OnInit {
       return;
     }
     this.usertype = await this.storage.get(environment.USER);
-    // console.log('User Type:', this.usertype);
+    this.allowInventory = this.usertype ? this.usertype.AllowInventory !== false : true;
     this.clinicId = await this.storage.get(environment.CLINIC_Id);
     // console.log('Clinic ID:', this.clinicId);
     if (!this.doctorId) {

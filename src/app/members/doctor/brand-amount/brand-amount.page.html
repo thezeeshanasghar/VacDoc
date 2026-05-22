@@ -7,7 +7,7 @@
       <ion-icon style="margin-left: 10%; cursor: pointer; color: white;" routerLink="/members/doctor/stock-management/stock-transfer" name="swap-horizontal-outline" size="large"></ion-icon>
       <ion-icon style="margin-left: 10%; cursor: pointer; color: white;" routerLink="/members/doctor/stock-management/direct-sale" name="bag-handle-outline" size="large"></ion-icon>
     </ion-buttons>
-    <ion-buttons slot="end" style="margin-right:6px; gap:6px;">
+    <ion-buttons *ngIf="allowInventory" slot="end" style="margin-right:6px; gap:6px;">
       <button class="pdf-pill pdf-pill--blue" (click)="downloadPDF()">
         <ion-icon name="document-outline"></ion-icon>
         <span>Stock</span>
@@ -33,12 +33,12 @@
     <ion-grid>
       <ion-row class="header-row">
         <ion-col class="header-col">Brand Name</ion-col>
-        <ion-col class="header-col">Inventory</ion-col>
+        <ion-col *ngIf="allowInventory" class="header-col">Inventory</ion-col>
         <ion-col class="header-col">Sale Price</ion-col>
       </ion-row>
       <ion-row *ngFor="let b of brandAmounts" class="data-row">
         <ion-col class="center-text" style="margin-top: 10px;">{{b.BrandName}}</ion-col>
-        <ion-col class="center-text"
+        <ion-col *ngIf="allowInventory" class="center-text"
           style="margin-top: 10px; cursor: pointer;"
           [style.color]="isCumulative(b) ? '#1B5E20' : null"
           [style.font-weight]="isCumulative(b) ? 'bold' : null"
@@ -47,7 +47,7 @@
           <ion-input [(ngModel)]="b.Amount" [ngModelOptions]="{standalone: true}" type="tel" #amountInput="ngModel" required pattern="^[0-9]*$"></ion-input>
           <div *ngIf="amountInput.invalid && (amountInput.dirty || amountInput.touched)">
             <div *ngIf="amountInput.errors?.required" class="error">Amount is required.</div>
-          </div> 
+          </div>
         </ion-col>
       </ion-row>
     </ion-grid>
