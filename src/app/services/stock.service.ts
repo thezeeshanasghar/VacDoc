@@ -67,4 +67,16 @@ export class StockService {
   reverseBill(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}bill/${id}/reverse`);
   }
+
+  updateBill(id: number, dto: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}bill/${id}`, dto);
+  }
+
+  addPayment(billId: number, dto: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}bill/${billId}/payment`, dto);
+  }
+
+  getPayments(billId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}bill/${billId}/payments`);
+  }
 }

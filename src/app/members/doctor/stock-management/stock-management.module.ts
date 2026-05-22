@@ -29,6 +29,10 @@ const routes: Routes = [
   {
     path: 'purchase-bills/add',
     loadChildren: () => import('./purchase-bills/add-bill/add-bill.module').then(m => m.AddBillPageModule)
+  },
+  {
+    path: 'purchase-bills/edit/:id',
+    loadChildren: () => import('./purchase-bills/edit-bill/edit-bill.module').then(m => m.EditBillPageModule)
   }
 ];
 

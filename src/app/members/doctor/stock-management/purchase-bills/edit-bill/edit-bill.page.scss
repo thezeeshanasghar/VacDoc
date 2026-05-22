@@ -1,0 +1,295 @@
+.field-block {
+  padding: 10px 16px 12px;
+  border-bottom: 1px solid var(--ion-color-step-150, #e0e0e0);
+}
+
+.field-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #546E7A;
+  margin-bottom: 6px;
+}
+
+// Autocomplete widget — supplier (full-width) and brand (cell-level)
+.ac-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.ac-input {
+  display: block;
+  width: 100%;
+  padding: 8px 32px 8px 10px;
+  font-size: 15px;
+  color: #1A1A2E;
+  background: #fff;
+  border: 1.5px solid #B0BEC5;
+  border-radius: 8px;
+  outline: none;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: #1565C0;
+  }
+}
+
+.ac-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #90A4AE;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.ac-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #B0BEC5;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  z-index: 999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.ac-option {
+  padding: 9px 12px;
+  font-size: 14px;
+  color: #1A1A2E;
+  cursor: pointer;
+  border-bottom: 1px solid #F5F7FA;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:active {
+    background: #EEF2F7;
+  }
+}
+
+// Cell-level autocomplete (brand inside table row)
+.cell-ac-wrap {
+  position: relative;
+  overflow: visible;
+}
+
+// Fixed overlay for brand dropdown — escapes the grid/overflow context
+.brand-overlay-drop {
+  position: fixed;
+  background: #fff;
+  border: 1px solid #B0BEC5;
+  border-radius: 0 0 8px 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.cell-ac-input {
+  padding-right: 20px !important;
+}
+
+.cell-ac-clear {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #90A4AE;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.form-card, .totals-card {
+  margin: 0 0 12px 0;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.hint {
+  font-size: 11px;
+  color: #78909C;
+  font-weight: 400;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #546E7A;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 16px 0 8px 4px;
+}
+
+// Compact line items table
+.lines-table-wrap {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  overflow-x: auto;
+  overflow-y: visible;
+  margin-bottom: 12px;
+}
+
+.lines-table-header,
+.lines-table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 60px 80px 28px;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+}
+
+.lines-table-header {
+  background: #EEF2F7;
+  padding: 6px 8px;
+  border-bottom: 1px solid #CFD8DC;
+
+  span {
+    font-size: 11px;
+    font-weight: 700;
+    color: #546E7A;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+}
+
+.lines-table-row {
+  border-bottom: 1px solid #F5F7FA;
+  min-height: 44px;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.cell-select {
+  width: 100%;
+  font-size: 12px;
+  color: #1A1A2E;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 2px 0;
+  appearance: auto;
+  cursor: pointer;
+
+  &:focus {
+    background: #EEF2F7;
+    border-radius: 4px;
+  }
+}
+
+// Remove number input spinners everywhere on this page
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] { -moz-appearance: textfield; }
+
+.cell-input {
+  width: 100%;
+  font-size: 13px;
+  color: #1A1A2E;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #CFD8DC;
+  outline: none;
+  padding: 4px 2px;
+  box-sizing: border-box;
+
+  &:focus {
+    border-bottom-color: #1565C0;
+    background: #EEF2F7;
+  }
+}
+
+.cell-date {
+  font-size: 12px;
+}
+
+.cell-num {
+  text-align: right;
+}
+
+.del-btn {
+  background: none;
+  border: none;
+  color: #E53935;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+.col-qty, .col-price {
+  text-align: right;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 14px;
+  color: #1A1A2E;
+}
+
+.awt-input-row {
+  border-top: 1px solid #EEF2F7;
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+.awt-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: #1A1A2E;
+}
+
+.awt-pct-input {
+  width: 44px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1A1A2E;
+  border: 1.5px solid #B0BEC5;
+  border-radius: 5px;
+  outline: none;
+  background: #fff;
+  padding: 2px 4px;
+
+  &:focus {
+    border-color: #1565C0;
+  }
+}
+
+.payable-row {
+  border-top: 1px solid #EEF2F7;
+  margin-top: 6px;
+  padding-top: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0D47A1;
+}

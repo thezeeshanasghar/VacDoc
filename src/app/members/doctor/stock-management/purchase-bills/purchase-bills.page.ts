@@ -55,6 +55,81 @@ export class PurchaseBillsPage {
     this.router.navigate(['/members/doctor/stock-management/purchase-bills/add']);
   }
 
+  editBill(bill: any) {
+    this.router.navigate(['/members/doctor/stock-management/purchase-bills/edit', bill.Id]);
+  }
+
+  async recordPayment(bill: any) {
+    const alert = await this.alertController.create({
+      header: 'Record Payment',
+      subHeader: bill.BillNo + ' — Pending: Rs ' + (bill.PendingAmount || 0).toFixed(2),
+      inputs: [
+        {
+          name: 'amount',
+          type: 'number',
+          placeholder: 'Amount paid',
+          min: 1
+        },
+        {
+          name: 'method',
+          type: 'text',
+          placeholder: 'Method: Cash / Bank Transfer / Cheque'
+        },
+        {
+          name: 'notes',
+          type: 'text',
+          placeholder: 'Notes (optional)'
+        }
+      ],
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Save Payment',
+          handler: (data: any) => {
+            const amount = parseFloat(data.amount);
+            if (!amount || amount <= 0) {
+              this.toastService.create('Enter a valid amount', 'danger');
+              return false;
+            }
+            const today = new Date();
+            const mm = (today.getMonth() + 1).toString().padStart(2, '0');
+            const dd = today.getDate().toString().padStart(2, '0');
+            const dateStr = today.getFullYear() + '-' + mm + '-' + dd;
+            this.savePayment(bill.Id, amount, data.method || 'Cash', data.notes || null, dateStr);
+            return true;
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async savePayment(billId: number, amount: number, method: string, notes: string, date: string) {
+    const loading = await this.loadingController.create({ message: 'Saving payment...' });
+    await loading.present();
+    this.stockService.addPayment(billId, {
+      BillId: billId,
+      Amount: amount,
+      PaymentMethod: method,
+      Notes: notes,
+      PaymentDate: date
+    }).subscribe(
+      (res: any) => {
+        loading.dismiss();
+        if (res.IsSuccess) {
+          this.toastService.create('Payment recorded', 'success');
+          this.loadBills();
+        } else {
+          this.toastService.create(res.Message || 'Failed to save payment', 'danger');
+        }
+      },
+      () => {
+        loading.dismiss();
+        this.toastService.create('Failed to save payment', 'danger');
+      }
+    );
+  }
+
   async confirmReverse(bill: any) {
     let message = 'This will remove all remaining stock entries for ' + bill.BillNo + '. Continue?';
     if (bill.PaymentStatus === 'Paid' || bill.PaymentStatus === 'Partial') {

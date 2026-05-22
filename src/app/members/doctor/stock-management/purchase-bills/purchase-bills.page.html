@@ -50,6 +50,14 @@
       </div>
     </div>
     <div class="bill-actions">
+      <ion-button fill="outline" color="primary" size="small" (click)="editBill(bill)" style="margin-right:6px">
+        <ion-icon name="create-outline" slot="start"></ion-icon>
+        Edit
+      </ion-button>
+      <ion-button fill="outline" color="success" size="small" (click)="recordPayment(bill)" *ngIf="bill.PaymentStatus !== 'Paid'" style="margin-right:6px">
+        <ion-icon name="cash-outline" slot="start"></ion-icon>
+        Pay
+      </ion-button>
       <ion-button fill="outline" color="danger" size="small" (click)="confirmReverse(bill)">
         <ion-icon name="refresh-outline" slot="start"></ion-icon>
         Reverse

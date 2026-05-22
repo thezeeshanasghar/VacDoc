@@ -1,0 +1,131 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/stock-management/purchase-bills"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Edit Purchase Bill</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Bill Header -->
+  <ion-card class="form-card">
+    <ion-card-content>
+
+      <ion-item lines="full">
+        <ion-label position="stacked">Bill No</ion-label>
+        <ion-input [(ngModel)]="billNo" placeholder="BILL-2026-0001" clearInput></ion-input>
+      </ion-item>
+
+      <ion-item lines="full">
+        <ion-label position="stacked">Bill Date *</ion-label>
+        <ion-input type="date" [(ngModel)]="billDate"></ion-input>
+      </ion-item>
+
+      <div class="field-block">
+        <label class="field-label">Supplier</label>
+        <div class="ac-wrap">
+          <input
+            type="text"
+            class="ac-input"
+            placeholder="Type to search supplier..."
+            [(ngModel)]="supplierSearch"
+            (input)="supplierDropOpen = true"
+            (focus)="supplierDropOpen = true"
+            autocomplete="off"
+          >
+          <button *ngIf="supplierId" class="ac-clear" type="button" (click)="clearSupplier()">✕</button>
+          <div class="ac-dropdown" *ngIf="supplierDropOpen && filteredSuppliers.length > 0">
+            <div class="ac-option" *ngFor="let s of filteredSuppliers" (click)="selectSupplier(s)">{{ s.Name }}</div>
+          </div>
+        </div>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Line Items -->
+  <div class="section-title">Line Items</div>
+
+  <div class="lines-table-wrap">
+    <div class="lines-table-header">
+      <span class="col-brand">Brand</span>
+      <span class="col-batch">Batch</span>
+      <span class="col-expiry">Expiry</span>
+      <span class="col-qty">Qty</span>
+      <span class="col-price">Price</span>
+      <span class="col-del"></span>
+    </div>
+
+    <div class="lines-table-row" *ngFor="let line of lines; let i = index">
+      <div class="col-brand cell-ac-wrap">
+        <input
+          type="text"
+          class="cell-input cell-ac-input"
+          placeholder="brand..."
+          [(ngModel)]="line.brandSearch"
+          (input)="openBrandDrop($event, line)"
+          (focus)="openBrandDrop($event, line)"
+          autocomplete="off"
+        >
+        <button *ngIf="line.brandId" class="cell-ac-clear" type="button" (click)="clearLineBrand(line)">✕</button>
+      </div>
+      <div class="col-batch">
+        <input type="text" [(ngModel)]="line.batchLot" class="cell-input" placeholder="Batch">
+      </div>
+      <div class="col-expiry">
+        <input type="date" [(ngModel)]="line.expiry" class="cell-input cell-date">
+      </div>
+      <div class="col-qty">
+        <input type="number" [(ngModel)]="line.qty" class="cell-input cell-num" placeholder="0" min="1">
+      </div>
+      <div class="col-price">
+        <input type="number" [(ngModel)]="line.unitPrice" class="cell-input cell-num" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <div class="col-del">
+        <button class="del-btn" (click)="removeLine(i)" *ngIf="lines.length > 1">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <ion-button expand="block" fill="outline" color="primary" (click)="addLine()" style="margin-bottom: 16px;">
+    <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+    Add Item
+  </ion-button>
+
+  <!-- Totals -->
+  <ion-card class="totals-card">
+    <ion-card-content>
+      <div class="total-row">
+        <span>Subtotal</span>
+        <span>Rs {{ subtotal | number:'1.2-2' }}</span>
+      </div>
+      <div class="total-row awt-input-row">
+        <span class="awt-label">AWT <input type="number" [(ngModel)]="awtPercent" class="awt-pct-input" min="0" max="100" placeholder="0"> %</span>
+        <span>Rs {{ awtAmount | number:'1.2-2' }}</span>
+      </div>
+      <div class="total-row payable-row">
+        <span>Total Payable</span>
+        <span>Rs {{ totalPayable | number:'1.2-2' }}</span>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="block" color="primary" (click)="save()" style="margin-top: 8px; margin-bottom: 32px;">
+    <ion-icon name="save-outline" slot="start"></ion-icon>
+    Update Bill
+  </ion-button>
+
+</ion-content>
+
+<!-- Brand autocomplete overlay -->
+<div class="brand-overlay-drop"
+     *ngIf="activeLine && activeLine.brandDropOpen && filteredBrands(activeLine.brandSearch).length > 0"
+     [style.top.px]="brandDropTop"
+     [style.left.px]="brandDropLeft"
+     [style.width.px]="brandDropWidth">
+  <div class="ac-option" *ngFor="let b of filteredBrands(activeLine.brandSearch)" (click)="selectBrand(activeLine, b)">
+    {{ b.BrandName }}
+  </div>
+</div>
