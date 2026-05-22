@@ -23,12 +23,13 @@
         <ion-input type="date" [(ngModel)]="billDate"></ion-input>
       </ion-item>
 
-      <ion-item lines="full">
-        <ion-label position="stacked">Supplier</ion-label>
-        <ion-select [(ngModel)]="supplierId" placeholder="Select supplier" interface="action-sheet">
-          <ion-select-option *ngFor="let s of suppliers" [value]="s.Id">{{ s.Name }}</ion-select-option>
-        </ion-select>
-      </ion-item>
+      <div class="field-block">
+        <label class="field-label">Supplier</label>
+        <select [(ngModel)]="supplierId" class="native-select">
+          <option [ngValue]="null">— Select supplier —</option>
+          <option *ngFor="let s of suppliers" [ngValue]="s.Id">{{ s.Name }}</option>
+        </select>
+      </div>
 
       <ion-item lines="none">
         <ion-label position="stacked">AWT %</ion-label>
@@ -50,14 +51,13 @@
         </ion-button>
       </div>
 
-      <ion-item lines="full">
-        <ion-label position="stacked">Brand *</ion-label>
-        <ion-select [(ngModel)]="line.brandId" placeholder="Select brand" interface="action-sheet">
-          <ion-select-option *ngFor="let b of brands" [value]="b.BrandId">
-            {{ b.VaccineName }} — {{ b.BrandName }}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
+      <div class="field-block">
+        <label class="field-label">Brand *</label>
+        <select [(ngModel)]="line.brandId" class="native-select">
+          <option [ngValue]="null">— Select brand —</option>
+          <option *ngFor="let b of brands" [ngValue]="b.BrandId">{{ b.VaccineName }} — {{ b.BrandName }}</option>
+        </select>
+      </div>
 
       <ion-item lines="full">
         <ion-label position="stacked">Batch / Lot *</ion-label>

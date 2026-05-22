@@ -1,3 +1,33 @@
+.field-block {
+  padding: 10px 16px 12px;
+  border-bottom: 1px solid var(--ion-color-step-150, #e0e0e0);
+}
+
+.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #546E7A;
+  margin-bottom: 6px;
+}
+
+.native-select {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 15px;
+  color: #1A1A2E;
+  background: #fff;
+  border: 1.5px solid #B0BEC5;
+  border-radius: 8px;
+  outline: none;
+  appearance: auto;
+
+  &:focus {
+    border-color: #1565C0;
+  }
+}
+
 .form-card, .line-card, .totals-card {
   margin: 0 0 12px 0;
   border-radius: 10px;
