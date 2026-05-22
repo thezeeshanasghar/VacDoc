@@ -148,6 +148,6 @@
      [style.left.px]="brandDropLeft"
      [style.width.px]="brandDropWidth">
   <div class="ac-option" *ngFor="let b of filteredBrands(activeLine.brandSearch)" (click)="selectBrand(activeLine, b)">
-    {{ b.VaccineName }} / {{ b.BrandName }}
+    {{ b.BrandName }}
   </div>
 </div>

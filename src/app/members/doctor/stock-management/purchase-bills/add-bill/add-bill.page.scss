@@ -195,6 +195,14 @@
   }
 }
 
+// Remove number input spinners everywhere on this page
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] { -moz-appearance: textfield; }
+
 .cell-input {
   width: 100%;
   font-size: 13px;
