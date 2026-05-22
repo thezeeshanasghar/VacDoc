@@ -4,14 +4,44 @@
   margin-bottom: 12px;
 }
 
-.price-input {
-  text-align: right;
-  max-width: 100px;
-  --padding-end: 4px;
+.brand-name {
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  color: #1A1A2E !important;
 }
 
-.price-currency {
+.vaccine-name {
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  color: #546E7A !important;
+}
+
+.price-box-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.price-box {
+  width: 90px;
+  border: 2px solid #1565C0;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1A1A2E;
+  text-align: right;
+  background: #fff;
+  outline: none;
+
+  &:focus {
+    border-color: #0D47A1;
+    background: #EEF2F7;
+  }
+}
+
+.price-rs {
   font-size: 13px;
+  font-weight: 600;
   color: #546E7A;
-  margin-left: 4px;
 }

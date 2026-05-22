@@ -38,7 +38,10 @@ export class BrandPricesPage implements OnInit {
       (res: any) => {
         loading.dismiss();
         if (res.IsSuccess) {
-          this.brandAmounts = res.ResponseData || [];
+          this.brandAmounts = (res.ResponseData || []).map((item: any) => {
+            item.Amount = parseFloat((item.Amount || 0).toFixed(2));
+            return item;
+          });
         } else {
           this.toastService.create(res.Message || 'Failed to load prices', 'danger');
         }
