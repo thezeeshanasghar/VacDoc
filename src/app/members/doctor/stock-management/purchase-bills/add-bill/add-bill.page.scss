@@ -159,6 +159,37 @@
   color: #1A1A2E;
 }
 
+.awt-input-row {
+  border-top: 1px solid #EEF2F7;
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+.awt-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: #1A1A2E;
+}
+
+.awt-pct-input {
+  width: 44px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1A1A2E;
+  border: 1.5px solid #B0BEC5;
+  border-radius: 5px;
+  outline: none;
+  background: #fff;
+  padding: 2px 4px;
+
+  &:focus {
+    border-color: #1565C0;
+  }
+}
+
 .payable-row {
   border-top: 1px solid #EEF2F7;
   margin-top: 6px;

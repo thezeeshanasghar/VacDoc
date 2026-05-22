@@ -31,11 +31,6 @@
         </select>
       </div>
 
-      <ion-item lines="none">
-        <ion-label position="stacked">AWT %</ion-label>
-        <ion-input type="number" [(ngModel)]="awtPercent" min="0" max="100" placeholder="0"></ion-input>
-      </ion-item>
-
     </ion-card-content>
   </ion-card>
 
@@ -91,8 +86,8 @@
         <span>Subtotal</span>
         <span>Rs {{ subtotal | number:'1.2-2' }}</span>
       </div>
-      <div class="total-row" *ngIf="awtPercent > 0">
-        <span>AWT ({{ awtPercent }}%)</span>
+      <div class="total-row awt-input-row">
+        <span class="awt-label">AWT <input type="number" [(ngModel)]="awtPercent" class="awt-pct-input" min="0" max="100" placeholder="0"> %</span>
         <span>Rs {{ awtAmount | number:'1.2-2' }}</span>
       </div>
       <div class="total-row payable-row">
