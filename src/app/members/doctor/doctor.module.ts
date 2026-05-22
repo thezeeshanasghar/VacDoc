@@ -47,6 +47,10 @@ const routes: Routes = [
     loadChildren: () => import('./financial/reporting/reporting.module').then(m => m.ReportingPageModule)
   },
   {
+    path: "brand-prices",
+    loadChildren: () => import('./brand-prices/brand-prices.module').then(m => m.BrandPricesPageModule)
+  },
+  {
     path: "stock-management",
     loadChildren: () => import('./stock-management/stock-management.module').then(m => m.StockManagementPageModule)
   },

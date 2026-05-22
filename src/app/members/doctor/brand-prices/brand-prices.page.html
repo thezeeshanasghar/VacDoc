@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Brand Prices</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <p class="prices-hint">Set the sale price charged to patients per vaccine brand. Used in invoices.</p>
+
+  <ion-list *ngIf="brandAmounts.length > 0">
+    <ion-item *ngFor="let item of brandAmounts">
+      <ion-label>
+        <h3>{{ item.BrandName }}</h3>
+        <p>{{ item.VaccineName }}</p>
+      </ion-label>
+      <ion-input
+        slot="end"
+        type="number"
+        [(ngModel)]="item.Amount"
+        min="0"
+        class="price-input"
+        placeholder="0">
+      </ion-input>
+      <span slot="end" class="price-currency">Rs</span>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="brandAmounts.length === 0" style="text-align:center; margin-top:40px; color:#888;">
+    <ion-icon name="pricetag-outline" style="font-size:48px;"></ion-icon>
+    <p>No brands found for this clinic.</p>
+  </div>
+
+  <div style="margin-top: 24px;" *ngIf="brandAmounts.length > 0">
+    <ion-button expand="block" color="primary" (click)="savePrices()">
+      <ion-icon name="save-outline" slot="start"></ion-icon>
+      Save Prices
+    </ion-button>
+  </div>
+
+</ion-content>

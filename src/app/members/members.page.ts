@@ -709,30 +709,36 @@ export class MembersPage implements OnInit {
                 url: "/members/doctor/personal-assistant",
                 icon: "wallet-outline"
               });
+            }
 
-              if (agentAllowed) {
-                this.appPages.push({
-                  title: "Agent Module",
-                  icon: "people-outline",
-                  url: "/members/doctor/agent-module",
-                });
-              }
+            if (agentAllowed) {
+              this.appPages.push({
+                title: "Agent Module",
+                icon: "people-outline",
+                url: "/members/doctor/agent-module",
+              });
+            }
 
-              if (inventoryAllowed) {
-                this.appPages.push({
-                  title: "Stock Management",
-                  icon: "cube-outline",
-                  url: "/members/doctor/stock-management",
-                });
-              }
+            this.appPages.push({
+              title: "Brand Prices",
+              icon: "pricetag-outline",
+              url: "/members/doctor/brand-prices",
+            });
 
-              if (financialAllowed) {
-                this.appPages.push({
-                  title: "Financial",
-                  icon: "bar-chart-outline",
-                  url: "/members/doctor/financial/reporting",
-                });
-              }
+            if (inventoryAllowed) {
+              this.appPages.push({
+                title: "Stock Management",
+                icon: "cube-outline",
+                url: "/members/doctor/stock-management",
+              });
+            }
+
+            if (financialAllowed) {
+              this.appPages.push({
+                title: "Financial",
+                icon: "bar-chart-outline",
+                url: "/members/doctor/financial/reporting",
+              });
             }
           } else {
             this.doctorPages = [
@@ -762,6 +768,12 @@ export class MembersPage implements OnInit {
                 url: "/members/doctor/agent-module",
               });
             }
+
+            this.appPages.push({
+              title: "Brand Prices",
+              icon: "pricetag-outline",
+              url: "/members/doctor/brand-prices",
+            });
 
             if (inventoryAllowed) {
               this.appPages.push({

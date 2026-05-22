@@ -39,4 +39,12 @@ export class BrandService extends BaseService {
       );
   }
 
+  getBrandAmount(doctorId: number, clinicId: number): Observable<any> {
+    return this.http.get<any>(`${this.API_BRAND}brandamount?doctorId=${doctorId}&clinicId=${clinicId}`);
+  }
+
+  putBrandAmount(dtos: any[]): Observable<any> {
+    return this.http.put<any>(`${this.API_BRAND}brandamount`, dtos);
+  }
+
 }
