@@ -35,6 +35,7 @@ export class BulkPage implements OnInit {
     cssClass: "action-sheet-class"
   };
   usertype: any;
+  paId: number = null;
   allowInventory: boolean = true;
   childType: string = "";
   paymentMode: string = 'Cash';
@@ -146,6 +147,9 @@ export class BulkPage implements OnInit {
       if (user) {
         this.usertype = user.UserType;
         this.allowInventory = user.AllowInventory !== false;
+        if (user.UserType === "PA") {
+          this.paId = Number(user.PAId) || null;
+        }
         const actorId = user.UserType === "PA" ? Number(user.PAId) : Number(user.DoctorId);
         if (actorId && !isNaN(actorId)) { this.doctorId = actorId; }
       } else {
@@ -458,7 +462,7 @@ export class BulkPage implements OnInit {
 
     this.fg.value.IsPAApprove = this.usertype === "DOCTOR";
 
-    const data = {
+    var data: any = {
       Circle: this.fg.value.Circle,
       Date: this.fg.value.Date,
       DoctorId: this.doctorId,
@@ -473,6 +477,9 @@ export class BulkPage implements OnInit {
       PaymentMode: this.paymentMode,
       OnlineService: this.paymentMode === 'Online Transfer' ? this.onlineService : null
     };
+    if (this.usertype === 'PA' && this.paId) {
+      data.PaId = this.paId;
+    }
 
     this.fillVaccine(data);
   }

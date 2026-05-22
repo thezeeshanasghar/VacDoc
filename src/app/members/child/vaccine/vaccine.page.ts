@@ -36,6 +36,7 @@ export class VaccinePage {
   type: string;
   istravel: boolean = true;
   usertype: any;
+  paId: number = null;
   retryCount = 0;
   maxRetries = 3;
   canGiveVaccine = true;
@@ -116,6 +117,7 @@ export class VaccinePage {
       if (user) {
         this.usertype = user.UserType;
         if (user.UserType === 'PA') {
+          this.paId = Number(user.PAId) || null;
           this.paService.getPaPermissions(Number(user.PAId)).subscribe(perm => {
             this.canGiveVaccine    = (perm && perm.GiveVaccine)        || false;
             this.canUngiveVaccine  = (perm && perm.UngiveVaccine)      || false;
@@ -554,15 +556,21 @@ this.downloadSpecialPdf();
       await loading.present();
     }
 
-    let data = {
+    var unfillData: any = {
       Id: id,
       IsDone: false,
+    };
+    if (this.usertype === 'PA' && this.paId) {
+      unfillData.PaId = this.paId;
     }
     if (Data) {
-      data = Data;
+      unfillData = Data;
+      if (this.usertype === 'PA' && this.paId) {
+        unfillData.PaId = this.paId;
+      }
     }
 
-    await this.vaccineService.UnfillChildVaccine(data)
+    await this.vaccineService.UnfillChildVaccine(unfillData)
       .subscribe(
         res => {
           if (res.IsSuccess) {
@@ -622,12 +630,15 @@ this.downloadSpecialPdf();
       message: 'Skipping ' + doseName
     });
     await loading.present();
-    let data = {
+    var skipData: any = {
       Id: id,
       IsSkip: true,
+    };
+    if (this.usertype === 'PA' && this.paId) {
+      skipData.PaId = this.paId;
     }
 
-    await this.vaccineService.UnfillChildVaccine(data).subscribe(
+    await this.vaccineService.UnfillChildVaccine(skipData).subscribe(
       res => {
         if (res.IsSuccess) {
           this.toastService.create('Success: Skipped ' + res.ResponseData.Dose.Name, 'success', false, 3000);
@@ -698,12 +709,15 @@ this.downloadSpecialPdf();
     });
 
     await loading.present();
-    let data = {
+    var unskipData: any = {
       Id: id,
       IsSkip: false,
+    };
+    if (this.usertype === 'PA' && this.paId) {
+      unskipData.PaId = this.paId;
     }
 
-    await this.vaccineService.UnfillChildVaccine(data).subscribe(
+    await this.vaccineService.UnfillChildVaccine(unskipData).subscribe(
       res => {
         if (res.IsSuccess) {
           // console.log(res.ResponseData)
