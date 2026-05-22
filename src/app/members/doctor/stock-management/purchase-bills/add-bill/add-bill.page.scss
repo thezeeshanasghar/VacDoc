@@ -82,6 +82,19 @@
 // Cell-level autocomplete (brand inside table row)
 .cell-ac-wrap {
   position: relative;
+  overflow: visible;
+}
+
+// Fixed overlay for brand dropdown — escapes the grid/overflow context
+.brand-overlay-drop {
+  position: fixed;
+  background: #fff;
+  border: 1px solid #B0BEC5;
+  border-radius: 0 0 8px 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .cell-ac-input {
@@ -128,9 +141,9 @@
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  overflow: hidden;
-  margin-bottom: 12px;
   overflow-x: auto;
+  overflow-y: visible;
+  margin-bottom: 12px;
 }
 
 .lines-table-header,

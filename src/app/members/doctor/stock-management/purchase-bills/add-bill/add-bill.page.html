@@ -67,16 +67,11 @@
           class="cell-input cell-ac-input"
           placeholder="brand..."
           [(ngModel)]="line.brandSearch"
-          (input)="line.brandDropOpen = true"
-          (focus)="line.brandDropOpen = true"
+          (input)="openBrandDrop($event, line)"
+          (focus)="openBrandDrop($event, line)"
           autocomplete="off"
         >
         <button *ngIf="line.brandId" class="cell-ac-clear" type="button" (click)="clearLineBrand(line)">✕</button>
-        <div class="ac-dropdown" *ngIf="line.brandDropOpen && filteredBrands(line.brandSearch).length > 0">
-          <div class="ac-option" *ngFor="let b of filteredBrands(line.brandSearch)" (click)="selectBrand(line, b)">
-            {{ b.VaccineName }} / {{ b.BrandName }}
-          </div>
-        </div>
       </div>
       <div class="col-batch">
         <input type="text" [(ngModel)]="line.batchLot" class="cell-input" placeholder="Batch">
@@ -145,3 +140,14 @@
   </ion-button>
 
 </ion-content>
+
+<!-- Brand autocomplete overlay — rendered outside scroll context to avoid clipping -->
+<div class="brand-overlay-drop"
+     *ngIf="activeLine && activeLine.brandDropOpen && filteredBrands(activeLine.brandSearch).length > 0"
+     [style.top.px]="brandDropTop"
+     [style.left.px]="brandDropLeft"
+     [style.width.px]="brandDropWidth">
+  <div class="ac-option" *ngFor="let b of filteredBrands(activeLine.brandSearch)" (click)="selectBrand(activeLine, b)">
+    {{ b.VaccineName }} / {{ b.BrandName }}
+  </div>
+</div>

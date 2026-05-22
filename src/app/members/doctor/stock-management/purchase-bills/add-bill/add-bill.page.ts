@@ -96,6 +96,11 @@ export class AddBillPage implements OnInit {
     );
   }
 
+  brandDropTop: number = 0;
+  brandDropLeft: number = 0;
+  brandDropWidth: number = 200;
+  activeLine: any = null;
+
   filteredBrands(search: string): any[] {
     const q = (search || '').toLowerCase();
     if (!q) return this.brands;
@@ -103,6 +108,15 @@ export class AddBillPage implements OnInit {
       (b.VaccineName || '').toLowerCase().indexOf(q) >= 0 ||
       (b.BrandName || '').toLowerCase().indexOf(q) >= 0
     );
+  }
+
+  openBrandDrop(event: any, line: any) {
+    const rect = event.target.getBoundingClientRect();
+    this.brandDropTop = rect.bottom + window.scrollY;
+    this.brandDropLeft = rect.left + window.scrollX;
+    this.brandDropWidth = Math.max(rect.width, 200);
+    this.activeLine = line;
+    line.brandDropOpen = true;
   }
 
   selectSupplier(s: any) {
@@ -119,8 +133,9 @@ export class AddBillPage implements OnInit {
 
   selectBrand(line: any, b: any) {
     line.brandId = b.BrandId;
-    line.brandSearch = b.VaccineName + ' / ' + b.BrandName;
+    line.brandSearch = b.BrandName;
     line.brandDropOpen = false;
+    this.activeLine = null;
   }
 
   clearLineBrand(line: any) {
