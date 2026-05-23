@@ -156,6 +156,9 @@ export class AdjustStockPage {
             this.batchLot = first.BatchLot || '';
             this.expiryDate = first.Expiry ? this.formatDateInput(first.Expiry) : '';
             this.availableQty = first.Quantity || 0;
+            if (this.adjustType === 'Increase') {
+              this.price = first.StockAmount || null;
+            }
           } else {
             this.batchLot = '';
             this.expiryDate = '';
@@ -181,6 +184,9 @@ export class AdjustStockPage {
     this.batchLot = batch.BatchLot || '';
     this.expiryDate = batch.Expiry ? this.formatDateInput(batch.Expiry) : '';
     this.availableQty = batch.Quantity || 0;
+    if (this.adjustType === 'Increase') {
+      this.price = batch.StockAmount || null;
+    }
     this.batchModalOpen = false;
   }
 
