@@ -105,6 +105,39 @@ ion-card ion-card-content ion-icon {
   margin-right: 3px;
 }
 
+// ── Mobile improvements ───────────────────────────────────────────────────────
+@media (max-width: 480px) {
+  // Name can be long — allow it to truncate gracefully
+  .icons-name {
+    font-size: 13px;
+    max-width: calc(100vw - 160px);
+  }
+
+  // Tighten action icon gap
+  .icons-right {
+    gap: 10px;
+  }
+
+  .iconchild {
+    font-size: 19px;
+  }
+
+  // Card content action buttons — wrap to next line naturally
+  ion-card ion-card-content {
+    font-size: 12px;
+    padding: 8px 10px 10px;
+  }
+
+  // Buttons inside card — slightly smaller
+  ion-card ion-card-content ion-button {
+    font-size: 11px !important;
+    height: 26px !important;
+    --padding-start: 6px !important;
+    --padding-end: 6px !important;
+    margin: 2px 2px 2px 0 !important;
+  }
+}
+
 // ── Utility ───────────────────────────────────────────────────────────────────
 .error-message {
   color: #C62828;

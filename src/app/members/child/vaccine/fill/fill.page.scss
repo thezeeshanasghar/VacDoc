@@ -2,11 +2,12 @@ input {
     border: 0;
 }
 
+// ── Payment row ───────────────────────────────────────────────────────────────
 .payment-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
+  padding: 8px 0;
 }
 
 .payment-label {
@@ -15,7 +16,8 @@ input {
 }
 
 .mode-select {
-  width: 110px;
+  flex: 1;
+  min-width: 0;
   padding: 7px 8px;
   border: 1px solid #aaa;
   border-radius: 6px;
@@ -28,6 +30,7 @@ input {
 
 .service-input {
   flex: 1;
+  min-width: 0;
   padding: 7px 10px;
   border: 1px solid #aaa;
   border-radius: 6px;
@@ -42,9 +45,10 @@ ion-item ion-input {
     --placeholder-color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.6);
 }
 
+// ── Date picker row ───────────────────────────────────────────────────────────
 .date-input {
     width: 110px;
-    min-width: 110px;
+    min-width: 0;
     color: var(--ion-text-color, #000000) !important;
     background: transparent;
     border: 0 !important;
@@ -59,7 +63,7 @@ ion-item ion-input {
 .date-end {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
 }
 
 :host ::ng-deep .date-end .mat-datepicker-toggle {
@@ -96,13 +100,38 @@ ion-item input[matInput] {
     color: var(--ion-text-color, #000000) !important;
 }
 
+// ── Brand autocomplete — full width, no overflow ──────────────────────────────
 .example-full-width {
     width: 100%;
+    box-sizing: border-box;
 }
 
 .custom-input-item {
     width: 100%;
+    box-sizing: border-box;
     margin: 8px 0;
+}
+
+// Override Material's internal wrapper padding so field fills its container
+:host ::ng-deep .example-full-width .mat-form-field-wrapper,
+:host ::ng-deep .custom-input-item .mat-form-field-wrapper {
+    padding-bottom: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+:host ::ng-deep .example-full-width .mat-form-field-infix,
+:host ::ng-deep .custom-input-item .mat-form-field-infix {
+    width: auto !important;
+    min-width: 0 !important;
+    padding: 10px 0 !important;
+}
+
+:host ::ng-deep .example-full-width .mat-form-field-flex,
+:host ::ng-deep .custom-input-item .mat-form-field-flex {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 0 12px !important;
 }
 
 .brand-label {
@@ -117,7 +146,7 @@ ion-item input[matInput] {
     color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.6) !important;
 }
 
-/* Theme-aware Angular Material controls on this page */
+// ── Theme-aware Material controls ─────────────────────────────────────────────
 :host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline,
 :host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-thick {
     color: var(--ion-color-primary, #3880ff) !important;
@@ -156,4 +185,34 @@ ion-item input[matInput] {
 :host ::ng-deep .mat-option-text,
 :host ::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
     color: var(--ion-text-color, #000000) !important;
+}
+
+// ── Mobile-specific overrides ─────────────────────────────────────────────────
+@media (max-width: 480px) {
+  // Remove extra wrapper margin that squishes the outline field
+  :host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  // Validation error text: stack below, not absolute-positioned
+  ion-text[color="danger"],
+  ion-text[color="success"] {
+    position: static !important;
+    transform: none !important;
+    font-size: 11px !important;
+    display: block;
+    margin-top: 2px;
+  }
+
+  // Give items breathing room
+  ion-item {
+    --padding-start: 12px;
+    --inner-padding-end: 8px;
+  }
+
+  .date-input {
+    width: 90px;
+    font-size: 13px;
+  }
 }

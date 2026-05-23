@@ -266,6 +266,69 @@ ion-fab-button[color="tertiary"] {
   --background-activated: var(--vac-red-dark);
 }
 
+// ── Mobile layout fixes ───────────────────────────────────────────────────────
+// Prevent Material form fields from overflowing on narrow screens
+mat-form-field,
+.mat-form-field {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.mat-form-field-wrapper {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+// Prevent ion-content from generating horizontal scrollbars due to child overflow
+ion-content {
+  --overflow: hidden auto;
+}
+
+// Constrain form pages so nothing bleeds past the viewport
+ion-content.ion-padding > form,
+ion-content.ion-padding > ion-card {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 480px) {
+  // Reduce side padding slightly so forms have more room
+  .ion-padding {
+    --padding-start:  12px !important;
+    --padding-end:    12px !important;
+    --padding-top:    12px !important;
+    --padding-bottom: 12px !important;
+  }
+
+  // Material outline fields: collapse internal wrapper margin
+  .mat-form-field-appearance-outline .mat-form-field-wrapper {
+    margin: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  // ion-item label + input: keep them from overflowing
+  ion-item {
+    --min-height: 52px;
+  }
+
+  ion-label {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+
+  ion-input,
+  ion-select,
+  ion-textarea {
+    font-size: 14px !important;
+  }
+
+  // Buttons in items — don't let them clip
+  ion-button {
+    font-size: 12px;
+  }
+}
+
 // ── Scrollbar (webkit) ───────────────────────────────────────────────────────
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
