@@ -6,6 +6,22 @@ import { BrandService } from 'src/app/services/brand.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 
+interface TransferItem {
+  brandId: number;
+  brandSearch: string;
+  brandDropOpen: boolean;
+  batchLot: string;
+  expiryDate: string;
+  availableQty: number;
+  qty: number;
+  unitPrice: number;
+  batches: any[];
+  batchModalOpen: boolean;
+  brandDropTop: number;
+  brandDropLeft: number;
+  brandDropWidth: number;
+}
+
 @Component({
   selector: 'app-stock-transfer',
   templateUrl: './stock-transfer.page.html',
@@ -16,53 +32,48 @@ export class StockTransferPage {
   fromClinicId: number = 0;
   toClinicId: number = 0;
   clinics: any[] = [];
+  brands: any[] = [];
 
   // Form fields
-  brandId: number = null;
-  brandSearch: string = '';
-  brandDropOpen: boolean = false;
-  batchLot: string = '';
-  expiryDate: string = '';
-  availableQty: number = 0;
-  qty: number = null;
+  items: TransferItem[] = [];
+  awtPercent: number = 0;
   transferDate: string = '';
   reason: string = '';
-
-  // Batch popup
-  batchModalOpen: boolean = false;
-  batches: any[] = [];
-
-  // Brand autocomplete
-  brands: any[] = [];
-  brandDropTop: number = 0;
-  brandDropLeft: number = 0;
-  brandDropWidth: number = 200;
 
   // History
   history: any[] = [];
   historySearch: string = '';
 
   get toClinicOptions(): any[] {
-    return this.clinics.filter(function(c: any) { return c.Id !== this.fromClinicId; }, this);
-  }
-
-  filteredBrands(search: string): any[] {
-    const q = (search || '').toLowerCase();
-    if (!q) return this.brands;
-    return this.brands.filter(function(b: any) {
-      return (b.VaccineName || '').toLowerCase().indexOf(q) >= 0 ||
-             (b.BrandName || '').toLowerCase().indexOf(q) >= 0;
-    });
+    var self = this;
+    return this.clinics.filter(function(c: any) { return c.Id !== self.fromClinicId; });
   }
 
   get filteredHistory(): any[] {
-    const q = (this.historySearch || '').toLowerCase();
+    var q = (this.historySearch || '').toLowerCase();
     if (!q) return this.history;
     return this.history.filter(function(h: any) {
       return (h.BrandName || '').toLowerCase().indexOf(q) >= 0 ||
              (h.VaccineName || '').toLowerCase().indexOf(q) >= 0 ||
-             (h.Reason || '').toLowerCase().indexOf(q) >= 0;
+             (h.Reason || '').toLowerCase().indexOf(q) >= 0 ||
+             (h.BillNo || '').toLowerCase().indexOf(q) >= 0;
     });
+  }
+
+  get subTotal(): number {
+    var total = 0;
+    for (var i = 0; i < this.items.length; i++) {
+      total += (this.items[i].unitPrice || 0) * (this.items[i].qty || 0);
+    }
+    return total;
+  }
+
+  get awtAmount(): number {
+    return Math.round(this.subTotal * (this.awtPercent || 0) / 100 * 100) / 100;
+  }
+
+  get grandTotal(): number {
+    return this.subTotal + this.awtAmount;
   }
 
   constructor(
@@ -81,7 +92,6 @@ export class StockTransferPage {
     const allClinics = await this.storage.get(environment.CLINICS);
     this.clinics = allClinics || (clinic ? [clinic] : []);
 
-    // Default toClinic to first option that isn't fromClinic
     const other = this.clinics.filter(function(c: any) { return c.Id !== clinic.Id; });
     this.toClinicId = other.length > 0 ? other[0].Id : 0;
 
@@ -92,15 +102,44 @@ export class StockTransferPage {
 
     this.loadBrands();
     this.loadHistory();
+    if (this.items.length === 0) {
+      this.addItem();
+    }
+  }
+
+  newItem(): TransferItem {
+    return {
+      brandId: null,
+      brandSearch: '',
+      brandDropOpen: false,
+      batchLot: '',
+      expiryDate: '',
+      availableQty: 0,
+      qty: null,
+      unitPrice: null,
+      batches: [],
+      batchModalOpen: false,
+      brandDropTop: 0,
+      brandDropLeft: 0,
+      brandDropWidth: 200
+    };
+  }
+
+  addItem() {
+    this.items.push(this.newItem());
+  }
+
+  removeItem(index: number) {
+    this.items.splice(index, 1);
   }
 
   onFromClinicChange() {
-    // Ensure toClinic doesn't equal fromClinic
     if (this.toClinicId === this.fromClinicId) {
-      const other = this.clinics.filter(function(c: any) { return c.Id !== this.fromClinicId; }, this);
+      var self = this;
+      var other = this.clinics.filter(function(c: any) { return c.Id !== self.fromClinicId; });
       this.toClinicId = other.length > 0 ? other[0].Id : 0;
     }
-    this.resetForm();
+    this.resetItems();
     this.loadBrands();
     this.loadHistory();
   }
@@ -110,119 +149,141 @@ export class StockTransferPage {
   }
 
   loadBrands() {
+    var self = this;
     this.brandService.getBrandAmount(this.doctorId, this.fromClinicId).subscribe(
       function(res: any) {
         if (res.IsSuccess) {
-          this.brands = res.ResponseData || [];
+          self.brands = res.ResponseData || [];
         }
-      }.bind(this),
+      },
       function() {}
     );
   }
 
   loadHistory() {
+    var self = this;
     this.stockService.getTransfers(this.doctorId, this.fromClinicId).subscribe(
       function(res: any) {
         if (res.IsSuccess) {
-          this.history = res.ResponseData || [];
+          self.history = res.ResponseData || [];
         }
-      }.bind(this),
+      },
       function() {}
     );
   }
 
-  // Brand autocomplete
-  openBrandDrop(event: any) {
-    const rect = event.target.getBoundingClientRect();
-    this.brandDropTop = rect.bottom + window.scrollY;
-    this.brandDropLeft = rect.left + window.scrollX;
-    this.brandDropWidth = Math.max(rect.width, 220);
-    this.brandDropOpen = true;
+  filteredBrands(search: string): any[] {
+    var q = (search || '').toLowerCase();
+    if (!q) return this.brands;
+    return this.brands.filter(function(b: any) {
+      return (b.VaccineName || '').toLowerCase().indexOf(q) >= 0 ||
+             (b.BrandName || '').toLowerCase().indexOf(q) >= 0;
+    });
   }
 
-  selectBrand(b: any) {
-    this.brandId = b.BrandId;
-    this.brandSearch = b.BrandName;
-    this.brandDropOpen = false;
-    this.batchLot = '';
-    this.expiryDate = '';
-    this.availableQty = 0;
-    this.loadBatchesForBrand();
+  openBrandDrop(event: any, item: TransferItem) {
+    var rect = event.target.getBoundingClientRect();
+    item.brandDropTop = rect.bottom + window.scrollY;
+    item.brandDropLeft = rect.left + window.scrollX;
+    item.brandDropWidth = Math.max(rect.width, 220);
+    item.brandDropOpen = true;
   }
 
-  clearBrand() {
-    this.brandId = null;
-    this.brandSearch = '';
-    this.brandDropOpen = false;
-    this.batchLot = '';
-    this.expiryDate = '';
-    this.availableQty = 0;
-    this.batches = [];
+  selectBrand(b: any, item: TransferItem) {
+    item.brandId = b.BrandId;
+    item.brandSearch = b.BrandName;
+    item.brandDropOpen = false;
+    item.batchLot = '';
+    item.expiryDate = '';
+    item.availableQty = 0;
+    item.unitPrice = null;
+    this.loadBatchesForItem(item);
   }
 
-  loadBatchesForBrand() {
-    if (!this.brandId) return;
-    this.stockService.getBatchLotsByBrand(this.brandId, this.fromClinicId).subscribe(
+  clearBrand(item: TransferItem) {
+    item.brandId = null;
+    item.brandSearch = '';
+    item.brandDropOpen = false;
+    item.batchLot = '';
+    item.expiryDate = '';
+    item.availableQty = 0;
+    item.unitPrice = null;
+    item.batches = [];
+  }
+
+  loadBatchesForItem(item: TransferItem) {
+    if (!item.brandId) return;
+    var self = this;
+    this.stockService.getBatchLotsByBrand(item.brandId, this.fromClinicId).subscribe(
       function(res: any) {
         if (res.IsSuccess) {
-          this.batches = res.ResponseData || [];
-          if (this.batches.length > 0) {
-            const first = this.batches[0];
-            this.batchLot = first.BatchLot || '';
-            this.expiryDate = first.Expiry ? this.formatDateInput(first.Expiry) : '';
-            this.availableQty = first.Quantity || 0;
+          item.batches = res.ResponseData || [];
+          if (item.batches.length > 0) {
+            var first = item.batches[0];
+            item.batchLot = first.BatchLot || '';
+            item.expiryDate = first.Expiry ? self.formatDateInput(first.Expiry) : '';
+            item.availableQty = first.Quantity || 0;
+            item.unitPrice = first.StockAmount || null;
           } else {
-            this.batchLot = '';
-            this.expiryDate = '';
-            this.availableQty = 0;
+            item.batchLot = '';
+            item.expiryDate = '';
+            item.availableQty = 0;
+            item.unitPrice = null;
           }
         }
-      }.bind(this),
+      },
       function() {}
     );
   }
 
-  // Batch popup
-  openBatchModal() {
-    if (!this.brandId) return;
-    this.batchModalOpen = true;
+  openBatchModal(item: TransferItem) {
+    if (!item.brandId) return;
+    item.batchModalOpen = true;
   }
 
-  closeBatchModal() {
-    this.batchModalOpen = false;
+  closeBatchModal(item: TransferItem) {
+    item.batchModalOpen = false;
   }
 
-  selectBatch(batch: any) {
-    this.batchLot = batch.BatchLot || '';
-    this.expiryDate = batch.Expiry ? this.formatDateInput(batch.Expiry) : '';
-    this.availableQty = batch.Quantity || 0;
-    this.batchModalOpen = false;
+  selectBatch(batch: any, item: TransferItem) {
+    item.batchLot = batch.BatchLot || '';
+    item.expiryDate = batch.Expiry ? this.formatDateInput(batch.Expiry) : '';
+    item.availableQty = batch.Quantity || 0;
+    item.unitPrice = batch.StockAmount || null;
+    item.batchModalOpen = false;
   }
 
   formatDateInput(d: string): string {
     if (!d) return '';
-    const dt = new Date(d);
-    const mm = (dt.getMonth() + 1).toString().padStart(2, '0');
-    const dd = dt.getDate().toString().padStart(2, '0');
+    var dt = new Date(d);
+    var mm = (dt.getMonth() + 1).toString().padStart(2, '0');
+    var dd = dt.getDate().toString().padStart(2, '0');
     return dt.getFullYear() + '-' + mm + '-' + dd;
   }
 
   async save() {
-    if (!this.brandId) {
-      this.toastService.create('Select a brand', 'danger');
-      return;
-    }
-    if (!this.batchLot || this.batchLot.trim() === '') {
-      this.toastService.create('Batch is required', 'danger');
-      return;
-    }
-    if (!this.qty || this.qty <= 0) {
-      this.toastService.create('Quantity must be greater than 0', 'danger');
-      return;
-    }
-    if (this.qty > this.availableQty) {
-      this.toastService.create('Cannot transfer more than available (' + this.availableQty + ')', 'danger');
-      return;
+    for (var i = 0; i < this.items.length; i++) {
+      var item = this.items[i];
+      if (!item.brandId) {
+        this.toastService.create('Select a brand for item ' + (i + 1), 'danger');
+        return;
+      }
+      if (!item.batchLot || item.batchLot.trim() === '') {
+        this.toastService.create('Batch is required for item ' + (i + 1), 'danger');
+        return;
+      }
+      if (!item.qty || item.qty <= 0) {
+        this.toastService.create('Quantity must be greater than 0 for item ' + (i + 1), 'danger');
+        return;
+      }
+      if (item.qty > item.availableQty) {
+        this.toastService.create('Cannot transfer more than available (' + item.availableQty + ') for item ' + (i + 1), 'danger');
+        return;
+      }
+      if (!item.unitPrice || item.unitPrice < 0) {
+        this.toastService.create('Unit price is required for item ' + (i + 1), 'danger');
+        return;
+      }
     }
     if (!this.transferDate) {
       this.toastService.create('Date is required', 'danger');
@@ -236,46 +297,59 @@ export class StockTransferPage {
     const loading = await this.loadingController.create({ message: 'Saving...' });
     await loading.present();
 
-    const payload = {
+    var itemPayloads: any[] = [];
+    for (var j = 0; j < this.items.length; j++) {
+      var it = this.items[j];
+      itemPayloads.push({
+        BrandId: it.brandId,
+        BatchLot: it.batchLot,
+        ExpiryDate: it.expiryDate ? it.expiryDate : null,
+        Quantity: it.qty,
+        UnitPrice: it.unitPrice || 0
+      });
+    }
+
+    var payload = {
       DoctorId: this.doctorId,
       FromClinicId: this.fromClinicId,
       ToClinicId: this.toClinicId,
-      BrandId: this.brandId,
-      Quantity: this.qty,
-      BatchLot: this.batchLot,
-      ExpiryDate: this.expiryDate ? this.expiryDate : null,
+      AwtPercent: this.awtPercent || 0,
       Reason: this.reason || '',
-      TransferDate: this.transferDate
+      TransferDate: this.transferDate,
+      Items: itemPayloads
     };
 
+    var self = this;
     this.stockService.createTransfer(payload).subscribe(
       function(res: any) {
         loading.dismiss();
         if (res.IsSuccess) {
-          this.toastService.create('Transfer recorded', 'success');
-          this.resetForm();
-          this.loadHistory();
+          self.toastService.create('Transfer recorded successfully', 'success');
+          self.resetItems();
+          self.loadHistory();
+          self.loadBrands();
         } else {
-          this.toastService.create(res.Message || 'Failed to save', 'danger');
+          self.toastService.create(res.Message || 'Failed to save', 'danger');
         }
-      }.bind(this),
+      },
       function() {
         loading.dismiss();
-        this.toastService.create('Failed to save transfer', 'danger');
-      }.bind(this)
+        self.toastService.create('Failed to save transfer', 'danger');
+      }
     );
   }
 
   async confirmDelete(id: number) {
+    var self = this;
     const alert = await this.alertController.create({
       header: 'Reverse Transfer',
-      message: 'This will undo the stock transfer. Are you sure?',
+      message: 'This will undo the entire transfer and restore source stock. Are you sure?',
       buttons: [
         { text: 'Cancel', role: 'cancel' },
         {
           text: 'Reverse',
           role: 'destructive',
-          handler: function() { this.deleteTransfer(id); }.bind(this)
+          handler: function() { self.deleteTransfer(id); }
         }
       ]
     });
@@ -283,31 +357,41 @@ export class StockTransferPage {
   }
 
   deleteTransfer(id: number) {
+    var self = this;
     this.stockService.deleteTransfer(id).subscribe(
       function(res: any) {
         if (res.IsSuccess) {
-          this.toastService.create('Transfer reversed', 'success');
-          this.loadHistory();
+          self.toastService.create('Transfer reversed', 'success');
+          self.loadHistory();
+          self.loadBrands();
         } else {
-          this.toastService.create(res.Message || 'Failed to reverse', 'danger');
+          self.toastService.create(res.Message || 'Failed to reverse', 'danger');
         }
-      }.bind(this),
+      },
       function() {
-        this.toastService.create('Failed to reverse transfer', 'danger');
-      }.bind(this)
+        self.toastService.create('Failed to reverse transfer', 'danger');
+      }
     );
   }
 
-  resetForm() {
-    this.brandId = null;
-    this.brandSearch = '';
-    this.brandDropOpen = false;
-    this.batchLot = '';
-    this.expiryDate = '';
-    this.availableQty = 0;
-    this.qty = null;
+  downloadPdf(billId: number, billNo: string) {
+    this.stockService.downloadTransferPdf(billId).subscribe(
+      function(response: any) {
+        var blob = new Blob([response], { type: 'application/pdf' });
+        var link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = 'Transfer-' + billNo + '.pdf';
+        link.click();
+        window.URL.revokeObjectURL(link.href);
+      },
+      function() {}
+    );
+  }
+
+  resetItems() {
+    this.items = [this.newItem()];
+    this.awtPercent = 0;
     this.reason = '';
-    this.batches = [];
     const today = new Date();
     const mm = (today.getMonth() + 1).toString().padStart(2, '0');
     const dd = today.getDate().toString().padStart(2, '0');
@@ -316,8 +400,8 @@ export class StockTransferPage {
 
   formatDate(d: string): string {
     if (!d) return '—';
-    const dt = new Date(d);
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var dt = new Date(d);
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     return dt.getDate() + ' ' + months[dt.getMonth()] + ' ' + dt.getFullYear();
   }
 
@@ -328,9 +412,9 @@ export class StockTransferPage {
 
   isExpiringSoon(expiryStr: string): boolean {
     if (!expiryStr) return false;
-    const expiry = new Date(expiryStr);
-    const today = new Date();
-    const diffDays = (expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+    var expiry = new Date(expiryStr);
+    var today = new Date();
+    var diffDays = (expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
     return diffDays <= 90 && diffDays >= 0;
   }
 }

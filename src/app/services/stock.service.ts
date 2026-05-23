@@ -107,4 +107,8 @@ export class StockService {
   deleteTransfer(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}stocktransfer/${id}`);
   }
+
+  downloadTransferPdf(billId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}stocktransfer/pdf?billId=${billId}`, { responseType: 'blob' });
+  }
 }
