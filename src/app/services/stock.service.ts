@@ -79,4 +79,8 @@ export class StockService {
   getPayments(billId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}bill/${billId}/payments`);
   }
+
+  getStockOverview(doctorId: number, clinicId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}stockoverview?doctorId=${doctorId}&clinicId=${clinicId}`);
+  }
 }

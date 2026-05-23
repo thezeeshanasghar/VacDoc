@@ -1,0 +1,211 @@
+.overview-content {
+  --background: #EEF2F7;
+}
+
+.search-wrap {
+  padding: 12px 16px 8px;
+}
+
+.search-input {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 15px;
+  color: #1A1A2E;
+  background: #fff;
+  border: 1.5px solid #B0BEC5;
+  border-radius: 10px;
+  outline: none;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: #1565C0;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  margin-top: 60px;
+  color: #78909C;
+
+  ion-icon {
+    font-size: 56px;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 16px;
+    margin: 4px 0;
+    font-weight: 600;
+  }
+
+  .empty-sub {
+    font-size: 13px;
+    font-weight: 400;
+  }
+}
+
+.brand-card {
+  background: #fff;
+  border-radius: 12px;
+  margin: 0 12px 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  overflow: hidden;
+}
+
+.brand-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  cursor: pointer;
+
+  &:active {
+    background: #F5F7FA;
+  }
+}
+
+.brand-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.vaccine-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1A1A2E;
+}
+
+.brand-name {
+  font-size: 12px;
+  color: #78909C;
+  margin-top: 2px;
+}
+
+.brand-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.count-badge {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  background: #1565C0;
+  padding: 3px 10px;
+  border-radius: 12px;
+
+  &.low-stock {
+    background: #E53935;
+  }
+}
+
+.expand-icon {
+  font-size: 16px;
+  color: #90A4AE;
+}
+
+.sale-price-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 16px 10px;
+  border-bottom: 1px solid #F0F4F8;
+}
+
+.sale-price-label {
+  font-size: 12px;
+  color: #78909C;
+}
+
+.sale-price-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2E7D32;
+}
+
+// Batch table
+.batch-table {
+  border-top: 1px solid #EEF2F7;
+}
+
+.no-batches {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #90A4AE;
+  font-style: italic;
+}
+
+.batch-header {
+  display: grid;
+  grid-template-columns: 1.2fr 1.4fr 60px 90px;
+  padding: 6px 16px;
+  background: #EEF2F7;
+  border-bottom: 1px solid #CFD8DC;
+
+  span {
+    font-size: 11px;
+    font-weight: 700;
+    color: #546E7A;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+}
+
+.batch-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1.4fr 60px 90px;
+  padding: 8px 16px;
+  border-bottom: 1px solid #F5F7FA;
+  align-items: center;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &.expired {
+    background: #FFF8F8;
+  }
+
+  &.expiring-soon {
+    background: #FFFDE7;
+  }
+}
+
+.batch-lot {
+  font-size: 13px;
+  color: #1A1A2E;
+  font-weight: 600;
+}
+
+.batch-expiry {
+  font-size: 12px;
+  color: #546E7A;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.col-right {
+  text-align: right;
+  font-size: 13px;
+  color: #1A1A2E;
+}
+
+.expiry-tag {
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.expired-tag {
+  background: #FFEBEE;
+  color: #C62828;
+}
+
+.soon-tag {
+  background: #FFF9C4;
+  color: #F57F17;
+}

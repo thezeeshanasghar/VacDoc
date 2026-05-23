@@ -33,6 +33,10 @@ const routes: Routes = [
   {
     path: 'purchase-bills/edit/:id',
     loadChildren: () => import('./purchase-bills/edit-bill/edit-bill.module').then(m => m.EditBillPageModule)
+  },
+  {
+    path: 'stock-overview',
+    loadChildren: () => import('./stock-overview/stock-overview.module').then(m => m.StockOverviewPageModule)
   }
 ];
 

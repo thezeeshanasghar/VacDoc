@@ -1,0 +1,90 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/stock-management"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Stock Overview</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="overview-content">
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <input
+      type="text"
+      class="search-input"
+      placeholder="Search vaccine or brand..."
+      [(ngModel)]="searchTerm"
+      (input)="applyFilter()"
+    >
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="filteredBrands.length === 0" class="empty-state">
+    <ion-icon name="cube-outline"></ion-icon>
+    <p>No stock found.</p>
+    <p class="empty-sub">Add purchase bills to record incoming stock.</p>
+  </div>
+
+  <!-- Brand cards -->
+  <div *ngFor="let brand of filteredBrands" class="brand-card">
+
+    <!-- Brand header row — tap to expand/collapse batches -->
+    <div class="brand-header" (click)="toggleBrand(brand.BrandId)">
+      <div class="brand-info">
+        <span class="vaccine-name">{{ brand.VaccineName }}</span>
+        <span class="brand-name">{{ brand.BrandName }}</span>
+      </div>
+      <div class="brand-summary">
+        <span class="count-badge" [class.low-stock]="brand.TotalCount <= 5">
+          {{ brand.TotalCount }} units
+        </span>
+        <ion-icon
+          [name]="isExpanded(brand.BrandId) ? 'chevron-up-outline' : 'chevron-down-outline'"
+          class="expand-icon">
+        </ion-icon>
+      </div>
+    </div>
+
+    <!-- Sale price row -->
+    <div class="sale-price-row" *ngIf="brand.SalePrice > 0">
+      <span class="sale-price-label">Sale Price</span>
+      <span class="sale-price-val">Rs {{ brand.SalePrice | number:'1.2-2' }}</span>
+    </div>
+
+    <!-- Batch detail table — shown when expanded -->
+    <div class="batch-table" *ngIf="isExpanded(brand.BrandId)">
+
+      <div *ngIf="brand.Batches.length === 0" class="no-batches">
+        No batch records — stock may have been fully consumed.
+      </div>
+
+      <div class="batch-header" *ngIf="brand.Batches.length > 0">
+        <span>Batch</span>
+        <span>Expiry</span>
+        <span class="col-right">Qty</span>
+        <span class="col-right">Unit Price</span>
+      </div>
+
+      <div
+        *ngFor="let batch of brand.Batches"
+        class="batch-row"
+        [class.expired]="isExpired(batch.Expiry)"
+        [class.expiring-soon]="!isExpired(batch.Expiry) && isExpiringSoon(batch.Expiry)"
+      >
+        <span class="batch-lot">{{ batch.BatchLot || '—' }}</span>
+        <span class="batch-expiry">
+          {{ formatDate(batch.Expiry) }}
+          <span class="expiry-tag expired-tag" *ngIf="isExpired(batch.Expiry)">Expired</span>
+          <span class="expiry-tag soon-tag" *ngIf="!isExpired(batch.Expiry) && isExpiringSoon(batch.Expiry)">Soon</span>
+        </span>
+        <span class="col-right">{{ batch.Quantity }}</span>
+        <span class="col-right">Rs {{ batch.UnitPrice | number:'1.2-2' }}</span>
+      </div>
+
+    </div>
+
+  </div>
+
+</ion-content>
