@@ -7,17 +7,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --openssl-legacy-provider
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js 16
         uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: npm install -g @ionic/cli # Install Ionic CLI globally
+      - run: npm install -g @ionic/cli
       - run: npm install
       - run: ionic build --prod
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
