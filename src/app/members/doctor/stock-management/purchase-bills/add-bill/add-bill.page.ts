@@ -86,9 +86,13 @@ export class AddBillPage implements OnInit {
       (res: any) => {
         if (res.IsSuccess) {
           this.suppliers = (res.ResponseData || []).filter((s: any) => s.IsActive);
+        } else {
+          this.toastService.create(res.Message || 'Failed to load suppliers', 'danger');
         }
       },
-      () => {}
+      (err: any) => {
+        this.toastService.create('Failed to load suppliers', 'danger');
+      }
     );
   }
 
