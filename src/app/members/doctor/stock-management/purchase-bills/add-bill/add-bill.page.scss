@@ -1,3 +1,39 @@
+// Clinic selector row (inline label + select, no card)
+.clinic-selector-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 4px 6px;
+}
+
+.clinic-selector-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #546E7A;
+  white-space: nowrap;
+}
+
+.clinic-selector-select {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #1A1A2E;
+  background: #fff;
+  border: 1.5px solid #B0BEC5;
+  border-radius: 8px;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%2390A4AE' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+
+  &:focus {
+    border-color: #1565C0;
+  }
+}
+
 .field-block {
   padding: 10px 16px 12px;
   border-bottom: 1px solid var(--ion-color-step-150, #e0e0e0);
@@ -247,10 +283,6 @@ ion-input[type=number]::part(native)::-webkit-outer-spin-button {
   border-color: #90CAF9;
 }
 
-.tot-label {
-  font-size: 14px;
-  color: #546E7A;
-}
 
 .cell-input {
   width: 100%;
@@ -295,18 +327,47 @@ ion-input[type=number]::part(native)::-webkit-outer-spin-button {
   text-align: right;
 }
 
-.total-row {
+// Unified totals + payment summary card rows
+.summary-row {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  padding: 4px 0;
-  font-size: 14px;
-  color: #1A1A2E;
+  padding: 7px 0;
+  gap: 8px;
 }
 
-.awt-input-row {
+.summary-row-border {
   border-top: 1px solid #EEF2F7;
-  padding-top: 8px;
-  margin-top: 4px;
+  padding-top: 9px;
+  margin-top: 2px;
+}
+
+.summary-row-total {
+  padding-bottom: 2px;
+}
+
+.summary-row-pending {
+  border-top: 1px solid #EEF2F7;
+  padding-top: 9px;
+  margin-top: 2px;
+}
+
+.summary-divider {
+  height: 1px;
+  background: #CFD8DC;
+  margin: 8px 0;
+}
+
+.summary-label {
+  font-size: 14px;
+  color: #546E7A;
+  white-space: nowrap;
+}
+
+.summary-label-bold {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1A1A2E;
 }
 
 .awt-label {
@@ -329,16 +390,44 @@ ion-input[type=number]::part(native)::-webkit-outer-spin-button {
   background: #fff;
   padding: 2px 4px;
 
-  &:focus {
-    border-color: #1565C0;
-  }
+  &:focus { border-color: #1565C0; }
 }
 
-.payable-row {
-  border-top: 1px solid #EEF2F7;
-  margin-top: 6px;
-  padding-top: 8px;
-  font-size: 16px;
+// Amount paid input — matches amt-box width and style
+.amt-input {
+  min-width: 100px;
+  width: 130px;
+  text-align: right;
+  padding: 4px 10px;
+  background: #fff;
+  border: 1.5px solid #B0BEC5;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1A1A2E;
+  outline: none;
+  box-sizing: border-box;
+
+  &:focus { border-color: #1565C0; }
+}
+
+// Payment method select — right-aligned, same width
+.amt-select {
+  min-width: 130px;
+  padding: 4px 10px;
+  background: #fff;
+  border: 1.5px solid #B0BEC5;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1A1A2E;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.amt-box-pending {
   font-weight: 700;
-  color: #0D47A1;
+  font-size: 15px;
+  color: #C62828;
+  background: #FFF8F8;
+  border-color: #FFCDD2;
 }

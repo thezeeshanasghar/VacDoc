@@ -10,9 +10,9 @@
 <ion-content class="ion-padding">
 
   <!-- Clinic selector — only shown when doctor has multiple clinics -->
-  <div class="field-block" *ngIf="clinics.length > 1">
-    <label class="field-label">Clinic</label>
-    <select [(ngModel)]="clinicId" class="native-select" (change)="onClinicChange()">
+  <div class="clinic-selector-wrap" *ngIf="clinics.length > 1">
+    <span class="clinic-selector-label">Clinic</span>
+    <select [(ngModel)]="clinicId" class="clinic-selector-select" (change)="onClinicChange()">
       <option *ngFor="let c of clinics" [ngValue]="c.Id">{{ c.Name }}</option>
     </select>
   </div>
@@ -104,41 +104,49 @@
     Add Item
   </ion-button>
 
-  <!-- Totals -->
+  <!-- Totals + Payment unified card -->
   <ion-card class="totals-card">
     <ion-card-content>
-      <div class="total-row">
-        <span class="tot-label">Subtotal</span>
+
+      <div class="summary-row">
+        <span class="summary-label">Subtotal</span>
         <span class="amt-box">Rs {{ subtotal | number:'1.2-2' }}</span>
       </div>
-      <div class="total-row awt-input-row">
-        <span class="awt-label">AWT <input type="number" [(ngModel)]="awtPercent" class="awt-pct-input" min="0" max="100" placeholder="0"> %</span>
+
+      <div class="summary-row summary-row-border">
+        <span class="summary-label awt-label">
+          AWT <input type="number" [(ngModel)]="awtPercent" class="awt-pct-input" min="0" max="100" placeholder="0"> %
+        </span>
         <span class="amt-box">Rs {{ awtAmount | number:'1.2-2' }}</span>
       </div>
-      <div class="total-row payable-row">
-        <span class="tot-label">Total Payable</span>
+
+      <div class="summary-row summary-row-border summary-row-total">
+        <span class="summary-label-bold">Total Payable</span>
         <span class="amt-box amt-box-bold">Rs {{ totalPayable | number:'1.2-2' }}</span>
       </div>
-    </ion-card-content>
-  </ion-card>
 
-  <!-- Payment -->
-  <ion-card class="form-card">
-    <ion-card-content>
-      <div class="section-title" style="margin-top:0; margin-bottom:8px">Payment</div>
-      <div class="field-block">
-        <label class="field-label">Amount Paid <span class="hint">(leave 0 if not paid now)</span></label>
-        <input type="number" [(ngModel)]="amountPaid" class="native-input" placeholder="0.00" min="0">
+      <div class="summary-divider"></div>
+
+      <div class="summary-row">
+        <span class="summary-label">Amount Paid <span class="hint">(0 if not paid now)</span></span>
+        <input type="number" [(ngModel)]="amountPaid" class="amt-input" placeholder="0.00" min="0">
       </div>
-      <div class="field-block" *ngIf="amountPaid > 0">
-        <label class="field-label">Payment Method</label>
-        <select [(ngModel)]="paymentMethod" class="native-select">
+
+      <div class="summary-row" *ngIf="amountPaid > 0">
+        <span class="summary-label">Payment Method</span>
+        <select [(ngModel)]="paymentMethod" class="amt-select">
           <option value="">— Select —</option>
           <option value="Cash">Cash</option>
           <option value="Bank Transfer">Bank Transfer</option>
           <option value="Cheque">Cheque</option>
         </select>
       </div>
+
+      <div class="summary-row summary-row-pending" *ngIf="amountPaid > 0 && amountPaid < totalPayable">
+        <span class="summary-label-bold">Pending</span>
+        <span class="amt-box amt-box-pending">Rs {{ totalPayable - amountPaid | number:'1.2-2' }}</span>
+      </div>
+
     </ion-card-content>
   </ion-card>
 
