@@ -163,17 +163,13 @@
   </div>
   <div class="supplier-modal-search">
     <ion-icon name="search-outline" class="sms-icon"></ion-icon>
-    <input type="text" [(ngModel)]="supplierSearch" placeholder="Search..." class="sms-input" (input)="onSupplierSearch()" autocomplete="off">
+    <input type="text" [(ngModel)]="supplierSearch" placeholder="Search..." class="sms-input" autocomplete="off">
     <button *ngIf="supplierSearch" class="sms-clear" (click)="supplierSearch = ''">&times;</button>
   </div>
   <div class="supplier-modal-list">
     <div *ngIf="filteredSuppliers.length === 0" class="supplier-modal-empty">No suppliers found</div>
     <div class="supplier-modal-item" *ngFor="let s of filteredSuppliers" (click)="selectSupplier(s)">
-      <ion-icon name="business-outline" class="smi-icon"></ion-icon>
-      <div class="smi-info">
-        <span class="smi-name">{{ s.Name }}</span>
-        <span class="smi-phone" *ngIf="s.Phone">{{ s.Phone }}</span>
-      </div>
+      <span class="smi-name">{{ s.Name }}</span>
       <ion-icon *ngIf="supplierId === s.Id" name="checkmark-circle" class="smi-check"></ion-icon>
     </div>
   </div>

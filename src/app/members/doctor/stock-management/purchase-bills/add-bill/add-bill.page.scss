@@ -113,27 +113,28 @@
 .supplier-clear-icon { color: #B0BEC5; cursor: pointer; }
 .supplier-chevron { font-size: 16px; }
 
-// Supplier modal backdrop
+// Supplier modal — centered compact popup
 .supplier-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: rgba(0,0,0,0.5);
   z-index: 1000;
 }
 
-// Supplier modal panel
 .supplier-modal {
   position: fixed;
-  left: 12px;
-  right: 12px;
-  bottom: 0;
-  max-height: 70vh;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 88%;
+  max-width: 360px;
+  max-height: 60vh;
   background: #fff;
-  border-radius: 16px 16px 0 0;
+  border-radius: 14px;
   z-index: 1001;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 -4px 24px rgba(0,0,0,0.18);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.22);
   overflow: hidden;
 }
 
@@ -141,17 +142,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px 10px;
-  border-bottom: 1px solid #EEF2F7;
+  padding: 12px 14px 0;
 
   .supplier-modal-title {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     color: #1A1A2E;
   }
 
   .supplier-modal-close {
-    font-size: 22px;
+    font-size: 20px;
     color: #90A4AE;
     cursor: pointer;
   }
@@ -161,17 +161,19 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 14px;
-  border-bottom: 1px solid #EEF2F7;
+  margin: 10px 12px;
+  padding: 7px 10px;
   background: #F5F7FA;
+  border-radius: 8px;
+  border: 1px solid #CFD8DC;
 
-  .sms-icon { font-size: 18px; color: #90A4AE; flex-shrink: 0; }
+  .sms-icon { font-size: 16px; color: #90A4AE; flex-shrink: 0; }
 
   .sms-input {
     flex: 1;
     border: none;
     background: transparent;
-    font-size: 15px;
+    font-size: 14px;
     color: #1A1A2E;
     outline: none;
   }
@@ -180,7 +182,7 @@
     background: none;
     border: none;
     color: #90A4AE;
-    font-size: 18px;
+    font-size: 16px;
     cursor: pointer;
     padding: 0;
     line-height: 1;
@@ -190,38 +192,34 @@
 .supplier-modal-list {
   overflow-y: auto;
   flex: 1;
+  padding-bottom: 6px;
 }
 
 .supplier-modal-empty {
   text-align: center;
-  padding: 32px 16px;
+  padding: 24px 16px;
   color: #90A4AE;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .supplier-modal-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
+  justify-content: space-between;
+  padding: 12px 16px;
   border-bottom: 1px solid #F5F7FA;
   cursor: pointer;
 
   &:last-child { border-bottom: none; }
   &:active { background: #F5F7FA; }
 
-  .smi-icon { font-size: 20px; color: #B0BEC5; flex-shrink: 0; }
-
-  .smi-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+  .smi-name {
+    font-size: 14px;
+    color: #1A1A2E;
+    font-weight: 500;
   }
 
-  .smi-name { font-size: 15px; color: #1A1A2E; font-weight: 500; }
-  .smi-phone { font-size: 12px; color: #90A4AE; }
-  .smi-check { font-size: 20px; color: #2dd36f; flex-shrink: 0; }
+  .smi-check { font-size: 18px; color: #2dd36f; }
 }
 
 // Autocomplete widget — supplier (full-width) and brand (cell-level)
