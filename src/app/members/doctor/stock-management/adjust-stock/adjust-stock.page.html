@@ -1,0 +1,221 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/stock-management"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Adjust Stock</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Clinic selector -->
+  <div class="clinic-row" *ngIf="clinics.length > 1">
+    <label class="field-label">Clinic</label>
+    <select [(ngModel)]="clinicId" class="header-select" (change)="onClinicChange()">
+      <option *ngFor="let c of clinics" [ngValue]="c.Id">{{ c.Name }}</option>
+    </select>
+  </div>
+
+  <!-- New Adjustment card -->
+  <ion-card class="form-card">
+    <ion-card-content class="form-card-content">
+
+      <div class="section-label">New Adjustment</div>
+
+      <!-- Type toggle -->
+      <div class="type-toggle-row">
+        <button
+          class="type-btn"
+          [class.type-btn-increase]="adjustType === 'Increase'"
+          [class.type-btn-inactive]="adjustType !== 'Increase'"
+          (click)="setType('Increase')">
+          <ion-icon name="arrow-up-circle-outline"></ion-icon>
+          Increase
+        </button>
+        <button
+          class="type-btn"
+          [class.type-btn-loss]="adjustType === 'Loss'"
+          [class.type-btn-inactive]="adjustType !== 'Loss'"
+          (click)="setType('Loss')">
+          <ion-icon name="arrow-down-circle-outline"></ion-icon>
+          Stock Loss
+        </button>
+      </div>
+
+      <!-- Brand picker -->
+      <div class="field-wrap">
+        <label class="field-label">Brand *</label>
+        <div class="ac-wrap">
+          <input
+            type="text"
+            class="header-input ac-input"
+            placeholder="Type vaccine or brand name..."
+            [(ngModel)]="brandSearch"
+            (input)="openBrandDrop($event)"
+            (focus)="openBrandDrop($event)"
+            autocomplete="off"
+          >
+          <button *ngIf="brandId" class="ac-clear" type="button" (click)="clearBrand()">✕</button>
+        </div>
+      </div>
+
+      <!-- Batch row — only shown after brand selected -->
+      <div *ngIf="brandId">
+        <div class="two-col-row">
+          <div class="field-wrap">
+            <label class="field-label">Batch <span class="hint">(tap to change)</span></label>
+            <div class="batch-pick-row" (click)="openBatchModal()">
+              <span class="batch-pick-value" [class.placeholder]="!batchLot">
+                {{ batchLot || 'No batches available' }}
+              </span>
+              <ion-icon name="chevron-down-outline" class="batch-chevron"></ion-icon>
+            </div>
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">Expiry</label>
+            <input type="text" class="header-input" [value]="expiryDate ? formatDate(expiryDate) : '—'" readonly>
+          </div>
+        </div>
+
+        <div class="avail-row">
+          <ion-icon name="cube-outline" class="avail-icon"></ion-icon>
+          <span class="avail-label">Available in batch:</span>
+          <span class="avail-count" [class.avail-zero]="availableQty === 0">{{ availableQty }} units</span>
+        </div>
+      </div>
+
+      <!-- Qty + Date -->
+      <div class="two-col-row">
+        <div class="field-wrap">
+          <label class="field-label">Quantity *</label>
+          <input type="number" [(ngModel)]="qty" class="header-input" placeholder="0" min="1">
+        </div>
+        <div class="field-wrap">
+          <label class="field-label">Date *</label>
+          <input type="date" [(ngModel)]="adjustDate" class="header-input">
+        </div>
+      </div>
+
+      <!-- Reason -->
+      <div class="field-wrap">
+        <label class="field-label">Reason *</label>
+        <input type="text" [(ngModel)]="reason" class="header-input" placeholder="e.g. Stock count correction">
+      </div>
+
+      <!-- Price — Increase only -->
+      <div class="field-wrap" *ngIf="adjustType === 'Increase'">
+        <label class="field-label">Price / unit (incl. AWT) *</label>
+        <input type="number" [(ngModel)]="price" class="header-input" placeholder="0.00" min="0" step="0.01">
+      </div>
+
+      <ion-button expand="block" (click)="save()" class="save-btn"
+        [color]="adjustType === 'Loss' ? 'danger' : 'primary'">
+        <ion-icon [name]="adjustType === 'Loss' ? 'arrow-down-circle-outline' : 'arrow-up-circle-outline'" slot="start"></ion-icon>
+        Save {{ adjustType }} Adjustment
+      </ion-button>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- History section -->
+  <div class="section-title">History</div>
+
+  <div class="search-wrap">
+    <ion-icon name="search-outline" class="search-icon"></ion-icon>
+    <input type="text" [(ngModel)]="historySearch" class="search-input" placeholder="Search brand or reason...">
+    <button *ngIf="historySearch" class="search-clear" (click)="historySearch = ''">&times;</button>
+  </div>
+
+  <div class="empty-state" *ngIf="filteredHistory.length === 0">
+    <ion-icon name="options-outline" class="empty-icon"></ion-icon>
+    <p>No adjustments recorded</p>
+  </div>
+
+  <div class="history-card" *ngFor="let h of filteredHistory"
+    [class.history-card-increase]="h.Adjustment > 0"
+    [class.history-card-loss]="h.Adjustment < 0">
+
+    <div class="history-top">
+      <div class="history-brand-block">
+        <span class="history-brand">{{ h.BrandName }}</span>
+        <span class="history-vaccine">{{ h.VaccineName }}</span>
+      </div>
+      <span class="adj-badge" [class.adj-badge-increase]="h.Adjustment > 0" [class.adj-badge-loss]="h.Adjustment < 0">
+        <ion-icon [name]="h.Adjustment > 0 ? 'arrow-up-outline' : 'arrow-down-outline'"></ion-icon>
+        {{ h.Adjustment > 0 ? '+' : '' }}{{ h.Adjustment }}
+      </span>
+    </div>
+
+    <div class="history-meta-row">
+      <span class="meta-chip">
+        <ion-icon name="barcode-outline"></ion-icon> {{ h.BatchLot || '—' }}
+      </span>
+      <span class="meta-chip" *ngIf="h.ExpiryDate">
+        <ion-icon name="calendar-outline"></ion-icon> Exp: {{ formatDate(h.ExpiryDate) }}
+      </span>
+    </div>
+
+    <div class="history-reason">{{ h.Reason }}</div>
+
+    <div class="history-footer">
+      <div class="history-footer-left">
+        <span class="history-date">{{ formatDate(h.Date) }}</span>
+        <span class="history-price" *ngIf="h.Price > 0">Rs {{ h.Price | number:'1.2-2' }}/unit</span>
+      </div>
+      <ion-button fill="outline" color="danger" size="small" (click)="confirmDelete(h.Id)">
+        <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+
+  </div>
+
+  <div style="height: 32px;"></div>
+
+</ion-content>
+
+<!-- Batch picker modal -->
+<div class="modal-backdrop" *ngIf="batchModalOpen" (click)="closeBatchModal()"></div>
+<div class="batch-modal" *ngIf="batchModalOpen">
+  <div class="batch-modal-header">
+    <span class="batch-modal-title">Select Batch</span>
+    <ion-icon name="close-outline" class="batch-modal-close" (click)="closeBatchModal()"></ion-icon>
+  </div>
+  <div class="batch-modal-table-header">
+    <span>Batch</span>
+    <span>Expiry</span>
+    <span>Qty</span>
+  </div>
+  <div class="batch-modal-list">
+    <div *ngIf="batches.length === 0" class="batch-modal-empty">No batches in stock</div>
+    <div class="batch-modal-row"
+         *ngFor="let b of batches"
+         (click)="selectBatch(b)"
+         [class.batch-row-selected]="b.BatchLot === batchLot"
+         [class.batch-row-expired]="isExpired(b.Expiry)"
+         [class.batch-row-soon]="!isExpired(b.Expiry) && isExpiringSoon(b.Expiry)">
+      <span class="bmr-batch">
+        <ion-icon *ngIf="b.BatchLot === batchLot" name="checkmark-circle" class="bmr-check"></ion-icon>
+        {{ b.BatchLot }}
+      </span>
+      <span class="bmr-expiry">
+        {{ b.Expiry ? formatDate(b.Expiry) : '—' }}
+        <span class="expiry-tag expired-tag" *ngIf="isExpired(b.Expiry)">Exp</span>
+        <span class="expiry-tag soon-tag" *ngIf="!isExpired(b.Expiry) && isExpiringSoon(b.Expiry)">Soon</span>
+      </span>
+      <span class="bmr-qty" [class.bmr-qty-zero]="b.Quantity === 0">{{ b.Quantity }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Brand autocomplete overlay -->
+<div class="brand-overlay-drop"
+     *ngIf="brandDropOpen && filteredBrands(brandSearch).length > 0"
+     [style.top.px]="brandDropTop"
+     [style.left.px]="brandDropLeft"
+     [style.width.px]="brandDropWidth">
+  <div class="ac-option" *ngFor="let b of filteredBrands(brandSearch)" (click)="selectBrand(b)">
+    <span class="ac-opt-brand">{{ b.BrandName }}</span>
+    <span class="ac-opt-vaccine">{{ b.VaccineName }}</span>
+  </div>
+</div>

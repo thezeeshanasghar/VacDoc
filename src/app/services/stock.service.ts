@@ -83,4 +83,16 @@ export class StockService {
   getStockOverview(doctorId: number, clinicId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}stockoverview?doctorId=${doctorId}&clinicId=${clinicId}`);
   }
+
+  createAdjustment(dto: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}adjuststock`, dto);
+  }
+
+  getAdjustments(doctorId: number, clinicId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}adjuststock?doctorId=${doctorId}&clinicId=${clinicId}`);
+  }
+
+  deleteAdjustment(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}adjuststock/${id}`);
+  }
 }
