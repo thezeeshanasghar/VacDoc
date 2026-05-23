@@ -26,7 +26,7 @@ export class AddBillPage {
   supplierModalOpen: boolean = false;
   awtPercent: number = 0;
   amountPaid: number = 0;
-  paymentMethod: string = '';
+  paymentMethod: string = 'Cash';
 
   suppliers: any[] = [];
   brands: any[] = [];
