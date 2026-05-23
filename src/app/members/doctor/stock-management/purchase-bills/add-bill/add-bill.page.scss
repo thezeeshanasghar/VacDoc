@@ -1,21 +1,51 @@
-// Clinic selector row (inline label + select, no card)
-.clinic-selector-wrap {
+// Header card layout
+.header-card-content {
+  padding: 12px 16px !important;
+}
+
+.header-row-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.header-field {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 4px 6px;
+  flex-direction: column;
+  gap: 5px;
 }
 
-.clinic-selector-label {
+.header-field-full {
+  grid-column: 1 / -1;
+  margin-bottom: 12px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.header-input {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
   font-size: 14px;
-  font-weight: 600;
-  color: #546E7A;
-  white-space: nowrap;
+  color: #1A1A2E;
+  background: #fff;
+  border: 1.5px solid #B0BEC5;
+  border-radius: 8px;
+  outline: none;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: #1565C0;
+  }
 }
 
-.clinic-selector-select {
-  flex: 1;
-  padding: 8px 12px;
+.header-select {
+  display: block;
+  width: 100%;
+  padding: 8px 32px 8px 10px;
   font-size: 14px;
   color: #1A1A2E;
   background: #fff;
@@ -27,7 +57,7 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%2390A4AE' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
-  padding-right: 32px;
+  box-sizing: border-box;
 
   &:focus {
     border-color: #1565C0;

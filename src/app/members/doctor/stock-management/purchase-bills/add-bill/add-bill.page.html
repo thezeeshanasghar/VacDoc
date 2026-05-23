@@ -9,29 +9,32 @@
 
 <ion-content class="ion-padding">
 
-  <!-- Clinic selector — only shown when doctor has multiple clinics -->
-  <div class="clinic-selector-wrap" *ngIf="clinics.length > 1">
-    <span class="clinic-selector-label">Clinic</span>
-    <select [(ngModel)]="clinicId" class="clinic-selector-select" (change)="onClinicChange()">
-      <option *ngFor="let c of clinics" [ngValue]="c.Id">{{ c.Name }}</option>
-    </select>
-  </div>
-
-  <!-- Bill Header -->
+  <!-- Bill Header card -->
   <ion-card class="form-card">
-    <ion-card-content>
+    <ion-card-content class="header-card-content">
 
-      <ion-item lines="full">
-        <ion-label position="stacked">Bill No <span class="hint">(auto if blank)</span></ion-label>
-        <ion-input [(ngModel)]="billNo" placeholder="BILL-2026-0001" clearInput></ion-input>
-      </ion-item>
+      <!-- Row 1: Bill No + Bill Date side by side -->
+      <div class="header-row-pair">
+        <div class="header-field">
+          <label class="field-label">Bill No <span class="hint">(auto if blank)</span></label>
+          <input type="text" [(ngModel)]="billNo" class="header-input" placeholder="BILL-2026-0001">
+        </div>
+        <div class="header-field">
+          <label class="field-label">Bill Date *</label>
+          <input type="date" [(ngModel)]="billDate" class="header-input">
+        </div>
+      </div>
 
-      <ion-item lines="full">
-        <ion-label position="stacked">Bill Date *</ion-label>
-        <ion-input type="date" [(ngModel)]="billDate"></ion-input>
-      </ion-item>
+      <!-- Row 2: Clinic (only when multiple) -->
+      <div class="header-field header-field-full" *ngIf="clinics.length > 1">
+        <label class="field-label">Clinic</label>
+        <select [(ngModel)]="clinicId" class="header-select" (change)="onClinicChange()">
+          <option *ngFor="let c of clinics" [ngValue]="c.Id">{{ c.Name }}</option>
+        </select>
+      </div>
 
-      <div class="field-block">
+      <!-- Row 3: Supplier autocomplete -->
+      <div class="header-field header-field-full">
         <label class="field-label">Supplier</label>
         <div class="ac-wrap">
           <input
