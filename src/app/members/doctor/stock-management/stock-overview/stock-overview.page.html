@@ -4,10 +4,22 @@
       <ion-back-button defaultHref="/members/doctor/stock-management"></ion-back-button>
     </ion-buttons>
     <ion-title>Stock Overview</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="downloadPdf()">
+        <ion-icon name="document-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="overview-content">
+
+  <!-- Clinic selector — only shown when doctor has multiple clinics -->
+  <div class="clinic-wrap" *ngIf="clinics.length > 1">
+    <select [(ngModel)]="clinicId" class="clinic-select" (change)="onClinicChange()">
+      <option *ngFor="let c of clinics" [ngValue]="c.Id">{{ c.Name }}</option>
+    </select>
+  </div>
 
   <!-- Search -->
   <div class="search-wrap">
@@ -45,12 +57,6 @@
           class="expand-icon">
         </ion-icon>
       </div>
-    </div>
-
-    <!-- Sale price row -->
-    <div class="sale-price-row" *ngIf="brand.SalePrice > 0">
-      <span class="sale-price-label">Sale Price</span>
-      <span class="sale-price-val">Rs {{ brand.SalePrice | number:'1.2-2' }}</span>
     </div>
 
     <!-- Batch detail table — shown when expanded -->

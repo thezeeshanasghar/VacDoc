@@ -2,6 +2,29 @@
   --background: #EEF2F7;
 }
 
+.clinic-wrap {
+  padding: 10px 16px 4px;
+
+  .clinic-select {
+    display: block;
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 15px;
+    color: #1A1A2E;
+    background: #fff;
+    border: 1.5px solid #B0BEC5;
+    border-radius: 10px;
+    outline: none;
+    box-sizing: border-box;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2390A4AE' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+}
+
 .search-wrap {
   padding: 12px 16px 8px;
 }
