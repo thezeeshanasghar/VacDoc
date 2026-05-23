@@ -45,8 +45,7 @@
     <!-- Brand header row — tap to expand/collapse batches -->
     <div class="brand-header" (click)="toggleBrand(brand.BrandId)">
       <div class="brand-info">
-        <span class="vaccine-name">{{ brand.VaccineName || brand.BrandName }}</span>
-        <span class="brand-name" *ngIf="brand.VaccineName && brand.VaccineName !== brand.BrandName">{{ brand.BrandName }}</span>
+        <span class="vaccine-name">{{ brand.BrandName }}</span>
       </div>
       <div class="brand-summary">
         <span class="count-badge" [class.low-stock]="brand.TotalCount <= 5">
