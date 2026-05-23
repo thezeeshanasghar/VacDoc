@@ -17,6 +17,7 @@ export class StockOverviewPage {
   expandedBrands: { [brandId: number]: boolean } = {};
   doctorId: number = 0;
   clinicId: number = 0;
+  clinics: any[] = [];
 
   constructor(
     private stockService: StockService,
@@ -29,6 +30,13 @@ export class StockOverviewPage {
     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
     const clinic = await this.storage.get(environment.ON_CLINIC);
     this.clinicId = clinic ? clinic.Id : 0;
+    const allClinics = await this.storage.get(environment.CLINICS);
+    this.clinics = allClinics || (clinic ? [clinic] : []);
+    this.loadOverview();
+  }
+
+  onClinicChange() {
+    this.expandedBrands = {};
     this.loadOverview();
   }
 
@@ -70,6 +78,11 @@ export class StockOverviewPage {
 
   isExpanded(brandId: number): boolean {
     return !!this.expandedBrands[brandId];
+  }
+
+  downloadPdf() {
+    const url = environment.BASE_URL + 'stockoverview/pdf?doctorId=' + this.doctorId + '&clinicId=' + this.clinicId;
+    window.open(url, '_blank');
   }
 
   formatDate(d: string): string {

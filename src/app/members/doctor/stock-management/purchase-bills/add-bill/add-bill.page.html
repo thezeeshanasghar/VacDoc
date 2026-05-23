@@ -9,6 +9,14 @@
 
 <ion-content class="ion-padding">
 
+  <!-- Clinic selector — only shown when doctor has multiple clinics -->
+  <div class="field-block" *ngIf="clinics.length > 1">
+    <label class="field-label">Clinic</label>
+    <select [(ngModel)]="clinicId" class="native-select" (change)="onClinicChange()">
+      <option *ngFor="let c of clinics" [ngValue]="c.Id">{{ c.Name }}</option>
+    </select>
+  </div>
+
   <!-- Bill Header -->
   <ion-card class="form-card">
     <ion-card-content>

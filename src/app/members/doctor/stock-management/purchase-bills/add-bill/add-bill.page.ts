@@ -16,6 +16,7 @@ import { environment } from 'src/environments/environment';
 export class AddBillPage implements OnInit {
   doctorId: number = 0;
   clinicId: number = 0;
+  clinics: any[] = [];
 
   billNo: string = '';
   billDate: string = '';
@@ -63,6 +64,8 @@ export class AddBillPage implements OnInit {
     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
     const clinic = await this.storage.get(environment.ON_CLINIC);
     this.clinicId = clinic ? clinic.Id : 0;
+    const allClinics = await this.storage.get(environment.CLINICS);
+    this.clinics = allClinics || (clinic ? [clinic] : []);
 
     const today = new Date();
     const mm = (today.getMonth() + 1).toString().padStart(2, '0');
@@ -71,6 +74,10 @@ export class AddBillPage implements OnInit {
 
     this.addLine();
     this.loadSuppliers();
+    this.loadBrands();
+  }
+
+  onClinicChange() {
     this.loadBrands();
   }
 
