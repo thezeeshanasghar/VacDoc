@@ -1,0 +1,217 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/stock-management"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Stock Transfer</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="transfer-content">
+  <div class="transfer-wrap">
+
+    <!-- Clinic selectors -->
+    <div class="clinic-row">
+      <label class="field-label">From Clinic</label>
+      <select [(ngModel)]="fromClinicId" class="header-select" (change)="onFromClinicChange()">
+        <option *ngFor="let c of clinics" [ngValue]="c.Id">{{ c.Name }}</option>
+      </select>
+    </div>
+
+    <div class="clinic-row">
+      <label class="field-label">To Clinic</label>
+      <select [(ngModel)]="toClinicId" class="header-select" (change)="onToClinicChange()">
+        <option *ngFor="let c of clinics" [ngValue]="c.Id" [disabled]="c.Id === fromClinicId">{{ c.Name }}</option>
+      </select>
+    </div>
+
+    <!-- No destination warning -->
+    <div class="warn-row" *ngIf="clinics.length < 2">
+      <ion-icon name="warning-outline"></ion-icon>
+      <span>Stock Transfer requires at least two clinics on your account.</span>
+    </div>
+
+    <!-- New Transfer form card -->
+    <ion-card class="form-card" *ngIf="clinics.length >= 2">
+      <ion-card-content class="form-card-content">
+        <div class="section-label">New Transfer</div>
+
+        <!-- Brand autocomplete -->
+        <div class="field-wrap">
+          <label class="field-label">Brand *</label>
+          <div class="ac-wrap">
+            <input
+              type="text"
+              class="header-input ac-input"
+              placeholder="Type vaccine or brand name..."
+              [(ngModel)]="brandSearch"
+              (input)="openBrandDrop($event)"
+              (focus)="openBrandDrop($event)"
+              autocomplete="off"
+            >
+            <button *ngIf="brandId" class="ac-clear" type="button" (click)="clearBrand()">✕</button>
+          </div>
+        </div>
+
+        <!-- Batch + Expiry row -->
+        <div class="two-col-row" *ngIf="brandId">
+          <div class="field-wrap">
+            <label class="field-label">Batch <span class="hint">(tap to change)</span></label>
+            <div class="batch-pick-row" (click)="openBatchModal()">
+              <span class="batch-pick-value" [class.placeholder]="!batchLot">{{ batchLot || 'No batch' }}</span>
+              <ion-icon name="chevron-down-outline" class="batch-chevron"></ion-icon>
+            </div>
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">Expiry</label>
+            <input type="text" class="header-input" [value]="expiryDate ? formatDate(expiryDate) : '—'" readonly>
+          </div>
+        </div>
+
+        <!-- Available qty -->
+        <div class="avail-row" *ngIf="brandId">
+          <ion-icon name="cube-outline" class="avail-icon"></ion-icon>
+          <span class="avail-label">Available in batch:</span>
+          <span class="avail-count" [class.avail-zero]="availableQty === 0">{{ availableQty }} units</span>
+        </div>
+
+        <!-- Qty + Date -->
+        <div class="two-col-row">
+          <div class="field-wrap">
+            <label class="field-label">Quantity *</label>
+            <input type="number" class="header-input" [(ngModel)]="qty" placeholder="0" min="1">
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">Date *</label>
+            <input type="date" class="header-input" [(ngModel)]="transferDate">
+          </div>
+        </div>
+
+        <!-- Reason -->
+        <div class="field-wrap">
+          <label class="field-label">Reason</label>
+          <input type="text" class="header-input" [(ngModel)]="reason" placeholder="Optional reason...">
+        </div>
+
+        <!-- Save button -->
+        <ion-button expand="block" color="primary" class="save-btn" (click)="save()">
+          <ion-icon name="swap-horizontal-outline" slot="start"></ion-icon>
+          Transfer Stock
+        </ion-button>
+
+      </ion-card-content>
+    </ion-card>
+
+    <!-- History -->
+    <div class="section-title">History</div>
+
+    <div class="search-wrap">
+      <ion-icon name="search-outline" class="search-icon"></ion-icon>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search brand or reason..."
+        [(ngModel)]="historySearch"
+        autocomplete="off"
+      >
+      <button *ngIf="historySearch" class="search-clear" (click)="historySearch = ''">✕</button>
+    </div>
+
+    <div class="empty-state" *ngIf="filteredHistory.length === 0">
+      <ion-icon name="swap-horizontal-outline" class="empty-icon"></ion-icon>
+      <p>No transfers recorded</p>
+    </div>
+
+    <div *ngFor="let t of filteredHistory" class="history-card">
+      <div class="history-top">
+        <div class="history-brand-block">
+          <span class="history-brand">{{ t.BrandName }}</span>
+          <span class="history-vaccine" *ngIf="t.VaccineName">{{ t.VaccineName }}</span>
+        </div>
+        <div class="transfer-badge">
+          <ion-icon name="swap-horizontal-outline"></ion-icon>
+          {{ t.Quantity }} units
+        </div>
+      </div>
+
+      <div class="history-meta-row">
+        <span class="meta-chip" *ngIf="t.BatchLot">
+          <ion-icon name="pricetag-outline"></ion-icon>
+          {{ t.BatchLot }}
+        </span>
+        <span class="meta-chip" *ngIf="t.ExpiryDate">
+          <ion-icon name="calendar-outline"></ion-icon>
+          Exp: {{ formatDate(t.ExpiryDate) }}
+          <span class="expiry-tag expired-tag" *ngIf="isExpired(t.ExpiryDate)">Expired</span>
+          <span class="expiry-tag soon-tag" *ngIf="!isExpired(t.ExpiryDate) && isExpiringSoon(t.ExpiryDate)">Soon</span>
+        </span>
+      </div>
+
+      <div class="clinic-route-row">
+        <ion-icon name="business-outline" class="clinic-icon"></ion-icon>
+        <span class="clinic-from">{{ t.FromClinicName }}</span>
+        <ion-icon name="arrow-forward-outline" class="route-arrow"></ion-icon>
+        <span class="clinic-to">{{ t.ToClinicName }}</span>
+      </div>
+
+      <div *ngIf="t.Reason" class="history-reason">"{{ t.Reason }}"</div>
+
+      <div class="history-footer">
+        <span class="history-date">{{ formatDate(t.TransferDate) }}</span>
+        <ion-button fill="outline" color="danger" size="small" (click)="confirmDelete(t.Id)">
+          <ion-icon name="trash-outline" slot="start"></ion-icon>
+          Reverse
+        </ion-button>
+      </div>
+    </div>
+
+  </div>
+</ion-content>
+
+<!-- Brand overlay dropdown (fixed position) -->
+<div class="brand-overlay-drop"
+     *ngIf="brandDropOpen && filteredBrands(brandSearch).length > 0"
+     [style.top.px]="brandDropTop"
+     [style.left.px]="brandDropLeft"
+     [style.width.px]="brandDropWidth">
+  <div class="ac-option" *ngFor="let b of filteredBrands(brandSearch)" (click)="selectBrand(b)">
+    <span class="ac-opt-brand">{{ b.BrandName }}</span>
+    <span class="ac-opt-vaccine">{{ b.VaccineName }}</span>
+  </div>
+</div>
+
+<!-- Batch modal -->
+<div class="modal-backdrop" *ngIf="batchModalOpen" (click)="closeBatchModal()"></div>
+<div class="batch-modal" *ngIf="batchModalOpen">
+  <div class="batch-modal-header">
+    <span class="batch-modal-title">Select Batch</span>
+    <ion-icon name="close-outline" class="batch-modal-close" (click)="closeBatchModal()"></ion-icon>
+  </div>
+  <div class="batch-modal-table-header">
+    <span>Batch</span>
+    <span>Expiry</span>
+    <span>Qty</span>
+  </div>
+  <div class="batch-modal-list">
+    <div *ngIf="batches.length === 0" class="batch-modal-empty">No batches available</div>
+    <div
+      *ngFor="let b of batches"
+      class="batch-modal-row"
+      [class.batch-row-selected]="b.BatchLot === batchLot"
+      [class.batch-row-expired]="isExpired(b.Expiry)"
+      [class.batch-row-soon]="!isExpired(b.Expiry) && isExpiringSoon(b.Expiry)"
+      (click)="selectBatch(b)"
+    >
+      <span class="bmr-batch">
+        <ion-icon *ngIf="b.BatchLot === batchLot" name="checkmark-circle-outline" class="bmr-check"></ion-icon>
+        {{ b.BatchLot || '—' }}
+      </span>
+      <span class="bmr-expiry">
+        {{ formatDate(b.Expiry) }}
+        <span class="expiry-tag expired-tag" *ngIf="isExpired(b.Expiry)">Exp'd</span>
+        <span class="expiry-tag soon-tag" *ngIf="!isExpired(b.Expiry) && isExpiringSoon(b.Expiry)">Soon</span>
+      </span>
+      <span class="bmr-qty" [class.bmr-qty-zero]="b.Quantity === 0">{{ b.Quantity }}</span>
+    </div>
+  </div>
+</div>

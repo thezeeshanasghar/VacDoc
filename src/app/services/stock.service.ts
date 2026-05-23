@@ -95,4 +95,16 @@ export class StockService {
   deleteAdjustment(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}adjuststock/${id}`);
   }
+
+  createTransfer(dto: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}stocktransfer`, dto);
+  }
+
+  getTransfers(doctorId: number, clinicId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}stocktransfer?doctorId=${doctorId}&clinicId=${clinicId}`);
+  }
+
+  deleteTransfer(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}stocktransfer/${id}`);
+  }
 }
