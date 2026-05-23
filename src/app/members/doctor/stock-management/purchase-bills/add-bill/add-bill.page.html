@@ -33,23 +33,17 @@
         </select>
       </div>
 
-      <!-- Row 3: Supplier autocomplete -->
+      <!-- Row 3: Supplier picker -->
       <div class="header-field header-field-full">
         <label class="field-label">Supplier</label>
-        <div class="ac-wrap">
-          <input
-            type="text"
-            class="ac-input"
-            placeholder="Type to search supplier..."
-            [(ngModel)]="supplierSearch"
-            (input)="supplierDropOpen = true"
-            (focus)="supplierDropOpen = true"
-            autocomplete="off"
-          >
-          <button *ngIf="supplierId" class="ac-clear" type="button" (click)="clearSupplier()">✕</button>
-          <div class="ac-dropdown" *ngIf="supplierDropOpen && filteredSuppliers.length > 0">
-            <div class="ac-option" *ngFor="let s of filteredSuppliers" (click)="selectSupplier(s)">{{ s.Name }}</div>
-          </div>
+        <div class="supplier-pick-row" (click)="openSupplierModal()">
+          <span class="supplier-pick-value" [class.placeholder]="!supplierId">
+            {{ supplierId ? supplierSearch : 'Tap to select supplier...' }}
+          </span>
+          <span class="supplier-pick-icons">
+            <ion-icon *ngIf="supplierId" name="close-circle" class="supplier-clear-icon" (click)="clearSupplier(); $event.stopPropagation()"></ion-icon>
+            <ion-icon name="chevron-down-outline" class="supplier-chevron"></ion-icon>
+          </span>
         </div>
       </div>
 
@@ -159,6 +153,31 @@
   </ion-button>
 
 </ion-content>
+
+<!-- Supplier picker modal -->
+<div class="supplier-modal-backdrop" *ngIf="supplierModalOpen" (click)="closeSupplierModal()"></div>
+<div class="supplier-modal" *ngIf="supplierModalOpen">
+  <div class="supplier-modal-header">
+    <span class="supplier-modal-title">Select Supplier</span>
+    <ion-icon name="close-outline" class="supplier-modal-close" (click)="closeSupplierModal()"></ion-icon>
+  </div>
+  <div class="supplier-modal-search">
+    <ion-icon name="search-outline" class="sms-icon"></ion-icon>
+    <input type="text" [(ngModel)]="supplierSearch" placeholder="Search..." class="sms-input" (input)="onSupplierSearch()" autocomplete="off">
+    <button *ngIf="supplierSearch" class="sms-clear" (click)="supplierSearch = ''">&times;</button>
+  </div>
+  <div class="supplier-modal-list">
+    <div *ngIf="filteredSuppliers.length === 0" class="supplier-modal-empty">No suppliers found</div>
+    <div class="supplier-modal-item" *ngFor="let s of filteredSuppliers" (click)="selectSupplier(s)">
+      <ion-icon name="business-outline" class="smi-icon"></ion-icon>
+      <div class="smi-info">
+        <span class="smi-name">{{ s.Name }}</span>
+        <span class="smi-phone" *ngIf="s.Phone">{{ s.Phone }}</span>
+      </div>
+      <ion-icon *ngIf="supplierId === s.Id" name="checkmark-circle" class="smi-check"></ion-icon>
+    </div>
+  </div>
+</div>
 
 <!-- Brand autocomplete overlay — rendered outside scroll context to avoid clipping -->
 <div class="brand-overlay-drop"

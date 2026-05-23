@@ -23,6 +23,7 @@ export class AddBillPage {
   supplierId: number = null;
   supplierSearch: string = '';
   supplierDropOpen: boolean = false;
+  supplierModalOpen: boolean = false;
   awtPercent: number = 0;
   amountPaid: number = 0;
   paymentMethod: string = '';
@@ -130,16 +131,33 @@ export class AddBillPage {
     line.brandDropOpen = true;
   }
 
+  openSupplierModal() {
+    this.supplierSearch = '';
+    this.supplierModalOpen = true;
+  }
+
+  closeSupplierModal() {
+    this.supplierModalOpen = false;
+    if (this.supplierId) {
+      const s = this.suppliers.find((x: any) => x.Id === this.supplierId);
+      this.supplierSearch = s ? s.Name : '';
+    }
+  }
+
+  onSupplierSearch() {}
+
   selectSupplier(s: any) {
     this.supplierId = s.Id;
     this.supplierSearch = s.Name;
     this.supplierDropOpen = false;
+    this.supplierModalOpen = false;
   }
 
   clearSupplier() {
     this.supplierId = null;
     this.supplierSearch = '';
     this.supplierDropOpen = false;
+    this.supplierModalOpen = false;
   }
 
   selectBrand(line: any, b: any) {

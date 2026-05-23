@@ -77,6 +77,153 @@
   margin-bottom: 6px;
 }
 
+// Supplier picker row (tap to open modal)
+.supplier-pick-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 9px 12px;
+  background: #fff;
+  border: 1.5px solid #B0BEC5;
+  border-radius: 8px;
+  cursor: pointer;
+  box-sizing: border-box;
+  min-height: 40px;
+
+  &:active { background: #F5F7FA; }
+}
+
+.supplier-pick-value {
+  font-size: 15px;
+  color: #1A1A2E;
+  flex: 1;
+
+  &.placeholder { color: #90A4AE; }
+}
+
+.supplier-pick-icons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #90A4AE;
+  font-size: 18px;
+}
+
+.supplier-clear-icon { color: #B0BEC5; cursor: pointer; }
+.supplier-chevron { font-size: 16px; }
+
+// Supplier modal backdrop
+.supplier-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 1000;
+}
+
+// Supplier modal panel
+.supplier-modal {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  max-height: 70vh;
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.18);
+  overflow: hidden;
+}
+
+.supplier-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid #EEF2F7;
+
+  .supplier-modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1A1A2E;
+  }
+
+  .supplier-modal-close {
+    font-size: 22px;
+    color: #90A4AE;
+    cursor: pointer;
+  }
+}
+
+.supplier-modal-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #EEF2F7;
+  background: #F5F7FA;
+
+  .sms-icon { font-size: 18px; color: #90A4AE; flex-shrink: 0; }
+
+  .sms-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 15px;
+    color: #1A1A2E;
+    outline: none;
+  }
+
+  .sms-clear {
+    background: none;
+    border: none;
+    color: #90A4AE;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+  }
+}
+
+.supplier-modal-list {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.supplier-modal-empty {
+  text-align: center;
+  padding: 32px 16px;
+  color: #90A4AE;
+  font-size: 14px;
+}
+
+.supplier-modal-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #F5F7FA;
+  cursor: pointer;
+
+  &:last-child { border-bottom: none; }
+  &:active { background: #F5F7FA; }
+
+  .smi-icon { font-size: 20px; color: #B0BEC5; flex-shrink: 0; }
+
+  .smi-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .smi-name { font-size: 15px; color: #1A1A2E; font-weight: 500; }
+  .smi-phone { font-size: 12px; color: #90A4AE; }
+  .smi-check { font-size: 20px; color: #2dd36f; flex-shrink: 0; }
+}
+
 // Autocomplete widget — supplier (full-width) and brand (cell-level)
 .ac-wrap {
   position: relative;
