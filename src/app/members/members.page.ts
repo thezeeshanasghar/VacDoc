@@ -589,7 +589,6 @@ export class MembersPage implements OnInit {
         if (res.IsSuccess) {
           this.doctorData = res.ResponseData;
           const inventoryAllowed = this.doctorData.AllowInventory !== false;
-          const supplierAllowed  = this.doctorData.AllowSupplier  === true;
           const financialAllowed = this.doctorData.AllowFinancial === true;
           const agentAllowed     = this.doctorData.AllowAgent     === true;
           this.profileImagePath = this.doctorData.ProfileImage;
