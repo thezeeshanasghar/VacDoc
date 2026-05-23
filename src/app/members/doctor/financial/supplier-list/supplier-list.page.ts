@@ -59,4 +59,18 @@ export class SupplierListPage {
   addNew() {
     this.router.navigate(['/members/doctor/stock-management/supplier-edit', 'new']);
   }
+
+  toggleActive(s: any) {
+    const updated = Object.assign({}, s, { IsActive: !s.IsActive });
+    this.supplierService.update(s.Id, updated).subscribe(
+      (res: any) => {
+        if (res.IsSuccess) {
+          s.IsActive = !s.IsActive;
+        } else {
+          this.toastService.create(res.Message || 'Failed to update', 'danger');
+        }
+      },
+      () => { this.toastService.create('Failed to update', 'danger'); }
+    );
+  }
 }
