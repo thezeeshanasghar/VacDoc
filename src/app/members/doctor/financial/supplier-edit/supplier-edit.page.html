@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <form [formGroup]="fg">
+  <form [formGroup]="fg" *ngIf="ready">
 
     <ion-item>
       <ion-label position="floating" color="primary">Name *</ion-label>

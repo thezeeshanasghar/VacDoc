@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
@@ -12,11 +12,12 @@ import { environment } from 'src/environments/environment';
   templateUrl: './supplier-edit.page.html',
   styleUrls: ['./supplier-edit.page.scss'],
 })
-export class SupplierEditPage implements OnInit {
+export class SupplierEditPage {
   fg: FormGroup;
   isNew: boolean = false;
   supplierId: any = null;
   doctorId: number = 0;
+  ready: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -28,7 +29,8 @@ export class SupplierEditPage implements OnInit {
     private storage: Storage,
   ) {}
 
-  async ngOnInit() {
+  async ionViewWillEnter() {
+    this.ready = false;
     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
     const idParam = this.route.snapshot.paramMap.get('id');
     this.isNew = idParam === 'new';
@@ -43,6 +45,7 @@ export class SupplierEditPage implements OnInit {
       OpeningBalance: [null],
       IsActive: [true],
     });
+    this.ready = true;
 
     if (!this.isNew) {
       this.loadSupplier();
