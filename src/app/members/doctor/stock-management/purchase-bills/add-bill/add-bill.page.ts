@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
@@ -13,7 +13,7 @@ import { environment } from 'src/environments/environment';
   templateUrl: './add-bill.page.html',
   styleUrls: ['./add-bill.page.scss'],
 })
-export class AddBillPage implements OnInit {
+export class AddBillPage {
   doctorId: number = 0;
   clinicId: number = 0;
   clinics: any[] = [];
@@ -60,7 +60,7 @@ export class AddBillPage implements OnInit {
     private toastService: ToastService,
   ) {}
 
-  async ngOnInit() {
+  async ionViewWillEnter() {
     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
     const clinic = await this.storage.get(environment.ON_CLINIC);
     this.clinicId = clinic ? clinic.Id : 0;
@@ -72,7 +72,7 @@ export class AddBillPage implements OnInit {
     const dd = today.getDate().toString().padStart(2, '0');
     this.billDate = today.getFullYear() + '-' + mm + '-' + dd;
 
-    this.addLine();
+    if (this.lines.length === 0) this.addLine();
     this.loadSuppliers();
     this.loadBrands();
   }
