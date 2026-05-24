@@ -588,9 +588,10 @@ export class MembersPage implements OnInit {
       async (res) => {
         if (res.IsSuccess) {
           this.doctorData = res.ResponseData;
-          const inventoryAllowed = this.doctorData.AllowInventory !== false;
-          const financialAllowed = this.doctorData.AllowFinancial === true;
-          const agentAllowed     = this.doctorData.AllowAgent     === true;
+          const inventoryAllowed  = this.doctorData.AllowInventory  !== false;
+          const financialAllowed  = this.doctorData.AllowFinancial  === true;
+          const agentAllowed      = this.doctorData.AllowAgent       === true;
+          const analyticsAllowed  = this.doctorData.AllowAnalytics   === true;
           this.profileImagePath = this.doctorData.ProfileImage;
           this.Name = this.doctorData.DisplayName;
           const clinics = this.doctorData.Clinics;
@@ -687,12 +688,15 @@ export class MembersPage implements OnInit {
                 url: "/members/doctor/password",
                 icon: "key-outline"
               },
-              {
+            ];
+
+            if (analyticsAllowed) {
+              this.doctorPages.push({
                 title: "Analytics",
                 url: "/members/doctor/analytics/data",
                 icon: "stats-chart-outline"
-              },
-            ];
+              });
+            }
 
             this.childPages = [
               {
