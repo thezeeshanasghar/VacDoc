@@ -111,4 +111,20 @@ export class StockService {
   downloadTransferPdf(billId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}stocktransfer/pdf?billId=${billId}`, { responseType: 'blob' });
   }
+
+  createDirectSale(dto: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}directsale`, dto);
+  }
+
+  getDirectSales(doctorId: number, clinicId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}directsale?doctorId=${doctorId}&clinicId=${clinicId}`);
+  }
+
+  deleteDirectSale(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}directsale/${id}`);
+  }
+
+  downloadDirectSalePdf(saleBillNo: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}directsale/pdf?saleBillNo=${encodeURIComponent(saleBillNo)}`, { responseType: 'blob' });
+  }
 }

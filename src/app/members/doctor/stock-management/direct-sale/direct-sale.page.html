@@ -1,0 +1,281 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/stock-management"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Direct Sale</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="sale-content">
+  <div class="sale-wrap">
+
+    <!-- Sale form card -->
+    <ion-card class="form-card">
+      <ion-card-content class="form-card-content">
+        <div class="section-label">NEW SALE</div>
+
+        <!-- Items loop -->
+        <div *ngFor="let item of items; let idx = index" class="item-block">
+          <div class="item-header">
+            <span class="item-num">Item {{ idx + 1 }}</span>
+            <button *ngIf="items.length > 1" class="remove-item-btn" type="button" (click)="removeItem(idx)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </button>
+          </div>
+
+          <!-- Brand autocomplete -->
+          <div class="field-wrap">
+            <label class="field-label">Brand *</label>
+            <div class="ac-wrap">
+              <input
+                type="text"
+                class="header-input ac-input"
+                placeholder="Type vaccine or brand name..."
+                [(ngModel)]="item.brandSearch"
+                (input)="openBrandDrop($event, item)"
+                (focus)="openBrandDrop($event, item)"
+                autocomplete="off"
+              >
+              <button *ngIf="item.brandId" class="ac-clear" type="button" (click)="clearBrand(item)">✕</button>
+            </div>
+            <div class="inline-brand-drop" *ngIf="item.brandDropOpen && filteredBrands(item.brandSearch).length > 0">
+              <div class="ac-option" *ngFor="let b of filteredBrands(item.brandSearch)" (click)="selectBrand(b, item)">
+                <span class="ac-opt-brand">{{ b.BrandName }}</span>
+                <span class="ac-opt-vaccine">{{ b.VaccineName }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Batch + Expiry row -->
+          <div class="two-col-row" *ngIf="item.brandId">
+            <div class="field-wrap">
+              <label class="field-label">Batch <span class="hint">(tap to change)</span></label>
+              <div class="batch-pick-row" (click)="openBatchModal(item)">
+                <span class="batch-pick-value" [class.placeholder]="!item.batchLot">{{ item.batchLot || 'No batch' }}</span>
+                <ion-icon name="chevron-down-outline" class="batch-chevron"></ion-icon>
+              </div>
+            </div>
+            <div class="field-wrap">
+              <label class="field-label">Expiry</label>
+              <input type="text" class="header-input" [value]="item.expiryDate ? formatDate(item.expiryDate) : '—'" readonly>
+            </div>
+          </div>
+
+          <!-- Available qty -->
+          <div class="avail-row" *ngIf="item.brandId">
+            <ion-icon name="cube-outline" class="avail-icon"></ion-icon>
+            <span class="avail-label">Available in batch:</span>
+            <span class="avail-count" [class.avail-zero]="item.availableQty === 0">{{ item.availableQty }} units</span>
+          </div>
+
+          <!-- Qty + Sale Price row -->
+          <div class="two-col-row" *ngIf="item.brandId">
+            <div class="field-wrap">
+              <label class="field-label">Quantity *</label>
+              <input type="number" class="header-input" [(ngModel)]="item.qty" placeholder="0" min="1">
+            </div>
+            <div class="field-wrap">
+              <label class="field-label">Sale Price *</label>
+              <input type="number" class="header-input" [(ngModel)]="item.salePrice" placeholder="0.00" min="0" step="0.01">
+            </div>
+          </div>
+
+          <!-- Line total -->
+          <div class="line-total-row" *ngIf="item.brandId && item.qty > 0 && item.salePrice > 0">
+            <span class="line-total-label">Line Total</span>
+            <span class="line-total-value">{{ (item.qty * item.salePrice).toFixed(2) }}</span>
+          </div>
+
+          <!-- Batch modal -->
+          <div class="modal-backdrop" *ngIf="item.batchModalOpen" (click)="closeBatchModal(item)"></div>
+          <div class="batch-modal" *ngIf="item.batchModalOpen">
+            <div class="batch-modal-header">
+              <span class="batch-modal-title">Select Batch</span>
+              <ion-icon name="close-outline" class="batch-modal-close" (click)="closeBatchModal(item)"></ion-icon>
+            </div>
+            <div class="batch-modal-table-header">
+              <span>Batch</span>
+              <span>Expiry</span>
+              <span>Qty</span>
+            </div>
+            <div class="batch-modal-list">
+              <div *ngIf="item.batches.length === 0" class="batch-modal-empty">No batches available</div>
+              <div
+                *ngFor="let b of item.batches"
+                class="batch-modal-row"
+                [class.batch-row-selected]="b.BatchLot === item.batchLot"
+                [class.batch-row-expired]="isExpired(b.Expiry)"
+                [class.batch-row-soon]="!isExpired(b.Expiry) && isExpiringSoon(b.Expiry)"
+                (click)="selectBatch(b, item)"
+              >
+                <span class="bmr-batch">
+                  <ion-icon *ngIf="b.BatchLot === item.batchLot" name="checkmark-circle-outline" class="bmr-check"></ion-icon>
+                  {{ b.BatchLot || '—' }}
+                </span>
+                <span class="bmr-expiry">
+                  {{ formatDate(b.Expiry) }}
+                  <span class="expiry-tag expired-tag" *ngIf="isExpired(b.Expiry)">Exp'd</span>
+                  <span class="expiry-tag soon-tag" *ngIf="!isExpired(b.Expiry) && isExpiringSoon(b.Expiry)">Soon</span>
+                </span>
+                <span class="bmr-qty" [class.bmr-qty-zero]="b.Quantity === 0">{{ b.Quantity }}</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- /item loop -->
+
+        <!-- Add item button -->
+        <div class="add-item-row">
+          <ion-button fill="outline" color="primary" size="small" (click)="addItem()">
+            <ion-icon name="add-outline" slot="start"></ion-icon>
+            Add Another Item
+          </ion-button>
+        </div>
+
+        <!-- Client + Date row -->
+        <div class="two-col-row">
+          <div class="field-wrap">
+            <label class="field-label">Client Name *</label>
+            <input type="text" class="header-input" [(ngModel)]="clientName" placeholder="Walk-in client name">
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">Date *</label>
+            <input type="date" class="header-input" [(ngModel)]="saleDate">
+          </div>
+        </div>
+
+        <!-- Payment Mode -->
+        <div class="field-wrap">
+          <label class="field-label">Payment Mode *</label>
+          <select [(ngModel)]="paymentMode" class="header-select">
+            <option value="Cash">Cash</option>
+            <option value="Online">Online</option>
+            <option value="Card">Card</option>
+            <option value="Cheque">Cheque</option>
+          </select>
+        </div>
+
+        <!-- Online service — only if Online selected -->
+        <div class="field-wrap" *ngIf="paymentMode === 'Online'">
+          <label class="field-label">Online Service</label>
+          <input type="text" class="header-input" [(ngModel)]="onlineService" placeholder="e.g. EasyPaisa, JazzCash...">
+        </div>
+
+        <!-- Notes -->
+        <div class="field-wrap">
+          <label class="field-label">Notes</label>
+          <input type="text" class="header-input" [(ngModel)]="notes" placeholder="Optional notes...">
+        </div>
+
+        <!-- Grand total -->
+        <div class="totals-block" *ngIf="subTotal > 0">
+          <div class="total-row grand">
+            <span>Grand Total</span>
+            <span>{{ subTotal.toFixed(2) }}</span>
+          </div>
+        </div>
+
+        <!-- Save button -->
+        <ion-button expand="block" color="primary" class="save-btn" (click)="save()">
+          <ion-icon name="cart-outline" slot="start"></ion-icon>
+          Record Sale
+        </ion-button>
+
+      </ion-card-content>
+    </ion-card>
+
+    <!-- History -->
+    <div class="section-title">History</div>
+
+    <div class="search-wrap">
+      <ion-icon name="search-outline" class="search-icon"></ion-icon>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search client, brand, bill no..."
+        [(ngModel)]="historySearch"
+        autocomplete="off"
+      >
+      <button *ngIf="historySearch" class="search-clear" (click)="historySearch = ''">✕</button>
+    </div>
+
+    <div class="empty-state" *ngIf="filteredHistory.length === 0">
+      <ion-icon name="cart-outline" class="empty-icon"></ion-icon>
+      <p>No sales recorded</p>
+    </div>
+
+    <!-- Grouped history cards -->
+    <ng-container *ngFor="let group of filteredHistory">
+      <div class="history-card">
+
+        <!-- Bill no + total -->
+        <div class="history-top">
+          <div class="history-bill-block">
+            <span class="history-bill-no">{{ group.SaleBillNo }}</span>
+            <span class="history-client">
+              <ion-icon name="person-outline"></ion-icon>
+              {{ group.ClientName }}
+            </span>
+          </div>
+          <div class="sale-total-badge">
+            Rs {{ group.grandTotal.toFixed(2) }}
+          </div>
+        </div>
+
+        <!-- Items list -->
+        <div class="history-items">
+          <div *ngFor="let it of group.items" class="history-item-row">
+            <div class="hir-brand-block">
+              <span class="hir-brand">{{ it.BrandName }}</span>
+              <span class="hir-vaccine" *ngIf="it.VaccineName">{{ it.VaccineName }}</span>
+            </div>
+            <div class="hir-meta">
+              <span class="meta-chip" *ngIf="it.BatchLot">
+                <ion-icon name="pricetag-outline"></ion-icon>{{ it.BatchLot }}
+              </span>
+              <span class="meta-chip" *ngIf="it.ExpiryDate">
+                <ion-icon name="calendar-outline"></ion-icon>Exp: {{ formatDate(it.ExpiryDate) }}
+                <span class="expiry-tag expired-tag" *ngIf="isExpired(it.ExpiryDate)">Expired</span>
+                <span class="expiry-tag soon-tag" *ngIf="!isExpired(it.ExpiryDate) && isExpiringSoon(it.ExpiryDate)">Soon</span>
+              </span>
+            </div>
+            <div class="hir-qty-price">
+              <span class="hir-qty">{{ it.Quantity }} × {{ it.SalePricePerUnit.toFixed(2) }}</span>
+              <span class="hir-total">= {{ it.TotalSaleValue.toFixed(2) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment + date -->
+        <div class="history-meta-row">
+          <span class="meta-chip">
+            <ion-icon name="cash-outline"></ion-icon>
+            {{ group.PaymentMode }}<span *ngIf="group.OnlineService"> / {{ group.OnlineService }}</span>
+          </span>
+          <span class="meta-chip" *ngIf="group.Notes">
+            <ion-icon name="document-text-outline"></ion-icon>
+            {{ group.Notes }}
+          </span>
+        </div>
+
+        <div class="history-footer">
+          <span class="history-date">{{ formatDate(group.SaleDate) }}</span>
+          <div class="footer-btns">
+            <ion-button fill="outline" color="primary" size="small" (click)="downloadPdf(group.SaleBillNo)">
+              <ion-icon name="document-text-outline" slot="start"></ion-icon>
+              PDF
+            </ion-button>
+            <ion-button fill="outline" color="danger" size="small" (click)="confirmDelete(group.firstId)">
+              <ion-icon name="trash-outline" slot="start"></ion-icon>
+              Reverse
+            </ion-button>
+          </div>
+        </div>
+
+      </div>
+    </ng-container>
+
+  </div>
+</ion-content>

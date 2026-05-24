@@ -45,6 +45,10 @@ const routes: Routes = [
   {
     path: 'stock-transfer',
     loadChildren: () => import('./stock-transfer/stock-transfer.module').then(m => m.StockTransferPageModule)
+  },
+  {
+    path: 'direct-sale',
+    loadChildren: () => import('./direct-sale/direct-sale.module').then(m => m.DirectSalePageModule)
   }
 ];
 
