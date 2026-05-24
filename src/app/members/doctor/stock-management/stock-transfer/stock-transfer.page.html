@@ -64,7 +64,6 @@
             <div class="inline-brand-drop" *ngIf="item.brandDropOpen && filteredBrands(item.brandSearch).length > 0">
               <div class="ac-option" *ngFor="let b of filteredBrands(item.brandSearch)" (click)="selectBrand(b, item)">
                 <span class="ac-opt-brand">{{ b.BrandName }}</span>
-                <span class="ac-opt-vaccine">{{ b.VaccineName }}</span>
               </div>
             </div>
           </div>
