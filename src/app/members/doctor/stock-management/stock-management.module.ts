@@ -49,6 +49,10 @@ const routes: Routes = [
   {
     path: 'direct-sale',
     loadChildren: () => import('./direct-sale/direct-sale.module').then(m => m.DirectSalePageModule)
+  },
+  {
+    path: 'reports',
+    loadChildren: () => import('../financial/reporting/reporting.module').then(m => m.ReportingPageModule)
   }
 ];
 
