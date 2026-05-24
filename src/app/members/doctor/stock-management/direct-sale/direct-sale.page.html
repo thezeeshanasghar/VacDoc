@@ -150,14 +150,13 @@
           <label class="field-label">Payment Mode *</label>
           <select [(ngModel)]="paymentMode" class="header-select">
             <option value="Cash">Cash</option>
-            <option value="Online">Online</option>
-            <option value="Card">Card</option>
+            <option value="Online Transfer">Online Transfer</option>
             <option value="Cheque">Cheque</option>
           </select>
         </div>
 
         <!-- Online service — only if Online selected -->
-        <div class="field-wrap" *ngIf="paymentMode === 'Online'">
+        <div class="field-wrap" *ngIf="paymentMode === 'Online Transfer'">
           <label class="field-label">Online Service</label>
           <input type="text" class="header-input" [(ngModel)]="onlineService" placeholder="e.g. EasyPaisa, JazzCash...">
         </div>
