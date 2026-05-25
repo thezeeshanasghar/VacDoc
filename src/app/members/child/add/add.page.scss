@@ -65,12 +65,14 @@ input {
 .mobile-number-wrapper {
   margin: 8px 0;
   width: 100%;
+  padding: 0 8px;
+  box-sizing: border-box;
 }
 
 .mobile-number-container {
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
   width: 100%;
 }
@@ -80,9 +82,21 @@ input {
   min-width: 100px;
   max-width: 120px;
   margin: 0 !important;
-  
+
   .mat-form-field-wrapper {
-    padding-bottom: 0;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .mat-form-field-infix {
+    padding: 0.4em 0 !important;
+    border-top: 0.6em solid transparent !important;
+  }
+
+  .mat-form-field-outline-start,
+  .mat-form-field-outline-end,
+  .mat-form-field-outline-gap {
+    border-color: #ddd !important;
   }
 }
 
@@ -94,8 +108,10 @@ input {
   --border-width: 1px;
   --highlight-height: 0;
   margin: 0;
-  padding: 4px 8px;
+  padding: 0 8px;
+  height: 56px;
   min-height: 56px;
+  max-height: 56px;
   display: flex;
   align-items: center;
 }
@@ -103,7 +119,7 @@ input {
 @media (max-width: 576px) {
   .country-code-field {
     min-width: 90px;
-    max-width: 100px;
+    max-width: 105px;
   }
 }
 
