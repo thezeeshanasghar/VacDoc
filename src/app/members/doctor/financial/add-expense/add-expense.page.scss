@@ -1,0 +1,214 @@
+.exp-content {
+  --background: #EEF2F7;
+}
+
+.exp-card {
+  margin: 16px 16px 0;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(10, 61, 121, 0.10);
+
+  ion-card-content {
+    padding: 16px;
+  }
+}
+
+// ── Field base ─────────────────────────────────────────────────────────────
+.field {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.field-full {
+  flex: none;
+  width: 100%;
+  margin-top: 12px;
+
+  &:first-child { margin-top: 0; }
+}
+
+.row-pair {
+  display: flex;
+  gap: 12px;
+}
+
+.field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #546E7A;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.hint {
+  font-weight: 400;
+  color: #90A4AE;
+  text-transform: none;
+  font-size: 11px;
+}
+
+.field-input {
+  border: 1.5px solid #CFD8DC;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #263238;
+  background: #fff;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+
+  &:focus { border-color: #1565C0; }
+}
+
+.field-select {
+  border: 1.5px solid #CFD8DC;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #263238;
+  background: #fff;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+
+  &:focus { border-color: #1565C0; }
+}
+
+.field-textarea {
+  border: 1.5px solid #CFD8DC;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #263238;
+  background: #fff;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  resize: none;
+  font-family: inherit;
+
+  &:focus { border-color: #1565C0; }
+}
+
+// ── Category chips grid ────────────────────────────────────────────────────
+.cat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.cat-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1.5px solid #CFD8DC;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #455A64;
+  transition: all 0.15s ease;
+
+  &:active { transform: scale(0.97); }
+}
+
+.cat-chip-active {
+  border-color: #1565C0;
+  background: #E3F2FD;
+  color: #1565C0;
+
+  .cat-icon { color: #1565C0; }
+}
+
+.cat-icon {
+  font-size: 18px;
+  color: #78909C;
+  flex-shrink: 0;
+}
+
+// ── Scope buttons ──────────────────────────────────────────────────────────
+.scope-row {
+  display: flex;
+  gap: 12px;
+}
+
+.scope-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 10px;
+  border-radius: 14px;
+  border: 1.5px solid #CFD8DC;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #455A64;
+  text-align: center;
+  transition: all 0.15s ease;
+
+  ion-icon {
+    font-size: 22px;
+    color: #78909C;
+  }
+
+  &:active { transform: scale(0.97); }
+}
+
+.scope-btn-active {
+  border-color: #1565C0;
+  background: #E3F2FD;
+  color: #1565C0;
+
+  ion-icon { color: #1565C0; }
+}
+
+.single-clinic-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2E7D32;
+
+  ion-icon { font-size: 18px; color: #2E7D32; }
+}
+
+// ── Payment mode chips ─────────────────────────────────────────────────────
+.pay-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pay-chip {
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1.5px solid #CFD8DC;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  color: #455A64;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:active { transform: scale(0.96); }
+}
+
+.pay-chip-active {
+  border-color: #1565C0;
+  background: #1565C0;
+  color: #fff;
+}
+
+// ── Save button ────────────────────────────────────────────────────────────
+.save-btn {
+  margin: 20px 16px 36px;
+}

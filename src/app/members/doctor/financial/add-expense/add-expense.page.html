@@ -1,0 +1,124 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/financial"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Add Expense</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="exp-content">
+
+  <!-- ── DATE + AMOUNT ─────────────────────────────────────────── -->
+  <ion-card class="exp-card">
+    <ion-card-content>
+
+      <div class="row-pair">
+        <div class="field">
+          <label class="field-label">Date *</label>
+          <input type="date" [(ngModel)]="expenseDate" class="field-input">
+        </div>
+        <div class="field">
+          <label class="field-label">Amount (Rs) *</label>
+          <input type="number" [(ngModel)]="amount" class="field-input" placeholder="0.00" min="0" step="0.01">
+        </div>
+      </div>
+
+      <div class="field field-full">
+        <label class="field-label">Description *</label>
+        <input type="text" [(ngModel)]="description" class="field-input" placeholder="Brief description of expense">
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- ── CATEGORY ──────────────────────────────────────────────── -->
+  <ion-card class="exp-card">
+    <ion-card-content>
+
+      <div class="field field-full">
+        <label class="field-label">Category *</label>
+        <div class="cat-grid">
+          <div *ngFor="let cat of categories"
+               class="cat-chip"
+               [class.cat-chip-active]="category === cat.value"
+               (click)="selectCategory(cat.value)">
+            <ion-icon [name]="cat.icon" class="cat-icon"></ion-icon>
+            <span>{{ cat.label }}</span>
+          </div>
+        </div>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- ── CLINIC SCOPE ──────────────────────────────────────────── -->
+  <ion-card class="exp-card">
+    <ion-card-content>
+
+      <div class="field field-full">
+        <label class="field-label">Applies To *</label>
+        <div class="scope-row">
+          <div class="scope-btn"
+               [class.scope-btn-active]="scope === 'clinic'"
+               (click)="setScope('clinic')">
+            <ion-icon name="business-outline"></ion-icon>
+            <span>Specific Clinic</span>
+          </div>
+          <div class="scope-btn"
+               [class.scope-btn-active]="scope === 'all'"
+               (click)="setScope('all')">
+            <ion-icon name="earth-outline"></ion-icon>
+            <span>All Clinics</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clinic selector (single clinic mode) -->
+      <div class="field field-full" *ngIf="scope === 'clinic' && clinics.length > 1">
+        <label class="field-label">Select Clinic *</label>
+        <select [(ngModel)]="clinicId" class="field-select">
+          <option [ngValue]="null" disabled>Choose a clinic...</option>
+          <option *ngFor="let c of clinics" [ngValue]="c.Id">{{ c.Name }}</option>
+        </select>
+      </div>
+
+      <!-- Auto-selected when only one clinic -->
+      <div class="single-clinic-note" *ngIf="scope === 'clinic' && clinics.length === 1">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+        {{ clinics[0].Name }}
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- ── PAYMENT + NOTES ───────────────────────────────────────── -->
+  <ion-card class="exp-card">
+    <ion-card-content>
+
+      <div class="field field-full">
+        <label class="field-label">Payment Mode</label>
+        <div class="pay-row">
+          <div *ngFor="let pm of paymentModes"
+               class="pay-chip"
+               [class.pay-chip-active]="paymentMode === pm.value"
+               (click)="paymentMode = pm.value">
+            {{ pm.label }}
+          </div>
+        </div>
+      </div>
+
+      <div class="field field-full">
+        <label class="field-label">Notes <span class="hint">(optional)</span></label>
+        <textarea [(ngModel)]="notes" class="field-textarea" rows="2" placeholder="Any additional details..."></textarea>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="block" color="primary" (click)="save()" class="save-btn">
+    <ion-icon name="save-outline" slot="start"></ion-icon>
+    Save Expense
+  </ion-button>
+
+</ion-content>

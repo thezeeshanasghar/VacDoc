@@ -23,6 +23,16 @@
   box-shadow: 0 4px 20px rgba(10, 61, 121, 0.14);
   cursor: default;
   opacity: 0.88;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &[routerLink] {
+    cursor: pointer;
+    opacity: 1;
+    &:active {
+      transform: scale(0.97);
+      box-shadow: 0 2px 10px rgba(10, 61, 121, 0.10);
+    }
+  }
 }
 
 .fin-card-icon {
@@ -52,6 +62,14 @@
 .fin-card-sub {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.75);
+}
+
+.fin-card-arrow {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 18px;
 }
 
 .soon-badge {
