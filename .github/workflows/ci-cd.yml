@@ -16,6 +16,8 @@ jobs:
       - run: npm install -g @ionic/cli
       - run: npm install
       - run: ionic build --prod
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
