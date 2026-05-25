@@ -657,8 +657,12 @@ this.downloadSpecialPdf();
           }
         }
         else {
-          this.toastService.create('Error: Try again\nFailed to fill ' + res.ResponseData.Dose.Name, 'danger', false, 3000);
           loading.dismiss();
+          this.alertController.create({
+            header: 'Cannot Skip',
+            message: res.Message,
+            buttons: ['OK']
+          }).then(a => a.present());
         }
       },
       err => {
@@ -739,8 +743,12 @@ this.downloadSpecialPdf();
           }
         }
         else {
-          this.toastService.create('Error: Try again\nFailed to Unskip ' + doseName, 'danger', false, 7000);
           loading.dismiss();
+          this.alertController.create({
+            header: 'Cannot Unskip',
+            message: res.Message,
+            buttons: ['OK']
+          }).then(a => a.present());
         }
       },
       err => {
