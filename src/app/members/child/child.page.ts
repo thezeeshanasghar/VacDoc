@@ -154,12 +154,12 @@ export class ChildPage {
         }
         else {
           loading.dismiss();
-          this.toastService.create(res.Message, 'danger');
+          this.alertService.simpleAlert(res.Message, 'Cannot Delete Patient');
         }
       },
       err => {
         loading.dismiss();
-        this.toastService.create(err, 'danger')
+        this.alertService.simpleAlert('An error occurred while deleting.', 'Error');
       }
     );
   }
