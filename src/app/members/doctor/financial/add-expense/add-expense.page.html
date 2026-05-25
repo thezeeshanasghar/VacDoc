@@ -55,8 +55,8 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- ── CATEGORY ──────────────────────────────────────────────── -->
-  <ion-card class="exp-card">
+  <!-- ── CATEGORY (Recurring only) ───────────────────────────── -->
+  <ion-card class="exp-card" *ngIf="expenseType === 'Recurring'">
     <ion-card-content>
 
       <div class="field field-full">

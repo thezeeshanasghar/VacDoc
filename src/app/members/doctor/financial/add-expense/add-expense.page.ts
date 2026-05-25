@@ -95,6 +95,8 @@ export class AddExpensePage {
       this.warrantyFile = null;
       this.receiptPreview = '';
       this.warrantyPreview = '';
+    } else {
+      this.category = '';
     }
   }
 
@@ -160,7 +162,7 @@ export class AddExpensePage {
     if (!this.description || this.description.trim() === '') {
       this.toastService.create('Description is required', 'danger'); return;
     }
-    if (!this.category) {
+    if (this.expenseType === 'Recurring' && !this.category) {
       this.toastService.create('Select a category', 'danger'); return;
     }
     if (this.scope === 'clinic' && !this.clinicId) {
