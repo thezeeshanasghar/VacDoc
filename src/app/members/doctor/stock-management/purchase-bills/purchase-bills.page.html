@@ -12,7 +12,7 @@
   <div class="filter-bar">
     <select class="supplier-select" [(ngModel)]="selectedSupplier" (change)="onSupplierChange()">
       <option value="">All Suppliers</option>
-      <option *ngFor="let s of suppliers" [value]="s.Name">{{ s.Name }}</option>
+      <option *ngFor="let s of suppliers" [value]="s">{{ s }}</option>
     </select>
   </div>
 

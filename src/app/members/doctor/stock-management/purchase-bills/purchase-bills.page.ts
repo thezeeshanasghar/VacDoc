@@ -14,7 +14,7 @@ import { environment } from 'src/environments/environment';
 export class PurchaseBillsPage {
   bills: any[] = [];
   filteredBills: any[] = [];
-  suppliers: any[] = [];
+  suppliers: string[] = [];
   selectedSupplier: string = '';
   doctorId: number = 0;
   clinicId: number = 0;
@@ -32,19 +32,7 @@ export class PurchaseBillsPage {
     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
     const clinic = await this.storage.get(environment.ON_CLINIC);
     this.clinicId = clinic ? clinic.Id : 0;
-    this.loadSuppliers();
     this.loadBills();
-  }
-
-  loadSuppliers() {
-    this.stockService.getSuppliers().subscribe(
-      (res: any) => {
-        if (res.IsSuccess) {
-          this.suppliers = res.ResponseData || [];
-        }
-      },
-      () => {}
-    );
   }
 
   async loadBills() {
@@ -55,6 +43,17 @@ export class PurchaseBillsPage {
         loading.dismiss();
         if (res.IsSuccess) {
           this.bills = (res.ResponseData || []).slice().reverse();
+          // Build unique supplier list from bills
+          const seen: any = {};
+          this.suppliers = [];
+          this.bills.forEach((b: any) => {
+            const name = b.SupplierName || '';
+            if (name && !seen[name]) {
+              seen[name] = true;
+              this.suppliers.push(name);
+            }
+          });
+          this.suppliers.sort();
           this.applyFilter();
         } else {
           this.toastService.create(res.Message || 'Failed to load bills', 'danger');
