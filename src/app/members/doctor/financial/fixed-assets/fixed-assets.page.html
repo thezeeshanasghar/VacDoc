@@ -1,0 +1,120 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/financial"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Fixed Asset Register</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="fa-content">
+  <div class="fa-wrap">
+
+    <!-- ── FILTER BAR ──────────────────────────────────────────── -->
+    <div class="filter-bar">
+
+      <!-- Clinic filter -->
+      <select class="filter-select" [(ngModel)]="selectedClinicId" (change)="applyFilters()">
+        <option [ngValue]="null">All Clinics</option>
+        <option *ngFor="let c of clinics" [ngValue]="c.Id">{{ c.Name }}</option>
+      </select>
+
+      <!-- Category filter -->
+      <select class="filter-select" [(ngModel)]="selectedCategory" (change)="applyFilters()">
+        <option value="">All Categories</option>
+        <option *ngFor="let cat of categoryOptions" [value]="cat">{{ cat }}</option>
+      </select>
+
+    </div>
+
+    <!-- ── SUMMARY ROW ─────────────────────────────────────────── -->
+    <div class="summary-strip" *ngIf="filtered.length > 0">
+      <div class="summary-item">
+        <span class="summary-val">{{ filtered.length }}</span>
+        <span class="summary-lbl">Assets</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-val">Rs {{ totalCost | number:'1.0-0' }}</span>
+        <span class="summary-lbl">Total Cost</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-val">Rs {{ totalBookValue | number:'1.0-0' }}</span>
+        <span class="summary-lbl">Book Value</span>
+      </div>
+    </div>
+
+    <!-- ── EMPTY STATE ─────────────────────────────────────────── -->
+    <div *ngIf="filtered.length === 0 && !loading" class="empty-state">
+      <ion-icon name="cube-outline"></ion-icon>
+      <p>No fixed assets found.</p>
+      <p class="empty-sub">Add an expense with type "Fixed Asset" to register assets here.</p>
+    </div>
+
+    <!-- ── ASSET CARDS ─────────────────────────────────────────── -->
+    <div *ngFor="let asset of filtered" class="asset-card">
+
+      <!-- Header -->
+      <div class="ac-header">
+        <div class="ac-name-wrap">
+          <span class="ac-name">{{ asset.AssetName }}</span>
+          <span class="ac-category">{{ asset.Category || 'Capital' }}</span>
+        </div>
+        <span class="ac-amount">Rs {{ asset.Amount | number:'1.0-0' }}</span>
+      </div>
+
+      <!-- Clinic + Date -->
+      <div class="ac-meta">
+        <span class="ac-meta-item">
+          <ion-icon name="business-outline"></ion-icon>
+          {{ getClinicName(asset.ClinicId) }}
+        </span>
+        <span class="ac-meta-item">
+          <ion-icon name="calendar-outline"></ion-icon>
+          {{ formatDate(asset.ExpenseDate) }}
+        </span>
+      </div>
+
+      <!-- Depreciation bar -->
+      <div class="ac-depr-row">
+        <div class="ac-depr-labels">
+          <span class="ac-depr-label">Book Value</span>
+          <span class="ac-depr-value">Rs {{ getBookValue(asset) | number:'1.0-0' }}</span>
+        </div>
+        <div class="ac-depr-bar-wrap">
+          <div class="ac-depr-bar-fill" [style.width.%]="getBookValuePct(asset)"></div>
+        </div>
+        <div class="ac-depr-sub">
+          {{ getAgeMonths(asset) }} mo used · {{ asset.ExpectedLifeYrs }} yr life · Rs {{ getMonthlyDeprn(asset) | number:'1.0-0' }}/mo
+        </div>
+      </div>
+
+      <!-- Warranty -->
+      <div class="ac-warranty" *ngIf="asset.WarrantyExpiry" [class.ac-warranty-expired]="isWarrantyExpired(asset)">
+        <ion-icon [name]="isWarrantyExpired(asset) ? 'shield-outline' : 'shield-checkmark-outline'"></ion-icon>
+        <span>Warranty {{ isWarrantyExpired(asset) ? 'expired' : 'until' }} {{ formatDate(asset.WarrantyExpiry) }}</span>
+      </div>
+
+      <!-- Receipt image thumb -->
+      <div class="ac-images" *ngIf="asset.ReceiptImagePath || asset.WarrantyImagePath">
+        <img *ngIf="asset.ReceiptImagePath" [src]="resourceUrl + asset.ReceiptImagePath" class="ac-thumb" (click)="viewImage(asset.ReceiptImagePath)" alt="Receipt">
+        <img *ngIf="asset.WarrantyImagePath" [src]="resourceUrl + asset.WarrantyImagePath" class="ac-thumb" (click)="viewImage(asset.WarrantyImagePath)" alt="Warranty">
+      </div>
+
+      <!-- Payment mode pill -->
+      <div class="ac-footer">
+        <span class="ac-pay-pill">{{ asset.PaymentMode }}</span>
+        <span class="ac-notes" *ngIf="asset.Notes">{{ asset.Notes }}</span>
+      </div>
+
+    </div>
+
+  </div>
+</ion-content>
+
+<!-- Image viewer modal -->
+<div class="img-modal-backdrop" *ngIf="viewingImage" (click)="viewingImage = null">
+  <div class="img-modal-box" (click)="$event.stopPropagation()">
+    <ion-icon name="close-circle" class="img-modal-close" (click)="viewingImage = null"></ion-icon>
+    <img [src]="resourceUrl + viewingImage" class="img-modal-img" alt="Asset image">
+  </div>
+</div>

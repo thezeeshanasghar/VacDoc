@@ -15,6 +15,10 @@ const routes: Routes = [
     loadChildren: () => import('./add-expense/add-expense.module').then(m => m.AddExpensePageModule)
   },
   {
+    path: 'fixed-assets',
+    loadChildren: () => import('./fixed-assets/fixed-assets.module').then(m => m.FixedAssetsPageModule)
+  },
+  {
     path: 'reporting',
     loadChildren: () => import('./reporting/reporting.module').then(m => m.ReportingPageModule)
   },

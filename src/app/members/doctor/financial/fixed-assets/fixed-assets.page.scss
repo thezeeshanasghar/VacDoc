@@ -1,0 +1,269 @@
+.fa-content {
+  --background: #EEF2F7;
+}
+
+.fa-wrap {
+  padding: 16px 16px 32px;
+}
+
+// ── Filter bar ─────────────────────────────────────────────────────────────
+.filter-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.filter-select {
+  flex: 1;
+  border: 1.5px solid #CFD8DC;
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 13px;
+  color: #263238;
+  background: #fff;
+  outline: none;
+
+  &:focus { border-color: #1565C0; }
+}
+
+// ── Summary strip ──────────────────────────────────────────────────────────
+.summary-strip {
+  display: flex;
+  gap: 0;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(10,61,121,0.10);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.summary-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px;
+  border-right: 1px solid #EEF2F7;
+
+  &:last-child { border-right: none; }
+}
+
+.summary-val {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0A3D79;
+}
+
+.summary-lbl {
+  font-size: 11px;
+  color: #78909C;
+  margin-top: 2px;
+}
+
+// ── Empty state ────────────────────────────────────────────────────────────
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: #90A4AE;
+
+  ion-icon { font-size: 52px; display: block; margin: 0 auto 12px; }
+  p { margin: 0 0 4px; font-size: 15px; font-weight: 600; color: #546E7A; }
+  .empty-sub { font-size: 13px; color: #90A4AE; font-weight: 400; }
+}
+
+// ── Asset card ─────────────────────────────────────────────────────────────
+.asset-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 12px rgba(10,61,121,0.10);
+}
+
+.ac-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.ac-name-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ac-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0A3D79;
+}
+
+.ac-category {
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  background: #6A1B9A;
+  padding: 2px 8px;
+  border-radius: 10px;
+  align-self: flex-start;
+}
+
+.ac-amount {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1565C0;
+}
+
+// ── Meta row ──────────────────────────────────────────────────────────────
+.ac-meta {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.ac-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #546E7A;
+
+  ion-icon { font-size: 14px; }
+}
+
+// ── Depreciation bar ───────────────────────────────────────────────────────
+.ac-depr-row {
+  margin-bottom: 10px;
+}
+
+.ac-depr-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.ac-depr-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #546E7A;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.ac-depr-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: #2E7D32;
+}
+
+.ac-depr-bar-wrap {
+  height: 6px;
+  background: #EEF2F7;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.ac-depr-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2E7D32, #43A047);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+  min-width: 2px;
+}
+
+.ac-depr-sub {
+  font-size: 11px;
+  color: #90A4AE;
+}
+
+// ── Warranty ──────────────────────────────────────────────────────────────
+.ac-warranty {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2E7D32;
+  margin-bottom: 10px;
+
+  ion-icon { font-size: 15px; }
+}
+
+.ac-warranty-expired {
+  color: #C62828;
+}
+
+// ── Images ────────────────────────────────────────────────────────────────
+.ac-images {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ac-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1.5px solid #CFD8DC;
+  cursor: pointer;
+}
+
+// ── Footer ────────────────────────────────────────────────────────────────
+.ac-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ac-pay-pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 10px;
+  background: #E3F2FD;
+  color: #1565C0;
+}
+
+.ac-notes {
+  font-size: 12px;
+  color: #78909C;
+  font-style: italic;
+}
+
+// ── Image viewer modal ─────────────────────────────────────────────────────
+.img-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.img-modal-box {
+  position: relative;
+  max-width: 100%;
+  max-height: 90vh;
+}
+
+.img-modal-close {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  font-size: 32px;
+  color: #fff;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.img-modal-img {
+  max-width: 100%;
+  max-height: 85vh;
+  border-radius: 12px;
+  display: block;
+}
