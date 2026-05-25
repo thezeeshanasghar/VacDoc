@@ -17,7 +17,7 @@ jobs:
       - run: npm install
       - run: ionic build --prod
         env:
-          NODE_OPTIONS: --openssl-legacy-provider
+          NODE_OPTIONS: --openssl-legacy-provider --max-old-space-size=4096
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
