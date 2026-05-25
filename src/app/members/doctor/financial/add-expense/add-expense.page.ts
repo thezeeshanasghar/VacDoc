@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
@@ -12,6 +12,9 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./add-expense.page.scss'],
 })
 export class AddExpensePage {
+  @ViewChild('receiptInput', { static: false }) receiptInput: ElementRef;
+  @ViewChild('warrantyInput', { static: false }) warrantyInput: ElementRef;
+
   doctorId: number = 0;
   clinics: any[] = [];
 
@@ -19,27 +22,37 @@ export class AddExpensePage {
   amount: number = null;
   description: string = '';
   category: string = '';
+  expenseType: string = 'Recurring';
   scope: string = 'clinic';
   clinicId: number = null;
   paymentMode: string = 'Cash';
   notes: string = '';
 
+  // Capital / fixed asset fields
+  assetName: string = '';
+  expectedLifeYrs: number = null;
+  warrantyExpiry: string = '';
+  receiptFile: File = null;
+  warrantyFile: File = null;
+  receiptPreview: string = '';
+  warrantyPreview: string = '';
+
   categories = [
-    { value: 'Marketing',   label: 'Marketing',   icon: 'megaphone-outline'       },
-    { value: 'Printing',    label: 'Printing',    icon: 'print-outline'           },
-    { value: 'Gifting',     label: 'Gifting',     icon: 'gift-outline'            },
-    { value: 'Fuel',        label: 'Fuel & Ship', icon: 'car-outline'             },
-    { value: 'Salary',      label: 'Salary',      icon: 'people-outline'          },
-    { value: 'Disposables', label: 'Disposables', icon: 'medkit-outline'          },
+    { value: 'Marketing',   label: 'Marketing',   icon: 'megaphone-outline'           },
+    { value: 'Printing',    label: 'Printing',    icon: 'print-outline'               },
+    { value: 'Gifting',     label: 'Gifting',     icon: 'gift-outline'                },
+    { value: 'Fuel',        label: 'Fuel & Ship', icon: 'car-outline'                 },
+    { value: 'Salary',      label: 'Salary',      icon: 'people-outline'              },
+    { value: 'Disposables', label: 'Disposables', icon: 'medkit-outline'              },
     { value: 'Others',      label: 'Others',      icon: 'ellipsis-horizontal-outline' },
   ];
 
   paymentModes = [
-    { value: 'Cash',             label: 'Cash'        },
-    { value: 'Online_Bank',      label: 'Bank'        },
-    { value: 'Online_EasyPaisa', label: 'EasyPaisa'   },
-    { value: 'Online_JazzCash',  label: 'JazzCash'    },
-    { value: 'Cheque',           label: 'Cheque'      },
+    { value: 'Cash',             label: 'Cash'      },
+    { value: 'Online_Bank',      label: 'Bank'      },
+    { value: 'Online_EasyPaisa', label: 'EasyPaisa' },
+    { value: 'Online_JazzCash',  label: 'JazzCash'  },
+    { value: 'Cheque',           label: 'Cheque'    },
   ];
 
   constructor(
@@ -72,6 +85,19 @@ export class AddExpensePage {
     this.category = val;
   }
 
+  setExpenseType(val: string) {
+    this.expenseType = val;
+    if (val === 'Recurring') {
+      this.assetName = '';
+      this.expectedLifeYrs = null;
+      this.warrantyExpiry = '';
+      this.receiptFile = null;
+      this.warrantyFile = null;
+      this.receiptPreview = '';
+      this.warrantyPreview = '';
+    }
+  }
+
   setScope(val: string) {
     this.scope = val;
     if (val === 'all') {
@@ -79,6 +105,49 @@ export class AddExpensePage {
     } else if (this.clinics.length === 1) {
       this.clinicId = this.clinics[0].Id;
     }
+  }
+
+  pickReceipt() {
+    this.receiptInput.nativeElement.click();
+  }
+
+  pickWarranty() {
+    this.warrantyInput.nativeElement.click();
+  }
+
+  onReceiptPicked(event: any) {
+    const file: File = event.target.files[0];
+    if (!file) return;
+    this.receiptFile = file;
+    this.compressAndPreview(file, (dataUrl) => { this.receiptPreview = dataUrl; });
+  }
+
+  onWarrantyPicked(event: any) {
+    const file: File = event.target.files[0];
+    if (!file) return;
+    this.warrantyFile = file;
+    this.compressAndPreview(file, (dataUrl) => { this.warrantyPreview = dataUrl; });
+  }
+
+  private compressAndPreview(file: File, cb: (dataUrl: string) => void) {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const img = new Image();
+      img.onload = () => {
+        const maxPx = 800;
+        let w = img.width, h = img.height;
+        if (w > maxPx || h > maxPx) {
+          if (w > h) { h = Math.round(h * maxPx / w); w = maxPx; }
+          else       { w = Math.round(w * maxPx / h); h = maxPx; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        cb(canvas.toDataURL('image/jpeg', 0.6));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
   }
 
   async save() {
@@ -98,10 +167,22 @@ export class AddExpensePage {
       this.toastService.create('Select a clinic', 'danger'); return;
     }
 
+    if (this.expenseType === 'Capital') {
+      if (!this.assetName || !this.assetName.trim()) {
+        this.toastService.create('Asset name is required', 'danger'); return;
+      }
+      if (!this.expectedLifeYrs || this.expectedLifeYrs < 1) {
+        this.toastService.create('Enter useful life in years', 'danger'); return;
+      }
+      if (!this.receiptFile) {
+        this.toastService.create('Receipt image is required for fixed asset expenses', 'danger'); return;
+      }
+    }
+
     const loading = await this.loadingController.create({ message: 'Saving...' });
     await loading.present();
 
-    const payload = {
+    const payload: any = {
       DoctorId:    this.doctorId,
       ClinicId:    this.scope === 'clinic' ? this.clinicId : null,
       IsShared:    this.scope === 'all',
@@ -109,9 +190,18 @@ export class AddExpensePage {
       Amount:      this.amount,
       Description: this.description.trim(),
       Category:    this.category,
+      ExpenseType: this.expenseType,
       PaymentMode: this.paymentMode,
       Notes:       this.notes ? this.notes.trim() : null,
     };
+
+    if (this.expenseType === 'Capital') {
+      payload.AssetName       = this.assetName.trim();
+      payload.ExpectedLifeYrs = this.expectedLifeYrs;
+      payload.WarrantyExpiry  = this.warrantyExpiry || null;
+      payload.ReceiptImage    = this.receiptPreview;
+      payload.WarrantyImage   = this.warrantyPreview || null;
+    }
 
     this.expenseService.create(payload).subscribe(
       (res: any) => {

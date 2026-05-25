@@ -32,6 +32,29 @@
     </ion-card-content>
   </ion-card>
 
+  <!-- ── EXPENSE TYPE ──────────────────────────────────────────── -->
+  <ion-card class="exp-card">
+    <ion-card-content>
+      <div class="field field-full">
+        <label class="field-label">Expense Type *</label>
+        <div class="scope-row">
+          <div class="scope-btn"
+               [class.scope-btn-active]="expenseType === 'Recurring'"
+               (click)="setExpenseType('Recurring')">
+            <ion-icon name="repeat-outline"></ion-icon>
+            <span>Recurring</span>
+          </div>
+          <div class="scope-btn"
+               [class.scope-btn-active]="expenseType === 'Capital'"
+               (click)="setExpenseType('Capital')">
+            <ion-icon name="cube-outline"></ion-icon>
+            <span>Fixed Asset</span>
+          </div>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
   <!-- ── CATEGORY ──────────────────────────────────────────────── -->
   <ion-card class="exp-card">
     <ion-card-content>
@@ -47,6 +70,60 @@
             <span>{{ cat.label }}</span>
           </div>
         </div>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- ── FIXED ASSET DETAILS (Capital only) ───────────────────── -->
+  <ion-card class="exp-card asset-card" *ngIf="expenseType === 'Capital'">
+    <ion-card-content>
+
+      <div class="asset-card-header">
+        <ion-icon name="cube-outline"></ion-icon>
+        <span>Fixed Asset Details</span>
+      </div>
+
+      <div class="row-pair" style="margin-top:14px">
+        <div class="field">
+          <label class="field-label">Asset Name *</label>
+          <input type="text" [(ngModel)]="assetName" class="field-input" placeholder="e.g. Autoclave">
+        </div>
+        <div class="field">
+          <label class="field-label">Useful Life (yrs) *</label>
+          <input type="number" [(ngModel)]="expectedLifeYrs" class="field-input" placeholder="5" min="1" max="99">
+        </div>
+      </div>
+
+      <div class="field field-full">
+        <label class="field-label">Warranty Expiry <span class="hint">(optional)</span></label>
+        <input type="date" [(ngModel)]="warrantyExpiry" class="field-input">
+      </div>
+
+      <!-- Receipt image (required) -->
+      <div class="field field-full">
+        <label class="field-label">Receipt / Invoice Image *</label>
+        <div class="img-upload-box" (click)="pickReceipt()">
+          <img *ngIf="receiptPreview" [src]="receiptPreview" class="img-preview">
+          <div *ngIf="!receiptPreview" class="img-placeholder">
+            <ion-icon name="camera-outline"></ion-icon>
+            <span>Tap to attach receipt</span>
+          </div>
+        </div>
+        <input type="file" #receiptInput accept="image/*" style="display:none" (change)="onReceiptPicked($event)">
+      </div>
+
+      <!-- Warranty card image (optional, only shown if warranty date entered) -->
+      <div class="field field-full" *ngIf="warrantyExpiry">
+        <label class="field-label">Warranty Card Image <span class="hint">(optional)</span></label>
+        <div class="img-upload-box" (click)="pickWarranty()">
+          <img *ngIf="warrantyPreview" [src]="warrantyPreview" class="img-preview">
+          <div *ngIf="!warrantyPreview" class="img-placeholder">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+            <span>Tap to attach warranty card</span>
+          </div>
+        </div>
+        <input type="file" #warrantyInput accept="image/*" style="display:none" (change)="onWarrantyPicked($event)">
       </div>
 
     </ion-card-content>
@@ -74,7 +151,6 @@
         </div>
       </div>
 
-      <!-- Clinic selector (single clinic mode) -->
       <div class="field field-full" *ngIf="scope === 'clinic' && clinics.length > 1">
         <label class="field-label">Select Clinic *</label>
         <select [(ngModel)]="clinicId" class="field-select">
@@ -83,7 +159,6 @@
         </select>
       </div>
 
-      <!-- Auto-selected when only one clinic -->
       <div class="single-clinic-note" *ngIf="scope === 'clinic' && clinics.length === 1">
         <ion-icon name="checkmark-circle-outline"></ion-icon>
         {{ clinics[0].Name }}
