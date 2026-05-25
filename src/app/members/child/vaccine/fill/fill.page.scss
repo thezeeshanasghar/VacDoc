@@ -104,12 +104,14 @@ ion-item input[matInput] {
 .example-full-width {
     width: 100%;
     box-sizing: border-box;
+    padding: 0 8px;
 }
 
 .custom-input-item {
     width: 100%;
     box-sizing: border-box;
     margin: 8px 0;
+    padding: 0 8px;
 }
 
 // Override Material's internal wrapper padding so field fills its container

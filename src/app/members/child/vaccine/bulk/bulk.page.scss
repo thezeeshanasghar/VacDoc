@@ -81,12 +81,27 @@ input
 
 .bulk-brand-row {
     margin-top: 8px;
+    padding: 0 8px;
+    box-sizing: border-box;
 }
 
 .bulk-dose-hint {
     font-size: 12px;
     color: var(--ion-color-medium);
-    margin: 0 8px 4px;
+    margin: 0 0 4px;
+}
+
+.example-full-width,
+.custom-input-item {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+:host ::ng-deep .example-full-width .mat-form-field-wrapper,
+:host ::ng-deep .custom-input-item .mat-form-field-wrapper {
+    padding-bottom: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 .brand-label {
