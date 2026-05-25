@@ -78,9 +78,10 @@ input {
 }
 
 .country-code-field {
-  flex: 0 0 auto;
-  min-width: 100px;
-  max-width: 120px;
+  flex: 0 0 calc(25% - 4px);
+  width: calc(25% - 4px);
+  min-width: 0;
+  max-width: none;
   margin: 0 !important;
 
   .mat-form-field-wrapper {
@@ -89,8 +90,15 @@ input {
   }
 
   .mat-form-field-infix {
-    padding: 0.4em 0 !important;
-    border-top: 0.6em solid transparent !important;
+    padding: 0.5em 0 !important;
+    border-top: 0.5em solid transparent !important;
+    width: auto !important;
+    min-width: 0 !important;
+  }
+
+  .mat-form-field-flex {
+    padding: 0 8px !important;
+    align-items: center !important;
   }
 
   .mat-form-field-outline-start,
@@ -98,10 +106,15 @@ input {
   .mat-form-field-outline-gap {
     border-color: #ddd !important;
   }
+
+  input[matInput] {
+    min-width: 0 !important;
+  }
 }
 
 .mobile-number-field {
-  flex: 1 1 auto;
+  flex: 0 0 calc(75% - 4px);
+  width: calc(75% - 4px);
   --background: transparent;
   --border-radius: 8px;
   --border-color: #ddd;
@@ -114,32 +127,6 @@ input {
   max-height: 56px;
   display: flex;
   align-items: center;
-}
-
-@media (max-width: 576px) {
-  .country-code-field {
-    min-width: 90px;
-    max-width: 105px;
-  }
-}
-
-@media (max-width: 375px) {
-  .mobile-number-container {
-    gap: 6px;
-  }
-  
-  .country-code-field {
-    min-width: 85px;
-    max-width: 95px;
-  }
-
-  .country-label, .mobile-label {
-    font-size: 14px;
-  }
-  
-  .country-code-select, .number-input {
-    font-size: 14px;
-  }
 }
 
 .required-asterisk {
