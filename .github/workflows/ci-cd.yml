@@ -13,11 +13,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: npm install -g @ionic/cli
       - run: npm install
-      - run: ionic build --prod
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider --max-old-space-size=4096
+      - run: npm run build -- --prod
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
