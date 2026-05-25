@@ -34,6 +34,10 @@ const routes: Routes = [
     path: 'audit-log',
     loadChildren: () => import('./pa-audit-log/pa-audit-log.module').then(m => m.PaAuditLogPageModule)
   },
+  {
+    path: 'cash-handover',
+    loadChildren: () => import('./cash-handover/cash-handover.module').then(m => m.CashHandoverPageModule)
+  },
 ];
 
 @NgModule({

@@ -1,0 +1,82 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Cash Handover</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- PA VIEW -->
+  <ng-container *ngIf="!isDoctorView">
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>Cash In Hand</ion-card-subtitle>
+        <ion-card-title style="font-size: 28px; color: #2dd36f;">Rs. {{ cashInHand | number:'1.0-0' }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button expand="block" color="primary" (click)="initiateHandover()" [disabled]="cashInHand <= 0">
+          Hand Over to Doctor
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-list-header>
+      <ion-label>Handover History</ion-label>
+    </ion-list-header>
+
+    <ion-card *ngIf="handovers.length === 0">
+      <ion-card-content>No handovers recorded yet.</ion-card-content>
+    </ion-card>
+
+    <ion-card *ngFor="let h of handovers">
+      <ion-card-content>
+        <ion-item lines="none">
+          <ion-label>
+            <h2>Rs. {{ h.Amount | number:'1.0-0' }}</h2>
+            <p>{{ h.CreatedAt | date:'dd MMM yyyy, h:mm a' }}</p>
+            <p *ngIf="h.ConfirmedAt">Confirmed: {{ h.ConfirmedAt | date:'dd MMM yyyy, h:mm a' }}</p>
+            <p *ngIf="h.RejectionNote" style="color: red;">Reason: {{ h.RejectionNote }}</p>
+          </ion-label>
+          <ion-badge slot="end" [color]="statusColor(h.Status)">{{ h.Status }}</ion-badge>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+  </ng-container>
+
+  <!-- DOCTOR VIEW -->
+  <ng-container *ngIf="isDoctorView">
+
+    <ion-list-header>
+      <ion-label>Pending Handovers</ion-label>
+    </ion-list-header>
+
+    <ion-card *ngIf="pendingHandovers.length === 0">
+      <ion-card-content>No pending handovers.</ion-card-content>
+    </ion-card>
+
+    <ion-card *ngFor="let h of pendingHandovers">
+      <ion-card-content>
+        <ion-item lines="none">
+          <ion-label>
+            <h2>{{ h.PaName }}</h2>
+            <p>{{ h.ClinicName }}</p>
+            <p style="font-size: 18px; font-weight: bold; color: #2dd36f;">Rs. {{ h.Amount | number:'1.0-0' }}</p>
+            <p>Submitted: {{ h.CreatedAt | date:'dd MMM yyyy, h:mm a' }}</p>
+            <p>Cash still in hand: Rs. {{ h.CashInHand | number:'1.0-0' }}</p>
+          </ion-label>
+        </ion-item>
+        <div style="display: flex; gap: 8px; padding: 8px 16px;">
+          <ion-button color="success" expand="block" style="flex:1;" (click)="confirmHandover(h)">Confirm Receipt</ion-button>
+          <ion-button color="danger" expand="block" style="flex:1;" fill="outline" (click)="rejectHandover(h)">Reject</ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+  </ng-container>
+
+</ion-content>

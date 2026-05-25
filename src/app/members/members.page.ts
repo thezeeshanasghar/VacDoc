@@ -644,6 +644,12 @@ export class MembersPage implements OnInit {
             if (AllowChild) {
               this.childPages = [];
             }
+
+            this.appPages.push({
+              title: "Cash Handover",
+              url: "/members/doctor/personal-assistant/cash-handover",
+              icon: "cash-outline"
+            });
           } else if (this.hasClinics) {
             this.profile = [
               {
@@ -711,6 +717,11 @@ export class MembersPage implements OnInit {
                 title: "Personal Assistant",
                 url: "/members/doctor/personal-assistant",
                 icon: "wallet-outline"
+              });
+              this.appPages.push({
+                title: "Cash Handover",
+                url: "/members/doctor/personal-assistant/cash-handover",
+                icon: "cash-outline"
               });
             }
 
