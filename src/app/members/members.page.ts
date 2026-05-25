@@ -740,7 +740,7 @@ export class MembersPage implements OnInit {
               this.appPages.push({
                 title: "Financial",
                 icon: "bar-chart-outline",
-                url: "/members/doctor/financial/reporting",
+                url: "/members/doctor/financial",
               });
             }
           } else {
@@ -790,7 +790,7 @@ export class MembersPage implements OnInit {
               this.appPages.push({
                 title: "Financial",
                 icon: "bar-chart-outline",
-                url: "/members/doctor/financial/reporting",
+                url: "/members/doctor/financial",
               });
             }
           }

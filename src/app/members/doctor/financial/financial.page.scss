@@ -1,0 +1,74 @@
+.fin-content {
+  --background: #EEF2F7;
+}
+
+.fin-wrap {
+  padding: 24px 16px 32px;
+}
+
+.fin-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.fin-card {
+  position: relative;
+  border-radius: 20px;
+  padding: 22px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(10, 61, 121, 0.14);
+  cursor: default;
+  opacity: 0.88;
+}
+
+.fin-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+
+  ion-icon {
+    font-size: 26px;
+    color: #ffffff;
+  }
+}
+
+.fin-card-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 3px;
+  letter-spacing: 0.2px;
+}
+
+.fin-card-sub {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.soon-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  letter-spacing: 0.3px;
+}
+
+// Card colours
+.card-expenses { background: linear-gradient(145deg, #1565C0 0%, #1976D2 100%); }
+.card-pnl      { background: linear-gradient(145deg, #2E7D32 0%, #43A047 100%); }
+.card-assets   { background: linear-gradient(145deg, #6A1B9A 0%, #8E24AA 100%); }
+.card-income   { background: linear-gradient(145deg, #E65100 0%, #F57C00 100%); }

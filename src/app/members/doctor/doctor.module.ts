@@ -43,8 +43,8 @@ const routes: Routes = [
     loadChildren: () => import('./personal-assistant/personal-assistant.module').then(m => m.PersonalAssistantPageModule)
   },
   {
-    path: "financial/reporting",
-    loadChildren: () => import('./financial/reporting/reporting.module').then(m => m.ReportingPageModule)
+    path: "financial",
+    loadChildren: () => import('./financial/financial.module').then(m => m.FinancialPageModule)
   },
   {
     path: "brand-prices",
