@@ -13,6 +13,9 @@ import { environment } from 'src/environments/environment';
 })
 export class PurchaseBillsPage {
   bills: any[] = [];
+  filteredBills: any[] = [];
+  suppliers: any[] = [];
+  selectedSupplier: string = '';
   doctorId: number = 0;
   clinicId: number = 0;
 
@@ -29,7 +32,19 @@ export class PurchaseBillsPage {
     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
     const clinic = await this.storage.get(environment.ON_CLINIC);
     this.clinicId = clinic ? clinic.Id : 0;
+    this.loadSuppliers();
     this.loadBills();
+  }
+
+  loadSuppliers() {
+    this.stockService.getSuppliers().subscribe(
+      (res: any) => {
+        if (res.IsSuccess) {
+          this.suppliers = res.ResponseData || [];
+        }
+      },
+      () => {}
+    );
   }
 
   async loadBills() {
@@ -39,7 +54,8 @@ export class PurchaseBillsPage {
       (res: any) => {
         loading.dismiss();
         if (res.IsSuccess) {
-          this.bills = res.ResponseData || [];
+          this.bills = (res.ResponseData || []).slice().reverse();
+          this.applyFilter();
         } else {
           this.toastService.create(res.Message || 'Failed to load bills', 'danger');
         }
@@ -49,6 +65,20 @@ export class PurchaseBillsPage {
         this.toastService.create('Failed to load bills', 'danger');
       }
     );
+  }
+
+  applyFilter() {
+    if (!this.selectedSupplier) {
+      this.filteredBills = this.bills.slice();
+    } else {
+      this.filteredBills = this.bills.filter((b: any) =>
+        (b.SupplierName || '').toLowerCase() === this.selectedSupplier.toLowerCase()
+      );
+    }
+  }
+
+  onSupplierChange() {
+    this.applyFilter();
   }
 
   addBill() {

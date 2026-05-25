@@ -9,13 +9,20 @@
 
 <ion-content class="ion-padding">
 
-  <div *ngIf="bills.length === 0" class="empty-state">
+  <div class="filter-bar">
+    <select class="supplier-select" [(ngModel)]="selectedSupplier" (change)="onSupplierChange()">
+      <option value="">All Suppliers</option>
+      <option *ngFor="let s of suppliers" [value]="s.Name">{{ s.Name }}</option>
+    </select>
+  </div>
+
+  <div *ngIf="filteredBills.length === 0" class="empty-state">
     <ion-icon name="receipt-outline"></ion-icon>
     <p>No purchase bills yet.</p>
     <p class="empty-sub">Tap + to record your first stock entry.</p>
   </div>
 
-  <div *ngFor="let bill of bills" class="bill-card">
+  <div *ngFor="let bill of filteredBills" class="bill-card">
     <div class="bill-header">
       <span class="bill-no">{{ bill.BillNo }}</span>
       <ion-badge [color]="bill.PaymentStatus === 'Paid' ? 'success' : bill.PaymentStatus === 'Partial' ? 'warning' : 'danger'" class="paid-badge">
