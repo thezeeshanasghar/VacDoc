@@ -152,18 +152,18 @@
 
       <div class="mobile-number-wrapper">
         <div class="mobile-number-container">
-          <mat-form-field appearance="outline" class="country-code-field">
+          <div class="country-code-field">
             <span class="fi fi-{{ getFlagCode(fg1.get('CountryCode').value) }}"></span>
-            <span style="color: gray !important;">+</span>
-            <input type="text" matInput placeholder="Code" formControlName="CountryCode" [matAutocomplete]="countryAuto"
-              (input)="filterCountryCodes($event.target.value)" class="custom-input" autocomplete="off" />
+            <span class="country-plus">+</span>
+            <input type="text" placeholder="Code" formControlName="CountryCode" [matAutocomplete]="countryAuto"
+              (input)="filterCountryCodes($event.target.value)" class="country-code-input" autocomplete="off" />
             <mat-autocomplete #countryAuto="matAutocomplete" class="no-indent">
               <mat-option *ngFor="let country of filteredCountryCodes" [value]="country.code">
                 <span class="fi fi-{{ country.flag }}"></span>
                 {{ country.name }} (+{{ country.code }})
               </mat-option>
             </mat-autocomplete>
-          </mat-form-field>
+          </div>
 
           <ion-item class="mobile-number-field">
             <ion-input type="text" placeholder="Mobile Number *" required formControlName="MobileNumber"

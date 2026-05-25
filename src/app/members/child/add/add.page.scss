@@ -81,35 +81,38 @@ input {
   flex: 0 0 calc(25% - 4px);
   width: calc(25% - 4px);
   min-width: 0;
-  max-width: none;
-  margin: 0 !important;
+  height: 56px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  padding: 0 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-sizing: border-box;
+  background: transparent;
+  overflow: hidden;
+}
 
-  .mat-form-field-wrapper {
-    padding-bottom: 0 !important;
-    margin-bottom: 0 !important;
-  }
+.country-plus {
+  color: gray;
+  font-size: 14px;
+  flex-shrink: 0;
+}
 
-  .mat-form-field-infix {
-    padding: 0.5em 0 !important;
-    border-top: 0.5em solid transparent !important;
-    width: auto !important;
-    min-width: 0 !important;
-  }
+.country-code-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: gray;
+  width: 100%;
+}
 
-  .mat-form-field-flex {
-    padding: 0 8px !important;
-    align-items: center !important;
-  }
-
-  .mat-form-field-outline-start,
-  .mat-form-field-outline-end,
-  .mat-form-field-outline-gap {
-    border-color: #ddd !important;
-  }
-
-  input[matInput] {
-    min-width: 0 !important;
-  }
+.country-code-input::placeholder {
+  color: gray;
 }
 
 .mobile-number-field {
