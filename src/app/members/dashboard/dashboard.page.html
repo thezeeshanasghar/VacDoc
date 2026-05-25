@@ -47,6 +47,15 @@
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
+      <div *ngIf="showStock" routerLink="/members/doctor/stock-management" class="dash-card card-stock">
+        <div class="dash-card-icon">
+          <ion-icon name="cube-outline"></ion-icon>
+        </div>
+        <span class="dash-card-label">Stock</span>
+        <span class="dash-card-sub">Inventory management</span>
+        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
+      </div>
+
       <div *ngIf="showClinics" routerLink="/members/doctor/clinic" class="dash-card card-clinic">
         <div class="dash-card-icon">
           <ion-icon name="business-outline"></ion-icon>

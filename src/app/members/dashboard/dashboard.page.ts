@@ -42,6 +42,7 @@ export class DashboardPage implements OnInit {
   showAnalytics: boolean = true;
   showSchedule: boolean = true;
   showClinics: boolean = true;
+  showStock: boolean = true;
 
   constructor(
     private loadingController: LoadingController,
@@ -87,15 +88,18 @@ export class DashboardPage implements OnInit {
       this.isPa = true;
       try {
         const pa = await this.paService.getPa(this.user.PAId).toPromise();
-        this.showPatients  = (pa && pa.AllowChild)    || false;
-        this.showAlerts    = (pa && pa.AllowAlert)    || false;
+        this.showPatients  = (pa && pa.AllowChild)     || false;
+        this.showAlerts    = (pa && pa.AllowAlert)     || false;
         this.showAnalytics = (pa && pa.AllowAnalytics) || false;
         this.showSchedule  = (pa && pa.AllowSchedule)  || false;
-        this.showClinics   = (pa && pa.AllowClinic)   || false;
+        this.showClinics   = (pa && pa.AllowClinic)    || false;
+        this.showStock     = (pa && pa.AllowStock)     || false;
       } catch (e) {
         this.showPatients = this.showAlerts =
-          this.showAnalytics = this.showSchedule = this.showClinics = false;
+          this.showAnalytics = this.showSchedule = this.showClinics = this.showStock = false;
       }
+    } else {
+      this.showStock = this.user && this.user.AllowInventory !== false;
     }
   }
 
