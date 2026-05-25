@@ -65,6 +65,15 @@
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
+      <div *ngIf="showFinancial" routerLink="/members/doctor/financial" class="dash-card card-financial">
+        <div class="dash-card-icon">
+          <ion-icon name="bar-chart-outline"></ion-icon>
+        </div>
+        <span class="dash-card-label">Financial</span>
+        <span class="dash-card-sub">Expenses, P&amp;L &amp; assets</span>
+        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
+      </div>
+
     </div>
   </div>
 </ion-content>

@@ -43,6 +43,7 @@ export class DashboardPage implements OnInit {
   showSchedule: boolean = true;
   showClinics: boolean = true;
   showStock: boolean = true;
+  showFinancial: boolean = false;
 
   constructor(
     private loadingController: LoadingController,
@@ -94,12 +95,15 @@ export class DashboardPage implements OnInit {
         this.showSchedule  = (pa && pa.AllowSchedule)  || false;
         this.showClinics   = (pa && pa.AllowClinic)    || false;
         this.showStock     = (pa && pa.AllowStock)     || false;
+        this.showFinancial = false;
       } catch (e) {
         this.showPatients = this.showAlerts =
           this.showAnalytics = this.showSchedule = this.showClinics = this.showStock = false;
+        this.showFinancial = false;
       }
     } else {
-      this.showStock = this.user && this.user.AllowInventory !== false;
+      this.showStock     = this.user && this.user.AllowInventory !== false;
+      this.showFinancial = this.user && this.user.AllowFinancial === true;
     }
   }
 
