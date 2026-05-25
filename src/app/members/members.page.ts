@@ -645,6 +645,12 @@ export class MembersPage implements OnInit {
               this.childPages = [];
             }
 
+            this.appPages.push({
+              title: "Collection Tasks",
+              url: "/members/doctor/personal-assistant/collection-tasks",
+              icon: "cash-outline"
+            });
+
           } else if (this.hasClinics) {
             this.profile = [
               {

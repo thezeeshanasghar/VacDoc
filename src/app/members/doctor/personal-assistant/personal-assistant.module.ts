@@ -38,6 +38,10 @@ const routes: Routes = [
     path: 'cash-handover',
     loadChildren: () => import('./cash-handover/cash-handover.module').then(m => m.CashHandoverPageModule)
   },
+  {
+    path: 'collection-tasks',
+    loadChildren: () => import('./collection-tasks/collection-tasks.module').then(m => m.CollectionTasksPageModule)
+  },
 ];
 
 @NgModule({

@@ -25,6 +25,10 @@ const routes: Routes = [
   {
     path: 'cash-handover',
     loadChildren: () => import('../personal-assistant/cash-handover/cash-handover.module').then(m => m.CashHandoverPageModule)
+  },
+  {
+    path: 'day-log',
+    loadChildren: () => import('./day-log/day-log.module').then(m => m.DayLogPageModule)
   }
 ];
 

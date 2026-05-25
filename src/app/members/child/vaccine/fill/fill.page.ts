@@ -11,6 +11,7 @@ import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { FollowupService } from 'src/app/services/followup.service';
+import { PaService } from 'src/app/services/pa.service';
 
 @Component({
   selector: 'app-fill',
@@ -63,6 +64,8 @@ export class FillPage implements OnInit {
   scheduleDatecheck: string;
   paymentMode: string = 'Cash';
   onlineService: string = '';
+  clinicPAs: any[] = [];
+  paymentCollectorPaId: number = null;
   private readonly travelFieldStorageSuffix = 'travel-vaccine-fill-state';
 
   private getTodayIsoDate(): string {
@@ -104,6 +107,7 @@ export class FillPage implements OnInit {
     private alertController: AlertController,
     private clinicService: ClinicService,
     private followupService: FollowupService,
+    private paService: PaService,
   ) { }
 
   ngOnInit() {
@@ -145,6 +149,13 @@ export class FillPage implements OnInit {
         const actorId = user.UserType === 'PA' ? Number(user.PAId) : Number(user.DoctorId);
         if (actorId && !isNaN(actorId)) {
           this.doctorId = actorId;
+        }
+        if (user.UserType === 'DOCTOR' && user.DoctorId) {
+          this.paService.getPAsByDoctorId(String(user.DoctorId)).subscribe(res => {
+            if (res && res.IsSuccess && res.ResponseData) {
+              this.clinicPAs = res.ResponseData;
+            }
+          });
         }
       } else {
         console.error('No user data found in storage.');
@@ -388,6 +399,7 @@ export class FillPage implements OnInit {
 
     this.fg.value.PaymentMode = this.paymentMode;
     this.fg.value.OnlineService = this.paymentMode === 'Online Transfer' ? this.onlineService : null;
+    this.fg.value.PaymentCollectorPaId = this.paymentCollectorPaId || null;
 
     await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
       res => {
