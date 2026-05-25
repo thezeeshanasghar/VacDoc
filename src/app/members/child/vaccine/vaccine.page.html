@@ -62,6 +62,8 @@
           <ion-item lines="none" style="display: flex; align-items: center; margin: -2px 0; padding: -5px 0;">
             <ion-label style="flex: 1; display: flex; align-items: center; font-size: 14px;" class="ion-text-wrap">
               {{ v.Dose.Name }}
+              <ion-badge *ngIf="usertype === 'DOCTOR' && (v.GiveCount == 2 || v.UngiveCount == 2 || v.SkipCount == 2 || v.UnskipCount == 2)"
+                color="warning" style="font-size:10px; margin-left:4px;">!</ion-badge>
             </ion-label>
             <div style="flex: 1; display: flex; font-size: 14px;">
               <span *ngIf="v.BrandId && v.IsDone; else noBrand" style="color: rgb(55, 231, 10);">
@@ -109,7 +111,7 @@
             >
             </ion-img>
             <ion-img
-              *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && (usertype === 'DOCTOR' || (canUngiveVaccine && isFilledToday(v.DoneAt)))"
+              *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && (usertype === 'DOCTOR' || canUngiveVaccine)"
               style="height: 20px;"
               src="../../assets/injectionFilled.png"
               [title]="'Ungive Vaccine'"

@@ -588,12 +588,16 @@ this.downloadSpecialPdf();
           }
           else {
             loading.dismiss();
-            this.toastService.create(res.Message, 'danger');
+            this.alertController.create({
+              header: 'Cannot Ungive',
+              message: res.Message,
+              buttons: ['OK']
+            }).then(a => a.present());
           }
         },
         err => {
-          this.toastService.create('Error: server failure');
           loading.dismiss();
+          this.toastService.create('Error: server failure');
         }
       );
   }
