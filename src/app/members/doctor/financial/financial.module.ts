@@ -17,6 +17,10 @@ const routes: Routes = [
   {
     path: 'reporting',
     loadChildren: () => import('./reporting/reporting.module').then(m => m.ReportingPageModule)
+  },
+  {
+    path: 'cash-handover',
+    loadChildren: () => import('../personal-assistant/cash-handover/cash-handover.module').then(m => m.CashHandoverPageModule)
   }
 ];
 
