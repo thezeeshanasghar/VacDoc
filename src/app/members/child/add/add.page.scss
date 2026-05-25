@@ -1,8 +1,9 @@
 .error-message {
   color: red;
-  font-size: 14px;
+  font-size: 13px;
   margin-left: 10px;
-  margin-top: 10px;
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 .mat-datepicker-toggle-default-icon {
     color: rgb(198, 198, 198);
@@ -63,7 +64,7 @@ input {
 
 // Mobile Number Layout
 .mobile-number-wrapper {
-  margin: 8px 0;
+  margin: 4px 0;
   width: 100%;
   padding: 0 8px;
   box-sizing: border-box;
@@ -81,7 +82,7 @@ input {
   flex: 0 0 calc(25% - 4px);
   width: calc(25% - 4px);
   min-width: 0;
-  height: 56px;
+  height: 44px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -123,11 +124,12 @@ input {
   --border-color: #ddd;
   --border-width: 1px;
   --highlight-height: 0;
+  --min-height: 44px;
   margin: 0;
   padding: 0 8px;
-  height: 56px;
-  min-height: 56px;
-  max-height: 56px;
+  height: 44px;
+  min-height: 44px;
+  max-height: 44px;
   display: flex;
   align-items: center;
 }
@@ -151,17 +153,15 @@ ion-label {
   fill: gray !important;
 }
 .custom-input-item {
-  // --background: #fff;
   --border-radius: 8px;
   --border-color: #ddd;
   --border-width: 1px;
-  --highlight-height: 0; // remove default ionic highlight line
-  // border: 1px solid #ddd;
-  // border-radius: 8px;
+  --highlight-height: 0;
+  --min-height: 44px;
   color: #ddd;
-  margin: 8px 0;
-  padding: 4px 8px;
-   width: 100%;
+  margin: 4px 0;
+  padding: 0 8px;
+  width: 100%;
 }
 
 .custom-input {
@@ -212,5 +212,21 @@ ion-label {
 .city-label {
   color: gray !important;
   font-size: 16px;
+}
+
+// Compact mat-form-field (DOB) to match 44px row height
+:host ::ng-deep .custom-input-item.mat-form-field-appearance-outline .mat-form-field-wrapper {
+  padding-bottom: 0 !important;
+  margin: 0 !important;
+}
+
+:host ::ng-deep .custom-input-item.mat-form-field-appearance-outline .mat-form-field-infix {
+  padding: 8px 0 !important;
+  border-top: 8px solid transparent !important;
+}
+
+:host ::ng-deep .custom-input-item.mat-form-field-appearance-outline .mat-form-field-flex {
+  padding: 0 12px !important;
+  align-items: center !important;
 }
 
