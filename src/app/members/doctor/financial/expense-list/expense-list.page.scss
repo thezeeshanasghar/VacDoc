@@ -1,0 +1,137 @@
+.el-content {
+  --background: #F4F6F9;
+}
+
+.filter-row {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px 8px;
+  overflow-x: auto;
+}
+
+.filter-chip {
+  flex-shrink: 0;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #fff;
+  color: #546E7A;
+  border: 1.5px solid #CFD8DC;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.filter-chip-active {
+  background: #0A3D79;
+  color: #fff;
+  border-color: #0A3D79;
+}
+
+.summary-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 16px 10px;
+}
+
+.summary-count {
+  font-size: 12px;
+  color: #90A4AE;
+}
+
+.summary-total {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0A3D79;
+}
+
+.exp-list {
+  padding: 0 12px 80px;
+}
+
+.exp-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+
+.exp-left {
+  flex-shrink: 0;
+}
+
+.exp-cat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  ion-icon { font-size: 20px; }
+}
+
+.cat-blue   { background: #E3F2FD; color: #1565C0; }
+.cat-grey   { background: #ECEFF1; color: #546E7A; }
+.cat-pink   { background: #FCE4EC; color: #AD1457; }
+.cat-orange { background: #FFF3E0; color: #E65100; }
+.cat-green  { background: #E8F5E9; color: #2E7D32; }
+.cat-teal   { background: #E0F2F1; color: #00695C; }
+.cat-purple { background: #EDE7F6; color: #4527A0; }
+
+.exp-mid {
+  flex: 1;
+  min-width: 0;
+}
+
+.exp-desc {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1C2A3A;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.exp-meta {
+  font-size: 12px;
+  color: #90A4AE;
+  margin-top: 3px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.exp-dot { color: #CFD8DC; }
+
+.exp-right {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.exp-amount {
+  font-size: 14px;
+  font-weight: 700;
+  color: #C62828;
+}
+
+.exp-mode {
+  font-size: 11px;
+  color: #90A4AE;
+  margin-top: 2px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #B0BEC5;
+  ion-icon { font-size: 48px; margin-bottom: 12px; }
+  p { font-size: 15px; }
+}

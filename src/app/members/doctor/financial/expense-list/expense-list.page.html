@@ -1,0 +1,68 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/financial"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Expense Reports</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/members/doctor/financial/add-expense">
+        <ion-icon name="add-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="el-content">
+
+  <!-- Filter tabs -->
+  <div class="filter-row">
+    <div class="filter-chip" [class.filter-chip-active]="filter === 'All'"       (click)="setFilter('All')">All</div>
+    <div class="filter-chip" [class.filter-chip-active]="filter === 'Recurring'" (click)="setFilter('Recurring')">Recurring</div>
+    <div class="filter-chip" [class.filter-chip-active]="filter === 'Capital'"   (click)="setFilter('Capital')">Fixed Asset</div>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="summary-bar" *ngIf="filtered.length > 0">
+    <span class="summary-count">{{ filtered.length }} expense{{ filtered.length === 1 ? '' : 's' }}</span>
+    <span class="summary-total">Rs {{ total | number:'1.0-0' }}</span>
+  </div>
+
+  <!-- List -->
+  <div class="exp-list" *ngIf="filtered.length > 0">
+    <div class="exp-row" *ngFor="let e of filtered" (click)="onTap(e)">
+      <div class="exp-left">
+        <div class="exp-cat-icon" [ngClass]="catClass(e.Category)">
+          <ion-icon [name]="catIcon(e.Category)"></ion-icon>
+        </div>
+      </div>
+      <div class="exp-mid">
+        <div class="exp-desc">{{ e.Description }}</div>
+        <div class="exp-meta">
+          <span class="exp-date">{{ e.ExpenseDate | date:'dd MMM yy' }}</span>
+          <span class="exp-dot">·</span>
+          <span class="exp-cat">{{ e.ExpenseType === 'Capital' ? e.AssetName || 'Fixed Asset' : e.Category }}</span>
+          <span class="exp-dot" *ngIf="e.ClinicId">·</span>
+          <span class="exp-clinic" *ngIf="e.ClinicId">{{ clinicName(e.ClinicId) }}</span>
+          <span class="exp-dot" *ngIf="e.IsShared">·</span>
+          <span class="exp-clinic" *ngIf="e.IsShared">All Clinics</span>
+        </div>
+      </div>
+      <div class="exp-right">
+        <div class="exp-amount">Rs {{ e.Amount | number:'1.0-0' }}</div>
+        <div class="exp-mode">{{ modeLabel(e.PaymentMode) }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div class="empty-state" *ngIf="filtered.length === 0 && !loading">
+    <ion-icon name="receipt-outline"></ion-icon>
+    <p>No expenses found</p>
+  </div>
+
+  <!-- Loading -->
+  <div class="empty-state" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+</ion-content>

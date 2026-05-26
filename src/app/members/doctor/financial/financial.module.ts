@@ -11,6 +11,10 @@ const routes: Routes = [
     component: FinancialPage
   },
   {
+    path: 'expense-list',
+    loadChildren: () => import('./expense-list/expense-list.module').then(m => m.ExpenseListPageModule)
+  },
+  {
     path: 'add-expense',
     loadChildren: () => import('./add-expense/add-expense.module').then(m => m.AddExpensePageModule)
   },
