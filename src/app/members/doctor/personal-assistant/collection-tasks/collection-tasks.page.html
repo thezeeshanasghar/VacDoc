@@ -8,65 +8,61 @@
 </ion-header>
 
 <ion-content>
-  <ion-list *ngIf="tasks.length > 0">
-    <ion-item *ngFor="let task of tasks" button (click)="openMarkForm(task)">
-      <ion-label>
-        <h2>{{ getChildName(task) }}</h2>
-        <p>{{ getVaccineName(task) }}</p>
-        <p>Amount: {{ task.Amount | currency:'PKR':'symbol':'1.0-0' }}</p>
-        <p>Given: {{ task.GivenDate | date:'dd MMM yyyy' }}</p>
-      </ion-label>
-      <ion-badge slot="end" color="warning">Collect</ion-badge>
-    </ion-item>
-  </ion-list>
+  <!-- Task List -->
+  <div *ngIf="!activeTask">
+    <ion-list *ngIf="tasks.length > 0">
+      <ion-item *ngFor="let task of tasks" button (click)="openMarkForm(task)">
+        <ion-label>
+          <h2>{{ getChildName(task) }}</h2>
+          <p>{{ getVaccineName(task) }}</p>
+          <p>Amount: Rs. {{ task.Amount }}</p>
+          <p>Given: {{ task.GivenDate | date:'dd MMM yyyy' }}</p>
+        </ion-label>
+        <ion-badge slot="end" color="warning">Collect</ion-badge>
+      </ion-item>
+    </ion-list>
 
-  <div *ngIf="tasks.length === 0" style="text-align:center; padding: 40px; color: #888;">
-    <ion-icon name="checkmark-circle-outline" style="font-size:48px;"></ion-icon>
-    <p>No pending collection tasks.</p>
+    <div *ngIf="tasks.length === 0" style="text-align:center; padding: 40px; color: #888;">
+      <ion-icon name="checkmark-circle-outline" style="font-size:48px;"></ion-icon>
+      <p>No pending collection tasks.</p>
+    </div>
   </div>
 
-  <!-- Mark Collected Form -->
-  <ion-modal [isOpen]="!!activeTask" (didDismiss)="closeMarkForm()">
-    <ng-template>
-      <ion-header>
-        <ion-toolbar color="primary">
-          <ion-title>Mark Payment Collected</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="closeMarkForm()">Close</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content class="ion-padding">
-        <div *ngIf="activeTask">
-          <p><strong>{{ getChildName(activeTask) }}</strong> — {{ getVaccineName(activeTask) }}</p>
-          <p>Amount: {{ activeTask.Amount | currency:'PKR':'symbol':'1.0-0' }}</p>
+  <!-- Mark Collected Form (inline, shown when task selected) -->
+  <div *ngIf="activeTask" class="ion-padding">
+    <ion-item lines="none">
+      <ion-button fill="clear" slot="start" (click)="closeMarkForm()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+      <ion-label><strong>Mark Payment Collected</strong></ion-label>
+    </ion-item>
 
-          <ion-item>
-            <ion-label>Payment Mode</ion-label>
-            <ion-select [(ngModel)]="paymentMode">
-              <ion-select-option value="Cash">Cash</ion-select-option>
-              <ion-select-option value="Online Transfer">Online Transfer</ion-select-option>
-            </ion-select>
-          </ion-item>
+    <p class="ion-padding-horizontal"><strong>{{ getChildName(activeTask) }}</strong> — {{ getVaccineName(activeTask) }}</p>
+    <p class="ion-padding-horizontal">Amount: Rs. {{ activeTask.Amount }}</p>
 
-          <ion-item>
-            <ion-label position="floating">Weight (kg)</ion-label>
-            <ion-input type="number" [(ngModel)]="weight"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating">Height (cm)</ion-label>
-            <ion-input type="number" [(ngModel)]="height"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating">Head Circumference (cm)</ion-label>
-            <ion-input type="number" [(ngModel)]="circle"></ion-input>
-          </ion-item>
+    <ion-item>
+      <ion-label>Payment Mode</ion-label>
+      <ion-select [(ngModel)]="paymentMode">
+        <ion-select-option value="Cash">Cash</ion-select-option>
+        <ion-select-option value="Online Transfer">Online Transfer</ion-select-option>
+      </ion-select>
+    </ion-item>
 
-          <ion-button expand="block" color="success" (click)="markCollected()" style="margin-top:16px;">
-            Mark as Collected
-          </ion-button>
-        </div>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
+    <ion-item>
+      <ion-label position="floating">Weight (kg)</ion-label>
+      <ion-input type="number" [(ngModel)]="weight"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Height (cm)</ion-label>
+      <ion-input type="number" [(ngModel)]="height"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Head Circumference (cm)</ion-label>
+      <ion-input type="number" [(ngModel)]="circle"></ion-input>
+    </ion-item>
+
+    <ion-button expand="block" color="success" (click)="markCollected()" style="margin-top:16px;">
+      Mark as Collected
+    </ion-button>
+  </div>
 </ion-content>
