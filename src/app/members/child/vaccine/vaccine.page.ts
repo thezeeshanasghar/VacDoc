@@ -138,9 +138,7 @@ export class VaccinePage {
           });
         }
         if (user.UserType === 'DOCTOR') {
-          this.storage.get(environment.DOCTOR_Id).then(id => {
-            this.doctorId = id ? Number(id) : null;
-          });
+          this.doctorId = user.DoctorId ? Number(user.DoctorId) : null;
           this.storage.get(environment.ON_CLINIC).then(clinic => {
             this.clinicId = clinic ? Number(clinic.Id) : null;
             if (this.clinicId) {
@@ -1008,8 +1006,11 @@ this.downloadSpecialPdf();
       } else {
         this.toastService.create(res.Message || 'Failed to assign', 'danger');
       }
-    }, () => {
-      this.toastService.create('Failed to assign', 'danger');
+    }, (err) => {
+      const msg = err && err.error && err.error.Message ? err.error.Message
+                : err && err.message ? err.message
+                : 'Failed to assign';
+      this.toastService.create(msg, 'danger');
     });
   }
 }
