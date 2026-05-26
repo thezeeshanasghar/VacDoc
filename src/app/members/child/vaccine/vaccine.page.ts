@@ -114,42 +114,42 @@ export class VaccinePage {
       'ChildId': [null],
       'Date': [null]
     });
+    this.loadUserAndPAs();
   }
 
-  ngOnInit() {
+  ngOnInit() {}
+
+  private loadUserAndPAs() {
     this.storage.get(environment.USER).then((user) => {
-      if (user) {
-        this.usertype = user.UserType;
-        if (user.UserType === 'PA') {
-          this.paId = Number(user.PAId) || null;
-          this.paService.getPaPermissions(Number(user.PAId)).subscribe(perm => {
-            this.canGiveVaccine    = (perm && perm.GiveVaccine)        || false;
-            this.canUngiveVaccine  = (perm && perm.UngiveVaccine)      || false;
-            this.canReschedule     = (perm && perm.RescheduleVaccine)  || false;
-            this.canBulkGive       = (perm && perm.BulkGiveVaccines)   || false;
-            this.canBulkUngive     = (perm && perm.BulkUngiveVaccines) || false;
-            this.canBulkReschedule = (perm && perm.BulkReschedule)     || false;
-            this.canInvoice        = (perm && perm.ManageInvoice)      || false;
-            this.canAddParams      = (perm && perm.AddVaccineParams)   || false;
-            this.canPrint          = (perm && perm.PrintSchedulePdf)   || false;
-            this.canSkip           = (perm && perm.SkipVaccine)        || false;
-            this.canUnskip         = (perm && perm.UnskipVaccine)      || false;
-            this.canEditSchedule   = (perm && perm.EditVaccineSchedule)|| false;
-          });
-        }
-        if (user.UserType === 'DOCTOR') {
-          this.doctorId = user.DoctorId ? Number(user.DoctorId) : null;
-          this.storage.get(environment.ON_CLINIC).then(clinic => {
-            this.clinicId = clinic ? Number(clinic.Id) : null;
-            if (this.clinicId) {
-              this.paService.getPAsForClinic(this.clinicId).subscribe(res => {
-                if (res && res.IsSuccess) { this.clinicPAs = res.ResponseData || []; }
-              });
-            }
-          });
-        }
-      } else {
-        console.error('No user data found in storage.');
+      if (!user) { console.error('No user data found in storage.'); return; }
+      this.usertype = user.UserType;
+      if (user.UserType === 'PA') {
+        this.paId = Number(user.PAId) || null;
+        this.paService.getPaPermissions(Number(user.PAId)).subscribe(perm => {
+          this.canGiveVaccine    = (perm && perm.GiveVaccine)        || false;
+          this.canUngiveVaccine  = (perm && perm.UngiveVaccine)      || false;
+          this.canReschedule     = (perm && perm.RescheduleVaccine)  || false;
+          this.canBulkGive       = (perm && perm.BulkGiveVaccines)   || false;
+          this.canBulkUngive     = (perm && perm.BulkUngiveVaccines) || false;
+          this.canBulkReschedule = (perm && perm.BulkReschedule)     || false;
+          this.canInvoice        = (perm && perm.ManageInvoice)      || false;
+          this.canAddParams      = (perm && perm.AddVaccineParams)   || false;
+          this.canPrint          = (perm && perm.PrintSchedulePdf)   || false;
+          this.canSkip           = (perm && perm.SkipVaccine)        || false;
+          this.canUnskip         = (perm && perm.UnskipVaccine)      || false;
+          this.canEditSchedule   = (perm && perm.EditVaccineSchedule)|| false;
+        });
+      }
+      if (user.UserType === 'DOCTOR') {
+        this.doctorId = user.DoctorId ? Number(user.DoctorId) : null;
+        this.storage.get(environment.ON_CLINIC).then(clinic => {
+          this.clinicId = clinic ? Number(clinic.Id) : null;
+          if (this.clinicId) {
+            this.paService.getPAsForClinic(this.clinicId).subscribe(res => {
+              if (res && res.IsSuccess) { this.clinicPAs = res.ResponseData || []; }
+            });
+          }
+        });
       }
     });
   }
