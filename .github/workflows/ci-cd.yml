@@ -17,11 +17,12 @@ jobs:
           node-version: 16
       - name: Add swap space
         run: |
-          sudo fallocate -l 4G /swapfile
+          sudo dd if=/dev/zero of=/swapfile bs=1M count=4096
           sudo chmod 600 /swapfile
           sudo mkswap /swapfile
           sudo swapon /swapfile
-      - run: npm install
+          free -h
+      - run: npm install --legacy-peer-deps
       - run: npx ng build --prod
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -47,9 +48,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           script: |
-            # Remove old files
             sudo rm -rf /var/www/doctor.vaccinationcentre.com/html/*
-            # Create temporary directory for new files
             mkdir -p /tmp/doctor-deploy
       - name: Copy files to EC2
         uses: appleboy/scp-action@v0.1.7
@@ -69,12 +68,8 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           script: |
-            # Move files to web directory
             sudo mv /tmp/doctor-deploy/* /var/www/doctor.vaccinationcentre.com/html/
-            # Set proper ownership and permissions
             sudo chown -R ec2-user:ec2-user /var/www/doctor.vaccinationcentre.com/html/
             sudo chmod -R 755 /var/www/doctor.vaccinationcentre.com/html/
-            # Clean up
             rm -rf /tmp/doctor-deploy
-            # Reload Nginx
             sudo systemctl reload nginx
