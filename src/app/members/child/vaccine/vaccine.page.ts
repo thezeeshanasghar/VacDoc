@@ -51,6 +51,10 @@ export class VaccinePage {
   canSkip = true;
   canUnskip = true;
   canEditSchedule = true;
+  doctorId: number = null;
+  clinicId: number = null;
+  clinicPAs: any[] = [];
+  assignPopupOpen: boolean = false;
 
   isFilledToday(doneAt: any): boolean {
     if (!doneAt) return false;
@@ -133,11 +137,24 @@ export class VaccinePage {
             this.canEditSchedule   = (perm && perm.EditVaccineSchedule)|| false;
           });
         }
+        if (user.UserType === 'DOCTOR') {
+          this.storage.get(environment.DOCTOR_Id).then(id => {
+            this.doctorId = id ? Number(id) : null;
+          });
+          this.storage.get(environment.ON_CLINIC).then(clinic => {
+            this.clinicId = clinic ? Number(clinic.Id) : null;
+            if (this.clinicId) {
+              this.paService.getPAsForClinic(this.clinicId).subscribe(res => {
+                if (res && res.IsSuccess) { this.clinicPAs = res.ResponseData || []; }
+              });
+            }
+          });
+        }
       } else {
         console.error('No user data found in storage.');
       }
     });
-  } 
+  }
 
   handleSkipClick(event: Event, id: number, doseName: string) {
     event.preventDefault();
@@ -943,7 +960,7 @@ this.downloadSpecialPdf();
       a.href = url;
       const contentDisposition = this.vaccineService.getLastContentDisposition();
       let filename = 'Immunization-Record.pdf';
-      
+
       if (contentDisposition) {
         const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
         const matches = filenameRegex.exec(contentDisposition);
@@ -951,12 +968,48 @@ this.downloadSpecialPdf();
           filename = matches[1].replace(/['"]/g, '');
         }
       }
-      
+
       a.download = filename;
       a.click();
       window.URL.revokeObjectURL(url);
     }, error => {
       console.error('Error downloading PDF:', error);
+    });
+  }
+
+  openAssignPopup() {
+    if (this.clinicPAs.length === 0) {
+      this.toastService.create('No PAs assigned to this clinic', 'warning');
+      return;
+    }
+    if (this.clinicPAs.length === 1) {
+      this.doAssign(this.clinicPAs[0]);
+      return;
+    }
+    this.assignPopupOpen = true;
+  }
+
+  closeAssignPopup() {
+    this.assignPopupOpen = false;
+  }
+
+  doAssign(pa: any) {
+    this.assignPopupOpen = false;
+    const payload = {
+      DoctorId: this.doctorId,
+      ClinicId: this.clinicId,
+      PersonalAssistantId: pa.Id,
+      ChildId: Number(this.childId),
+      Notes: ''
+    };
+    this.paService.createAssignment(payload).subscribe(res => {
+      if (res && res.IsSuccess) {
+        this.toastService.create('Assigned to ' + pa.Name, 'success');
+      } else {
+        this.toastService.create(res.Message || 'Failed to assign', 'danger');
+      }
+    }, () => {
+      this.toastService.create('Failed to assign', 'danger');
     });
   }
 }

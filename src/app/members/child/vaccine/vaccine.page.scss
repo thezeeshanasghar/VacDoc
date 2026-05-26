@@ -134,3 +134,44 @@ ion-toolbar {
     gap: 6px !important;
   }
 }
+
+// ── PA Assign popup ───────────────────────────────────────────────────────────
+.assign-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45); z-index: 1000;
+}
+.assign-popup {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 82%;
+  max-width: 340px;
+  background: #fff;
+  border-radius: 16px;
+  z-index: 1001;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+  overflow: hidden;
+}
+.assign-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #0A3D79 0%, #1565C0 100%);
+}
+.assign-popup-title { font-size: 15px; font-weight: 700; color: #fff; }
+.assign-popup-close { font-size: 20px; color: rgba(255,255,255,0.8); cursor: pointer; }
+.assign-popup-list { padding: 8px 0; }
+.assign-pa-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #F5F7FA;
+  cursor: pointer;
+  &:last-child { border-bottom: none; }
+  &:active { background: #EEF2F7; }
+}
+.assign-pa-icon { font-size: 28px; color: #1565C0; }
+.assign-pa-name { flex: 1; font-size: 15px; font-weight: 500; color: #1A1A2E; }
+.assign-pa-arrow { font-size: 16px; color: #90A4AE; }

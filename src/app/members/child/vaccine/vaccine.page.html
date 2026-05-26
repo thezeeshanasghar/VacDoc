@@ -57,6 +57,15 @@
             name="document-text-outline"
           >
           </ion-icon>
+          <ion-icon
+            *ngIf="usertype === 'DOCTOR'"
+            name="person-add-outline"
+            color="primary"
+            style="font-size: 18px; cursor: pointer; margin-bottom: 10px;"
+            (click)="openAssignPopup()"
+            title="Assign patient to PA"
+          >
+          </ion-icon>
         </div>
         <div *ngFor="let v of item.value" style="margin-bottom: -10px;">
           <ion-item lines="none" style="display: flex; align-items: center; margin: -2px 0; padding: -5px 0;">
@@ -154,3 +163,19 @@
     </ion-fab-button>
   </ion-fab>
 </ion-content>
+
+<!-- PA Assign popup -->
+<div class="assign-backdrop" *ngIf="assignPopupOpen" (click)="closeAssignPopup()"></div>
+<div class="assign-popup" *ngIf="assignPopupOpen">
+  <div class="assign-popup-header">
+    <span class="assign-popup-title">Assign to PA</span>
+    <ion-icon name="close-outline" class="assign-popup-close" (click)="closeAssignPopup()"></ion-icon>
+  </div>
+  <div class="assign-popup-list">
+    <div *ngFor="let pa of clinicPAs" class="assign-pa-row" (click)="doAssign(pa)">
+      <ion-icon name="person-circle-outline" class="assign-pa-icon"></ion-icon>
+      <span class="assign-pa-name">{{ pa.Name }}</span>
+      <ion-icon name="chevron-forward-outline" class="assign-pa-arrow"></ion-icon>
+    </div>
+  </div>
+</div>
