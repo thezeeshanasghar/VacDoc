@@ -215,9 +215,10 @@ export class AddExpensePage {
           this.toastService.create(res.Message || 'Failed to save', 'danger');
         }
       },
-      () => {
+      (err: any) => {
         loading.dismiss();
-        this.toastService.create('Failed to save expense', 'danger');
+        const msg = (err && err.error && err.error.Message) || (err && err.message) || 'Failed to save expense';
+        this.toastService.create(msg, 'danger');
       }
     );
   }
