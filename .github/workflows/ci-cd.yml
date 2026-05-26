@@ -7,14 +7,22 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --openssl-legacy-provider --max-old-space-size=4096
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js 16
         uses: actions/setup-node@v3
         with:
           node-version: 16
+      - name: Add swap space
+        run: |
+          sudo fallocate -l 4G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
       - run: npm install
-      - run: npm run build -- --prod
+      - run: npx ng build --prod
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
