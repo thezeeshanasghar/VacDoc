@@ -1,0 +1,103 @@
+// ── Child gender card borders ─────────────────────────────────────────────────
+.girl {
+  border-left: 4px solid #E91E9A !important;
+  box-shadow: 0 2px 12px rgba(233, 30, 154, 0.12) !important;
+}
+
+.boy {
+  border-left: 4px solid #1565C0 !important;
+  box-shadow: 0 2px 12px rgba(21, 101, 192, 0.12) !important;
+}
+
+// ── Compact card header bar ───────────────────────────────────────────────────
+.icons {
+  background: linear-gradient(135deg, #0A3D79 0%, #1565C0 100%);
+  border-radius: 12px 12px 0 0;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.icons-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.icons-thumb {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+
+  ion-img {
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.45);
+    width: 34px;
+    height: 34px;
+  }
+}
+
+.icons-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.icons-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.iconchild {
+  font-size: 22px;
+  color: #ffffff !important;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+
+  &:active { transform: scale(0.92); }
+}
+
+// ── Complete icon override ────────────────────────────────────────────────────
+.complete-icon {
+  font-size: 26px;
+  color: #A5D6A7 !important;
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+.empty-state {
+  text-align: center;
+  padding: 56px 16px;
+  color: #90A4AE;
+
+  ion-icon {
+    font-size: 56px;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 15px;
+    margin: 0;
+  }
+}
+
+// ── Assignment notes ──────────────────────────────────────────────────────────
+.assignment-notes {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #546E7A;
+
+  ion-icon {
+    font-size: 12px;
+    vertical-align: middle;
+    margin-right: 3px;
+  }
+}

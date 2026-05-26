@@ -94,4 +94,24 @@
 .card-analytics { background: linear-gradient(145deg, #FF4500 0%, #FF6B35 100%); }
 .card-schedule  { background: linear-gradient(145deg, #0D47A1 0%, #1E88E5 100%); }
 .card-clinic    { background: linear-gradient(145deg, #1A1A2E 0%, #2E2E4E 100%); }
-.card-financial { background: linear-gradient(145deg, #4527A0 0%, #7B1FA2 100%); }
+.card-financial    { background: linear-gradient(145deg, #4527A0 0%, #7B1FA2 100%); }
+.card-assignments  { background: linear-gradient(145deg, #00695C 0%, #00897B 100%); }
+
+// Assignment count badge
+.assignment-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #E53935;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  line-height: 1;
+}

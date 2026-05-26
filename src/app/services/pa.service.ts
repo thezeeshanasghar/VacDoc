@@ -169,6 +169,21 @@ export class PaService extends BaseService {
     return this.http.post(url, log, this.httpOptions).pipe(catchError(this.handleError));
   }
 
+  getAssignments(paId: number): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/pa/${paId}`;
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  completeAssignment(assignmentId: number): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/complete`;
+    return this.http.post(url, {}, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  createAssignment(data: any): Observable<any> {
+    const url = `${this.API_PA}PAAssignment`;
+    return this.http.post(url, data, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
 //   putDoctorSchedule(data): Observable<any> {
 //     const url = `${this.API_SCHEDULE}doctorschedule`;
 //     return this.http

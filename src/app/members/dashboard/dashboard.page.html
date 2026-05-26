@@ -10,6 +10,16 @@
 
     <div class="dash-grid">
 
+      <div *ngIf="isPa" routerLink="/members/pa/assignments" class="dash-card card-assignments">
+        <div class="dash-card-icon" style="position:relative">
+          <ion-icon name="clipboard-outline"></ion-icon>
+          <span *ngIf="assignmentCount > 0" class="assignment-badge">{{ assignmentCount }}</span>
+        </div>
+        <span class="dash-card-label">Assignments</span>
+        <span class="dash-card-sub">Tasks from your doctor</span>
+        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
+      </div>
+
       <div *ngIf="showPatients" routerLink="/members/child" class="dash-card card-patients">
         <div class="dash-card-icon">
           <ion-icon name="people-outline"></ion-icon>

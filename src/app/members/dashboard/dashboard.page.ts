@@ -44,6 +44,7 @@ export class DashboardPage implements OnInit {
   showClinics: boolean = true;
   showStock: boolean = true;
   showFinancial: boolean = false;
+  assignmentCount: number = 0;
 
   constructor(
     private loadingController: LoadingController,
@@ -96,6 +97,11 @@ export class DashboardPage implements OnInit {
         this.showClinics   = (pa && pa.AllowClinic)    || false;
         this.showStock     = (pa && pa.AllowStock)     || false;
         this.showFinancial = false;
+        this.paService.getAssignments(Number(this.user.PAId)).subscribe(res => {
+          if (res && res.IsSuccess) {
+            this.assignmentCount = (res.ResponseData || []).length;
+          }
+        });
       } catch (e) {
         this.showPatients = this.showAlerts =
           this.showAnalytics = this.showSchedule = this.showClinics = this.showStock = false;

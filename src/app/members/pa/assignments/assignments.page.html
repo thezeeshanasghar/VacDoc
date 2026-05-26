@@ -1,0 +1,58 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Assignments</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <div *ngIf="assignments.length === 0 && !loading" class="empty-state">
+    <ion-icon name="clipboard-outline"></ion-icon>
+    <p>No active assignments</p>
+  </div>
+
+  <ion-card *ngFor="let a of assignments" [ngClass]="a.Gender === 'Girl' ? 'girl' : 'boy'">
+
+    <div class="icons">
+      <div class="icons-left">
+        <ion-thumbnail class="icons-thumb">
+          <ion-img [src]="a.Gender === 'Girl' ? '../../../assets/female.png' : '../../../assets/male.png'"></ion-img>
+        </ion-thumbnail>
+        <span class="icons-name">{{ a.Name }}</span>
+      </div>
+      <div class="icons-right">
+        <ion-icon
+          name="checkmark-done-circle-outline"
+          class="iconchild complete-icon"
+          (click)="confirmComplete(a.AssignmentId, a.Name)">
+        </ion-icon>
+      </div>
+    </div>
+
+    <ion-card-content>
+      <ion-icon name="person"></ion-icon> {{ a.FatherName }}
+      &nbsp;&nbsp;
+      <ion-icon name="calendar"></ion-icon> {{ a.DOB | date:'dd MMM yyyy' }}
+      &nbsp;&nbsp;
+      <ion-icon name="call"></ion-icon> {{ a.MobileNumber }}
+      <br>
+      <ion-button size="small" fill="outline" color="primary"
+        routerLink="/members/child/vaccine/{{ a.ChildId }}">
+        Vaccine
+      </ion-button>
+      &nbsp;
+      <ion-button size="small" fill="outline" color="primary"
+        routerLink="/members/child/followup/{{ a.ChildId }}">
+        Follow Up
+      </ion-button>
+      <div *ngIf="a.Notes" class="assignment-notes">
+        <ion-icon name="document-text-outline"></ion-icon> {{ a.Notes }}
+      </div>
+    </ion-card-content>
+
+  </ion-card>
+
+</ion-content>
