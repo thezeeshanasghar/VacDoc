@@ -37,10 +37,6 @@ export class DirectSalePage {
   notes: string = '';
   saleDate: string = '';
 
-  // Sheet
-  sheetOpen: boolean = false;
-  sheetSaleBillNo: string = '';
-
   // History
   history: any[] = [];
   historySearch: string = '';
@@ -321,23 +317,14 @@ export class DirectSalePage {
     };
 
     var self = this;
-    var showSheet = this.isToday(this.saleDate);
     this.stockService.createDirectSale(payload).subscribe(
       function(res: any) {
         loading.dismiss();
         if (res.IsSuccess) {
           self.toastService.create('Sale recorded successfully', 'success');
-          if (showSheet) {
-            self.sheetSaleBillNo = res.ResponseData ? (res.ResponseData.SaleBillNo || '') : '';
-            self.sheetOpen = true;
-            self.resetForm();
-            self.loadHistory();
-            self.loadBrands();
-          } else {
-            self.resetForm();
-            self.loadHistory();
-            self.loadBrands();
-          }
+          self.resetForm();
+          self.loadHistory();
+          self.loadBrands();
         } else {
           self.toastService.create(res.Message || 'Failed to save', 'danger');
         }
@@ -430,15 +417,4 @@ export class DirectSalePage {
     return diffDays <= 90 && diffDays >= 0;
   }
 
-  isToday(dateStr: string): boolean {
-    var d = new Date(dateStr);
-    var today = new Date();
-    return d.getFullYear() === today.getFullYear() &&
-           d.getMonth()    === today.getMonth()    &&
-           d.getDate()     === today.getDate();
-  }
-
-  closeSaleSheet() {
-    this.sheetOpen = false;
-  }
 }
