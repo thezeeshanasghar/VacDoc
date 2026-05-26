@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
@@ -15,6 +16,9 @@ export class AddExpensePage {
   @ViewChild('receiptInput', { static: false }) receiptInput: ElementRef;
   @ViewChild('warrantyInput', { static: false }) warrantyInput: ElementRef;
 
+  editId: number = null;
+  isEdit: boolean = false;
+
   doctorId: number = 0;
   clinics: any[] = [];
 
@@ -28,7 +32,6 @@ export class AddExpensePage {
   paymentMode: string = 'Cash';
   notes: string = '';
 
-  // Capital / fixed asset fields
   assetName: string = '';
   expectedLifeYrs: number = null;
   warrantyExpiry: string = '';
@@ -59,6 +62,7 @@ export class AddExpensePage {
     private expenseService: ExpenseService,
     private loadingController: LoadingController,
     private router: Router,
+    private route: ActivatedRoute,
     private storage: Storage,
     private toastService: ToastService,
   ) {}
@@ -69,16 +73,62 @@ export class AddExpensePage {
     const allClinics = await this.storage.get(environment.CLINICS);
     this.clinics = allClinics || (clinic ? [clinic] : []);
 
-    if (this.clinics.length === 1) {
-      this.clinicId = this.clinics[0].Id;
-    } else if (clinic) {
-      this.clinicId = clinic.Id;
+    const idParam = this.route.snapshot.queryParamMap.get('id');
+    if (idParam) {
+      this.editId = +idParam;
+      this.isEdit = true;
+      this.loadExpense(this.editId);
+    } else {
+      this.isEdit = false;
+      this.editId = null;
+      this.resetForm();
+      if (clinic) { this.clinicId = clinic.Id; }
     }
+  }
+
+  resetForm() {
+    this.expenseDate = '';
+    this.amount = null;
+    this.description = '';
+    this.category = '';
+    this.expenseType = 'Recurring';
+    this.scope = 'clinic';
+    this.clinicId = null;
+    this.paymentMode = 'Cash';
+    this.notes = '';
+    this.assetName = '';
+    this.expectedLifeYrs = null;
+    this.warrantyExpiry = '';
+    this.receiptFile = null;
+    this.warrantyFile = null;
+    this.receiptPreview = '';
+    this.warrantyPreview = '';
 
     const today = new Date();
     const mm = (today.getMonth() + 1).toString().padStart(2, '0');
     const dd = today.getDate().toString().padStart(2, '0');
     this.expenseDate = `${today.getFullYear()}-${mm}-${dd}`;
+  }
+
+  loadExpense(id: number) {
+    this.expenseService.getById(id).subscribe((res: any) => {
+      if (!res.IsSuccess) return;
+      const e = res.ResponseData;
+      this.expenseDate  = e.ExpenseDate ? e.ExpenseDate.substring(0, 10) : '';
+      this.amount       = e.Amount;
+      this.description  = e.Description;
+      this.category     = e.Category;
+      this.expenseType  = e.ExpenseType || 'Recurring';
+      this.paymentMode  = e.PaymentMode || 'Cash';
+      this.notes        = e.Notes || '';
+      this.scope        = e.IsShared ? 'all' : 'clinic';
+      this.clinicId     = e.ClinicId || null;
+      this.assetName        = e.AssetName || '';
+      this.expectedLifeYrs  = e.ExpectedLifeYrs || null;
+      this.warrantyExpiry   = e.WarrantyExpiry ? e.WarrantyExpiry.substring(0, 10) : '';
+      this.receiptPreview   = e.ReceiptImagePath ? e.ReceiptImagePath : '';
+      this.warrantyPreview  = e.WarrantyImagePath ? e.WarrantyImagePath : '';
+    });
   }
 
   selectCategory(val: string) {
@@ -176,7 +226,7 @@ export class AddExpensePage {
       if (!this.expectedLifeYrs || this.expectedLifeYrs < 1) {
         this.toastService.create('Enter useful life in years', 'danger'); return;
       }
-      if (!this.receiptFile) {
+      if (!this.isEdit && !this.receiptFile) {
         this.toastService.create('Receipt image is required for fixed asset expenses', 'danger'); return;
       }
     }
@@ -201,25 +251,44 @@ export class AddExpensePage {
       payload.AssetName       = this.assetName.trim();
       payload.ExpectedLifeYrs = this.expectedLifeYrs;
       payload.WarrantyExpiry  = this.warrantyExpiry || null;
-      payload.ReceiptImage    = this.receiptPreview;
-      payload.WarrantyImage   = this.warrantyPreview || null;
+      payload.ReceiptImage    = this.receiptFile ? this.receiptPreview : null;
+      payload.WarrantyImage   = this.warrantyFile ? this.warrantyPreview : null;
     }
 
-    this.expenseService.create(payload).subscribe(
-      (res: any) => {
-        loading.dismiss();
-        if (res.IsSuccess) {
-          this.toastService.create('Expense saved', 'success');
-          this.router.navigate(['/members/doctor/financial']);
-        } else {
-          this.toastService.create(res.Message || 'Failed to save', 'danger');
+    if (this.isEdit) {
+      this.expenseService.update(this.editId, payload).subscribe(
+        (res: any) => {
+          loading.dismiss();
+          if (res.IsSuccess) {
+            this.toastService.create('Expense updated', 'success');
+            this.router.navigate(['/members/doctor/financial/expense-list']);
+          } else {
+            this.toastService.create(res.Message || 'Failed to update', 'danger');
+          }
+        },
+        (err: any) => {
+          loading.dismiss();
+          const msg = (err && err.error && err.error.Message) || (err && err.message) || 'Failed to update expense';
+          this.toastService.create(msg, 'danger');
         }
-      },
-      (err: any) => {
-        loading.dismiss();
-        const msg = (err && err.error && err.error.Message) || (err && err.message) || 'Failed to save expense';
-        this.toastService.create(msg, 'danger');
-      }
-    );
+      );
+    } else {
+      this.expenseService.create(payload).subscribe(
+        (res: any) => {
+          loading.dismiss();
+          if (res.IsSuccess) {
+            this.toastService.create('Expense saved', 'success');
+            this.router.navigate(['/members/doctor/financial/expense-list']);
+          } else {
+            this.toastService.create(res.Message || 'Failed to save', 'danger');
+          }
+        },
+        (err: any) => {
+          loading.dismiss();
+          const msg = (err && err.error && err.error.Message) || (err && err.message) || 'Failed to save expense';
+          this.toastService.create(msg, 'danger');
+        }
+      );
+    }
   }
 }

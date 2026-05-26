@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { ActionSheetController, AlertController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { ExpenseService } from 'src/app/services/expense.service';
 import { ToastService } from 'src/app/shared/toast.service';
@@ -58,6 +58,7 @@ export class ExpenseListPage {
     private expenseService: ExpenseService,
     private storage: Storage,
     private router: Router,
+    private actionSheetCtrl: ActionSheetController,
     private alertCtrl: AlertController,
     private toastService: ToastService,
   ) {}
@@ -114,14 +115,39 @@ export class ExpenseListPage {
   }
 
   async onTap(expense: any) {
-    const alert = await this.alertCtrl.create({
+    const sheet = await this.actionSheetCtrl.create({
       header: expense.Description,
-      message: `Rs ${expense.Amount} · ${expense.Category || expense.ExpenseType}`,
+      buttons: [
+        {
+          text: 'Edit',
+          icon: 'pencil-outline',
+          handler: () => {
+            this.router.navigate(['/members/doctor/financial/add-expense'], { queryParams: { id: expense.Id } });
+          }
+        },
+        {
+          text: 'Delete',
+          icon: 'trash-outline',
+          role: 'destructive',
+          handler: () => { this.confirmDelete(expense); }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        }
+      ]
+    });
+    await sheet.present();
+  }
+
+  async confirmDelete(expense: any) {
+    const alert = await this.alertCtrl.create({
+      header: 'Delete Expense',
+      message: `Delete "${expense.Description}" (Rs ${expense.Amount})?`,
       buttons: [
         { text: 'Cancel', role: 'cancel' },
         {
           text: 'Delete',
-          role: 'destructive',
           cssClass: 'alert-btn-danger',
           handler: () => { this.deleteExpense(expense.Id); }
         }

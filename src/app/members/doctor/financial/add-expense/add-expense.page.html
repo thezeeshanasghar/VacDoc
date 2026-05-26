@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/members/doctor/financial"></ion-back-button>
     </ion-buttons>
-    <ion-title>Add Expense</ion-title>
+    <ion-title>{{ isEdit ? 'Edit Expense' : 'Add Expense' }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -151,17 +151,12 @@
         </div>
       </div>
 
-      <div class="field field-full" *ngIf="scope === 'clinic' && clinics.length > 1">
+      <div class="field field-full" *ngIf="scope === 'clinic'">
         <label class="field-label">Select Clinic *</label>
         <select [(ngModel)]="clinicId" class="field-select">
           <option [ngValue]="null" disabled>Choose a clinic...</option>
           <option *ngFor="let c of clinics" [ngValue]="c.Id">{{ c.Name }}</option>
         </select>
-      </div>
-
-      <div class="single-clinic-note" *ngIf="scope === 'clinic' && clinics.length === 1">
-        <ion-icon name="checkmark-circle-outline"></ion-icon>
-        {{ clinics[0].Name }}
       </div>
 
     </ion-card-content>
@@ -193,7 +188,7 @@
 
   <ion-button expand="block" color="primary" (click)="save()" class="save-btn">
     <ion-icon name="save-outline" slot="start"></ion-icon>
-    Save Expense
+    {{ isEdit ? 'Update Expense' : 'Save Expense' }}
   </ion-button>
 
 </ion-content>
