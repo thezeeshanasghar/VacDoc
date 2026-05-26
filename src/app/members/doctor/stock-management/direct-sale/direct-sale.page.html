@@ -277,3 +277,23 @@
 
   </div>
 </ion-content>
+
+<!-- Post-sale action sheet -->
+<div class="sheet-backdrop" *ngIf="sheetOpen" (click)="closeSaleSheet()"></div>
+<div class="sheet-panel" *ngIf="sheetOpen">
+  <div class="sheet-header">
+    <ion-icon name="checkmark-circle" class="sheet-check"></ion-icon>
+    <div class="sheet-title">Sale Recorded</div>
+    <div class="sheet-sub">{{ sheetSaleBillNo || 'Today\'s sale' }}</div>
+  </div>
+
+  <div class="sheet-pa-row" *ngIf="usertype === 'DOCTOR' && clinicPAs.length > 0">
+    <label class="sheet-label">Assign PA Collector</label>
+    <select [(ngModel)]="sheetPaId" class="sheet-select">
+      <option [ngValue]="null">None (Doctor collects)</option>
+      <option *ngFor="let pa of clinicPAs" [ngValue]="pa.Id">{{ pa.Name }}</option>
+    </select>
+  </div>
+
+  <button class="sheet-close" (click)="closeSaleSheet()">Close</button>
+</div>

@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage';
 import { StockService } from 'src/app/services/stock.service';
 import { BrandService } from 'src/app/services/brand.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { PaService } from 'src/app/services/pa.service';
 import { environment } from 'src/environments/environment';
 
 interface SaleItem {
@@ -36,6 +37,13 @@ export class DirectSalePage {
   onlineService: string = '';
   notes: string = '';
   saleDate: string = '';
+
+  // PA / sheet
+  clinicPAs: any[] = [];
+  usertype: string = '';
+  sheetOpen: boolean = false;
+  sheetPaId: number = null;
+  sheetSaleBillNo: string = '';
 
   // History
   history: any[] = [];
@@ -105,6 +113,7 @@ export class DirectSalePage {
     private alertController: AlertController,
     private storage: Storage,
     private toastService: ToastService,
+    private paService: PaService,
   ) {}
 
   async ionViewWillEnter() {
@@ -116,6 +125,18 @@ export class DirectSalePage {
     const mm = (today.getMonth() + 1).toString().padStart(2, '0');
     const dd = today.getDate().toString().padStart(2, '0');
     this.saleDate = today.getFullYear() + '-' + mm + '-' + dd;
+
+    const user = await this.storage.get(environment.USER);
+    if (user) {
+      this.usertype = user.UserType || '';
+      if (user.UserType === 'DOCTOR' && user.DoctorId) {
+        this.paService.getPAsByDoctorId(String(user.DoctorId)).subscribe(res => {
+          if (res && res.IsSuccess && res.ResponseData) {
+            this.clinicPAs = res.ResponseData;
+          }
+        });
+      }
+    }
 
     this.loadBrands();
     this.loadHistory();
@@ -317,14 +338,24 @@ export class DirectSalePage {
     };
 
     var self = this;
+    var showSheet = this.isToday(this.saleDate);
     this.stockService.createDirectSale(payload).subscribe(
       function(res: any) {
         loading.dismiss();
         if (res.IsSuccess) {
           self.toastService.create('Sale recorded successfully', 'success');
-          self.resetForm();
-          self.loadHistory();
-          self.loadBrands();
+          if (showSheet) {
+            self.sheetSaleBillNo = res.ResponseData ? (res.ResponseData.SaleBillNo || '') : '';
+            self.sheetPaId = null;
+            self.sheetOpen = true;
+            self.resetForm();
+            self.loadHistory();
+            self.loadBrands();
+          } else {
+            self.resetForm();
+            self.loadHistory();
+            self.loadBrands();
+          }
         } else {
           self.toastService.create(res.Message || 'Failed to save', 'danger');
         }
@@ -415,5 +446,17 @@ export class DirectSalePage {
     var today = new Date();
     var diffDays = (expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
     return diffDays <= 90 && diffDays >= 0;
+  }
+
+  isToday(dateStr: string): boolean {
+    var d = new Date(dateStr);
+    var today = new Date();
+    return d.getFullYear() === today.getFullYear() &&
+           d.getMonth()    === today.getMonth()    &&
+           d.getDate()     === today.getDate();
+  }
+
+  closeSaleSheet() {
+    this.sheetOpen = false;
   }
 }

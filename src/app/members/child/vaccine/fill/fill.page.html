@@ -186,3 +186,43 @@
     <ion-button [disabled]="!isBrandFilled() || isScheduleDateValid()" (click)="fillVaccine()">Submit</ion-button>
   </form>
 </ion-content>
+
+<!-- Post-vaccination action sheet -->
+<div class="sheet-backdrop" *ngIf="sheetOpen" (click)="closeSheet()"></div>
+<div class="sheet-panel" *ngIf="sheetOpen">
+  <div class="sheet-header">
+    <ion-icon name="checkmark-circle" class="sheet-check"></ion-icon>
+    <div class="sheet-title">Vaccine Recorded</div>
+    <div class="sheet-sub">{{ sheetChildName }} · {{ sheetVaccineName }}</div>
+  </div>
+
+  <div class="sheet-pa-row" *ngIf="usertype === 'DOCTOR' && clinicPAs.length > 0">
+    <label class="sheet-label">Assign PA Collector</label>
+    <select [(ngModel)]="sheetPaId" [ngModelOptions]="{standalone: true}" class="sheet-select">
+      <option [ngValue]="null">None (Doctor collects)</option>
+      <option *ngFor="let pa of clinicPAs" [ngValue]="pa.Id">{{ pa.Name }}</option>
+    </select>
+  </div>
+
+  <div class="sheet-actions">
+    <button class="sheet-btn sheet-btn-blue" (click)="sheetPrint()">
+      <ion-icon name="document-text-outline"></ion-icon>
+      <span>Schedule PDF</span>
+    </button>
+    <button class="sheet-btn sheet-btn-purple" (click)="sheetInvoice()">
+      <ion-icon name="card-outline"></ion-icon>
+      <span>Card / Invoice</span>
+    </button>
+    <button class="sheet-btn sheet-btn-green" (click)="sheetGrowth()">
+      <ion-icon name="resize-outline"></ion-icon>
+      <span>Growth Params</span>
+    </button>
+    <button class="sheet-btn sheet-btn-grey" disabled>
+      <ion-icon name="body-outline"></ion-icon>
+      <span>Dev. Assessment</span>
+      <span class="sheet-soon">Soon</span>
+    </button>
+  </div>
+
+  <button class="sheet-close" (click)="closeSheet()">Close</button>
+</div>

@@ -68,6 +68,15 @@ export class FillPage implements OnInit {
   paymentCollectorPaId: number = null;
   private readonly travelFieldStorageSuffix = 'travel-vaccine-fill-state';
 
+  // Post-vaccination action sheet
+  sheetOpen: boolean = false;
+  sheetChildName: string = '';
+  sheetVaccineName: string = '';
+  sheetChildId: number = null;
+  sheetDoseId: number = null;
+  sheetPaId: number = null;
+  private readonly API_VACCINE = `${environment.BASE_URL}`;
+
   private getTodayIsoDate(): string {
     return new Date().toISOString().split('T')[0];
   }
@@ -383,6 +392,7 @@ export class FillPage implements OnInit {
       loading.dismiss();
       return;
     }
+    const showSheet = givenDate.getTime() === currentDate.getTime();
     loading.dismiss();
     this.fg.value.GivenDate = moment(this.fg.value.GivenDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
 
@@ -406,7 +416,9 @@ export class FillPage implements OnInit {
         if (res.IsSuccess) {
           loading.dismiss();
           this.autoCreateFollowUp(() => {
-            if (this.vaccine) {
+            if (showSheet) {
+              this.showPostActionSheet();
+            } else if (this.vaccine) {
               this.addNewVaccineInScheduleTable(this.scheduleDatecheck);
             } else {
               this.router.navigate(['/members/child/vaccine/' + this.childId]);
@@ -1034,5 +1046,44 @@ export class FillPage implements OnInit {
     } catch (error) {
       console.error('Unable to restore travel field state from localStorage', error);
     }
+  }
+
+  private isToday(dateStr: string): boolean {
+    const d = new Date(dateStr);
+    const today = new Date();
+    return d.getFullYear() === today.getFullYear() &&
+           d.getMonth()    === today.getMonth()    &&
+           d.getDate()     === today.getDate();
+  }
+
+  showPostActionSheet() {
+    this.sheetChildName  = this.childData ? (this.childData.Name || '') : '';
+    this.sheetVaccineName = this.vaccineName || '';
+    this.sheetChildId    = this.childId;
+    this.sheetDoseId     = this.doseId;
+    this.sheetPaId       = null;
+    this.sheetOpen       = true;
+  }
+
+  closeSheet() {
+    this.sheetOpen = false;
+    if (this.vaccine) {
+      this.addNewVaccineInScheduleTable(this.scheduleDatecheck);
+    } else {
+      this.router.navigate(['/members/child/vaccine/' + this.childId]);
+    }
+  }
+
+  sheetPrint() {
+    const url = `${this.API_VACCINE}child/${this.sheetChildId}/ScheduleVerify`;
+    window.open(url);
+  }
+
+  sheetInvoice() {
+    this.router.navigate(['/members/child/vaccine', this.sheetChildId, 'bulkinvoice', this.sheetDoseId]);
+  }
+
+  sheetGrowth() {
+    this.router.navigate(['/members/child/growth'], { queryParams: { childId: this.sheetChildId } });
   }
 }
