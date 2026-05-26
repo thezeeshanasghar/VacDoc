@@ -4,7 +4,6 @@ import { Storage } from '@ionic/storage';
 import { StockService } from 'src/app/services/stock.service';
 import { BrandService } from 'src/app/services/brand.service';
 import { ToastService } from 'src/app/shared/toast.service';
-import { PaService } from 'src/app/services/pa.service';
 import { environment } from 'src/environments/environment';
 
 interface SaleItem {
@@ -38,11 +37,8 @@ export class DirectSalePage {
   notes: string = '';
   saleDate: string = '';
 
-  // PA / sheet
-  clinicPAs: any[] = [];
-  usertype: string = '';
+  // Sheet
   sheetOpen: boolean = false;
-  sheetPaId: number = null;
   sheetSaleBillNo: string = '';
 
   // History
@@ -113,7 +109,6 @@ export class DirectSalePage {
     private alertController: AlertController,
     private storage: Storage,
     private toastService: ToastService,
-    private paService: PaService,
   ) {}
 
   async ionViewWillEnter() {
@@ -125,18 +120,6 @@ export class DirectSalePage {
     const mm = (today.getMonth() + 1).toString().padStart(2, '0');
     const dd = today.getDate().toString().padStart(2, '0');
     this.saleDate = today.getFullYear() + '-' + mm + '-' + dd;
-
-    const user = await this.storage.get(environment.USER);
-    if (user) {
-      this.usertype = user.UserType || '';
-      if (user.UserType === 'DOCTOR' && user.DoctorId) {
-        this.paService.getPAsByDoctorId(String(user.DoctorId)).subscribe(res => {
-          if (res && res.IsSuccess && res.ResponseData) {
-            this.clinicPAs = res.ResponseData;
-          }
-        });
-      }
-    }
 
     this.loadBrands();
     this.loadHistory();
@@ -346,7 +329,6 @@ export class DirectSalePage {
           self.toastService.create('Sale recorded successfully', 'success');
           if (showSheet) {
             self.sheetSaleBillNo = res.ResponseData ? (res.ResponseData.SaleBillNo || '') : '';
-            self.sheetPaId = null;
             self.sheetOpen = true;
             self.resetForm();
             self.loadHistory();

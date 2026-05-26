@@ -174,14 +174,6 @@
       <span class="payment-label">Service</span>
       <input type="text" [(ngModel)]="onlineService" [ngModelOptions]="{standalone: true}" placeholder="e.g. JazzCash, EasyPaisa" class="service-input" />
     </div>
-    <div class="payment-row" *ngIf="usertype === 'DOCTOR' && clinicPAs.length > 0">
-      <span class="payment-label">Assign PA</span>
-      <select [(ngModel)]="paymentCollectorPaId" [ngModelOptions]="{standalone: true}" class="mode-select">
-        <option [ngValue]="null">None (Doctor)</option>
-        <option *ngFor="let pa of clinicPAs" [ngValue]="pa.Id">{{ pa.Name }}</option>
-      </select>
-    </div>
-
     <!-- <ion-button (click)="fillVaccine()">Submit</ion-button> -->
     <ion-button [disabled]="!isBrandFilled() || isScheduleDateValid()" (click)="fillVaccine()">Submit</ion-button>
   </form>
@@ -194,14 +186,6 @@
     <ion-icon name="checkmark-circle" class="sheet-check"></ion-icon>
     <div class="sheet-title">Vaccine Recorded</div>
     <div class="sheet-sub">{{ sheetChildName }} · {{ sheetVaccineName }}</div>
-  </div>
-
-  <div class="sheet-pa-row" *ngIf="usertype === 'DOCTOR' && clinicPAs.length > 0">
-    <label class="sheet-label">Assign PA Collector</label>
-    <select [(ngModel)]="sheetPaId" [ngModelOptions]="{standalone: true}" class="sheet-select">
-      <option [ngValue]="null">None (Doctor collects)</option>
-      <option *ngFor="let pa of clinicPAs" [ngValue]="pa.Id">{{ pa.Name }}</option>
-    </select>
   </div>
 
   <div class="sheet-actions">
