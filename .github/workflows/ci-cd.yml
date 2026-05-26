@@ -7,25 +7,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      NODE_OPTIONS: --openssl-legacy-provider --max-old-space-size=4096
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js 16
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 16
-      - name: Add swap space
-        run: |
-          sudo dd if=/dev/zero of=/swapfile bs=1M count=4096
-          sudo chmod 600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
-          free -h
+          node-version: 18
       - run: npm install --legacy-peer-deps
       - run: npx ng build --prod
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider --max-old-space-size=4096
+      - uses: actions/upload-artifact@v4
         with:
           name: build-output
           path: www/
@@ -35,13 +26,11 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: build-output
           path: www/
-      - name: Deploy to EC2 via SSH
-        uses: appleboy/ssh-action@v1.0.3
+      - uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
@@ -50,8 +39,7 @@ jobs:
           script: |
             sudo rm -rf /var/www/doctor.vaccinationcentre.com/html/*
             mkdir -p /tmp/doctor-deploy
-      - name: Copy files to EC2
-        uses: appleboy/scp-action@v0.1.7
+      - uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
@@ -60,8 +48,7 @@ jobs:
           source: "www/*"
           target: "/tmp/doctor-deploy/"
           strip_components: 1
-      - name: Move files and set permissions
-        uses: appleboy/ssh-action@v1.0.3
+      - uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
