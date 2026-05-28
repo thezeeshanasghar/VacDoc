@@ -117,18 +117,12 @@ export class BulkPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.storage.get(environment.DOCTOR_Id).then(val => {
-      this.doctorId = val;
-    });
     this.childId = this.activatedRoute.snapshot.paramMap.get("id");
 
     const dateParam = this.activatedRoute.snapshot.paramMap.get("childId") || "";
     this.currentDate = new Date(dateParam);
     this.currentDate1 = (moment as any)(this.currentDate).format("YYYY-MM-DD");
     this.todaydate = (moment as any)(new Date(), "DD-MM-YYYY").format("YYYY-MM-DD");
-
-    this.getBulk();
-    this.getChildType();
 
     this.fg = this.formBuilder.group({
       DoctorId: [""],
@@ -146,8 +140,17 @@ export class BulkPage implements OnInit {
     });
 
     this.applyTravelGivenDateToday();
+    this.getChildType();
 
-    this.storage.get(environment.USER).then((user) => {
+    // Resolve all storage values first so clinicId is ready before getBulk triggers batch/lot loading
+    Promise.all([
+      this.storage.get(environment.DOCTOR_Id),
+      this.storage.get(environment.USER),
+      this.storage.get(environment.ON_CLINIC),
+      this.storage.get(environment.CLINIC_Id)
+    ]).then(([docId, user, onlineClinic, storedClinicId]) => {
+      this.doctorId = docId;
+
       if (user) {
         this.usertype = user.UserType;
         this.allowInventory = user.AllowInventory !== false;
@@ -163,22 +166,19 @@ export class BulkPage implements OnInit {
             }
           });
         }
-      } else {
-        console.error("No user data found in storage.");
       }
-    });
 
-    this.storage.get(environment.ON_CLINIC).then((onlineClinic) => {
-      const id = onlineClinic && onlineClinic.Id ? Number(onlineClinic.Id) : null;
-      if (id && !isNaN(id)) { this.onlineClinicId = id; }
+      const onlineId = onlineClinic && onlineClinic.Id ? Number(onlineClinic.Id) : null;
+      if (onlineId && !isNaN(onlineId)) { this.onlineClinicId = onlineId; }
       this.onlineClinicName = (onlineClinic && onlineClinic.Name) ? String(onlineClinic.Name) : "";
-      const docId = onlineClinic && onlineClinic.DoctorId ? Number(onlineClinic.DoctorId) : null;
-      if (docId && !isNaN(docId)) { this.onlineClinicDoctorId = docId; }
-    });
+      const docIdFromClinic = onlineClinic && onlineClinic.DoctorId ? Number(onlineClinic.DoctorId) : null;
+      if (docIdFromClinic && !isNaN(docIdFromClinic)) { this.onlineClinicDoctorId = docIdFromClinic; }
 
-    this.storage.get(environment.CLINIC_Id).then((storedClinicId) => {
-      const id = Number(storedClinicId);
-      if (!this.clinicId && id && !isNaN(id)) { this.clinicId = id; }
+      const storedId = Number(storedClinicId);
+      if (!this.clinicId && storedId && !isNaN(storedId)) { this.clinicId = storedId; }
+
+      // clinicId is now resolved — fetch bulk data so batch/lot lookup has a valid clinicId
+      this.getBulk();
     });
   }
 
@@ -629,6 +629,13 @@ export class BulkPage implements OnInit {
   }
 
   private async confirmAndHandleClinicMismatch(): Promise<boolean> {
+    // Re-read from storage to pick up any clinic switch that happened after page load
+    const freshClinic = await this.storage.get(environment.ON_CLINIC);
+    if (freshClinic && freshClinic.Id) {
+      this.onlineClinicId = Number(freshClinic.Id);
+      this.onlineClinicName = freshClinic.Name || "";
+      this.onlineClinicDoctorId = Number(freshClinic.DoctorId) || this.onlineClinicDoctorId;
+    }
     const onlineId = this.onlineClinicId || this.clinicId;
     const registeredId = this.getRegisteredClinicId();
     if (!onlineId || !registeredId || onlineId === registeredId) { return true; }

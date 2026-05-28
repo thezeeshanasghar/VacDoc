@@ -431,6 +431,14 @@ export class FillPage implements OnInit {
   }
 
   private async confirmAndHandleClinicMismatch(): Promise<boolean> {
+    // Re-read from storage to pick up any clinic switch that happened after page load
+    const freshClinic = await this.storage.get(environment.ON_CLINIC);
+    if (freshClinic && freshClinic.Id) {
+      this.onlineClinicId = Number(freshClinic.Id);
+      this.clinicId = this.onlineClinicId;
+      this.onlineClinicName = freshClinic.Name || '';
+      if (freshClinic.DoctorId) { this.onlineClinicDoctorId = Number(freshClinic.DoctorId); }
+    }
     const onlineClinicId = this.onlineClinicId || this.clinicId;
     const registeredClinicId = this.getRegisteredClinicId();
 
