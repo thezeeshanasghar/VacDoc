@@ -57,6 +57,10 @@ const routes: Routes = [
   {
     path: "agent-module",
     loadChildren: () => import('./agent-module/agent-module.module').then(m => m.AgentModulePageModule)
+  },
+  {
+    path: "pa-payment-audit",
+    loadChildren: () => import('./pa-payment-audit/pa-payment-audit.module').then(m => m.PaPaymentAuditPageModule)
   }
 ];
 

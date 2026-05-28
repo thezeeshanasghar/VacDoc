@@ -189,6 +189,22 @@ export class PaService extends BaseService {
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
+  getDailySummary(doctorId: number, date?: string): Observable<any> {
+    let url = `${this.API_PA}PaCashHandover/daily-summary/${doctorId}`;
+    if (date) { url += `?date=${date}`; }
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  confirmHandover(handoverId: number): Observable<any> {
+    const url = `${this.API_PA}PaCashHandover/${handoverId}/confirm`;
+    return this.http.patch(url, {}, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  rejectHandover(handoverId: number, note: string): Observable<any> {
+    const url = `${this.API_PA}PaCashHandover/${handoverId}/reject`;
+    return this.http.patch(url, { RejectionNote: note }, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
 //   putDoctorSchedule(data): Observable<any> {
 //     const url = `${this.API_SCHEDULE}doctorschedule`;
 //     return this.http

@@ -12,6 +12,7 @@ import { VaccineService } from "src/app/services/vaccine.service";
 import { ChildService } from "src/app/services/child.service";
 import { StockService } from "src/app/services/stock.service";
 import { ClinicService } from "src/app/services/clinic.service";
+import { PaService } from "src/app/services/pa.service";
 
 @Component({
   selector: "app-bulk",
@@ -40,6 +41,8 @@ export class BulkPage implements OnInit {
   childType: string = "";
   paymentMode: string = 'Cash';
   onlineService: string = '';
+  clinicPAs: any[] = [];
+  paymentCollectorPaId: number = null;
   childData: any = null;
 
   // Per-row inventory state
@@ -109,7 +112,8 @@ export class BulkPage implements OnInit {
     private vaccineService: VaccineService,
     private childService: ChildService,
     private stockService: StockService,
-    private clinicService: ClinicService
+    private clinicService: ClinicService,
+    private paService: PaService
   ) {}
 
   ngOnInit() {
@@ -152,6 +156,13 @@ export class BulkPage implements OnInit {
         }
         const actorId = user.UserType === "PA" ? Number(user.PAId) : Number(user.DoctorId);
         if (actorId && !isNaN(actorId)) { this.doctorId = actorId; }
+        if (user.UserType === "DOCTOR" && user.DoctorId) {
+          this.paService.getPAsByDoctorId(String(user.DoctorId)).subscribe(res => {
+            if (res && res.IsSuccess && res.ResponseData) {
+              this.clinicPAs = res.ResponseData;
+            }
+          });
+        }
       } else {
         console.error("No user data found in storage.");
       }
@@ -475,7 +486,8 @@ export class BulkPage implements OnInit {
       IsPAApprove: this.fg.value.IsPAApprove,
       Validity: this.isTravelType ? (this.fg.value.Validity || "") : null,
       PaymentMode: this.paymentMode,
-      OnlineService: this.paymentMode === 'Online Transfer' ? this.onlineService : null
+      OnlineService: this.paymentMode === 'Online Transfer' ? this.onlineService : null,
+      PaymentCollectorPaId: this.paymentCollectorPaId || null
     };
     if (this.usertype === 'PA' && this.paId) {
       data.PaId = this.paId;

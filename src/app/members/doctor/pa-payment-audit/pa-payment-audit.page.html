@@ -1,0 +1,61 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/personal-assistant"></ion-back-button>
+    </ion-buttons>
+    <ion-title>PA Payment Audit</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Date picker -->
+  <div class="date-row">
+    <label class="date-label">Date</label>
+    <input type="date" [(ngModel)]="selectedDate" (change)="load()" class="date-input">
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="empty-state">Loading...</div>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && summary.length === 0" class="empty-state">
+    No PA payment activity found for this date.
+  </div>
+
+  <!-- PA summary cards -->
+  <ion-card *ngFor="let row of summary" class="pa-card">
+    <ion-card-content>
+      <div class="pa-name">{{ row.PaName }}</div>
+
+      <div class="stat-row">
+        <span class="stat-label">Cash Collected</span>
+        <span class="stat-val stat-cash">Rs {{ row.CashTotal | number:'1.2-2' }}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Online Collected</span>
+        <span class="stat-val stat-online">Rs {{ row.OnlineTotal | number:'1.2-2' }}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Cash Handed Over</span>
+        <span class="stat-val stat-handed">Rs {{ row.HandedOver | number:'1.2-2' }}</span>
+      </div>
+      <div class="stat-row stat-row-pending">
+        <span class="stat-label-bold">Cash In Hand</span>
+        <span class="stat-val" [class.stat-pending]="row.PendingCash > 0" [class.stat-clear]="row.PendingCash <= 0">
+          Rs {{ row.PendingCash | number:'1.2-2' }}
+        </span>
+      </div>
+
+      <!-- Pending handover actions -->
+      <div class="handover-row" *ngIf="getPendingForPa(row.PaId) as h">
+        <span class="handover-label">Handover Pending: Rs {{ h.Amount | number:'1.2-2' }}</span>
+        <div class="handover-btns">
+          <button class="btn-confirm" (click)="confirmHandover(h)">Confirm</button>
+          <button class="btn-reject" (click)="rejectHandover(h)">Reject</button>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

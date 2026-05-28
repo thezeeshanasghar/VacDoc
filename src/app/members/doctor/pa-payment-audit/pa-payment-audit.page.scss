@@ -1,0 +1,130 @@
+.date-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.date-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #546E7A;
+  min-width: 40px;
+}
+
+.date-input {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1.5px solid #B0BEC5;
+  border-radius: 8px;
+  outline: none;
+  color: #1A1A2E;
+  background: #fff;
+  &:focus { border-color: #1565C0; }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 16px;
+  color: #90A4AE;
+  font-size: 14px;
+}
+
+.pa-card {
+  margin: 0 0 12px 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.pa-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0D47A1;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #EEF2F7;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+}
+
+.stat-row-pending {
+  border-top: 1px solid #EEF2F7;
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #546E7A;
+}
+
+.stat-label-bold {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1A1A2E;
+}
+
+.stat-val {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1A1A2E;
+}
+
+.stat-cash { color: #2E7D32; }
+.stat-online { color: #1565C0; }
+.stat-handed { color: #546E7A; }
+.stat-pending { color: #C62828; }
+.stat-clear { color: #2E7D32; }
+
+.handover-row {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: #FFF8E1;
+  border: 1px solid #FFD54F;
+  border-radius: 8px;
+}
+
+.handover-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #E65100;
+  margin-bottom: 8px;
+}
+
+.handover-btns {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-confirm {
+  flex: 1;
+  padding: 7px 0;
+  background: #2E7D32;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  &:active { opacity: 0.8; }
+}
+
+.btn-reject {
+  flex: 1;
+  padding: 7px 0;
+  background: #C62828;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  &:active { opacity: 0.8; }
+}
