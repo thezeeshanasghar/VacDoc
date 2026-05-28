@@ -33,21 +33,23 @@ export class AdjustStockPage {
   batchModalOpen: boolean = false;
   batches: any[] = [];
 
-  // Brand autocomplete
+  // Brand picker modal
   brands: any[] = [];
+  brandModalOpen: boolean = false;
+  brandModalSearch: string = '';
 
-  // History
-  history: any[] = [];
-  historySearch: string = '';
-
-  filteredBrands(search: string): any[] {
-    const q = (search || '').toLowerCase();
+  get filteredBrandModal(): any[] {
+    const q = (this.brandModalSearch || '').toLowerCase();
     if (!q) return this.brands;
     return this.brands.filter((b: any) =>
       (b.VaccineName || '').toLowerCase().indexOf(q) >= 0 ||
       (b.BrandName || '').toLowerCase().indexOf(q) >= 0
     );
   }
+
+  // History
+  history: any[] = [];
+  historySearch: string = '';
 
   get filteredHistory(): any[] {
     const q = (this.historySearch || '').toLowerCase();
@@ -112,15 +114,20 @@ export class AdjustStockPage {
     );
   }
 
-  // Brand autocomplete
-  openBrandDrop(event: any) {
-    this.brandDropOpen = true;
+  // Brand modal
+  openBrandModal() {
+    this.brandModalSearch = '';
+    this.brandModalOpen = true;
   }
 
-  selectBrand(b: any) {
+  closeBrandModal() {
+    this.brandModalOpen = false;
+  }
+
+  selectBrandModal(b: any) {
     this.brandId = b.BrandId;
     this.brandSearch = b.BrandName;
-    this.brandDropOpen = false;
+    this.brandModalOpen = false;
     this.batchLot = '';
     this.expiryDate = '';
     this.availableQty = 0;
@@ -294,7 +301,6 @@ export class AdjustStockPage {
     this.adjustType = 'Increase';
     this.brandId = null;
     this.brandSearch = '';
-    this.brandDropOpen = false;
     this.batchLot = '';
     this.expiryDate = '';
     this.availableQty = 0;

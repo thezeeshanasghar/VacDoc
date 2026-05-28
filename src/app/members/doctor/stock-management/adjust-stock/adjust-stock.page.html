@@ -46,23 +46,14 @@
       <!-- Brand picker -->
       <div class="field-wrap">
         <label class="field-label">Brand *</label>
-        <div class="ac-wrap">
-          <input
-            type="text"
-            class="header-input ac-input"
-            placeholder="Type vaccine or brand name..."
-            [(ngModel)]="brandSearch"
-            (input)="openBrandDrop($event)"
-            (focus)="openBrandDrop($event)"
-            autocomplete="off"
-          >
-          <button *ngIf="brandId" class="ac-clear" type="button" (click)="clearBrand()">✕</button>
-          <div class="inline-brand-drop"
-               *ngIf="brandDropOpen && filteredBrands(brandSearch).length > 0">
-            <div class="ac-option" *ngFor="let b of filteredBrands(brandSearch)" (click)="selectBrand(b)">
-              <span class="ac-opt-brand">{{ b.BrandName }}</span>
-            </div>
-          </div>
+        <div class="supplier-pick-row" (click)="openBrandModal()">
+          <span class="supplier-pick-value" [class.placeholder]="!brandId">
+            {{ brandId ? brandSearch : 'Tap to select brand...' }}
+          </span>
+          <span class="supplier-pick-icons">
+            <ion-icon *ngIf="brandId" name="close-circle" class="supplier-clear-icon" (click)="clearBrand(); $event.stopPropagation()"></ion-icon>
+            <ion-icon name="chevron-down-outline" class="supplier-chevron"></ion-icon>
+          </span>
         </div>
       </div>
 
@@ -179,6 +170,27 @@
   <div style="height: 32px;"></div>
 
 </ion-content>
+
+<!-- Brand picker modal -->
+<div class="modal-backdrop" *ngIf="brandModalOpen" (click)="closeBrandModal()"></div>
+<div class="brand-modal" *ngIf="brandModalOpen">
+  <div class="brand-modal-header">
+    <span class="brand-modal-title">Select Brand</span>
+    <ion-icon name="close-outline" class="brand-modal-close" (click)="closeBrandModal()"></ion-icon>
+  </div>
+  <div class="brand-modal-search">
+    <ion-icon name="search-outline" class="bms-icon"></ion-icon>
+    <input type="text" [(ngModel)]="brandModalSearch" placeholder="Search brand..." class="bms-input" autocomplete="off">
+    <button *ngIf="brandModalSearch" class="bms-clear" (click)="brandModalSearch = ''">&times;</button>
+  </div>
+  <div class="brand-modal-list">
+    <div *ngIf="filteredBrandModal.length === 0" class="brand-modal-empty">No brands found</div>
+    <div class="brand-modal-item" *ngFor="let b of filteredBrandModal" (click)="selectBrandModal(b)">
+      <span class="bmi-name">{{ b.BrandName }}</span>
+      <ion-icon *ngIf="brandId === b.BrandId" name="checkmark-circle" class="bmi-check"></ion-icon>
+    </div>
+  </div>
+</div>
 
 <!-- Batch picker modal -->
 <div class="modal-backdrop" *ngIf="batchModalOpen" (click)="closeBatchModal()"></div>
