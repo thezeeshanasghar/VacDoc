@@ -108,13 +108,12 @@ export class AddBillPage {
     );
   }
 
-  brandDropTop: number = 0;
-  brandDropLeft: number = 0;
-  brandDropWidth: number = 200;
-  activeLine: any = null;
+  brandModalOpen: boolean = false;
+  brandModalSearch: string = '';
+  brandModalLine: any = null;
 
-  filteredBrands(search: string): any[] {
-    const q = (search || '').toLowerCase();
+  get filteredBrandModal(): any[] {
+    const q = (this.brandModalSearch || '').toLowerCase();
     if (!q) return this.brands;
     return this.brands.filter((b: any) =>
       (b.VaccineName || '').toLowerCase().indexOf(q) >= 0 ||
@@ -122,13 +121,24 @@ export class AddBillPage {
     );
   }
 
-  openBrandDrop(event: any, line: any) {
-    const rect = event.target.getBoundingClientRect();
-    this.brandDropTop = rect.bottom + window.scrollY;
-    this.brandDropLeft = rect.left + window.scrollX;
-    this.brandDropWidth = Math.max(rect.width, 200);
-    this.activeLine = line;
-    line.brandDropOpen = true;
+  openBrandModal(line: any) {
+    this.brandModalLine = line;
+    this.brandModalSearch = '';
+    this.brandModalOpen = true;
+  }
+
+  closeBrandModal() {
+    this.brandModalOpen = false;
+    this.brandModalLine = null;
+  }
+
+  selectBrandModal(b: any) {
+    if (this.brandModalLine) {
+      this.brandModalLine.brandId = b.BrandId;
+      this.brandModalLine.brandSearch = b.BrandName;
+    }
+    this.brandModalOpen = false;
+    this.brandModalLine = null;
   }
 
   openSupplierModal() {
@@ -160,17 +170,9 @@ export class AddBillPage {
     this.supplierModalOpen = false;
   }
 
-  selectBrand(line: any, b: any) {
-    line.brandId = b.BrandId;
-    line.brandSearch = b.BrandName;
-    line.brandDropOpen = false;
-    this.activeLine = null;
-  }
-
   clearLineBrand(line: any) {
     line.brandId = null;
     line.brandSearch = '';
-    line.brandDropOpen = false;
   }
 
   addLine() {

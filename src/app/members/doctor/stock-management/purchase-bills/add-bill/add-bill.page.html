@@ -70,10 +70,10 @@
         <input
           type="text"
           class="cell-input cell-ac-input"
-          placeholder="brand..."
-          [(ngModel)]="line.brandSearch"
-          (input)="openBrandDrop($event, line)"
-          (focus)="openBrandDrop($event, line)"
+          placeholder="tap to select..."
+          [value]="line.brandSearch"
+          readonly
+          (click)="openBrandModal(line)"
           autocomplete="off"
         >
         <button *ngIf="line.brandId" class="cell-ac-clear" type="button" (click)="clearLineBrand(line)">✕</button>
@@ -174,13 +174,23 @@
   </div>
 </div>
 
-<!-- Brand autocomplete overlay — rendered outside scroll context to avoid clipping -->
-<div class="brand-overlay-drop"
-     *ngIf="activeLine && activeLine.brandDropOpen && filteredBrands(activeLine.brandSearch).length > 0"
-     [style.top.px]="brandDropTop"
-     [style.left.px]="brandDropLeft"
-     [style.width.px]="brandDropWidth">
-  <div class="ac-option" *ngFor="let b of filteredBrands(activeLine.brandSearch)" (click)="selectBrand(activeLine, b)">
-    {{ b.BrandName }}
+<!-- Brand picker modal -->
+<div class="supplier-modal-backdrop" *ngIf="brandModalOpen" (click)="closeBrandModal()"></div>
+<div class="supplier-modal" *ngIf="brandModalOpen">
+  <div class="supplier-modal-header">
+    <span class="supplier-modal-title">Select Brand</span>
+    <ion-icon name="close-outline" class="supplier-modal-close" (click)="closeBrandModal()"></ion-icon>
+  </div>
+  <div class="supplier-modal-search">
+    <ion-icon name="search-outline" class="sms-icon"></ion-icon>
+    <input type="text" [(ngModel)]="brandModalSearch" placeholder="Search brand..." class="sms-input" autocomplete="off">
+    <button *ngIf="brandModalSearch" class="sms-clear" (click)="brandModalSearch = ''">&times;</button>
+  </div>
+  <div class="supplier-modal-list">
+    <div *ngIf="filteredBrandModal.length === 0" class="supplier-modal-empty">No brands found</div>
+    <div class="supplier-modal-item" *ngFor="let b of filteredBrandModal" (click)="selectBrandModal(b)">
+      <span class="smi-name">{{ b.VaccineName }} — {{ b.BrandName }}</span>
+      <ion-icon *ngIf="brandModalLine && brandModalLine.brandId === b.BrandId" name="checkmark-circle" class="smi-check"></ion-icon>
+    </div>
   </div>
 </div>
