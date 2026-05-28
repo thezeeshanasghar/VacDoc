@@ -234,21 +234,17 @@ export class ClinicPage {
     await loading.present();
     
     if (this.usertype.UserType === "PA") {
-      // For PA users, use PaAccess endpoint
-      if (!this.paAccessId) {
-        // Find PaAccessId from clinics list
-        const clinic = this.Clinics ? this.Clinics.find(c => c.Id === clinicId) : 
-                      (this.clinics ? this.clinics.find(c => c.Id === clinicId) : null);
-        if (clinic && clinic.PaAccessId) {
-          this.paAccessId = clinic.PaAccessId;
-        } else {
-          loading.dismiss();
-          this.toastService.create("Unable to find clinic access information", "danger");
-          return;
-        }
+      // Always look up PaAccessId from the tapped clinic row, not the cached property
+      const allClinics = this.Clinics || this.clinics || [];
+      const targetClinic = allClinics.find((c: any) => c.Id === clinicId);
+      const targetPaAccessId = targetClinic ? targetClinic.PaAccessId : null;
+      if (!targetPaAccessId) {
+        loading.dismiss();
+        this.toastService.create("Unable to find clinic access information", "danger");
+        return;
       }
-      
-      this.paService.updatePaClinicOnlineStatus(this.paAccessId, true).subscribe(
+
+      this.paService.updatePaClinicOnlineStatus(targetPaAccessId, true).subscribe(
         (res) => {
           if (res.IsSuccess || res.message) {
             loading.dismiss();
