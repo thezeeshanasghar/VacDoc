@@ -57,6 +57,12 @@
             autocomplete="off"
           >
           <button *ngIf="brandId" class="ac-clear" type="button" (click)="clearBrand()">✕</button>
+          <div class="inline-brand-drop"
+               *ngIf="brandDropOpen && filteredBrands(brandSearch).length > 0">
+            <div class="ac-option" *ngFor="let b of filteredBrands(brandSearch)" (click)="selectBrand(b)">
+              <span class="ac-opt-brand">{{ b.BrandName }}</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -208,13 +214,3 @@
   </div>
 </div>
 
-<!-- Brand autocomplete overlay -->
-<div class="brand-overlay-drop"
-     *ngIf="brandDropOpen && filteredBrands(brandSearch).length > 0"
-     [style.top.px]="brandDropTop"
-     [style.left.px]="brandDropLeft"
-     [style.width.px]="brandDropWidth">
-  <div class="ac-option" *ngFor="let b of filteredBrands(brandSearch)" (click)="selectBrand(b)">
-    <span class="ac-opt-brand">{{ b.BrandName }}</span>
-  </div>
-</div>

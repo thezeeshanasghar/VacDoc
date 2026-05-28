@@ -35,9 +35,6 @@ export class AdjustStockPage {
 
   // Brand autocomplete
   brands: any[] = [];
-  brandDropTop: number = 0;
-  brandDropLeft: number = 0;
-  brandDropWidth: number = 200;
 
   // History
   history: any[] = [];
@@ -117,10 +114,6 @@ export class AdjustStockPage {
 
   // Brand autocomplete
   openBrandDrop(event: any) {
-    const rect = event.target.getBoundingClientRect();
-    this.brandDropTop = rect.bottom + window.scrollY;
-    this.brandDropLeft = rect.left + window.scrollX;
-    this.brandDropWidth = Math.max(rect.width, 220);
     this.brandDropOpen = true;
   }
 
