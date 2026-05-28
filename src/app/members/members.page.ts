@@ -496,6 +496,8 @@ export class MembersPage implements OnInit {
   public doctorPages: any = [];
   public childPages: any = [];
   public pendingApprovalsCount: number = 0;
+  public paAssignmentCount: number = 0;
+  public isPaUser: boolean = false;
 
   constructor(
     public loadingController: LoadingController,
@@ -601,6 +603,13 @@ export class MembersPage implements OnInit {
             const { AllowClinic, AllowAnalytics, AllowVacation, AllowSchedule, AllowChild } = permissions;
 
           if (data === "PA") {
+            this.isPaUser = true;
+            this.paService.getAssignments(Number(this.user.PAId)).subscribe(res => {
+              if (res && res.IsSuccess) {
+                this.paAssignmentCount = (res.ResponseData || []).length;
+              }
+            });
+
             this.appPages = [
               {
                 title: "Dashboard",
@@ -646,9 +655,9 @@ export class MembersPage implements OnInit {
             }
 
             this.appPages.push({
-              title: "Collection Tasks",
-              url: "/members/doctor/personal-assistant/collection-tasks",
-              icon: "cash-outline"
+              title: "Assignments",
+              url: "/members/pa/assignments",
+              icon: "clipboard-outline"
             });
 
           } else if (this.hasClinics) {

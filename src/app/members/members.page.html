@@ -97,6 +97,10 @@
           <ion-icon style="cursor:pointer; margin: 0 18px; color:#fff;" routerLink="/members/child/add" name="person-add" size="large"></ion-icon>
           <ion-icon style="cursor:pointer; margin: 0 18px; color:#fff;" routerLink="/members/alert" name="alert" size="large"></ion-icon>
           <ion-icon style="cursor:pointer; margin: 0 18px; color:#fff;" routerLink="/members/child" name="accessibility-outline" size="large"></ion-icon>
+          <div *ngIf="isPaUser" style="position:relative; margin: 0 18px; cursor:pointer;" routerLink="/members/pa/assignments">
+            <ion-icon style="color:#fff;" name="notifications-outline" size="large"></ion-icon>
+            <span *ngIf="paAssignmentCount > 0" style="position:absolute;top:-4px;right:-4px;background:#E53935;color:#fff;font-size:10px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px;">{{ paAssignmentCount }}</span>
+          </div>
           <ion-menu-button style="margin: 0 18px; color:#fff;"></ion-menu-button>
         </ion-buttons>
       </ion-toolbar>
