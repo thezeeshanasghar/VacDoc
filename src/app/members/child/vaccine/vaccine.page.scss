@@ -39,6 +39,26 @@ ion-buttons {
   align-items: center;
 }
 
+// ── Hidden mat-datepicker input ───────────────────────────────────────────────
+// The input must exist in the DOM for mat-datepicker to attach, but must
+// never be visible or take up space.
+.hidden-picker {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+
+  input {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: none;
+    padding: 0;
+  }
+}
+
 // ── Date group card ───────────────────────────────────────────────────────────
 .date-group-card {
   margin-bottom: 10px;

@@ -44,17 +44,20 @@
               <img slot="icon-only" src="../../assets/injectionFilled.png" class="action-img" />
             </ion-button>
 
-            <!-- Bulk Reschedule -->
-            <ion-button
-              *ngIf="!allVaccinesGiven(item.value) && canBulkReschedule"
-              fill="clear"
-              class="action-btn action-btn--reschedule"
-              (click)="picker.open()"
-              title="Reschedule all vaccines on this date">
-              <ion-icon slot="icon-only" name="calendar-outline" class="action-icon action-icon--calendar"></ion-icon>
-              <input [matDatepicker]="picker" value="{{ item.key }}" (dateChange)="updateBulkDate($event, item.value[0].Id)" />
-              <mat-datepicker #picker></mat-datepicker>
-            </ion-button>
+            <!-- Bulk Reschedule — hidden input lives OUTSIDE the button -->
+            <ng-container *ngIf="!allVaccinesGiven(item.value) && canBulkReschedule">
+              <ion-button
+                fill="clear"
+                class="action-btn action-btn--reschedule"
+                (click)="bulkPicker.open()"
+                title="Reschedule all vaccines on this date">
+                <ion-icon slot="icon-only" name="calendar-outline" class="action-icon action-icon--calendar"></ion-icon>
+              </ion-button>
+              <span class="hidden-picker">
+                <input [matDatepicker]="bulkPicker" value="{{ item.key }}" (dateChange)="updateBulkDate($event, item.value[0].Id)" />
+                <mat-datepicker #bulkPicker></mat-datepicker>
+              </span>
+            </ng-container>
 
             <!-- Bulk Invoice -->
             <ion-button
@@ -117,17 +120,20 @@
           <!-- Action Buttons -->
           <div class="vaccine-actions">
 
-            <!-- Reschedule (individual) -->
-            <ion-button
-              *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip && canReschedule"
-              fill="clear"
-              class="action-btn action-btn--reschedule"
-              (click)="picker2.open()"
-              title="Reschedule">
-              <ion-icon slot="icon-only" name="calendar-outline" class="action-icon action-icon--calendar"></ion-icon>
-              <input [matDatepicker]="picker2" value="{{ v.Date }}" (dateChange)="updateDate($event, v.Id)" />
-              <mat-datepicker #picker2></mat-datepicker>
-            </ion-button>
+            <!-- Reschedule (individual) — hidden input lives OUTSIDE the button -->
+            <ng-container *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip && canReschedule">
+              <ion-button
+                fill="clear"
+                class="action-btn action-btn--reschedule"
+                (click)="rowPicker.open()"
+                title="Reschedule">
+                <ion-icon slot="icon-only" name="calendar-outline" class="action-icon action-icon--calendar"></ion-icon>
+              </ion-button>
+              <span class="hidden-picker">
+                <input [matDatepicker]="rowPicker" value="{{ v.Date }}" (dateChange)="updateDate($event, v.Id)" />
+                <mat-datepicker #rowPicker></mat-datepicker>
+              </span>
+            </ng-container>
 
             <!-- Give Vaccine -->
             <ion-button
@@ -159,7 +165,7 @@
               <img slot="icon-only" src="../../assets/add-parameter.png" class="action-img" />
             </ion-button>
 
-            <!-- Approve (Doctor) — icon on mobile, button on desktop -->
+            <!-- Approve — icon on mobile, text button on desktop -->
             <ng-container *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && usertype === 'DOCTOR' && !v.IsPAApprove">
               <ion-button fill="clear" class="action-btn action-btn--approve action-btn--approve-icon" (click)="updateScheduleApproval(v.Id)" title="Approve">
                 <ion-icon slot="icon-only" name="checkmark-circle-outline" class="action-icon action-icon--approve"></ion-icon>
