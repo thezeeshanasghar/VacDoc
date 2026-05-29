@@ -50,18 +50,25 @@ ion-buttons {
 .date-group-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 4px 0 10px;
+  justify-content: center;
+  gap: 12px;
+  padding: 6px 0 10px;
   border-bottom: 1px solid #eef0f4;
   margin-bottom: 4px;
 }
 
 .date-group-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #5c6b7a;
+  font-size: 14px;
+  font-weight: 700;
   letter-spacing: 0.3px;
+  white-space: nowrap;
 }
+
+// Date colour states
+.date-label--given    { color: #2e7d32; }   // green  — all vaccines done
+.date-label--missed   { color: #c62828; }   // red    — past date, not done
+.date-label--due-soon { color: #e65100; }   // amber  — due within 7 days
+.date-label--upcoming { color: #5c6b7a; }   // grey   — future, no urgency
 
 .date-group-actions {
   display: flex;

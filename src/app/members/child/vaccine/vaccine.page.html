@@ -20,7 +20,7 @@
 
         <!-- ── Date Group Header ─────────────────────────────────────────── -->
         <div class="date-group-header">
-          <span class="date-group-label">{{ item.key | date }}</span>
+          <span class="date-group-label" [ngClass]="getGroupDateClass(item.key, item.value)">{{ item.key | date }}</span>
 
           <div class="date-group-actions">
 

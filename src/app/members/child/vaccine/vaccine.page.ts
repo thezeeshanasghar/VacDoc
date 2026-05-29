@@ -691,6 +691,18 @@ this.downloadSpecialPdf();
     return vaccines.every(vaccine => vaccine.IsDone);
   }
 
+  // Returns CSS class for the date group label colour:
+  // green = all given, red = missed (past + not all done), yellow = due within 7 days
+  getGroupDateClass(dateKey: string, vaccines: any[]): string {
+    if (this.allVaccinesGiven(vaccines)) return 'date-label--given';
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const d = new Date(dateKey); d.setHours(0, 0, 0, 0);
+    if (d < today) return 'date-label--missed';
+    const diff = (d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+    if (diff <= 7) return 'date-label--due-soon';
+    return 'date-label--upcoming';
+  }
+
   async addNewVaccineInScheduleTable(scheduleDate, unfillData) {
     const loading = await this.loadingController.create({
       message: 'Updating Schedule'
