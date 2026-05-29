@@ -895,7 +895,7 @@ filterCountryCodes(value: string) {
     this.fg1.value.Password = retVal;
   }
 
-  async addNewChild(data: { agent: string; city: string }) {
+  async addNewChild(data: any) {
     console.log("City2 value:", this.fg1.get("City2").value);
     console.log("City2 value:", this.fg1.value.Agent2);
     if (data.agent == "") {
@@ -912,16 +912,14 @@ filterCountryCodes(value: string) {
     });
     await loading.present();
     if (this.usertype.UserType === "DOCTOR") {
-      this.fg1.value.IsPAApprove = true;
-      this.fg1.value.AddedByPaId = null;
+      data.IsPAApprove = true;
+      data.AddedByPaId = null;
     } else {
-      this.fg1.value.IsPAApprove = false;
-      this.fg1.value.AddedByPaId = this.usertype.PAId || null;
+      data.IsPAApprove = false;
+      data.AddedByPaId = this.usertype.PAId || null;
     }
     if (this.usertype.UserType === "DOCTOR") {
-      this.fg1.value.ClinicId = this.clinic.Id;
-    } else {
-      this.fg1.value.ClinicId;
+      data.ClinicId = this.clinic.Id;
     }
     // this.fg1.value.ClinicId = this.clinic.Id;
     console.log("data", data);
