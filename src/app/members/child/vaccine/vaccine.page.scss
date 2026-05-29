@@ -39,26 +39,6 @@ ion-buttons {
   align-items: center;
 }
 
-// ── Hidden mat-datepicker input ───────────────────────────────────────────────
-// The input must exist in the DOM for mat-datepicker to attach, but must
-// never be visible or take up space.
-.hidden-picker {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-  opacity: 0;
-  pointer-events: none;
-
-  input {
-    position: absolute;
-    width: 0;
-    height: 0;
-    border: none;
-    padding: 0;
-  }
-}
-
 // ── Date group card ───────────────────────────────────────────────────────────
 .date-group-card {
   margin-bottom: 10px;
@@ -86,8 +66,37 @@ ion-buttons {
 .date-group-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 10px;
 }
+
+// Header-row images (bulk give / ungive injection)
+.hdr-img {
+  height: 24px;
+  width: auto;
+  cursor: pointer;
+  display: block;
+  flex-shrink: 0;
+}
+
+// Header-row icons (calendar, invoice, assign)
+.hdr-icon {
+  font-size: 22px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.hdr-icon--calendar { color: #0277bd; }
+.hdr-icon--invoice  { color: #6a1b9a; }
+.hdr-icon--assign   { color: #00695c; }
+
+// Per-row calendar icon
+.row-icon {
+  font-size: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.row-icon--calendar { color: #0277bd; }
 
 // ── Shared action button base ─────────────────────────────────────────────────
 // Every action is an ion-button fill="clear" so Ionic handles ripple + focus ring.
@@ -307,7 +316,10 @@ ion-buttons {
   .action-img  { height: 20px; }
   .action-icon { font-size: 20px; }
 
-  .date-group-actions { gap: 6px; }
+  .date-group-actions { gap: 10px; }
+  .hdr-img  { height: 22px; }
+  .hdr-icon { font-size: 20px; }
+  .row-icon { font-size: 18px; }
 
   .action-chip {
     height: 28px;
@@ -335,7 +347,11 @@ ion-buttons {
   .action-img  { height: 24px; }
   .action-icon { font-size: 24px; }
 
-  .date-group-actions { gap: 2px; }
+  .hdr-img  { height: 26px; }
+  .hdr-icon { font-size: 24px; }
+  .row-icon { font-size: 22px; }
+
+  .date-group-actions { gap: 12px; }
 
   .date-group-label { font-size: 12px; }
 
