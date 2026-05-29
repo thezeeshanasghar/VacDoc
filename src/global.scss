@@ -540,3 +540,42 @@ ion-popover ion-item[aria-checked="true"] {
   --color: var(--vac-green) !important;
   font-weight: 600;
 }
+
+// ── Mat-datepicker — always centred on screen ─────────────────────────────────
+// The hidden trigger input sits at 0,0 so the CDK overlay anchors top-left.
+// We intercept the overlay panel and force it to the viewport centre instead.
+.cdk-overlay-container {
+  // Ensure the container covers the full viewport
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999 !important;
+  pointer-events: none;
+}
+
+.cdk-overlay-backdrop {
+  pointer-events: auto;
+}
+
+// The connected-position panel that mat-datepicker uses
+.cdk-overlay-connected-position-bounding-box {
+  // Override the JS-injected top/left to centre the panel
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  pointer-events: none;
+}
+
+.mat-datepicker-popup,
+.mat-datepicker-content {
+  pointer-events: auto;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25) !important;
+  overflow: hidden;
+}
