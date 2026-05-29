@@ -879,6 +879,11 @@ export class FillPage implements OnInit {
     this.refreshExpiryOptionsForLot(String(lotValue));
   }
 
+  onExpiryChange(event: any): void {
+    const expiryValue = event && event.detail ? event.detail.value : event;
+    this.fg.patchValue({ Expiry: expiryValue || null }, { emitEvent: true });
+  }
+
   private refreshExpiryOptionsForLot(lotValue: string): void {
     const expiryOptions = Array.from(
       new Set(
