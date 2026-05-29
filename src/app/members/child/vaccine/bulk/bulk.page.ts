@@ -249,7 +249,7 @@ export class BulkPage implements OnInit {
       this.selectedLotsPerRow[index] = "";
       this.selectedExpiriesPerRow[index] = "";
 
-      if (selectedBrand && this.BrandIds[index] && this.allowInventory) {
+      if (selectedBrand && this.BrandIds[index]) {
         this.loadBatchLotsForRow(index, Number(this.BrandIds[index]));
       }
     });
@@ -278,7 +278,7 @@ export class BulkPage implements OnInit {
     this.BrandIds[index] = exactMatch ? exactMatch.Id : null;
     this.manufacturerValues[index] = exactMatch ? (exactMatch.Manufacturer || "") : "";
 
-    if (exactMatch && this.allowInventory) {
+    if (exactMatch) {
       this.loadBatchLotsForRow(index, Number(exactMatch.Id));
     } else {
       this.clearLotsAndExpiries(index);
@@ -301,7 +301,7 @@ export class BulkPage implements OnInit {
     this.BrandIds[index] = selectedBrand ? selectedBrand.Id : null;
     this.manufacturerValues[index] = selectedBrand ? (selectedBrand.Manufacturer || "") : "";
 
-    if (selectedBrand && this.BrandIds[index] && this.allowInventory) {
+    if (selectedBrand && this.BrandIds[index]) {
       this.loadBatchLotsForRow(index, Number(this.BrandIds[index]));
     } else {
       this.clearLotsAndExpiries(index);
@@ -329,7 +329,7 @@ export class BulkPage implements OnInit {
       this.brandSearchTerms[index] = exactMatch.Name;
       this.BrandIds[index] = exactMatch.Id;
       this.manufacturerValues[index] = exactMatch.Manufacturer || "";
-      if (this.allowInventory) { this.loadBatchLotsForRow(index, Number(exactMatch.Id)); }
+      this.loadBatchLotsForRow(index, Number(exactMatch.Id));
     }
   }
 
