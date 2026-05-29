@@ -82,12 +82,12 @@
     </ion-item>
   </div>
   <div>
-    <ion-item lines="none" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
+    <ion-item *ngIf="allowInventory" lines="none" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
       <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Manufacturer</ion-label>
       <ion-input type="text" readonly formControlName="Manufacturer" style="font-size: 12px; color: #444;"></ion-input>
     </ion-item>
 
-    <ion-item lines="none" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
+    <ion-item *ngIf="allowInventory" lines="none" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
       <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Batch/Lot</ion-label>
       <ion-select
         [value]="fg.get('Lot').value"
@@ -99,7 +99,7 @@
       </ion-select>
     </ion-item>
 
-    <ion-item lines="full" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
+    <ion-item *ngIf="allowInventory" lines="full" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
       <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Expiry</ion-label>
       <ion-select
         [value]="fg.get('Expiry').value"
