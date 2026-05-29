@@ -9,53 +9,129 @@
 
 <ion-content class="ion-padding">
 
-  <!-- Date picker -->
-  <div class="date-row">
-    <label class="date-label">Date</label>
-    <input type="date" [(ngModel)]="selectedDate" (change)="load()" class="date-input">
+  <!-- View toggle -->
+  <div class="view-toggle">
+    <button [class.active]="viewMode === 'today'" (click)="switchView('today')">Today</button>
+    <button [class.active]="viewMode === 'outstanding'" (click)="switchView('outstanding')">All Outstanding</button>
   </div>
 
-  <!-- Loading -->
-  <div *ngIf="loading" class="empty-state">Loading...</div>
+  <!-- TODAY VIEW -->
+  <ng-container *ngIf="viewMode === 'today'">
+    <div class="date-row">
+      <label class="date-label">Date</label>
+      <input type="date" [(ngModel)]="selectedDate" (change)="load()" class="date-input">
+    </div>
 
-  <!-- Empty state -->
-  <div *ngIf="!loading && summary.length === 0" class="empty-state">
-    No PA payment activity found for this date.
-  </div>
+    <div *ngIf="loading" class="empty-state">Loading...</div>
+    <div *ngIf="!loading && summary.length === 0 && !doctorEntry" class="empty-state">
+      No PA payment activity found for this date.
+    </div>
 
-  <!-- PA summary cards -->
-  <ion-card *ngFor="let row of summary" class="pa-card">
-    <ion-card-content>
-      <div class="pa-name">{{ row.PaName }}</div>
-
-      <div class="stat-row">
-        <span class="stat-label">Cash Collected</span>
-        <span class="stat-val stat-cash">Rs {{ row.CashTotal | number:'1.2-2' }}</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Online Collected</span>
-        <span class="stat-val stat-online">Rs {{ row.OnlineTotal | number:'1.2-2' }}</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Cash Handed Over</span>
-        <span class="stat-val stat-handed">Rs {{ row.HandedOver | number:'1.2-2' }}</span>
-      </div>
-      <div class="stat-row stat-row-pending">
-        <span class="stat-label-bold">Cash In Hand</span>
-        <span class="stat-val" [class.stat-pending]="row.PendingCash > 0" [class.stat-clear]="row.PendingCash <= 0">
-          Rs {{ row.PendingCash | number:'1.2-2' }}
-        </span>
-      </div>
-
-      <!-- Pending handover actions -->
-      <div class="handover-row" *ngIf="getPendingForPa(row.PaId) as h">
-        <span class="handover-label">Handover Pending: Rs {{ h.Amount | number:'1.2-2' }}</span>
-        <div class="handover-btns">
-          <button class="btn-confirm" (click)="confirmHandover(h)">Confirm</button>
-          <button class="btn-reject" (click)="rejectHandover(h)">Reject</button>
+    <!-- Doctor self-collection card -->
+    <ion-card *ngIf="doctorEntry" class="pa-card doctor-card">
+      <ion-card-content>
+        <div class="pa-name">Doctor (Self-Collected)</div>
+        <div class="stat-row">
+          <span class="stat-label">Cash Collected</span>
+          <span class="stat-val stat-cash">Rs {{ doctorEntry.CashTotal | number:'1.2-2' }}</span>
         </div>
-      </div>
-    </ion-card-content>
-  </ion-card>
+        <div class="stat-row">
+          <span class="stat-label">Online Collected</span>
+          <span class="stat-val stat-online">Rs {{ doctorEntry.OnlineTotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="breakdown-toggle" (click)="doctorExpanded = !doctorExpanded">
+          {{ doctorExpanded ? 'Hide' : 'Show' }} {{ doctorEntry.Schedules?.length }} patient(s)
+        </div>
+        <div *ngIf="doctorExpanded" class="breakdown-list">
+          <div *ngFor="let s of doctorEntry.Schedules" class="breakdown-row">
+            <span class="b-name">{{ s.ChildName }}</span>
+            <span class="b-vaccine">{{ s.VaccineName }}</span>
+            <ion-badge [color]="s.PaymentMode === 'Cash' ? 'medium' : 'tertiary'">{{ s.PaymentMode }}</ion-badge>
+            <span class="b-amount">Rs {{ s.Amount | number:'1.0-0' }}</span>
+            <span *ngIf="s.IsPaymentApproved" class="verified-badge">&#10003; Verified</span>
+            <ion-button *ngIf="!s.IsPaymentApproved" size="small" color="success"
+              (click)="verifySchedule(s)">Verify</ion-button>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- PA summary cards -->
+    <ion-card *ngFor="let row of summary" class="pa-card">
+      <ion-card-content>
+        <div class="pa-name">{{ row.PaName }}</div>
+
+        <div class="stat-row">
+          <span class="stat-label">Cash Collected</span>
+          <span class="stat-val stat-cash">Rs {{ row.CashTotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Online Collected</span>
+          <span class="stat-val stat-online">Rs {{ row.OnlineTotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Cash Handed Over</span>
+          <span class="stat-val stat-handed">Rs {{ row.HandedOver | number:'1.2-2' }}</span>
+        </div>
+        <div class="stat-row stat-row-pending">
+          <span class="stat-label-bold">Cash In Hand</span>
+          <span class="stat-val" [class.stat-pending]="row.PendingCash > 0" [class.stat-clear]="row.PendingCash <= 0">
+            Rs {{ row.PendingCash | number:'1.2-2' }}
+          </span>
+        </div>
+
+        <!-- Pending handover actions -->
+        <div class="handover-row" *ngIf="getPendingForPa(row.PaId) as h">
+          <span class="handover-label">Handover Pending: Rs {{ h.Amount | number:'1.2-2' }}</span>
+          <div class="handover-btns">
+            <button class="btn-confirm" (click)="confirmHandover(h)">Cash Received</button>
+            <button class="btn-reject" (click)="rejectHandover(h)">Reject</button>
+          </div>
+        </div>
+
+        <!-- Per-patient drilldown -->
+        <div class="breakdown-toggle" (click)="toggleExpand(row)">
+          {{ row.expanded ? 'Hide' : 'Show' }} {{ row.Schedules?.length }} patient(s)
+        </div>
+        <div *ngIf="row.expanded" class="breakdown-list">
+          <div *ngFor="let s of row.Schedules" class="breakdown-row">
+            <span class="b-name">{{ s.ChildName }}</span>
+            <span class="b-vaccine">{{ s.VaccineName }}</span>
+            <ion-badge [color]="s.PaymentMode === 'Cash' ? 'medium' : 'tertiary'">{{ s.PaymentMode }}</ion-badge>
+            <span class="b-amount">Rs {{ s.Amount | number:'1.0-0' }}</span>
+            <span *ngIf="s.IsPaymentApproved" class="verified-badge">&#10003; Verified</span>
+            <ion-button *ngIf="!s.IsPaymentApproved" size="small" color="success"
+              (click)="verifySchedule(s)">Verify</ion-button>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+
+  <!-- OUTSTANDING VIEW -->
+  <ng-container *ngIf="viewMode === 'outstanding'">
+    <div *ngIf="loading" class="empty-state">Loading...</div>
+    <div *ngIf="!loading && outstanding.length === 0" class="empty-state">
+      No outstanding cash balances. All clear!
+    </div>
+
+    <ion-card *ngFor="let row of outstanding" class="pa-card">
+      <ion-card-content>
+        <div class="pa-name">{{ row.PaName }}</div>
+        <div class="stat-label" style="color:#888; font-size:12px;">{{ row.ClinicName }}</div>
+        <div class="stat-row stat-row-pending">
+          <span class="stat-label-bold">Cash In Hand</span>
+          <span class="stat-val stat-pending">Rs {{ row.PendingCash | number:'1.2-2' }}</span>
+        </div>
+        <div class="handover-row" *ngIf="getPendingForPa(row.PaId) as h">
+          <span class="handover-label">Handover Pending: Rs {{ h.Amount | number:'1.2-2' }}</span>
+          <div class="handover-btns">
+            <button class="btn-confirm" (click)="confirmHandover(h)">Cash Received</button>
+            <button class="btn-reject" (click)="rejectHandover(h)">Reject</button>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
 
 </ion-content>

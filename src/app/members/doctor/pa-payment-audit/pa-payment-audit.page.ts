@@ -14,8 +14,12 @@ export class PaPaymentAuditPage {
   doctorId: number = null;
   selectedDate: string = '';
   summary: any[] = [];
+  doctorEntry: any = null;
   pendingHandovers: any[] = [];
+  outstanding: any[] = [];
   loading: boolean = false;
+  viewMode: 'today' | 'outstanding' = 'today';
+  doctorExpanded: boolean = false;
 
   constructor(
     private paService: PaService,
@@ -39,25 +43,78 @@ export class PaPaymentAuditPage {
     this.load();
   }
 
+  switchView(mode: 'today' | 'outstanding') {
+    this.viewMode = mode;
+    this.load();
+  }
+
   load() {
     if (!this.doctorId) { return; }
     this.loading = true;
-    this.paService.getDailySummary(this.doctorId, this.selectedDate).subscribe(
-      res => {
-        this.loading = false;
-        if (res && res.IsSuccess && res.ResponseData) {
-          this.summary = res.ResponseData.Summary || [];
-          this.pendingHandovers = res.ResponseData.PendingHandovers || [];
+    if (this.viewMode === 'today') {
+      this.paService.getDailySummary(this.doctorId, this.selectedDate).subscribe(
+        res => {
+          this.loading = false;
+          if (res && res.IsSuccess && res.ResponseData) {
+            const rows = res.ResponseData.Summary || [];
+            rows.forEach((r: any) => r.expanded = false);
+            this.summary = rows;
+            this.doctorEntry = res.ResponseData.DoctorEntry || null;
+            this.doctorExpanded = false;
+            this.pendingHandovers = res.ResponseData.PendingHandovers || [];
+          }
+        },
+        () => { this.loading = false; this.toastService.create('Failed to load summary', 'danger'); }
+      );
+    } else {
+      this.paService.getOutstanding(this.doctorId).subscribe(
+        res => {
+          this.loading = false;
+          if (res && res.IsSuccess && res.ResponseData) {
+            this.outstanding = res.ResponseData.Outstanding || [];
+            this.pendingHandovers = res.ResponseData.PendingHandovers || [];
+          }
+        },
+        () => { this.loading = false; this.toastService.create('Failed to load outstanding', 'danger'); }
+      );
+    }
+  }
+
+  toggleExpand(row: any) {
+    row.expanded = !row.expanded;
+  }
+
+  async verifySchedule(schedule: any) {
+    const alert = await this.alertController.create({
+      header: 'Verify Payment',
+      message: `Mark Rs ${schedule.Amount} (${schedule.PaymentMode}) for ${schedule.ChildName} as verified?`,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Verify',
+          handler: () => {
+            this.paService.verifyPayment(schedule.ScheduleId, this.doctorId).subscribe(
+              res => {
+                if (res && res.IsSuccess) {
+                  schedule.IsPaymentApproved = true;
+                  this.toastService.create('Payment verified', 'success');
+                } else {
+                  this.toastService.create(res.Message || 'Failed', 'danger');
+                }
+              },
+              () => { this.toastService.create('Failed to verify', 'danger'); }
+            );
+          }
         }
-      },
-      () => { this.loading = false; this.toastService.create('Failed to load summary', 'danger'); }
-    );
+      ]
+    });
+    await alert.present();
   }
 
   async confirmHandover(handover: any) {
     const alert = await this.alertController.create({
-      header: 'Confirm Handover',
-      message: `Confirm cash handover of Rs ${handover.Amount}?`,
+      header: 'Cash Received',
+      message: `Confirm you received Rs ${handover.Amount} cash from this PA?`,
       buttons: [
         { text: 'Cancel', role: 'cancel' },
         {

@@ -205,6 +205,16 @@ export class PaService extends BaseService {
     return this.http.patch(url, { RejectionNote: note }, this.httpOptions).pipe(catchError(this.handleError));
   }
 
+  getOutstanding(doctorId: number): Observable<any> {
+    const url = `${this.API_PA}PaCashHandover/outstanding/${doctorId}`;
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  verifyPayment(scheduleId: number, doctorId: number): Observable<any> {
+    const url = `${this.API_PA}Schedule/${scheduleId}/verify-payment?doctorId=${doctorId}`;
+    return this.http.patch(url, {}, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
 //   putDoctorSchedule(data): Observable<any> {
 //     const url = `${this.API_SCHEDULE}doctorschedule`;
 //     return this.http

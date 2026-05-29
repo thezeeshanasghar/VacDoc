@@ -128,3 +128,74 @@
   cursor: pointer;
   &:active { opacity: 0.8; }
 }
+
+.view-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  button {
+    flex: 1;
+    padding: 8px 0;
+    border: 1.5px solid #1565C0;
+    border-radius: 8px;
+    background: #fff;
+    color: #1565C0;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &.active {
+      background: #1565C0;
+      color: #fff;
+    }
+  }
+}
+
+.doctor-card {
+  border-left: 4px solid #0D47A1;
+}
+
+.breakdown-toggle {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #1565C0;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.breakdown-list {
+  margin-top: 8px;
+}
+
+.breakdown-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px 0;
+  border-bottom: 1px solid #F1F3F5;
+  font-size: 13px;
+}
+
+.b-name {
+  font-weight: 600;
+  color: #1A1A2E;
+  min-width: 80px;
+}
+
+.b-vaccine {
+  color: #546E7A;
+  flex: 1;
+}
+
+.b-amount {
+  font-weight: 600;
+  color: #2E7D32;
+}
+
+.verified-badge {
+  font-size: 12px;
+  color: #2E7D32;
+  font-weight: 600;
+}
