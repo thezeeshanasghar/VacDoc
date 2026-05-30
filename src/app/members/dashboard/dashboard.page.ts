@@ -9,6 +9,7 @@ import { IonRouterOutlet, Platform } from '@ionic/angular';
 import { Plugins } from '@capacitor/core';
 import { DashboardService } from "src/app/services/dashboard.service";
 import { PaService } from "src/app/services/pa.service";
+import { ChildService } from "src/app/services/child.service";
 
 const { App } = Plugins;
 
@@ -44,7 +45,11 @@ export class DashboardPage implements OnInit {
   showClinics: boolean = true;
   showStock: boolean = true;
   showFinancial: boolean = false;
+  showVacation: boolean = true;
+  showAgent: boolean = false;
+  showPersonalAssistant: boolean = false;
   assignmentCount: number = 0;
+  pendingApprovalsCount: number = 0;
 
   constructor(
     private loadingController: LoadingController,
@@ -55,7 +60,8 @@ export class DashboardPage implements OnInit {
     private androidPermissions: AndroidPermissions,
     public platform: Platform,
     private routerOutlet: IonRouterOutlet,
-    private paService: PaService
+    private paService: PaService,
+    private childService: ChildService
   ) {}
 
   async ngOnInit() {
@@ -96,21 +102,45 @@ export class DashboardPage implements OnInit {
         this.showSchedule  = (pa && pa.AllowSchedule)  || false;
         this.showClinics   = (pa && pa.AllowClinic)    || false;
         this.showStock     = (pa && pa.AllowStock)     || false;
+        this.showVacation  = (pa && pa.AllowVacation)  || false;
         this.showFinancial = false;
+        this.showAgent     = false;
+        this.showPersonalAssistant = false;
         this.paService.getAssignments(Number(this.user.PAId)).subscribe(res => {
           if (res && res.IsSuccess) {
             this.assignmentCount = (res.ResponseData || []).length;
           }
         });
       } catch (e) {
-        this.showPatients = this.showAlerts =
-          this.showAnalytics = this.showSchedule = this.showClinics = this.showStock = false;
+        this.showPatients = this.showAlerts = this.showAnalytics =
+          this.showSchedule = this.showClinics = this.showStock =
+          this.showVacation = false;
         this.showFinancial = false;
       }
     } else {
+      // Doctor permissions from user/doctor profile flags
       this.showStock     = this.user && this.user.AllowInventory !== false;
       this.showFinancial = this.user && this.user.AllowFinancial === true;
+      this.showAnalytics = this.user && this.user.AllowAnalytics === true;
+      this.showAgent     = this.user && this.user.AllowAgent === true;
+      this.showPersonalAssistant = this.doctorId === 1;
+      this.showVacation  = true;
+      this.showClinics   = true;
+      this.showPatients  = true;
+      this.showAlerts    = true;
+      this.showSchedule  = true;
+      this.loadPendingCount();
     }
+  }
+
+  private loadPendingCount() {
+    const clinic = this.clinicService.OnlineClinic;
+    if (!clinic || !clinic.Id) { return; }
+    this.childService.getPendingCount(clinic.Id).subscribe(res => {
+      if (res && res.IsSuccess) {
+        this.pendingApprovalsCount = res.ResponseData || 0;
+      }
+    });
   }
 
   async ionViewDidEnter() {
