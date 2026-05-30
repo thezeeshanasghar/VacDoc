@@ -48,32 +48,39 @@
     </ion-button>
   </div>
 
-  <!-- 2. Item Report (needs brand) -->
-  <div class="report-card">
-    <div class="rc-left">
-      <div class="rc-icon" style="background: linear-gradient(135deg,#1B5E20,#2E7D32);">
-        <ion-icon name="file-tray-outline"></ion-icon>
+  <!-- 2. Item-wise Sale Report -->
+  <ion-card style="margin-top: 12px;">
+    <ion-card-header style="--background: linear-gradient(135deg,#1B5E20,#2E7D32);">
+      <ion-card-title style="color:#fff; display:flex; align-items:center; gap:8px;">
+        <ion-icon name="file-tray-outline"></ion-icon> Item-wise Sale Report
+      </ion-card-title>
+      <ion-card-subtitle style="color:rgba(255,255,255,0.75);">Per-vaccine sales analysis</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content style="padding-top: 12px;">
+      <ion-item lines="full" style="margin-bottom:8px;">
+        <ion-label position="floating">Select Brand</ion-label>
+        <ion-select [(ngModel)]="selectedBrandId" placeholder="Select brand">
+          <ion-select-option *ngFor="let b of brands" [value]="b.id">{{ b.displayName }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <div style="text-align:right; margin-top:4px;">
+        <ion-button color="secondary" fill="solid" (click)="getItemReport()">
+          <ion-icon name="download-outline" slot="start"></ion-icon>Download PDF
+        </ion-button>
       </div>
-      <div>
-        <div class="rc-title">Item-wise Sale Report</div>
-        <div class="rc-desc">Per-vaccine sales analysis — select brand below</div>
-      </div>
-    </div>
-    <ion-button size="small" color="secondary" fill="solid" (click)="getItemReport()">
-      <ion-icon name="download-outline" slot="start"></ion-icon>PDF
-    </ion-button>
-  </div>
+    </ion-card-content>
+  </ion-card>
 
-  <!-- Purchase Reports (Item-Wise / Supplier-Wise) -->
+  <!-- 3. Purchase Report (Item-Wise / Supplier-Wise) -->
   <ion-card style="margin-top: 12px;">
     <ion-card-header color="danger" style="--background: linear-gradient(135deg,#8B0000,#C62828);">
       <ion-card-title style="color:#fff; display:flex; align-items:center; gap:8px;">
-        <ion-icon name="cart-outline"></ion-icon> Purchase Report — What You Bought
+        <ion-icon name="cart-outline"></ion-icon> Purchase Report
       </ion-card-title>
+      <ion-card-subtitle style="color:rgba(255,255,255,0.75);">What you bought — by item or supplier</ion-card-subtitle>
     </ion-card-header>
     <ion-card-content style="padding-top: 12px;">
 
-      <!-- Segment toggle -->
       <ion-segment [(ngModel)]="purchaseReportType" (ionChange)="onPurchaseTypeChange()" style="margin-bottom:12px;">
         <ion-segment-button value="item">
           <ion-label>Item Wise</ion-label>
@@ -87,16 +94,9 @@
       <ng-container *ngIf="purchaseReportType === 'item'">
         <ion-item lines="full" style="margin-bottom:8px;">
           <ion-label position="floating">Select Brand</ion-label>
-          <mat-form-field class="full-w">
-            <mat-select [(ngModel)]="selectedBrandId" (openedChange)="showAllBrands()" placeholder="Select brand">
-              <mat-option disabled>
-                <input matInput [(ngModel)]="brandSearchTerm" (ngModelChange)="filterBrands($event)"
-                  (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"
-                  placeholder="Search brand" style="font-size:14px;">
-              </mat-option>
-              <mat-option *ngFor="let b of filteredBrands" [value]="b.id">{{ b.displayName }}</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <ion-select [(ngModel)]="selectedPurchaseBrandId" placeholder="Select brand">
+            <ion-select-option *ngFor="let b of brands" [value]="b.id">{{ b.displayName }}</ion-select-option>
+          </ion-select>
         </ion-item>
       </ng-container>
 

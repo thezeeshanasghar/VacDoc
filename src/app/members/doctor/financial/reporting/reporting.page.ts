@@ -20,10 +20,10 @@ export class ReportingPage implements OnInit {
   agents: { id: number; name: string }[] = [];
   selectedClinicId: any;
   selectedBrandId: any = null;
+  selectedPurchaseBrandId: any = null;
   selectedAgent: string | null = null;
   purchaseReportType: 'item' | 'supplier' = 'item';
   filteredBrands: any[] = [];
-  brandSearchTerm = '';
   form: FormGroup;
   todaydate: string;
   doctorId: any;
@@ -93,7 +93,7 @@ export class ReportingPage implements OnInit {
   }
 
   onPurchaseTypeChange() {
-    this.selectedBrandId = null;
+    this.selectedPurchaseBrandId = null;
     this.selectedAgent = null;
   }
 
@@ -104,12 +104,6 @@ export class ReportingPage implements OnInit {
       await this.getSupplierReport();
     }
   }
-
-  filterBrands(term: string) {
-    const t = (term || '').toLowerCase().trim();
-    this.filteredBrands = t ? this.brands.filter(b => b.displayName.toLowerCase().includes(t)) : this.brands.slice();
-  }
-  showAllBrands() { this.brandSearchTerm = ''; this.filteredBrands = this.brands.slice(); }
 
   private get fromDate() { return (this.form.value.fromDate || this.todaydate).toString().slice(0, 10); }
   private get toDate()   { return (this.form.value.toDate   || this.todaydate).toString().slice(0, 10); }
@@ -134,10 +128,10 @@ export class ReportingPage implements OnInit {
   }
 
   async getItemPurchaseReport() {
-    if (!this.selectedClinicId || !this.selectedBrandId) { this.toastService.create('Select clinic and brand', 'danger'); return; }
+    if (!this.selectedClinicId || !this.selectedPurchaseBrandId) { this.toastService.create('Select clinic and brand', 'danger'); return; }
     const loader = await this.loadingCtrl.create({ message: 'Generating purchase report...' });
     await loader.present();
-    this.stockService.getItemsPurchaseReportFile(this.selectedClinicId, this.selectedBrandId, this.fromDate, this.toDate)
+    this.stockService.getItemsPurchaseReportFile(this.selectedClinicId, this.selectedPurchaseBrandId, this.fromDate, this.toDate)
       .subscribe({ next: (res) => { loader.dismiss(); this.downloadBlob(res, `PurchaseReport_${this.fromDate}.pdf`); }, error: () => { loader.dismiss(); this.toastService.create('Failed', 'danger'); } });
   }
 
