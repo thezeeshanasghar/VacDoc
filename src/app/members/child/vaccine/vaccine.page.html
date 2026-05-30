@@ -64,7 +64,7 @@
 
             <!-- Assign to PA (Doctor only) -->
             <ion-icon
-              *ngIf="usertype === 'DOCTOR'"
+              *ngIf="usertype === 'DOCTOR' && clinicPAs.length > 0"
               name="person-add-outline"
               class="hdr-icon hdr-icon--assign"
               (click)="openAssignPopup()"
