@@ -140,14 +140,29 @@ export class BulkPage implements OnInit {
     });
 
     this.applyTravelGivenDateToday();
-    this.getChildType();
 
-    // Resolve all storage values first so clinicId is ready before getBulk triggers batch/lot loading
+    // Resolve storage AND child data together so clinicId is fully known before getBulk fires
+    const childDataPromise = new Promise<void>((resolve) => {
+      this.childService.getChildById(this.childId).subscribe(
+        (res) => {
+          if (res && res.IsSuccess && res.ResponseData) {
+            this.childData = res.ResponseData;
+            this.childType = (res.ResponseData.Type || "").toString();
+            this.clinicId = this.resolveClinicId(res.ResponseData) || this.clinicId;
+            this.applyTravelGivenDateToday();
+          }
+          resolve();
+        },
+        () => { this.childType = ""; resolve(); }
+      );
+    });
+
     Promise.all([
       this.storage.get(environment.DOCTOR_Id),
       this.storage.get(environment.USER),
       this.storage.get(environment.ON_CLINIC),
-      this.storage.get(environment.CLINIC_Id)
+      this.storage.get(environment.CLINIC_Id),
+      childDataPromise
     ]).then(([docId, user, onlineClinic, storedClinicId]) => {
       this.doctorId = docId;
 
@@ -177,7 +192,7 @@ export class BulkPage implements OnInit {
       const storedId = Number(storedClinicId);
       if (!this.clinicId && storedId && !isNaN(storedId)) { this.clinicId = storedId; }
 
-      // clinicId is now resolved — fetch bulk data so batch/lot lookup has a valid clinicId
+      // All sources resolved — clinicId is guaranteed set before getBulk triggers batch/lot loading
       this.getBulk();
     });
   }
@@ -200,20 +215,6 @@ export class BulkPage implements OnInit {
         loading.dismiss();
         this.toastService.create(err, "danger");
       }
-    );
-  }
-
-  private getChildType(): void {
-    this.childService.getChildById(this.childId).subscribe(
-      (res) => {
-        if (res && res.IsSuccess && res.ResponseData) {
-          this.childData = res.ResponseData;
-          this.childType = (res.ResponseData.Type || "").toString();
-          this.clinicId = this.resolveClinicId(res.ResponseData) || this.clinicId;
-          this.applyTravelGivenDateToday();
-        }
-      },
-      () => { this.childType = ""; }
     );
   }
 
