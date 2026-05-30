@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-buttons slot="start"><ion-back-button defaultHref="/members/doctor/stock-management"></ion-back-button></ion-buttons>
-    <ion-title>Stock Reports</ion-title>
+    <ion-buttons slot="start"><ion-back-button defaultHref="/members/dashboard"></ion-back-button></ion-buttons>
+    <ion-title>Reports</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -39,8 +39,8 @@
         <ion-icon name="stats-chart-outline"></ion-icon>
       </div>
       <div>
-        <div class="rc-title">Sales Report</div>
-        <div class="rc-desc">Vaccination income by date range — all injections administered</div>
+        <div class="rc-title">Vaccination Sales Report</div>
+        <div class="rc-desc">Total vaccinations administered by date range</div>
       </div>
     </div>
     <ion-button size="small" color="primary" fill="solid" (click)="getSalesReport()">
@@ -55,8 +55,8 @@
         <ion-icon name="file-tray-outline"></ion-icon>
       </div>
       <div>
-        <div class="rc-title">Item Report</div>
-        <div class="rc-desc">Per vaccine sales analysis — select brand below</div>
+        <div class="rc-title">Item-wise Sale Report</div>
+        <div class="rc-desc">Per-vaccine sales analysis — select brand below</div>
       </div>
     </div>
     <ion-button size="small" color="secondary" fill="solid" (click)="getItemReport()">
@@ -68,7 +68,7 @@
   <ion-card style="margin-top: 12px;">
     <ion-card-header color="danger" style="--background: linear-gradient(135deg,#8B0000,#C62828);">
       <ion-card-title style="color:#fff; display:flex; align-items:center; gap:8px;">
-        <ion-icon name="cart-outline"></ion-icon> Purchase Report
+        <ion-icon name="cart-outline"></ion-icon> Purchase Report — What You Bought
       </ion-card-title>
     </ion-card-header>
     <ion-card-content style="padding-top: 12px;">

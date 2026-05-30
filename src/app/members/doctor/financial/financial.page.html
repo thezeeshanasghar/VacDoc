@@ -9,6 +9,8 @@
 
 <ion-content class="fin-content">
   <div class="fin-wrap">
+
+    <div class="fin-section-label">Operations</div>
     <div class="fin-grid">
 
       <!-- Expense Reports -->
@@ -41,6 +43,11 @@
         <ion-icon name="chevron-forward-outline" class="fin-card-arrow"></ion-icon>
       </div>
 
+    </div>
+
+    <div class="fin-section-label">Collections &amp; Income</div>
+    <div class="fin-grid">
+
       <!-- Income Tracker -->
       <div routerLink="/members/doctor/financial/cash-handover" class="fin-card card-income">
         <div class="fin-card-icon">
@@ -61,13 +68,23 @@
         <ion-icon name="chevron-forward-outline" class="fin-card-arrow"></ion-icon>
       </div>
 
-      <!-- Sales & Collection -->
+      <!-- Patient Collections (was: Sales & Collection) -->
       <div routerLink="/members/doctor/financial/sales-collection" class="fin-card card-sales">
         <div class="fin-card-icon">
           <ion-icon name="document-text-outline"></ion-icon>
         </div>
-        <span class="fin-card-label">Sales &amp; Collection</span>
-        <span class="fin-card-sub">Patient-wise sales report</span>
+        <span class="fin-card-label">Patient Collections</span>
+        <span class="fin-card-sub">Patient-wise billing &amp; collection PDF</span>
+        <ion-icon name="chevron-forward-outline" class="fin-card-arrow"></ion-icon>
+      </div>
+
+      <!-- Sales & Purchase Reports (new cross-link to reporting page) -->
+      <div routerLink="/members/doctor/financial/reporting" class="fin-card card-reports">
+        <div class="fin-card-icon">
+          <ion-icon name="bar-chart-outline"></ion-icon>
+        </div>
+        <span class="fin-card-label">Sales &amp; Purchase Reports</span>
+        <span class="fin-card-sub">Item-wise, purchase &amp; vaccination PDFs</span>
         <ion-icon name="chevron-forward-outline" class="fin-card-arrow"></ion-icon>
       </div>
 
