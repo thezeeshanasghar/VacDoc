@@ -97,9 +97,9 @@ export class SalesCollectionPage implements OnInit {
     const loading = await this.loadingController.create({ message: 'Generating report...' });
     await loading.present();
     this.stockService.getSalesCollectionReportFile(this.selectedClinicId, new Date(fromDate), new Date(toDate)).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         loading.dismiss();
-        const blob = new Blob([response], { type: 'application/pdf' });
+        const blob = new Blob([response.body], { type: 'application/pdf' });
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
         link.download = `SalesReport_${this.selectedClinicId}_${fromDate}_${toDate}.pdf`;
