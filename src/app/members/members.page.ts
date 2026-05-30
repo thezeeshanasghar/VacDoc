@@ -590,10 +590,11 @@ export class MembersPage implements OnInit {
       async (res) => {
         if (res.IsSuccess) {
           this.doctorData = res.ResponseData;
-          const inventoryAllowed  = this.doctorData.AllowInventory  !== false;
-          const financialAllowed  = this.doctorData.AllowFinancial  === true;
-          const agentAllowed      = this.doctorData.AllowAgent       === true;
-          const analyticsAllowed  = this.doctorData.AllowAnalytics   === true;
+          const inventoryAllowed   = this.doctorData.AllowInventory  !== false;
+          const financialAllowed   = this.doctorData.AllowFinancial  === true;
+          const agentAllowed       = this.doctorData.AllowAgent       === true;
+          const analyticsAllowed   = this.doctorData.AllowAnalytics   === true;
+          const assistantAllowed   = this.doctorData.AllowAssistant   === true;
           this.profileImagePath = this.doctorData.ProfileImage;
           this.Name = this.doctorData.DisplayName;
           const clinics = this.doctorData.Clinics;
@@ -722,7 +723,7 @@ export class MembersPage implements OnInit {
               }
             ];
             this.loadPendingCount();
-            if (this.DoctorId === 1) {
+            if (assistantAllowed) {
               this.appPages.push({
                 title: "Personal Assistant",
                 url: "/members/doctor/personal-assistant",
