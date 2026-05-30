@@ -3,7 +3,7 @@ import { BaseService } from "./base.service";
 import { environment } from "src/environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { catchError, map } from "rxjs/operators";
+import { catchError } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root"
@@ -16,11 +16,15 @@ export class DashboardService extends BaseService {
   }
 
   getCombinedDashboardData(doctorId: number): Observable<any> {
-    debugger
     const url = `${this.API_DASHBOARD}/combined-data/${doctorId}`;
-    console.log('API URL (Combined Dashboard Data):', url);
-    return this.http.get(url, this.httpOptions).pipe(
-      map(this.extractData),
+    return this.http.get<any>(url).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  getAnalyticsData(doctorId: number): Observable<any> {
+    const url = `${this.API_DASHBOARD}/analytics/${doctorId}`;
+    return this.http.get<any>(url).pipe(
       catchError(this.handleError)
     );
   }

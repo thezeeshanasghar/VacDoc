@@ -1,30 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { LoadingController, ToastController } from "@ionic/angular";
-import { ClinicService } from "src/app/services/clinic.service";
-import { Storage } from "@ionic/storage";
-import { environment } from "src/environments/environment";
-import { ToastService } from "src/app/shared/toast.service";
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
-import { IonRouterOutlet, Platform } from '@ionic/angular';
-import { Plugins } from '@capacitor/core';
-import { DashboardService } from "src/app/services/dashboard.service";
-
-// interface BrandBill {
-//   BillId: number;
-//   BillNo: string;
-//   Date: string;
-//   SupName: string;
-//   Quantity: number;
-//   PurchasedAmt: number;
-//   IsPaid: boolean;
-//   BrandId: number;
-//   BrandName: string;
-//   VaccineName: string;
-//   Supplier: string;
-//   StockAmount: number;
-//   Id: number;
-// }
+import { LoadingController } from '@ionic/angular';
+import { Storage } from '@ionic/storage';
+import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
+import { Label } from 'ng2-charts';
+import { DashboardService } from 'src/app/services/dashboard.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-data',
@@ -32,130 +13,119 @@ import { DashboardService } from "src/app/services/dashboard.service";
   styleUrls: ['./data.page.scss'],
 })
 export class DataPage implements OnInit {
-Clinics: any = [];
-  clinic: any;
+
   doctorId: any;
-  NewClinics: any = [];
-  DelClinics: any = [];
-  Messages: any = [];
-  Children: any;
-  DashboardService: any;
-  totalChildCount: number;
-  clinicCount: any;
-  totalAlertsCount: number;
-  clinicsExist: boolean = false;
-  futureAlertsCount: number;
-  currentMonthGivenDosesCount: number = 0;
-  totalRevenue: number = 0;
+
+  // Stat cards
+  totalPatients = 0;
+  currentMonthPatients = 0;
+  currentMonthDoses = 0;
+  totalAlerts = 0;
+
+  // Monthly Revenue chart
+  revenueLabels: Label[] = [];
+  revenueData: ChartDataSets[] = [{ data: [], label: 'Revenue (PKR)' }];
+  revenueOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: { yAxes: [{ ticks: { beginAtZero: true } }] },
+    legend: { display: false }
+  };
+
+  // Monthly Doses chart
+  dosesLabels: Label[] = [];
+  dosesData: ChartDataSets[] = [{ data: [], label: 'Doses Given' }];
+  dosesOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: { yAxes: [{ ticks: { beginAtZero: true } }] },
+    legend: { display: false }
+  };
+
+  // Monthly New Patients chart
+  patientsLabels: Label[] = [];
+  patientsData: ChartDataSets[] = [{ data: [], label: 'New Patients' }];
+  patientsOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: { yAxes: [{ ticks: { beginAtZero: true } }] },
+    legend: { display: false }
+  };
+
+  // Top Vaccines chart
+  vaccinesLabels: Label[] = [];
+  vaccinesData: ChartDataSets[] = [{ data: [], label: 'Doses Given' }];
+  vaccinesOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: { xAxes: [{ ticks: { beginAtZero: true } }] },
+    legend: { display: false }
+  };
+
+  barChartType: ChartType = 'bar';
+  horizontalBarType: ChartType = 'horizontalBar';
+
+  revenueColors = [{ backgroundColor: 'rgba(21,101,192,0.75)', borderColor: 'rgba(21,101,192,1)', borderWidth: 1 }];
+  dosesColors  = [{ backgroundColor: 'rgba(46,125,50,0.75)',  borderColor: 'rgba(46,125,50,1)',  borderWidth: 1 }];
+  patientsColors = [{ backgroundColor: 'rgba(230,81,0,0.75)', borderColor: 'rgba(230,81,0,1)',   borderWidth: 1 }];
+  vaccinesColors = [{ backgroundColor: 'rgba(106,27,154,0.75)', borderColor: 'rgba(106,27,154,1)', borderWidth: 1 }];
 
   constructor(
-    private loadingController: LoadingController,
-    public clinicService: ClinicService,
-    private toastService: ToastService,
     private dashboardService: DashboardService,
+    private loadingCtrl: LoadingController,
     private storage: Storage,
-    private androidPermissions: AndroidPermissions,
-    public platform: Platform,
-    private routerOutlet: IonRouterOutlet
+    private toastService: ToastService
   ) {}
 
   async ngOnInit() {
-    await this.storage.get(environment.DOCTOR_Id).then(docId => {
-      this.doctorId = docId;
+    this.doctorId = await this.storage.get(environment.DOCTOR_Id);
+    await this.loadAll();
+  }
+
+  async loadAll() {
+    const loader = await this.loadingCtrl.create({ message: 'Loading analytics...' });
+    await loader.present();
+
+    // Load stat cards
+    this.dashboardService.getCombinedDashboardData(this.doctorId).subscribe({
+      next: (res: any) => {
+        if (res) {
+          this.totalPatients = res.TotalChildCount || 0;
+          this.currentMonthPatients = res.CurrentMonthChildCount || 0;
+          this.currentMonthDoses = res.GivenDosesCount || 0;
+          this.totalAlerts = res.TotalAlertsCount || 0;
+        }
+      },
+      error: () => {}
     });
 
-    const loading = await this.loadingController.create({ message: "Loading ..." });
-    await loading.present();
+    // Load charts
+    this.dashboardService.getAnalyticsData(this.doctorId).subscribe({
+      next: (res: any) => {
+        loader.dismiss();
+        if (!res) return;
 
-    try {
-      await this.getCombinedDashboardData();
-    //   await this.getClinics();
-    } catch (error) {
-      console.error("Error while loading dashboard data:", error);
-      this.toastService.create("Error loading dashboard data", "danger");
-    } finally {
-      loading.dismiss();
-    }
-
-    // await this.storage.get(environment.ON_CLINIC).then(clinic => {
-    //   this.clinic = clinic;
-    //   if (this.clinic) {
-    //     this.clinicService.updateClinic(this.clinic);
-    //   } else {
-    //     this.getClinics();
-    //   }
-    // });
-  }
-
-  async ionViewDidEnter() {
-    this.storage.set(environment.SMS, 1);
-    if (!this.platform.is('desktop') && !this.platform.is('mobileweb')) {
-      this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.SEND_SMS).then(
-        result => {
-          if (!result.hasPermission) {
-            this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.SEND_SMS);
-          }
+        if (res.MonthlyRevenue) {
+          this.revenueLabels = res.MonthlyRevenue.map((d: any) => d.Month);
+          this.revenueData = [{ data: res.MonthlyRevenue.map((d: any) => d.Value), label: 'Revenue (PKR)' }];
         }
-      );
-    }
-  }
-
-//   async getClinics() {
-//     return new Promise<void>((resolve, reject) => {
-//       this.clinicService.getClinics(this.doctorId).subscribe(
-//         res => {
-//           if (res.IsSuccess) {
-//             this.Clinics = res.ResponseData;
-//             this.clinicCount = this.Clinics.length;
-//             this.clinicsExist = this.clinicCount > 0;
-//             this.storage.set(environment.CLINICS, this.Clinics);
-//             for (let i = 0; i < this.Clinics.length; i++) {
-//               if (this.Clinics[i].IsOnline) {
-//                 this.storage.set(environment.CLINIC_Id, this.Clinics[i].Id);
-//                 this.storage.set(environment.ON_CLINIC, this.Clinics[i]);
-//                 this.clinicService.updateClinic(this.Clinics[i]);
-//               }
-//             }
-//             resolve();
-//           } else {
-//             this.clinicsExist = false;
-//             this.toastService.create(res.Message, "danger");
-//             reject(res.Message);
-//           }
-//         },
-//         err => {
-//           this.clinicsExist = false;
-//           this.toastService.create(err, "danger");
-//           reject(err);
-//         }
-//       );
-//     });
-//   }
-
-  async getCombinedDashboardData() {
-    debugger
-    return new Promise<void>((resolve, reject) => {
-      this.dashboardService.getCombinedDashboardData(this.doctorId).subscribe(
-        res => {
-          if (res) {
-            debugger
-            this.Children = res.CurrentMonthChildCount;
-            this.totalChildCount = res.TotalChildCount;
-            this.totalAlertsCount = res.TotalAlertsCount;
-            this.futureAlertsCount = res.FutureAlertsCount;
-            this.currentMonthGivenDosesCount = res.GivenDosesCount;
-            this.totalRevenue = res.TotalRevenue;
-            resolve();
-          } else {
-            this.toastService.create("Failed to fetch combined dashboard data", "danger");
-            reject("Unexpected response format");
-          }
-        },
-        err => {
-          this.toastService.create("Error fetching combined dashboard data", "danger");
-          reject(err);
+        if (res.MonthlyDoses) {
+          this.dosesLabels = res.MonthlyDoses.map((d: any) => d.Month);
+          this.dosesData = [{ data: res.MonthlyDoses.map((d: any) => d.Value), label: 'Doses Given' }];
         }
-      );
+        if (res.MonthlyNewPatients) {
+          this.patientsLabels = res.MonthlyNewPatients.map((d: any) => d.Month);
+          this.patientsData = [{ data: res.MonthlyNewPatients.map((d: any) => d.Value), label: 'New Patients' }];
+        }
+        if (res.TopVaccines) {
+          this.vaccinesLabels = res.TopVaccines.map((d: any) => d.BrandName);
+          this.vaccinesData = [{ data: res.TopVaccines.map((d: any) => d.Count), label: 'Doses Given' }];
+        }
+      },
+      error: () => {
+        loader.dismiss();
+        this.toastService.create('Failed to load analytics', 'danger');
+      }
     });
   }
 }

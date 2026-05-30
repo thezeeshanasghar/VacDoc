@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-analytics',
@@ -7,9 +8,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AnalyticsPage implements OnInit {
 
-  constructor() { }
+  constructor(private router: Router) {}
 
   ngOnInit() {
+    this.router.navigate(['/members/doctor/analytics/data'], { replaceUrl: true });
   }
-
 }

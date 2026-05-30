@@ -1,217 +1,112 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start"><ion-back-button defaultHref="/members/doctor/analytics"></ion-back-button></ion-buttons>
+    <ion-title>Analytics</ion-title>
+  </ion-toolbar>
+</ion-header>
 
-  <ion-content class="dashboard-content">
-    <!-- Welcome Card Section -->
-    <div class="welcome-section">
-      <ion-card class="welcome-card animated fadeIn">
-        <div class="header-image-container">
-          <ion-img src="/assets/vaccinepk.jpg" class="header-img"></ion-img>
-          <div class="welcome-overlay">
-            <h1>Welcome to Analytics Dashboard</h1>
-            <p>Manage your Analytics efficiently with real-time data</p>
-          </div>
+<ion-content class="ion-padding">
+
+  <!-- Stat Cards -->
+  <ion-grid style="padding:0 0 12px;">
+    <ion-row>
+      <ion-col size="6">
+        <div class="stat-card" style="background:linear-gradient(135deg,#0D47A1,#1565C0);">
+          <div class="stat-value">{{ totalPatients }}</div>
+          <div class="stat-label">Total Patients</div>
         </div>
-        
-        <!-- <ion-card *ngIf="!clinicsExist" class="no-clinics-card animated pulse">
-          <ion-card-content>
-            <ion-icon name="warning" class="warning-icon"></ion-icon>
-            <p class="no-clinics-text">
-              <a href="/members/doctor/clinic" class="no-underline">
-                Please add a clinic to proceed
-              </a>
-            </p>
-          </ion-card-content>
-        </ion-card> -->
-      </ion-card>
-    </div>
-  
-    <div class="stats-section">
-      <ion-grid>
-        <ion-row>
-          <ion-col size="12" size-md="6" size-lg="4">
-            <ion-card class="stats-card sales-report animated fadeInUp" style="animation-delay: 0.1s" routerLink="/members/doctor/analytics/salesreport">
-              <ion-card-header>
-                <div class="card-flex" >
-                  <div class="card-icon-container">
-                    <ion-icon name="stats-chart" class="card-icon"></ion-icon>
-                  </div>
-                  <ion-card-title style="padding: 10%;">Sales Report</ion-card-title>
-                </div>
-              </ion-card-header>
-            </ion-card>
-          </ion-col>
-          <ion-col size="12" size-md="6" size-lg="4">
-            <ion-card class="stats-card item-report animated fadeInUp" style="animation-delay: 0.1s" routerLink="/members/doctor/analytics/itemreport">
-              <ion-card-header>
-                <div class="card-flex">
-                  <div class="card-icon-container">
-                    <ion-icon name="file-tray-outline" class="card-icon"></ion-icon>
-                  </div>
-                  <ion-card-title style="padding: 10%;">Item Report</ion-card-title>
-                </div>
-              </ion-card-header>
-            </ion-card>
-          </ion-col>
-          <ion-col size="12" size-md="6" size-lg="4">
-            <ion-card class="stats-card item-purchase animated fadeInUp" style="animation-delay: 0.1s" routerLink="/members/doctor/analytics/itempurchase">
-              <ion-card-header>
-                <div class="card-flex">
-                  <div class="card-icon-container">
-                    <ion-icon name="cart-outline" class="card-icon"></ion-icon>
-                  </div>
-                  <ion-card-title style="padding: 10%;">Item Purchase</ion-card-title>
-                </div>
-              </ion-card-header>
-            </ion-card>
-          </ion-col>
-          <ion-col size="12" size-md="6" size-lg="4">
-            <ion-card class="stats-card item-supplier animated fadeInUp" style="animation-delay: 0.1s" routerLink="/members/doctor/analytics/itemsupplier">
-              <ion-card-header>
-                <div class="card-flex">
-                  <div class="card-icon-container">
-                    <ion-icon name="folder-outline" class="card-icon"></ion-icon>
-                  </div>
-                  <ion-card-title style="padding: 10%;">Item Supplier</ion-card-title>
-                </div>
-              </ion-card-header>
-            </ion-card>
-          </ion-col>
-          <ion-col size="12" size-md="6" size-lg="4">
-            <ion-card class="stats-card cross animated fadeInUp" style="animation-delay: 0.1s">
-              <ion-card-header>
-                <div class="card-flex">
-                  <div class="card-icon-container">
-                    <ion-icon name="close-outline" class="card-icon"></ion-icon>
-                  </div>
-                  <!-- <ion-card-title style="padding: 10%;"></ion-card-title> -->
-                </div>
-              </ion-card-header>
-            </ion-card>
-          </ion-col>
-          <ion-col size="12" size-md="6" size-lg="4">
-            <ion-card class="stats-card cross animated fadeInUp" style="animation-delay: 0.1s">
-              <ion-card-header>
-                <div class="card-flex">
-                  <div class="card-icon-container">
-                    <ion-icon name="close-outline" class="card-icon"></ion-icon>
-                  </div>
-                  <!-- <ion-card-title style="padding: 10%;"></ion-card-title> -->
-                </div>
-              </ion-card-header>
-            </ion-card>
-          </ion-col>
-          <ion-col size="12" size-md="6" size-lg="4">
-            <ion-card class="stats-card patient-stats animated fadeInUp">
-              <ion-card-header>
-                <div class="card-icon-container">
-                  <ion-icon name="people" class="card-icon"></ion-icon>
-                </div>
-                <ion-card-title>This Month Patients</ion-card-title>
-              </ion-card-header>
-              <ion-card-content>
-                <h2>{{ Children }}</h2>
-                <ion-progress-bar value="0.7" class="stats-progress"></ion-progress-bar>
-                <p class="stats-comparison">
-                  <ion-icon name="trending-up" class="trend-up"></ion-icon>
-                  +12% from last month
-                </p>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-          <ion-col size="12" size-md="6" size-lg="4">
-            <ion-card class="stats-card total-patients animated fadeInUp" style="animation-delay: 0.1s">
-              <ion-card-header>
-                <div class="card-icon-container">
-                  <ion-icon name="accessibility" class="card-icon"></ion-icon>
-                </div>
-                <ion-card-title>Total Patients</ion-card-title>
-              </ion-card-header>
-              <ion-card-content>
-                <h2>{{ totalChildCount }}</h2>
-                <ion-progress-bar value="0.85" class="stats-progress"></ion-progress-bar>
-                <p class="stats-comparison">
-                  <ion-icon name="trending-up" class="trend-up"></ion-icon>
-                  +24% from last year
-                </p>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-  
-          <ion-col size="12" size-md="6" size-lg="4">
-            <ion-card class="stats-card alert-stats animated fadeInUp" style="animation-delay: 0.2s">
-              <ion-card-header>
-                <div class="card-icon-container">
-                  <ion-icon name="notifications" class="card-icon"></ion-icon>
-                </div>
-                <ion-card-title>Previous Alerts</ion-card-title>
-              </ion-card-header>
-              <ion-card-content>
-                <h2>{{ totalAlertsCount }}</h2>
-                <ion-progress-bar value="0.4" class="stats-progress"></ion-progress-bar>
-                <p class="stats-comparison">
-                  <ion-icon name="time" class="trend-neutral"></ion-icon>
-                  Current Month
-                </p>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-  
-          <ion-col size="12" size-md="6" size-lg="4">
-            <ion-card class="stats-card future-alerts animated fadeInUp" style="animation-delay: 0.3s">
-              <ion-card-header>
-                <div class="card-icon-container">
-                  <ion-icon name="time" class="card-icon"></ion-icon>
-                </div>
-                <ion-card-title>Future Alerts</ion-card-title>
-              </ion-card-header>
-              <ion-card-content>
-                <h2>{{ futureAlertsCount }}</h2>
-                <ion-progress-bar value="0.6" class="stats-progress"></ion-progress-bar>
-                <p class="stats-comparison">
-                  <ion-icon name="trending-up" class="trend-up"></ion-icon>
-                  Current Month
-                </p>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-  
-          <ion-col size="12" size-md="6" size-lg="4">
-            <ion-card class="stats-card doses-stats animated fadeInUp" style="animation-delay: 0.4s">
-              <ion-card-header>
-                <div class="card-icon-container">
-                  <ion-icon name="medkit" class="card-icon"></ion-icon>
-                </div>
-                <ion-card-title>Doses Given</ion-card-title>
-              </ion-card-header>
-              <ion-card-content>
-                <h2>{{ currentMonthGivenDosesCount }}</h2>
-                <ion-progress-bar value="0.9" class="stats-progress"></ion-progress-bar>
-                <p class="stats-comparison">
-                  <ion-icon name="trending-up" class="trend-up"></ion-icon>
-                  Current Month
-                </p>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-  
-          <ion-col size="12" size-md="6" size-lg="4">
-            <ion-card class="stats-card revenue-stats animated fadeInUp" style="animation-delay: 0.5s">
-              <ion-card-header>
-                <div class="card-icon-container">
-                  <ion-icon name="cash" class="card-icon"></ion-icon>
-                </div>
-                <ion-card-title>Revenue</ion-card-title>
-              </ion-card-header>
-              <ion-card-content>
-                <h2>{{ totalRevenue | currency:'PKR ':'symbol':'1.0-0' }}</h2>
-                <ion-progress-bar value="0.75" class="stats-progress"></ion-progress-bar>
-                <p class="stats-comparison">
-                  <ion-icon name="trending-up" class="trend-up"></ion-icon>
-                  Current Month
-                </p>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </div>
-  </ion-content>
+      </ion-col>
+      <ion-col size="6">
+        <div class="stat-card" style="background:linear-gradient(135deg,#1B5E20,#2E7D32);">
+          <div class="stat-value">{{ currentMonthPatients }}</div>
+          <div class="stat-label">This Month</div>
+        </div>
+      </ion-col>
+      <ion-col size="6">
+        <div class="stat-card" style="background:linear-gradient(135deg,#E65100,#F57C00);">
+          <div class="stat-value">{{ currentMonthDoses }}</div>
+          <div class="stat-label">Doses This Month</div>
+        </div>
+      </ion-col>
+      <ion-col size="6">
+        <div class="stat-card" style="background:linear-gradient(135deg,#880E4F,#C2185B);">
+          <div class="stat-value">{{ totalAlerts }}</div>
+          <div class="stat-label">Pending Alerts</div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- Monthly Revenue -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title class="chart-title">Monthly Revenue (PKR) — Last 6 Months</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div style="position:relative; height:220px;">
+        <canvas baseChart
+          [datasets]="revenueData"
+          [labels]="revenueLabels"
+          [options]="revenueOptions"
+          [colors]="revenueColors"
+          [chartType]="barChartType">
+        </canvas>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Monthly Doses -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title class="chart-title">Doses Given — Last 6 Months</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div style="position:relative; height:220px;">
+        <canvas baseChart
+          [datasets]="dosesData"
+          [labels]="dosesLabels"
+          [options]="dosesOptions"
+          [colors]="dosesColors"
+          [chartType]="barChartType">
+        </canvas>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Monthly New Patients -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title class="chart-title">New Patients — Last 6 Months</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div style="position:relative; height:220px;">
+        <canvas baseChart
+          [datasets]="patientsData"
+          [labels]="patientsLabels"
+          [options]="patientsOptions"
+          [colors]="patientsColors"
+          [chartType]="barChartType">
+        </canvas>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Top 10 Vaccines -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title class="chart-title">Top Vaccines Administered</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div style="position:relative; height:300px;">
+        <canvas baseChart
+          [datasets]="vaccinesData"
+          [labels]="vaccinesLabels"
+          [options]="vaccinesOptions"
+          [colors]="vaccinesColors"
+          [chartType]="horizontalBarType">
+        </canvas>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
