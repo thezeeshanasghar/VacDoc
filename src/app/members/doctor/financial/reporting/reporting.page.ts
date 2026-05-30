@@ -17,10 +17,11 @@ import { ToastService } from 'src/app/shared/toast.service';
 export class ReportingPage implements OnInit {
   clinics: any[] = [];
   brands: any[] = [];
-  agents: string[] = [];
+  agents: { id: number; name: string }[] = [];
   selectedClinicId: any;
   selectedBrandId: any = null;
-  selectedAgent: any = null;
+  selectedAgent: string | null = null;
+  purchaseReportType: 'item' | 'supplier' = 'item';
   filteredBrands: any[] = [];
   brandSearchTerm = '';
   form: FormGroup;
@@ -83,9 +84,25 @@ export class ReportingPage implements OnInit {
 
   loadAgents() {
     this.stockService.getSuppliers().subscribe({
-      next: (res: any) => { this.agents = res && res.ResponseData ? res.ResponseData : []; },
+      next: (res: any) => {
+        this.agents = (res && res.ResponseData ? res.ResponseData : [])
+          .map((s: any) => ({ id: s.Id, name: s.Name }));
+      },
       error: () => {}
     });
+  }
+
+  onPurchaseTypeChange() {
+    this.selectedBrandId = null;
+    this.selectedAgent = null;
+  }
+
+  async downloadPurchaseReport() {
+    if (this.purchaseReportType === 'item') {
+      await this.getItemPurchaseReport();
+    } else {
+      await this.getSupplierReport();
+    }
   }
 
   filterBrands(term: string) {

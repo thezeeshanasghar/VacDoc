@@ -64,60 +64,59 @@
     </ion-button>
   </div>
 
-  <!-- 3. Item Purchase Report (needs brand) -->
-  <div class="report-card">
-    <div class="rc-left">
-      <div class="rc-icon" style="background: linear-gradient(135deg,#8B0000,#C62828);">
-        <ion-icon name="cart-outline"></ion-icon>
-      </div>
-      <div>
-        <div class="rc-title">Item Purchase Report</div>
-        <div class="rc-desc">Purchase history per vaccine — select brand below</div>
-      </div>
-    </div>
-    <ion-button size="small" color="danger" fill="solid" (click)="getItemPurchaseReport()">
-      <ion-icon name="download-outline" slot="start"></ion-icon>PDF
-    </ion-button>
-  </div>
+  <!-- Purchase Reports (Item-Wise / Supplier-Wise) -->
+  <ion-card style="margin-top: 12px;">
+    <ion-card-header color="danger" style="--background: linear-gradient(135deg,#8B0000,#C62828);">
+      <ion-card-title style="color:#fff; display:flex; align-items:center; gap:8px;">
+        <ion-icon name="cart-outline"></ion-icon> Purchase Report
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content style="padding-top: 12px;">
 
-  <!-- Brand selector for Item reports -->
-  <ion-item style="margin: 0 0 8px;">
-    <ion-label position="floating">Brand (for Item / Purchase reports)</ion-label>
-    <mat-form-field class="full-w">
-      <mat-select [(ngModel)]="selectedBrandId" (openedChange)="showAllBrands()"
-        placeholder="Select brand">
-        <mat-option disabled>
-          <input matInput [(ngModel)]="brandSearchTerm" (ngModelChange)="filterBrands($event)"
-            (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"
-            placeholder="Search brand" style="font-size:14px;">
-        </mat-option>
-        <mat-option *ngFor="let b of filteredBrands" [value]="b.id">{{ b.displayName }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </ion-item>
+      <!-- Segment toggle -->
+      <ion-segment [(ngModel)]="purchaseReportType" (ionChange)="onPurchaseTypeChange()" style="margin-bottom:12px;">
+        <ion-segment-button value="item">
+          <ion-label>Item Wise</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="supplier">
+          <ion-label>Supplier Wise</ion-label>
+        </ion-segment-button>
+      </ion-segment>
 
-  <!-- 4. Supplier Report (needs supplier) -->
-  <div class="report-card">
-    <div class="rc-left">
-      <div class="rc-icon" style="background: linear-gradient(135deg,#E65100,#FF4500);">
-        <ion-icon name="folder-outline"></ion-icon>
-      </div>
-      <div>
-        <div class="rc-title">Supplier Report</div>
-        <div class="rc-desc">Purchases grouped by supplier — select supplier below</div>
-      </div>
-    </div>
-    <ion-button size="small" color="tertiary" fill="solid" (click)="getSupplierReport()">
-      <ion-icon name="download-outline" slot="start"></ion-icon>PDF
-    </ion-button>
-  </div>
+      <!-- Item-wise: brand selector -->
+      <ng-container *ngIf="purchaseReportType === 'item'">
+        <ion-item lines="full" style="margin-bottom:8px;">
+          <ion-label position="floating">Select Brand</ion-label>
+          <mat-form-field class="full-w">
+            <mat-select [(ngModel)]="selectedBrandId" (openedChange)="showAllBrands()" placeholder="Select brand">
+              <mat-option disabled>
+                <input matInput [(ngModel)]="brandSearchTerm" (ngModelChange)="filterBrands($event)"
+                  (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"
+                  placeholder="Search brand" style="font-size:14px;">
+              </mat-option>
+              <mat-option *ngFor="let b of filteredBrands" [value]="b.id">{{ b.displayName }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </ion-item>
+      </ng-container>
 
-  <!-- Supplier selector -->
-  <ion-item style="margin-bottom: 16px;">
-    <ion-label position="floating">Supplier (for Supplier report)</ion-label>
-    <ion-select [(ngModel)]="selectedAgent" placeholder="Select supplier">
-      <ion-select-option *ngFor="let a of agents" [value]="a">{{ a }}</ion-select-option>
-    </ion-select>
-  </ion-item>
+      <!-- Supplier-wise: supplier selector -->
+      <ng-container *ngIf="purchaseReportType === 'supplier'">
+        <ion-item lines="full" style="margin-bottom:8px;">
+          <ion-label position="floating">Select Supplier</ion-label>
+          <ion-select [(ngModel)]="selectedAgent" placeholder="Select supplier">
+            <ion-select-option *ngFor="let a of agents" [value]="a.name">{{ a.name }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ng-container>
+
+      <div style="text-align:right; margin-top:4px;">
+        <ion-button color="danger" fill="solid" (click)="downloadPurchaseReport()">
+          <ion-icon name="download-outline" slot="start"></ion-icon>Download PDF
+        </ion-button>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
 
 </ion-content>

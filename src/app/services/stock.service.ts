@@ -52,8 +52,8 @@ export class StockService {
     return this.http.get<any>(`${this.apiUrl}stock/items-purchase-report?clinicId=${clinicId}&brandId=${brandId}&from=${fromDate}&to=${toDate}`, { observe: 'response', responseType: 'blob' as 'json' });
   }
 
-  getItemsSupplierReportFile(clinicId: number, supplier: any, fromDate: any, toDate: any): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}stock/items-supplier-report?clinicId=${clinicId}&supplier=${supplier}&from=${fromDate}&to=${toDate}`, { observe: 'response', responseType: 'blob' as 'json' });
+  getItemsSupplierReportFile(clinicId: number, supplier: string, fromDate: any, toDate: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}stock/items-supplier-report?clinicId=${clinicId}&supplier=${encodeURIComponent(supplier)}&from=${fromDate}&to=${toDate}`, { observe: 'response', responseType: 'blob' as 'json' });
   }
 
   getBills(doctorId: number, clinicId: number): Observable<any> {
