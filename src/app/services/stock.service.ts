@@ -40,6 +40,10 @@ export class StockService {
     return this.http.get<any>(`${this.apiUrl}stock/sales-report?clinicId=${clinicId}&from=${fromDate.toISOString()}&to=${toDate.toISOString()}`, { observe: 'response', responseType: 'blob' as 'json' });
   }
 
+  getSalesCollectionReportFile(clinicId: number, fromDate: Date, toDate: Date): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}stock/sales-collection-report?clinicId=${clinicId}&from=${fromDate.toISOString()}&to=${toDate.toISOString()}`, { observe: 'response', responseType: 'blob' as 'json' });
+  }
+
   getItemsReportFile(clinicId: number, brandId: number, fromDate: any, toDate: any): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}stock/items-report?clinicId=${clinicId}&brandId=${brandId}&from=${fromDate}&to=${toDate}`, { observe: 'response', responseType: 'blob' as 'json' });
   }

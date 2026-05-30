@@ -33,6 +33,10 @@ const routes: Routes = [
   {
     path: 'day-log',
     loadChildren: () => import('./day-log/day-log.module').then(m => m.DayLogPageModule)
+  },
+  {
+    path: 'sales-collection',
+    loadChildren: () => import('./sales-collection/sales-collection.module').then(m => m.SalesCollectionPageModule)
   }
 ];
 
