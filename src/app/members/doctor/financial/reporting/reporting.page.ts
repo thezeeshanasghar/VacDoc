@@ -83,7 +83,7 @@ export class ReportingPage implements OnInit {
   }
 
   loadAgents() {
-    this.stockService.getSuppliers().subscribe({
+    this.stockService.getSuppliers(Number(this.doctorId)).subscribe({
       next: (res: any) => {
         this.agents = (res && res.ResponseData ? res.ResponseData : [])
           .map((s: any) => ({ id: s.Id, name: s.Name }));

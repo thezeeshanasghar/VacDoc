@@ -32,8 +32,8 @@ export class StockService {
     return this.http.get<any>(`${this.apiUrl}stock/batch-lots?brandId=${brandId}&clinicId=${clinicId}`);
   }
 
-  getSuppliers(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}supplier`);
+  getSuppliers(doctorId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}supplier?doctorId=${doctorId}`);
   }
 
   getSalesReportFile(clinicId: number, fromDate: Date, toDate: Date): Observable<any> {
