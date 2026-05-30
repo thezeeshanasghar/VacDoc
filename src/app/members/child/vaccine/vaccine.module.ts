@@ -6,6 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { VaccinePage } from './vaccine.page';
+import { AuditPopoverComponent } from './audit-popover/audit-popover.component';
 
 import { Downloader} from '@ionic-native/downloader/ngx';
 import {MatDatepickerModule} from '@angular/material/datepicker';
@@ -34,7 +35,8 @@ const routes: Routes = [
     MatFormFieldModule,
     MatInputModule
   ],
-  declarations: [VaccinePage],
+  declarations: [VaccinePage, AuditPopoverComponent],
+  entryComponents: [AuditPopoverComponent],
   providers: [
      Downloader
   ],

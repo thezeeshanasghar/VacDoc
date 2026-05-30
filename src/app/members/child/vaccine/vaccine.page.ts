@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { LoadingController, IonContent } from "@ionic/angular";
+import { LoadingController, IonContent, PopoverController } from "@ionic/angular";
 import { VaccineService } from "src/app/services/vaccine.service";
 import { ScheduleService } from "src/app/services/schedule.service";
 import { ToastService } from "src/app/shared/toast.service";
@@ -13,6 +13,7 @@ import { Storage } from '@ionic/storage';
 import { Platform } from '@ionic/angular';
 import { FormBuilder, FormGroup } from "@angular/forms";
 import { PaService } from "src/app/services/pa.service";
+import { AuditPopoverComponent } from "./audit-popover/audit-popover.component";
 
 @Component({
   selector: "app-vaccine",
@@ -91,6 +92,7 @@ export class VaccinePage {
     private formBuilder: FormBuilder,
     private scheduleService: ScheduleService,
     private paService: PaService,
+    private popoverController: PopoverController,
   ) {
     this.type = '';
   }
@@ -869,25 +871,37 @@ this.downloadSpecialPdf();
   }
 
   async updateScheduleApproval(scheduleId: number) {
-    const loading = await this.loadingController.create({
-      message: 'approved',
-    });
+    const loading = await this.loadingController.create({ message: 'Approving…' });
     await loading.present();
-  
-  // Define the data object
     this.scheduleService.patchIsApproved(scheduleId).subscribe(
       (response: any) => {
-        // console.log('API Response:', response);
-        this.toastService.create(response.message, 'success');
         loading.dismiss();
-        this.getVaccination(); // Refresh the vaccination data
+        this.toastService.create(response.message || 'Approved', 'success');
+        // Update in-memory — no full reload needed
+        for (const key of Object.keys(this.dataGrouping)) {
+          const group = (this.dataGrouping as any)[key];
+          if (Array.isArray(group)) {
+            const row = group.find((v: any) => v.Id === scheduleId);
+            if (row) { row.IsPAApprove = true; break; }
+          }
+        }
       },
       (error) => {
-        console.error('Error updating IsPAApprove:', error);
-        this.toastService.create(error.error.message, 'danger');
         loading.dismiss();
+        this.toastService.create((error.error && error.error.message) || 'Approval failed', 'danger');
       }
     );
+  }
+
+  async showAuditPopover(event: Event, vaccine: any) {
+    const popover = await this.popoverController.create({
+      component: AuditPopoverComponent,
+      componentProps: { vaccine },
+      event,
+      translucent: true,
+      cssClass: 'audit-popover',
+    });
+    await popover.present();
   }
 
   // async UnfillVaccine(id, Data = null) {

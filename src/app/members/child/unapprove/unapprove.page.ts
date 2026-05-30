@@ -21,6 +21,7 @@ export class UnapprovePage {
   fg: FormGroup;
   childs: any = [];
   childsByPA: any[] = [];
+  filteredChilds: any[] = [];
   userId: any;
   doctorId: number;
   page: number = 0;
@@ -30,6 +31,9 @@ export class UnapprovePage {
   isSearchDisabled: boolean = false;
   clinics: any;
   selectedClinicId: any;
+  loading: boolean = false;
+  searchTerm: string = '';
+  filterPa: string = '';
 
   constructor(
     public router: Router,
@@ -120,16 +124,16 @@ export class UnapprovePage {
       message: 'Loading Unapproved Patients...',
     });
     await loading.present();
+    this.loading = true;
 
+    this.page = 0;
+    this.childs = [];
+    this.filteredChilds = [];
     if (isdelete) {
-      this.page = 0;
-      this.childs = [];
       this.search = false;
       this.fg.controls['Name'].setValue(null);
       this.isSearchDisabled = false;
     } else {
-      this.page = 0;
-      this.childs = [];
       this.infiniteScroll.disabled = false;
       this.isSearchDisabled = true;
     }
@@ -137,9 +141,12 @@ export class UnapprovePage {
     this.childService.getUnapprovedPatients(this.clinic.Id).subscribe({
       next: (res) => {
         loading.dismiss();
+        this.loading = false;
         if (res.IsSuccess) {
           this.infiniteScroll.disabled = true;
           this.childs = res.ResponseData;
+          this.searchTerm = '';
+          this.filterPa = '';
           this.buildPaGroups();
           this.search = true;
           this.isSearchDisabled = true;
@@ -151,6 +158,7 @@ export class UnapprovePage {
       },
       error: (err) => {
         loading.dismiss();
+        this.loading = false;
         this.toastService.create('Failed to fetch unapproved patients', 'danger');
         this.isSearchDisabled = false;
         console.error(err);
@@ -159,19 +167,73 @@ export class UnapprovePage {
   }
 
   buildPaGroups() {
-    var groups: any = {};
-    for (var i = 0; i < this.childs.length; i++) {
-      var child = this.childs[i];
-      var key = child.AddedByPaId ? (child.AddedByPaName || ('PA #' + child.AddedByPaId)) : 'Doctor';
+    const groups: any = {};
+    for (const child of this.childs) {
+      const key = child.AddedByPaId ? (child.AddedByPaName || ('PA #' + child.AddedByPaId)) : 'Doctor';
       if (!groups[key]) { groups[key] = []; }
       groups[key].push(child);
     }
-    var result: any[] = [];
-    var keys = Object.keys(groups);
-    for (var j = 0; j < keys.length; j++) {
-      result.push({ paName: keys[j], children: groups[keys[j]] });
+    this.childsByPA = Object.keys(groups).map(k => ({ paName: k, children: groups[k] }));
+    this.applyFilter();
+  }
+
+  applyFilter() {
+    let list = this.childs;
+    if (this.filterPa) {
+      list = list.filter((c: any) => {
+        const key = c.AddedByPaId ? (c.AddedByPaName || ('PA #' + c.AddedByPaId)) : 'Doctor';
+        return key === this.filterPa;
+      });
     }
-    this.childsByPA = result;
+    if (this.searchTerm && this.searchTerm.trim()) {
+      const term = this.searchTerm.trim().toLowerCase();
+      list = list.filter((c: any) =>
+        (c.Name || '').toLowerCase().includes(term) ||
+        (c.FatherName || '').toLowerCase().includes(term)
+      );
+    }
+    this.filteredChilds = list;
+  }
+
+  onSearch(term: string) {
+    this.searchTerm = term;
+    this.applyFilter();
+  }
+
+  clearSearch() {
+    this.searchTerm = '';
+    this.applyFilter();
+  }
+
+  togglePaFilter(paName: string) {
+    this.filterPa = this.filterPa === paName ? '' : paName;
+    this.applyFilter();
+  }
+
+  getPendingVaxCount(child: any): number {
+    if (!child.Schedules) { return 0; }
+    return child.Schedules.filter((s: any) => s.IsDone && !s.IsPAApprove).length;
+  }
+
+  async approveAllFromPa() {
+    const toApprove = this.filteredChilds.filter((c: any) => !c.IsPAApprove);
+    if (toApprove.length === 0) { return; }
+    const loading = await this.loadingController.create({ message: 'Approving all…' });
+    await loading.present();
+    let done = 0;
+    const doNext = () => {
+      if (done >= toApprove.length) {
+        loading.dismiss();
+        this.toastService.create(`${toApprove.length} patient(s) approved`, 'success');
+        this.getUnapprovedPatients(false);
+        return;
+      }
+      this.childService.approveChild(toApprove[done].Id).subscribe({
+        next: () => { done++; doNext(); },
+        error: () => { done++; doNext(); }
+      });
+    };
+    doNext();
   }
 
   getStringValue(value: any): string {

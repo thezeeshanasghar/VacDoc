@@ -76,14 +76,19 @@
         <!-- ─────────────────────────────────────────────────────────────── -->
 
         <!-- ── Vaccine Rows ────────────────────────────────────────────── -->
-        <div *ngFor="let v of item.value" class="vaccine-row" [class.vaccine-row--done]="v.IsDone && !v.Due2EPI">
+        <div *ngFor="let v of item.value"
+          class="vaccine-row"
+          [class.vaccine-row--done]="v.IsDone && !v.Due2EPI"
+          [class.vaccine-row--pending-approval]="v.IsDone && !v.Due2EPI && !v.IsPAApprove && usertype === 'DOCTOR'">
 
           <!-- Vaccine Name + Warning Badge -->
           <div class="vaccine-name">
             {{ v.Dose.Name }}
+            <!-- Audit badge — tappable, shows popover with counts -->
             <ion-badge
               *ngIf="usertype === 'DOCTOR' && (v.GiveCount == 2 || v.UngiveCount == 2 || v.SkipCount == 2 || v.UnskipCount == 2)"
-              color="warning" class="warn-badge">!</ion-badge>
+              color="warning" class="warn-badge"
+              (click)="showAuditPopover($event, v)">!</ion-badge>
           </div>
 
           <!-- Brand / EPI / Given Date -->

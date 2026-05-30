@@ -1,0 +1,32 @@
+<div class="audit-pop">
+  <div class="audit-pop-header">
+    <span class="audit-pop-title">Audit — {{ vaccine?.Dose?.Name }}</span>
+    <ion-icon name="close-outline" class="audit-pop-close" (click)="dismiss()"></ion-icon>
+  </div>
+  <div class="audit-pop-body">
+    <div class="audit-row" [class.audit-row--alert]="vaccine?.GiveCount >= 2">
+      <ion-icon name="checkmark-circle-outline" class="audit-icon audit-icon--give"></ion-icon>
+      <span class="audit-label">Given by PA</span>
+      <span class="audit-count">{{ vaccine?.GiveCount || 0 }}×</span>
+    </div>
+    <div class="audit-row" [class.audit-row--alert]="vaccine?.UngiveCount >= 2">
+      <ion-icon name="close-circle-outline" class="audit-icon audit-icon--ungive"></ion-icon>
+      <span class="audit-label">Ungiven by PA</span>
+      <span class="audit-count">{{ vaccine?.UngiveCount || 0 }}×</span>
+    </div>
+    <div class="audit-row" [class.audit-row--alert]="vaccine?.SkipCount >= 2">
+      <ion-icon name="ban-outline" class="audit-icon audit-icon--skip"></ion-icon>
+      <span class="audit-label">Skipped by PA</span>
+      <span class="audit-count">{{ vaccine?.SkipCount || 0 }}×</span>
+    </div>
+    <div class="audit-row" [class.audit-row--alert]="vaccine?.UnskipCount >= 2">
+      <ion-icon name="refresh-circle-outline" class="audit-icon audit-icon--unskip"></ion-icon>
+      <span class="audit-label">Unskipped by PA</span>
+      <span class="audit-count">{{ vaccine?.UnskipCount || 0 }}×</span>
+    </div>
+  </div>
+  <div class="audit-pop-note">
+    <ion-icon name="warning-outline"></ion-icon>
+    Any count at 2 means the PA has reached the maximum. Further changes require doctor action.
+  </div>
+</div>
