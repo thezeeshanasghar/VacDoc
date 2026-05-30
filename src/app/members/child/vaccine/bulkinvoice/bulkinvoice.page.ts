@@ -22,6 +22,7 @@ import { PaService } from "src/app/services/pa.service";
 export class BulkInvoicePage implements OnInit {
   childId: any;
   doctorId: any;
+  clinicId: any;
   currentDate: any;
   currentDate1: any;
   bulkData: any;
@@ -73,6 +74,7 @@ export class BulkInvoicePage implements OnInit {
       this.loadInvoiceStatus();
       this.loadInvoiceWarning();
     });
+    this.storage.get(environment.CLINIC_Id).then(val => { this.clinicId = val; });
     this.childId = this.activatedRoute.snapshot.paramMap.get("id");
     this.currentDate = this.activatedRoute.snapshot.paramMap.get("childId");
     // const storedInvoiceId = localStorage.getItem('invoiceId');
@@ -237,7 +239,7 @@ export class BulkInvoicePage implements OnInit {
       ChildId: Number(this.childId),
       DoctorId: Number(this.doctorId),
       PaId: this.paId ? Number(this.paId) : null,
-      ClinicId: null,
+      ClinicId: this.clinicId ? Number(this.clinicId) : null,
       InvoiceDate: this.currentDate1 || new Date(),
       ConsultationFee: consultationFee
     };
