@@ -234,7 +234,7 @@
 //               },
 //               {
 //                 title: "Analytics",
-//                 url: "/members/doctor/analytics/data",
+//                 url: "/members/doctor/analytics",
 //                 icon: "stats-chart-outline"
 //               },
 //               {
@@ -630,7 +630,7 @@ export class MembersPage implements OnInit {
             if (AllowAnalytics) {
               this.appPages.push({
                 title: "Analytics",
-                url: "/members/doctor/analytics/data",
+                url: "/members/doctor/analytics",
                 icon: "stats-chart-outline"
               });
             }
@@ -710,7 +710,7 @@ export class MembersPage implements OnInit {
             if (analyticsAllowed) {
               this.doctorPages.push({
                 title: "Analytics",
-                url: "/members/doctor/analytics/data",
+                url: "/members/doctor/analytics",
                 icon: "stats-chart-outline"
               });
             }

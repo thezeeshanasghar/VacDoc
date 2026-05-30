@@ -3,14 +3,9 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Routes, RouterModule } from "@angular/router";
 import { IonicModule } from "@ionic/angular";
-import { AnalyticsPage } from "./analytics.page";
 
 const routes: Routes = [
-  {
-    path: "",
-    component: AnalyticsPage
-  },
-  { path: 'data', loadChildren: () => import('./data/data.module').then(m => m.DataPageModule) },
+  { path: '', loadChildren: () => import('./data/data.module').then(m => m.DataPageModule) },
 ];
 
 @NgModule({
@@ -20,6 +15,6 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [AnalyticsPage]
+  declarations: []
 })
 export class AnalyticsPageModule {}
