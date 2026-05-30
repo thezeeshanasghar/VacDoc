@@ -87,22 +87,22 @@
   font-size: 18px;
 }
 
-// Individual card colours
-.card-patients       { background: linear-gradient(145deg, #0A3D79 0%, #1565C0 100%); }
-.card-add-patient    { background: linear-gradient(145deg, #01579B 0%, #0288D1 100%); }
-.card-alerts         { background: linear-gradient(145deg, #8B0000 0%, #C62828 60%, #FF4500 100%); }
-.card-unapproved     { background: linear-gradient(145deg, #B71C1C 0%, #E53935 100%); }
-.card-stock          { background: linear-gradient(145deg, #2E7D32 0%, #43A047 100%); }
-.card-analytics      { background: linear-gradient(145deg, #E65100 0%, #FF6D00 100%); }
-.card-schedule       { background: linear-gradient(145deg, #0D47A1 0%, #1E88E5 100%); }
-.card-clinic         { background: linear-gradient(145deg, #1A1A2E 0%, #37474F 100%); }
-.card-financial      { background: linear-gradient(145deg, #4527A0 0%, #7B1FA2 100%); }
-.card-assignments    { background: linear-gradient(145deg, #00695C 0%, #00897B 100%); }
-.card-vacation       { background: linear-gradient(145deg, #00838F 0%, #00ACC1 100%); }
-.card-brand-prices   { background: linear-gradient(145deg, #6A1B9A 0%, #AB47BC 100%); }
-.card-agent          { background: linear-gradient(145deg, #37474F 0%, #546E7A 100%); }
-.card-pa             { background: linear-gradient(145deg, #004D40 0%, #00796B 100%); }
-.card-password       { background: linear-gradient(145deg, #3E2723 0%, #5D4037 100%); }
+// Individual card colours — unified cool-slate palette with purposeful accents
+.card-patients       { background: linear-gradient(135deg, #1E3A5F 0%, #2D6A9F 100%); }
+.card-add-patient    { background: linear-gradient(135deg, #1B4F72 0%, #2E86C1 100%); }
+.card-alerts         { background: linear-gradient(135deg, #922B21 0%, #D44000 100%); }
+.card-unapproved     { background: linear-gradient(135deg, #8E1A1A 0%, #C0392B 100%); }
+.card-clinic         { background: linear-gradient(135deg, #1A2A40 0%, #2C3E6B 100%); }
+.card-schedule       { background: linear-gradient(135deg, #154360 0%, #1F618D 100%); }
+.card-vacation       { background: linear-gradient(135deg, #0E6655 0%, #1ABC9C 100%); }
+.card-brand-prices   { background: linear-gradient(135deg, #512E8A 0%, #7D3C98 100%); }
+.card-stock          { background: linear-gradient(135deg, #1D6A3A 0%, #27AE60 100%); }
+.card-financial      { background: linear-gradient(135deg, #4A235A 0%, #8E44AD 100%); }
+.card-pa             { background: linear-gradient(135deg, #1A4A3A 0%, #148F77 100%); }
+.card-password       { background: linear-gradient(135deg, #2C3640 0%, #4A6274 100%); }
+.card-assignments    { background: linear-gradient(135deg, #0E5E5E 0%, #17A589 100%); }
+.card-analytics      { background: linear-gradient(135deg, #7D4E00 0%, #B7770D 100%); }
+.card-agent          { background: linear-gradient(135deg, #2E3A52 0%, #4A6080 100%); }
 
 // Assignment count badge
 .assignment-badge {
