@@ -21,36 +21,6 @@
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
-      <!-- ── Patients ─────────────────────────────────────────── -->
-      <div *ngIf="showPatients" routerLink="/members/child" class="dash-card card-patients">
-        <div class="dash-card-icon">
-          <ion-icon name="accessibility-outline"></ion-icon>
-        </div>
-        <span class="dash-card-label">Patients</span>
-        <span class="dash-card-sub">View all children</span>
-        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
-      </div>
-
-      <!-- ── Add Patient (Doctor only) ────────────────────────── -->
-      <div *ngIf="!isPa" routerLink="/members/child/add" class="dash-card card-add-patient">
-        <div class="dash-card-icon">
-          <ion-icon name="person-add-outline"></ion-icon>
-        </div>
-        <span class="dash-card-label">Add Patient</span>
-        <span class="dash-card-sub">Register new child</span>
-        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
-      </div>
-
-      <!-- ── Alerts ───────────────────────────────────────────── -->
-      <div *ngIf="showAlerts" routerLink="/members/alert" class="dash-card card-alerts">
-        <div class="dash-card-icon">
-          <ion-icon name="notifications-outline"></ion-icon>
-        </div>
-        <span class="dash-card-label">Alerts</span>
-        <span class="dash-card-sub">Due & overdue vaccines</span>
-        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
-      </div>
-
       <!-- ── Unapproved (Doctor only) ─────────────────────────── -->
       <div *ngIf="!isPa" routerLink="/members/child/unapprove" class="dash-card card-unapproved">
         <div class="dash-card-icon" style="position:relative">
