@@ -28,4 +28,16 @@ export class DashboardService extends BaseService {
       catchError(this.handleError)
     );
   }
+
+  getAdvancedAnalytics(
+    doctorId: number,
+    clinicId: number,
+    from: string,
+    to: string,
+    compareFrom: string,
+    compareTo: string
+  ): Observable<any> {
+    const url = `${this.API_DASHBOARD}/advanced?doctorId=${doctorId}&clinicId=${clinicId}&from=${from}&to=${to}&compareFrom=${compareFrom}&compareTo=${compareTo}`;
+    return this.http.get<any>(url).pipe(catchError(this.handleError));
+  }
 }

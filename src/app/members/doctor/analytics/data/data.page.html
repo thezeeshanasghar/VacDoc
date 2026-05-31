@@ -7,113 +7,324 @@
 
 <ion-content class="ion-padding">
 
+  <!-- ═══════════════════════════════════════════
+       FILTER BAR
+  ════════════════════════════════════════════ -->
+  <ion-card class="filter-card">
+    <ion-card-content>
+
+      <!-- Quick presets -->
+      <div class="preset-row">
+        <button class="preset-btn" (click)="setPreset('thismonth')">This Month</button>
+        <button class="preset-btn" (click)="setPreset('lastmonth')">Last Month</button>
+        <button class="preset-btn" (click)="setPreset('thisyear')">This Year</button>
+        <button class="preset-btn" (click)="setPreset('lastyear')">Last Year</button>
+      </div>
+
+      <!-- Clinic + Date pickers -->
+      <ion-grid style="padding:0;">
+        <ion-row>
+          <ion-col size="12">
+            <ion-item lines="none" class="filter-item">
+              <ion-label position="stacked">Clinic</ion-label>
+              <ion-select [(ngModel)]="selectedClinicId" interface="popover">
+                <ion-select-option [value]="0">All Clinics</ion-select-option>
+                <ion-select-option *ngFor="let c of clinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+          <ion-col size="6">
+            <ion-item lines="none" class="filter-item">
+              <ion-label position="stacked">From</ion-label>
+              <ion-input type="date" [(ngModel)]="fromDate"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col size="6">
+            <ion-item lines="none" class="filter-item">
+              <ion-label position="stacked">To</ion-label>
+              <ion-input type="date" [(ngModel)]="toDate"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <!-- Compare period toggle -->
+      <div class="compare-row">
+        <span class="compare-label">Compare with:</span>
+        <ion-toggle [(ngModel)]="customCompare" style="margin: 0 8px;"></ion-toggle>
+        <span class="compare-label">Custom period</span>
+      </div>
+      <ion-grid *ngIf="customCompare" style="padding:0;">
+        <ion-row>
+          <ion-col size="6">
+            <ion-item lines="none" class="filter-item">
+              <ion-label position="stacked">Compare From</ion-label>
+              <ion-input type="date" [(ngModel)]="compareFrom"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col size="6">
+            <ion-item lines="none" class="filter-item">
+              <ion-label position="stacked">Compare To</ion-label>
+              <ion-input type="date" [(ngModel)]="compareTo"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      <div *ngIf="!customCompare" class="compare-auto-label">
+        Auto-comparing: {{ compareFrom }} → {{ compareTo }} (same period, prior year)
+      </div>
+
+      <ion-button expand="block" color="primary" style="margin-top:10px;" (click)="load()">
+        <ion-icon name="analytics-outline" slot="start"></ion-icon>
+        Generate Report
+      </ion-button>
+
+    </ion-card-content>
+  </ion-card>
+
   <div *ngIf="loading" class="loading-box">
-    <ion-spinner name="crescent"></ion-spinner>
-    <p>Loading analytics...</p>
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Crunching numbers...</p>
   </div>
 
-  <ng-container *ngIf="!loading">
+  <ng-container *ngIf="!loading && hasData">
 
-    <!-- Stat Cards -->
-    <ion-grid style="padding:0 0 16px;">
+    <!-- ═══════════════════════════════════════════
+         SECTION 1 — GROWTH OVERVIEW (YoY)
+    ════════════════════════════════════════════ -->
+    <div class="section-title">
+      <ion-icon name="trending-up-outline"></ion-icon> Growth Overview
+      <span class="section-sub">Current period vs comparison period</span>
+    </div>
+
+    <ion-grid style="padding:0 0 8px;">
       <ion-row>
+
+        <!-- Patients -->
         <ion-col size="6">
-          <div class="stat-card" style="background:linear-gradient(135deg,#0D47A1,#1565C0);">
-            <div class="stat-value">{{ totalPatients }}</div>
-            <div class="stat-label">Total Patients</div>
+          <div class="kpi-card" style="border-left:4px solid #1565C0;">
+            <div class="kpi-label">New Patients</div>
+            <div class="kpi-val">{{ current?.Patients | number }}</div>
+            <div class="kpi-prev">prev: {{ previous?.Patients | number }}</div>
+            <div class="kpi-delta" [ngClass]="deltaClass(current?.Patients, previous?.Patients)">
+              {{ deltaLabel(current?.Patients, previous?.Patients) }}
+            </div>
           </div>
         </ion-col>
+
+        <!-- Doses -->
         <ion-col size="6">
-          <div class="stat-card" style="background:linear-gradient(135deg,#1B5E20,#2E7D32);">
-            <div class="stat-value">{{ currentMonthPatients }}</div>
-            <div class="stat-label">This Month</div>
+          <div class="kpi-card" style="border-left:4px solid #2E7D32;">
+            <div class="kpi-label">Doses Given</div>
+            <div class="kpi-val">{{ current?.Doses | number }}</div>
+            <div class="kpi-prev">prev: {{ previous?.Doses | number }}</div>
+            <div class="kpi-delta" [ngClass]="deltaClass(current?.Doses, previous?.Doses)">
+              {{ deltaLabel(current?.Doses, previous?.Doses) }}
+            </div>
           </div>
         </ion-col>
+
+        <!-- Revenue -->
         <ion-col size="6">
-          <div class="stat-card" style="background:linear-gradient(135deg,#E65100,#F57C00);">
-            <div class="stat-value">{{ currentMonthDoses }}</div>
-            <div class="stat-label">Doses This Month</div>
+          <div class="kpi-card" style="border-left:4px solid #E65100;">
+            <div class="kpi-label">Revenue Billed *</div>
+            <div class="kpi-val">{{ fmtMoney(current?.Revenue) }}</div>
+            <div class="kpi-prev">prev: {{ fmtMoney(previous?.Revenue) }}</div>
+            <div class="kpi-delta" [ngClass]="deltaClass(current?.Revenue, previous?.Revenue)">
+              {{ deltaLabel(current?.Revenue, previous?.Revenue) }}
+            </div>
           </div>
         </ion-col>
+
+        <!-- Expense -->
         <ion-col size="6">
-          <div class="stat-card" style="background:linear-gradient(135deg,#880E4F,#C2185B);">
-            <div class="stat-value">{{ totalAlerts }}</div>
-            <div class="stat-label">Pending Alerts</div>
+          <div class="kpi-card" style="border-left:4px solid #C62828;">
+            <div class="kpi-label">Total Expense</div>
+            <div class="kpi-val">{{ fmtMoney(current?.Expense) }}</div>
+            <div class="kpi-prev">prev: {{ fmtMoney(previous?.Expense) }}</div>
+            <div class="kpi-delta" [ngClass]="deltaClass(previous?.Expense, current?.Expense)">
+              {{ deltaLabel(previous?.Expense, current?.Expense) }}
+            </div>
           </div>
         </ion-col>
+
+        <!-- Net Profit -->
+        <ion-col size="12">
+          <div class="kpi-card net-card" [style.borderLeftColor]="current?.NetProfit >= 0 ? '#1565C0' : '#C62828'">
+            <div class="kpi-label">Net Profit / Loss</div>
+            <div class="kpi-val" [style.color]="current?.NetProfit >= 0 ? '#1B5E20' : '#C62828'">
+              {{ fmtMoney(current?.NetProfit) }}
+              <span style="font-size:14px; font-weight:400;"> PKR</span>
+            </div>
+            <div class="kpi-prev">prev period: {{ fmtMoney(previous?.NetProfit) }} PKR</div>
+            <div class="kpi-delta" [ngClass]="deltaClass(current?.NetProfit, previous?.NetProfit)">
+              {{ deltaLabel(current?.NetProfit, previous?.NetProfit) }}
+            </div>
+          </div>
+        </ion-col>
+
       </ion-row>
     </ion-grid>
+    <p class="disclaimer">* Revenue Billed = vaccination charges + direct sales + consultation fees. Does not reflect actual cash collected.</p>
 
-    <!-- Monthly Revenue -->
-    <ion-card *ngIf="monthlyRevenue.length > 0">
-      <ion-card-header>
-        <ion-card-title class="chart-title">Monthly Revenue (PKR) — Last 6 Months</ion-card-title>
-      </ion-card-header>
+    <!-- ═══════════════════════════════════════════
+         SECTION 2 — INCOME vs EXPENSE BY CLINIC
+    ════════════════════════════════════════════ -->
+    <div class="section-title" *ngIf="byClinic.length > 0">
+      <ion-icon name="business-outline"></ion-icon> Income vs Expense by Clinic
+    </div>
+
+    <ion-card *ngFor="let c of byClinic" class="clinic-card">
       <ion-card-content>
-        <div class="bar-chart">
-          <div class="bar-group" *ngFor="let d of monthlyRevenue">
-            <div class="bar-fill" style="background:#1565C0;"
-              [style.height.%]="(d.value / maxValue(monthlyRevenue)) * 100"></div>
-            <div class="bar-label">{{ d.month }}</div>
-            <div class="bar-val">{{ d.value | number:'1.0-0' }}</div>
-          </div>
+        <div class="clinic-name">{{ c.ClinicName }}</div>
+        <div class="clinic-stats">
+          <span>{{ c.Doses }} doses</span>
+          <span>{{ c.Patients }} patients</span>
+          <span [style.color]="c.Net >= 0 ? '#1B5E20' : '#C62828'" style="font-weight:700;">
+            Net: {{ fmtMoney(c.Net) }}
+          </span>
+        </div>
+
+        <!-- Revenue bar -->
+        <div class="bar-label-row">
+          <span class="bar-lbl income-lbl">Revenue</span>
+          <span class="bar-amount">{{ fmtMoney(c.Revenue) }}</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill income-bar" [style.width.%]="(c.Revenue / maxClinicVal()) * 100"></div>
+        </div>
+
+        <!-- Expense bar -->
+        <div class="bar-label-row" style="margin-top:6px;">
+          <span class="bar-lbl expense-lbl">Expense</span>
+          <span class="bar-amount">{{ fmtMoney(c.Expense) }}</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill expense-bar" [style.width.%]="(c.Expense / maxClinicVal()) * 100"></div>
         </div>
       </ion-card-content>
     </ion-card>
 
-    <!-- Monthly Doses -->
-    <ion-card *ngIf="monthlyDoses.length > 0">
-      <ion-card-header>
-        <ion-card-title class="chart-title">Doses Given — Last 6 Months</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <div class="bar-chart">
-          <div class="bar-group" *ngFor="let d of monthlyDoses">
-            <div class="bar-fill" style="background:#2E7D32;"
-              [style.height.%]="(d.value / maxValue(monthlyDoses)) * 100"></div>
-            <div class="bar-label">{{ d.month }}</div>
-            <div class="bar-val">{{ d.value }}</div>
-          </div>
-        </div>
+    <!-- ═══════════════════════════════════════════
+         SECTION 3 — VACCINE PERFORMANCE
+    ════════════════════════════════════════════ -->
+    <div class="section-title" *ngIf="byVaccine.length > 0">
+      <ion-icon name="medical-outline"></ion-icon> Vaccine Performance
+      <div class="sort-row">
+        <button class="sort-btn" [class.active]="vaccineSort==='doses'"   (click)="vaccineSort='doses'">By Doses</button>
+        <button class="sort-btn" [class.active]="vaccineSort==='revenue'" (click)="vaccineSort='revenue'">By Revenue</button>
+      </div>
+    </div>
+
+    <ion-card *ngIf="byVaccine.length > 0">
+      <ion-card-content style="padding:0;">
+        <table class="vax-table">
+          <thead>
+            <tr>
+              <th>Vaccine</th>
+              <th class="num">Doses</th>
+              <th class="num">Revenue</th>
+              <th class="num">Avg Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let v of sortedVaccines(); let i = index" [class.alt]="i % 2 === 1">
+              <td>
+                <div class="vax-name">{{ v.Name }}</div>
+                <div class="vax-bar-track">
+                  <div class="vax-bar-fill"
+                    [style.width.%]="vaccineSort === 'doses'
+                      ? (v.Doses / sortedVaccines()[0].Doses) * 100
+                      : (v.Revenue / sortedVaccines()[0].Revenue) * 100">
+                  </div>
+                </div>
+              </td>
+              <td class="num">{{ v.Doses }}</td>
+              <td class="num">{{ fmtMoney(v.Revenue) }}</td>
+              <td class="num">{{ fmtMoney(v.AvgPrice) }}</td>
+            </tr>
+          </tbody>
+        </table>
       </ion-card-content>
     </ion-card>
 
-    <!-- Monthly New Patients -->
-    <ion-card *ngIf="monthlyPatients.length > 0">
-      <ion-card-header>
-        <ion-card-title class="chart-title">New Patients — Last 6 Months</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <div class="bar-chart">
-          <div class="bar-group" *ngFor="let d of monthlyPatients">
-            <div class="bar-fill" style="background:#E65100;"
-              [style.height.%]="(d.value / maxValue(monthlyPatients)) * 100"></div>
-            <div class="bar-label">{{ d.month }}</div>
-            <div class="bar-val">{{ d.value }}</div>
-          </div>
-        </div>
-      </ion-card-content>
-    </ion-card>
+    <!-- ═══════════════════════════════════════════
+         SECTION 4 — MONTHLY TREND + COMPARISON
+    ════════════════════════════════════════════ -->
+    <div class="section-title" *ngIf="monthly.length > 0">
+      <ion-icon name="bar-chart-outline"></ion-icon> Monthly Trend &amp; Comparison
+    </div>
 
-    <!-- Top Vaccines -->
-    <ion-card *ngIf="topVaccines.length > 0">
-      <ion-card-header>
-        <ion-card-title class="chart-title">Top Vaccines Administered</ion-card-title>
-      </ion-card-header>
+    <ion-card *ngIf="monthly.length > 0">
       <ion-card-content>
-        <div class="horiz-chart">
-          <div class="h-row" *ngFor="let v of topVaccines">
-            <div class="h-label">{{ v.name }}</div>
-            <div class="h-track">
-              <div class="h-fill" style="background:#6A1B9A;"
-                [style.width.%]="(v.count / topVaccines[0].count) * 100"></div>
+        <!-- Metric toggle -->
+        <div class="metric-row">
+          <button class="metric-btn" [class.active]="trendMetric==='revenue'"  (click)="trendMetric='revenue'">Revenue</button>
+          <button class="metric-btn" [class.active]="trendMetric==='expense'"  (click)="trendMetric='expense'">Expense</button>
+          <button class="metric-btn" [class.active]="trendMetric==='doses'"    (click)="trendMetric='doses'">Doses</button>
+          <button class="metric-btn" [class.active]="trendMetric==='patients'" (click)="trendMetric='patients'">Patients</button>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend-row">
+          <span class="leg cur-leg">&#9646; Current period</span>
+          <span class="leg prev-leg">&#9646; Comparison period</span>
+        </div>
+
+        <!-- Side-by-side bar chart -->
+        <div class="trend-chart">
+          <ng-container *ngFor="let m of monthly; let i = index">
+            <div class="trend-group">
+              <!-- Current bar -->
+              <div class="trend-bar cur-bar"
+                [style.height.%]="barPct(trendVal(m))"
+                [title]="m.Month + ': ' + trendVal(m)">
+              </div>
+              <!-- Previous bar -->
+              <div class="trend-bar prev-bar"
+                [style.height.%]="monthlyPrev[i] ? barPct(trendVal(monthlyPrev[i])) : 0"
+                [title]="(monthlyPrev[i]?.Month || '') + ': ' + (monthlyPrev[i] ? trendVal(monthlyPrev[i]) : 0)">
+              </div>
+              <div class="trend-lbl">{{ m.Month }}</div>
             </div>
-            <div class="h-val">{{ v.count }}</div>
-          </div>
+          </ng-container>
         </div>
+
+        <!-- Data table below chart -->
+        <div style="overflow-x:auto; margin-top:12px;">
+          <table class="trend-table">
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th class="num">Current</th>
+                <th class="num">vs Prev</th>
+                <th class="num">Δ%</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let m of monthly; let i = index">
+                <td>{{ m.Month }}</td>
+                <td class="num">{{ fmtMoney(trendVal(m)) }}</td>
+                <td class="num">{{ monthlyPrev[i] ? fmtMoney(trendVal(monthlyPrev[i])) : '—' }}</td>
+                <td class="num">
+                  <span *ngIf="monthlyPrev[i]"
+                    [ngClass]="deltaClass(trendVal(m), trendVal(monthlyPrev[i]))">
+                    {{ deltaLabel(trendVal(m), trendVal(monthlyPrev[i])) }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
       </ion-card-content>
     </ion-card>
 
   </ng-container>
+
+  <div *ngIf="!loading && !hasData" class="empty-state">
+    <ion-icon name="analytics-outline" style="font-size:48px; color:#ccc;"></ion-icon>
+    <p>Select a date range and tap <strong>Generate Report</strong></p>
+  </div>
 
 </ion-content>
