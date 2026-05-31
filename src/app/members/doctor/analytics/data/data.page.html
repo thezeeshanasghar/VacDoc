@@ -7,106 +7,113 @@
 
 <ion-content class="ion-padding">
 
-  <!-- Stat Cards -->
-  <ion-grid style="padding:0 0 12px;">
-    <ion-row>
-      <ion-col size="6">
-        <div class="stat-card" style="background:linear-gradient(135deg,#0D47A1,#1565C0);">
-          <div class="stat-value">{{ totalPatients }}</div>
-          <div class="stat-label">Total Patients</div>
-        </div>
-      </ion-col>
-      <ion-col size="6">
-        <div class="stat-card" style="background:linear-gradient(135deg,#1B5E20,#2E7D32);">
-          <div class="stat-value">{{ currentMonthPatients }}</div>
-          <div class="stat-label">This Month</div>
-        </div>
-      </ion-col>
-      <ion-col size="6">
-        <div class="stat-card" style="background:linear-gradient(135deg,#E65100,#F57C00);">
-          <div class="stat-value">{{ currentMonthDoses }}</div>
-          <div class="stat-label">Doses This Month</div>
-        </div>
-      </ion-col>
-      <ion-col size="6">
-        <div class="stat-card" style="background:linear-gradient(135deg,#880E4F,#C2185B);">
-          <div class="stat-value">{{ totalAlerts }}</div>
-          <div class="stat-label">Pending Alerts</div>
-        </div>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <div *ngIf="loading" class="loading-box">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading analytics...</p>
+  </div>
 
-  <!-- Monthly Revenue -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title class="chart-title">Monthly Revenue (PKR) — Last 6 Months</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <div style="position:relative; height:220px;">
-        <canvas baseChart
-          [datasets]="revenueData"
-          [labels]="revenueLabels"
-          [options]="revenueOptions"
-          [colors]="revenueColors"
-          [chartType]="barChartType">
-        </canvas>
-      </div>
-    </ion-card-content>
-  </ion-card>
+  <ng-container *ngIf="!loading">
 
-  <!-- Monthly Doses -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title class="chart-title">Doses Given — Last 6 Months</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <div style="position:relative; height:220px;">
-        <canvas baseChart
-          [datasets]="dosesData"
-          [labels]="dosesLabels"
-          [options]="dosesOptions"
-          [colors]="dosesColors"
-          [chartType]="barChartType">
-        </canvas>
-      </div>
-    </ion-card-content>
-  </ion-card>
+    <!-- Stat Cards -->
+    <ion-grid style="padding:0 0 16px;">
+      <ion-row>
+        <ion-col size="6">
+          <div class="stat-card" style="background:linear-gradient(135deg,#0D47A1,#1565C0);">
+            <div class="stat-value">{{ totalPatients }}</div>
+            <div class="stat-label">Total Patients</div>
+          </div>
+        </ion-col>
+        <ion-col size="6">
+          <div class="stat-card" style="background:linear-gradient(135deg,#1B5E20,#2E7D32);">
+            <div class="stat-value">{{ currentMonthPatients }}</div>
+            <div class="stat-label">This Month</div>
+          </div>
+        </ion-col>
+        <ion-col size="6">
+          <div class="stat-card" style="background:linear-gradient(135deg,#E65100,#F57C00);">
+            <div class="stat-value">{{ currentMonthDoses }}</div>
+            <div class="stat-label">Doses This Month</div>
+          </div>
+        </ion-col>
+        <ion-col size="6">
+          <div class="stat-card" style="background:linear-gradient(135deg,#880E4F,#C2185B);">
+            <div class="stat-value">{{ totalAlerts }}</div>
+            <div class="stat-label">Pending Alerts</div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
 
-  <!-- Monthly New Patients -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title class="chart-title">New Patients — Last 6 Months</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <div style="position:relative; height:220px;">
-        <canvas baseChart
-          [datasets]="patientsData"
-          [labels]="patientsLabels"
-          [options]="patientsOptions"
-          [colors]="patientsColors"
-          [chartType]="barChartType">
-        </canvas>
-      </div>
-    </ion-card-content>
-  </ion-card>
+    <!-- Monthly Revenue -->
+    <ion-card *ngIf="monthlyRevenue.length > 0">
+      <ion-card-header>
+        <ion-card-title class="chart-title">Monthly Revenue (PKR) — Last 6 Months</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="bar-chart">
+          <div class="bar-group" *ngFor="let d of monthlyRevenue">
+            <div class="bar-fill" style="background:#1565C0;"
+              [style.height.%]="(d.value / maxValue(monthlyRevenue)) * 100"></div>
+            <div class="bar-label">{{ d.month }}</div>
+            <div class="bar-val">{{ d.value | number:'1.0-0' }}</div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
 
-  <!-- Top 10 Vaccines -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title class="chart-title">Top Vaccines Administered</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <div style="position:relative; height:300px;">
-        <canvas baseChart
-          [datasets]="vaccinesData"
-          [labels]="vaccinesLabels"
-          [options]="vaccinesOptions"
-          [colors]="vaccinesColors"
-          [chartType]="horizontalBarType">
-        </canvas>
-      </div>
-    </ion-card-content>
-  </ion-card>
+    <!-- Monthly Doses -->
+    <ion-card *ngIf="monthlyDoses.length > 0">
+      <ion-card-header>
+        <ion-card-title class="chart-title">Doses Given — Last 6 Months</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="bar-chart">
+          <div class="bar-group" *ngFor="let d of monthlyDoses">
+            <div class="bar-fill" style="background:#2E7D32;"
+              [style.height.%]="(d.value / maxValue(monthlyDoses)) * 100"></div>
+            <div class="bar-label">{{ d.month }}</div>
+            <div class="bar-val">{{ d.value }}</div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Monthly New Patients -->
+    <ion-card *ngIf="monthlyPatients.length > 0">
+      <ion-card-header>
+        <ion-card-title class="chart-title">New Patients — Last 6 Months</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="bar-chart">
+          <div class="bar-group" *ngFor="let d of monthlyPatients">
+            <div class="bar-fill" style="background:#E65100;"
+              [style.height.%]="(d.value / maxValue(monthlyPatients)) * 100"></div>
+            <div class="bar-label">{{ d.month }}</div>
+            <div class="bar-val">{{ d.value }}</div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Top Vaccines -->
+    <ion-card *ngIf="topVaccines.length > 0">
+      <ion-card-header>
+        <ion-card-title class="chart-title">Top Vaccines Administered</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="horiz-chart">
+          <div class="h-row" *ngFor="let v of topVaccines">
+            <div class="h-label">{{ v.name }}</div>
+            <div class="h-track">
+              <div class="h-fill" style="background:#6A1B9A;"
+                [style.width.%]="(v.count / topVaccines[0].count) * 100"></div>
+            </div>
+            <div class="h-val">{{ v.count }}</div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+  </ng-container>
 
 </ion-content>
