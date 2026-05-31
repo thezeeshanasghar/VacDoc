@@ -114,7 +114,7 @@ export class ReportingPage implements OnInit {
     await loader.present();
     this.stockService.getSalesReportFile(this.selectedClinicId, new Date(this.fromDate), new Date(this.toDate))
       .subscribe({
-        next: (res) => { loader.dismiss(); this.downloadBlob(res, `SalesReport_${this.fromDate}_${this.toDate}.pdf`); },
+        next: (res) => { loader.dismiss(); this.downloadBlob(res.body, `SalesReport_${this.fromDate}_${this.toDate}.pdf`); },
         error: (err: any) => { loader.dismiss(); if (err.status === 404) this.toastService.create('No sales in period', 'warning'); else this.toastService.create('Failed', 'danger'); }
       });
   }
@@ -124,7 +124,7 @@ export class ReportingPage implements OnInit {
     const loader = await this.loadingCtrl.create({ message: 'Generating item report...' });
     await loader.present();
     this.stockService.getItemsReportFile(this.selectedClinicId, this.selectedBrandId, this.fromDate, this.toDate)
-      .subscribe({ next: (res) => { loader.dismiss(); this.downloadBlob(res, `ItemReport_${this.fromDate}.pdf`); }, error: () => { loader.dismiss(); this.toastService.create('Failed', 'danger'); } });
+      .subscribe({ next: (res) => { loader.dismiss(); this.downloadBlob(res.body, `ItemReport_${this.fromDate}.pdf`); }, error: () => { loader.dismiss(); this.toastService.create('Failed', 'danger'); } });
   }
 
   async getItemPurchaseReport() {
@@ -132,7 +132,7 @@ export class ReportingPage implements OnInit {
     const loader = await this.loadingCtrl.create({ message: 'Generating purchase report...' });
     await loader.present();
     this.stockService.getItemsPurchaseReportFile(this.selectedClinicId, this.selectedPurchaseBrandId, this.fromDate, this.toDate)
-      .subscribe({ next: (res) => { loader.dismiss(); this.downloadBlob(res, `PurchaseReport_${this.fromDate}.pdf`); }, error: () => { loader.dismiss(); this.toastService.create('Failed', 'danger'); } });
+      .subscribe({ next: (res) => { loader.dismiss(); this.downloadBlob(res.body, `PurchaseReport_${this.fromDate}.pdf`); }, error: () => { loader.dismiss(); this.toastService.create('Failed', 'danger'); } });
   }
 
   async getSupplierReport() {
@@ -140,15 +140,18 @@ export class ReportingPage implements OnInit {
     const loader = await this.loadingCtrl.create({ message: 'Generating supplier report...' });
     await loader.present();
     this.stockService.getItemsSupplierReportFile(this.selectedClinicId, this.selectedAgent, this.fromDate, this.toDate)
-      .subscribe({ next: (res) => { loader.dismiss(); this.downloadBlob(res, `SupplierReport_${this.fromDate}.pdf`); }, error: () => { loader.dismiss(); this.toastService.create('Failed', 'danger'); } });
+      .subscribe({ next: (res) => { loader.dismiss(); this.downloadBlob(res.body, `SupplierReport_${this.fromDate}.pdf`); }, error: () => { loader.dismiss(); this.toastService.create('Failed', 'danger'); } });
   }
 
-  private downloadBlob(blob: any, filename: string) {
+  private downloadBlob(blob: Blob, filename: string) {
+    const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href = window.URL.createObjectURL(blob);
+    link.href = url;
     link.download = filename;
+    document.body.appendChild(link);
     link.click();
-    window.URL.revokeObjectURL(link.href);
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
     this.toastService.create('Report downloaded', 'success');
   }
 }

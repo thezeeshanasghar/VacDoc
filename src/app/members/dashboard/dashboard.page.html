@@ -32,36 +32,6 @@
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
-      <!-- ── Clinic ────────────────────────────────────────────── -->
-      <div *ngIf="showClinics" routerLink="/members/doctor/clinic" class="dash-card card-clinic">
-        <div class="dash-card-icon">
-          <ion-icon name="business-outline"></ion-icon>
-        </div>
-        <span class="dash-card-label">Clinic</span>
-        <span class="dash-card-sub">Manage clinic settings</span>
-        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
-      </div>
-
-      <!-- ── Schedule ─────────────────────────────────────────── -->
-      <div *ngIf="showSchedule" routerLink="/members/doctor/schedule" class="dash-card card-schedule">
-        <div class="dash-card-icon">
-          <ion-icon name="calendar-outline"></ion-icon>
-        </div>
-        <span class="dash-card-label">Schedule</span>
-        <span class="dash-card-sub">Vaccine schedule setup</span>
-        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
-      </div>
-
-      <!-- ── Vacation ─────────────────────────────────────────── -->
-      <div *ngIf="showVacation" routerLink="/members/doctor/vacation" class="dash-card card-vacation">
-        <div class="dash-card-icon">
-          <ion-icon name="airplane-outline"></ion-icon>
-        </div>
-        <span class="dash-card-label">Vacation</span>
-        <span class="dash-card-sub">Set clinic off days</span>
-        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
-      </div>
-
       <!-- ── Brand Prices (Doctor only) ──────────────────────── -->
       <div *ngIf="!isPa" routerLink="/members/doctor/brand-prices" class="dash-card card-brand-prices">
         <div class="dash-card-icon">

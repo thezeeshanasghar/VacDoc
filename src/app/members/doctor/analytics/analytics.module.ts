@@ -1,20 +1,24 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { Routes, RouterModule } from "@angular/router";
 import { IonicModule } from "@ionic/angular";
+import { ChartsModule } from "ng2-charts";
+import { DataPage } from "./data/data.page";
 
 const routes: Routes = [
-  { path: '', loadChildren: () => import('./data/data.module').then(m => m.DataPageModule) },
+  { path: '', component: DataPage },
 ];
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     IonicModule,
+    ChartsModule,
     RouterModule.forChild(routes)
   ],
-  declarations: []
+  declarations: [DataPage]
 })
 export class AnalyticsPageModule {}
