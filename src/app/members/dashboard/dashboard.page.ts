@@ -95,14 +95,14 @@ export class DashboardPage implements OnInit {
     if (this.user && this.user.UserType === 'PA') {
       this.isPa = true;
       try {
-        const pa = await this.paService.getPa(this.user.PAId).toPromise();
-        this.showPatients  = (pa && pa.AllowChild)     || false;
-        this.showAlerts    = (pa && pa.AllowAlert)     || false;
-        this.showAnalytics = (pa && pa.AllowAnalytics) || false;
-        this.showSchedule  = (pa && pa.AllowSchedule)  || false;
-        this.showClinics   = (pa && pa.AllowClinic)    || false;
-        this.showStock     = (pa && pa.AllowStock)     || false;
-        this.showVacation  = (pa && pa.AllowVacation)  || false;
+        const perm = await this.paService.getPaPermissions(Number(this.user.PAId)).toPromise();
+        this.showPatients  = (perm && perm.SearchPatient)    || false;
+        this.showAlerts    = (perm && perm.ViewAlerts)       || false;
+        this.showAnalytics = (perm && perm.ViewAnalytics)    || false;
+        this.showSchedule  = (perm && perm.ViewSchedule)     || false;
+        this.showClinics   = (perm && perm.SetClinicOnline)  || false;
+        this.showStock     = (perm && (perm.StockSuppliers || perm.StockPurchaseBills || perm.StockOverview || perm.StockAdjust || perm.StockTransfer || perm.StockDirectSale || perm.StockReports)) || false;
+        this.showVacation  = (perm && perm.SetVacationDates) || false;
         this.showFinancial = false;
         this.showAgent     = false;
         this.showPersonalAssistant = false;

@@ -12,8 +12,8 @@
 
     <div class="stock-grid">
 
-      <!-- Suppliers — LIVE -->
-      <div routerLink="/members/doctor/stock-management/suppliers" class="stock-card card-suppliers">
+      <!-- Suppliers -->
+      <div *ngIf="showSuppliers" routerLink="/members/doctor/stock-management/suppliers" class="stock-card card-suppliers">
         <div class="stock-card-icon">
           <ion-icon name="business-outline"></ion-icon>
         </div>
@@ -22,8 +22,8 @@
         <ion-icon name="chevron-forward-outline" class="stock-card-arrow"></ion-icon>
       </div>
 
-      <!-- Purchase Bills — LIVE -->
-      <div routerLink="/members/doctor/stock-management/purchase-bills" class="stock-card card-bills">
+      <!-- Purchase Bills -->
+      <div *ngIf="showPurchaseBills" routerLink="/members/doctor/stock-management/purchase-bills" class="stock-card card-bills">
         <div class="stock-card-icon">
           <ion-icon name="receipt-outline"></ion-icon>
         </div>
@@ -32,8 +32,8 @@
         <ion-icon name="chevron-forward-outline" class="stock-card-arrow"></ion-icon>
       </div>
 
-      <!-- Stock Overview — LIVE -->
-      <div routerLink="/members/doctor/stock-management/stock-overview" class="stock-card card-overview">
+      <!-- Stock Overview -->
+      <div *ngIf="showOverview" routerLink="/members/doctor/stock-management/stock-overview" class="stock-card card-overview">
         <div class="stock-card-icon">
           <ion-icon name="cube-outline"></ion-icon>
         </div>
@@ -42,8 +42,8 @@
         <ion-icon name="chevron-forward-outline" class="stock-card-arrow"></ion-icon>
       </div>
 
-      <!-- Adjust Stock — LIVE -->
-      <div routerLink="/members/doctor/stock-management/adjust-stock" class="stock-card card-adjust">
+      <!-- Adjust Stock -->
+      <div *ngIf="showAdjust" routerLink="/members/doctor/stock-management/adjust-stock" class="stock-card card-adjust">
         <div class="stock-card-icon">
           <ion-icon name="options-outline"></ion-icon>
         </div>
@@ -52,8 +52,8 @@
         <ion-icon name="chevron-forward-outline" class="stock-card-arrow"></ion-icon>
       </div>
 
-      <!-- Stock Transfer — LIVE -->
-      <div routerLink="/members/doctor/stock-management/stock-transfer" class="stock-card card-transfer">
+      <!-- Stock Transfer -->
+      <div *ngIf="showTransfer" routerLink="/members/doctor/stock-management/stock-transfer" class="stock-card card-transfer">
         <div class="stock-card-icon">
           <ion-icon name="swap-horizontal-outline"></ion-icon>
         </div>
@@ -62,8 +62,8 @@
         <ion-icon name="chevron-forward-outline" class="stock-card-arrow"></ion-icon>
       </div>
 
-      <!-- Direct Sale — LIVE -->
-      <div routerLink="/members/doctor/stock-management/direct-sale" class="stock-card card-sale">
+      <!-- Direct Sale -->
+      <div *ngIf="showDirectSale" routerLink="/members/doctor/stock-management/direct-sale" class="stock-card card-sale">
         <div class="stock-card-icon">
           <ion-icon name="cart-outline"></ion-icon>
         </div>
@@ -72,8 +72,8 @@
         <ion-icon name="chevron-forward-outline" class="stock-card-arrow"></ion-icon>
       </div>
 
-      <!-- Reports — LIVE -->
-      <div routerLink="/members/doctor/stock-management/reports" class="stock-card card-reports">
+      <!-- Reports -->
+      <div *ngIf="showReports" routerLink="/members/doctor/stock-management/reports" class="stock-card card-reports">
         <div class="stock-card-icon">
           <ion-icon name="bar-chart-outline"></ion-icon>
         </div>
