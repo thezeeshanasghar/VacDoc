@@ -102,7 +102,7 @@ export class PayablesPage {
         this.toastService.create('Assignment cancelled', 'success');
         await this.ionViewWillEnter();
       } else {
-        this.toastService.create(res?.Message || 'Cancel failed', 'danger');
+        this.toastService.create((res && res.Message) || 'Cancel failed', 'danger');
       }
     } catch {
       this.toastService.create('Cancel failed', 'danger');
