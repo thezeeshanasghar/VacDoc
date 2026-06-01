@@ -56,6 +56,9 @@ export class VaccinePage {
   clinicId: number = null;
   clinicPAs: any[] = [];
   assignPopupOpen: boolean = false;
+  paymentPopupOpen: boolean = false;
+  paymentTargetScheduleId: number = null;
+  canCollectPayment = true;
 
   isFilledToday(doneAt: any): boolean {
     if (!doneAt) return false;
@@ -135,6 +138,7 @@ export class VaccinePage {
           this.canBulkUngive     = (perm && perm.BulkUngiveVaccines) || false;
           this.canBulkReschedule = (perm && perm.BulkReschedule)     || false;
           this.canInvoice        = (perm && perm.ManageInvoice)      || false;
+          this.canCollectPayment = (perm && perm.ManageInvoice)      || false;
           this.canAddParams      = (perm && perm.AddVaccineParams)   || false;
           this.canPrint          = (perm && perm.PrintSchedulePdf)   || false;
           this.canSkip           = (perm && perm.SkipVaccine)        || false;
@@ -1021,6 +1025,35 @@ this.downloadSpecialPdf();
 
   closeAssignPopup() {
     this.assignPopupOpen = false;
+  }
+
+  openPaymentPopup(scheduleId: number) {
+    this.paymentTargetScheduleId = scheduleId;
+    this.paymentPopupOpen = true;
+  }
+
+  closePaymentPopup() {
+    this.paymentPopupOpen = false;
+    this.paymentTargetScheduleId = null;
+  }
+
+  async submitPayment(mode: 'Cash' | 'Online') {
+    if (!this.paymentTargetScheduleId) return;
+    this.closePaymentPopup();
+    const loading = await this.loadingController.create({ message: 'Recording payment...' });
+    await loading.present();
+    this.scheduleService.markPaymentCollected(this.paymentTargetScheduleId, { PaymentMode: mode })
+      .subscribe(res => {
+        loading.dismiss();
+        if (res && res.IsSuccess) {
+          this.toastService.create('Payment recorded: ' + mode, 'success');
+        } else {
+          this.toastService.create(res.Message || 'Failed to record payment', 'danger');
+        }
+      }, () => {
+        loading.dismiss();
+        this.toastService.create('Error recording payment', 'danger');
+      });
   }
 
   doAssign(pa: any) {

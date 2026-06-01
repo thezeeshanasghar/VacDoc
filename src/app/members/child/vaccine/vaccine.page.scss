@@ -95,6 +95,7 @@ ion-buttons {
 .hdr-icon--calendar { color: #0277bd; }
 .hdr-icon--invoice  { color: #6a1b9a; }
 .hdr-icon--assign   { color: #00695c; }
+.hdr-icon--payment  { color: #2e7d32; }
 
 // Per-row calendar icon
 .row-icon {
@@ -313,6 +314,30 @@ ion-buttons {
 .assign-pa-icon { font-size: 28px; color: #1565C0; }
 .assign-pa-name { flex: 1; font-size: 15px; font-weight: 500; color: #1A1A2E; }
 .assign-pa-arrow { font-size: 16px; color: #90A4AE; }
+
+// ── Payment mode popup ────────────────────────────────────────────────────────
+.payment-mode-list { padding: 8px 0; }
+
+.payment-mode-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 20px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  min-height: 56px;
+
+  &:last-child { border-bottom: none; }
+  &:active     { background: #f5f5f5; }
+}
+
+.payment-mode-icon {
+  font-size: 24px;
+  margin-right: 14px;
+  &--cash   { color: #2e7d32; }
+  &--online { color: #1565c0; }
+}
+
+.payment-mode-label { font-size: 16px; font-weight: 500; color: #333; }
 
 // ── Desktop (≥768px) ──────────────────────────────────────────────────────────
 @media (min-width: 768px) {

@@ -62,6 +62,15 @@
               title="Create invoice for this date">
             </ion-icon>
 
+            <!-- Record Payment -->
+            <ion-icon
+              *ngIf="!checkVaccineIsDon(item.value) && canCollectPayment"
+              name="cash-outline"
+              class="hdr-icon hdr-icon--payment"
+              (click)="openPaymentPopup(item.value[0].Id)"
+              title="Record payment">
+            </ion-icon>
+
             <!-- Assign to PA (Doctor only) -->
             <ion-icon
               *ngIf="usertype === 'DOCTOR' && clinicPAs.length > 0"
@@ -197,6 +206,25 @@
     </ion-fab-button>
   </ion-fab>
 </ion-content>
+
+<!-- Payment popup -->
+<div class="assign-backdrop" *ngIf="paymentPopupOpen" (click)="closePaymentPopup()"></div>
+<div class="assign-popup" *ngIf="paymentPopupOpen">
+  <div class="assign-popup-header">
+    <span class="assign-popup-title">Record Payment</span>
+    <ion-icon name="close-outline" class="assign-popup-close" (click)="closePaymentPopup()"></ion-icon>
+  </div>
+  <div class="payment-mode-list">
+    <div class="payment-mode-row" (click)="submitPayment('Cash')">
+      <ion-icon name="cash-outline" class="payment-mode-icon payment-mode-icon--cash"></ion-icon>
+      <span class="payment-mode-label">Cash</span>
+    </div>
+    <div class="payment-mode-row" (click)="submitPayment('Online')">
+      <ion-icon name="phone-portrait-outline" class="payment-mode-icon payment-mode-icon--online"></ion-icon>
+      <span class="payment-mode-label">Online</span>
+    </div>
+  </div>
+</div>
 
 <!-- PA Assign popup -->
 <div class="assign-backdrop" *ngIf="assignPopupOpen" (click)="closeAssignPopup()"></div>
