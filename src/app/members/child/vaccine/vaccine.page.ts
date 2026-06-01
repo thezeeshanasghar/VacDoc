@@ -823,6 +823,10 @@ this.downloadSpecialPdf();
       return this.addMonths(baseDate, Math.floor(gapDays / 28));
     }
 
+    if (gapDays >= 401 && gapDays <= 460) {
+      return this.addMonths(baseDate, gapDays - 400);
+    }
+
     if (gapDays >= 395 && gapDays <= 608) {
       return this.addMonths(baseDate, Math.floor(gapDays / 29));
     }
