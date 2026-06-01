@@ -1027,6 +1027,15 @@ this.downloadSpecialPdf();
     this.assignPopupOpen = false;
   }
 
+  hasUnpaidDoneVaccine(data: any[]): boolean {
+    return data.some(v => v.IsDone && !v.Due2EPI && !v.IsPaymentCollected);
+  }
+
+  getDoneScheduleId(data: any[]): number {
+    const done = data.find(v => v.IsDone && !v.Due2EPI);
+    return done ? done.Id : data[0].Id;
+  }
+
   openPaymentPopup(scheduleId: number) {
     this.paymentTargetScheduleId = scheduleId;
     this.paymentPopupOpen = true;

@@ -64,10 +64,10 @@
 
             <!-- Record Payment -->
             <ion-icon
-              *ngIf="!checkVaccineIsDon(item.value) && canCollectPayment"
+              *ngIf="hasUnpaidDoneVaccine(item.value) && canCollectPayment"
               name="cash-outline"
               class="hdr-icon hdr-icon--payment"
-              (click)="openPaymentPopup(item.value[0].Id)"
+              (click)="openPaymentPopup(getDoneScheduleId(item.value))"
               title="Record payment">
             </ion-icon>
 
