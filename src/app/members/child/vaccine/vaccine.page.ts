@@ -59,6 +59,7 @@ export class VaccinePage {
   paymentPopupOpen: boolean = false;
   paymentTargetScheduleId: number = null;
   paymentDueAmount: number = 0;
+  consultationFee: number = 0;
   canCollectPayment = true;
 
   isFilledToday(doneAt: any): boolean {
@@ -146,11 +147,17 @@ export class VaccinePage {
           this.canUnskip         = (perm && perm.UnskipVaccine)      || false;
           this.canEditSchedule   = (perm && perm.EditVaccineSchedule)|| false;
         });
+        this.storage.get(environment.ON_CLINIC).then(clinic => {
+          if (clinic && clinic.ConsultationFee) {
+            this.consultationFee = Number(clinic.ConsultationFee) || 0;
+          }
+        });
       }
       if (user.UserType === 'DOCTOR') {
         this.doctorId = user.DoctorId ? Number(user.DoctorId) : null;
         this.storage.get(environment.ON_CLINIC).then(clinic => {
           this.clinicId = clinic ? Number(clinic.Id) : null;
+          this.consultationFee = (clinic && clinic.ConsultationFee) ? Number(clinic.ConsultationFee) : 0;
           if (this.clinicId) {
             this.paService.getPAsForClinic(this.clinicId).subscribe(res => {
               if (res && res.IsSuccess) { this.clinicPAs = res.ResponseData || []; }
@@ -1039,7 +1046,8 @@ this.downloadSpecialPdf();
 
   openPaymentPopup(scheduleId: number, groupVaccines: any[]) {
     this.paymentTargetScheduleId = scheduleId;
-    this.paymentDueAmount = groupVaccines.reduce((sum, v) => sum + (v.Amount ? Number(v.Amount) : 0), 0);
+    const vaccineTotal = groupVaccines.reduce((sum, v) => sum + (v.Amount ? Number(v.Amount) : 0), 0);
+    this.paymentDueAmount = vaccineTotal + this.consultationFee;
     this.paymentPopupOpen = true;
   }
 
