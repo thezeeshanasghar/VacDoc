@@ -1,0 +1,282 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Payment Reconciliation</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="load()" fill="clear">
+        <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="recon-page">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Payment Reconciliation</h1>
+        <p class="page-subtitle">Track and reconcile payments collected by Physician Assistants</p>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label>Clinic</label>
+        <select class="filter-select" [(ngModel)]="selectedClinicId" (change)="onClinicChange()">
+          <option [ngValue]="null">All Clinics</option>
+          <option *ngFor="let c of clinics" [ngValue]="c.Id">{{ c.Name }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Staff / PA</label>
+        <select class="filter-select" [(ngModel)]="selectedPaId" (change)="onFilterChange()">
+          <option [ngValue]="null">All Staff / PA</option>
+          <option *ngFor="let p of pas" [ngValue]="p.PaId || p.Id">{{ p.Name || p.PaName }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>From Date</label>
+        <input type="date" class="filter-input" [(ngModel)]="fromDate" (change)="onFilterChange()">
+      </div>
+
+      <div class="filter-group">
+        <label>To Date</label>
+        <input type="date" class="filter-input" [(ngModel)]="toDate" (change)="onFilterChange()">
+      </div>
+
+      <div class="filter-group filter-search">
+        <label>Search Patient</label>
+        <div class="search-wrap">
+          <ion-icon name="search-outline" class="search-icon"></ion-icon>
+          <input type="text" class="filter-input search-input" [(ngModel)]="searchQuery"
+            (input)="onSearch()" placeholder="Search by patient name...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card">
+        <div class="card-icon-wrap blue-icon">
+          <ion-icon name="wallet-outline"></ion-icon>
+        </div>
+        <div class="card-body">
+          <div class="card-label">Total Collections</div>
+          <div class="card-amount blue">PKR {{ totalCollections | number:'1.0-0' }}</div>
+          <div class="card-sub">All payments collected (Cash + Online)</div>
+        </div>
+      </div>
+
+      <div class="summary-card orange-card">
+        <div class="card-icon-wrap orange-icon">
+          <ion-icon name="cash-outline"></ion-icon>
+        </div>
+        <div class="card-body">
+          <div class="card-label">Cash Still With PA</div>
+          <div class="card-amount orange">PKR {{ cashWithPA | number:'1.0-0' }}</div>
+          <div class="card-sub warn-text">Money not yet handed over to owner</div>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="card-icon-wrap sky-icon">
+          <ion-icon name="card-outline"></ion-icon>
+        </div>
+        <div class="card-body">
+          <div class="card-label">Online Payments</div>
+          <div class="card-amount sky">PKR {{ onlinePayments | number:'1.0-0' }}</div>
+          <div class="card-sub">Online payments received (Total)</div>
+        </div>
+      </div>
+
+      <div class="summary-card green-card">
+        <div class="card-icon-wrap green-icon">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+        </div>
+        <div class="card-body">
+          <div class="card-label">Reconciled / Confirmed</div>
+          <div class="card-amount green">PKR {{ reconciledAmount | number:'1.0-0' }}</div>
+          <div class="card-sub">Payments received by owner / verified</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content: Table + Right Panel -->
+    <div class="main-content-area">
+
+      <!-- Table Section -->
+      <div class="table-section">
+
+        <!-- Bulk Action Bar -->
+        <div class="bulk-action-bar">
+          <div class="bulk-left">
+            <label class="checkbox-wrap">
+              <input type="checkbox" [checked]="allChecked"
+                (change)="toggleAll($any($event.target).checked)"
+                [disabled]="filteredRows.length === 0">
+              <span class="checkbox-label">
+                {{ selectedCount > 0 ? selectedCount + ' selected' : '0 selected' }}
+              </span>
+            </label>
+            <button class="btn-bulk-confirm" [disabled]="selectedCount === 0" (click)="bulkConfirm()">
+              <ion-icon name="checkmark-outline"></ion-icon>
+              Mark Selected Payments Received
+            </button>
+          </div>
+          <div class="bulk-right">
+            <button class="btn-refresh" (click)="load()">
+              <ion-icon name="refresh-outline"></ion-icon>
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="loading" class="table-loading">
+          <ion-spinner name="crescent"></ion-spinner>
+          <span>Loading payments...</span>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!loading && filteredRows.length === 0" class="table-empty">
+          <ion-icon name="receipt-outline"></ion-icon>
+          <p>No payments found</p>
+          <span>Try adjusting your filters or date range</span>
+        </div>
+
+        <!-- Data Table -->
+        <div class="table-wrap" *ngIf="!loading && filteredRows.length > 0">
+          <table class="recon-table">
+            <thead>
+              <tr>
+                <th class="col-check"></th>
+                <th class="col-date">Date</th>
+                <th class="col-patient">Patient Name</th>
+                <th class="col-vaccine">Vaccine(s)</th>
+                <th class="col-amount">Amount</th>
+                <th class="col-mode">Payment Mode</th>
+                <th class="col-status">Status</th>
+                <th class="col-action">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of filteredRows"
+                  [class.row-confirmed]="row.IsConfirmed"
+                  [class.row-pending]="!row.IsConfirmed">
+                <td class="col-check">
+                  <input type="checkbox"
+                    [checked]="isSelected(row)"
+                    [disabled]="row.IsConfirmed"
+                    (change)="toggleRow(row, $any($event.target).checked)"
+                    class="row-checkbox">
+                </td>
+                <td class="col-date">{{ formatDate(row.Date) }}</td>
+                <td class="col-patient">
+                  <div class="patient-name">{{ row.PatientName }}</div>
+                  <div class="patient-pa" *ngIf="row.PaName">{{ row.PaName }}</div>
+                </td>
+                <td class="col-vaccine">{{ row.Vaccines }}</td>
+                <td class="col-amount">
+                  <span class="amount-val">PKR {{ row.Amount | number:'1.0-0' }}</span>
+                </td>
+                <td class="col-mode">
+                  <span class="badge" [ngClass]="row.PaymentMode === 'Online' ? 'badge-online' : 'badge-cash'">
+                    {{ row.PaymentMode }}
+                  </span>
+                </td>
+                <td class="col-status">
+                  <ng-container *ngIf="row.IsConfirmed">
+                    <span class="badge badge-confirmed">Confirmed</span>
+                    <div class="confirm-ts">{{ formatDateTime(row.ConfirmedAt) }}</div>
+                  </ng-container>
+                  <ng-container *ngIf="!row.IsConfirmed">
+                    <span class="badge badge-pending">Pending With PA</span>
+                    <div class="pending-sub">Money Still With PA</div>
+                  </ng-container>
+                </td>
+                <td class="col-action">
+                  <div *ngIf="row.IsConfirmed" class="action-confirmed">
+                    <ion-icon name="checkmark-circle" class="icon-confirmed"></ion-icon>
+                  </div>
+                  <button *ngIf="!row.IsConfirmed" class="btn-confirm-row"
+                    (click)="confirmPayment(row)">Confirm</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Showing count -->
+        <div class="table-footer" *ngIf="!loading && filteredRows.length > 0">
+          Showing {{ filteredRows.length }} of {{ allRows.length }} entries
+        </div>
+
+      </div>
+
+      <!-- Right Panel -->
+      <div class="right-panel">
+        <div class="panel-header">Reconciliation Summary</div>
+
+        <div class="panel-meta">
+          <div class="panel-meta-row">
+            <ion-icon name="person-outline" class="panel-icon"></ion-icon>
+            <div>
+              <div class="panel-meta-label">Selected PA</div>
+              <div class="panel-meta-value">{{ selectedPaName }}</div>
+            </div>
+          </div>
+          <div class="panel-meta-row">
+            <ion-icon name="business-outline" class="panel-icon"></ion-icon>
+            <div>
+              <div class="panel-meta-label">Selected Clinic</div>
+              <div class="panel-meta-value">{{ selectedClinicName }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-stats">
+          <div class="panel-stat-row">
+            <span class="panel-stat-label">Cash Pending</span>
+            <span class="panel-stat-val orange">PKR {{ panelCashPending | number:'1.0-0' }}</span>
+          </div>
+          <div class="panel-stat-row">
+            <span class="panel-stat-label">Online Pending Verification</span>
+            <span class="panel-stat-val sky">PKR {{ panelOnlinePending | number:'1.0-0' }}</span>
+          </div>
+          <div class="panel-stat-divider"></div>
+          <div class="panel-stat-row total-row">
+            <span class="panel-stat-label-bold">Total Outstanding</span>
+            <span class="panel-stat-val-bold" [class.orange]="panelTotalOutstanding > 0" [class.green]="panelTotalOutstanding === 0">
+              PKR {{ panelTotalOutstanding | number:'1.0-0' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Outstanding Warning Card -->
+        <div class="panel-warning-card" *ngIf="panelTotalOutstanding > 0">
+          <div class="warning-header">
+            <ion-icon name="warning-outline" class="warning-icon"></ion-icon>
+            <span>Outstanding Amount</span>
+          </div>
+          <div class="warning-amount">PKR {{ panelTotalOutstanding | number:'1.0-0' }}</div>
+          <div class="warning-sub">Funds not yet reconciled with owner</div>
+        </div>
+
+        <!-- All Clear Card -->
+        <div class="panel-clear-card" *ngIf="panelTotalOutstanding === 0 && allRows.length > 0">
+          <ion-icon name="checkmark-circle-outline" class="clear-icon"></ion-icon>
+          <div class="clear-text">All Clear</div>
+          <div class="clear-sub">All payments reconciled</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ion-content>
