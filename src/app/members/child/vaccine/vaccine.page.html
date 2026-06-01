@@ -71,9 +71,9 @@
               title="Record payment">
             </ion-icon>
 
-            <!-- Assign to PA (Doctor only) -->
+            <!-- Assign to PA (Doctor only) — hidden when assignment is active -->
             <ion-icon
-              *ngIf="usertype === 'DOCTOR' && clinicPAs.length > 0"
+              *ngIf="usertype === 'DOCTOR' && clinicPAs.length > 0 && !activeAssignment"
               name="person-add-outline"
               class="hdr-icon hdr-icon--assign"
               (click)="openAssignPopup()"
