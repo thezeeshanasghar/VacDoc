@@ -13,6 +13,7 @@ import { Storage } from '@ionic/storage';
 import { Platform } from '@ionic/angular';
 import { FormBuilder, FormGroup } from "@angular/forms";
 import { PaService } from "src/app/services/pa.service";
+import { InvoiceService } from "src/app/services/invoice.service";
 import { AuditPopoverComponent } from "./audit-popover/audit-popover.component";
 
 @Component({
@@ -59,7 +60,6 @@ export class VaccinePage {
   paymentPopupOpen: boolean = false;
   paymentTargetScheduleId: number = null;
   paymentDueAmount: number = 0;
-  consultationFee: number = 0;
   canCollectPayment = true;
 
   isFilledToday(doneAt: any): boolean {
@@ -97,6 +97,7 @@ export class VaccinePage {
     private formBuilder: FormBuilder,
     private scheduleService: ScheduleService,
     private paService: PaService,
+    private invoiceService: InvoiceService,
     private popoverController: PopoverController,
   ) {
     this.type = '';
@@ -147,17 +148,11 @@ export class VaccinePage {
           this.canUnskip         = (perm && perm.UnskipVaccine)      || false;
           this.canEditSchedule   = (perm && perm.EditVaccineSchedule)|| false;
         });
-        this.storage.get(environment.ON_CLINIC).then(clinic => {
-          if (clinic && clinic.ConsultationFee) {
-            this.consultationFee = Number(clinic.ConsultationFee) || 0;
-          }
-        });
       }
       if (user.UserType === 'DOCTOR') {
         this.doctorId = user.DoctorId ? Number(user.DoctorId) : null;
         this.storage.get(environment.ON_CLINIC).then(clinic => {
           this.clinicId = clinic ? Number(clinic.Id) : null;
-          this.consultationFee = (clinic && clinic.ConsultationFee) ? Number(clinic.ConsultationFee) : 0;
           if (this.clinicId) {
             this.paService.getPAsForClinic(this.clinicId).subscribe(res => {
               if (res && res.IsSuccess) { this.clinicPAs = res.ResponseData || []; }
@@ -1046,9 +1041,17 @@ this.downloadSpecialPdf();
 
   openPaymentPopup(scheduleId: number, groupVaccines: any[]) {
     this.paymentTargetScheduleId = scheduleId;
-    const vaccineTotal = groupVaccines.reduce((sum, v) => sum + (v.Amount ? Number(v.Amount) : 0), 0);
-    this.paymentDueAmount = vaccineTotal + this.consultationFee;
+    this.paymentDueAmount = 0;
     this.paymentPopupOpen = true;
+    const doneVaccine = groupVaccines.find(v => v.IsDone && v.GivenDate);
+    if (doneVaccine) {
+      const dateStr = doneVaccine.GivenDate.toString().split('T')[0];
+      this.invoiceService.getInvoiceTotal(Number(this.childId), dateStr).subscribe(res => {
+        if (res && res.IsSuccess && res.ResponseData > 0) {
+          this.paymentDueAmount = res.ResponseData;
+        }
+      });
+    }
   }
 
   closePaymentPopup() {

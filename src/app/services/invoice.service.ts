@@ -46,6 +46,11 @@ export class InvoiceService extends BaseService {
     );
   }
 
+getInvoiceTotal(childId: number, scheduleDate: string): Observable<any> {
+    const url = `${this.API_INVOICE}Child/invoice-total?childId=${childId}&scheduleDate=${scheduleDate}`;
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
 getFee(Id: string): Observable<any> {
     const url = `${this.API_INVOICE}Child/consultation-fee/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(
