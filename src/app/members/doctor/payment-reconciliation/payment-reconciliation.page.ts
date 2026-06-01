@@ -7,7 +7,8 @@ import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 
 interface PaymentRow {
-  ScheduleId: number;
+  InvoiceSubmissionId: number;
+  ScheduleId: number;       // alias = InvoiceSubmissionId, kept for backwards compat
   Date: string;
   PatientName: string;
   Vaccines: string;
@@ -147,6 +148,7 @@ export class PaymentReconciliationPage {
           summary.forEach((pa: any) => {
             (pa.Schedules || []).forEach((s: any) => {
               rows.push({
+                InvoiceSubmissionId: s.ScheduleId,
                 ScheduleId: s.ScheduleId,
                 Date: s.Date || this.fromDate,
                 PatientName: s.ChildName || '',
@@ -166,6 +168,7 @@ export class PaymentReconciliationPage {
             const doc = res.ResponseData.DoctorEntry;
             (doc.Schedules || []).forEach((s: any) => {
               rows.push({
+                InvoiceSubmissionId: s.ScheduleId,
                 ScheduleId: s.ScheduleId,
                 Date: s.Date || this.fromDate,
                 PatientName: s.ChildName || '',
@@ -367,7 +370,7 @@ export class PaymentReconciliationPage {
         return;
       }
       const row = rows[index];
-      this.paService.verifyPayment(row.ScheduleId, this.doctorId).subscribe(
+      this.paService.confirmInvoice(row.InvoiceSubmissionId || row.ScheduleId, this.doctorId).subscribe(
         res => {
           if (res && res.IsSuccess) {
             done++;
