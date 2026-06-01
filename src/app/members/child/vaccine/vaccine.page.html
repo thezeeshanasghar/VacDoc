@@ -67,7 +67,7 @@
               *ngIf="hasUnpaidDoneVaccine(item.value) && canCollectPayment"
               name="cash-outline"
               class="hdr-icon hdr-icon--payment"
-              (click)="openPaymentPopup(getDoneScheduleId(item.value))"
+              (click)="openPaymentPopup(getDoneScheduleId(item.value), item.value)"
               title="Record payment">
             </ion-icon>
 
@@ -213,6 +213,10 @@
   <div class="assign-popup-header">
     <span class="assign-popup-title">Record Payment</span>
     <ion-icon name="close-outline" class="assign-popup-close" (click)="closePaymentPopup()"></ion-icon>
+  </div>
+  <div class="payment-due-banner" *ngIf="paymentDueAmount > 0">
+    <span class="payment-due-label">Payment Due</span>
+    <span class="payment-due-amount">{{ paymentDueAmount | number }} /-</span>
   </div>
   <div class="payment-mode-list">
     <div class="payment-mode-row" (click)="submitPayment('Cash')">

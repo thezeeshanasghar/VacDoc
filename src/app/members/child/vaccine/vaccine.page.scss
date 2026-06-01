@@ -316,6 +316,18 @@ ion-buttons {
 .assign-pa-arrow { font-size: 16px; color: #90A4AE; }
 
 // ── Payment mode popup ────────────────────────────────────────────────────────
+.payment-due-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: #f1f8e9;
+  border-bottom: 1px solid #c5e1a5;
+}
+
+.payment-due-label { font-size: 13px; color: #558b2f; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.payment-due-amount { font-size: 20px; font-weight: 700; color: #2e7d32; }
+
 .payment-mode-list { padding: 8px 0; }
 
 .payment-mode-row {

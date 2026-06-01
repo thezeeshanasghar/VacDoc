@@ -58,6 +58,7 @@ export class VaccinePage {
   assignPopupOpen: boolean = false;
   paymentPopupOpen: boolean = false;
   paymentTargetScheduleId: number = null;
+  paymentDueAmount: number = 0;
   canCollectPayment = true;
 
   isFilledToday(doneAt: any): boolean {
@@ -1036,14 +1037,16 @@ this.downloadSpecialPdf();
     return done ? done.Id : data[0].Id;
   }
 
-  openPaymentPopup(scheduleId: number) {
+  openPaymentPopup(scheduleId: number, groupVaccines: any[]) {
     this.paymentTargetScheduleId = scheduleId;
+    this.paymentDueAmount = groupVaccines.reduce((sum, v) => sum + (v.Amount ? Number(v.Amount) : 0), 0);
     this.paymentPopupOpen = true;
   }
 
   closePaymentPopup() {
     this.paymentPopupOpen = false;
     this.paymentTargetScheduleId = null;
+    this.paymentDueAmount = 0;
   }
 
   async submitPayment(mode: 'Cash' | 'Online') {
@@ -1051,11 +1054,12 @@ this.downloadSpecialPdf();
     this.closePaymentPopup();
     const loading = await this.loadingController.create({ message: 'Recording payment...' });
     await loading.present();
-    this.scheduleService.markPaymentCollected(this.paymentTargetScheduleId, { PaymentMode: mode })
+    this.scheduleService.recordPaymentMode(this.paymentTargetScheduleId, { PaymentMode: mode })
       .subscribe(res => {
         loading.dismiss();
         if (res && res.IsSuccess) {
           this.toastService.create('Payment recorded: ' + mode, 'success');
+          this.getVaccination();
         } else {
           this.toastService.create(res.Message || 'Failed to record payment', 'danger');
         }
