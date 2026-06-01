@@ -57,6 +57,7 @@
           <span class="col-name">Name &amp; ID</span>
           <span class="col-amt">Invoice Amount</span>
           <span class="col-status">Status</span>
+          <span class="col-cancel"></span>
         </div>
         <div *ngIf="newAssignments.length === 0" class="empty-state">No new assignments</div>
         <div
@@ -72,6 +73,11 @@
           <span class="col-amt">PKR {{ (a.InvoiceAmount || 0) | number }}</span>
           <span class="col-status">
             <span class="badge badge-pending">Pending</span>
+          </span>
+          <span class="col-cancel">
+            <ion-button fill="clear" color="danger" size="small" (click)="promptCancel(a, $event)">
+              <ion-icon name="close-circle-outline" slot="icon-only"></ion-icon>
+            </ion-button>
           </span>
         </div>
       </ng-container>
