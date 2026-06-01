@@ -127,14 +127,14 @@
   &:active { background: #F0F4F8; }
 }
 
-.col-sn     { width: 32px; font-weight: 700; color: #37474F; font-size: 13px; flex-shrink: 0; }
-.col-name   { flex: 1; font-size: 13px; color: #263238;
-  strong { display: block; }
+.col-sn     { width: 28px; font-weight: 700; color: #37474F; font-size: 13px; flex-shrink: 0; }
+.col-name   { flex: 1; min-width: 0; font-size: 13px; color: #263238;
+  strong { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .pid-tag { font-size: 11px; color: #90A4AE; }
 }
-.col-amt    { width: 100px; text-align: right; font-size: 13px; color: #37474F; font-weight: 500; flex-shrink: 0; }
-.col-status { width: 80px; text-align: right; flex-shrink: 0; }
-.col-cancel { width: 40px; text-align: center; flex-shrink: 0; }
+.col-amt    { width: 120px; text-align: right; font-size: 13px; color: #37474F; font-weight: 600; flex-shrink: 0; }
+.col-status { width: 90px; display: flex; justify-content: flex-end; align-items: center; flex-shrink: 0; }
+.col-cancel { width: 36px; text-align: center; flex-shrink: 0; }
 
 // ── Badges ──────────────────────────────────────────────────────────────────
 .badge {
