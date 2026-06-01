@@ -10,24 +10,13 @@
 
     <div class="dash-grid">
 
-      <!-- ── PA ONLY: My Payables ──────────────────────────────── -->
+      <!-- ── PA ONLY: Assignments & Payments ───────────────────── -->
       <div *ngIf="isPa" routerLink="/members/pa/payables" class="dash-card card-payables">
         <div class="dash-card-icon">
           <ion-icon name="wallet-outline"></ion-icon>
         </div>
-        <span class="dash-card-label">My Payables</span>
-        <span class="dash-card-sub">Cash handover summary</span>
-        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
-      </div>
-
-      <!-- ── PA ONLY: Assignments ─────────────────────────────── -->
-      <div *ngIf="isPa" routerLink="/members/pa/assignments" class="dash-card card-assignments">
-        <div class="dash-card-icon" style="position:relative">
-          <ion-icon name="clipboard-outline"></ion-icon>
-          <span *ngIf="assignmentCount > 0" class="assignment-badge">{{ assignmentCount }}</span>
-        </div>
-        <span class="dash-card-label">Assignments</span>
-        <span class="dash-card-sub">Tasks from your doctor</span>
+        <span class="dash-card-label">Assignments & Payments</span>
+        <span class="dash-card-sub">Tasks &amp; cash handover</span>
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 

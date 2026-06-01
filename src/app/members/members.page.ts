@@ -545,7 +545,7 @@ export class MembersPage implements OnInit {
         const perm = await this.paService.getPaPermissions(Number(id)).toPromise();
         if (perm) {
           return {
-            AllowStock: perm.ViewStock || false,
+            AllowStock: (perm.StockSuppliers || perm.StockPurchaseBills || perm.StockOverview || perm.StockAdjust || perm.StockTransfer || perm.StockDirectSale || perm.StockReports) || false,
             AllowAlert: perm.ViewAlerts || false,
             AllowSchedule: perm.ViewSchedule || false,
             AllowVacation: perm.SetVacationDates || false,
@@ -654,13 +654,7 @@ export class MembersPage implements OnInit {
             }
 
             this.appPages.push({
-              title: "Assignments",
-              url: "/members/pa/assignments",
-              icon: "clipboard-outline"
-            });
-
-            this.appPages.push({
-              title: "My Payables",
+              title: "Assignments & Payments",
               url: "/members/pa/payables",
               icon: "wallet-outline"
             });
