@@ -42,19 +42,33 @@ export class AssignmentsPage {
     );
   }
 
-  async confirmComplete(assignmentId: number, name: string) {
-    const alert = await this.alertController.create({
-      header: 'Mark Complete',
-      message: `Mark assignment for ${name} as done?`,
-      buttons: [
-        { text: 'Cancel', role: 'cancel' },
-        {
-          text: 'Complete',
-          handler: () => { this.completeAssignment(assignmentId); }
-        }
-      ]
-    });
-    await alert.present();
+  hasUnpaidSchedules(a: any): boolean {
+    if (!a.Schedules || !Array.isArray(a.Schedules)) { return false; }
+    return a.Schedules.some(function(s) { return !s.IsPaymentCollected; });
+  }
+
+  getMissingGrowthVaccines(a: any): string[] {
+    if (!a.Schedules || !Array.isArray(a.Schedules)) { return []; }
+    return a.Schedules
+      .filter(function(s) { return !s.Weight && !s.Height && !s.Circle; })
+      .map(function(s) { return s.DoseName || 'Unknown'; });
+  }
+
+  async confirmComplete(assignment: any) {
+    const missingGrowth = this.getMissingGrowthVaccines(assignment);
+    if (missingGrowth.length > 0) {
+      const alert = await this.alertController.create({
+        header: 'Growth Not Recorded',
+        message: 'Growth parameters not entered for: ' + missingGrowth.join(', ') + '. Continue anyway?',
+        buttons: [
+          { text: 'Go Back', role: 'cancel' },
+          { text: 'Complete Anyway', handler: () => { this.completeAssignment(assignment.AssignmentId); } }
+        ]
+      });
+      await alert.present();
+    } else {
+      this.completeAssignment(assignment.AssignmentId);
+    }
   }
 
   async completeAssignment(assignmentId: number) {
@@ -65,7 +79,7 @@ export class AssignmentsPage {
         loading.dismiss();
         if (res && res.IsSuccess) {
           this.toastService.create('Assignment completed', 'success');
-          this.assignments = this.assignments.filter(a => a.AssignmentId !== assignmentId);
+          this.assignments = this.assignments.filter(function(a) { return a.AssignmentId !== assignmentId; });
         } else {
           this.toastService.create(res.Message || 'Failed to complete', 'danger');
         }

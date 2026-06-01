@@ -95,6 +95,18 @@
   }
 }
 
+// ── Payment pending badge ─────────────────────────────────────────────────────
+.payment-pending-badge {
+  font-size: 11px;
+  padding: 3px 8px;
+  margin: 4px 0 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  ion-icon { font-size: 12px; }
+}
+
 // ── Assignment notes ──────────────────────────────────────────────────────────
 .assignment-notes {
   margin-top: 8px;

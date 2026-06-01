@@ -27,7 +27,7 @@
         <ion-icon
           name="checkmark-done-circle-outline"
           class="iconchild complete-icon"
-          (click)="confirmComplete(a.AssignmentId, a.Name)">
+          (click)="confirmComplete(a)">
         </ion-icon>
         <ion-icon
           name="close-circle-outline"
@@ -41,8 +41,10 @@
       <ion-icon name="person"></ion-icon> {{ a.FatherName }}
       &nbsp;&nbsp;
       <ion-icon name="calendar"></ion-icon> {{ a.DOB | date:'dd MMM yyyy' }}
-      &nbsp;&nbsp;
-      <ion-icon name="call"></ion-icon> {{ a.MobileNumber }}
+      <br>
+      <ion-badge color="warning" *ngIf="hasUnpaidSchedules(a)" class="payment-pending-badge">
+        <ion-icon name="cash-outline"></ion-icon> Payment Pending
+      </ion-badge>
       <br>
       <ion-button size="small" fill="outline" color="primary"
         routerLink="/members/child/vaccine/{{ a.ChildId }}">
