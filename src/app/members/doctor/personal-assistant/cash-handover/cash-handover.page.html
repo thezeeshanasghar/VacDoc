@@ -30,6 +30,29 @@
       </ion-card-content>
     </ion-card>
 
+    <!-- My Outstanding Summary -->
+    <ion-card *ngIf="myRecon" class="recon-summary-card">
+      <ion-card-header>
+        <ion-card-subtitle>My Payment Summary (All Time)</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="recon-row">
+          <span class="recon-label">Total Collected</span>
+          <span class="recon-val">Rs. {{ myRecon.TotalCollected | number:'1.0-0' }}</span>
+        </div>
+        <div class="recon-row">
+          <span class="recon-label">Confirmed by Doctor</span>
+          <span class="recon-val recon-green">Rs. {{ myRecon.TotalConfirmed | number:'1.0-0' }}</span>
+        </div>
+        <div class="recon-row recon-row-total">
+          <span class="recon-label-bold">Still Pending</span>
+          <span class="recon-val-bold" [style.color]="myRecon.TotalPending > 0 ? '#E65100' : '#2e7d32'">
+            Rs. {{ myRecon.TotalPending | number:'1.0-0' }}
+          </span>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
     <ion-list-header>
       <ion-label>Handover History</ion-label>
     </ion-list-header>

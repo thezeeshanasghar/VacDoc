@@ -1,3 +1,26 @@
+.recon-summary-card {
+  margin-bottom: 8px;
+}
+
+.recon-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 13px;
+}
+
+.recon-row-total {
+  border-top: 1px solid #eee;
+  margin-top: 6px;
+  padding-top: 8px;
+}
+
+.recon-label       { color: #555; }
+.recon-label-bold  { font-weight: 700; color: #333; }
+.recon-val         { font-weight: 600; }
+.recon-val-bold    { font-weight: 700; font-size: 15px; }
+.recon-green       { color: #2e7d32; }
+
 .rejected-banner {
   display: flex;
   align-items: flex-start;

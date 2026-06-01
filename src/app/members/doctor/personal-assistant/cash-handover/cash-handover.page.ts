@@ -3,6 +3,7 @@ import { LoadingController, AlertController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
 import { PaCashHandoverService } from 'src/app/services/pa-cash-handover.service';
+import { PaService } from 'src/app/services/pa.service';
 import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
@@ -19,12 +20,14 @@ export class CashHandoverPage {
   handovers: any[] = [];
   pendingHandovers: any[] = [];
   isDoctorView: boolean = false;
+  myRecon: { TotalCollected: number; TotalConfirmed: number; TotalPending: number } = null;
 
   constructor(
     private loadingController: LoadingController,
     private alertController: AlertController,
     private storage: Storage,
     private cashHandoverService: PaCashHandoverService,
+    private paService: PaService,
     private toastService: ToastService
   ) {}
 
@@ -42,6 +45,7 @@ export class CashHandoverPage {
             this.doctorId = docId ? Number(docId) : null;
             this.loadCashInHand();
             this.loadHistory();
+            this.loadMyReconciliation();
           });
         });
       } else if (user.UserType === 'DOCTOR') {
@@ -78,6 +82,18 @@ export class CashHandoverPage {
         }
       },
       (err) => {}
+    );
+  }
+
+  loadMyReconciliation() {
+    if (!this.paId || !this.clinicId) { return; }
+    this.paService.getMyReconciliation(this.paId, this.clinicId).subscribe(
+      res => {
+        if (res && res.IsSuccess && res.ResponseData) {
+          this.myRecon = res.ResponseData;
+        }
+      },
+      () => {}
     );
   }
 
