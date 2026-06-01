@@ -108,6 +108,20 @@ export class PersonalAssistantPage implements OnInit {
     });
   }
 
+  async toggleVerify(pa: any) {
+    const loading = await this.loadingController.create({ message: pa.IsVerified ? 'Revoking approval...' : 'Approving...' });
+    await loading.present();
+    this.paService.togglePaVerify(pa.Id).subscribe({
+      next: () => {
+        loading.dismiss();
+        pa.IsVerified = !pa.IsVerified;
+        const status = pa.IsVerified ? 'approved' : 'unapproved';
+        this.toastService.create('PA ' + status + ' successfully', 'success');
+      },
+      error: () => { loading.dismiss(); this.toastService.create('Failed to update approval status', 'danger'); }
+    });
+  }
+
   async deletepa(Id: number) {
     const loading = await this.loadingController.create({
       message: "Delete PA...",

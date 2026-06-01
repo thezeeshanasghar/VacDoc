@@ -137,6 +137,11 @@ export class PaService extends BaseService {
     return this.http.put(url, {}, this.httpOptions).pipe(catchError(this.handleError));
   }
 
+  togglePaVerify(paId: number): Observable<any> {
+    const url = `${this.API_PA}PersonalAssistant/${paId}/toggle-verify`;
+    return this.http.put(url, {}, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
   updatePaClinicOnlineStatus(paAccessId: number, isOnline: boolean): Observable<any> {
     const url = `${this.API_PA}PAAccess/${paAccessId}/isonline`;
     return this.http.put(url, isOnline, this.httpOptions).pipe(

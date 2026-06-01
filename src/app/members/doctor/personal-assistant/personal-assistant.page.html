@@ -57,6 +57,13 @@
         {{ pa.IsActive ? 'Active' : 'Inactive' }}
       </ion-button>
 
+      <ion-button fill="outline" size="small"
+        [color]="pa.IsVerified ? 'warning' : 'danger'"
+        (click)="toggleVerify(pa)">
+        <ion-icon [name]="pa.IsVerified ? 'shield-checkmark-outline' : 'shield-outline'" slot="start"></ion-icon>
+        {{ pa.IsVerified ? 'Approved' : 'Not Approved' }}
+      </ion-button>
+
       <ion-button fill="outline" size="small" color="primary" (click)="navigateToEdit(pa)">
         <ion-icon name="create-outline" slot="start"></ion-icon>
         Edit
