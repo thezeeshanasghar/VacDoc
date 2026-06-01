@@ -531,31 +531,30 @@ export class MembersPage implements OnInit {
     }
   }
 
-  async checkPermissions(id: string): Promise<{ 
-    AllowStock: boolean; 
-    AllowAlert: boolean; 
-    AllowSchedule: boolean; 
-    AllowVacation: boolean; 
-    AllowAnalytics: boolean; 
+  async checkPermissions(id: string): Promise<{
+    AllowStock: boolean;
+    AllowAlert: boolean;
+    AllowSchedule: boolean;
+    AllowVacation: boolean;
+    AllowAnalytics: boolean;
     AllowClinic: boolean;
     AllowChild: boolean;
   }> {
     try {
       if (this.user.UserType === "PA") {
-        const hasPermission = await this.paService.getPa(id).toPromise();
-        if (hasPermission) {
+        const perm = await this.paService.getPaPermissions(Number(id)).toPromise();
+        if (perm) {
           return {
-            AllowStock: hasPermission.AllowStock || false,
-            AllowAlert: hasPermission.AllowAlert || false,
-            AllowSchedule: hasPermission.AllowSchedule || false,
-            AllowVacation: hasPermission.AllowVacation || false,
-            AllowAnalytics: hasPermission.AllowAnalytics || false,
-            AllowClinic: hasPermission.AllowClinic || false,
-            AllowChild: hasPermission.AllowChild || false,
+            AllowStock: perm.ViewStock || false,
+            AllowAlert: perm.ViewAlerts || false,
+            AllowSchedule: perm.ViewSchedule || false,
+            AllowVacation: perm.SetVacationDates || false,
+            AllowAnalytics: perm.ViewAnalytics || false,
+            AllowClinic: perm.SetClinicOnline || false,
+            AllowChild: perm.SearchPatient || false,
           };
         }
       }
-      // Return default values if no permissions are found
       return {
         AllowStock: false,
         AllowAlert: false,
@@ -567,7 +566,6 @@ export class MembersPage implements OnInit {
       };
     } catch (error) {
       console.error('Error checking permissions:', error);
-      // Return default values in case of an error
       return {
         AllowStock: false,
         AllowAlert: false,
@@ -659,6 +657,12 @@ export class MembersPage implements OnInit {
               title: "Assignments",
               url: "/members/pa/assignments",
               icon: "clipboard-outline"
+            });
+
+            this.appPages.push({
+              title: "My Payables",
+              url: "/members/pa/payables",
+              icon: "wallet-outline"
             });
 
           } else if (this.hasClinics) {

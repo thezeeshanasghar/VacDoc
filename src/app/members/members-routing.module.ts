@@ -31,6 +31,10 @@ const routes: Routes = [
       {
         path: 'pa/assignments',
         loadChildren: () => import('./pa/assignments/assignments.module').then(m => m.AssignmentsPageModule)
+      },
+      {
+        path: 'pa/payables',
+        loadChildren: () => import('./pa/payables/payables.module').then(m => m.PayablesPageModule)
       }
     ]
   },

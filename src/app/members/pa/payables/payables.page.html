@@ -1,0 +1,109 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>My Payables</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="payables-content">
+  <div class="pay-wrap">
+
+    <!-- KPI Cards -->
+    <div class="kpi-row">
+      <div class="kpi-card kpi-blue">
+        <div class="kpi-icon-wrap kpi-icon-blue">
+          <ion-icon name="wallet-outline"></ion-icon>
+        </div>
+        <div class="kpi-body">
+          <p class="kpi-label">TOTAL AMOUNT PAYABLE</p>
+          <p class="kpi-value">PKR {{ totalPayable | number }}</p>
+          <p class="kpi-sub">Completed visits value</p>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-green">
+        <div class="kpi-icon-wrap kpi-icon-green">
+          <ion-icon name="clipboard-outline"></ion-icon>
+        </div>
+        <div class="kpi-body">
+          <p class="kpi-label">PENDING ASSIGNMENTS</p>
+          <p class="kpi-value kpi-value-green">{{ pendingCount }}</p>
+          <p class="kpi-sub">Visits still pending</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-row">
+      <button class="tab-btn" [class.tab-active]="activeTab === 'new'" (click)="activeTab = 'new'">
+        <ion-icon name="clipboard-outline"></ion-icon>
+        New Assignments
+      </button>
+      <button class="tab-btn" [class.tab-active]="activeTab === 'completed'" (click)="activeTab = 'completed'">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+        Completed (Pending Cash Handover)
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+
+      <!-- New Assignments Tab -->
+      <ng-container *ngIf="activeTab === 'new'">
+        <div class="table-header">
+          <span class="col-sn">S#</span>
+          <span class="col-name">Name &amp; ID</span>
+          <span class="col-amt">Invoice Amount</span>
+          <span class="col-status">Status</span>
+        </div>
+        <div *ngIf="newAssignments.length === 0" class="empty-state">No new assignments</div>
+        <div
+          *ngFor="let a of newAssignments; let i = index"
+          class="table-row"
+          (click)="goToSchedule(a.ChildId)"
+        >
+          <span class="col-sn">{{ i + 1 }}</span>
+          <span class="col-name">
+            <strong>{{ a.Name }}</strong>
+            <span class="pid-tag">({{ formatMR(a.ChildId) }})</span>
+          </span>
+          <span class="col-amt">PKR {{ (a.InvoiceAmount || 0) | number }}</span>
+          <span class="col-status">
+            <span class="badge badge-pending">Pending</span>
+          </span>
+        </div>
+      </ng-container>
+
+      <!-- Completed Tab -->
+      <ng-container *ngIf="activeTab === 'completed'">
+        <div class="table-header">
+          <span class="col-sn">S#</span>
+          <span class="col-name">Name &amp; ID</span>
+          <span class="col-amt">Invoice Amount</span>
+          <span class="col-status">Status</span>
+        </div>
+        <div *ngIf="completedRows.length === 0" class="empty-state">No completed invoices pending handover</div>
+        <div
+          *ngFor="let r of completedRows; let i = index"
+          class="table-row"
+          (click)="goToSchedule(r.ChildId)"
+        >
+          <span class="col-sn">{{ i + 1 }}</span>
+          <span class="col-name">
+            <strong>{{ r.PatientName }}</strong>
+            <span class="pid-tag">({{ formatMR(r.ChildId) }})</span>
+          </span>
+          <span class="col-amt">PKR {{ r.Amount | number }}</span>
+          <span class="col-status">
+            <span class="badge" [class.badge-done]="r.IsConfirmed" [class.badge-pending]="!r.IsConfirmed">
+              {{ r.IsConfirmed ? 'Done' : 'Pending' }}
+            </span>
+          </span>
+        </div>
+      </ng-container>
+
+    </div>
+  </div>
+</ion-content>

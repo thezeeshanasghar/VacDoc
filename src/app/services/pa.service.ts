@@ -246,8 +246,9 @@ export class PaService extends BaseService {
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  getMyReconciliation(paId: number, clinicId: number): Observable<any> {
-    const url = `${this.API_PA}PaCashHandover/my-reconciliation/${paId}/${clinicId}`;
+  getMyReconciliation(paId: number, clinicId?: number): Observable<any> {
+    let url = `${this.API_PA}PaCashHandover/my-reconciliation/${paId}`;
+    if (clinicId) url += `?clinicId=${clinicId}`;
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 

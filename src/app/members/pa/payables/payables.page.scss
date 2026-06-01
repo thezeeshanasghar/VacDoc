@@ -1,0 +1,174 @@
+.payables-content {
+  --background: #F0F4F8;
+}
+
+.pay-wrap {
+  padding: 20px 16px 32px;
+}
+
+// ── KPI Cards ───────────────────────────────────────────────────────────────
+.kpi-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.kpi-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+
+.kpi-icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  ion-icon { font-size: 26px; }
+}
+
+.kpi-icon-blue { background: #E8F0FC; ion-icon { color: #1565C0; } }
+.kpi-icon-green { background: #E8F5E9; ion-icon { color: #2E7D32; } }
+
+.kpi-body { flex: 1; min-width: 0; }
+
+.kpi-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #78909C;
+  letter-spacing: 0.5px;
+  margin: 0 0 4px;
+  text-transform: uppercase;
+}
+
+.kpi-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1565C0;
+  margin: 0 0 2px;
+  line-height: 1.1;
+}
+
+.kpi-value-green { color: #2E7D32; }
+
+.kpi-sub {
+  font-size: 11px;
+  color: #90A4AE;
+  margin: 0;
+}
+
+// ── Tabs ────────────────────────────────────────────────────────────────────
+.tab-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 8px;
+  border-radius: 50px;
+  border: 2px solid #1565C0;
+  background: transparent;
+  color: #1565C0;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  ion-icon { font-size: 16px; }
+
+  &.tab-active {
+    background: #1565C0;
+    color: #fff;
+  }
+}
+
+// ── Table ───────────────────────────────────────────────────────────────────
+.table-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+
+.table-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #ECEFF1;
+  font-size: 12px;
+  font-weight: 600;
+  color: #546E7A;
+}
+
+.table-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid #F5F7FA;
+  cursor: pointer;
+  transition: background 0.12s;
+
+  &:last-child { border-bottom: none; }
+  &:active { background: #F0F4F8; }
+}
+
+.col-sn     { width: 32px; font-weight: 700; color: #37474F; font-size: 13px; flex-shrink: 0; }
+.col-name   { flex: 1; font-size: 13px; color: #263238;
+  strong { display: block; }
+  .pid-tag { font-size: 11px; color: #90A4AE; }
+}
+.col-amt    { width: 100px; text-align: right; font-size: 13px; color: #37474F; font-weight: 500; flex-shrink: 0; }
+.col-status { width: 80px; text-align: right; flex-shrink: 0; }
+
+// ── Badges ──────────────────────────────────────────────────────────────────
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+}
+
+.badge-pending {
+  background: #FFF3E0;
+  color: #E65100;
+  &::before { background: #E65100; }
+}
+
+.badge-done {
+  background: #E8F5E9;
+  color: #2E7D32;
+  &::before { background: #2E7D32; }
+}
+
+.empty-state {
+  padding: 32px 16px;
+  text-align: center;
+  color: #90A4AE;
+  font-size: 14px;
+}
