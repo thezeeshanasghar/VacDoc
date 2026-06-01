@@ -104,9 +104,13 @@ export class VaccineService extends BaseService {
       );
   } 
 
-  DeleteVaccineByChildidDoseidDate(Childid: string, Doseid: string, date: String) {
-    const url = `${this.API_VACCINE}schedule/${Childid}/${Doseid}/${date}`;
-    return this.http.delete(url,this.httpOptions)
+  DeleteVaccineByChildidDoseidDate(Childid: string, Doseid: string, date: String, paId?: number, doctorId?: number) {
+    let url = `${this.API_VACCINE}schedule/${Childid}/${Doseid}/${date}`;
+    const params: string[] = [];
+    if (paId) params.push(`paId=${paId}`);
+    if (doctorId) params.push(`doctorId=${doctorId}`);
+    if (params.length) url += `?${params.join('&')}`;
+    return this.http.delete(url, this.httpOptions)
       .pipe(
         catchError(this.handleError)
       );

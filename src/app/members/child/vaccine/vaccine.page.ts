@@ -625,7 +625,9 @@ this.downloadSpecialPdf();
     });
 
     await loading.present();
-    await this.vaccineService.DeleteVaccineByChildidDoseidDate(ChildId, DoseId, date)
+    const delPaId = (this.usertype === 'PA' && this.paId) ? this.paId : undefined;
+    const delDoctorId = this.doctorId ? this.doctorId : undefined;
+    await this.vaccineService.DeleteVaccineByChildidDoseidDate(ChildId, DoseId, date, delPaId, delDoctorId)
       .subscribe(
         (result) => {
           let data: any = result;

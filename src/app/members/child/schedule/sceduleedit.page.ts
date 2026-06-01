@@ -113,20 +113,22 @@ export class ChildSceduleEditPage implements OnInit {
  
   async getdoses(){
     console.log(this.doses);
-   let newschedule=[]
+    const user = await this.storage.get(environment.USER);
+    const paId = (user && user.UserType === 'PA') ? (Number(user.PAId) || null) : null;
+    const doctorId = (user && user.DoctorId) ? Number(user.DoctorId) : null;
+
+    let newschedule = [];
     this.doses.forEach(dose => {
-      if (dose.IsSpecial==true)
-      {
-        newschedule.push({
+      if (dose.IsSpecial == true) {
+        const entry: any = {
           DoseId: dose.Id,
           ChildId: this.ChildId,
-         // Date: null,
           IsDone: false,
           Due2EPI: false,
-         // GivenDate: null
-
-
-        });
+        };
+        if (paId) { entry.PaId = paId; }
+        if (doctorId) { entry.DoctorId = doctorId; }
+        newschedule.push(entry);
       }
     });
     console.log(newschedule);
@@ -143,10 +145,8 @@ export class ChildSceduleEditPage implements OnInit {
       },
       err => {
         loading.dismiss();
-      //  this.formcontroll = false;
         this.toastService.create(err, "danger");
       }
     );
-    
   }
 }
