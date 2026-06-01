@@ -230,6 +230,16 @@
   </div>
 </div>
 
+<!-- Active assignment banner (Doctor view) -->
+<div *ngIf="usertype === 'DOCTOR' && activeAssignment" class="active-assignment-bar">
+  <ion-icon name="person-outline" class="active-assign-icon"></ion-icon>
+  <span class="active-assign-label">Assigned: <strong>{{ activeAssignment.PaName }}</strong></span>
+  <div class="active-assign-actions">
+    <button class="assign-action-btn reassign-btn" (click)="openReassignPopup()">Reassign</button>
+    <button class="assign-action-btn cancel-btn" (click)="confirmCancelAssignment()">Cancel</button>
+  </div>
+</div>
+
 <!-- PA Assign popup -->
 <div class="assign-backdrop" *ngIf="assignPopupOpen" (click)="closeAssignPopup()"></div>
 <div class="assign-popup" *ngIf="assignPopupOpen">
@@ -239,6 +249,22 @@
   </div>
   <div class="assign-popup-list">
     <div *ngFor="let pa of clinicPAs" class="assign-pa-row" (click)="doAssign(pa)">
+      <ion-icon name="person-circle-outline" class="assign-pa-icon"></ion-icon>
+      <span class="assign-pa-name">{{ pa.Name }}</span>
+      <ion-icon name="chevron-forward-outline" class="assign-pa-arrow"></ion-icon>
+    </div>
+  </div>
+</div>
+
+<!-- Reassign popup -->
+<div class="assign-backdrop" *ngIf="reassignPopupOpen" (click)="closeReassignPopup()"></div>
+<div class="assign-popup" *ngIf="reassignPopupOpen">
+  <div class="assign-popup-header">
+    <span class="assign-popup-title">Reassign to PA</span>
+    <ion-icon name="close-outline" class="assign-popup-close" (click)="closeReassignPopup()"></ion-icon>
+  </div>
+  <div class="assign-popup-list">
+    <div *ngFor="let pa of clinicPAs" class="assign-pa-row" (click)="doReassign(pa)">
       <ion-icon name="person-circle-outline" class="assign-pa-icon"></ion-icon>
       <span class="assign-pa-name">{{ pa.Name }}</span>
       <ion-icon name="chevron-forward-outline" class="assign-pa-arrow"></ion-icon>

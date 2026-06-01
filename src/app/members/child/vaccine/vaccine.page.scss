@@ -315,6 +315,28 @@ ion-buttons {
 .assign-pa-name { flex: 1; font-size: 15px; font-weight: 500; color: #1A1A2E; }
 .assign-pa-arrow { font-size: 16px; color: #90A4AE; }
 
+.active-assignment-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #E3F2FD;
+  border-bottom: 1px solid #BBDEFB;
+}
+.active-assign-icon { font-size: 18px; color: #1565C0; flex-shrink: 0; }
+.active-assign-label { flex: 1; font-size: 13px; color: #0D47A1; }
+.active-assign-actions { display: flex; gap: 6px; }
+.assign-action-btn {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.reassign-btn { background: #1565C0; color: #fff; }
+.cancel-btn   { background: #fff; color: #C62828; border: 1px solid #C62828; }
+
 // ── Payment mode popup ────────────────────────────────────────────────────────
 .payment-due-banner {
   display: flex;

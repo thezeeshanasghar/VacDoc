@@ -57,6 +57,8 @@ export class VaccinePage {
   clinicId: number = null;
   clinicPAs: any[] = [];
   assignPopupOpen: boolean = false;
+  activeAssignment: any = null;
+  reassignPopupOpen: boolean = false;
   paymentPopupOpen: boolean = false;
   paymentTargetScheduleId: number = null;
   paymentDueAmount: number = 0;
@@ -158,6 +160,7 @@ export class VaccinePage {
               if (res && res.IsSuccess) { this.clinicPAs = res.ResponseData || []; }
             });
           }
+          this.loadActiveAssignment();
         });
       }
     });
@@ -1092,6 +1095,7 @@ this.downloadSpecialPdf();
     this.paService.createAssignment(payload).subscribe(res => {
       if (res && res.IsSuccess) {
         this.toastService.create('Assigned to ' + pa.Name, 'success');
+        this.loadActiveAssignment();
       } else {
         this.toastService.create(res.Message || 'Failed to assign', 'danger');
       }
@@ -1101,6 +1105,78 @@ this.downloadSpecialPdf();
                 : 'Failed to assign';
       this.toastService.create(msg, 'danger');
     });
+  }
+
+  loadActiveAssignment() {
+    if (!this.doctorId || !this.childId) return;
+    this.paService.getActiveAssignmentsForDoctor(this.doctorId).subscribe(res => {
+      if (res && res.IsSuccess) {
+        const all: any[] = res.ResponseData || [];
+        this.activeAssignment = all.find(a => a.ChildId === Number(this.childId)) || null;
+      }
+    });
+  }
+
+  async confirmCancelAssignment() {
+    const alert = await this.alertController.create({
+      header: 'Cancel Assignment',
+      message: `Cancel the active assignment for ${this.activeAssignment ? this.activeAssignment.ChildName : 'this patient'}?`,
+      inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason (optional)' }],
+      buttons: [
+        { text: 'No', role: 'cancel' },
+        { text: 'Yes, Cancel', handler: (data) => { this.doCancelAssignment(data.reason || ''); } }
+      ]
+    });
+    await alert.present();
+  }
+
+  async doCancelAssignment(reason: string) {
+    if (!this.activeAssignment) return;
+    const loading = await this.loadingController.create({ message: 'Cancelling...' });
+    await loading.present();
+    this.paService.cancelAssignment(this.activeAssignment.AssignmentId, 'DOCTOR', this.doctorId, reason).subscribe(
+      res => {
+        loading.dismiss();
+        if (res && res.IsSuccess) {
+          this.toastService.create('Assignment cancelled', 'success');
+          this.activeAssignment = null;
+        } else {
+          this.toastService.create(res.Message || 'Failed to cancel', 'danger');
+        }
+      },
+      () => { loading.dismiss(); this.toastService.create('Failed to cancel assignment', 'danger'); }
+    );
+  }
+
+  openReassignPopup() {
+    if (this.clinicPAs.length === 0) {
+      this.toastService.create('No PAs available at this clinic', 'warning');
+      return;
+    }
+    this.reassignPopupOpen = true;
+  }
+
+  closeReassignPopup() {
+    this.reassignPopupOpen = false;
+  }
+
+  async doReassign(pa: any) {
+    this.reassignPopupOpen = false;
+    if (!this.activeAssignment) return;
+    const loading = await this.loadingController.create({ message: 'Reassigning...' });
+    await loading.present();
+    this.paService.reassignAssignment(this.activeAssignment.AssignmentId, pa.Id).subscribe(
+      res => {
+        loading.dismiss();
+        if (res && res.IsSuccess) {
+          this.toastService.create('Reassigned to ' + pa.Name, 'success');
+          this.loadActiveAssignment();
+        } else {
+          this.toastService.create(res.Message || 'Failed to reassign', 'danger');
+        }
+      },
+      () => { loading.dismiss(); this.toastService.create('Failed to reassign', 'danger'); }
+    );
   }
 }
 

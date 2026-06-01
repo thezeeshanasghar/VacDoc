@@ -183,6 +183,10 @@ export class CashHandoverPage {
     );
   }
 
+  get hasRejectedHandover(): boolean {
+    return this.handovers.some(h => h.Status === 'Rejected');
+  }
+
   statusColor(status: string): string {
     if (status === 'Confirmed') return 'success';
     if (status === 'Rejected') return 'danger';

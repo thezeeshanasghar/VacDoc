@@ -76,4 +76,42 @@ export class AssignmentsPage {
       }
     );
   }
+
+  async confirmCancel(assignmentId: number, name: string) {
+    const alert = await this.alertController.create({
+      header: 'Cancel Assignment',
+      message: `Cancel assignment for ${name}?`,
+      inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason (optional)' }],
+      buttons: [
+        { text: 'No', role: 'cancel' },
+        {
+          text: 'Yes, Cancel',
+          handler: async (data) => { await this.cancelAssignment(assignmentId, data.reason || ''); }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async cancelAssignment(assignmentId: number, reason: string) {
+    const user = await this.storage.get(environment.USER);
+    if (!user) return;
+    const loading = await this.loadingController.create({ message: 'Cancelling...' });
+    await loading.present();
+    this.paService.cancelAssignment(assignmentId, 'PA', Number(user.PAId), reason).subscribe(
+      res => {
+        loading.dismiss();
+        if (res && res.IsSuccess) {
+          this.toastService.create('Assignment cancelled', 'success');
+          this.assignments = this.assignments.filter(a => a.AssignmentId !== assignmentId);
+        } else {
+          this.toastService.create(res.Message || 'Failed to cancel', 'danger');
+        }
+      },
+      () => {
+        loading.dismiss();
+        this.toastService.create('Failed to cancel assignment', 'danger');
+      }
+    );
+  }
 }

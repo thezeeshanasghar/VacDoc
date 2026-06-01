@@ -12,6 +12,12 @@
   <!-- PA VIEW -->
   <ng-container *ngIf="!isDoctorView">
 
+    <!-- Rejected handover warning banner -->
+    <div class="rejected-banner" *ngIf="hasRejectedHandover">
+      <ion-icon name="warning-outline"></ion-icon>
+      <span>A cash handover was rejected by the doctor. See history below for the reason and re-submit.</span>
+    </div>
+
     <ion-card>
       <ion-card-header>
         <ion-card-subtitle>Cash In Hand</ion-card-subtitle>
