@@ -139,7 +139,7 @@ export class VaccinePage {
           this.canBulkUngive     = (perm && perm.BulkUngiveVaccines) || false;
           this.canBulkReschedule = (perm && perm.BulkReschedule)     || false;
           this.canInvoice        = (perm && perm.ManageInvoice)      || false;
-          this.canCollectPayment = (perm && perm.ManageInvoice)      || false;
+          this.canCollectPayment = (perm && perm.GiveVaccine)        || false;
           this.canAddParams      = (perm && perm.AddVaccineParams)   || false;
           this.canPrint          = (perm && perm.PrintSchedulePdf)   || false;
           this.canSkip           = (perm && perm.SkipVaccine)        || false;
