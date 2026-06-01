@@ -171,9 +171,9 @@ export class BulkPage implements OnInit {
         this.allowInventory = user.AllowInventory !== false;
         if (user.UserType === "PA") {
           this.paId = Number(user.PAId) || null;
+        } else if (user.UserType === "DOCTOR" && user.DoctorId) {
+          this.doctorId = Number(user.DoctorId);
         }
-        const actorId = user.UserType === "PA" ? Number(user.PAId) : Number(user.DoctorId);
-        if (actorId && !isNaN(actorId)) { this.doctorId = actorId; }
         if (user.UserType === "DOCTOR" && user.DoctorId) {
           this.paService.getPAsByDoctorId(String(user.DoctorId)).subscribe(res => {
             if (res && res.IsSuccess && res.ResponseData) {
