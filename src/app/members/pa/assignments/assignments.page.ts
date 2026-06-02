@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { PaService } from 'src/app/services/pa.service';
+import { ScheduleService } from 'src/app/services/schedule.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 
@@ -16,6 +17,7 @@ export class AssignmentsPage {
 
   constructor(
     private paService: PaService,
+    private scheduleService: ScheduleService,
     private storage: Storage,
     private toastService: ToastService,
     private alertController: AlertController,
@@ -55,6 +57,67 @@ export class AssignmentsPage {
   }
 
   async confirmComplete(assignment: any) {
+    if (this.hasUnpaidSchedules(assignment)) {
+      const alert = await this.alertController.create({
+        header: 'Record Payment Mode',
+        message: 'Select how the patient paid. This is required before completing the assignment.',
+        inputs: [
+          { type: 'radio', label: 'Cash', value: 'Cash', checked: true },
+          { type: 'radio', label: 'Online Transfer', value: 'Online Transfer' },
+          { type: 'radio', label: 'Bank Transfer', value: 'Bank Transfer' },
+        ],
+        buttons: [
+          { text: 'Cancel', role: 'cancel' },
+          {
+            text: 'Confirm & Continue',
+            handler: async (selectedMode: string) => {
+              const ok = await this.recordPaymentModeForAll(assignment, selectedMode || 'Cash');
+              if (ok) { this.proceedToGrowthCheck(assignment); }
+            }
+          }
+        ]
+      });
+      await alert.present();
+    } else {
+      this.proceedToGrowthCheck(assignment);
+    }
+  }
+
+  private async recordPaymentModeForAll(assignment: any, mode: string): Promise<boolean> {
+    const unpaid = (assignment.Schedules || []).filter(function(s: any) { return !s.IsPaymentCollected && s.Amount > 0; });
+    if (unpaid.length === 0) { return true; }
+    const loading = await this.loadingController.create({ message: 'Recording payment...' });
+    await loading.present();
+    return new Promise(resolve => {
+      const next = (index: number) => {
+        if (index >= unpaid.length) {
+          loading.dismiss();
+          unpaid.forEach(function(s: any) { s.IsPaymentCollected = true; s.PaymentMode = mode; });
+          resolve(true);
+          return;
+        }
+        this.scheduleService.recordPaymentMode(unpaid[index].Id, { PaymentMode: mode }).subscribe(
+          res => {
+            if (res && res.IsSuccess) {
+              next(index + 1);
+            } else {
+              loading.dismiss();
+              this.toastService.create((res && res.Message) || 'Failed to record payment', 'danger');
+              resolve(false);
+            }
+          },
+          () => {
+            loading.dismiss();
+            this.toastService.create('Failed to record payment mode', 'danger');
+            resolve(false);
+          }
+        );
+      };
+      next(0);
+    });
+  }
+
+  private async proceedToGrowthCheck(assignment: any) {
     const missingGrowth = this.getMissingGrowthVaccines(assignment);
     if (missingGrowth.length > 0) {
       const alert = await this.alertController.create({
