@@ -1034,7 +1034,7 @@ this.downloadSpecialPdf();
   }
 
   hasUnpaidDoneVaccine(data: any[]): boolean {
-    return data.some(function(v) { return v.IsDone && !v.Due2EPI && !v.IsPaymentCollected && v.Amount > 0; });
+    return data.some(function(v) { return v.IsDone && !v.Due2EPI && !v.IsPaymentCollected; });
   }
 
   getDoneScheduleId(data: any[]): number {
