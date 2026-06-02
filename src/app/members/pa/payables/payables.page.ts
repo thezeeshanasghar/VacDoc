@@ -67,6 +67,50 @@ export class PayablesPage {
     return 'MR-' + String(childId).padStart(6, '0');
   }
 
+  async promptDone(a: any, event: Event) {
+    event.stopPropagation();
+    const unpaid = (a.Schedules || []).filter(function(s: any) { return !s.IsPaymentCollected; });
+
+    if (unpaid.length > 0) {
+      const names = unpaid.map(function(s: any) { return s.DoseName; }).join(', ');
+      const alert = await this.alertCtrl.create({
+        header: 'Payment Pending',
+        message: 'Please record payment for: ' + names + '. Use the money icon on the vaccine page first.',
+        buttons: [{ text: 'OK', role: 'cancel' }]
+      });
+      await alert.present();
+      return;
+    }
+
+    const confirm = await this.alertCtrl.create({
+      header: 'Mark as Done',
+      message: 'Mark assignment for ' + a.Name + ' as completed?',
+      buttons: [
+        { text: 'Back', role: 'cancel' },
+        { text: 'Done', handler: () => { this.doCompleteAssignment(a.AssignmentId); } }
+      ]
+    });
+    await confirm.present();
+  }
+
+  async doCompleteAssignment(assignmentId: number) {
+    const loading = await this.loadingController.create({ message: 'Completing...' });
+    await loading.present();
+    try {
+      const res = await this.paService.completeAssignment(assignmentId).toPromise();
+      if (res && res.IsSuccess) {
+        this.toastService.create('Assignment completed', 'success');
+        await this.ionViewWillEnter();
+      } else {
+        this.toastService.create((res && res.Message) || 'Complete failed', 'danger');
+      }
+    } catch (e) {
+      this.toastService.create('Complete failed', 'danger');
+    } finally {
+      loading.dismiss();
+    }
+  }
+
   async promptCancel(a: any, event: Event) {
     event.stopPropagation();
     const alert = await this.alertCtrl.create({
