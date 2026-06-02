@@ -17,9 +17,15 @@
     </div>
     <div *ngFor="let r of pendingReversals" class="reversal-row">
       <div class="reversal-pa">{{ r.PaName }}</div>
+      <div class="reversal-type" [style.color]="r.ActionCode === 'InvoiceAmountReduction' ? '#e65100' : '#b71c1c'">
+        {{ r.ActionCode === 'InvoiceAmountReduction' ? 'Invoice Amount Reduced' : 'Vaccine Ungiven After Payment' }}
+      </div>
       <div class="reversal-notes">{{ r.Notes }}</div>
       <div class="reversal-date">{{ r.ActionDate | date:'dd MMM, HH:mm' }}</div>
-      <button class="btn-approve-reversal" (click)="confirmApproveReversal(r)">Approve &amp; Reduce</button>
+      <div class="reversal-btns">
+        <button class="btn-approve-reversal" (click)="confirmApproveReversal(r)">Approve &amp; Reduce</button>
+        <button class="btn-reject-reversal" (click)="confirmRejectReversal(r)">Reject</button>
+      </div>
     </div>
   </div>
 

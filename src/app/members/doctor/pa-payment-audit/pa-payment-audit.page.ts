@@ -213,6 +213,37 @@ export class PaPaymentAuditPage {
     await alert.present();
   }
 
+  async confirmRejectReversal(reversal: any) {
+    const alert = await this.alertController.create({
+      header: 'Reject Reversal',
+      message: 'Reject this request? The PA\'s payable will remain unchanged.\n\n' + (reversal.Notes || ''),
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Reject',
+          cssClass: 'alert-btn-danger',
+          handler: async () => {
+            const loading = await this.loadingController.create({ message: 'Rejecting...' });
+            await loading.present();
+            this.paService.rejectReversal(reversal.Id).subscribe(
+              res => {
+                loading.dismiss();
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Reversal rejected — payable unchanged', 'warning');
+                  this.pendingReversals = this.pendingReversals.filter(function(r: any) { return r.Id !== reversal.Id; });
+                } else {
+                  this.toastService.create((res && res.Message) || 'Failed', 'danger');
+                }
+              },
+              () => { loading.dismiss(); this.toastService.create('Failed to reject', 'danger'); }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
   async promptAdjust(row: any) {
     const alert = await this.alertController.create({
       header: 'Adjust Payable',
