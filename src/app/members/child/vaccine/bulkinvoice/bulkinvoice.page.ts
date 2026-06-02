@@ -312,68 +312,30 @@ export class BulkInvoicePage implements OnInit {
     );
   }
 
-async getInvoiceId(doseId: string, childId: string) {
-  const loading = await this.loadingController.create({
-    message: "Loading"
-  });
-  await loading.present();
-  this.invoiceService.getInvoiceId(doseId, childId).subscribe(
-    res => {
-      if (res.IsSuccess) {
-        const bulkItem = this.bulkData.find(item => item.Dose.Id === doseId);
-        this.getFee(res.ResponseData.InvoiceId)
-        if (bulkItem) {
-          bulkItem.InvoiceId = res.ResponseData.InvoiceId;
-        }
-      } else {
-      }
-      loading.dismiss();
-    },
-    err => {
-      loading.dismiss();
+getInvoiceId(doseId: string, childId: string) {
+  this.invoiceService.getInvoiceId(doseId, childId).subscribe(res => {
+    if (res.IsSuccess) {
+      const bulkItem = this.bulkData.find(item => item.Dose.Id === doseId);
+      this.getFee(res.ResponseData.InvoiceId);
+      if (bulkItem) { bulkItem.InvoiceId = res.ResponseData.InvoiceId; }
     }
-  );
+  });
 }
 
-async getAmount(id: string,doseId: string, childId: string) {
-  const loading = await this.loadingController.create({
-    message: "Loading"
-  });
-  await loading.present();
-  this.invoiceService.getAmount(id, doseId, childId).subscribe(
-    res => {
-      if (res.IsSuccess) {
-        const bulkItem = this.bulkData.find(item => item.Dose.Id === doseId);
-        // console.log(res.ResponseData);
-        if (bulkItem) {
-          bulkItem.Amount = res.ResponseData; 
-        }
-      } else {
-      }
-      loading.dismiss();
-    },
-    err => {
-      loading.dismiss();
+getAmount(id: string, doseId: string, childId: string) {
+  this.invoiceService.getAmount(id, doseId, childId).subscribe(res => {
+    if (res.IsSuccess) {
+      const bulkItem = this.bulkData.find(item => item.Dose.Id === doseId);
+      if (bulkItem) { bulkItem.Amount = res.ResponseData; }
     }
-  );
+  });
 }
 
-async getFee(Id: string) {
-  const loading = await this.loadingController.create({
-    message: "Loading"
+getFee(Id: string) {
+  this.invoiceService.getFee(Id).subscribe(res => {
+    this.fg.controls['ConsultationFee'].setValue(res.ResponseData.Amount);
+    this.fg.controls['IsConsultationFee'].setValue(true);
   });
-  await loading.present();
-  this.invoiceService.getFee(Id).subscribe(
-    res => {
-         this.fg.controls['ConsultationFee'].setValue(res.ResponseData.Amount);
-         this.fg.controls['IsConsultationFee'].setValue(true);
-      loading.dismiss();
-    },
-    err => {
-      loading.dismiss();
-      // this.toastService.create(err, "danger");
-    }
-  );
 }
 
 // hasAnyInvoiceId(): boolean {
