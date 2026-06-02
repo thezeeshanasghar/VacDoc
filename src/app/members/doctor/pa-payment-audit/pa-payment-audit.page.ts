@@ -17,6 +17,7 @@ export class PaPaymentAuditPage {
   doctorEntry: any = null;
   pendingHandovers: any[] = [];
   outstanding: any[] = [];
+  pendingReversals: any[] = [];
   loading: boolean = false;
   viewMode: 'today' | 'outstanding' = 'today';
   doctorExpanded: boolean = false;
@@ -41,6 +42,19 @@ export class PaPaymentAuditPage {
       this.selectedDate = today.getFullYear() + '-' + mm + '-' + dd;
     }
     this.load();
+    this.loadPendingReversals();
+  }
+
+  loadPendingReversals() {
+    if (!this.doctorId) { return; }
+    this.paService.getPendingReversals(this.doctorId).subscribe(
+      res => {
+        if (res && res.IsSuccess) {
+          this.pendingReversals = res.ResponseData || [];
+        }
+      },
+      () => {}
+    );
   }
 
   switchView(mode: 'today' | 'outstanding') {
@@ -167,6 +181,36 @@ export class PaPaymentAuditPage {
 
   getPendingForPa(paId: number): any {
     return this.pendingHandovers.find(h => h.PaId === paId) || null;
+  }
+
+  async confirmApproveReversal(reversal: any) {
+    const alert = await this.alertController.create({
+      header: 'Approve Reversal',
+      message: 'Approve this cancellation? The invoice amount will be reduced and the PA\'s payable decreased.\n\n' + (reversal.Notes || ''),
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Approve',
+          handler: async () => {
+            const loading = await this.loadingController.create({ message: 'Approving...' });
+            await loading.present();
+            this.paService.approveReversal(reversal.Id).subscribe(
+              res => {
+                loading.dismiss();
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Reversal approved — payable adjusted', 'success');
+                  this.pendingReversals = this.pendingReversals.filter(function(r: any) { return r.Id !== reversal.Id; });
+                } else {
+                  this.toastService.create((res && res.Message) || 'Failed', 'danger');
+                }
+              },
+              () => { loading.dismiss(); this.toastService.create('Failed to approve', 'danger'); }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
   async promptAdjust(row: any) {

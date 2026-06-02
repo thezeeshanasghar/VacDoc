@@ -200,6 +200,46 @@
   font-weight: 600;
 }
 
+.reversal-section {
+  background: #FFF3E0;
+  border: 1.5px solid #FF8F00;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+
+.reversal-header {
+  font-size: 14px;
+  font-weight: 700;
+  color: #E65100;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.reversal-row {
+  padding: 8px 0;
+  border-bottom: 1px solid #FFE0B2;
+  &:last-child { border-bottom: none; }
+}
+
+.reversal-pa   { font-size: 13px; font-weight: 700; color: #1A1A2E; }
+.reversal-notes { font-size: 12px; color: #546E7A; margin: 2px 0 4px; }
+.reversal-date  { font-size: 11px; color: #90A4AE; margin-bottom: 6px; }
+
+.btn-approve-reversal {
+  padding: 6px 14px;
+  background: #E65100;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  &:active { opacity: 0.8; }
+}
+
 .adjust-row {
   margin-top: 10px;
 }

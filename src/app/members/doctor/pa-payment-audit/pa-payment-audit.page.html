@@ -9,6 +9,20 @@
 
 <ion-content class="ion-padding">
 
+  <!-- Pending reversal approvals -->
+  <div *ngIf="pendingReversals.length > 0" class="reversal-section">
+    <div class="reversal-header">
+      <ion-icon name="warning-outline"></ion-icon>
+      Pending Reversal Approvals ({{ pendingReversals.length }})
+    </div>
+    <div *ngFor="let r of pendingReversals" class="reversal-row">
+      <div class="reversal-pa">{{ r.PaName }}</div>
+      <div class="reversal-notes">{{ r.Notes }}</div>
+      <div class="reversal-date">{{ r.ActionDate | date:'dd MMM, HH:mm' }}</div>
+      <button class="btn-approve-reversal" (click)="confirmApproveReversal(r)">Approve &amp; Reduce</button>
+    </div>
+  </div>
+
   <!-- View toggle -->
   <div class="view-toggle">
     <button [class.active]="viewMode === 'today'" (click)="switchView('today')">Today</button>

@@ -257,6 +257,16 @@ export class PaService extends BaseService {
     return this.http.post(url, { PaId: paId, DoctorId: doctorId, ClinicId: clinicId, Amount: amount, Reason: reason }, this.httpOptions).pipe(catchError(this.handleError));
   }
 
+  getPendingReversals(doctorId: number): Observable<any> {
+    const url = `${this.API_PA}PaActivityLog/pending-reversals/${doctorId}`;
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  approveReversal(logId: number): Observable<any> {
+    const url = `${this.API_PA}PaActivityLog/${logId}/approve-reversal`;
+    return this.http.patch(url, {}, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
   confirmInvoice(invoiceSubmissionId: number, doctorId: number): Observable<any> {
     const url = `${this.API_PA}Schedule/confirm-invoice/${invoiceSubmissionId}?doctorId=${doctorId}`;
     return this.http.patch(url, {}, this.httpOptions).pipe(catchError(this.handleError));
