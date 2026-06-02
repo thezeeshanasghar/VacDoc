@@ -1046,12 +1046,23 @@ this.downloadSpecialPdf();
     this.paymentTargetScheduleId = scheduleId;
     this.paymentDueAmount = 0;
     this.paymentPopupOpen = true;
-    const doneVaccine = groupVaccines.find(v => v.IsDone && v.GivenDate);
+    const doneVaccine = groupVaccines.find(function(v) { return v.IsDone && v.GivenDate; });
     if (doneVaccine) {
-      const dateStr = doneVaccine.GivenDate.toString().split('T')[0];
-      this.invoiceService.getInvoiceTotal(Number(this.childId), dateStr).subscribe(res => {
+      const utcDateStr = doneVaccine.GivenDate.toString().split('T')[0];
+      const childId = Number(this.childId);
+      this.invoiceService.getInvoiceTotal(childId, utcDateStr).subscribe(res => {
         if (res && res.IsSuccess && res.ResponseData > 0) {
           this.paymentDueAmount = res.ResponseData;
+        } else {
+          // GivenDate stored as UTC may be 1 day ahead of local invoice date — try previous day
+          const prev = new Date(utcDateStr);
+          prev.setDate(prev.getDate() - 1);
+          const prevStr = prev.toISOString().split('T')[0];
+          this.invoiceService.getInvoiceTotal(childId, prevStr).subscribe(res2 => {
+            if (res2 && res2.IsSuccess && res2.ResponseData > 0) {
+              this.paymentDueAmount = res2.ResponseData;
+            }
+          });
         }
       });
     }
@@ -1065,10 +1076,11 @@ this.downloadSpecialPdf();
 
   async submitPayment(mode: 'Cash' | 'Online') {
     if (!this.paymentTargetScheduleId) return;
+    const scheduleId = this.paymentTargetScheduleId;
     this.closePaymentPopup();
     const loading = await this.loadingController.create({ message: 'Recording payment...' });
     await loading.present();
-    this.scheduleService.recordPaymentMode(this.paymentTargetScheduleId, { PaymentMode: mode })
+    this.scheduleService.recordPaymentMode(scheduleId, { PaymentMode: mode })
       .subscribe(res => {
         loading.dismiss();
         if (res && res.IsSuccess) {
