@@ -55,7 +55,7 @@
 
             <!-- Bulk Invoice -->
             <ion-icon
-              *ngIf="canInvoice"
+              *ngIf="canInvoice && !checkVaccineIsDon(item.value)"
               name="document-text-outline"
               class="hdr-icon hdr-icon--invoice"
               routerLink="/members/child/vaccine/{{childId}}/bulkinvoice/{{item.key}}"
