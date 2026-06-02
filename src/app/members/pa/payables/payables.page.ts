@@ -69,7 +69,7 @@ export class PayablesPage {
 
   async promptDone(a: any, event: Event) {
     event.stopPropagation();
-    const unpaid = (a.Schedules || []).filter(function(s: any) { return !s.IsPaymentCollected; });
+    const unpaid = (a.Schedules || []).filter(function(s: any) { return !s.IsPaymentCollected && s.Amount > 0; });
 
     if (unpaid.length > 0) {
       const names = unpaid.map(function(s: any) { return s.DoseName; }).join(', ');

@@ -44,7 +44,7 @@ export class AssignmentsPage {
 
   hasUnpaidSchedules(a: any): boolean {
     if (!a.Schedules || !Array.isArray(a.Schedules)) { return false; }
-    return a.Schedules.some(function(s) { return !s.IsPaymentCollected; });
+    return a.Schedules.some(function(s) { return !s.IsPaymentCollected && s.Amount > 0; });
   }
 
   getMissingGrowthVaccines(a: any): string[] {
