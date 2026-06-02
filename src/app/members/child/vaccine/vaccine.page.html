@@ -211,12 +211,11 @@
 <div class="assign-backdrop" *ngIf="paymentPopupOpen" (click)="closePaymentPopup()"></div>
 <div class="assign-popup" *ngIf="paymentPopupOpen">
   <div class="assign-popup-header">
-    <span class="assign-popup-title">Record Payment</span>
+    <div class="payment-header-text">
+      <span class="assign-popup-title">Record Payment</span>
+      <span class="payment-header-amount" *ngIf="paymentDueAmount > 0">PKR {{ paymentDueAmount | number }}</span>
+    </div>
     <ion-icon name="close-outline" class="assign-popup-close" (click)="closePaymentPopup()"></ion-icon>
-  </div>
-  <div class="payment-due-banner" *ngIf="paymentDueAmount > 0">
-    <span class="payment-due-label">Payment Due</span>
-    <span class="payment-due-amount">{{ paymentDueAmount | number }} /-</span>
   </div>
   <div class="payment-mode-list">
     <div class="payment-mode-row" (click)="submitPayment('Cash')">

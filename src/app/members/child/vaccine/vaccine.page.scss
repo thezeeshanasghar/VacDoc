@@ -294,7 +294,9 @@ ion-buttons {
   background: linear-gradient(135deg, #0A3D79 0%, #1565C0 100%);
 }
 
+.payment-header-text  { display: flex; flex-direction: column; gap: 2px; }
 .assign-popup-title   { font-size: 15px; font-weight: 700; color: #fff; }
+.payment-header-amount { font-size: 18px; font-weight: 800; color: #ffe082; letter-spacing: 0.3px; }
 .assign-popup-close   { font-size: 20px; color: rgba(255, 255, 255, 0.8); cursor: pointer; }
 .assign-popup-list    { padding: 8px 0; }
 
