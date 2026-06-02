@@ -199,3 +199,20 @@
   color: #2E7D32;
   font-weight: 600;
 }
+
+.adjust-row {
+  margin-top: 10px;
+}
+
+.btn-adjust {
+  width: 100%;
+  padding: 7px 0;
+  background: #fff;
+  color: #6A1B9A;
+  border: 1.5px solid #6A1B9A;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  &:active { opacity: 0.8; }
+}

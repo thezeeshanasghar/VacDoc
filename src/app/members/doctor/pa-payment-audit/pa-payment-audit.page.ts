@@ -168,4 +168,49 @@ export class PaPaymentAuditPage {
   getPendingForPa(paId: number): any {
     return this.pendingHandovers.find(h => h.PaId === paId) || null;
   }
+
+  async promptAdjust(row: any) {
+    const alert = await this.alertController.create({
+      header: 'Adjust Payable',
+      subHeader: row.PaName,
+      message: 'Enter a positive amount to increase or negative to decrease the PA\'s payable.',
+      inputs: [
+        { name: 'amount', type: 'number', placeholder: 'Amount (e.g. -500 or 200)' },
+        { name: 'reason', type: 'text', placeholder: 'Reason (required)' }
+      ],
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Apply',
+          handler: async (data) => {
+            const amt = Number(data.amount);
+            if (!amt || amt === 0) {
+              this.toastService.create('Enter a non-zero amount', 'warning');
+              return false;
+            }
+            if (!data.reason || !data.reason.trim()) {
+              this.toastService.create('Reason is required', 'warning');
+              return false;
+            }
+            const clinicId = row.ClinicId || 0;
+            const loading = await this.loadingController.create({ message: 'Applying...' });
+            await loading.present();
+            this.paService.adjustPayable(row.PaId, this.doctorId, clinicId, amt, data.reason.trim()).subscribe(
+              res => {
+                loading.dismiss();
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Adjustment applied', 'success');
+                  this.load();
+                } else {
+                  this.toastService.create((res && res.Message) || 'Failed', 'danger');
+                }
+              },
+              () => { loading.dismiss(); this.toastService.create('Failed to apply adjustment', 'danger'); }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
 }

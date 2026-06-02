@@ -89,6 +89,11 @@
           </div>
         </div>
 
+        <!-- Doctor adjustment -->
+        <div class="adjust-row">
+          <button class="btn-adjust" (click)="promptAdjust(row)">&#177; Adjust Payable</button>
+        </div>
+
         <!-- Per-patient drilldown -->
         <div class="breakdown-toggle" (click)="toggleExpand(row)">
           {{ row.expanded ? 'Hide' : 'Show' }} {{ row.Schedules?.length }} patient(s)
@@ -129,6 +134,9 @@
             <button class="btn-confirm" (click)="confirmHandover(h)">Cash Received</button>
             <button class="btn-reject" (click)="rejectHandover(h)">Reject</button>
           </div>
+        </div>
+        <div class="adjust-row">
+          <button class="btn-adjust" (click)="promptAdjust(row)">&#177; Adjust Payable</button>
         </div>
       </ion-card-content>
     </ion-card>
