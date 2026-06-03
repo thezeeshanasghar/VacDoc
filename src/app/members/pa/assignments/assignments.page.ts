@@ -40,8 +40,15 @@ export class AssignmentsPage {
           this.assignments = res.ResponseData || [];
         }
       },
-      () => { this.loading = false; }
+      () => {
+        this.loading = false;
+        this.toastService.create('Failed to load assignments', 'danger');
+      }
     );
+  }
+
+  isBulkGroup(a: any): boolean {
+    return Array.isArray(a.Schedules) && a.Schedules.length >= 2;
   }
 
   hasUnpaidSchedules(a: any): boolean {
@@ -89,27 +96,25 @@ export class AssignmentsPage {
     const loading = await this.loadingController.create({ message: 'Recording payment...' });
     await loading.present();
     return new Promise(resolve => {
+      let settled = false;
+      const done = (ok: boolean) => { if (!settled) { settled = true; loading.dismiss(); resolve(ok); } };
       const next = (index: number) => {
-        if (index >= unpaid.length) {
-          loading.dismiss();
-          unpaid.forEach(function(s: any) { s.IsPaymentCollected = true; s.PaymentMode = mode; });
-          resolve(true);
-          return;
-        }
+        if (index >= unpaid.length) { done(true); return; }
         this.scheduleService.recordPaymentMode(unpaid[index].Id, { PaymentMode: mode }).subscribe(
           res => {
             if (res && res.IsSuccess) {
+              // Mark only this schedule as paid once server confirms
+              unpaid[index].IsPaymentCollected = true;
+              unpaid[index].PaymentMode = mode;
               next(index + 1);
             } else {
-              loading.dismiss();
               this.toastService.create((res && res.Message) || 'Failed to record payment', 'danger');
-              resolve(false);
+              done(false);
             }
           },
           () => {
-            loading.dismiss();
             this.toastService.create('Failed to record payment mode', 'danger');
-            resolve(false);
+            done(false);
           }
         );
       };
@@ -138,11 +143,12 @@ export class AssignmentsPage {
     const loading = await this.loadingController.create({ message: 'Updating...' });
     await loading.present();
     this.paService.completeAssignment(assignmentId).subscribe(
-      res => {
+      async res => {
         loading.dismiss();
         if (res && res.IsSuccess) {
           this.toastService.create('Assignment completed', 'success');
-          this.assignments = this.assignments.filter(function(a) { return a.AssignmentId !== assignmentId; });
+          const user = await this.storage.get(environment.USER);
+          if (user && user.PAId) { this.loadAssignments(Number(user.PAId)); }
         } else {
           this.toastService.create(res.Message || 'Failed to complete', 'danger');
         }
@@ -158,7 +164,7 @@ export class AssignmentsPage {
     const alert = await this.alertController.create({
       header: 'Cancel Assignment',
       message: `Cancel assignment for ${name}?`,
-      inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason (optional)' }],
+      inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason (optional — leave blank if none)' }],
       buttons: [
         { text: 'No', role: 'cancel' },
         {

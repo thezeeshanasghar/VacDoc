@@ -22,6 +22,14 @@ export class CashHandoverPage {
   isDoctorView: boolean = false;
   myRecon: { TotalCollected: number; TotalConfirmed: number; TotalPending: number } = null;
 
+  // Cached flag — recomputed whenever handovers array is replaced
+  hasRejectedHandover: boolean = false;
+
+  // In-flight guards to prevent double-tap races
+  private confirmingId: number = null;
+  private rejectingId: number = null;
+  private initiating: boolean = false;
+
   constructor(
     private loadingController: LoadingController,
     private alertController: AlertController,
@@ -43,9 +51,15 @@ export class CashHandoverPage {
           this.clinicId = clinicId ? Number(clinicId) : null;
           this.storage.get(environment.DOCTOR_Id).then((docId) => {
             this.doctorId = docId ? Number(docId) : null;
+            if (!this.doctorId) {
+              this.toastService.create('Could not load clinic info — please re-login', 'danger');
+              return;
+            }
             this.loadCashInHand();
             this.loadHistory();
             this.loadMyReconciliation();
+          }).catch(() => {
+            this.toastService.create('Could not load clinic info — please re-login', 'danger');
           });
         });
       } else if (user.UserType === 'DOCTOR') {
@@ -67,21 +81,35 @@ export class CashHandoverPage {
         loading.dismiss();
         if (res.IsSuccess) {
           this.cashInHand = res.ResponseData || 0;
+        } else {
+          this.toastService.create(res.Message || 'Failed to load cash in hand', 'danger');
         }
       },
-      (err) => { loading.dismiss(); }
+      () => {
+        loading.dismiss();
+        this.toastService.create('Failed to load cash in hand', 'danger');
+      }
     );
   }
 
   async loadHistory() {
     if (!this.paId || !this.clinicId) return;
+    const loading = await this.loadingController.create({ message: 'Loading history...' });
+    await loading.present();
     this.cashHandoverService.getHistory(this.paId, this.clinicId).subscribe(
       (res) => {
+        loading.dismiss();
         if (res.IsSuccess) {
           this.handovers = res.ResponseData || [];
+          this.hasRejectedHandover = this.handovers.some(h => h.Status === 'Rejected');
+        } else {
+          this.toastService.create(res.Message || 'Failed to load handover history', 'danger');
         }
       },
-      (err) => {}
+      () => {
+        loading.dismiss();
+        this.toastService.create('Failed to load handover history', 'danger');
+      }
     );
   }
 
@@ -106,9 +134,14 @@ export class CashHandoverPage {
         loading.dismiss();
         if (res.IsSuccess) {
           this.pendingHandovers = res.ResponseData || [];
+        } else {
+          this.toastService.create(res.Message || 'Failed to load pending handovers', 'danger');
         }
       },
-      (err) => { loading.dismiss(); }
+      () => {
+        loading.dismiss();
+        this.toastService.create('Failed to load pending handovers', 'danger');
+      }
     );
   }
 
@@ -117,11 +150,18 @@ export class CashHandoverPage {
       this.toastService.create('Clinic or doctor info missing.', 'danger');
       return;
     }
+    if (this.cashInHand <= 0) {
+      this.toastService.create('No cash to hand over', 'warning');
+      return;
+    }
+    if (this.initiating) { return; }
+    this.initiating = true;
     const loading = await this.loadingController.create({ message: 'Creating handover...' });
     await loading.present();
     this.cashHandoverService.createHandover(this.paId, this.clinicId, this.doctorId).subscribe(
       async (res) => {
         loading.dismiss();
+        this.initiating = false;
         if (res.IsSuccess) {
           const alert = await this.alertController.create({
             header: 'Handover Submitted',
@@ -140,33 +180,42 @@ export class CashHandoverPage {
           await alert.present();
         }
       },
-      (err) => {
+      () => {
         loading.dismiss();
+        this.initiating = false;
         this.toastService.create('Error creating handover.', 'danger');
       }
     );
   }
 
   async confirmHandover(handover: any) {
+    if (this.confirmingId === handover.Id) { return; }
+    this.confirmingId = handover.Id;
     const loading = await this.loadingController.create({ message: 'Confirming...' });
     await loading.present();
     this.cashHandoverService.confirmHandover(handover.Id).subscribe(
       (res) => {
         loading.dismiss();
+        this.confirmingId = null;
         if (res.IsSuccess) {
           this.toastService.create('Handover confirmed — Rs. ' + handover.Amount + ' received.');
           this.loadPendingHandovers();
         } else {
-          this.toastService.create(res.Message, 'danger');
+          this.toastService.create(res.Message || 'Failed to confirm handover', 'danger');
         }
       },
-      (err) => { loading.dismiss(); }
+      () => {
+        loading.dismiss();
+        this.confirmingId = null;
+        this.toastService.create('Failed to confirm handover', 'danger');
+      }
     );
   }
 
   async rejectHandover(handover: any) {
+    if (this.rejectingId === handover.Id) { return; }
     const alert = await this.alertController.create({
-      header: 'Reject Handover',
+      header: 'Reject Rs. ' + handover.Amount + ' Handover',
       message: 'Enter reason for rejection:',
       inputs: [{ name: 'note', type: 'textarea', placeholder: 'Reason...' }],
       buttons: [
@@ -183,24 +232,27 @@ export class CashHandoverPage {
   }
 
   async doReject(id: number, note: string) {
+    if (this.rejectingId === id) { return; }
+    this.rejectingId = id;
     const loading = await this.loadingController.create({ message: 'Rejecting...' });
     await loading.present();
     this.cashHandoverService.rejectHandover(id, note).subscribe(
       (res) => {
         loading.dismiss();
+        this.rejectingId = null;
         if (res.IsSuccess) {
           this.toastService.create('Handover rejected.');
           this.loadPendingHandovers();
         } else {
-          this.toastService.create(res.Message, 'danger');
+          this.toastService.create(res.Message || 'Failed to reject handover', 'danger');
         }
       },
-      (err) => { loading.dismiss(); }
+      () => {
+        loading.dismiss();
+        this.rejectingId = null;
+        this.toastService.create('Failed to reject handover', 'danger');
+      }
     );
-  }
-
-  get hasRejectedHandover(): boolean {
-    return this.handovers.some(h => h.Status === 'Rejected');
   }
 
   statusColor(status: string): string {

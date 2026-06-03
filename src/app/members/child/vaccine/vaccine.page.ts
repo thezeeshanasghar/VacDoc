@@ -57,7 +57,10 @@ export class VaccinePage {
   clinicId: number = null;
   clinicPAs: any[] = [];
   assignPopupOpen: boolean = false;
+  assignPopupLoading: boolean = false;
+  assigningPA: boolean = false;
   activeAssignment: any = null;
+  activeAssignmentLoading: boolean = false;
   reassignPopupOpen: boolean = false;
   paymentPopupOpen: boolean = false;
   paymentTargetScheduleId: number = null;
@@ -208,14 +211,10 @@ export class VaccinePage {
   // }
 
   checkVaccineIsDon(data): boolean {
-    var isdone: boolean = true;
     for (let i = 0; i < data.length; i++) {
-      if (!data[i].IsDone == false) {
-        isdone = false;
-        break;
-      }
+      if (!data[i].IsDone) { return false; }
     }
-    return isdone;
+    return true;
   }
   
 
@@ -1019,6 +1018,7 @@ this.downloadSpecialPdf();
   }
 
   openAssignPopup() {
+    if (this.assigningPA) { return; }
     if (this.clinicPAs.length === 0) {
       this.toastService.create('No PAs assigned to this clinic', 'warning');
       return;
@@ -1035,7 +1035,7 @@ this.downloadSpecialPdf();
   }
 
   hasUnpaidDoneVaccine(data: any[]): boolean {
-    return data.some(function(v) { return v.IsDone && !v.Due2EPI && !v.IsPaymentCollected; });
+    return data.some(function(v) { return v.IsDone && !v.Due2EPI && !v.IsPaymentCollected && v.Amount > 0; });
   }
 
   getDoneScheduleId(data: any[]): number {
@@ -1043,11 +1043,11 @@ this.downloadSpecialPdf();
     return done ? done.Id : data[0].Id;
   }
 
-  openPaymentPopup(scheduleId: number, groupVaccines: any[]) {
+  async openPaymentPopup(scheduleId: number, groupVaccines: any[]) {
     this.paymentTargetScheduleId = scheduleId;
-    // Collect ALL done schedule IDs in this group — payment is recorded for the whole bill
+    // Collect ALL done schedule IDs in this group that have an amount — payment is recorded for the whole bill
     this.paymentTargetScheduleIds = (groupVaccines || [])
-      .filter(function(v) { return v.IsDone && v.Id; })
+      .filter(function(v) { return v.IsDone && v.Id && v.Amount > 0; })
       .map(function(v) { return v.Id; });
     this.paymentDueAmount = 0;
     this.paymentPopupOpen = true;
@@ -1055,21 +1055,21 @@ this.downloadSpecialPdf();
     if (doneVaccine) {
       const utcDateStr = doneVaccine.GivenDate.toString().split('T')[0];
       const childId = Number(this.childId);
-      this.invoiceService.getInvoiceTotal(childId, utcDateStr).subscribe(res => {
+      // Try current date first, then previous day (UTC vs local timezone offset)
+      try {
+        const res = await this.invoiceService.getInvoiceTotal(childId, utcDateStr).toPromise();
         if (res && res.IsSuccess && res.ResponseData > 0) {
           this.paymentDueAmount = res.ResponseData;
         } else {
-          // GivenDate stored as UTC may be 1 day ahead of local invoice date — try previous day
           const prev = new Date(utcDateStr);
           prev.setDate(prev.getDate() - 1);
           const prevStr = prev.toISOString().split('T')[0];
-          this.invoiceService.getInvoiceTotal(childId, prevStr).subscribe(res2 => {
-            if (res2 && res2.IsSuccess && res2.ResponseData > 0) {
-              this.paymentDueAmount = res2.ResponseData;
-            }
-          });
+          const res2 = await this.invoiceService.getInvoiceTotal(childId, prevStr).toPromise();
+          if (res2 && res2.IsSuccess && res2.ResponseData > 0) {
+            this.paymentDueAmount = res2.ResponseData;
+          }
         }
-      });
+      } catch { /* amount stays 0 — user can still proceed */ }
     }
   }
 
@@ -1085,22 +1085,30 @@ this.downloadSpecialPdf();
       ? this.paymentTargetScheduleIds
       : (this.paymentTargetScheduleId ? [this.paymentTargetScheduleId] : []);
     if (ids.length === 0) return;
-    this.closePaymentPopup();
     const loading = await this.loadingController.create({ message: 'Recording payment...' });
     await loading.present();
     // Record payment mode for ALL schedules in this visit in parallel
     const calls = ids.map(id => this.scheduleService.recordPaymentMode(id, { PaymentMode: mode }).toPromise());
-    Promise.all(calls).then(() => {
+    try {
+      await Promise.all(calls);
       loading.dismiss();
+      this.closePaymentPopup();
       this.toastService.create('Payment recorded: ' + mode, 'success');
       this.getVaccination();
-    }).catch(() => {
+    } catch {
       loading.dismiss();
-      this.toastService.create('Error recording payment', 'danger');
-    });
+      this.toastService.create('Error recording payment — please try again', 'danger');
+      // popup stays open so user can retry
+    }
   }
 
   doAssign(pa: any) {
+    if (this.assigningPA) { return; }
+    if (!this.doctorId || !this.clinicId || !this.childId) {
+      this.toastService.create('Patient or clinic info not loaded yet', 'warning');
+      return;
+    }
+    this.assigningPA = true;
     this.assignPopupOpen = false;
     const payload = {
       DoctorId: this.doctorId,
@@ -1111,12 +1119,16 @@ this.downloadSpecialPdf();
     };
     this.paService.createAssignment(payload).subscribe(res => {
       if (res && res.IsSuccess) {
-        this.toastService.create('Assigned to ' + pa.Name, 'success');
-        this.loadActiveAssignment();
+        this.loadActiveAssignment(() => {
+          this.assigningPA = false;
+          this.toastService.create('Assigned to ' + pa.Name, 'success');
+        });
       } else {
+        this.assigningPA = false;
         this.toastService.create(res.Message || 'Failed to assign', 'danger');
       }
     }, (err) => {
+      this.assigningPA = false;
       const msg = err && err.error && err.error.Message ? err.error.Message
                 : err && err.message ? err.message
                 : 'Failed to assign';
@@ -1124,13 +1136,19 @@ this.downloadSpecialPdf();
     });
   }
 
-  loadActiveAssignment() {
-    if (!this.doctorId || !this.childId) return;
+  loadActiveAssignment(onDone?: () => void) {
+    if (!this.doctorId || !this.childId) { if (onDone) onDone(); return; }
+    this.activeAssignmentLoading = true;
     this.paService.getActiveAssignmentsForDoctor(this.doctorId).subscribe(res => {
+      this.activeAssignmentLoading = false;
       if (res && res.IsSuccess) {
         const all: any[] = res.ResponseData || [];
         this.activeAssignment = all.find(a => a.ChildId === Number(this.childId)) || null;
       }
+      if (onDone) onDone();
+    }, () => {
+      this.activeAssignmentLoading = false;
+      if (onDone) onDone();
     });
   }
 
@@ -1166,6 +1184,10 @@ this.downloadSpecialPdf();
   }
 
   openReassignPopup() {
+    if (!this.activeAssignment) {
+      this.toastService.create('No active assignment to reassign', 'warning');
+      return;
+    }
     if (this.clinicPAs.length === 0) {
       this.toastService.create('No PAs available at this clinic', 'warning');
       return;
