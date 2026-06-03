@@ -61,6 +61,7 @@ export class VaccinePage {
   reassignPopupOpen: boolean = false;
   paymentPopupOpen: boolean = false;
   paymentTargetScheduleId: number = null;
+  paymentTargetScheduleIds: number[] = [];
   paymentDueAmount: number = 0;
   canCollectPayment = true;
 
@@ -1044,6 +1045,10 @@ this.downloadSpecialPdf();
 
   openPaymentPopup(scheduleId: number, groupVaccines: any[]) {
     this.paymentTargetScheduleId = scheduleId;
+    // Collect ALL done schedule IDs in this group — payment is recorded for the whole bill
+    this.paymentTargetScheduleIds = (groupVaccines || [])
+      .filter(function(v) { return v.IsDone && v.Id; })
+      .map(function(v) { return v.Id; });
     this.paymentDueAmount = 0;
     this.paymentPopupOpen = true;
     const doneVaccine = groupVaccines.find(function(v) { return v.IsDone && v.GivenDate; });
@@ -1071,28 +1076,28 @@ this.downloadSpecialPdf();
   closePaymentPopup() {
     this.paymentPopupOpen = false;
     this.paymentTargetScheduleId = null;
+    this.paymentTargetScheduleIds = [];
     this.paymentDueAmount = 0;
   }
 
   async submitPayment(mode: 'Cash' | 'Online') {
-    if (!this.paymentTargetScheduleId) return;
-    const scheduleId = this.paymentTargetScheduleId;
+    const ids = this.paymentTargetScheduleIds.length > 0
+      ? this.paymentTargetScheduleIds
+      : (this.paymentTargetScheduleId ? [this.paymentTargetScheduleId] : []);
+    if (ids.length === 0) return;
     this.closePaymentPopup();
     const loading = await this.loadingController.create({ message: 'Recording payment...' });
     await loading.present();
-    this.scheduleService.recordPaymentMode(scheduleId, { PaymentMode: mode })
-      .subscribe(res => {
-        loading.dismiss();
-        if (res && res.IsSuccess) {
-          this.toastService.create('Payment recorded: ' + mode, 'success');
-          this.getVaccination();
-        } else {
-          this.toastService.create(res.Message || 'Failed to record payment', 'danger');
-        }
-      }, () => {
-        loading.dismiss();
-        this.toastService.create('Error recording payment', 'danger');
-      });
+    // Record payment mode for ALL schedules in this visit in parallel
+    const calls = ids.map(id => this.scheduleService.recordPaymentMode(id, { PaymentMode: mode }).toPromise());
+    Promise.all(calls).then(() => {
+      loading.dismiss();
+      this.toastService.create('Payment recorded: ' + mode, 'success');
+      this.getVaccination();
+    }).catch(() => {
+      loading.dismiss();
+      this.toastService.create('Error recording payment', 'danger');
+    });
   }
 
   doAssign(pa: any) {
