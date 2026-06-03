@@ -240,9 +240,7 @@ export class BulkInvoicePage implements OnInit {
       DoctorId: Number(this.doctorId),
       PaId: this.paId ? Number(this.paId) : null,
       ClinicId: this.clinicId ? Number(this.clinicId) : null,
-      InvoiceDate: (this.bulkData && this.bulkData.length > 0 && this.bulkData[0].GivenDate)
-          ? new Date(this.bulkData[0].GivenDate)
-          : this.currentDate1 || new Date(),
+      InvoiceDate: new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' })),
       ConsultationFee: consultationFee
     };
   }
