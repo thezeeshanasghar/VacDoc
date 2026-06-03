@@ -440,10 +440,10 @@ export class PaymentReconciliationPage {
           text: 'Reject',
           cssClass: 'alert-btn-danger',
           handler: (data) => {
-            this.paService.rejectAmendment(row.AmendmentId!, this.doctorId!, data?.notes || '').subscribe(
+            this.paService.rejectAmendment(row.AmendmentId!, this.doctorId!, (data && data.notes) || '').subscribe(
               res => {
                 if (res && res.IsSuccess) {
-                  this.toastService.create('Amendment rejected — PA still owes full amount', 'warning');
+                  this.toastService.create('Amendment rejected - PA still owes full amount', 'warning');
                   this.load();
                 } else {
                   this.toastService.create((res && res.Message) || 'Reject failed', 'danger');
