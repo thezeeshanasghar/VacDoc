@@ -463,8 +463,9 @@ export class PaymentReconciliationPage {
     try {
       const d = new Date(dateStr);
       const dd = d.getDate().toString().padStart(2, '0');
-      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      return `${dd} ${months[d.getMonth()]} ${d.getFullYear()}`;
+      const mm = (d.getMonth() + 1).toString().padStart(2, '0');
+      const yy = d.getFullYear().toString().slice(-2);
+      return `${dd}/${mm}/${yy}`;
     } catch { return dateStr; }
   }
 

@@ -159,9 +159,8 @@
                 <th class="col-check"></th>
                 <th class="col-date">Date</th>
                 <th class="col-patient">Patient Name</th>
-                <th class="col-vaccine">Vaccine(s)</th>
                 <th class="col-amount">Amount</th>
-                <th class="col-mode">Payment Mode</th>
+                <th class="col-mode">Mode</th>
                 <th class="col-status">Status</th>
                 <th class="col-action">Action</th>
               </tr>
@@ -185,12 +184,11 @@
                   <div class="patient-name">{{ row.PatientName }}</div>
                   <div class="patient-pa" *ngIf="row.PaName">{{ row.PaName }}</div>
                 </td>
-                <td class="col-vaccine">{{ row.Vaccines }}</td>
                 <td class="col-amount">
-                  <span class="amount-val">PKR {{ row.Amount | number:'1.0-0' }}</span>
+                  <span class="amount-val">{{ row.Amount | number:'1.0-0' }}</span>
                   <!-- For amendment rows show old→new -->
                   <div *ngIf="row.RowType !== 'Invoice'" class="amount-sub-detail">
-                    Old: PKR {{ row.OldAmount | number:'1.0-0' }} → New: PKR {{ row.NewAmount | number:'1.0-0' }}
+                    {{ row.OldAmount | number:'1.0-0' }} → {{ row.NewAmount | number:'1.0-0' }}
                   </div>
                 </td>
                 <td class="col-mode">
