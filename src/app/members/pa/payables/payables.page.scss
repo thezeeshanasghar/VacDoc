@@ -3,37 +3,39 @@
 }
 
 .pay-wrap {
-  padding: 20px 16px 32px;
+  padding: 16px 14px 40px;
+  max-width: 480px;
+  margin: 0 auto;
 }
 
 // ── KPI Cards ───────────────────────────────────────────────────────────────
 .kpi-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 18px;
 }
 
 .kpi-card {
   background: #fff;
   border-radius: 16px;
-  padding: 16px 14px;
+  padding: 14px 12px;
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
 }
 
 .kpi-icon-wrap {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 
-  ion-icon { font-size: 26px; }
+  ion-icon { font-size: 24px; }
 }
 
 .kpi-icon-blue { background: #E8F0FC; ion-icon { color: #1565C0; } }
@@ -42,16 +44,16 @@
 .kpi-body { flex: 1; min-width: 0; }
 
 .kpi-label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   color: #78909C;
-  letter-spacing: 0.5px;
-  margin: 0 0 4px;
+  letter-spacing: 0.3px;
+  margin: 0 0 2px;
   text-transform: uppercase;
 }
 
 .kpi-value {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 800;
   color: #1565C0;
   margin: 0 0 2px;
@@ -61,7 +63,7 @@
 .kpi-value-green { color: #2E7D32; }
 
 .kpi-sub {
-  font-size: 11px;
+  font-size: 10px;
   color: #90A4AE;
   margin: 0;
 }
@@ -70,7 +72,7 @@
 .tab-row {
   display: flex;
   gap: 10px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .tab-btn {
@@ -79,17 +81,17 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 10px 8px;
+  padding: 11px 8px;
   border-radius: 50px;
   border: 2px solid #1565C0;
   background: transparent;
   color: #1565C0;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
 
-  ion-icon { font-size: 16px; }
+  ion-icon { font-size: 17px; }
 
   &.tab-active {
     background: #1565C0;
@@ -97,46 +99,142 @@
   }
 }
 
-// ── Table ───────────────────────────────────────────────────────────────────
-.table-card {
+// ── Assignment Cards ─────────────────────────────────────────────────────────
+.assignment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.assignment-card {
   background: #fff;
-  border-radius: 16px;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-}
-
-.table-header {
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  border-bottom: 1px solid #ECEFF1;
-  font-size: 12px;
-  font-weight: 600;
-  color: #546E7A;
-}
-
-.table-row {
-  display: flex;
-  align-items: center;
-  padding: 14px 16px;
-  border-bottom: 1px solid #F5F7FA;
   cursor: pointer;
-  transition: background 0.12s;
+  transition: box-shadow 0.15s;
 
-  &:last-child { border-bottom: none; }
-  &:active { background: #F0F4F8; }
+  &:active { box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
 }
 
-.col-sn     { width: 28px; font-weight: 700; color: #37474F; font-size: 13px; flex-shrink: 0; }
-.col-name   { flex: 1; min-width: 0; font-size: 13px; color: #263238;
-  strong { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .pid-tag { font-size: 11px; color: #90A4AE; }
+// Top row: index + name + badge
+.card-header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 14px 10px;
+  border-bottom: 1px solid #F0F4F8;
 }
-.col-amt    { width: 120px; text-align: right; font-size: 13px; color: #37474F; font-weight: 600; flex-shrink: 0; }
-.col-status { width: 90px; display: flex; justify-content: flex-end; align-items: center; flex-shrink: 0; }
-.col-actions { width: 72px; text-align: center; flex-shrink: 0; display: flex; align-items: center; justify-content: flex-end; }
 
-// ── Badges ──────────────────────────────────────────────────────────────────
+.card-index {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #E8F0FC;
+  color: #1565C0;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card-name-block {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1A2A3A;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-pid {
+  font-size: 12px;
+  color: #90A4AE;
+  margin-top: 1px;
+}
+
+.card-badge-wrap {
+  flex-shrink: 0;
+}
+
+// Bottom row: amount + actions
+.card-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #FAFBFC;
+}
+
+.card-amount {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.amt-label {
+  font-size: 10px;
+  color: #90A4AE;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.amt-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #263238;
+}
+
+// Action buttons in footer
+.card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border-radius: 50px;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+
+  ion-icon { font-size: 15px; }
+
+  &:active { opacity: 0.75; }
+}
+
+.action-done {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.action-cancel {
+  background: #FFEBEE;
+  color: #C62828;
+}
+
+// Completed tab status icons
+.card-status-icon {
+  ion-icon { font-size: 26px; }
+}
+
+.icon-confirmed { color: #2E7D32; }
+.icon-pending   { color: #E65100; }
+
+// ── Badges ───────────────────────────────────────────────────────────────────
 .badge {
   display: inline-flex;
   align-items: center;
@@ -173,9 +271,20 @@
   &::before { background: #283593; }
 }
 
+// ── Empty State ───────────────────────────────────────────────────────────────
 .empty-state {
-  padding: 32px 16px;
   text-align: center;
+  padding: 48px 16px;
   color: #90A4AE;
-  font-size: 14px;
+
+  ion-icon {
+    font-size: 52px;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 14px;
+    margin: 0;
+  }
 }
