@@ -167,6 +167,12 @@
   &::before { background: #2E7D32; }
 }
 
+.badge-handover {
+  background: #E8EAF6;
+  color: #283593;
+  &::before { background: #283593; }
+}
+
 .empty-state {
   padding: 32px 16px;
   text-align: center;

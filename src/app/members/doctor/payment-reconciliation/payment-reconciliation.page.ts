@@ -9,13 +9,20 @@ import { environment } from 'src/environments/environment';
 interface PaymentRow {
   InvoiceSubmissionId: number;
   ScheduleId: number;       // alias = InvoiceSubmissionId, kept for backwards compat
+  AmendmentId?: number;     // set when RowType is UngiveReversal or EditReversal
+  RowType: 'Invoice' | 'UngiveReversal' | 'EditReversal';
   Date: string;
   PatientName: string;
   Vaccines: string;
   Amount: number;
-  PaymentMode: 'Cash' | 'Online';
+  OldAmount?: number;
+  NewAmount?: number;
+  PaymentMode: string;
   IsConfirmed: boolean;
   ConfirmedAt?: string;
+  InvoiceStatus?: string;
+  HasPendingAmendment?: boolean;
+  PendingHandover?: boolean;
   PaId: number;
   PaName: string;
   ClinicId: number;
@@ -28,11 +35,12 @@ interface PaymentRow {
   styleUrls: ['./payment-reconciliation.page.scss'],
 })
 export class PaymentReconciliationPage {
-  doctorId: number = null;
+  doctorId: number | null = null;
   clinics: any[] = [];
   pas: any[] = [];
 
   selectedClinicId: number | null = null;
+
   selectedPaId: number | null = null;
   fromDate: string = '';
   toDate: string = '';
@@ -74,7 +82,7 @@ export class PaymentReconciliationPage {
 
   async loadClinics() {
     if (!this.doctorId) { return; }
-    this.clinicService.getClinics(this.doctorId).subscribe(res => {
+    this.clinicService.getClinics(this.doctorId!).subscribe(res => {
       if (res && res.IsSuccess) {
         this.clinics = res.ResponseData || [];
       }
@@ -139,7 +147,7 @@ export class PaymentReconciliationPage {
   }
 
   private loadFallback() {
-    this.paService.getDailySummary(this.doctorId, this.fromDate).subscribe(
+    this.paService.getDailySummary(this.doctorId!, this.fromDate).subscribe(
       res => {
         this.loading = false;
         if (res && res.IsSuccess && res.ResponseData) {
@@ -148,6 +156,7 @@ export class PaymentReconciliationPage {
           summary.forEach((pa: any) => {
             (pa.Schedules || []).forEach((s: any) => {
               rows.push({
+                RowType: 'Invoice' as const,
                 InvoiceSubmissionId: s.ScheduleId,
                 ScheduleId: s.ScheduleId,
                 Date: s.Date || this.fromDate,
@@ -168,6 +177,7 @@ export class PaymentReconciliationPage {
             const doc = res.ResponseData.DoctorEntry;
             (doc.Schedules || []).forEach((s: any) => {
               rows.push({
+                RowType: 'Invoice' as const,
                 InvoiceSubmissionId: s.ScheduleId,
                 ScheduleId: s.ScheduleId,
                 Date: s.Date || this.fromDate,
@@ -370,7 +380,7 @@ export class PaymentReconciliationPage {
         return;
       }
       const row = rows[index];
-      this.paService.confirmInvoice(row.InvoiceSubmissionId || row.ScheduleId, this.doctorId).subscribe(
+      this.paService.confirmInvoice(row.InvoiceSubmissionId || row.ScheduleId, this.doctorId!).subscribe(
         res => {
           if (res && res.IsSuccess) {
             done++;
@@ -385,6 +395,67 @@ export class PaymentReconciliationPage {
       );
     };
     confirmNext(0);
+  }
+
+  async approveAmendment(row: PaymentRow) {
+    const alert = await this.alertController.create({
+      header: row.RowType === 'UngiveReversal' ? 'Approve Ungive' : 'Approve Invoice Edit Reversal',
+      message: row.RowType === 'UngiveReversal'
+        ? `Approve ungive for ${row.PatientName}? PA payable will drop to PKR 0 for this invoice.`
+        : `Approve edit reversal for ${row.PatientName}? PA payable for Amount1 (PKR ${(row.OldAmount || 0).toLocaleString()}) will be reversed.`,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Approve',
+          cssClass: 'alert-btn-confirm',
+          handler: () => {
+            this.paService.approveAmendment(row.AmendmentId!, this.doctorId!).subscribe(
+              res => {
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Amendment approved', 'success');
+                  this.load();
+                } else {
+                  this.toastService.create((res && res.Message) || 'Approve failed', 'danger');
+                }
+              },
+              () => this.toastService.create('Approve failed', 'danger')
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async rejectAmendment(row: PaymentRow) {
+    const alert = await this.alertController.create({
+      header: 'Reject — PA Still Owes',
+      message: row.RowType === 'UngiveReversal'
+        ? `Reject ungive for ${row.PatientName}? PA will still owe PKR ${(row.OldAmount || row.Amount).toLocaleString()}.`
+        : `Reject edit reversal for ${row.PatientName}? PA still owes original amount PKR ${(row.OldAmount || row.Amount).toLocaleString()}.`,
+      inputs: [{ name: 'notes', type: 'text', placeholder: 'Optional notes...' }],
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Reject',
+          cssClass: 'alert-btn-danger',
+          handler: (data) => {
+            this.paService.rejectAmendment(row.AmendmentId!, this.doctorId!, data?.notes || '').subscribe(
+              res => {
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Amendment rejected — PA still owes full amount', 'warning');
+                  this.load();
+                } else {
+                  this.toastService.create((res && res.Message) || 'Reject failed', 'danger');
+                }
+              },
+              () => this.toastService.create('Reject failed', 'danger')
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
   formatDate(dateStr: string): string {

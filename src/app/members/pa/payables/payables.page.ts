@@ -43,8 +43,10 @@ export class PayablesPage {
       ]);
 
       if (assignRes && assignRes.IsSuccess) {
-        // New Assignments = doctor-assigned (not auto-created), not completed
-        this.newAssignments = (assignRes.ResponseData || []).filter((a: any) => !a.IsAutoCreated);
+        // Show all active assignments regardless of IsAutoCreated (includes remote-clinic invoice-driven ones)
+        this.newAssignments = (assignRes.ResponseData || []).filter(
+          (a: any) => !a.IsCompleted && !a.IsCancelled && a.AssignmentStatus !== 'Completed'
+        );
         this.pendingCount = this.newAssignments.length;
       }
 
@@ -84,28 +86,30 @@ export class PayablesPage {
 
     const confirm = await this.alertCtrl.create({
       header: 'Mark as Done',
-      message: 'Mark assignment for ' + a.Name + ' as completed?',
+      message: 'Mark assignment for ' + a.Name + ' as done? This will move it to Pending Cash Handover for the doctor to confirm.',
       buttons: [
         { text: 'Back', role: 'cancel' },
-        { text: 'Done', handler: () => { this.doCompleteAssignment(a.AssignmentId); } }
+        { text: 'Mark Done', handler: () => { this.doCompleteAssignment(a.AssignmentId); } }
       ]
     });
     await confirm.present();
   }
 
   async doCompleteAssignment(assignmentId: number) {
-    const loading = await this.loadingController.create({ message: 'Completing...' });
+    const user = await this.storage.get(environment.USER);
+    const paId = Number(user.PAId);
+    const loading = await this.loadingController.create({ message: 'Marking done...' });
     await loading.present();
     try {
-      const res = await this.paService.completeAssignment(assignmentId).toPromise();
+      const res = await this.paService.markAssignmentDone(assignmentId, paId).toPromise();
       if (res && res.IsSuccess) {
-        this.toastService.create('Assignment completed', 'success');
+        this.toastService.create('Marked as done — pending cash handover', 'success');
         await this.ionViewWillEnter();
       } else {
-        this.toastService.create((res && res.Message) || 'Complete failed', 'danger');
+        this.toastService.create((res && res.Message) || 'Mark done failed', 'danger');
       }
     } catch (e) {
-      this.toastService.create('Complete failed', 'danger');
+      this.toastService.create('Mark done failed', 'danger');
     } finally {
       loading.dismiss();
     }

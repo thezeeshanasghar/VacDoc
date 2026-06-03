@@ -277,6 +277,31 @@ export class PaService extends BaseService {
     return this.http.patch(url, {}, this.httpOptions).pipe(catchError(this.handleError));
   }
 
+  // --- Invoice Amendment endpoints ---
+  // Returns all pending (unresolved) amendments for doctor's reconciliation page
+  getPendingAmendments(doctorId: number): Observable<any> {
+    const url = `${this.API_PA}InvoiceAmendment/pending/${doctorId}`;
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  // Doctor approves amendment: ungive → payable drops to 0; edit → payable becomes NewAmount
+  approveAmendment(amendmentId: number, doctorId: number): Observable<any> {
+    const url = `${this.API_PA}InvoiceAmendment/${amendmentId}/approve?doctorId=${doctorId}`;
+    return this.http.patch(url, {}, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  // Doctor rejects amendment: PA payable stays at OldAmount regardless of ungive/edit
+  rejectAmendment(amendmentId: number, doctorId: number, notes?: string): Observable<any> {
+    const url = `${this.API_PA}InvoiceAmendment/${amendmentId}/reject?doctorId=${doctorId}`;
+    return this.http.patch(url, { Notes: notes || '' }, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  // PA marks assignment done (payment collected) → transitions to PendingHandover
+  markAssignmentDone(assignmentId: number, paId: number): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/mark-done?paId=${paId}`;
+    return this.http.patch(url, {}, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
 //   putDoctorSchedule(data): Observable<any> {
 //     const url = `${this.API_SCHEDULE}doctorschedule`;
 //     return this.http

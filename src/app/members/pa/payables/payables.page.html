@@ -72,7 +72,8 @@
           </span>
           <span class="col-amt">PKR {{ (a.InvoiceAmount || 0) | number }}</span>
           <span class="col-status">
-            <span class="badge badge-pending">Pending</span>
+            <span class="badge badge-handover" *ngIf="a.AssignmentStatus === 'PendingHandover'">Pending Handover</span>
+            <span class="badge badge-pending" *ngIf="a.AssignmentStatus !== 'PendingHandover'">Pending</span>
           </span>
           <span class="col-actions">
             <ion-button fill="clear" color="success" size="small" (click)="promptDone(a, $event)">
