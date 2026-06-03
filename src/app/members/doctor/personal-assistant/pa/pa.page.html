@@ -64,7 +64,7 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">Assign to Clinic (optional)</ion-label>
-      <ion-select formControlName="ClinicId">
+      <ion-select formControlName="ClinicId" multiple="true">
         <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
           {{ clinic.Name }}
         </ion-select-option>

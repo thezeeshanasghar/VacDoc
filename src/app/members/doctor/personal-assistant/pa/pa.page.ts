@@ -82,20 +82,33 @@ export class PaPage implements OnInit {
       next: (res) => {
         if (res.IsSuccess) {
           const newPaId = res.ResponseData && res.ResponseData.Id ? res.ResponseData.Id : null;
-          const clinicId = this.fg.value.ClinicId;
+          const clinicIds: any[] = this.fg.value.ClinicId || [];
 
-          if (newPaId && clinicId) {
-            this.paService.addPAAccess({ PersonalAssistantId: newPaId, clinicId }).subscribe({
-              next: () => {
-                loading.dismiss();
-                this.toastService.create('Assistant added with clinic access.', 'success');
-                this.router.navigate(['/members/doctor/personal-assistant']);
-              },
-              error: () => {
-                loading.dismiss();
-                this.toastService.create('Assistant added but clinic access failed.', 'warning');
-                this.router.navigate(['/members/doctor/personal-assistant']);
-              }
+          if (newPaId && clinicIds.length > 0) {
+            let completed = 0;
+            let failed = 0;
+            clinicIds.forEach((clinicId) => {
+              this.paService.addPAAccess({ PersonalAssistantId: newPaId, clinicId }).subscribe({
+                next: () => {
+                  completed++;
+                  if (completed + failed === clinicIds.length) {
+                    loading.dismiss();
+                    const msg = failed > 0
+                      ? 'Assistant added, some clinic access assignments failed.'
+                      : 'Assistant added with clinic access.';
+                    this.toastService.create(msg, failed > 0 ? 'warning' : 'success');
+                    this.router.navigate(['/members/doctor/personal-assistant']);
+                  }
+                },
+                error: () => {
+                  failed++;
+                  if (completed + failed === clinicIds.length) {
+                    loading.dismiss();
+                    this.toastService.create('Assistant added, some clinic access assignments failed.', 'warning');
+                    this.router.navigate(['/members/doctor/personal-assistant']);
+                  }
+                }
+              });
             });
           } else {
             loading.dismiss();
