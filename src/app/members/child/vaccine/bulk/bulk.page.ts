@@ -241,8 +241,8 @@ export class BulkPage implements OnInit {
         : null;
 
       this.BrandIds[index] = selectedBrand ? selectedBrand.Id : null;
-      this.brandSearchTerms[index] = selectedBrand ? selectedBrand.Name : "";
-      this.ohfSelections[index] = false;
+      this.brandSearchTerms[index] = selectedBrand ? selectedBrand.Name : "OHF";
+      this.ohfSelections[index] = !selectedBrand;
       this.manufacturerValues[index] = selectedBrand ? (selectedBrand.Manufacturer || "") : "";
       this.availableBatchLotsPerRow[index] = [];
       this.availableLotsPerRow[index] = [];

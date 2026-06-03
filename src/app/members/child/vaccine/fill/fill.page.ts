@@ -260,6 +260,10 @@ export class FillPage implements OnInit {
             this.fg.controls['BrandId'].setValue('OHF');
             this.brandSearchTerm = 'OHF';
             this.onBrandChange('OHF');
+          } else {
+            this.fg.controls['BrandId'].setValue('OHF');
+            this.brandSearchTerm = 'OHF';
+            this.onBrandChange('OHF');
           }
           this.ref.detectChanges();
           loading.dismiss();
