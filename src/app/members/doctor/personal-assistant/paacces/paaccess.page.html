@@ -1,71 +1,58 @@
 <ion-header>
-    <ion-toolbar color="primary">
-      <ion-buttons slot="start">
-      </ion-buttons>
-      <ion-title>Personal Assistant Access</ion-title>
-    </ion-toolbar>
-    <ion-toolbar color="primary" >
-      <ion-buttons class="ion-justify-content-center" style="border-radius: 5px;">
-        <ion-icon style="margin-left: 10%" routerLink="/members/child/add"  name="person-add" size="large" > </ion-icon>
-        <ion-icon style="margin-left: 10%" routerLink="/members/alert"  name="alert" size="large" > </ion-icon>
-        <ion-icon style="margin-left: 10%" routerLink="/members/child" name="accessibility-outline" size="large"> </ion-icon>
-        <ion-menu-button style="margin-left: 10%"></ion-menu-button>
-      </ion-buttons>
-    </ion-toolbar>
- </ion-header>
-  
-  <ion-content class="ion-padding">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/personal-assistant"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Manage Clinic Access</ion-title>
+  </ion-toolbar>
+</ion-header>
 
-    <!-- Guidance banner shown after PA creation -->
-    <ion-note color="primary" style="display:block; background:#E3F0FF; border-radius:10px; padding:10px 14px; margin-bottom:12px; font-size:13px;" *ngIf="selectedPA">
-      <ion-icon name="information-circle-outline"></ion-icon>
-      &nbsp;PA created successfully. Now select a clinic to grant access, then tap <strong>Submit</strong>.
-    </ion-note>
+<ion-content class="ion-padding">
 
-    <form [formGroup]="fg">
-      <ion-item>
-        <ion-label position="floating">Select PA</ion-label>
-        <ion-select formControlName="pa" (ionChange)="onPADropdownChange($event)">
-          <ion-select-option *ngFor="let pa of personalAssistants" [value]="pa.Id">
-            {{ pa.Name }}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-item>
-        <ion-label position="floating">Select Clinic</ion-label>
-        <ion-select formControlName="clinic" (ionChange)="onClinicDropdownChange($event)">
-          <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
-            {{ clinic.Name }}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-button expand="block" (click)="submit()" [disabled]="!fg.valid">Submit</ion-button>
-    </form>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Clinic</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let pa of personalAssistantsaccess">
-              <td>{{ pa.PersonalAssistant.Name }}</td>
-              <td>{{ pa.Clinic.Name }}</td>
-              <td>
-                <ion-button color="danger" fill="clear" (click)="deleteAccess(pa.Id)">
-                  <ion-icon name="close-outline" slot="icon-only"></ion-icon>
-                </ion-button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <ng-template #noData>
-        <ion-text color="medium">
-          <p>No Personal Assistants found.</p>
-        </ion-text>
-      </ng-template>
-  </ion-content>
+  <form [formGroup]="fg">
+    <ion-item>
+      <ion-label position="floating">Select PA</ion-label>
+      <ion-select formControlName="pa" (ionChange)="onPADropdownChange($event)">
+        <ion-select-option *ngFor="let pa of personalAssistants" [value]="pa.Id">
+          {{ pa.Name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Select Clinic</ion-label>
+      <ion-select formControlName="clinic" (ionChange)="onClinicDropdownChange($event)">
+        <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+          {{ clinic.Name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-button expand="block" (click)="submit()" [disabled]="!fg.valid" style="margin-top: 12px;">Submit</ion-button>
+  </form>
+
+  <div class="table-container" style="margin-top: 20px;">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Clinic</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pa of personalAssistantsaccess">
+          <td>{{ pa.PersonalAssistant.Name }}</td>
+          <td>{{ pa.Clinic.Name }}</td>
+          <td>
+            <ion-button color="danger" fill="clear" (click)="deleteAccess(pa.Id)">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <ion-text color="medium" *ngIf="!personalAssistantsaccess || !personalAssistantsaccess.length">
+      <p>No clinic access assignments found.</p>
+    </ion-text>
+  </div>
+
+</ion-content>

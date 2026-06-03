@@ -1,18 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
-// import { ClinicService } from 'src/app/services/clinic.service';
 import { Storage } from '@ionic/storage';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from '../../../../../environments/environment';
-import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { PaService } from 'src/app/services/pa.service';
+import { ClinicService } from 'src/app/services/clinic.service';
 import { Router } from '@angular/router';
-import * as moment from 'moment';
 import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
 import { AbstractControl, ValidatorFn } from '@angular/forms';
-
-
 
 @Component({
   selector: 'app-pa',
@@ -21,13 +18,9 @@ import { AbstractControl, ValidatorFn } from '@angular/forms';
 })
 export class PaPage implements OnInit {
 
-  fg: any;
-  clinics: any = [];
-
+  fg: FormGroup;
+  clinics: any[] = [];
   DoctorId: any;
-  ClinicId: any = [];
-  todaydate;
-  email: any; 
 
   constructor(
     public loadingController: LoadingController,
@@ -35,122 +28,82 @@ export class PaPage implements OnInit {
     public formBuilder: FormBuilder,
     private storage: Storage,
     private paService: PaService,
-    // private vacationService: VacationService,
+    private clinicService: ClinicService,
     private toastService: ToastService,
     private http: HttpClient
-
-  ) {
-    this.todaydate = new Date().toISOString().slice(0, 10);
-
-    //this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format('YYYY-MM-DD');
-    // this.fg2 = this.formBuilder.group({
-    //   clinics: new FormArray([]),
-    //   'formDate': [this.todaydate],
-    //   'ToDate': [this.todaydate],
-    //   'CountryCode': ['92'],
-    //   'MobileNumber': [null, [Validators.required, this.onlyNumbersValidator()]],
-    // });
-  }
+  ) {}
 
   ngOnInit() {
-    this.storage.get(environment.DOCTOR_Id).then((val) => {
-      this.DoctorId = val;
-    });
-    // this.getClinics();
     this.fg = this.formBuilder.group({
-      // Id: [null],
-      // FirstName: [null],
-      // LastName: [null],
-      // DisplayName: [null],
-      // Email: new FormControl(
-      //   "",
-      //   Validators.compose([
-      //     Validators.required,
-      //     Validators.pattern(
-      //       "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
-      //     )
-      //   ])
-      // ),
-      // IsApproved: ['true'],
       Name: ['', Validators.compose([
         Validators.required,
         Validators.pattern(/^[^\d]+$/)
       ])],
       CountryCode: ['92'],
-      MobileNumber: new FormControl(
-        "",
-        Validators.compose([
-          Validators.required,
-          Validators.pattern("[0-9]{10}$")
-        ])
-      ),
-      Email: new FormControl("", Validators.compose([
-        Validators.required,  ]), 
-      ),
-      // ShowMobile: [null],
-      // PhoneNo: new FormControl(
-      //   "",
-      //   Validators.compose([
-      //     Validators.required,
-      //     Validators.minLength(7),
-      //     Validators.maxLength(11),
-      //     Validators.pattern("^([0-9]*)$")
-      //   ])
-      // ),
-      // ShowPhone: [null],
-      // PMDC: new FormControl(
-      //   "",
-      //   Validators.compose([
-      //     Validators.required,
-      //     Validators.pattern("^[0-9-\\+]*-[A-Z]$")
-      //   ])
-      // ),
-      // AdditionalInfo:["",
-      //  [Validators.required,
-      //   // this.fourLinesValidator,
-      // ]],
-      // Qualification:[null],
-      // // SignatureImage: new FormControl([null]),
-      // ProfileImage: new FormControl([null])
-
+      MobileNumber: new FormControl('', Validators.compose([
+        Validators.required,
+        Validators.pattern('[0-9]{10}$')
+      ])),
+      Email: new FormControl('', Validators.required),
+      ClinicId: [''],
     });
 
+    this.storage.get(environment.DOCTOR_Id).then((val) => {
+      this.DoctorId = val;
+      this.loadClinics(val);
+    });
   }
-  // pickFromDate($event) {
-  //   this.fg2.controls['formDate'].setValue($event.detail.value);
-  // }
-  // pickTodayDate($event) {
-  //   this.fg2.controls['ToDate'].setValue($event.detail.value);
-  // }
+
+  async loadClinics(doctorId: any) {
+    this.clinicService.getClinics(Number(doctorId)).subscribe({
+      next: (response) => {
+        if (response.IsSuccess) {
+          this.clinics = response.ResponseData;
+        }
+      },
+      error: () => {}
+    });
+  }
 
   async submit() {
     const personalAssistantData = {
       Name: this.fg.value.Name,
       CountryCode: this.fg.value.CountryCode,
       MobileNumber: this.fg.value.MobileNumber,
-      Password: this.generatePassword(8), // Generate a password
+      Password: this.generatePassword(8),
       DoctorId: this.DoctorId,
       Email: this.fg.value.Email,
     };
-  
-    console.log('Personal Assistant Data:', personalAssistantData);
-  
-    const loading = await this.loadingController.create({
-      message: 'Loading'
-    });
+
+    const loading = await this.loadingController.create({ message: 'Loading' });
     await loading.present();
-  
+
     this.paService.signUpPersonalAssistant(personalAssistantData).subscribe({
       next: (res) => {
-        loading.dismiss();
         if (res.IsSuccess) {
-          this.toastService.create('Assistant added! Now assign clinic access.', 'success');
           const newPaId = res.ResponseData && res.ResponseData.Id ? res.ResponseData.Id : null;
-          this.router.navigate(
-            ['/members/doctor/personal-assistant/access'],
-            newPaId ? { queryParams: { paId: newPaId } } : {}
-          );
+          const clinicId = this.fg.value.ClinicId;
+
+          if (newPaId && clinicId) {
+            this.paService.addPAAccess({ PersonalAssistantId: newPaId, clinicId }).subscribe({
+              next: () => {
+                loading.dismiss();
+                this.toastService.create('Assistant added with clinic access.', 'success');
+                this.router.navigate(['/members/doctor/personal-assistant']);
+              },
+              error: () => {
+                loading.dismiss();
+                this.toastService.create('Assistant added but clinic access failed.', 'warning');
+                this.router.navigate(['/members/doctor/personal-assistant']);
+              }
+            });
+          } else {
+            loading.dismiss();
+            this.toastService.create('Assistant added! Approve and set permissions from the list.', 'success');
+            this.router.navigate(['/members/doctor/personal-assistant']);
+          }
         } else {
+          loading.dismiss();
           this.toastService.create(res.Message, 'danger');
         }
       },
@@ -166,48 +119,24 @@ export class PaPage implements OnInit {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}|;:,.<>?';
     let password = '';
     for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      password += characters[randomIndex];
+      password += characters[Math.floor(Math.random() * characters.length)];
     }
     return password;
   }
 
-  onlyNumbersValidator(): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
-      const forbidden = /\D/.test(control.value); // Regular expression to test for non-digit characters
-      return forbidden ? { 'onlyNumbers': { value: control.value } } : null;
-    };
-  }
+  validation_messages = {
+    Name: [
+      { type: 'required', message: 'Name is required.' },
+    ],
+    MobileNumber: [
+      { type: 'required', message: 'Mobile number is required' },
+    ],
+    Email: [
+      { type: 'pattern', message: 'Please enter a valid email address' },
+      { type: 'email', message: 'Please enter a valid email address' }
+    ],
+  };
 
-  // async getClinics() {
-  //   const loading = await this.loadingController.create({ message: 'Loading' });
-  //   await loading.present();
-
-  //   await this.clinicService.getClinics(this.DoctorId).subscribe(
-  //     res => {
-  //       if (res.IsSuccess) {
-  //         this.clinics = res.ResponseData;
-  //         const controls = this.clinics.map(c => new FormControl(false));
-  //         this.fg2 = this.formBuilder.group({
-  //           clinics: new FormArray(controls),
-  //            'formDate': [this.todaydate],
-  //            'ToDate': [this.todaydate]
-  //         });
-  //         loading.dismiss();
-  //       }
-  //       else {
-  //         loading.dismiss();
-  //         this.toastService.create(res.Message, 'danger');
-  //       }
-  //     },
-  //     err => {
-  //       loading.dismiss();
-  //       this.toastService.create(err, 'danger');
-  //     }
-  //   );
-  // }
-
-  
   countryCodes = [
     { name: 'Afghanistan', code: '93' },
     { name: 'Albania', code: '355' },
@@ -450,107 +379,4 @@ export class PaPage implements OnInit {
     { name: 'Zambia', code: '260' },
     { name: 'Zimbabwe', code: '263' },
   ];
-
-  // async addVacation() {
-
-  //   const clinicId = 56; // Example clinic IDs
-  //   const fromDate = '2024-04-23'; // Example from date
-  //   const toDate = '2024-04-24';
-
-  //   this.vacationService.patchChildIdsWithSchedules(clinicId, fromDate, toDate)
-  //     .subscribe(
-  //       (response) => {
-  //         console.log('Data patched successfully:', response);
-  //         // Add your success handling code here
-  //       },
-  //       (error) => {
-  //         console.error('Failed to patch data:', error);
-  //         // Add your error handling code here
-  //       }
-  //     );
-  
-  //   // const loading = await this.loadingController.create({ message: 'Loading' });
-  //   // await loading.present();
-
-  //   // await this.vacationService.addVaccation(data)
-  //   //   .subscribe(res => {
-  //   //     if (res.IsSuccess) {
-  //   //       loading.dismiss();
-  //   //       this.toastService.create('successfully added');
-  //   //       this.router.navigate(['/members/']);
-  //   //     }
-  //   //     else {
-  //   //       loading.dismiss();
-  //   //       this.toastService.create(res.Message, 'danger');
-  //   //     }
-  //   //   }, (err) => {
-  //   //     loading.dismiss();
-  //   //     this.toastService.create(err, 'danger')
-  //   //   });
-  // }
-//   async addVacation() {
-//     // Retrieve selected clinic IDs from the form
-//     const selectedClinics = this.fg2.value.clinics.reduce((acc, curr, index) => {
-//       if (curr) acc.push(this.clinics[index].Id);
-//       return acc;
-//     }, []);
-
-//     // Retrieve from date and to date from the form
-//     const fromDate = moment(this.fg2.value.formDate).format('YYYY-MM-DD');
-//     const toDate = moment(this.fg2.value.ToDate).format('YYYY-MM-DD');
-//     console.log(fromDate);
-//     console.log(toDate);
-
-//     // Patch data for each selected clinic
-//     selectedClinics.forEach(async clinicId => {
-//       this.vacationService.patchChildIdsWithSchedules(clinicId, fromDate, toDate)
-//         .subscribe(
-//           (response) => {
-//             console.log('Data patched successfully for clinic ID', clinicId, ':', response);
-//             this.toastService.create("Vacation Updated Successfully")
-//             // Add your success handling code here
-//           },
-//           (error) => {
-//             console.error('Failed to patch data for clinic ID', clinicId, ':', error);
-//             this.toastService.create("Cannot Update Vacation", 'danger')
-//             // Add your error handling code here
-//           }
-//         );
-//     });
-// }
-validation_messages = {
-  Name: [{ type: "required", message: "Name is required." },
-  // { type: 'pattern', message: 'Please enter only characters in the first name.' }],
-  // City2: [
-  //   { type: 'pattern', message: 'Please enter only characters in the city.' }],
-  // fatherName: [{ type: "required", message: "Guardian name is required." },
-  // { type: 'pattern', message: 'Only letters, spaces, commas, and hyphens are allowed in Guardian.' }],
-  // DOB: [{ type: "required", message: "Date of Birth is required." }
-  ],
-  MobileNumber: [
-    {
-      type: "required",
-      message: "Mobile number is required"
-    },
-  ],
-  Email: [
-    { type: "pattern", message: "Please enter a valid email address" },
-    { type: "email", message: "Please enter a valid email address" }
-],
-//   gender: [{ type: "required", message: "Gender is required." }],
-//   Agent2: [
-//     { type: "required", message: "Agent is required." }
-//   ],
-//   email: [
-//     { type: "pattern", message: "Please enter a valid email address" },
-//     { type: "email", message: "Please enter a valid email address" }
-// ],
-// nationality: [
-//   { type: "required", message: "Nationality is required." },
-//   { type: "pattern", message: "Please enter a valid nationality (letters and spaces only)." }
-// ],
-};
-
 }
-
-// https://coryrylan.com/blog/creating-a-dynamic-checkbox-list-in-angular

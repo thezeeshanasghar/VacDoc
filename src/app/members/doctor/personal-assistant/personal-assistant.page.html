@@ -48,6 +48,13 @@
 
     <!-- ── Actions ───────────────────────────────────────────── -->
     <div class="pa-actions">
+      <ion-button fill="outline" size="small"
+        [color]="pa.IsVerified ? 'success' : 'warning'"
+        (click)="toggleVerify(pa)">
+        <ion-icon [name]="pa.IsVerified ? 'shield-checkmark-outline' : 'shield-outline'" slot="start"></ion-icon>
+        {{ pa.IsVerified ? 'Approved' : 'Not Approved' }}
+      </ion-button>
+
       <ion-button fill="solid" size="small" color="tertiary" (click)="navigateToPermissions(pa)">
         <ion-icon name="key-outline" slot="start"></ion-icon>
         Permissions
@@ -58,13 +65,6 @@
         (click)="toggleActive(pa)">
         <ion-icon [name]="pa.IsActive ? 'checkmark-circle-outline' : 'ban-outline'" slot="start"></ion-icon>
         {{ pa.IsActive ? 'Active' : 'Inactive' }}
-      </ion-button>
-
-      <ion-button fill="outline" size="small"
-        [color]="pa.IsVerified ? 'warning' : 'danger'"
-        (click)="toggleVerify(pa)">
-        <ion-icon [name]="pa.IsVerified ? 'shield-checkmark-outline' : 'shield-outline'" slot="start"></ion-icon>
-        {{ pa.IsVerified ? 'Approved' : 'Not Approved' }}
       </ion-button>
 
       <ion-button fill="outline" size="small" color="primary" (click)="navigateToEdit(pa)">
