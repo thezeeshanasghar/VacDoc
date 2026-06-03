@@ -2,7 +2,7 @@
   <div class="dash-wrap">
 
     <div class="dash-greeting">
-      <p class="dash-hello">{{ isPa ? 'Welcome, ' + (user?.Name || 'Assistant') : 'Welcome back, ' + (user?.Name || 'Doctor') }}</p>
+      <p class="dash-hello">{{ isPa ? 'Welcome, ' + (userName || 'Assistant') : 'Welcome back, ' + (userName || 'Doctor') }}</p>
       <p class="dash-tagline">
         {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name : 'Baby Medics / Vaccine.pk' }}
       </p>

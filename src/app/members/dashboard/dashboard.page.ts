@@ -36,6 +36,7 @@ export class DashboardPage implements OnInit {
   totalRevenue: number = 0;
 
   user: any;
+  userName: string = '';
   isPa: boolean = false;
 
   showPatients: boolean = true;
@@ -67,6 +68,18 @@ export class DashboardPage implements OnInit {
   async ngOnInit() {
     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
     this.user = await this.storage.get(environment.USER);
+    const doctorProfile = await this.storage.get(environment.DOCTOR);
+    if (this.user && this.user.UserType === 'PA') {
+      if (this.user.Name) {
+        this.userName = this.user.Name;
+      } else if (this.user.PAId) {
+        this.paService.getPa(String(this.user.PAId)).subscribe(res => {
+          if (res && res.IsSuccess && res.ResponseData) this.userName = res.ResponseData.Name || '';
+        });
+      }
+    } else {
+      this.userName = (doctorProfile && (doctorProfile.DisplayName || doctorProfile.FirstName)) || '';
+    }
 
     const loading = await this.loadingController.create({ message: "Loading ..." });
     await loading.present();
