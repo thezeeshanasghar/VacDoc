@@ -45,7 +45,7 @@ export class PayablesPage {
       if (assignRes && assignRes.IsSuccess) {
         // Show all active assignments regardless of IsAutoCreated (includes remote-clinic invoice-driven ones)
         this.newAssignments = (assignRes.ResponseData || []).filter(
-          (a: any) => !a.IsCompleted && !a.IsCancelled && a.AssignmentStatus !== 'Completed'
+          (a: any) => !a.IsCompleted && !a.IsCancelled && a.AssignmentStatus !== 'Completed' && a.AssignmentStatus !== 'PendingHandover'
         );
         this.pendingCount = this.newAssignments.length;
       }
