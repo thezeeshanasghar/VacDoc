@@ -42,7 +42,104 @@
 }
 .btn-save {
   flex: 1;
-  --background: linear-gradient(135deg, #8B0000 0%, #C62828 40%, #FF4500 100%);
+  --background: #0D6EAD;
+  --background-activated: #0b6098;
   --color: #fff; --border-radius: 0; margin: 0; height: 54px; font-weight: 800;
 }
-ion-content { --padding-bottom: 60px; }
+ion-content { --padding-bottom: 80px; }
+
+// ── Clinic Access section ─────────────────────────────────────────────────────
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0B2D5C;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin: 24px 0 12px;
+
+  ion-icon { font-size: 16px; color: #0D6EAD; }
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #CBD5E1;
+    margin-left: 6px;
+  }
+}
+
+.clinic-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.clinic-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: #F8FAFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+
+  &--active {
+    background: #E6FAF8;
+    border-color: #99E6DE;
+  }
+}
+
+.clinic-row-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.clinic-icon {
+  font-size: 18px;
+  color: #90A4AE;
+
+  &--active { color: #0E7C72; }
+}
+
+.clinic-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1A1A2E;
+}
+
+.clinic-row-right {
+  display: flex;
+  align-items: center;
+}
+
+.clinic-spinner {
+  width: 20px;
+  height: 20px;
+  color: #0D6EAD;
+}
+
+.clinic-toggle {
+  ion-icon {
+    font-size: 22px;
+    color: #CBD5E1;
+  }
+
+  &--on ion-icon { color: #14B8A6; }
+}
+
+.clinic-empty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  color: #90A4AE;
+  font-size: 13px;
+
+  ion-icon { font-size: 18px; }
+}

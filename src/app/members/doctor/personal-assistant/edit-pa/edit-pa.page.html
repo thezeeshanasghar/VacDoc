@@ -54,6 +54,41 @@
 
   </form>
 
+  <!-- ── Clinic Access ────────────────────────────────────────────────────── -->
+  <div class="section-divider">
+    <ion-icon name="business-outline"></ion-icon>
+    <span>Clinic Access</span>
+  </div>
+
+  <div class="clinic-list">
+    <div *ngFor="let clinic of allClinics"
+         class="clinic-row"
+         [class.clinic-row--active]="isClinicAssigned(clinic.Id)"
+         (click)="toggleClinic(clinic)">
+
+      <div class="clinic-row-left">
+        <ion-icon name="business-outline" class="clinic-icon"
+          [class.clinic-icon--active]="isClinicAssigned(clinic.Id)">
+        </ion-icon>
+        <span class="clinic-name">{{ clinic.Name }}</span>
+      </div>
+
+      <div class="clinic-row-right">
+        <ion-spinner *ngIf="togglingClinicId === clinic.Id" name="crescent" class="clinic-spinner"></ion-spinner>
+        <div *ngIf="togglingClinicId !== clinic.Id"
+             class="clinic-toggle"
+             [class.clinic-toggle--on]="isClinicAssigned(clinic.Id)">
+          <ion-icon [name]="isClinicAssigned(clinic.Id) ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="allClinics.length === 0" class="clinic-empty">
+      <ion-icon name="business-outline"></ion-icon>
+      <span>No clinics found</span>
+    </div>
+  </div>
+
 </ion-content>
 
 <div class="bottom-bar">
