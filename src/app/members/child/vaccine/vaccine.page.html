@@ -26,7 +26,7 @@
 
             <!-- Bulk Give -->
             <img
-              *ngIf="checkVaccineIsDon(item.value) && canBulkGive"
+              *ngIf="!checkVaccineIsDon(item.value) && canBulkGive"
               src="../../assets/injectionEmpty.png"
               class="hdr-img hdr-img--give"
               routerLink="/members/child/vaccine/{{childId}}/bulk/{{item.key}}"
@@ -35,7 +35,7 @@
 
             <!-- Bulk Ungive -->
             <img
-              *ngIf="!checkVaccineIsDon(item.value) && (usertype === 'DOCTOR' || canBulkUngive)"
+              *ngIf="checkVaccineIsDon(item.value) && (usertype === 'DOCTOR' || canBulkUngive)"
               src="../../assets/injectionFilled.png"
               class="hdr-img hdr-img--ungive"
               (click)="unfillbulk(item)"
