@@ -1,5 +1,5 @@
 .overview-content {
-  --background: #EEF2F7;
+  --background: #F1F5F9;
 }
 
 .clinic-wrap {
@@ -42,7 +42,7 @@
   box-sizing: border-box;
 
   &:focus {
-    border-color: #1565C0;
+    border-color: #0D6EAD;
   }
 }
 
@@ -115,7 +115,7 @@
   font-size: 13px;
   font-weight: 700;
   color: #fff;
-  background: #1565C0;
+  background: #0D6EAD;
   padding: 3px 10px;
   border-radius: 12px;
 
@@ -149,7 +149,7 @@
 
 // Batch table
 .batch-table {
-  border-top: 1px solid #EEF2F7;
+  border-top: 1px solid #F1F5F9;
 }
 
 .no-batches {
@@ -163,7 +163,7 @@
   display: grid;
   grid-template-columns: 1.2fr 1.4fr 60px 90px;
   padding: 6px 16px;
-  background: #EEF2F7;
+  background: #F1F5F9;
   border-bottom: 1px solid #CFD8DC;
 
   span {

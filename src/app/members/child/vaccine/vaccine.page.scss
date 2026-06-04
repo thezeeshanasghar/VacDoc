@@ -291,7 +291,7 @@ ion-buttons {
   align-items: center;
   justify-content: space-between;
   padding: 14px 16px;
-  background: linear-gradient(135deg, #0A3D79 0%, #1565C0 100%);
+  background: linear-gradient(135deg, #0B2D5C 0%, #0D6EAD 100%);
 }
 
 .payment-header-text  { display: flex; flex-direction: column; gap: 2px; }
@@ -310,10 +310,10 @@ ion-buttons {
   min-height: 52px;
 
   &:last-child { border-bottom: none; }
-  &:active     { background: #EEF2F7; }
+  &:active     { background: #F1F5F9; }
 }
 
-.assign-pa-icon { font-size: 28px; color: #1565C0; }
+.assign-pa-icon { font-size: 28px; color: #0D6EAD; }
 .assign-pa-name { flex: 1; font-size: 15px; font-weight: 500; color: #1A1A2E; }
 .assign-pa-arrow { font-size: 16px; color: #90A4AE; }
 
@@ -325,8 +325,8 @@ ion-buttons {
   background: #E3F2FD;
   border-bottom: 1px solid #BBDEFB;
 }
-.active-assign-icon { font-size: 18px; color: #1565C0; flex-shrink: 0; }
-.active-assign-label { flex: 1; font-size: 13px; color: #0D47A1; }
+.active-assign-icon { font-size: 18px; color: #0D6EAD; flex-shrink: 0; }
+.active-assign-label { flex: 1; font-size: 13px; color: #0b6098; }
 .active-assign-actions { display: flex; gap: 6px; }
 .assign-action-btn {
   padding: 4px 10px;
@@ -336,7 +336,7 @@ ion-buttons {
   font-weight: 600;
   cursor: pointer;
 }
-.reassign-btn { background: #1565C0; color: #fff; }
+.reassign-btn { background: #0D6EAD; color: #fff; }
 .cancel-btn   { background: #fff; color: #C62828; border: 1px solid #C62828; }
 
 // ── Payment mode popup ────────────────────────────────────────────────────────

@@ -5,7 +5,7 @@
 .supplier-select {
   width: 100%;
   padding: 9px 12px;
-  border: 1.5px solid #1565C0;
+  border: 1.5px solid #0D6EAD;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
@@ -14,7 +14,7 @@
   outline: none;
   appearance: none;
   -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231565C0' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%230D6EAD' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
 }
@@ -74,7 +74,7 @@
 
 .bill-supplier {
   font-size: 13px;
-  color: #1565C0;
+  color: #0D6EAD;
   font-weight: 600;
 }
 
@@ -90,7 +90,7 @@
 }
 
 .bill-amounts {
-  border-top: 1px solid #EEF2F7;
+  border-top: 1px solid #F1F5F9;
   padding-top: 8px;
   margin-bottom: 10px;
 }
@@ -115,7 +115,7 @@
 .total-row .amt-val {
   font-weight: 700;
   font-size: 15px;
-  color: #0D47A1;
+  color: #0b6098;
 }
 
 .paid-val {

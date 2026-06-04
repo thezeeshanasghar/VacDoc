@@ -4,8 +4,8 @@
 .preset-row {
   display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;
   .preset-btn {
-    padding: 4px 10px; border-radius: 14px; border: 1px solid #1565C0;
-    background: #fff; color: #1565C0; font-size: 12px; cursor: pointer;
+    padding: 4px 10px; border-radius: 14px; border: 1px solid #0D6EAD;
+    background: #fff; color: #0D6EAD; font-size: 12px; cursor: pointer;
     &:active { background: #e3f0ff; }
   }
 }
@@ -24,7 +24,7 @@
 // ── Section titles ──────────────────────────────────────────────
 .section-title {
   display: flex; align-items: center; gap: 6px;
-  font-size: 15px; font-weight: 700; color: #1565C0;
+  font-size: 15px; font-weight: 700; color: #0D6EAD;
   margin: 18px 0 8px;
   ion-icon { font-size: 18px; }
   .section-sub { font-size: 11px; font-weight: 400; color: #888; margin-left: 4px; }
@@ -66,7 +66,7 @@
   .bar-lbl    { font-size: 11px; font-weight: 600; }
   .bar-amount { font-size: 11px; color: #444; }
 }
-.income-lbl  { color: #1565C0; }
+.income-lbl  { color: #0D6EAD; }
 .expense-lbl { color: #C62828; }
 
 .bar-track {
@@ -74,23 +74,23 @@
   border-radius: 5px; overflow: hidden;
 }
 .bar-fill     { height: 100%; border-radius: 5px; transition: width .4s; }
-.income-bar   { background: linear-gradient(90deg, #1565C0, #42A5F5); }
+.income-bar   { background: linear-gradient(90deg, #0D6EAD, #42A5F5); }
 .expense-bar  { background: linear-gradient(90deg, #C62828, #EF9A9A); }
 
 // ── Vaccine table ──────────────────────────────────────────────
 .sort-row {
   display: flex; gap: 6px; margin-left: auto;
   .sort-btn {
-    padding: 2px 10px; border-radius: 12px; border: 1px solid #1565C0;
-    background: #fff; color: #1565C0; font-size: 11px; cursor: pointer;
-    &.active { background: #1565C0; color: #fff; }
+    padding: 2px 10px; border-radius: 12px; border: 1px solid #0D6EAD;
+    background: #fff; color: #0D6EAD; font-size: 11px; cursor: pointer;
+    &.active { background: #0D6EAD; color: #fff; }
   }
 }
 
 .vax-table {
   width: 100%; border-collapse: collapse;
   th {
-    background: #1565C0; color: #fff; padding: 8px 10px;
+    background: #0D6EAD; color: #fff; padding: 8px 10px;
     font-size: 11px; text-align: left;
     &.num { text-align: right; }
   }
@@ -101,22 +101,22 @@
 .vax-name { font-weight: 600; color: #1a1a2e; font-size: 12px; }
 .vax-bar-track {
   height: 4px; background: #e8eaf0; border-radius: 2px; margin-top: 3px; overflow: hidden;
-  .vax-bar-fill { height: 100%; background: #1565C0; border-radius: 2px; }
+  .vax-bar-fill { height: 100%; background: #0D6EAD; border-radius: 2px; }
 }
 
 // ── Monthly trend chart ────────────────────────────────────────
 .metric-row {
   display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;
   .metric-btn {
-    padding: 4px 12px; border-radius: 14px; border: 1px solid #1565C0;
-    background: #fff; color: #1565C0; font-size: 12px; cursor: pointer;
-    &.active { background: #1565C0; color: #fff; }
+    padding: 4px 12px; border-radius: 14px; border: 1px solid #0D6EAD;
+    background: #fff; color: #0D6EAD; font-size: 12px; cursor: pointer;
+    &.active { background: #0D6EAD; color: #fff; }
   }
 }
 
 .legend-row {
   display: flex; gap: 16px; margin-bottom: 8px; font-size: 11px;
-  .cur-leg  { color: #1565C0; font-weight: 600; }
+  .cur-leg  { color: #0D6EAD; font-weight: 600; }
   .prev-leg { color: #90CAF9; font-weight: 600; }
 }
 
@@ -131,7 +131,7 @@
 .trend-bar {
   width: 42%; min-height: 3px; border-radius: 3px 3px 0 0;
 }
-.cur-bar  { background: #1565C0; margin-right: 1px; }
+.cur-bar  { background: #0D6EAD; margin-right: 1px; }
 .prev-bar { background: #90CAF9; }
 .trend-lbl {
   font-size: 9px; color: #666; margin-top: 4px;
@@ -141,7 +141,7 @@
 
 .trend-table {
   width: 100%; border-collapse: collapse; font-size: 12px;
-  th { background: #f5f7ff; padding: 7px 10px; font-size: 11px; color: #1565C0; text-align: left; &.num { text-align: right; } }
+  th { background: #f5f7ff; padding: 7px 10px; font-size: 11px; color: #0D6EAD; text-align: left; &.num { text-align: right; } }
   td { padding: 6px 10px; border-bottom: 1px solid #f0f0f0; }
   .num { text-align: right; }
 }

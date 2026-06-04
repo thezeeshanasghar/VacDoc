@@ -1,11 +1,11 @@
 .exp-content {
-  --background: #EEF2F7;
+  --background: #F1F5F9;
 }
 
 .exp-card {
   margin: 16px 16px 0;
   border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(10, 61, 121, 0.10);
+  box-shadow: 0 2px 12px rgba(11, 45, 92, 0.10);
 
   ion-card-content {
     padding: 16px;
@@ -59,7 +59,7 @@
   width: 100%;
   box-sizing: border-box;
 
-  &:focus { border-color: #1565C0; }
+  &:focus { border-color: #0D6EAD; }
 }
 
 .field-select {
@@ -73,7 +73,7 @@
   width: 100%;
   box-sizing: border-box;
 
-  &:focus { border-color: #1565C0; }
+  &:focus { border-color: #0D6EAD; }
 }
 
 .field-textarea {
@@ -89,7 +89,7 @@
   resize: none;
   font-family: inherit;
 
-  &:focus { border-color: #1565C0; }
+  &:focus { border-color: #0D6EAD; }
 }
 
 // ── Category chips grid ────────────────────────────────────────────────────
@@ -117,11 +117,11 @@
 }
 
 .cat-chip-active {
-  border-color: #1565C0;
+  border-color: #0D6EAD;
   background: #E3F2FD;
-  color: #1565C0;
+  color: #0D6EAD;
 
-  .cat-icon { color: #1565C0; }
+  .cat-icon { color: #0D6EAD; }
 }
 
 .cat-icon {
@@ -162,11 +162,11 @@
 }
 
 .scope-btn-active {
-  border-color: #1565C0;
+  border-color: #0D6EAD;
   background: #E3F2FD;
-  color: #1565C0;
+  color: #0D6EAD;
 
-  ion-icon { color: #1565C0; }
+  ion-icon { color: #0D6EAD; }
 }
 
 .single-clinic-note {
@@ -203,8 +203,8 @@
 }
 
 .pay-chip-active {
-  border-color: #1565C0;
-  background: #1565C0;
+  border-color: #0D6EAD;
+  background: #0D6EAD;
   color: #fff;
 }
 
@@ -237,7 +237,7 @@
   background: #FAFAFA;
   transition: border-color 0.15s ease;
 
-  &:active { border-color: #1565C0; }
+  &:active { border-color: #0D6EAD; }
 }
 
 .img-preview {

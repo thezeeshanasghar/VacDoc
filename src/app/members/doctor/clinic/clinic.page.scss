@@ -1,8 +1,8 @@
 // ── Clinic card ───────────────────────────────────────────────────────────────
 ion-card {
   border-radius: 16px !important;
-  border-left: 4px solid #1565C0;
-  box-shadow: 0 3px 14px rgba(21, 101, 192, 0.12), 0 1px 4px rgba(0,0,0,0.06) !important;
+  border-left: 4px solid #0D6EAD;
+  box-shadow: 0 3px 14px rgba(13, 110, 173, 0.12), 0 1px 4px rgba(0,0,0,0.06) !important;
   background: #ffffff;
   margin: 0 0 14px;
   overflow: hidden;
@@ -10,7 +10,7 @@ ion-card {
 
 // ── Clinic name row ────────────────────────────────────────────────────────────
 ion-card > ion-item {
-  --background: linear-gradient(135deg, #0A3D79 0%, #1565C0 100%);
+  --background: linear-gradient(135deg, #0B2D5C 0%, #0D6EAD 100%);
   --color: #ffffff;
   --border-color: transparent;
   --inner-border-width: 0;

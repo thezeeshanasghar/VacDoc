@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  background: linear-gradient(135deg, #0D47A1, #1565C0);
+  background: linear-gradient(135deg, #0b6098, #0D6EAD);
   border-radius: 16px;
   padding: 16px 18px;
   margin-bottom: 24px;
@@ -22,9 +22,9 @@
   border-radius: 12px;
   overflow: hidden;
   transition: border-color 0.2s;
-  &:focus-within { border-color: #1565C0; background: #F0F4FF; }
+  &:focus-within { border-color: #0D6EAD; background: #F0F4FF; }
 }
-.field-icon   { font-size: 18px; color: #1565C0; padding: 0 12px; flex-shrink: 0; }
+.field-icon   { font-size: 18px; color: #0D6EAD; padding: 0 12px; flex-shrink: 0; }
 .field-input  { --padding-start: 0; --padding-end: 12px; --color: #111827; --placeholder-color: #9CA3AF; font-size: 15px; flex: 1; }
 
 .error-text   { color: #C62828; font-size: 12px; margin-top: 4px; }

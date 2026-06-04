@@ -12,9 +12,10 @@ $app-theme:   mat-light-theme($app-primary, $app-accent, $app-warn);
 /** Ionic CSS Variables **/
 :root {
   // ── Brand palette tokens ────────────────────────────────────────────────
-  --vac-navy:      #0A3D79;
-  --vac-blue:      #1565C0;
-  --vac-sky:       #1E88E5;
+  --vac-navy:      #0B2D5C;
+  --vac-blue:      #0D6EAD;
+  --vac-teal:      #14B8A6;
+  --vac-sky:       #257EB5;
   --vac-green:     #2E7D32;
   --vac-green2:    #43A047;
   --vac-orange:    #FF4500;
@@ -22,19 +23,19 @@ $app-theme:   mat-light-theme($app-primary, $app-accent, $app-warn);
   --vac-red:       #C62828;
   --vac-red-dark:  #8B0000;
   --vac-black:     #1A1A2E;
-  --vac-surface:   #EEF2F7;
+  --vac-surface:   #F1F5F9;
   --vac-card:      #FFFFFF;
-  --vac-border:    #D0DCF0;
-  --vac-shadow:    0 4px 24px rgba(10, 61, 121, 0.13);
-  --vac-shadow-lg: 0 8px 32px rgba(10, 61, 121, 0.22);
+  --vac-border:    #CBD5E1;
+  --vac-shadow:    0 4px 24px rgba(11, 45, 92, 0.13);
+  --vac-shadow-lg: 0 8px 32px rgba(11, 45, 92, 0.22);
 
-  // ── Primary: Logo Blue ──────────────────────────────────────────────────
-  --ion-color-primary:          #1565C0;
-  --ion-color-primary-rgb:      21, 101, 192;
+  // ── Primary: Medical Blue ───────────────────────────────────────────────
+  --ion-color-primary:          #0D6EAD;
+  --ion-color-primary-rgb:      13, 110, 173;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade:    #0D47A1;
-  --ion-color-primary-tint:     #1E88E5;
+  --ion-color-primary-shade:    #0b6098;
+  --ion-color-primary-tint:     #257eb5;
 
   // ── Secondary: Logo Green ───────────────────────────────────────────────
   --ion-color-secondary:          #2E7D32;

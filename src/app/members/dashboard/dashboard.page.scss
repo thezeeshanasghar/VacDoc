@@ -1,5 +1,5 @@
 .dashboard-content {
-  --background: #EEF2F7;
+  --background: #F1F5F9;
 }
 
 .dash-wrap {
@@ -13,7 +13,7 @@
 .dash-hello {
   font-size: 22px;
   font-weight: 700;
-  color: #0A3D79;
+  color: #0B2D5C;
   margin: 0 0 4px;
 }
 
@@ -40,13 +40,13 @@
   align-items: flex-start;
   cursor: pointer;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(10, 61, 121, 0.14);
+  box-shadow: 0 4px 20px rgba(11, 45, 92, 0.14);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   text-decoration: none;
 
   &:active {
     transform: scale(0.97);
-    box-shadow: 0 2px 10px rgba(10, 61, 121, 0.10);
+    box-shadow: 0 2px 10px rgba(11, 45, 92, 0.10);
   }
 }
 
@@ -101,7 +101,7 @@
 .card-pa             { background: linear-gradient(135deg, #1A4A3A 0%, #148F77 100%); }
 .card-password       { background: linear-gradient(135deg, #2C3640 0%, #4A6274 100%); }
 .card-assignments    { background: linear-gradient(135deg, #0E5E5E 0%, #17A589 100%); }
-.card-payables       { background: linear-gradient(135deg, #0D47A1 0%, #1976D2 100%); }
+.card-payables       { background: linear-gradient(135deg, #0b6098 0%, #1976D2 100%); }
 .card-analytics      { background: linear-gradient(135deg, #7D4E00 0%, #B7770D 100%); }
 .card-agent          { background: linear-gradient(135deg, #2E3A52 0%, #4A6080 100%); }
 

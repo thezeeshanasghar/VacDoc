@@ -54,9 +54,9 @@
 }
 
 .type-btn-increase {
-  border-color: #1565C0;
+  border-color: #0D6EAD;
   background: #E3F2FD;
-  color: #1565C0;
+  color: #0D6EAD;
 }
 
 .type-btn-loss {
@@ -104,7 +104,7 @@
   outline: none;
   box-sizing: border-box;
 
-  &:focus { border-color: #1565C0; }
+  &:focus { border-color: #0D6EAD; }
 
   &[readonly] {
     background: #F5F7FA;
@@ -130,7 +130,7 @@
   background-position: right 12px center;
   box-sizing: border-box;
 
-  &:focus { border-color: #1565C0; }
+  &:focus { border-color: #0D6EAD; }
 }
 
 // Brand picker row (tap to open modal)
@@ -319,7 +319,7 @@
   padding: 7px 10px;
   background: #F5F7FA;
   border-radius: 7px;
-  border: 1px solid #EEF2F7;
+  border: 1px solid #F1F5F9;
 }
 
 .avail-icon {
@@ -335,7 +335,7 @@
 .avail-count {
   font-size: 14px;
   font-weight: 700;
-  color: #1565C0;
+  color: #0D6EAD;
 
   &.avail-zero {
     color: #E53935;
@@ -426,7 +426,7 @@ input[type=number] { -moz-appearance: textfield; }
 }
 
 .history-card-increase {
-  border-left-color: #1565C0;
+  border-left-color: #0D6EAD;
 }
 
 .history-card-loss {
@@ -479,7 +479,7 @@ input[type=number] { -moz-appearance: textfield; }
 
 .adj-badge-increase {
   background: #E3F2FD;
-  color: #1565C0;
+  color: #0D6EAD;
 }
 
 .adj-badge-loss {
@@ -567,7 +567,7 @@ input[type=number] { -moz-appearance: textfield; }
   align-items: center;
   justify-content: space-between;
   padding: 13px 16px 10px;
-  border-bottom: 1px solid #EEF2F7;
+  border-bottom: 1px solid #F1F5F9;
 
   .batch-modal-title {
     font-size: 15px;
@@ -587,7 +587,7 @@ input[type=number] { -moz-appearance: textfield; }
   grid-template-columns: 1.2fr 1.4fr 60px;
   gap: 4px;
   padding: 7px 16px;
-  background: #EEF2F7;
+  background: #F1F5F9;
 
   span {
     font-size: 11px;
@@ -646,7 +646,7 @@ input[type=number] { -moz-appearance: textfield; }
 
 .bmr-check {
   font-size: 15px;
-  color: #1565C0;
+  color: #0D6EAD;
 }
 
 .bmr-expiry {
@@ -661,7 +661,7 @@ input[type=number] { -moz-appearance: textfield; }
 .bmr-qty {
   font-size: 13px;
   font-weight: 700;
-  color: #1565C0;
+  color: #0D6EAD;
   text-align: right;
 
   &.bmr-qty-zero { color: #E53935; }

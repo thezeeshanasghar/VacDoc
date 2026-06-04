@@ -18,18 +18,18 @@
   overflow: hidden;
 }
 
-// ── Shell Toolbar 1 — Logo Blue ───────────────────────────────────────────────
+// ── Shell Toolbar 1 — Medical Blue ───────────────────────────────────────────
 .toolbar-blue {
-  --background: #1565C0;
+  --background: #0D6EAD;
   --color: #ffffff;
   --min-height: 44px;
   --padding-top: 0;
   --padding-bottom: 0;
 }
 
-// ── Shell Toolbar 2 — Logo Green ─────────────────────────────────────────────
+// ── Shell Toolbar 2 — Navy ────────────────────────────────────────────────────
 .toolbar-green {
-  --background: #2E7D32;
+  --background: #0B2D5C;
   --color: #ffffff;
   --min-height: 44px;
   --padding-top: 0;
@@ -38,11 +38,11 @@
 
 // ── Side menu ─────────────────────────────────────────────────────────────────
 ion-menu {
-  --background: #0D0D12;
+  --background: #0B2D5C;
 }
 
 ion-menu ion-header ion-toolbar {
-  --background: linear-gradient(135deg, #0D47A1 0%, #1565C0 100%);
+  --background: linear-gradient(135deg, #0B2D5C 0%, #0D6EAD 100%);
 }
 
 ion-menu ion-header ion-title {
@@ -52,7 +52,7 @@ ion-menu ion-header ion-title {
 }
 
 ion-menu ion-content {
-  --background: #0D0D12;
+  --background: #0B2D5C;
 }
 
 ion-menu ion-list.menu {
@@ -63,7 +63,7 @@ ion-menu ion-list.menu {
 // ── Menu items ────────────────────────────────────────────────────────────────
 ion-menu ion-item {
   --background:           transparent;
-  --background-activated: rgba(21, 101, 192, 0.20);
+  --background-activated: rgba(20, 184, 166, 0.20);
   --color:                rgba(255, 255, 255, 0.85);
   --border-color:         transparent;
   --inner-border-width:   0;
@@ -75,7 +75,7 @@ ion-menu ion-item {
 }
 
 ion-menu ion-item ion-icon {
-  color: #1E88E5 !important;
+  color: #14B8A6 !important;
   font-size: 20px;
 }
 
@@ -84,7 +84,7 @@ ion-menu ion-item ion-label {
 }
 
 ion-menu ion-avatar ion-icon {
-  color: #1E88E5 !important;
+  color: #14B8A6 !important;
   font-size: 32px;
 }
 

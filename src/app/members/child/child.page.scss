@@ -5,13 +5,13 @@
 }
 
 .boy {
-  border-left: 4px solid #1565C0 !important;
-  box-shadow: 0 2px 12px rgba(21, 101, 192, 0.12) !important;
+  border-left: 4px solid #0D6EAD !important;
+  box-shadow: 0 2px 12px rgba(13, 110, 173, 0.12) !important;
 }
 
 // ── Compact card header bar ───────────────────────────────────────────────────
 .icons {
-  background: linear-gradient(135deg, #0A3D79 0%, #1565C0 100%);
+  background: linear-gradient(135deg, #0B2D5C 0%, #0D6EAD 100%);
   border-radius: 12px 12px 0 0;
   padding: 6px 12px;
   display: flex;
@@ -79,7 +79,7 @@
   --background: #ffffff;
   border-radius: 12px;
   margin-bottom: 12px;
-  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.08);
+  box-shadow: 0 2px 8px rgba(13, 110, 173, 0.08);
 }
 
 // ── Search bar ────────────────────────────────────────────────────────────────
@@ -87,7 +87,7 @@ form ion-item {
   --border-radius: 12px;
   --background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.08);
+  box-shadow: 0 2px 8px rgba(13, 110, 173, 0.08);
   margin-bottom: 14px;
 }
 
@@ -100,7 +100,7 @@ ion-card ion-card-content {
 }
 
 ion-card ion-card-content ion-icon {
-  color: #1565C0;
+  color: #0D6EAD;
   vertical-align: middle;
   margin-right: 3px;
 }

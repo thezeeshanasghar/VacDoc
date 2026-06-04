@@ -1,5 +1,5 @@
 .fa-content {
-  --background: #EEF2F7;
+  --background: #F1F5F9;
 }
 
 .fa-wrap {
@@ -23,7 +23,7 @@
   background: #fff;
   outline: none;
 
-  &:focus { border-color: #1565C0; }
+  &:focus { border-color: #0D6EAD; }
 }
 
 // ── Summary strip ──────────────────────────────────────────────────────────
@@ -43,7 +43,7 @@
   flex-direction: column;
   align-items: center;
   padding: 12px 8px;
-  border-right: 1px solid #EEF2F7;
+  border-right: 1px solid #F1F5F9;
 
   &:last-child { border-right: none; }
 }
@@ -51,7 +51,7 @@
 .summary-val {
   font-size: 14px;
   font-weight: 700;
-  color: #0A3D79;
+  color: #0B2D5C;
 }
 
 .summary-lbl {
@@ -96,7 +96,7 @@
 .ac-name {
   font-size: 16px;
   font-weight: 700;
-  color: #0A3D79;
+  color: #0B2D5C;
 }
 
 .ac-category {
@@ -112,7 +112,7 @@
 .ac-amount {
   font-size: 15px;
   font-weight: 700;
-  color: #1565C0;
+  color: #0D6EAD;
 }
 
 // ── Meta row ──────────────────────────────────────────────────────────────
@@ -159,7 +159,7 @@
 
 .ac-depr-bar-wrap {
   height: 6px;
-  background: #EEF2F7;
+  background: #F1F5F9;
   border-radius: 3px;
   overflow: hidden;
   margin-bottom: 4px;
@@ -224,7 +224,7 @@
   padding: 3px 9px;
   border-radius: 10px;
   background: #E3F2FD;
-  color: #1565C0;
+  color: #0D6EAD;
 }
 
 .ac-notes {

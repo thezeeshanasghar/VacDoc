@@ -1,5 +1,5 @@
 .fin-content {
-  --background: #EEF2F7;
+  --background: #F1F5F9;
 }
 
 .fin-wrap {
@@ -20,7 +20,7 @@
   flex-direction: column;
   align-items: flex-start;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(10, 61, 121, 0.14);
+  box-shadow: 0 4px 20px rgba(11, 45, 92, 0.14);
   cursor: default;
   opacity: 0.88;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -30,7 +30,7 @@
     opacity: 1;
     &:active {
       transform: scale(0.97);
-      box-shadow: 0 2px 10px rgba(10, 61, 121, 0.10);
+      box-shadow: 0 2px 10px rgba(11, 45, 92, 0.10);
     }
   }
 }
@@ -86,7 +86,7 @@
 }
 
 // Card colours
-.card-expenses { background: linear-gradient(145deg, #1565C0 0%, #1976D2 100%); }
+.card-expenses { background: linear-gradient(145deg, #0D6EAD 0%, #1976D2 100%); }
 .card-pnl      { background: linear-gradient(145deg, #2E7D32 0%, #43A047 100%); }
 .card-assets   { background: linear-gradient(145deg, #6A1B9A 0%, #8E24AA 100%); }
 .card-income   { background: linear-gradient(145deg, #E65100 0%, #F57C00 100%); }

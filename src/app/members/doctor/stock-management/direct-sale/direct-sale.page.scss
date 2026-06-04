@@ -1,5 +1,5 @@
 .sale-content {
-  --background: #EEF2F7;
+  --background: #F1F5F9;
 }
 
 .sale-wrap {
@@ -28,7 +28,7 @@
 
 // Item block
 .item-block {
-  border: 1px solid #EEF2F7;
+  border: 1px solid #F1F5F9;
   border-radius: 8px;
   padding: 10px 12px;
   margin-bottom: 12px;
@@ -45,7 +45,7 @@
 .item-num {
   font-size: 12px;
   font-weight: 700;
-  color: #1565C0;
+  color: #0D6EAD;
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
@@ -99,7 +99,7 @@
   outline: none;
   box-sizing: border-box;
 
-  &:focus { border-color: #1565C0; }
+  &:focus { border-color: #0D6EAD; }
 
   &[readonly] {
     background: #F5F7FA;
@@ -125,7 +125,7 @@
   background-position: right 12px center;
   box-sizing: border-box;
 
-  &:focus { border-color: #1565C0; }
+  &:focus { border-color: #0D6EAD; }
 }
 
 // Brand autocomplete
@@ -170,7 +170,7 @@
   cursor: pointer;
 
   &:last-child { border-bottom: none; }
-  &:active { background: #EEF2F7; }
+  &:active { background: #F1F5F9; }
 }
 
 .ac-opt-brand {
@@ -233,7 +233,7 @@
   padding: 7px 10px;
   background: #F5F7FA;
   border-radius: 7px;
-  border: 1px solid #EEF2F7;
+  border: 1px solid #F1F5F9;
 }
 
 .avail-icon { font-size: 15px; color: #546E7A; }
@@ -242,7 +242,7 @@
 .avail-count {
   font-size: 14px;
   font-weight: 700;
-  color: #1565C0;
+  color: #0D6EAD;
 
   &.avail-zero { color: #E53935; }
 }
@@ -372,7 +372,7 @@ input[type=number] { -moz-appearance: textfield; }
   padding: 12px 14px;
   margin-bottom: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  border-left: 4px solid #1565C0;
+  border-left: 4px solid #0D6EAD;
 }
 
 .history-top {
@@ -391,7 +391,7 @@ input[type=number] { -moz-appearance: textfield; }
 .history-bill-no {
   font-size: 14px;
   font-weight: 700;
-  color: #1565C0;
+  color: #0D6EAD;
 }
 
 .history-client {
@@ -537,7 +537,7 @@ input[type=number] { -moz-appearance: textfield; }
   align-items: center;
   justify-content: space-between;
   padding: 13px 16px 10px;
-  border-bottom: 1px solid #EEF2F7;
+  border-bottom: 1px solid #F1F5F9;
 
   .batch-modal-title {
     font-size: 15px;
@@ -557,7 +557,7 @@ input[type=number] { -moz-appearance: textfield; }
   grid-template-columns: 1.2fr 1.4fr 60px;
   gap: 4px;
   padding: 7px 16px;
-  background: #EEF2F7;
+  background: #F1F5F9;
 
   span {
     font-size: 11px;
@@ -620,7 +620,7 @@ input[type=number] { -moz-appearance: textfield; }
 .bmr-qty {
   font-size: 13px;
   font-weight: 700;
-  color: #1565C0;
+  color: #0D6EAD;
   text-align: right;
 
   &.bmr-qty-zero { color: #E53935; }

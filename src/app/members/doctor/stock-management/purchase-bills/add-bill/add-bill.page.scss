@@ -38,7 +38,7 @@
   box-sizing: border-box;
 
   &:focus {
-    border-color: #1565C0;
+    border-color: #0D6EAD;
   }
 }
 
@@ -60,7 +60,7 @@
   box-sizing: border-box;
 
   &:focus {
-    border-color: #1565C0;
+    border-color: #0D6EAD;
   }
 }
 
@@ -241,7 +241,7 @@
   box-sizing: border-box;
 
   &:focus {
-    border-color: #1565C0;
+    border-color: #0D6EAD;
   }
 }
 
@@ -286,7 +286,7 @@
   }
 
   &:active {
-    background: #EEF2F7;
+    background: #F1F5F9;
   }
 }
 
@@ -355,7 +355,7 @@
 }
 
 .lines-table-header {
-  background: #EEF2F7;
+  background: #F1F5F9;
   padding: 6px 8px;
   border-bottom: 1px solid #CFD8DC;
 
@@ -389,7 +389,7 @@
   cursor: pointer;
 
   &:focus {
-    background: #EEF2F7;
+    background: #F1F5F9;
     border-radius: 4px;
   }
 }
@@ -421,7 +421,7 @@ ion-input[type=number]::part(native)::-webkit-outer-spin-button {
   box-sizing: border-box;
 
   &:focus {
-    border-color: #1565C0;
+    border-color: #0D6EAD;
   }
 }
 
@@ -441,8 +441,8 @@ ion-input[type=number]::part(native)::-webkit-outer-spin-button {
 .amt-box-bold {
   font-weight: 700;
   font-size: 16px;
-  color: #0D47A1;
-  background: #EEF2F7;
+  color: #0b6098;
+  background: #F1F5F9;
   border-color: #90CAF9;
 }
 
@@ -459,8 +459,8 @@ ion-input[type=number]::part(native)::-webkit-outer-spin-button {
   box-sizing: border-box;
 
   &:focus {
-    border-bottom-color: #1565C0;
-    background: #EEF2F7;
+    border-bottom-color: #0D6EAD;
+    background: #F1F5F9;
   }
 }
 
@@ -500,7 +500,7 @@ ion-input[type=number]::part(native)::-webkit-outer-spin-button {
 }
 
 .summary-row-border {
-  border-top: 1px solid #EEF2F7;
+  border-top: 1px solid #F1F5F9;
   padding-top: 9px;
   margin-top: 2px;
 }
@@ -510,7 +510,7 @@ ion-input[type=number]::part(native)::-webkit-outer-spin-button {
 }
 
 .summary-row-pending {
-  border-top: 1px solid #EEF2F7;
+  border-top: 1px solid #F1F5F9;
   padding-top: 9px;
   margin-top: 2px;
 }
@@ -553,7 +553,7 @@ ion-input[type=number]::part(native)::-webkit-outer-spin-button {
   background: #fff;
   padding: 2px 4px;
 
-  &:focus { border-color: #1565C0; }
+  &:focus { border-color: #0D6EAD; }
 }
 
 // Amount paid input — matches amt-box width and style
@@ -570,7 +570,7 @@ ion-input[type=number]::part(native)::-webkit-outer-spin-button {
   outline: none;
   box-sizing: border-box;
 
-  &:focus { border-color: #1565C0; }
+  &:focus { border-color: #0D6EAD; }
 }
 
 // Payment method select — right-aligned, same width

@@ -12,22 +12,23 @@
 
 // ── App-wide palette tokens ─────────────────────────────────────────────────
 :root {
-  --vac-blue:       #1565C0;
-  --vac-blue-dp:    #0D47A1;
-  --vac-blue-lt:    #1E88E5;
-  --vac-navy:       #0A3D79;
+  --vac-blue:       #0D6EAD;
+  --vac-blue-dp:    #0b6098;
+  --vac-blue-lt:    #257eb5;
+  --vac-navy:       #0B2D5C;
+  --vac-teal:       #14B8A6;
   --vac-green:      #2E7D32;
   --vac-green-lt:   #43A047;
   --vac-lava:       #FF4500;
   --vac-lava-lt:    #FF6B35;
   --vac-red:        #C62828;
   --vac-red-dark:   #8B0000;
-  --vac-near-black: #0D0D12;
+  --vac-near-black: #0B2D5C;
   --vac-card-bg:    #FFFFFF;
-  --vac-surface:    #EEF2F7;
-  --vac-border:     #D0DCF0;
-  --vac-shadow:     0 4px 24px rgba(10, 61, 121, 0.13);
-  --vac-shadow-lg:  0 8px 32px rgba(10, 61, 121, 0.22);
+  --vac-surface:    #F1F5F9;
+  --vac-border:     #CBD5E1;
+  --vac-shadow:     0 4px 24px rgba(11, 45, 92, 0.13);
+  --vac-shadow-lg:  0 8px 32px rgba(11, 45, 92, 0.22);
 }
 
 // ── Toolbar ──────────────────────────────────────────────────────────────────
@@ -41,11 +42,11 @@ ion-header ion-toolbar[color="primary"] + ion-toolbar[color="primary"] {
   --background: var(--vac-blue-dp);
 }
 
-// ── Toolbar 3 — Lava (page-owned toolbars inside the router outlet) ───────────
+// ── Toolbar 3 — Medical Blue (page-owned toolbars inside the router outlet) ───
 // Targets every page's own ion-header toolbar automatically.
 // Shell toolbars use .toolbar-blue / .toolbar-green so they are unaffected.
 .shell-outlet ion-header ion-toolbar {
-  --background: linear-gradient(135deg, var(--vac-red-dark) 0%, var(--vac-red) 45%, var(--vac-lava) 100%);
+  --background: var(--vac-blue);
   --color: #ffffff;
 }
 
@@ -57,9 +58,9 @@ ion-toolbar ion-title {
 // ── Cards ────────────────────────────────────────────────────────────────────
 ion-card {
   border-radius: 16px !important;
-  box-shadow: 0 2px 12px rgba(21, 101, 192, 0.10),
+  box-shadow: 0 2px 12px rgba(13, 110, 173, 0.10),
               0 1px 4px  rgba(0, 0, 0, 0.06) !important;
-  border: 1px solid rgba(21, 101, 192, 0.08);
+  border: 1px solid rgba(13, 110, 173, 0.08);
   background: var(--vac-card-bg);
 }
 
@@ -87,14 +88,14 @@ ion-button[color="primary"] {
   font-weight: 700;
 }
 
-// Main submit/action buttons — lava gradient
+// Main submit/action buttons — Medical Blue
 ion-button.lava-btn,
 ion-button[expand="block"][color="primary"],
 ion-button[expand="full"][color="primary"] {
-  --background: linear-gradient(135deg, var(--vac-red-dark) 0%, var(--vac-red) 45%, var(--vac-lava) 100%);
-  --background-activated: var(--vac-red-dark);
+  --background: var(--vac-blue);
+  --background-activated: var(--vac-blue-dp);
   --border-radius: 12px;
-  --box-shadow: 0 4px 16px rgba(198, 40, 40, 0.35);
+  --box-shadow: 0 4px 16px rgba(13, 110, 173, 0.30);
   font-weight: 800;
   letter-spacing: 0.5px;
 }
@@ -125,7 +126,7 @@ ion-button[fill="outline"][color="primary"] {
 
 // ── Inputs / Items ───────────────────────────────────────────────────────────
 ion-item {
-  --border-color:      rgba(21, 101, 192, 0.15);
+  --border-color:      rgba(13, 110, 173, 0.15);
   --highlight-color-focused: var(--vac-blue);
 }
 
@@ -142,11 +143,11 @@ ion-badge[color="warning"]  { background: #F57C00; }
 
 // ── Menu sidebar ─────────────────────────────────────────────────────────────
 ion-menu ion-toolbar[color="primary"] {
-  --background: linear-gradient(135deg, var(--vac-blue-dp) 0%, var(--vac-blue) 100%);
+  --background: linear-gradient(135deg, var(--vac-navy) 0%, var(--vac-blue) 100%);
 }
 
 ion-menu ion-content {
-  --background: var(--vac-near-black);
+  --background: var(--vac-navy);
 }
 
 ion-menu ion-list.menu {
@@ -155,7 +156,7 @@ ion-menu ion-list.menu {
 
 ion-menu ion-item {
   --background:           transparent;
-  --background-activated: rgba(21, 101, 192, 0.18);
+  --background-activated: rgba(20, 184, 166, 0.18);
   --color:                rgba(255, 255, 255, 0.85);
   --border-color:         rgba(255, 255, 255, 0.06);
   font-size: 15px;
@@ -165,7 +166,7 @@ ion-menu ion-item {
 }
 
 ion-menu ion-item ion-icon {
-  color: var(--vac-blue-lt) !important;
+  color: var(--vac-teal) !important;
 }
 
 ion-menu ion-item ion-label {
@@ -175,7 +176,7 @@ ion-menu ion-item ion-label {
 // Avatar / profile row in menu
 ion-menu ion-avatar ion-icon {
   font-size: 32px;
-  color: var(--vac-blue-lt) !important;
+  color: var(--vac-teal) !important;
 }
 
 // ── Tables (stock management pages) ─────────────────────────────────────────
@@ -192,21 +193,21 @@ table th {
 }
 
 table td {
-  border-bottom: 1px solid rgba(21, 101, 192, 0.08) !important;
+  border-bottom: 1px solid rgba(13, 110, 173, 0.08) !important;
 }
 
 table tr:hover td {
-  background-color: rgba(21, 101, 192, 0.04);
+  background-color: rgba(13, 110, 173, 0.04);
 }
 
 // ── Segment controls ────────────────────────────────────────────────────────
 ion-segment {
-  --background: rgba(21, 101, 192, 0.08);
+  --background: rgba(13, 110, 173, 0.08);
 }
 
 ion-segment-button {
   --color-checked:    var(--vac-blue);
-  --indicator-color:  var(--vac-blue);
+  --indicator-color:  var(--vac-teal);
   font-weight: 600;
 }
 
@@ -214,7 +215,7 @@ ion-segment-button {
 ion-searchbar {
   --background:      var(--vac-surface);
   --border-radius:   12px;
-  --box-shadow:      0 2px 8px rgba(21, 101, 192, 0.08);
+  --box-shadow:      0 2px 8px rgba(13, 110, 173, 0.08);
   --color:           #111827;
   --placeholder-color: #9CA3AF;
   --icon-color:      var(--vac-blue);
@@ -240,9 +241,9 @@ ion-content {
 
 // ── FAB buttons ──────────────────────────────────────────────────────────────
 ion-fab-button {
-  --background: linear-gradient(135deg, var(--vac-red-dark) 0%, var(--vac-red) 45%, var(--vac-lava) 100%);
-  --background-activated: var(--vac-red-dark);
-  --box-shadow: 0 4px 16px rgba(255, 69, 0, 0.45);
+  --background: var(--vac-blue);
+  --background-activated: var(--vac-blue-dp);
+  --box-shadow: 0 4px 16px rgba(13, 110, 173, 0.40);
   --color: #ffffff;
 }
 
@@ -333,43 +334,41 @@ ion-content.ion-padding > ion-card {
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(21, 101, 192, 0.35);
+  background: rgba(13, 110, 173, 0.35);
   border-radius: 3px;
 }
 
 // ── Alert popups (ion-select default + ion-alert) ────────────────────────────
 
-// Outer wrapper — deep shadow using all three brand hues
+// Outer wrapper — deep shadow using brand hues
 .alert-wrapper {
   border-radius: 18px !important;
   overflow: hidden !important;
   box-shadow:
-    0 0 0 2px rgba(255, 69, 0, 0.18),
-    0 12px 40px rgba(21, 101, 192, 0.22),
+    0 0 0 2px rgba(13, 110, 173, 0.18),
+    0 12px 40px rgba(11, 45, 92, 0.22),
     0 2px 10px rgba(0, 0, 0, 0.14) !important;
   min-width: 290px !important;
 }
 
-// Header — blue→green gradient (blue = brand, green = logo)
+// Header — navy→blue gradient
 .alert-head {
   background: linear-gradient(135deg,
-    var(--vac-blue-dp) 0%,
-    var(--vac-blue)    45%,
-    var(--vac-green)   100%
+    var(--vac-navy) 0%,
+    var(--vac-blue) 100%
   ) !important;
   padding: 0 !important;
 }
 
-// Lava accent stripe across the top of the header
+// Teal accent stripe across the top of the header
 .alert-head::before {
   content: '' !important;
   display: block !important;
   height: 4px !important;
   background: linear-gradient(90deg,
-    var(--vac-red-dark) 0%,
-    var(--vac-red)      35%,
-    var(--vac-lava)     65%,
-    #FF8C00             100%
+    var(--vac-navy) 0%,
+    var(--vac-teal) 60%,
+    #5eead4         100%
   ) !important;
 }
 
@@ -448,22 +447,18 @@ ion-content.ion-padding > ion-card {
   padding: 8px 20px !important;
   min-width: 84px !important;
   color: var(--vac-blue) !important;
-  border: 1.5px solid rgba(21, 101, 192, 0.35) !important;
+  border: 1.5px solid rgba(13, 110, 173, 0.35) !important;
   background: transparent !important;
   margin: 0 2px !important;
 }
 
-// OK / confirm — lava gradient (matches main submit buttons)
+// OK / confirm — Medical Blue
 .alert-button:last-child,
 .alert-button.alert-button-role-confirm {
-  background: linear-gradient(135deg,
-    var(--vac-red-dark) 0%,
-    var(--vac-red)      45%,
-    var(--vac-lava)     100%
-  ) !important;
+  background: var(--vac-blue) !important;
   color: #ffffff !important;
   border: none !important;
-  box-shadow: 0 3px 12px rgba(255, 69, 0, 0.45) !important;
+  box-shadow: 0 3px 12px rgba(13, 110, 173, 0.35) !important;
 }
 
 // ── Action sheets (country-code pickers etc.) ─────────────────────────────────
@@ -472,17 +467,16 @@ ion-content.ion-padding > ion-card {
   overflow: hidden !important;
 }
 
-// Lava top stripe on action sheet title
+// Teal top stripe on action sheet title
 .action-sheet-title.sc-ion-action-sheet-md::before,
 .action-sheet-title.sc-ion-action-sheet-ios::before {
   content: '' !important;
   display: block !important;
   height: 4px !important;
   background: linear-gradient(90deg,
-    var(--vac-red-dark) 0%,
-    var(--vac-red)      35%,
-    var(--vac-lava)     65%,
-    #FF8C00             100%
+    var(--vac-navy) 0%,
+    var(--vac-teal) 60%,
+    #5eead4         100%
   ) !important;
   margin: 0 -20px !important;
 }
@@ -490,9 +484,8 @@ ion-content.ion-padding > ion-card {
 .action-sheet-title.sc-ion-action-sheet-md,
 .action-sheet-title.sc-ion-action-sheet-ios {
   background: linear-gradient(135deg,
-    var(--vac-blue-dp) 0%,
-    var(--vac-blue)    50%,
-    var(--vac-green)   100%
+    var(--vac-navy) 0%,
+    var(--vac-blue) 100%
   ) !important;
   color: #ffffff !important;
   font-weight: 700 !important;
@@ -512,20 +505,20 @@ ion-content.ion-padding > ion-card {
   background: rgba(46, 125, 50, 0.07) !important;
 }
 
-// Cancel button in action sheet — lava tint
+// Cancel button in action sheet — teal tint
 .action-sheet-cancel.sc-ion-action-sheet-md,
 .action-sheet-cancel.sc-ion-action-sheet-ios {
-  color: var(--vac-lava) !important;
+  color: var(--vac-teal) !important;
   font-weight: 700 !important;
-  border-top: 1px solid rgba(255, 69, 0, 0.15) !important;
+  border-top: 1px solid rgba(20, 184, 166, 0.20) !important;
 }
 
 // ── Popover selects ───────────────────────────────────────────────────────────
 .popover-content {
   border-radius: 14px !important;
   box-shadow:
-    0 0 0 2px rgba(255, 69, 0, 0.14),
-    0 8px 28px rgba(21, 101, 192, 0.18),
+    0 0 0 2px rgba(13, 110, 173, 0.14),
+    0 8px 28px rgba(11, 45, 92, 0.18),
     0 2px 8px rgba(0, 0, 0, 0.10) !important;
   overflow: hidden !important;
 }
