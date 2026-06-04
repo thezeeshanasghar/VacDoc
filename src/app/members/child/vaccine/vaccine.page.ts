@@ -1035,6 +1035,22 @@ this.downloadSpecialPdf();
   }
 
   hasUnpaidDoneVaccine(data: any[]): boolean {
+    const isPA = this.usertype === 'PA' && !!this.paId;
+
+    if (isPA) {
+      const now = new Date();
+      const todayStr = now.toISOString().split('T')[0];
+      const yest = new Date(now); yest.setDate(yest.getDate() - 1);
+      const yesterdayStr = yest.toISOString().split('T')[0];
+
+      return data.some((v) => {
+        if (!v.IsDone || v.Due2EPI || v.IsPaymentCollected || !(v.Amount > 0)) return false;
+        if (v.PaymentCollectorPaId !== this.paId) return false;
+        const doneDay = v.DoneAt ? String(v.DoneAt).split('T')[0] : null;
+        return doneDay === todayStr || doneDay === yesterdayStr;
+      });
+    }
+
     return data.some(function(v) { return v.IsDone && !v.Due2EPI && !v.IsPaymentCollected && v.Amount > 0; });
   }
 
