@@ -59,7 +59,7 @@ export class EditPaPage implements OnInit {
     // getPaaccess returns all PaAccess rows for doctor — filter to this PA
     this.paService.getPaaccess(String(doctorId)).subscribe({
       next: (res: any) => {
-        const rows = Array.isArray(res) ? res : (res?.ResponseData || []);
+        const rows = Array.isArray(res) ? res : ((res && res.ResponseData) || []);
         this.paAccessRows = rows.filter((r: any) => r.PersonalAssistantId === Number(this.paId));
       }
     });
@@ -90,7 +90,7 @@ export class EditPaPage implements OnInit {
       this.paService.addPAAccess({ PersonalAssistantId: Number(this.paId), clinicId: clinic.Id }).subscribe({
         next: (res: any) => {
           // push new row so state is correct without reload
-          const newRow = res?.ResponseData || { Id: res?.Id || Date.now(), PersonalAssistantId: Number(this.paId), ClinicId: clinic.Id };
+          const newRow = (res && res.ResponseData) || { Id: (res && res.Id) || Date.now(), PersonalAssistantId: Number(this.paId), ClinicId: clinic.Id };
           this.paAccessRows = [...this.paAccessRows, newRow];
           this.togglingClinicId = null;
         },
@@ -117,7 +117,7 @@ export class EditPaPage implements OnInit {
           this.toastService.create('Profile updated successfully', 'success');
           this.router.navigate(['/members/doctor/personal-assistant']);
         } else {
-          this.toastService.create(res?.Message || 'Failed to update', 'danger');
+          this.toastService.create((res && res.Message) || 'Failed to update', 'danger');
         }
       },
       error: () => { loader.dismiss(); this.toastService.create('Failed to update profile', 'danger'); }
