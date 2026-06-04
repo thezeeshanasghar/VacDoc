@@ -14,6 +14,17 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+
+  <!-- Active assignment card (Doctor view) — scrolls with content -->
+  <div *ngIf="usertype === 'DOCTOR' && activeAssignment" class="active-assignment-card">
+    <ion-icon name="person-outline" class="active-assign-icon"></ion-icon>
+    <span class="active-assign-label">Assigned: <strong>{{ activeAssignment.PaName }}</strong></span>
+    <div class="active-assign-actions">
+      <button class="assign-action-btn reassign-btn" (click)="openReassignPopup()">Reassign</button>
+      <button class="assign-action-btn cancel-btn" (click)="confirmCancelAssignment()">Cancel</button>
+    </div>
+  </div>
+
   <div *ngFor="let item of dataGrouping | keyvalue; let i = index">
     <ion-card class="date-group-card">
       <ion-card-content>
@@ -229,15 +240,6 @@
   </div>
 </div>
 
-<!-- Active assignment banner (Doctor view) -->
-<div *ngIf="usertype === 'DOCTOR' && activeAssignment" class="active-assignment-bar">
-  <ion-icon name="person-outline" class="active-assign-icon"></ion-icon>
-  <span class="active-assign-label">Assigned: <strong>{{ activeAssignment.PaName }}</strong></span>
-  <div class="active-assign-actions">
-    <button class="assign-action-btn reassign-btn" (click)="openReassignPopup()">Reassign</button>
-    <button class="assign-action-btn cancel-btn" (click)="confirmCancelAssignment()">Cancel</button>
-  </div>
-</div>
 
 <!-- PA Assign popup -->
 <div class="assign-backdrop" *ngIf="assignPopupOpen" (click)="closeAssignPopup()"></div>
