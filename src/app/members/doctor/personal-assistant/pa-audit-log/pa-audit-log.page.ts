@@ -55,7 +55,10 @@ export class PaAuditLogPage implements OnInit {
     // Load PA list independently so dropdown always shows all PAs
     this.paService.getPAsByDoctorId(String(this.doctorId)).subscribe({
       next: (res: any) => {
-        if (res && res.IsSuccess) {
+        // API returns raw array directly (no IsSuccess wrapper)
+        if (Array.isArray(res)) {
+          this.personalAssistants = res;
+        } else if (res && res.IsSuccess) {
           this.personalAssistants = res.ResponseData || [];
         }
       }
