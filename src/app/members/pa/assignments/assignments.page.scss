@@ -107,6 +107,25 @@
   ion-icon { font-size: 12px; }
 }
 
+// ── Bulk vaccine group highlight ─────────────────────────────────────────────
+.bulk-group {
+  border: 3px solid #FF4500 !important;
+  box-shadow: 0 0 0 2px rgba(255, 69, 0, 0.20), 0 2px 16px rgba(255, 69, 0, 0.18) !important;
+}
+
+.bulk-badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  margin-left: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border-radius: 8px;
+  flex-shrink: 0;
+
+  ion-icon { font-size: 11px; }
+}
+
 // ── Assignment notes ──────────────────────────────────────────────────────────
 .assignment-notes {
   margin-top: 8px;

@@ -14,7 +14,7 @@
     <p>No active assignments</p>
   </div>
 
-  <ion-card *ngFor="let a of assignments" [ngClass]="a.Gender === 'Girl' ? 'girl' : 'boy'">
+  <ion-card *ngFor="let a of assignments" [ngClass]="[a.Gender === 'Girl' ? 'girl' : 'boy', isBulkGroup(a) ? 'bulk-group' : '']">
 
     <div class="icons">
       <div class="icons-left">
@@ -22,6 +22,9 @@
           <ion-img [src]="a.Gender === 'Girl' ? '../../../assets/female.png' : '../../../assets/male.png'"></ion-img>
         </ion-thumbnail>
         <span class="icons-name">{{ a.Name }}</span>
+        <ion-badge *ngIf="isBulkGroup(a)" class="bulk-badge" color="warning">
+          <ion-icon name="layers-outline"></ion-icon> {{ a.Schedules.length }} vaccines
+        </ion-badge>
       </div>
       <div class="icons-right">
         <ion-icon
