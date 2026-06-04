@@ -5,6 +5,25 @@ import { PaService } from 'src/app/services/pa.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 
+const ACTION_LABELS: Record<string, string> = {
+  SCHEDULE_ADD_VACCINE:    'Add Vaccine',
+  SCHEDULE_EDIT_VACCINE:   'Edit Vaccine',
+  SCHEDULE_DELETE_VACCINE: 'Delete Vaccine',
+  VACCINE_GIVEN:           'Vaccine Given',
+  VACCINE_UNGIVEN:         'Vaccine Ungiven',
+  VACCINE_SKIP:            'Vaccine Skipped',
+  VACCINE_UNSKIP:          'Vaccine Unskipped',
+  VACCINE_RESCHEDULE:      'Reschedule',
+  INVOICESUBMIT:           'Invoice Submit',
+  INVOICEEDIT:             'Invoice Edit',
+  InvoiceEdit:             'Invoice Edit',
+  PAYMENT_COLLECTED:       'Payment Collected',
+  HANDOVER_CREATED:        'Cash Handover',
+  HANDOVER_CONFIRMED:      'Handover Confirmed',
+  PATIENT_ADDED:           'Patient Added',
+  PATIENT_EDITED:          'Patient Edited',
+};
+
 @Component({
   selector: 'app-pa-audit-log',
   templateUrl: './pa-audit-log.page.html',
@@ -33,23 +52,21 @@ export class PaAuditLogPage implements OnInit {
 
   async ngOnInit() {
     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
-    this.loadLogs();
-  }
-
-  buildPaListFromLogs() {
-    const seen = new Map<number, string>();
-    this.logs.forEach(log => {
-      if (log.PaId && !seen.has(log.PaId)) { seen.set(log.PaId, log.PaName || ''); }
+    // Load PA list independently so dropdown always shows all PAs
+    this.paService.getPAsByDoctorId(String(this.doctorId)).subscribe({
+      next: (res: any) => {
+        if (res && res.IsSuccess) {
+          this.personalAssistants = res.ResponseData || [];
+        }
+      }
     });
-    if (seen.size) {
-      this.personalAssistants = Array.from(seen.entries()).map(([Id, Name]) => ({ Id, Name }));
-    }
+    this.loadLogs();
   }
 
   async loadLogs() {
     if (this.loading) { return; }
     this.loading = true;
-    const load = await this.loadingController.create({ message: 'Loading audit log...' });
+    const load = await this.loadingController.create({ message: 'Loading...' });
     await load.present();
     this.paService.getAuditLog(this.doctorId, this.selectedPaId || undefined, this.page, this.pageSize).subscribe({
       next: (res: any) => {
@@ -57,7 +74,6 @@ export class PaAuditLogPage implements OnInit {
         this.loading = false;
         this.total = res.total || 0;
         this.logs = res.logs || [];
-        this.buildPaListFromLogs();
       },
       error: () => {
         load.dismiss();
@@ -82,11 +98,17 @@ export class PaAuditLogPage implements OnInit {
     if (this.page * this.pageSize < this.total) { this.page++; this.loadLogs(); }
   }
 
+  getActionLabel(log: any): string {
+    const code: string = log.ActionCode || '';
+    return ACTION_LABELS[code] || code.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').trim();
+  }
+
   getActionColor(log: any): string {
     if (log.IsReversal) { return 'warning'; }
     const code: string = log.ActionCode || '';
-    if (code === 'InvoiceEdit' || code.toLowerCase().indexOf('delete') >= 0) { return 'danger'; }
-    if (code.toLowerCase().indexOf('give') >= 0 || code.toLowerCase().indexOf('add') >= 0) { return 'success'; }
-    return 'primary';
+    if (code.toLowerCase().includes('delete') || code === 'InvoiceEdit' || code === 'INVOICEEDIT') { return 'danger'; }
+    if (code.toLowerCase().includes('give') || code.toLowerCase().includes('add') || code === 'PATIENT_ADDED') { return 'success'; }
+    if (code.toLowerCase().includes('invoice') || code.toLowerCase().includes('payment') || code.toLowerCase().includes('handover')) { return 'primary'; }
+    return 'medium';
   }
 }

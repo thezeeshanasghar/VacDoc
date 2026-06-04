@@ -1,98 +1,220 @@
+.audit-content { --background: #F1F5F9; }
+
+.audit-wrap { padding: 16px 16px 24px; }
+
+// ── Filter bar ────────────────────────────────────────────────────────────────
 .filter-bar {
-  --background: #1a1a2e;
-  --color: #fff;
-  ion-label { color: #aaa; font-size: 13px; }
-}
-
-.log-summary {
-  padding: 6px 16px;
-  font-size: 12px;
-  color: #888;
-  text-align: right;
-}
-
-.log-card {
-  --background: #1c1c2e;
-  margin: 8px 10px;
-  border-radius: 10px;
-}
-
-.log-top {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
   flex-wrap: wrap;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 10px rgba(11, 45, 92, 0.08);
+  margin-bottom: 16px;
 }
 
-.action-badge {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 160px;
+
+  label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #78909C;
+    letter-spacing: 0.5px;
+  }
 }
 
-.reversal-badge {
-  font-size: 10px;
-  font-weight: 700;
-}
-
-.log-date {
-  margin-left: auto;
-  font-size: 11px;
-  color: #888;
-}
-
-.log-pa {
+.filter-select {
+  padding: 8px 12px;
   font-size: 13px;
-  color: #ccc;
-  margin: 4px 0;
+  font-weight: 500;
+  color: #1A1A2E;
+  background: #F1F5F9;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 8px;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%230D6EAD' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+  cursor: pointer;
+
+  &:focus { border-color: #0D6EAD; background-color: #ffffff; }
+}
+
+.filter-summary {
+  font-size: 12px;
+  color: #78909C;
+  white-space: nowrap;
+  margin-left: auto;
+
+  .summary-num { font-weight: 700; color: #0B2D5C; }
+}
+
+// ── Log cards ─────────────────────────────────────────────────────────────────
+.log-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(11, 45, 92, 0.07);
+  border-left: 4px solid #CBD5E1;
+
+  &--success { border-left-color: #2E7D32; }
+  &--danger  { border-left-color: #C62828; }
+  &--primary { border-left-color: #0D6EAD; }
+  &--warning { border-left-color: #E65100; }
+  &--medium  { border-left-color: #78909C; }
+}
+
+// Row 1 — PA name + date
+.log-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.log-pa-wrap {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.log-desc {
-  font-size: 14px;
-  color: #e0e0e0;
-  margin: 4px 0;
+.log-pa-icon {
+  font-size: 18px;
+  color: #0D6EAD;
+  flex-shrink: 0;
 }
 
+.log-pa-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0B2D5C;
+}
+
+.log-date {
+  font-size: 11px;
+  color: #90A4AE;
+  white-space: nowrap;
+}
+
+// Row 2 — Action chip
+.log-row-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.action-chip {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.2px;
+
+  &--success { background: #E8F5E9; color: #2E7D32; }
+  &--danger  { background: #FEECEC; color: #C62828; }
+  &--primary { background: #E3F0FF; color: #0D6EAD; }
+  &--warning { background: #FFF3E0; color: #E65100; }
+  &--medium  { background: #F1F5F9; color: #546E7A; }
+}
+
+.reversal-chip {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: #FFF3E0;
+  color: #E65100;
+  letter-spacing: 0.3px;
+}
+
+// Description
+.log-desc {
+  font-size: 13px;
+  color: #374151;
+  margin: 0 0 4px;
+  line-height: 1.4;
+}
+
+// Notes
 .log-notes {
   font-size: 12px;
-  color: #aaa;
+  color: #78909C;
   font-style: italic;
   display: flex;
   align-items: center;
   gap: 4px;
+  margin: 4px 0 0;
+
+  ion-icon { font-size: 13px; }
 }
 
+// Reversal ref
 .log-reversal-ref {
   font-size: 11px;
-  color: #FF4500;
+  color: #E65100;
   display: flex;
   align-items: center;
   gap: 4px;
+  margin: 4px 0 0;
+
+  ion-icon { font-size: 13px; }
 }
 
+// ── Empty state ───────────────────────────────────────────────────────────────
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  color: #555;
-  ion-icon { font-size: 48px; display: block; margin: 0 auto 12px; }
-  p { font-size: 14px; }
+  color: #90A4AE;
+
+  ion-icon { font-size: 52px; display: block; margin: 0 auto 12px; color: #CBD5E1; }
+  p { font-size: 14px; margin: 0; }
 }
 
+// ── Pagination ────────────────────────────────────────────────────────────────
 .pagination-row {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 16px;
-  padding: 16px;
+  padding: 20px 0 8px;
+}
+
+.page-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1.5px solid #CBD5E1;
+  background: #ffffff;
+  color: #0D6EAD;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover:not([disabled]) { background: #E3F0FF; border-color: #0D6EAD; }
+  &[disabled] { opacity: 0.35; cursor: default; }
+
+  ion-icon { font-size: 16px; }
 }
 
 .page-label {
-  font-size: 14px;
-  color: #aaa;
-  min-width: 30px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0B2D5C;
+  min-width: 60px;
   text-align: center;
 }
