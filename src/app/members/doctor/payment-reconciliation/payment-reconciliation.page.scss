@@ -711,3 +711,162 @@
   font-size: 11px;
   color: #388E3C;
 }
+
+// ─── Pending Reversals Section ────────────────────────────────────────────────
+.reversal-section {
+  background: #FFF8F4;
+  border: 1.5px solid #FFCCBC;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+
+.reversal-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #E65100;
+  margin-bottom: 12px;
+
+  ion-icon { font-size: 16px; }
+}
+
+.reversal-row {
+  background: #fff;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border-left: 3px solid #E65100;
+
+  &:last-child { margin-bottom: 0; }
+}
+
+.reversal-pa {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0B2D5C;
+  margin-bottom: 2px;
+}
+
+.reversal-type {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.reversal-notes {
+  font-size: 12px;
+  color: #546E7A;
+  margin-bottom: 3px;
+}
+
+.reversal-date {
+  font-size: 11px;
+  color: #90A4AE;
+  margin-bottom: 8px;
+}
+
+.reversal-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-approve-reversal {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #2E7D32;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  &:hover { background: #256627; }
+}
+
+.btn-reject-reversal {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  background: transparent;
+  color: #BF360C;
+  border: 1.5px solid #BF360C;
+  border-radius: 7px;
+  cursor: pointer;
+  &:hover { background: #FBE9E7; }
+}
+
+// ─── Panel Handover + Adjust ──────────────────────────────────────────────────
+.panel-handover-card {
+  background: #E8EAF6;
+  border: 1.5px solid #9FA8DA;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-top: 12px;
+}
+
+.handover-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #283593;
+  margin-bottom: 10px;
+
+  ion-icon { font-size: 15px; }
+}
+
+.handover-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-confirm-handover {
+  flex: 1;
+  padding: 7px 0;
+  font-size: 12px;
+  font-weight: 700;
+  background: #0D6EAD;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  &:hover { background: #0b6098; }
+}
+
+.btn-reject-handover {
+  flex: 1;
+  padding: 7px 0;
+  font-size: 12px;
+  font-weight: 700;
+  background: transparent;
+  color: #BF360C;
+  border: 1.5px solid #BF360C;
+  border-radius: 7px;
+  cursor: pointer;
+  &:hover { background: #FBE9E7; }
+}
+
+.panel-adjust-row {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.btn-adjust {
+  width: 100%;
+  padding: 9px 0;
+  font-size: 13px;
+  font-weight: 700;
+  background: transparent;
+  color: #512DA8;
+  border: 1.5px solid #512DA8;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    background: #EDE7F6;
+  }
+}

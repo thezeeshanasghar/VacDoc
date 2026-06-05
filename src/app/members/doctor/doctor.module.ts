@@ -59,10 +59,6 @@ const routes: Routes = [
     loadChildren: () => import('./agent-module/agent-module.module').then(m => m.AgentModulePageModule)
   },
   {
-    path: "pa-payment-audit",
-    loadChildren: () => import('./pa-payment-audit/pa-payment-audit.module').then(m => m.PaPaymentAuditPageModule)
-  },
-  {
     path: "payment-reconciliation",
     loadChildren: () => import('./payment-reconciliation/payment-reconciliation.module').then(m => m.PaymentReconciliationPageModule)
   }

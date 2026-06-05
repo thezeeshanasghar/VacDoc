@@ -52,6 +52,9 @@ export class PaymentReconciliationPage {
 
   loading: boolean = false;
 
+  pendingReversals: any[] = [];
+  pendingHandovers: any[] = [];
+
   constructor(
     private paService: PaService,
     private clinicService: ClinicService,
@@ -72,6 +75,8 @@ export class PaymentReconciliationPage {
     }
     await this.loadClinics();
     this.load();
+    this.loadPendingReversals();
+    this.loadPendingHandovers();
   }
 
   private toDateStr(d: Date): string {
@@ -208,6 +213,199 @@ export class PaymentReconciliationPage {
         this.toastService.create('Failed to load payment data', 'danger');
       }
     );
+  }
+
+  loadPendingReversals() {
+    if (!this.doctorId) { return; }
+    this.paService.getPendingReversals(this.doctorId).subscribe(
+      res => {
+        if (res && res.IsSuccess) { this.pendingReversals = res.ResponseData || []; }
+      },
+      () => {}
+    );
+  }
+
+  loadPendingHandovers() {
+    if (!this.doctorId) { return; }
+    this.paService.getOutstanding(this.doctorId).subscribe(
+      res => {
+        if (res && res.IsSuccess && res.ResponseData) {
+          this.pendingHandovers = res.ResponseData.PendingHandovers || [];
+        }
+      },
+      () => {}
+    );
+  }
+
+  getPendingHandoverForPa(paId: number): any {
+    return this.pendingHandovers.find(h => h.PaId === paId) || null;
+  }
+
+  get panelPendingHandover(): any {
+    if (!this.selectedPaId) { return null; }
+    return this.getPendingHandoverForPa(this.selectedPaId);
+  }
+
+  async confirmHandover(h: any) {
+    const alert = await this.alertController.create({
+      header: 'Cash Received',
+      message: `Confirm you received Rs ${h.Amount} cash from this PA?`,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Confirm',
+          handler: () => {
+            this.paService.confirmHandover(h.Id).subscribe(
+              res => {
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Handover confirmed', 'success');
+                  this.loadPendingHandovers();
+                } else {
+                  this.toastService.create(res.Message || 'Failed', 'danger');
+                }
+              },
+              () => this.toastService.create('Failed to confirm', 'danger')
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async rejectHandover(h: any) {
+    const alert = await this.alertController.create({
+      header: 'Reject Handover',
+      inputs: [{ name: 'note', type: 'text', placeholder: 'Reason (optional)' }],
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Reject',
+          handler: (data) => {
+            this.paService.rejectHandover(h.Id, data.note || '').subscribe(
+              res => {
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Handover rejected', 'warning');
+                  this.loadPendingHandovers();
+                } else {
+                  this.toastService.create(res.Message || 'Failed', 'danger');
+                }
+              },
+              () => this.toastService.create('Failed to reject', 'danger')
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async confirmApproveReversal(reversal: any) {
+    const alert = await this.alertController.create({
+      header: 'Approve Reversal',
+      message: 'Approve this cancellation? The invoice amount will be reduced and the PA\'s payable decreased.\n\n' + (reversal.Notes || ''),
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Approve',
+          handler: async () => {
+            const loading = await this.loadingController.create({ message: 'Approving...' });
+            await loading.present();
+            this.paService.approveReversal(reversal.Id).subscribe(
+              res => {
+                loading.dismiss();
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Reversal approved — payable adjusted', 'success');
+                  this.pendingReversals = this.pendingReversals.filter((r: any) => r.Id !== reversal.Id);
+                } else {
+                  this.toastService.create((res && res.Message) || 'Failed', 'danger');
+                }
+              },
+              () => { loading.dismiss(); this.toastService.create('Failed to approve', 'danger'); }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async confirmRejectReversal(reversal: any) {
+    const alert = await this.alertController.create({
+      header: 'Reject Reversal',
+      message: 'Reject this request? The PA\'s payable will remain unchanged.\n\n' + (reversal.Notes || ''),
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Reject',
+          cssClass: 'alert-btn-danger',
+          handler: async () => {
+            const loading = await this.loadingController.create({ message: 'Rejecting...' });
+            await loading.present();
+            this.paService.rejectReversal(reversal.Id).subscribe(
+              res => {
+                loading.dismiss();
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Reversal rejected — payable unchanged', 'warning');
+                  this.pendingReversals = this.pendingReversals.filter((r: any) => r.Id !== reversal.Id);
+                } else {
+                  this.toastService.create((res && res.Message) || 'Failed', 'danger');
+                }
+              },
+              () => { loading.dismiss(); this.toastService.create('Failed to reject', 'danger'); }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async promptAdjust() {
+    if (!this.selectedPaId) { return; }
+    const pa = this.pas.find(p => p.PaId === this.selectedPaId || p.Id === this.selectedPaId);
+    const paName = pa ? (pa.Name || pa.PaName) : 'Selected PA';
+    const clinicId = this.selectedClinicId || 0;
+    const alert = await this.alertController.create({
+      header: 'Adjust Payable',
+      subHeader: paName,
+      message: 'Enter a positive amount to increase or negative to decrease the PA\'s payable.',
+      inputs: [
+        { name: 'amount', type: 'number', placeholder: 'Amount (e.g. -500 or 200)' },
+        { name: 'reason', type: 'text', placeholder: 'Reason (required)' }
+      ],
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Apply',
+          handler: async (data) => {
+            const amt = Number(data.amount);
+            if (!amt || amt === 0) {
+              this.toastService.create('Enter a non-zero amount', 'warning');
+              return false;
+            }
+            if (!data.reason || !data.reason.trim()) {
+              this.toastService.create('Reason is required', 'warning');
+              return false;
+            }
+            const loading = await this.loadingController.create({ message: 'Applying...' });
+            await loading.present();
+            this.paService.adjustPayable(this.selectedPaId!, this.doctorId!, clinicId, amt, data.reason.trim()).subscribe(
+              res => {
+                loading.dismiss();
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Adjustment applied', 'success');
+                } else {
+                  this.toastService.create((res && res.Message) || 'Failed', 'danger');
+                }
+              },
+              () => { loading.dismiss(); this.toastService.create('Failed to apply adjustment', 'danger'); }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
   applySearch() {

@@ -23,6 +23,26 @@
       </div>
     </div>
 
+    <!-- Pending Reversal Approvals -->
+    <div *ngIf="pendingReversals.length > 0" class="reversal-section">
+      <div class="reversal-header">
+        <ion-icon name="warning-outline"></ion-icon>
+        Pending Reversal Approvals ({{ pendingReversals.length }})
+      </div>
+      <div *ngFor="let r of pendingReversals" class="reversal-row">
+        <div class="reversal-pa">{{ r.PaName }}</div>
+        <div class="reversal-type" [style.color]="r.ActionCode === 'InvoiceAmountReduction' ? '#e65100' : '#b71c1c'">
+          {{ r.ActionCode === 'InvoiceAmountReduction' ? 'Invoice Amount Reduced' : 'Vaccine Ungiven After Payment' }}
+        </div>
+        <div class="reversal-notes">{{ r.Notes }}</div>
+        <div class="reversal-date">{{ r.ActionDate | date:'dd MMM, HH:mm' }}</div>
+        <div class="reversal-btns">
+          <button class="btn-approve-reversal" (click)="confirmApproveReversal(r)">Approve &amp; Reduce</button>
+          <button class="btn-reject-reversal" (click)="confirmRejectReversal(r)">Reject</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Filter Bar -->
     <div class="filter-bar">
       <div class="filter-group">
@@ -305,6 +325,25 @@
           <ion-icon name="checkmark-circle-outline" class="clear-icon"></ion-icon>
           <div class="clear-text">All Clear</div>
           <div class="clear-sub">All payments reconciled</div>
+        </div>
+
+        <!-- Pending Handover for selected PA -->
+        <ng-container *ngIf="selectedPaId && panelPendingHandover as h">
+          <div class="panel-handover-card">
+            <div class="handover-label">
+              <ion-icon name="swap-horizontal-outline"></ion-icon>
+              Handover Pending: Rs {{ h.Amount | number:'1.0-0' }}
+            </div>
+            <div class="handover-btns">
+              <button class="btn-confirm-handover" (click)="confirmHandover(h)">Cash Received</button>
+              <button class="btn-reject-handover" (click)="rejectHandover(h)">Reject</button>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- Adjust Payable (only when a specific PA is selected) -->
+        <div class="panel-adjust-row" *ngIf="selectedPaId">
+          <button class="btn-adjust" (click)="promptAdjust()">&#177; Adjust Payable</button>
         </div>
       </div>
 
