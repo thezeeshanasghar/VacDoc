@@ -206,69 +206,65 @@
       <button *ngIf="historySearch" class="search-clear" (click)="historySearch = ''">✕</button>
     </div>
 
-    <div class="empty-state" *ngIf="filteredHistory.length === 0">
+    <div class="empty-state" *ngIf="filteredGroupedHistory.length === 0">
       <ion-icon name="swap-horizontal-outline" class="empty-icon"></ion-icon>
       <p>No transfers recorded</p>
     </div>
 
-    <!-- Group history by bill -->
-    <ng-container *ngFor="let t of filteredHistory">
+    <ng-container *ngFor="let g of filteredGroupedHistory">
       <div class="history-card">
+
         <div class="history-top">
-          <div class="history-brand-block">
-            <span class="history-brand">{{ t.BrandName }}</span>
-            <span class="history-vaccine" *ngIf="t.VaccineName">{{ t.VaccineName }}</span>
+          <div class="clinic-route-row">
+            <ion-icon name="business-outline" class="clinic-icon"></ion-icon>
+            <span class="clinic-from">{{ g.FromClinicName }}</span>
+            <ion-icon name="arrow-forward-outline" class="route-arrow"></ion-icon>
+            <span class="clinic-to">{{ g.ToClinicName }}</span>
           </div>
-          <div class="transfer-badge">
-            <ion-icon name="swap-horizontal-outline"></ion-icon>
-            {{ t.Quantity }} units
-          </div>
+          <span class="history-date">{{ formatDate(g.TransferDate) }}</span>
         </div>
 
-        <div class="history-meta-row">
-          <span class="meta-chip" *ngIf="t.BatchLot">
-            <ion-icon name="pricetag-outline"></ion-icon>
-            {{ t.BatchLot }}
-          </span>
-          <span class="meta-chip" *ngIf="t.ExpiryDate">
-            <ion-icon name="calendar-outline"></ion-icon>
-            Exp: {{ formatDate(t.ExpiryDate) }}
-            <span class="expiry-tag expired-tag" *ngIf="isExpired(t.ExpiryDate)">Expired</span>
-            <span class="expiry-tag soon-tag" *ngIf="!isExpired(t.ExpiryDate) && isExpiringSoon(t.ExpiryDate)">Soon</span>
-          </span>
-          <span class="meta-chip price-chip" *ngIf="t.UnitPrice > 0">
-            <ion-icon name="cash-outline"></ion-icon>
-            {{ t.UnitPrice.toFixed(2) }} × {{ t.Quantity }} = {{ t.LineTotal.toFixed(2) }}
-          </span>
-        </div>
-
-        <div class="clinic-route-row">
-          <ion-icon name="business-outline" class="clinic-icon"></ion-icon>
-          <span class="clinic-from">{{ t.FromClinicName }}</span>
-          <ion-icon name="arrow-forward-outline" class="route-arrow"></ion-icon>
-          <span class="clinic-to">{{ t.ToClinicName }}</span>
-        </div>
-
-        <div *ngIf="t.BillNo" class="bill-no-row">
+        <div *ngIf="g.BillNo" class="bill-no-row">
           <ion-icon name="receipt-outline"></ion-icon>
-          {{ t.BillNo }}
+          {{ g.BillNo }}
         </div>
 
-        <div *ngIf="t.Reason" class="history-reason">"{{ t.Reason }}"</div>
+        <div *ngIf="g.Reason" class="history-reason">"{{ g.Reason }}"</div>
+
+        <div class="transfer-items-table">
+          <div class="ti-header-row">
+            <span class="ti-brand">Brand</span>
+            <span class="ti-batch">Batch</span>
+            <span class="ti-expiry">Expiry</span>
+            <span class="ti-qty">Qty</span>
+            <span class="ti-total">Total</span>
+          </div>
+          <div *ngFor="let t of g.items" class="ti-row">
+            <span class="ti-brand">{{ t.BrandName }}</span>
+            <span class="ti-batch">{{ t.BatchLot || '—' }}</span>
+            <span class="ti-expiry">
+              {{ formatDate(t.ExpiryDate) }}
+              <span class="expiry-tag expired-tag" *ngIf="isExpired(t.ExpiryDate)">Exp</span>
+              <span class="expiry-tag soon-tag" *ngIf="!isExpired(t.ExpiryDate) && isExpiringSoon(t.ExpiryDate)">Soon</span>
+            </span>
+            <span class="ti-qty">{{ t.Quantity }}</span>
+            <span class="ti-total">{{ t.LineTotal.toFixed(2) }}</span>
+          </div>
+        </div>
 
         <div class="history-footer">
-          <span class="history-date">{{ formatDate(t.TransferDate) }}</span>
           <div class="footer-btns">
-            <ion-button *ngIf="t.BillId" fill="outline" color="primary" size="small" (click)="downloadPdf(t.BillId, t.BillNo)">
+            <ion-button *ngIf="g.BillId" fill="outline" color="primary" size="small" (click)="downloadPdf(g.BillId, g.BillNo)">
               <ion-icon name="document-text-outline" slot="start"></ion-icon>
               PDF
             </ion-button>
-            <ion-button fill="outline" color="danger" size="small" (click)="confirmDelete(t.Id)">
+            <ion-button fill="outline" color="danger" size="small" (click)="confirmDelete(g.firstId)">
               <ion-icon name="trash-outline" slot="start"></ion-icon>
               Reverse
             </ion-button>
           </div>
         </div>
+
       </div>
     </ng-container>
 

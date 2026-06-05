@@ -310,77 +310,20 @@ input[type=number] { -moz-appearance: textfield; }
 
 .history-top {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   margin-bottom: 6px;
-}
-
-.history-brand-block {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1;
-  min-width: 0;
-}
-
-.history-brand {
-  font-size: 15px;
-  font-weight: 600;
-  color: #1A1A2E;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.history-vaccine {
-  font-size: 12px;
-  color: #78909C;
-}
-
-.transfer-badge {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 14px;
-  font-size: 14px;
-  font-weight: 700;
-  background: #E0F2F1;
-  color: #00695C;
-  white-space: nowrap;
-  flex-shrink: 0;
-  margin-left: 8px;
-
-  ion-icon { font-size: 13px; }
-}
-
-.history-meta-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 6px;
-}
-
-.meta-chip {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  color: #546E7A;
-  background: #F5F7FA;
-  padding: 3px 8px;
-  border-radius: 6px;
-
-  ion-icon { font-size: 12px; }
+  gap: 8px;
 }
 
 .clinic-route-row {
   display: flex;
   align-items: center;
   gap: 5px;
-  margin-bottom: 4px;
   font-size: 13px;
   color: #546E7A;
+  flex: 1;
+  min-width: 0;
 }
 
 .clinic-icon { font-size: 14px; flex-shrink: 0; }
@@ -408,15 +351,56 @@ input[type=number] { -moz-appearance: textfield; }
   font-style: italic;
 }
 
+// Line-item table inside history card
+.transfer-items-table {
+  margin: 8px 0 10px;
+  font-size: 12px;
+  overflow-x: auto;
+}
+
+.ti-header-row,
+.ti-row {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 1.4fr 0.5fr 1fr;
+  gap: 4px;
+  padding: 4px 2px;
+  align-items: center;
+}
+
+.ti-header-row {
+  font-weight: 700;
+  color: #546E7A;
+  border-bottom: 1px solid #E0E0E0;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.ti-row {
+  border-bottom: 1px solid #F5F7FA;
+  color: #1A1A2E;
+
+  &:last-child { border-bottom: none; }
+}
+
+.ti-qty,
+.ti-total {
+  text-align: right;
+}
+
+.ti-expiry {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-wrap: wrap;
+}
+
 .history-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-}
-
-.history-date {
-  font-size: 12px;
-  color: #78909C;
+  justify-content: flex-end;
+  padding-top: 6px;
+  border-top: 1px solid #F1F5F9;
 }
 
 // Batch modal

@@ -49,14 +49,37 @@ export class StockTransferPage {
     return this.clinics.filter(function(c: any) { return c.Id !== self.fromClinicId; });
   }
 
-  get filteredHistory(): any[] {
+  get groupedHistory(): any[] {
+    var map = new Map<number, any>();
+    for (var i = 0; i < this.history.length; i++) {
+      var t = this.history[i];
+      var key = t.BillId != null ? t.BillId : t.Id;
+      if (!map.has(key)) {
+        map.set(key, {
+          BillId: t.BillId,
+          BillNo: t.BillNo,
+          FromClinicName: t.FromClinicName,
+          ToClinicName: t.ToClinicName,
+          TransferDate: t.TransferDate,
+          Reason: t.Reason,
+          firstId: t.Id,
+          items: []
+        });
+      }
+      map.get(key).items.push(t);
+    }
+    return Array.from(map.values());
+  }
+
+  get filteredGroupedHistory(): any[] {
     var q = (this.historySearch || '').toLowerCase();
-    if (!q) return this.history;
-    return this.history.filter(function(h: any) {
-      return (h.BrandName || '').toLowerCase().indexOf(q) >= 0 ||
-             (h.VaccineName || '').toLowerCase().indexOf(q) >= 0 ||
-             (h.Reason || '').toLowerCase().indexOf(q) >= 0 ||
-             (h.BillNo || '').toLowerCase().indexOf(q) >= 0;
+    if (!q) return this.groupedHistory;
+    return this.groupedHistory.filter(function(g: any) {
+      return (g.BillNo || '').toLowerCase().indexOf(q) >= 0 ||
+             (g.Reason || '').toLowerCase().indexOf(q) >= 0 ||
+             g.items.some(function(t: any) {
+               return (t.BrandName || '').toLowerCase().indexOf(q) >= 0;
+             });
     });
   }
 
