@@ -25,7 +25,7 @@ export class VaccinePage {
   @ViewChild(IonContent, { static: false }) content: IonContent;
   vaccine: any[] = [];
   specialvaccineids: any[] = [];
-  dataGrouping: any[] = [];
+  dataGrouping: { [date: string]: any[] } = {};
   vaccinesData = [];
   childId: any;
   alphabetically: any;
@@ -901,7 +901,7 @@ this.downloadSpecialPdf();
         this.toastService.create(response.message || 'Approved', 'success');
         // Update in-memory — no full reload needed
         for (const key of Object.keys(this.dataGrouping)) {
-          const group = (this.dataGrouping as any)[key];
+          const group = this.dataGrouping[key];
           if (Array.isArray(group)) {
             const row = group.find((v: any) => v.Id === scheduleId);
             if (row) { row.IsPAApprove = true; break; }
@@ -1043,7 +1043,7 @@ this.downloadSpecialPdf();
   private loadInvoiceExistence() {
     this.invoiceExistsMap = {};
     const childId = Number(this.childId);
-    const grouped = this.dataGrouping as { [date: string]: any[] };
+    const grouped: any = this.dataGrouping;
     const doneDates = Object.keys(grouped).filter(date =>
       grouped[date].some((v: any) => v.IsDone && !v.Due2EPI && v.Amount > 0)
     );
