@@ -75,7 +75,6 @@ export class AssignmentsPage {
         inputs: [
           { type: 'radio', label: 'Cash', value: 'Cash', checked: true },
           { type: 'radio', label: 'Online Transfer', value: 'Online Transfer' },
-          { type: 'radio', label: 'Bank Transfer', value: 'Bank Transfer' },
         ],
         buttons: [
           { text: 'Cancel', role: 'cancel' },
