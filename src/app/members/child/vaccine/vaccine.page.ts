@@ -217,6 +217,10 @@ export class VaccinePage {
     }
     return true;
   }
+
+  anyVaccineGiven(data: any[]): boolean {
+    return data.some(v => v.IsDone && !v.Due2EPI);
+  }
   
 
  async getVaccination() {
