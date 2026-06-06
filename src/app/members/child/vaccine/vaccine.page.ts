@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from "@angular/core";
 import { LoadingController, IonContent, PopoverController } from "@ionic/angular";
 import { VaccineService } from "src/app/services/vaccine.service";
 import { ScheduleService } from "src/app/services/schedule.service";
@@ -106,6 +106,7 @@ export class VaccinePage {
     private paService: PaService,
     private invoiceService: InvoiceService,
     private popoverController: PopoverController,
+    private cdr: ChangeDetectorRef,
   ) {
     this.type = '';
   }
@@ -1052,6 +1053,7 @@ this.downloadSpecialPdf();
       this.invoiceService.getInvoiceTotal(childId, date).toPromise().then(res => {
         if (res && res.IsSuccess) {
           this.invoiceExistsMap[date] = true;
+          this.cdr.detectChanges();
         } else {
           // Try previous day for UTC/PST offset edge case
           const prev = new Date(date);
@@ -1060,6 +1062,7 @@ this.downloadSpecialPdf();
           this.invoiceService.getInvoiceTotal(childId, prevStr).toPromise().then(res2 => {
             if (res2 && res2.IsSuccess) {
               this.invoiceExistsMap[date] = true;
+              this.cdr.detectChanges();
             }
           }).catch(() => {});
         }
