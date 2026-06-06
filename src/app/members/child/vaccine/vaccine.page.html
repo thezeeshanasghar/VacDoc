@@ -73,9 +73,9 @@
               title="Create invoice for this date">
             </ion-icon>
 
-            <!-- Record Payment -->
+            <!-- Record Payment — only shown after invoice has been downloaded for this date -->
             <ion-icon
-              *ngIf="hasUnpaidDoneVaccine(item.value) && canCollectPayment"
+              *ngIf="hasUnpaidDoneVaccine(item.value, item.key) && canCollectPayment"
               name="cash-outline"
               class="hdr-icon hdr-icon--payment"
               (click)="openPaymentPopup(getDoneScheduleId(item.value), item.value)"

@@ -67,6 +67,7 @@ export class VaccinePage {
   paymentTargetScheduleIds: number[] = [];
   paymentDueAmount: number = 0;
   canCollectPayment = true;
+  invoiceExistsMap: { [date: string]: boolean } = {};
 
   isFilledToday(doneAt: any): boolean {
     if (!doneAt) return false;
@@ -248,6 +249,7 @@ export class VaccinePage {
 
         this.storage.set("vaccinesData", this.vaccinesData);
         this.dataGrouping = this.groupBy(this.vaccine, "Date");
+        this.loadInvoiceExistence();
         loading.dismiss();
 
       } else if (res.IsSuccess === false) {
@@ -1034,7 +1036,35 @@ this.downloadSpecialPdf();
     this.assignPopupOpen = false;
   }
 
-  hasUnpaidDoneVaccine(data: any[]): boolean {
+  private loadInvoiceExistence() {
+    this.invoiceExistsMap = {};
+    const childId = Number(this.childId);
+    const grouped = this.dataGrouping as { [date: string]: any[] };
+    const doneDates = Object.keys(grouped).filter(date =>
+      grouped[date].some((v: any) => v.IsDone && !v.Due2EPI && v.Amount > 0)
+    );
+    doneDates.forEach(date => {
+      this.invoiceService.getInvoiceTotal(childId, date).toPromise().then(res => {
+        if (res && res.IsSuccess && res.ResponseData > 0) {
+          this.invoiceExistsMap[date] = true;
+        } else {
+          // Try previous day for UTC/PST offset edge case
+          const prev = new Date(date);
+          prev.setDate(prev.getDate() - 1);
+          const prevStr = prev.toISOString().split('T')[0];
+          this.invoiceService.getInvoiceTotal(childId, prevStr).toPromise().then(res2 => {
+            if (res2 && res2.IsSuccess && res2.ResponseData > 0) {
+              this.invoiceExistsMap[date] = true;
+            }
+          }).catch(() => {});
+        }
+      }).catch(() => {});
+    });
+  }
+
+  hasUnpaidDoneVaccine(data: any[], date: string): boolean {
+    if (!this.invoiceExistsMap[date]) { return false; }
+
     const isPA = this.usertype === 'PA' && !!this.paId;
 
     if (isPA) {

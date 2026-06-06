@@ -45,7 +45,7 @@
       &nbsp;&nbsp;
       <ion-icon name="calendar"></ion-icon> {{ a.DOB | date:'dd MMM yyyy' }}
       <br>
-      <ion-badge color="warning" *ngIf="hasUnpaidSchedules(a)" class="payment-pending-badge">
+      <ion-badge color="warning" *ngIf="hasInvoiceForAssignment(a) && hasUnpaidSchedules(a)" class="payment-pending-badge">
         <ion-icon name="cash-outline"></ion-icon> Payment Pending
       </ion-badge>
       <br>

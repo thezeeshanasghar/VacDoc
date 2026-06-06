@@ -56,6 +56,10 @@ export class AssignmentsPage {
     return a.Schedules.some(function(s) { return !s.IsPaymentCollected && s.Amount > 0; });
   }
 
+  hasInvoiceForAssignment(a: any): boolean {
+    return !!a.HasInvoice;
+  }
+
   getMissingGrowthVaccines(a: any): string[] {
     if (!a.Schedules || !Array.isArray(a.Schedules)) { return []; }
     return a.Schedules
