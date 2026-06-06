@@ -1045,18 +1045,22 @@ this.downloadSpecialPdf();
     this.invoiceExistsMap = {};
     const childId = Number(this.childId);
     const grouped: any = this.dataGrouping;
-    // Check all dates that have at least one given vaccine (including zero-amount / OHF)
+    // Check all dates that have at least one given vaccine — EPI included, invoice existence is the only gate
     const doneDates = Object.keys(grouped).filter(date =>
-      grouped[date].some((v: any) => v.IsDone && !v.Due2EPI)
+      grouped[date].some((v: any) => v.IsDone)
     );
     doneDates.forEach(date => {
-      this.invoiceService.getInvoiceTotal(childId, date).toPromise().then(res => {
+      const group: any[] = grouped[date];
+      const doneVaccine = group.find(function(v: any) { return v.IsDone && v.GivenDate; });
+      if (!doneVaccine) { return; }
+      const givenDateStr: string = String(doneVaccine.GivenDate).split('T')[0];
+      this.invoiceService.getInvoiceTotal(childId, givenDateStr).toPromise().then(res => {
         if (res && res.IsSuccess) {
           this.invoiceExistsMap[date] = true;
           this.cdr.detectChanges();
         } else {
-          // Try previous day for UTC/PST offset edge case
-          const prev = new Date(date);
+          // PKT/UTC midnight boundary fallback
+          const prev = new Date(givenDateStr);
           prev.setDate(prev.getDate() - 1);
           const prevStr = prev.toISOString().split('T')[0];
           this.invoiceService.getInvoiceTotal(childId, prevStr).toPromise().then(res2 => {
@@ -1064,9 +1068,9 @@ this.downloadSpecialPdf();
               this.invoiceExistsMap[date] = true;
               this.cdr.detectChanges();
             }
-          }).catch(() => {});
+          }).catch(function() {});
         }
-      }).catch(() => {});
+      }).catch(function() {});
     });
   }
 
@@ -1082,14 +1086,14 @@ this.downloadSpecialPdf();
       const yesterdayStr = yest.toISOString().split('T')[0];
 
       return data.some((v) => {
-        if (!v.IsDone || v.Due2EPI || v.IsPaymentCollected || !(v.Amount > 0)) return false;
+        if (!v.IsDone || v.IsPaymentCollected || !(v.Amount > 0)) return false;
         if (v.PaymentCollectorPaId !== this.paId) return false;
         const doneDay = v.DoneAt ? String(v.DoneAt).split('T')[0] : null;
         return doneDay === todayStr || doneDay === yesterdayStr;
       });
     }
 
-    return data.some(function(v) { return v.IsDone && !v.Due2EPI && !v.IsPaymentCollected && v.Amount > 0; });
+    return data.some(function(v) { return v.IsDone && !v.IsPaymentCollected && v.Amount > 0; });
   }
 
   getDoneScheduleId(data: any[]): number {
