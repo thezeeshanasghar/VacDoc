@@ -38,8 +38,9 @@ export class InvoiceService extends BaseService {
     );
   }
 
-   getAmount(Id: string,doseId: string, childId: string): Observable<any> {
-    const url = `${this.API_INVOICE}Child/schedule-amount?id=${Id}&doseId=${doseId}&childId=${childId}`;
+   getAmount(Id: string, doseId: string, childId: string, clinicId?: any): Observable<any> {
+    let url = `${this.API_INVOICE}Child/schedule-amount?id=${Id}&doseId=${doseId}&childId=${childId}`;
+    if (clinicId) { url += `&clinicId=${clinicId}`; }
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)

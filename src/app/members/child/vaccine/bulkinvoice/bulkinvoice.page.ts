@@ -323,7 +323,7 @@ getInvoiceId(doseId: string, childId: string) {
 }
 
 getAmount(id: string, doseId: string, childId: string) {
-  this.invoiceService.getAmount(id, doseId, childId).subscribe(res => {
+  this.invoiceService.getAmount(id, doseId, childId, this.clinicId).subscribe(res => {
     if (res.IsSuccess) {
       const bulkItem = this.bulkData.find(item => item.Dose.Id === doseId);
       if (bulkItem) { bulkItem.Amount = res.ResponseData; }
