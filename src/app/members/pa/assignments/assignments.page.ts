@@ -60,6 +60,13 @@ export class AssignmentsPage {
     return !!a.HasInvoice;
   }
 
+  hasGivenOrPaidSchedules(a: any): boolean {
+    if (!a.Schedules || !Array.isArray(a.Schedules)) { return false; }
+    // Schedules array from GetByPA is already pre-filtered to IsDone === true,
+    // so any entry here means a vaccine was given; IsPaymentCollected covers payment.
+    return a.Schedules.length > 0 || a.Schedules.some(function(s: any) { return s.IsPaymentCollected; });
+  }
+
   getMissingGrowthVaccines(a: any): string[] {
     if (!a.Schedules || !Array.isArray(a.Schedules)) { return []; }
     return a.Schedules
@@ -163,16 +170,26 @@ export class AssignmentsPage {
     );
   }
 
-  async confirmCancel(assignmentId: number, name: string) {
+  async confirmCancel(assignment: any) {
+    if (this.hasGivenOrPaidSchedules(assignment)) {
+      const alert = await this.alertController.create({
+        header: 'Cannot Cancel',
+        message: 'This assignment has vaccines given or payment recorded and can no longer be self-cancelled. Please contact the doctor to cancel or reverse it.',
+        buttons: ['OK']
+      });
+      await alert.present();
+      return;
+    }
+
     const alert = await this.alertController.create({
       header: 'Cancel Assignment',
-      message: `Cancel assignment for ${name}?`,
+      message: `Cancel assignment for ${assignment.Name}?`,
       inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason (optional — leave blank if none)' }],
       buttons: [
         { text: 'No', role: 'cancel' },
         {
           text: 'Yes, Cancel',
-          handler: async (data) => { await this.cancelAssignment(assignmentId, data.reason || ''); }
+          handler: async (data) => { await this.cancelAssignment(assignment.AssignmentId, data.reason || ''); }
         }
       ]
     });

@@ -115,8 +115,26 @@ export class PayablesPage {
     }
   }
 
+  hasGivenOrPaidSchedules(a: any): boolean {
+    if (!a.Schedules || !Array.isArray(a.Schedules)) { return false; }
+    // Schedules array from GetByPA is already pre-filtered to IsDone === true,
+    // so any entry here means a vaccine was given; IsPaymentCollected covers payment.
+    return a.Schedules.length > 0 || a.Schedules.some(function(s: any) { return s.IsPaymentCollected; });
+  }
+
   async promptCancel(a: any, event: Event) {
     event.stopPropagation();
+
+    if (this.hasGivenOrPaidSchedules(a)) {
+      const blockedAlert = await this.alertCtrl.create({
+        header: 'Cannot Cancel',
+        message: 'This assignment has vaccines given or payment recorded and can no longer be self-cancelled. Please contact the doctor to cancel or reverse it.',
+        buttons: ['OK']
+      });
+      await blockedAlert.present();
+      return;
+    }
+
     const alert = await this.alertCtrl.create({
       header: 'Cancel Assignment',
       message: 'Please provide a reason for cancellation.',
