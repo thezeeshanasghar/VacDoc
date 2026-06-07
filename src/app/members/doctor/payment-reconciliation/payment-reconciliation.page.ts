@@ -10,7 +10,7 @@ interface PaymentRow {
   InvoiceSubmissionId: number;
   ScheduleId: number;       // alias = InvoiceSubmissionId, kept for backwards compat
   AmendmentId?: number;     // set when RowType is UngiveReversal or EditReversal
-  RowType: 'Invoice' | 'UngiveReversal' | 'EditReversal';
+  RowType: 'Invoice' | 'UngiveReversal' | 'EditReversal' | 'AwaitingInvoice';
   Date: string;
   PatientName: string;
   Vaccines: string;
