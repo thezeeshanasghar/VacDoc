@@ -74,7 +74,7 @@ export class AssignmentsPage {
         message: 'Select how the patient paid. This is required before completing the assignment.',
         inputs: [
           { type: 'radio', label: 'Cash', value: 'Cash', checked: true },
-          { type: 'radio', label: 'Online Transfer', value: 'Online Transfer' },
+          { type: 'radio', label: 'Online', value: 'Online' },
         ],
         buttons: [
           { text: 'Cancel', role: 'cancel' },
