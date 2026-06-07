@@ -43,6 +43,24 @@
       </div>
     </div>
 
+    <!-- Pending Cancellation Requests -->
+    <div *ngIf="pendingCancellations.length > 0" class="reversal-section">
+      <div class="reversal-header">
+        <ion-icon name="close-circle-outline"></ion-icon>
+        Pending Cancellation Requests ({{ pendingCancellations.length }})
+      </div>
+      <div *ngFor="let c of pendingCancellations" class="reversal-row">
+        <div class="reversal-pa">{{ c.PaName }}</div>
+        <div class="reversal-type" style="color: #b71c1c">Wants to cancel assignment for {{ c.ChildName }}</div>
+        <div class="reversal-notes">{{ c.CancelRequestReason }}</div>
+        <div class="reversal-date">{{ c.CancelRequestedAt | date:'dd MMM, HH:mm' }}</div>
+        <div class="reversal-btns">
+          <button class="btn-approve-reversal" (click)="confirmApproveCancelRequest(c)">Approve Cancellation</button>
+          <button class="btn-reject-reversal" (click)="confirmRejectCancelRequest(c)">Reject</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Filter Bar -->
     <div class="filter-bar">
       <div class="filter-group">

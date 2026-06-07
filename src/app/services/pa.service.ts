@@ -204,6 +204,26 @@ export class PaService extends BaseService {
     return this.http.patch(url, { NewPaId: newPaId }, this.httpOptions).pipe(catchError(this.handleError));
   }
 
+  requestCancelAssignment(assignmentId: number, paId: number, reason: string = ''): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/request-cancel`;
+    return this.http.patch(url, { CallerType: 'PA', CallerId: paId, Reason: reason }, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  getPendingCancellations(doctorId: number): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/pending-cancellations/${doctorId}`;
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  approveCancelRequest(assignmentId: number, doctorId: number): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/approve-cancel?doctorId=${doctorId}`;
+    return this.http.patch(url, {}, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  rejectCancelRequest(assignmentId: number, doctorId: number, notes: string = ''): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/reject-cancel`;
+    return this.http.patch(url, { DoctorId: doctorId, Notes: notes }, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
   getActiveAssignmentsForDoctor(doctorId: number): Observable<any> {
     const url = `${this.API_PA}PAAssignment/active/${doctorId}`;
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));

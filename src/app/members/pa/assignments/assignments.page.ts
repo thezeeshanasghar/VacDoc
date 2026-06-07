@@ -170,7 +170,21 @@ export class AssignmentsPage {
     );
   }
 
+  isPendingCancellation(a: any): boolean {
+    return a.AssignmentStatus === 'PendingCancellation';
+  }
+
   async confirmCancel(assignment: any) {
+    if (this.isPendingCancellation(assignment)) {
+      const alert = await this.alertController.create({
+        header: 'Already Pending',
+        message: 'A cancellation request for this assignment is already awaiting the doctor\'s approval.',
+        buttons: ['OK']
+      });
+      await alert.present();
+      return;
+    }
+
     if (this.hasGivenOrPaidSchedules(assignment)) {
       const alert = await this.alertController.create({
         header: 'Cannot Cancel',
@@ -182,38 +196,38 @@ export class AssignmentsPage {
     }
 
     const alert = await this.alertController.create({
-      header: 'Cancel Assignment',
-      message: `Cancel assignment for ${assignment.Name}?`,
+      header: 'Request Cancellation',
+      message: `Send a cancellation request to the doctor for ${assignment.Name}? The assignment will be cancelled once the doctor approves.`,
       inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason (optional — leave blank if none)' }],
       buttons: [
         { text: 'No', role: 'cancel' },
         {
-          text: 'Yes, Cancel',
-          handler: async (data) => { await this.cancelAssignment(assignment.AssignmentId, data.reason || ''); }
+          text: 'Send Request',
+          handler: async (data) => { await this.requestCancel(assignment, data.reason || ''); }
         }
       ]
     });
     await alert.present();
   }
 
-  async cancelAssignment(assignmentId: number, reason: string) {
+  async requestCancel(assignment: any, reason: string) {
     const user = await this.storage.get(environment.USER);
     if (!user) return;
-    const loading = await this.loadingController.create({ message: 'Cancelling...' });
+    const loading = await this.loadingController.create({ message: 'Sending request...' });
     await loading.present();
-    this.paService.cancelAssignment(assignmentId, 'PA', Number(user.PAId), reason).subscribe(
+    this.paService.requestCancelAssignment(assignment.AssignmentId, Number(user.PAId), reason).subscribe(
       res => {
         loading.dismiss();
         if (res && res.IsSuccess) {
-          this.toastService.create('Assignment cancelled', 'success');
-          this.assignments = this.assignments.filter(a => a.AssignmentId !== assignmentId);
+          this.toastService.create('Cancellation request sent — awaiting doctor approval', 'success');
+          assignment.AssignmentStatus = 'PendingCancellation';
         } else {
-          this.toastService.create(res.Message || 'Failed to cancel', 'danger');
+          this.toastService.create(res.Message || 'Failed to send request', 'danger');
         }
       },
       () => {
         loading.dismiss();
-        this.toastService.create('Failed to cancel assignment', 'danger');
+        this.toastService.create('Failed to send cancellation request', 'danger');
       }
     );
   }

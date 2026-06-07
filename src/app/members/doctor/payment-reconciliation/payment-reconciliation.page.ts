@@ -54,6 +54,7 @@ export class PaymentReconciliationPage {
 
   pendingReversals: any[] = [];
   pendingHandovers: any[] = [];
+  pendingCancellations: any[] = [];
 
   constructor(
     private paService: PaService,
@@ -77,6 +78,7 @@ export class PaymentReconciliationPage {
     this.load();
     this.loadPendingReversals();
     this.loadPendingHandovers();
+    this.loadPendingCancellations();
   }
 
   private toDateStr(d: Date): string {
@@ -225,6 +227,16 @@ export class PaymentReconciliationPage {
     );
   }
 
+  loadPendingCancellations() {
+    if (!this.doctorId) { return; }
+    this.paService.getPendingCancellations(this.doctorId).subscribe(
+      res => {
+        if (res && res.IsSuccess) { this.pendingCancellations = res.ResponseData || []; }
+      },
+      () => {}
+    );
+  }
+
   loadPendingHandovers() {
     if (!this.doctorId) { return; }
     this.paService.getOutstanding(this.doctorId).subscribe(
@@ -348,6 +360,68 @@ export class PaymentReconciliationPage {
                 if (res && res.IsSuccess) {
                   this.toastService.create('Reversal rejected — payable unchanged', 'warning');
                   this.pendingReversals = this.pendingReversals.filter((r: any) => r.Id !== reversal.Id);
+                } else {
+                  this.toastService.create((res && res.Message) || 'Failed', 'danger');
+                }
+              },
+              () => { loading.dismiss(); this.toastService.create('Failed to reject', 'danger'); }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async confirmApproveCancelRequest(c: any) {
+    const alert = await this.alertController.create({
+      header: 'Approve Cancellation',
+      message: `Approve this cancellation? The assignment for ${c.ChildName} will be cancelled and removed from ${c.PaName}'s list.\n\n` + (c.CancelRequestReason || ''),
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Approve',
+          handler: async () => {
+            const loading = await this.loadingController.create({ message: 'Approving...' });
+            await loading.present();
+            this.paService.approveCancelRequest(c.AssignmentId, this.doctorId!).subscribe(
+              res => {
+                loading.dismiss();
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Cancellation approved — assignment cancelled', 'success');
+                  this.pendingCancellations = this.pendingCancellations.filter((x: any) => x.AssignmentId !== c.AssignmentId);
+                } else {
+                  this.toastService.create((res && res.Message) || 'Failed', 'danger');
+                }
+              },
+              () => { loading.dismiss(); this.toastService.create('Failed to approve', 'danger'); }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async confirmRejectCancelRequest(c: any) {
+    const alert = await this.alertController.create({
+      header: 'Reject Cancellation',
+      inputs: [{ name: 'note', type: 'textarea', placeholder: 'Reason (sent to the PA)...' }],
+      message: `Reject this request? The assignment for ${c.ChildName} will remain active and ${c.PaName} will be notified.`,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Reject',
+          cssClass: 'alert-btn-danger',
+          handler: async (data) => {
+            const loading = await this.loadingController.create({ message: 'Rejecting...' });
+            await loading.present();
+            this.paService.rejectCancelRequest(c.AssignmentId, this.doctorId!, (data && data.note) || '').subscribe(
+              res => {
+                loading.dismiss();
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Cancellation rejected — assignment remains active', 'warning');
+                  this.pendingCancellations = this.pendingCancellations.filter((x: any) => x.AssignmentId !== c.AssignmentId);
                 } else {
                   this.toastService.create((res && res.Message) || 'Failed', 'danger');
                 }

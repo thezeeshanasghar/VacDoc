@@ -122,8 +122,22 @@ export class PayablesPage {
     return a.Schedules.length > 0 || a.Schedules.some(function(s: any) { return s.IsPaymentCollected; });
   }
 
+  isPendingCancellation(a: any): boolean {
+    return a.AssignmentStatus === 'PendingCancellation';
+  }
+
   async promptCancel(a: any, event: Event) {
     event.stopPropagation();
+
+    if (this.isPendingCancellation(a)) {
+      const pendingAlert = await this.alertCtrl.create({
+        header: 'Already Pending',
+        message: 'A cancellation request for this assignment is already awaiting the doctor\'s approval.',
+        buttons: ['OK']
+      });
+      await pendingAlert.present();
+      return;
+    }
 
     if (this.hasGivenOrPaidSchedules(a)) {
       const blockedAlert = await this.alertCtrl.create({
@@ -136,20 +150,20 @@ export class PayablesPage {
     }
 
     const alert = await this.alertCtrl.create({
-      header: 'Cancel Assignment',
-      message: 'Please provide a reason for cancellation.',
+      header: 'Request Cancellation',
+      message: 'This will send a cancellation request to the doctor for approval. Please provide a reason.',
       inputs: [{ name: 'reason', type: 'text', placeholder: 'One-line reason...' }],
       buttons: [
         { text: 'Back', role: 'cancel' },
         {
-          text: 'Cancel Assignment',
+          text: 'Send Request',
           cssClass: 'alert-danger-btn',
           handler: async (data) => {
             if (!data.reason || !data.reason.trim()) {
               this.toastService.create('Please enter a reason', 'warning');
               return false;
             }
-            await this.doCancelAssignment(a.AssignmentId, data.reason.trim());
+            await this.requestCancel(a, data.reason.trim());
           }
         }
       ]
@@ -157,21 +171,21 @@ export class PayablesPage {
     await alert.present();
   }
 
-  async doCancelAssignment(assignmentId: number, reason: string) {
+  async requestCancel(a: any, reason: string) {
     const user = await this.storage.get(environment.USER);
     const paId = Number(user.PAId);
-    const loading = await this.loadingController.create({ message: 'Cancelling...' });
+    const loading = await this.loadingController.create({ message: 'Sending request...' });
     await loading.present();
     try {
-      const res = await this.paService.cancelAssignment(assignmentId, 'PA', paId, reason).toPromise();
+      const res = await this.paService.requestCancelAssignment(a.AssignmentId, paId, reason).toPromise();
       if (res && res.IsSuccess) {
-        this.toastService.create('Assignment cancelled', 'success');
+        this.toastService.create('Cancellation request sent — awaiting doctor approval', 'success');
         await this.ionViewWillEnter();
       } else {
-        this.toastService.create((res && res.Message) || 'Cancel failed', 'danger');
+        this.toastService.create((res && res.Message) || 'Failed to send request', 'danger');
       }
     } catch {
-      this.toastService.create('Cancel failed', 'danger');
+      this.toastService.create('Failed to send cancellation request', 'danger');
     } finally {
       loading.dismiss();
     }

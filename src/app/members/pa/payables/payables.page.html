@@ -69,7 +69,8 @@
             </div>
             <div class="card-badge-wrap">
               <span class="badge badge-handover" *ngIf="a.AssignmentStatus === 'PendingHandover'">Handover</span>
-              <span class="badge badge-pending" *ngIf="a.AssignmentStatus !== 'PendingHandover'">Pending</span>
+              <span class="badge badge-pending" *ngIf="a.AssignmentStatus === 'PendingCancellation'">Cancellation Pending Approval</span>
+              <span class="badge badge-pending" *ngIf="a.AssignmentStatus !== 'PendingHandover' && a.AssignmentStatus !== 'PendingCancellation'">Pending</span>
             </div>
           </div>
 
@@ -84,7 +85,7 @@
                 <ion-icon name="checkmark-outline"></ion-icon>
                 Done
               </button>
-              <button class="action-btn action-cancel" (click)="promptCancel(a, $event)">
+              <button class="action-btn action-cancel" *ngIf="a.AssignmentStatus !== 'PendingCancellation'" (click)="promptCancel(a, $event)">
                 <ion-icon name="close-outline"></ion-icon>
                 Cancel
               </button>
