@@ -229,6 +229,21 @@ export class BulkInvoicePage implements OnInit {
     );
   }
 
+  // Prefer the actual given date — money/stock/PA-assignment are all keyed on it,
+  // and it's the exact value loadInvoiceExistence() looks up the invoice by.
+  // Guard against null/invalid GivenDate (the edge case that caused InvoiceDate
+  // to be switched to "always now", which broke the lookup match entirely).
+  private resolveInvoiceDate(): Date {
+    const givenDateRaw = this.bulkData && this.bulkData.length > 0 ? this.bulkData[0].GivenDate : null;
+    if (givenDateRaw) {
+      const parsed = new Date(givenDateRaw);
+      if (!isNaN(parsed.getTime()) && parsed.getFullYear() > 2000) {
+        return parsed;
+      }
+    }
+    return this.currentDate1 || new Date();
+  }
+
   buildInvoiceDTO(consultationFee: number): any {
     const schedules = (this.bulkData || []).map((schedule: any) => ({
       Id: schedule.Id,
@@ -240,7 +255,7 @@ export class BulkInvoicePage implements OnInit {
       DoctorId: Number(this.doctorId),
       PaId: this.paId ? Number(this.paId) : null,
       ClinicId: this.clinicId ? Number(this.clinicId) : null,
-      InvoiceDate: new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' })),
+      InvoiceDate: this.resolveInvoiceDate(),
       ConsultationFee: consultationFee
     };
   }
