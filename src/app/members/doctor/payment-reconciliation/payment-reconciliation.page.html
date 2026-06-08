@@ -43,24 +43,6 @@
       </div>
     </div>
 
-    <!-- Pending Cancellation Requests -->
-    <div *ngIf="pendingCancellations.length > 0" class="reversal-section">
-      <div class="reversal-header">
-        <ion-icon name="close-circle-outline"></ion-icon>
-        Pending Cancellation Requests ({{ pendingCancellations.length }})
-      </div>
-      <div *ngFor="let c of pendingCancellations" class="reversal-row">
-        <div class="reversal-pa">{{ c.PaName }}</div>
-        <div class="reversal-type" style="color: #b71c1c">Wants to cancel assignment for {{ c.ChildName }}</div>
-        <div class="reversal-notes">{{ c.CancelRequestReason }}</div>
-        <div class="reversal-date">{{ c.CancelRequestedAt | date:'dd MMM, HH:mm' }}</div>
-        <div class="reversal-btns">
-          <button class="btn-approve-reversal" (click)="confirmApproveCancelRequest(c)">Approve Cancellation</button>
-          <button class="btn-reject-reversal" (click)="confirmRejectCancelRequest(c)">Reject</button>
-        </div>
-      </div>
-    </div>
-
     <!-- Filter Bar -->
     <div class="filter-bar">
       <div class="filter-group">
@@ -207,8 +189,7 @@
               <tr *ngFor="let row of filteredRows"
                   [class.row-confirmed]="row.IsConfirmed"
                   [class.row-pending]="!row.IsConfirmed && row.RowType === 'Invoice'"
-                  [class.row-amendment]="row.RowType !== 'Invoice' && row.RowType !== 'AwaitingInvoice'"
-                  [class.row-awaiting]="row.RowType === 'AwaitingInvoice'">
+                  [class.row-amendment]="row.RowType !== 'Invoice'">
                 <!-- Checkbox: only for normal invoice rows -->
                 <td class="col-check">
                   <input type="checkbox"
@@ -224,23 +205,14 @@
                   <div class="patient-pa" *ngIf="row.PaName">{{ row.PaName }}</div>
                 </td>
                 <td class="col-amount">
-                  <span class="amount-val" *ngIf="row.RowType === 'AwaitingInvoice'">—</span>
-                  <ng-container *ngIf="row.RowType !== 'AwaitingInvoice'">
-                    <span class="amount-val">{{ row.Amount | number:'1.0-0' }}</span>
-                    <!-- For amendment rows show old→new -->
-                    <div *ngIf="row.RowType !== 'Invoice'" class="amount-sub-detail">
-                      {{ row.OldAmount | number:'1.0-0' }} → {{ row.NewAmount | number:'1.0-0' }}
-                    </div>
-                  </ng-container>
+                  <span class="amount-val">{{ row.Amount | number:'1.0-0' }}</span>
+                  <!-- For amendment rows show old→new -->
+                  <div *ngIf="row.RowType !== 'Invoice'" class="amount-sub-detail">
+                    {{ row.OldAmount | number:'1.0-0' }} → {{ row.NewAmount | number:'1.0-0' }}
+                  </div>
                 </td>
                 <td class="col-mode">
-                  <!-- PaymentMode is frozen at invoice-creation time from Schedule.PaymentMode,
-                       which defaults to "Cash" — so an invoice row shows "Cash" the instant it's
-                       downloaded, before the PA has recorded anything. Gate on IsPaymentCollected
-                       (the actual signal that a mode was recorded) rather than on PaymentMode
-                       being present, since it's never null/empty thanks to that default. -->
-                  <span class="amount-val" *ngIf="row.RowType === 'AwaitingInvoice' || (row.RowType === 'Invoice' && !row.IsPaymentCollected)">—</span>
-                  <span class="badge" *ngIf="row.RowType !== 'AwaitingInvoice' && (row.RowType !== 'Invoice' || row.IsPaymentCollected)" [ngClass]="row.PaymentMode === 'Online' ? 'badge-online' : 'badge-cash'">
+                  <span class="badge" [ngClass]="row.PaymentMode === 'Online' ? 'badge-online' : 'badge-cash'">
                     {{ row.PaymentMode || '—' }}
                   </span>
                 </td>
@@ -264,10 +236,6 @@
                   <ng-container *ngIf="row.RowType === 'EditReversal'">
                     <span class="badge badge-edit">Invoice Edit Reversal</span>
                     <div class="pending-sub">Amount1 pending your approval</div>
-                  </ng-container>
-                  <!-- Awaiting invoice: assignment exists, nothing to action yet -->
-                  <ng-container *ngIf="row.RowType === 'AwaitingInvoice'">
-                    <span class="badge badge-awaiting">Awaiting Invoice</span>
                   </ng-container>
                 </td>
                 <td class="col-action">

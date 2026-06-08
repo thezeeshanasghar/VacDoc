@@ -48,9 +48,6 @@
       <ion-badge color="warning" *ngIf="hasInvoiceForAssignment(a) && hasUnpaidSchedules(a)" class="payment-pending-badge">
         <ion-icon name="cash-outline"></ion-icon> Payment Pending
       </ion-badge>
-      <ion-badge color="medium" *ngIf="isPendingCancellation(a)" class="payment-pending-badge">
-        <ion-icon name="hourglass-outline"></ion-icon> Cancellation Pending Approval
-      </ion-badge>
       <br>
       <ion-button size="small" fill="outline" color="primary"
         routerLink="/members/child/vaccine/{{ a.ChildId }}">

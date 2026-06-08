@@ -101,8 +101,7 @@ export class BulkInvoicePage implements OnInit {
 
   loadInvoiceStatus() {
     if (!this.doctorId || !this.childId || !this.currentDate) { return; }
-    const dateStr = this.currentDateAsApiString();
-    if (!dateStr) { return; }
+    const dateStr = new Date(this.currentDate).toISOString().split('T')[0];
     this.bulkService.getInvoiceStatus(this.childId, this.doctorId, dateStr).subscribe({
       next: (res: any) => { this.invoiceStatus = res || { isSubmitted: false, editCount: 0, canEdit: true }; },
       error: () => {}
@@ -111,8 +110,7 @@ export class BulkInvoicePage implements OnInit {
 
   loadInvoiceWarning() {
     if (!this.childId || !this.currentDate) { return; }
-    const dateStr = this.currentDateAsApiString();
-    if (!dateStr) { return; }
+    const dateStr = new Date(this.currentDate).toISOString().split('T')[0];
     const url = `${this.API_VACCINE}child/${this.childId}/${dateStr}/invoice-warning`;
     fetch(url, { headers: { 'Content-Type': 'application/json' } })
       .then(r => r.json())
@@ -233,45 +231,17 @@ export class BulkInvoicePage implements OnInit {
 
   // Prefer the actual given date — money/stock/PA-assignment are all keyed on it,
   // and it's the exact value loadInvoiceExistence() looks up the invoice by.
-  // GivenDate arrives as a "DD-MM-YYYY" string (OnlyDateConverter on the API side) —
-  // must be parsed with that explicit format, NOT new Date(), which reads ambiguous
-  // strings as MM-DD-YYYY and silently swaps day/month for any day-of-month <= 12
-  // (e.g. "08-06-2026" => Aug 6 instead of Jun 8). Strict mode rejects the
-  // null/default-date edge case ("01-01-0001") that caused an earlier panic-revert
-  // to "always now".
-  // this.currentDate is the route's date-group key, which is the schedule's raw
-  // "Date" field — also serialized as "dd-MM-yyyy" by OnlyDateConverter (same as
-  // GivenDate). new Date(this.currentDate) hits the identical MM-DD/DD-MM swap
-  // described above, so the invoice-status/invoice-warning lookups were querying
-  // a different calendar date than the one the invoice was actually saved under.
-  private currentDateAsApiString(): string | null {
-    if (!this.currentDate) { return null; }
-    const parsed = moment(this.currentDate, "DD-MM-YYYY", true);
-    if (parsed.isValid() && parsed.year() > 2020) {
-      return parsed.format("YYYY-MM-DD");
-    }
-    return null;
-  }
-
-  // Returns a bare "YYYY-MM-DD" string — NOT a Date object. HttpClient JSON-serializes
-  // Date objects via toISOString() (UTC), and System.Text.Json deserializes that into a
-  // DateTime with Kind=Utc; .Date then truncates "local midnight" to the PREVIOUS day
-  // whenever the device's local timezone is ahead of UTC (PKT always is, UTC+5) — e.g.
-  // moment("08-06-2026").toDate() => 2026-06-08T00:00 PKT => "2026-06-07T19:00:00Z" =>
-  // .Date => 2026-06-07. This is exactly how InvoiceSubmission #146 (Tesdsd) ended up
-  // persisted as InvoiceDate=2026-06-07 despite its PDF correctly printing "08-06-2026"
-  // (the PDF's date comes from a different, correct source — SubmittedAt/today's date —
-  // not from this InvoiceDate field). A bare date string has no timezone component, so
-  // System.Text.Json parses it as Kind=Unspecified at midnight — .Date is then exact.
-  private resolveInvoiceDate(): string {
+  // Guard against null/invalid GivenDate (the edge case that caused InvoiceDate
+  // to be switched to "always now", which broke the lookup match entirely).
+  private resolveInvoiceDate(): Date {
     const givenDateRaw = this.bulkData && this.bulkData.length > 0 ? this.bulkData[0].GivenDate : null;
     if (givenDateRaw) {
-      const parsed = moment(givenDateRaw, "DD-MM-YYYY", true);
-      if (parsed.isValid() && parsed.year() > 2020) {
-        return parsed.format("YYYY-MM-DD");
+      const parsed = new Date(givenDateRaw);
+      if (!isNaN(parsed.getTime()) && parsed.getFullYear() > 2000) {
+        return parsed;
       }
     }
-    return moment(this.currentDate1 || new Date()).format("YYYY-MM-DD");
+    return this.currentDate1 || new Date();
   }
 
   buildInvoiceDTO(consultationFee: number): any {
