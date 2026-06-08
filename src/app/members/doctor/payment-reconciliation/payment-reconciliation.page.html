@@ -234,8 +234,13 @@
                   </ng-container>
                 </td>
                 <td class="col-mode">
-                  <span class="amount-val" *ngIf="row.RowType === 'AwaitingInvoice'">—</span>
-                  <span class="badge" *ngIf="row.RowType !== 'AwaitingInvoice'" [ngClass]="row.PaymentMode === 'Online' ? 'badge-online' : 'badge-cash'">
+                  <!-- PaymentMode is frozen at invoice-creation time from Schedule.PaymentMode,
+                       which defaults to "Cash" — so an invoice row shows "Cash" the instant it's
+                       downloaded, before the PA has recorded anything. Gate on IsPaymentCollected
+                       (the actual signal that a mode was recorded) rather than on PaymentMode
+                       being present, since it's never null/empty thanks to that default. -->
+                  <span class="amount-val" *ngIf="row.RowType === 'AwaitingInvoice' || (row.RowType === 'Invoice' && !row.IsPaymentCollected)">—</span>
+                  <span class="badge" *ngIf="row.RowType !== 'AwaitingInvoice' && (row.RowType !== 'Invoice' || row.IsPaymentCollected)" [ngClass]="row.PaymentMode === 'Online' ? 'badge-online' : 'badge-cash'">
                     {{ row.PaymentMode || '—' }}
                   </span>
                 </td>

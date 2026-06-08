@@ -18,6 +18,7 @@ interface PaymentRow {
   OldAmount?: number;
   NewAmount?: number;
   PaymentMode: string;
+  IsPaymentCollected?: boolean;  // RowType==='Invoice' only — true once PA actually recorded a mode
   IsConfirmed: boolean;
   ConfirmedAt?: string;
   InvoiceStatus?: string;
