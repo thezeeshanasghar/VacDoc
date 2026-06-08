@@ -231,14 +231,18 @@ export class BulkInvoicePage implements OnInit {
 
   // Prefer the actual given date — money/stock/PA-assignment are all keyed on it,
   // and it's the exact value loadInvoiceExistence() looks up the invoice by.
-  // Guard against null/invalid GivenDate (the edge case that caused InvoiceDate
-  // to be switched to "always now", which broke the lookup match entirely).
+  // GivenDate arrives as a "DD-MM-YYYY" string (OnlyDateConverter on the API side) —
+  // must be parsed with that explicit format, NOT new Date(), which reads ambiguous
+  // strings as MM-DD-YYYY and silently swaps day/month for any day-of-month <= 12
+  // (e.g. "08-06-2026" => Aug 6 instead of Jun 8). Strict mode rejects the
+  // null/default-date edge case ("01-01-0001") that caused an earlier panic-revert
+  // to "always now".
   private resolveInvoiceDate(): Date {
     const givenDateRaw = this.bulkData && this.bulkData.length > 0 ? this.bulkData[0].GivenDate : null;
     if (givenDateRaw) {
-      const parsed = new Date(givenDateRaw);
-      if (!isNaN(parsed.getTime()) && parsed.getFullYear() > 2020) {
-        return parsed;
+      const parsed = moment(givenDateRaw, "DD-MM-YYYY", true);
+      if (parsed.isValid() && parsed.year() > 2020) {
+        return parsed.toDate();
       }
     }
     return this.currentDate1 || new Date();
