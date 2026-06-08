@@ -253,15 +253,25 @@ export class BulkInvoicePage implements OnInit {
     return null;
   }
 
-  private resolveInvoiceDate(): Date {
+  // Returns a bare "YYYY-MM-DD" string — NOT a Date object. HttpClient JSON-serializes
+  // Date objects via toISOString() (UTC), and System.Text.Json deserializes that into a
+  // DateTime with Kind=Utc; .Date then truncates "local midnight" to the PREVIOUS day
+  // whenever the device's local timezone is ahead of UTC (PKT always is, UTC+5) — e.g.
+  // moment("08-06-2026").toDate() => 2026-06-08T00:00 PKT => "2026-06-07T19:00:00Z" =>
+  // .Date => 2026-06-07. This is exactly how InvoiceSubmission #146 (Tesdsd) ended up
+  // persisted as InvoiceDate=2026-06-07 despite its PDF correctly printing "08-06-2026"
+  // (the PDF's date comes from a different, correct source — SubmittedAt/today's date —
+  // not from this InvoiceDate field). A bare date string has no timezone component, so
+  // System.Text.Json parses it as Kind=Unspecified at midnight — .Date is then exact.
+  private resolveInvoiceDate(): string {
     const givenDateRaw = this.bulkData && this.bulkData.length > 0 ? this.bulkData[0].GivenDate : null;
     if (givenDateRaw) {
       const parsed = moment(givenDateRaw, "DD-MM-YYYY", true);
       if (parsed.isValid() && parsed.year() > 2020) {
-        return parsed.toDate();
+        return parsed.format("YYYY-MM-DD");
       }
     }
-    return this.currentDate1 || new Date();
+    return moment(this.currentDate1 || new Date()).format("YYYY-MM-DD");
   }
 
   buildInvoiceDTO(consultationFee: number): any {
