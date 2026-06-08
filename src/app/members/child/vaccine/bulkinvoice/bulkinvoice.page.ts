@@ -101,7 +101,8 @@ export class BulkInvoicePage implements OnInit {
 
   loadInvoiceStatus() {
     if (!this.doctorId || !this.childId || !this.currentDate) { return; }
-    const dateStr = new Date(this.currentDate).toISOString().split('T')[0];
+    const dateStr = this.currentDateAsApiString();
+    if (!dateStr) { return; }
     this.bulkService.getInvoiceStatus(this.childId, this.doctorId, dateStr).subscribe({
       next: (res: any) => { this.invoiceStatus = res || { isSubmitted: false, editCount: 0, canEdit: true }; },
       error: () => {}
@@ -110,7 +111,8 @@ export class BulkInvoicePage implements OnInit {
 
   loadInvoiceWarning() {
     if (!this.childId || !this.currentDate) { return; }
-    const dateStr = new Date(this.currentDate).toISOString().split('T')[0];
+    const dateStr = this.currentDateAsApiString();
+    if (!dateStr) { return; }
     const url = `${this.API_VACCINE}child/${this.childId}/${dateStr}/invoice-warning`;
     fetch(url, { headers: { 'Content-Type': 'application/json' } })
       .then(r => r.json())
@@ -237,6 +239,20 @@ export class BulkInvoicePage implements OnInit {
   // (e.g. "08-06-2026" => Aug 6 instead of Jun 8). Strict mode rejects the
   // null/default-date edge case ("01-01-0001") that caused an earlier panic-revert
   // to "always now".
+  // this.currentDate is the route's date-group key, which is the schedule's raw
+  // "Date" field — also serialized as "dd-MM-yyyy" by OnlyDateConverter (same as
+  // GivenDate). new Date(this.currentDate) hits the identical MM-DD/DD-MM swap
+  // described above, so the invoice-status/invoice-warning lookups were querying
+  // a different calendar date than the one the invoice was actually saved under.
+  private currentDateAsApiString(): string | null {
+    if (!this.currentDate) { return null; }
+    const parsed = moment(this.currentDate, "DD-MM-YYYY", true);
+    if (parsed.isValid() && parsed.year() > 2020) {
+      return parsed.format("YYYY-MM-DD");
+    }
+    return null;
+  }
+
   private resolveInvoiceDate(): Date {
     const givenDateRaw = this.bulkData && this.bulkData.length > 0 ? this.bulkData[0].GivenDate : null;
     if (givenDateRaw) {
