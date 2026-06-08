@@ -72,7 +72,9 @@ export class PersonalAssistantPage implements OnInit {
       next: (res) => {
         console.log('Response:', res);
         loading.dismiss();
-          this.personalAssistants = res;
+          this.personalAssistants = (res || []).sort((a: any, b: any) =>
+            (a.Name || '').localeCompare(b.Name || '')
+          );
           console.log('Personal Assistants:', this.personalAssistants);
       },
       error: (err) => {
