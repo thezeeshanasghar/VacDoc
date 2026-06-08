@@ -504,7 +504,7 @@ export class VaccinePage {
     if ((name == 'Pneumococcal # 3') || (name == 'Pneumococcal # 4')) {
       // console.log(name);
       //       const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-      let firstDate = new Date(DOB);
+      let firstDate = moment(DOB, "DD-MM-YYYY", true).toDate();
       const secondDate = new Date(this.Pneum2Date);
 
       // const diffDays = Math.round(Math.abs((firstDate - secondDate) / oneDay));

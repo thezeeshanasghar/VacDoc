@@ -10,6 +10,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { HttpResponse } from '@angular/common/http';
 import { PaService } from 'src/app/services/pa.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-unapprove',
@@ -144,7 +145,7 @@ export class UnapprovePage {
         this.loading = false;
         if (res.IsSuccess) {
           this.infiniteScroll.disabled = true;
-          this.childs = res.ResponseData;
+          this.childs = this.normalizeChildDates(res.ResponseData);
           this.searchTerm = '';
           this.filterPa = '';
           this.buildPaGroups();
@@ -164,6 +165,17 @@ export class UnapprovePage {
         console.error(err);
       },
     });
+  }
+
+  // ChildDTO.DOB arrives as "DD-MM-YYYY" (OnlyDateConverter) — normalize to
+  // "YYYY-MM-DD" so the template's `| date` pipe parses it unambiguously.
+  private normalizeChildDates(children: any[]): any[] {
+    for (const child of children) {
+      if (child && child.DOB) {
+        child.DOB = moment(child.DOB, 'DD-MM-YYYY').format('YYYY-MM-DD');
+      }
+    }
+    return children;
   }
 
   buildPaGroups() {
@@ -301,7 +313,7 @@ export class UnapprovePage {
         if (res.IsSuccess) {
           if (res.ResponseData.length < 15)
             this.infiniteScroll.disabled = true;
-          this.childs = (this.childs.concat(res.ResponseData));
+          this.childs = this.childs.concat(this.normalizeChildDates(res.ResponseData));
           this.page += 1;
           this.infiniteScroll.complete();
           this.isSearchDisabled = false;
@@ -348,7 +360,7 @@ export class UnapprovePage {
       next: (res) => {
         if (res.IsSuccess) {
           if (res.ResponseData.length < 10) this.infiniteScroll.disabled = true;
-          this.childs = this.childs.concat(res.ResponseData);
+          this.childs = this.childs.concat(this.normalizeChildDates(res.ResponseData));
           this.page += 1;
           loading.dismiss();
           this.infiniteScroll.complete();

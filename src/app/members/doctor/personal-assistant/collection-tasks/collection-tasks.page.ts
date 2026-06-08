@@ -3,6 +3,7 @@ import { LoadingController, AlertController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
 import { ScheduleService } from 'src/app/services/schedule.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-collection-tasks',
@@ -41,7 +42,12 @@ export class CollectionTasksPage implements OnInit {
       res => {
         loading.dismiss();
         if (res && res.IsSuccess) {
-          this.tasks = res.ResponseData || [];
+          this.tasks = (res.ResponseData || []).map(task => {
+            if (task.GivenDate) {
+              task.GivenDate = moment(task.GivenDate, 'DD-MM-YYYY').format('YYYY-MM-DD');
+            }
+            return task;
+          });
         }
       },
       () => loading.dismiss()
