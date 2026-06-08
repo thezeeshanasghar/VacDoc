@@ -237,7 +237,7 @@ export class BulkInvoicePage implements OnInit {
     const givenDateRaw = this.bulkData && this.bulkData.length > 0 ? this.bulkData[0].GivenDate : null;
     if (givenDateRaw) {
       const parsed = new Date(givenDateRaw);
-      if (!isNaN(parsed.getTime()) && parsed.getFullYear() > 2000) {
+      if (!isNaN(parsed.getTime()) && parsed.getFullYear() > 2020) {
         return parsed;
       }
     }
