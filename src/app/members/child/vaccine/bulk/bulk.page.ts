@@ -646,18 +646,25 @@ export class BulkPage implements OnInit {
     const alert = await this.alertController.create({
       header: "Different Registered Clinic",
       message: `This patient is registered in a different clinic (${clinicDisplay}). Do you want to change the patient's base clinic to ${this.onlineClinicName || `ID ${onlineId}`} and continue?`,
+      backdropDismiss: false,
       buttons: [
-        { text: "No: proceed with injection and use stock from online clinic", role: "cancel" },
-        { text: "Yes, Change", role: "confirm" }
+        { text: "Cancel", role: "cancel" },
+        { text: "No: proceed with injection and use stock from online clinic", role: "use-online-stock" },
+        { text: "Yes, Change", role: "change-clinic" }
       ]
     });
 
     await alert.present();
     const result = await alert.onDidDismiss();
-    if (result && result.role === "confirm") {
+    const role = result && result.role;
+
+    if (role === "change-clinic") {
       return this.updatePatientBaseClinicToOnlineClinic();
     }
-    return true;
+    if (role === "use-online-stock") {
+      return true;
+    }
+    return false;
   }
 
   private async getClinicNameById(clinicId: any): Promise<string> {
