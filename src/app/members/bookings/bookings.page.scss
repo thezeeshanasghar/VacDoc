@@ -327,3 +327,51 @@
     font-size: 13px;
   }
 }
+
+// ── PA Assignment section ─────────────────────────────────────────────────────
+
+.pa-assign-section {
+  background: #f0f5ff;
+  border: 1px solid #c5d8f8;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.pa-assign-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #1a73e8;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
+}
+
+.pa-assign-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  ion-select.pa-select {
+    flex: 1;
+    --background: #fff;
+    --padding-start: 10px;
+    border: 1px solid #c5d8f8;
+    border-radius: 7px;
+    font-size: 13px;
+    height: 34px;
+  }
+
+  .pa-assign-btn {
+    --border-radius: 7px;
+    height: 34px;
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+}
+
+.pa-none-text {
+  font-size: 12px;
+  color: #94a6b8;
+  margin: 0;
+}

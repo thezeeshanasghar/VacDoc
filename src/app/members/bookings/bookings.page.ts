@@ -25,6 +25,8 @@ export class BookingsPage {
   homeCities: any[] = [];
   newCityName: string = '';
   doctorId: number = 0;
+  paList: any[] = [];
+  selectedPAId: number = 0;
 
   constructor(
     public loadingController: LoadingController,
@@ -58,6 +60,7 @@ export class BookingsPage {
           this.clinic = clinic;
           this.loadBookings();
           this.loadHomeCities();
+          this.loadPAs();
         });
       }
     });
@@ -69,6 +72,55 @@ export class BookingsPage {
         if (res && res.IsSuccess) { this.homeCities = res.ResponseData || []; }
       },
       (err) => {}
+    );
+  }
+
+  loadPAs() {
+    if (!this.doctorId) { return; }
+    this.paService.getPAsForDoctor(this.doctorId).subscribe(
+      (res) => {
+        if (res && res.IsSuccess) {
+          this.paList = (res.ResponseData || []).filter(function(p: any) { return p.IsActive !== false; });
+        }
+      },
+      (err) => {}
+    );
+  }
+
+  assignPA(booking: any) {
+    if (!this.selectedPAId) {
+      this.toastService.create('Select a PA first.', 'danger');
+      return;
+    }
+    var notes = 'BookingId:' + booking.Id + ' | ' + booking.Vaccines;
+    this.bookingService.confirm(booking.Id, this.doctorComment).subscribe(
+      (res) => {
+        if (res && res.IsSuccess) {
+          booking.Status = 'Confirmed';
+          booking.DoctorComment = this.doctorComment;
+          this.paService.createAssignment({
+            DoctorId: this.doctorId,
+            ClinicId: booking.ClinicId,
+            PersonalAssistantId: this.selectedPAId,
+            ChildId: booking.ChildId,
+            Notes: notes
+          }).subscribe(
+            (r) => {
+              if (r && r.IsSuccess) {
+                this.expandedId = 0;
+                this.selectedPAId = 0;
+                this.toastService.create('PA assigned and booking confirmed.');
+              } else {
+                this.toastService.create('Booking confirmed but PA assignment failed.', 'warning');
+              }
+            },
+            (err) => { this.toastService.create('Booking confirmed but PA assignment failed.', 'warning'); }
+          );
+        } else {
+          this.toastService.create((res && res.Message) ? res.Message : 'Failed to confirm booking.', 'danger');
+        }
+      },
+      (err) => { this.toastService.create('Failed to confirm booking.', 'danger'); }
     );
   }
 
