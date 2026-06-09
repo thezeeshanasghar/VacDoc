@@ -1,53 +1,329 @@
-.booking-card {
-  margin-bottom: 12px;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+// ── Header toolbar tweaks ────────────────────────────────────────────────────
+
+.tab-toolbar {
+  --background: #fff;
+  --border-color: #e8edf2;
 }
 
-.action-panel {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #eee;
-}
+.filter-toolbar {
+  --background: #f7f9fc;
+  --border-color: #e8edf2;
+  --min-height: 40px;
 
-.action-buttons {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-
-  ion-button {
-    flex: 1;
-    min-width: 90px;
+  &.type-toolbar {
+    --border-top: none;
+    border-top: 1px solid #e8edf2;
   }
 }
+
+.main-segment,
+.status-segment,
+.type-segment {
+  --background: transparent;
+
+  ion-segment-button {
+    --color: #7a8fa6;
+    --color-checked: #1a73e8;
+    --indicator-color: #1a73e8;
+    --border-radius: 0;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    min-height: 40px;
+  }
+}
+
+// ── Content ──────────────────────────────────────────────────────────────────
+
+.bookings-content {
+  --background: #f0f4f8;
+}
+
+// ── Bookings list ────────────────────────────────────────────────────────────
+
+.bookings-list {
+  padding: 10px 12px;
+}
+
+// ── Booking row ──────────────────────────────────────────────────────────────
+
+.booking-row {
+  background: #fff;
+  border-radius: 10px;
+  margin-bottom: 7px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+  border: 1px solid #e8edf2;
+  transition: box-shadow 0.15s;
+
+  &.expanded {
+    box-shadow: 0 3px 12px rgba(26, 115, 232, 0.12);
+    border-color: #c5d8f8;
+  }
+}
+
+// ── Collapsed main row ───────────────────────────────────────────────────────
+
+.row-main {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  gap: 8px;
+}
+
+.row-left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.row-top {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.child-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a2533;
+  letter-spacing: -0.1px;
+}
+
+.row-vaccines {
+  font-size: 12px;
+  color: #4a6178;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.row-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #94a6b8;
+}
+
+.meta-dot {
+  opacity: 0.4;
+}
+
+.row-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding-left: 4px;
+}
+
+.expand-icon {
+  font-size: 16px;
+  color: #94a6b8;
+  transition: transform 0.2s ease;
+
+  &.rotated {
+    transform: rotate(180deg);
+  }
+}
+
+// ── Status & type chips ──────────────────────────────────────────────────────
+
+.chip {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.chip-type {
+  &.chip-home   { background: #e8f0fe; color: #1a73e8; }
+  &.chip-clinic { background: #e6f4ea; color: #1e8e3e; }
+}
+
+.chip-status {
+  &.chip-pending   { background: #fff3cd; color: #a07800; }
+  &.chip-confirmed { background: #d4edda; color: #1e7e34; }
+  &.chip-cancelled { background: #fde8e8; color: #c62828; }
+}
+
+// ── Expanded panel ───────────────────────────────────────────────────────────
+
+.row-expanded {
+  border-top: 1px solid #e8edf2;
+  background: #fafcff;
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.expanded-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #7a8fa6;
+  min-width: 80px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.3px;
+  padding-top: 2px;
+}
+
+.detail-value {
+  color: #1a2533;
+  font-weight: 500;
+  font-size: 12px;
+  flex: 1;
+}
+
+.note-text {
+  color: #4a6178;
+  font-style: italic;
+}
+
+.location-btn {
+  --border-radius: 6px;
+  height: 26px;
+  font-size: 11px;
+}
+
+// ── Note textarea ────────────────────────────────────────────────────────────
+
+.expanded-note-area {
+  ion-textarea.note-textarea {
+    --background: #fff;
+    --border-color: #dde4ed;
+    --padding-start: 10px;
+    --padding-end: 10px;
+    --padding-top: 7px;
+    --padding-bottom: 7px;
+    border: 1px solid #dde4ed;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+}
+
+// ── Action buttons ───────────────────────────────────────────────────────────
+
+.expanded-actions {
+  display: flex;
+  gap: 7px;
+
+  .action-btn {
+    flex: 1;
+    --border-radius: 7px;
+    height: 34px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+}
+
+// ── Empty state ──────────────────────────────────────────────────────────────
 
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  color: #aaa;
+  color: #b0bec5;
 
   ion-icon {
-    font-size: 56px;
-    margin-bottom: 12px;
+    font-size: 52px;
+    display: block;
+    margin-bottom: 10px;
   }
 
   p {
-    font-size: 15px;
+    font-size: 14px;
+    margin: 0;
   }
+}
+
+// ── Cities tab ───────────────────────────────────────────────────────────────
+
+.cities-tab {
+  padding: 12px;
+}
+
+.cities-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e8edf2;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+.cities-header {
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid #e8edf2;
+}
+
+.cities-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a2533;
+}
+
+.cities-sub {
+  font-size: 12px;
+  color: #7a8fa6;
+  margin-top: 2px;
 }
 
 .city-add-row {
   display: flex;
   gap: 8px;
   align-items: center;
-  margin-bottom: 16px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e8edf2;
 
-  .city-input {
+  ion-input.city-input {
     flex: 1;
-    --border-color: #ddd;
+    --background: #f7f9fc;
     --padding-start: 10px;
-    border: 1px solid #ddd;
+    --border-color: #dde4ed;
+    border: 1px solid #dde4ed;
     border-radius: 8px;
+    font-size: 13px;
+    height: 38px;
+  }
+
+  .city-add-btn {
+    --border-radius: 8px;
+    height: 38px;
+  }
+}
+
+.city-list {
+  background: transparent;
+  padding: 0;
+
+  .city-item {
+    --background: #fff;
+    --min-height: 44px;
+    font-size: 13px;
   }
 }

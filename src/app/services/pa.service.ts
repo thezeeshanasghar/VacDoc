@@ -194,6 +194,11 @@ export class PaService extends BaseService {
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
+  getPAsForDoctor(doctorId: number): Observable<any> {
+    const url = `${this.API_PA}PersonalAssistant/doctor/${doctorId}`;
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
   cancelAssignment(assignmentId: number, callerType: 'DOCTOR' | 'PA', callerId: number, reason: string = ''): Observable<any> {
     const url = `${this.API_PA}PAAssignment/${assignmentId}/cancel`;
     return this.http.patch(url, { CallerType: callerType, CallerId: callerId, Reason: reason }, this.httpOptions).pipe(catchError(this.handleError));

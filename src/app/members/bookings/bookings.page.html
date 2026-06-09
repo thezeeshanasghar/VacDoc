@@ -11,27 +11,24 @@
     </ion-buttons>
   </ion-toolbar>
 
-  <!-- Main tab switcher -->
-  <ion-toolbar>
-    <ion-segment [(ngModel)]="activeTab">
+  <ion-toolbar class="tab-toolbar">
+    <ion-segment [(ngModel)]="activeTab" class="main-segment">
       <ion-segment-button value="bookings">Bookings</ion-segment-button>
       <ion-segment-button value="cities">Home Cities</ion-segment-button>
     </ion-segment>
   </ion-toolbar>
 
-  <!-- Booking filters (only when on bookings tab) -->
   <ng-container *ngIf="activeTab === 'bookings'">
-    <ion-toolbar>
-      <ion-segment [(ngModel)]="selectedStatus" (ionChange)="filterChange()">
+    <ion-toolbar class="filter-toolbar">
+      <ion-segment [(ngModel)]="selectedStatus" (ionChange)="filterChange()" class="status-segment">
         <ion-segment-button value="">All</ion-segment-button>
         <ion-segment-button value="Pending">Pending</ion-segment-button>
         <ion-segment-button value="Confirmed">Confirmed</ion-segment-button>
         <ion-segment-button value="Cancelled">Cancelled</ion-segment-button>
       </ion-segment>
     </ion-toolbar>
-
-    <ion-toolbar>
-      <ion-segment [(ngModel)]="selectedType" (ionChange)="filterChange()">
+    <ion-toolbar class="filter-toolbar type-toolbar">
+      <ion-segment [(ngModel)]="selectedType" (ionChange)="filterChange()" class="type-segment">
         <ion-segment-button value="">All Types</ion-segment-button>
         <ion-segment-button value="HomeBooked">Home</ion-segment-button>
         <ion-segment-button value="ClinicBooked">Clinic</ion-segment-button>
@@ -40,112 +37,156 @@
   </ng-container>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="bookings-content">
 
   <!-- ── Home Service Cities tab ──────────────────────────────────────── -->
-  <div *ngIf="activeTab === 'cities'">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Home Service Cities</ion-card-title>
-        <ion-card-subtitle>Parents selecting Home Visit will choose from these cities only.</ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        <!-- Add new city -->
-        <div class="city-add-row">
-          <ion-input [(ngModel)]="newCityName" placeholder="New city name" class="city-input"></ion-input>
-          <ion-button (click)="addCity()" size="default" color="primary">
-            <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+  <div *ngIf="activeTab === 'cities'" class="cities-tab">
+    <div class="cities-card">
+      <div class="cities-header">
+        <div class="cities-title">Home Service Cities</div>
+        <div class="cities-sub">Parents selecting Home Visit will choose from these cities only.</div>
+      </div>
+      <div class="city-add-row">
+        <ion-input [(ngModel)]="newCityName" placeholder="New city name" class="city-input"></ion-input>
+        <ion-button (click)="addCity()" size="default" color="primary" class="city-add-btn">
+          <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+        </ion-button>
+      </div>
+      <ion-list lines="full" class="city-list">
+        <ion-item *ngFor="let c of homeCities" class="city-item">
+          <ion-icon name="location-outline" slot="start" color="tertiary"></ion-icon>
+          <ion-label>{{c.CityName}}</ion-label>
+          <ion-button slot="end" fill="clear" color="danger" (click)="removeCity(c)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
           </ion-button>
-        </div>
-
-        <!-- City list -->
-        <ion-list lines="full">
-          <ion-item *ngFor="let c of homeCities">
-            <ion-icon name="location-outline" slot="start" color="tertiary"></ion-icon>
-            <ion-label>{{c.CityName}}</ion-label>
-            <ion-button slot="end" fill="clear" color="danger" (click)="removeCity(c)">
-              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-            </ion-button>
-          </ion-item>
-          <ion-item *ngIf="!homeCities || homeCities.length === 0">
-            <ion-label color="medium">No cities added yet.</ion-label>
-          </ion-item>
-        </ion-list>
-      </ion-card-content>
-    </ion-card>
+        </ion-item>
+        <ion-item *ngIf="!homeCities || homeCities.length === 0" class="city-item">
+          <ion-label color="medium">No cities added yet.</ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
   </div>
 
   <!-- ── Bookings list tab ─────────────────────────────────────────────── -->
-  <div *ngIf="activeTab === 'bookings'">
+  <div *ngIf="activeTab === 'bookings'" class="bookings-list">
 
-  <ion-list *ngIf="bookings && bookings.length > 0">
-    <ion-card *ngFor="let b of bookings" class="booking-card">
+    <div *ngIf="bookings && bookings.length > 0">
+      <div *ngFor="let b of bookings" class="booking-row" [class.expanded]="expandedId === b.Id">
 
-      <!-- Card header row -->
-      <ion-card-header (click)="toggleExpand(b)" style="cursor:pointer">
-        <ion-card-title>
-          {{b.ChildName}}
-          <ion-badge [color]="typeColor(b.Type)" style="margin-left:8px; font-size:11px;">{{typeLabel(b.Type)}}</ion-badge>
-          <ion-badge [color]="statusColor(b.Status)" style="margin-left:4px; font-size:11px;">{{b.Status}}</ion-badge>
-        </ion-card-title>
-        <ion-card-subtitle>{{b.FatherName}} &bull; {{b.Phone}}</ion-card-subtitle>
-      </ion-card-header>
-
-      <ion-card-content>
-        <p><strong>Vaccines:</strong> {{b.Vaccines}}</p>
-        <p *ngIf="b.PreferredDate"><strong>Preferred Date:</strong> {{b.PreferredDate | date}}</p>
-        <p><strong>Booked:</strong> {{b.CreatedAt | date}}</p>
-
-        <!-- Home visit extras -->
-        <div *ngIf="b.Type === 'HomeBooked'">
-          <p *ngIf="b.Address"><strong>Address:</strong> {{b.Address}}</p>
-          <p *ngIf="b.City"><strong>City:</strong> {{b.City}}</p>
-          <ion-button *ngIf="b.Location" fill="outline" size="small" (click)="openLocation(b.Location)">
-            <ion-icon slot="start" name="navigate-outline"></ion-icon>
-            View Location
-          </ion-button>
+        <!-- Collapsed row -->
+        <div class="row-main" (click)="toggleExpand(b)">
+          <div class="row-left">
+            <div class="row-top">
+              <span class="child-name">{{b.ChildName}}</span>
+              <span class="chip chip-type" [ngClass]="b.Type === 'HomeBooked' ? 'chip-home' : 'chip-clinic'">
+                {{b.Type === 'HomeBooked' ? 'HOME' : 'CLINIC'}}
+              </span>
+              <span class="chip chip-status" [ngClass]="'chip-' + (b.Status | lowercase)">
+                {{b.Status | uppercase}}
+              </span>
+            </div>
+            <div class="row-vaccines">{{b.Vaccines}}</div>
+            <div class="row-meta">
+              <span class="meta-parent">{{b.FatherName}} &bull; {{b.Phone}}</span>
+              <span class="meta-dot">·</span>
+              <span class="meta-date">{{b.PreferredDate | date:'MMM d, y'}}</span>
+            </div>
+          </div>
+          <div class="row-right">
+            <ion-icon name="chevron-down-outline" class="expand-icon" [class.rotated]="expandedId === b.Id"></ion-icon>
+          </div>
         </div>
 
-        <p *ngIf="b.Comments"><strong>Parent Note:</strong> {{b.Comments}}</p>
-        <p *ngIf="b.DoctorComment"><em>Note: {{b.DoctorComment}}</em></p>
+        <!-- Expanded panel -->
+        <div *ngIf="expandedId === b.Id" class="row-expanded">
+          <div class="expanded-details">
+            <div class="detail-row" *ngIf="b.Vaccines">
+              <span class="detail-label">Vaccines</span>
+              <span class="detail-value">{{b.Vaccines}}</span>
+            </div>
+            <div class="detail-row" *ngIf="b.Address">
+              <span class="detail-label">Address</span>
+              <span class="detail-value">{{b.Address}}</span>
+            </div>
+            <div class="detail-row" *ngIf="b.City">
+              <span class="detail-label">City</span>
+              <span class="detail-value">{{b.City}}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Booked</span>
+              <span class="detail-value">{{b.CreatedAt | date:'MMM d, y'}}</span>
+            </div>
+            <div class="detail-row" *ngIf="b.Comments">
+              <span class="detail-label">Parent Note</span>
+              <span class="detail-value note-text">{{b.Comments}}</span>
+            </div>
+            <div class="detail-row" *ngIf="b.DoctorComment">
+              <span class="detail-label">Doctor Note</span>
+              <span class="detail-value note-text">{{b.DoctorComment}}</span>
+            </div>
+            <div class="detail-row" *ngIf="b.Location">
+              <span class="detail-label">Location</span>
+              <span class="detail-value">
+                <ion-button fill="outline" size="small" class="location-btn" (click)="openLocation(b.Location)">
+                  <ion-icon slot="start" name="navigate-outline"></ion-icon>
+                  View Map
+                </ion-button>
+              </span>
+            </div>
+          </div>
 
-        <!-- Expanded action panel -->
-        <div *ngIf="expandedId === b.Id" class="action-panel">
-          <ion-item>
-            <ion-label position="stacked">Doctor's Note</ion-label>
-            <ion-textarea [(ngModel)]="doctorComment" rows="2" placeholder="Optional note to parent..."></ion-textarea>
-          </ion-item>
+          <div class="expanded-note-area">
+            <ion-textarea
+              [(ngModel)]="doctorComment"
+              rows="2"
+              placeholder="Doctor's note (optional)..."
+              class="note-textarea"
+            ></ion-textarea>
+          </div>
 
-          <div class="action-buttons">
-            <ion-button color="success" (click)="confirmBooking(b)" [disabled]="b.Status === 'Confirmed'">
+          <div class="expanded-actions">
+            <ion-button
+              size="small"
+              color="success"
+              class="action-btn"
+              (click)="confirmBooking(b)"
+              [disabled]="b.Status === 'Confirmed'"
+            >
               <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
               Confirm
             </ion-button>
-            <ion-button color="danger" fill="outline" (click)="cancelBooking(b)" [disabled]="b.Status === 'Cancelled'">
+            <ion-button
+              size="small"
+              color="danger"
+              fill="outline"
+              class="action-btn"
+              (click)="cancelBooking(b)"
+              [disabled]="b.Status === 'Cancelled'"
+            >
               <ion-icon slot="start" name="close-circle-outline"></ion-icon>
               Cancel
             </ion-button>
-            <ion-button color="medium" fill="outline" (click)="saveComment(b)">
+            <ion-button
+              size="small"
+              color="medium"
+              fill="outline"
+              class="action-btn"
+              (click)="saveComment(b)"
+            >
               <ion-icon slot="start" name="save-outline"></ion-icon>
               Save Note
             </ion-button>
           </div>
         </div>
 
-        <ion-button fill="clear" size="small" (click)="toggleExpand(b)">
-          <ion-icon slot="start" [name]="expandedId === b.Id ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
-          {{expandedId === b.Id ? 'Less' : 'Actions'}}
-        </ion-button>
-      </ion-card-content>
+      </div>
+    </div>
 
-    </ion-card>
-  </ion-list>
+    <div *ngIf="!bookings || bookings.length === 0" class="empty-state">
+      <ion-icon name="calendar-outline"></ion-icon>
+      <p>No bookings found.</p>
+    </div>
 
-  <div *ngIf="!bookings || bookings.length === 0" class="empty-state">
-    <ion-icon name="calendar-outline" size="large" color="medium"></ion-icon>
-    <p>No bookings found.</p>
   </div>
-
-  </div> <!-- end bookings tab -->
 
 </ion-content>
