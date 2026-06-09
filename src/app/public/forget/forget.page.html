@@ -1,36 +1,49 @@
-<!-- <ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Forget Password</ion-title>
-    <ion-back-button  color="light" defaultHref="/" slot="start"> </ion-back-button>
-  </ion-toolbar>
-</ion-header> -->
+<ion-content>
 
-<ion-content >
-
-  <ion-card style="background-color:  #6b686873;">
+  <ion-card style="background-color: #6b686873;">
 
     <ion-card-content>
 
       <div style="color: rgb(255, 255, 255); height: 100px; display: flex; align-items: center;">
         <ion-back-button class="arrow" color="white" defaultHref="/" slot="start" style="align-self: flex-start;"></ion-back-button>
-        <h1 style="flex: 1; text-align: center; font-weight: 500; font-size: 25px; margin-bottom: 50px;">Forget Password ?</h1>
-    </div>
-    
-    
+        <h1 style="flex: 1; text-align: center; font-weight: 500; font-size: 25px; margin-bottom: 50px;">Forgot Password?</h1>
+      </div>
 
-      <ion-label color="primary" position="floating" class="ion-margin-top" style="color: white;">
-          <ion-icon name="mail" class="ion-item-start" style="color: white;"></ion-icon>
-          Email
-        </ion-label>
-        <ion-input type="text" [(ngModel)] = "Email"></ion-input>
+      <p style="color: #ccc; font-size: 13px; margin-bottom: 16px; text-align: center;">
+        Enter the mobile number registered with your doctor account.<br>
+        Your password will be sent via SMS and email.
+      </p>
 
+      <ion-label style="color: white; font-size: 13px; display: block; margin-bottom: 4px;">
+        <ion-icon name="call" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
+        Country Code
+      </ion-label>
+      <ion-input
+        type="text"
+        [(ngModel)]="CountryCode"
+        placeholder="+92"
+        style="background: rgba(255,255,255,0.1); border-radius: 6px; color: white; margin-bottom: 12px; padding-left: 10px;">
+      </ion-input>
 
-        <ion-button class="ion-margin-top" expand="full" color="tertiary" (click)="sendPassword()">
-          <ion-icon name="log-in"></ion-icon>&nbsp;
-          Send Password
-        </ion-button>
+      <ion-label style="color: white; font-size: 13px; display: block; margin-bottom: 4px;">
+        <ion-icon name="phone-portrait" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
+        Mobile Number
+      </ion-label>
+      <ion-input
+        type="tel"
+        [(ngModel)]="MobileNumber"
+        placeholder="e.g. 3001234567 (without country code)"
+        style="background: rgba(255,255,255,0.1); border-radius: 6px; color: white; margin-bottom: 4px; padding-left: 10px;">
+      </ion-input>
+      <p style="color: #aaa; font-size: 12px; margin: 4px 0 16px 2px;">
+        Do NOT include the country code here. Example: 3001234567
+      </p>
 
-      
+      <ion-button class="ion-margin-top" expand="full" color="tertiary" (click)="sendPassword()">
+        <ion-icon name="send"></ion-icon>&nbsp;
+        Send Password
+      </ion-button>
+
     </ion-card-content>
   </ion-card>
 
