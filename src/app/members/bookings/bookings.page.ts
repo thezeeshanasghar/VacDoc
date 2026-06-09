@@ -39,9 +39,6 @@ export class BookingsPage {
   ) {}
 
   ionViewWillEnter() {
-    this.storage.get(environment.DOCTOR_Id).then((docId) => {
-      this.doctorId = docId || 0;
-    });
     this.storage.get(environment.USER).then((user) => {
       this.usertype = user;
       if (user && user.UserType === 'PA') {
@@ -56,11 +53,14 @@ export class BookingsPage {
           (err) => { this.toastService.create('Failed to load clinics', 'danger'); }
         );
       } else {
-        this.storage.get(environment.ON_CLINIC).then((clinic) => {
-          this.clinic = clinic;
-          this.loadBookings();
-          this.loadHomeCities();
-          this.loadPAs();
+        this.storage.get(environment.DOCTOR_Id).then((docId) => {
+          this.doctorId = docId || 0;
+          this.storage.get(environment.ON_CLINIC).then((clinic) => {
+            this.clinic = clinic;
+            this.loadBookings();
+            this.loadHomeCities();
+            this.loadPAs();
+          });
         });
       }
     });
