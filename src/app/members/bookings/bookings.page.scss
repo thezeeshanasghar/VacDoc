@@ -36,3 +36,18 @@
     font-size: 15px;
   }
 }
+
+.city-add-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 16px;
+
+  .city-input {
+    flex: 1;
+    --border-color: #ddd;
+    --padding-start: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+}

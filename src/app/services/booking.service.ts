@@ -60,4 +60,25 @@ export class BookingService extends BaseService {
       catchError(this.handleError)
     );
   }
+
+  getHomeCities(doctorId: number): Observable<any> {
+    return this.http.get(`${environment.BASE_URL}homecity/doctor/${doctorId}`, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
+  addHomeCity(doctorId: number, cityName: string): Observable<any> {
+    return this.http.post(`${environment.BASE_URL}homecity`, { DoctorId: doctorId, CityName: cityName, IsActive: true }, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
+  deleteHomeCity(id: number): Observable<any> {
+    return this.http.delete(`${environment.BASE_URL}homecity/${id}`, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
 }

@@ -21,6 +21,10 @@ export class BookingsPage {
   usertype: any;
   expandedId: number = 0;
   doctorComment: string = '';
+  activeTab: string = 'bookings';
+  homeCities: any[] = [];
+  newCityName: string = '';
+  doctorId: number = 0;
 
   constructor(
     public loadingController: LoadingController,
@@ -33,6 +37,9 @@ export class BookingsPage {
   ) {}
 
   ionViewWillEnter() {
+    this.storage.get(environment.DOCTOR_Id).then((docId) => {
+      this.doctorId = docId || 0;
+    });
     this.storage.get(environment.USER).then((user) => {
       this.usertype = user;
       if (user && user.UserType === 'PA') {
@@ -50,9 +57,63 @@ export class BookingsPage {
         this.storage.get(environment.ON_CLINIC).then((clinic) => {
           this.clinic = clinic;
           this.loadBookings();
+          this.loadHomeCities();
         });
       }
     });
+  }
+
+  loadHomeCities() {
+    this.bookingService.getHomeCities(1).subscribe(
+      (res) => {
+        if (res && res.IsSuccess) { this.homeCities = res.ResponseData || []; }
+      },
+      (err) => {}
+    );
+  }
+
+  addCity() {
+    if (!this.newCityName || !this.newCityName.trim()) {
+      this.toastService.create('Enter a city name.', 'danger');
+      return;
+    }
+    this.bookingService.addHomeCity(1, this.newCityName.trim()).subscribe(
+      (res) => {
+        if (res && res.IsSuccess) {
+          this.newCityName = '';
+          this.loadHomeCities();
+          this.toastService.create('City added.');
+        } else {
+          this.toastService.create((res && res.Message) ? res.Message : 'Failed to add city', 'danger');
+        }
+      },
+      (err) => { this.toastService.create('Failed to add city', 'danger'); }
+    );
+  }
+
+  async removeCity(city: any) {
+    const alert = await this.alertController.create({
+      header: 'Remove City',
+      message: 'Remove "' + city.CityName + '" from home service?',
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Remove',
+          handler: () => {
+            this.bookingService.deleteHomeCity(city.Id).subscribe(
+              (res) => {
+                if (res && res.IsSuccess) {
+                  this.loadHomeCities();
+                  this.toastService.create('City removed.');
+                }
+              },
+              (err) => { this.toastService.create('Failed to remove city', 'danger'); }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
   loadBookings() {

@@ -11,27 +11,72 @@
     </ion-buttons>
   </ion-toolbar>
 
-  <!-- Status filter -->
+  <!-- Main tab switcher -->
   <ion-toolbar>
-    <ion-segment [(ngModel)]="selectedStatus" (ionChange)="filterChange()">
-      <ion-segment-button value="">All</ion-segment-button>
-      <ion-segment-button value="Pending">Pending</ion-segment-button>
-      <ion-segment-button value="Confirmed">Confirmed</ion-segment-button>
-      <ion-segment-button value="Cancelled">Cancelled</ion-segment-button>
+    <ion-segment [(ngModel)]="activeTab">
+      <ion-segment-button value="bookings">Bookings</ion-segment-button>
+      <ion-segment-button value="cities">Home Cities</ion-segment-button>
     </ion-segment>
   </ion-toolbar>
 
-  <!-- Type filter -->
-  <ion-toolbar>
-    <ion-segment [(ngModel)]="selectedType" (ionChange)="filterChange()">
-      <ion-segment-button value="">All Types</ion-segment-button>
-      <ion-segment-button value="HomeBooked">Home</ion-segment-button>
-      <ion-segment-button value="ClinicBooked">Clinic</ion-segment-button>
-    </ion-segment>
-  </ion-toolbar>
+  <!-- Booking filters (only when on bookings tab) -->
+  <ng-container *ngIf="activeTab === 'bookings'">
+    <ion-toolbar>
+      <ion-segment [(ngModel)]="selectedStatus" (ionChange)="filterChange()">
+        <ion-segment-button value="">All</ion-segment-button>
+        <ion-segment-button value="Pending">Pending</ion-segment-button>
+        <ion-segment-button value="Confirmed">Confirmed</ion-segment-button>
+        <ion-segment-button value="Cancelled">Cancelled</ion-segment-button>
+      </ion-segment>
+    </ion-toolbar>
+
+    <ion-toolbar>
+      <ion-segment [(ngModel)]="selectedType" (ionChange)="filterChange()">
+        <ion-segment-button value="">All Types</ion-segment-button>
+        <ion-segment-button value="HomeBooked">Home</ion-segment-button>
+        <ion-segment-button value="ClinicBooked">Clinic</ion-segment-button>
+      </ion-segment>
+    </ion-toolbar>
+  </ng-container>
 </ion-header>
 
 <ion-content class="ion-padding">
+
+  <!-- ── Home Service Cities tab ──────────────────────────────────────── -->
+  <div *ngIf="activeTab === 'cities'">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Home Service Cities</ion-card-title>
+        <ion-card-subtitle>Parents selecting Home Visit will choose from these cities only.</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <!-- Add new city -->
+        <div class="city-add-row">
+          <ion-input [(ngModel)]="newCityName" placeholder="New city name" class="city-input"></ion-input>
+          <ion-button (click)="addCity()" size="default" color="primary">
+            <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+          </ion-button>
+        </div>
+
+        <!-- City list -->
+        <ion-list lines="full">
+          <ion-item *ngFor="let c of homeCities">
+            <ion-icon name="location-outline" slot="start" color="tertiary"></ion-icon>
+            <ion-label>{{c.CityName}}</ion-label>
+            <ion-button slot="end" fill="clear" color="danger" (click)="removeCity(c)">
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <ion-item *ngIf="!homeCities || homeCities.length === 0">
+            <ion-label color="medium">No cities added yet.</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- ── Bookings list tab ─────────────────────────────────────────────── -->
+  <div *ngIf="activeTab === 'bookings'">
 
   <ion-list *ngIf="bookings && bookings.length > 0">
     <ion-card *ngFor="let b of bookings" class="booking-card">
@@ -100,5 +145,7 @@
     <ion-icon name="calendar-outline" size="large" color="medium"></ion-icon>
     <p>No bookings found.</p>
   </div>
+
+  </div> <!-- end bookings tab -->
 
 </ion-content>
