@@ -477,6 +477,8 @@ import { ToastService } from "../shared/toast.service";
 import { DoctorService } from "src/app/services/doctor.service";
 import { PaService } from "src/app/services/pa.service";
 import { ChildService } from "src/app/services/child.service";
+import { BookingService } from "src/app/services/booking.service";
+import { NotificationService } from "src/app/services/notification.service";
 
 @Component({
   selector: "app-members",
@@ -496,6 +498,8 @@ export class MembersPage implements OnInit {
   public doctorPages: any = [];
   public childPages: any = [];
   public pendingApprovalsCount: number = 0;
+  public pendingBookingsCount: number = 0;
+  public unreadNotificationCount: number = 0;
   public paAssignmentCount: number = 0;
   public isPaUser: boolean = false;
 
@@ -506,7 +510,9 @@ export class MembersPage implements OnInit {
     private toastService: ToastService,
     private doctorService: DoctorService,
     private paService: PaService,
-    private childService: ChildService
+    private childService: ChildService,
+    private bookingService: BookingService,
+    private notificationService: NotificationService,
   ) {}
 
   async ngOnInit() {
@@ -718,9 +724,21 @@ export class MembersPage implements OnInit {
                 title: "Unapproved",
                 url: "/members/child/unapprove",
                 icon: "alert-circle-outline"
+              },
+              {
+                title: "Bookings",
+                url: "/members/bookings",
+                icon: "calendar-outline"
+              },
+              {
+                title: "Notifications",
+                url: "/members/notifications",
+                icon: "notifications-outline"
               }
             ];
             this.loadPendingCount();
+            this.loadPendingBookingsCount();
+            this.loadUnreadNotificationCount();
             if (assistantAllowed) {
               this.appPages.push({
                 title: "Personal Assistant",
@@ -833,6 +851,31 @@ export class MembersPage implements OnInit {
         }
       },
       (err) => { console.error('Error fetching pending count', err); }
+    );
+  }
+
+  loadPendingBookingsCount() {
+    const clinic = this.clinicService.OnlineClinic;
+    if (!clinic || !clinic.Id) { return; }
+    this.bookingService.getPendingCount(clinic.Id).subscribe(
+      (res) => {
+        if (res && res.IsSuccess) {
+          this.pendingBookingsCount = res.ResponseData || 0;
+        }
+      },
+      (err) => {}
+    );
+  }
+
+  loadUnreadNotificationCount() {
+    if (!this.DoctorId) { return; }
+    this.notificationService.getUnreadCount(this.DoctorId).subscribe(
+      (res) => {
+        if (res && res.IsSuccess) {
+          this.unreadNotificationCount = res.ResponseData || 0;
+        }
+      },
+      (err) => {}
     );
   }
 

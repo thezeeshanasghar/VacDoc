@@ -1,0 +1,38 @@
+.booking-card {
+  margin-bottom: 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.action-panel {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+
+  ion-button {
+    flex: 1;
+    min-width: 90px;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #aaa;
+
+  ion-icon {
+    font-size: 56px;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 15px;
+  }
+}

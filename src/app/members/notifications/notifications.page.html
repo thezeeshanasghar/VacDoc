@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Notifications
+      <ion-badge *ngIf="unreadCount() > 0" color="danger" style="margin-left:6px;">{{unreadCount()}}</ion-badge>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="markAllRead()" *ngIf="unreadCount() > 0">
+        <ion-icon slot="icon-only" name="checkmark-done-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="loadNotifications()">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-list *ngIf="notifications && notifications.length > 0">
+    <ion-item *ngFor="let n of notifications" [class.unread-item]="!n.IsRead" (click)="tapNotification(n)" detail="false" button>
+      <ion-icon slot="start" [name]="n.IsRead ? 'notifications-outline' : 'notifications'" [color]="n.IsRead ? 'medium' : 'primary'"></ion-icon>
+      <ion-label>
+        <h2 [style.font-weight]="n.IsRead ? '400' : '700'">{{n.Title}}</h2>
+        <p>{{n.Message}}</p>
+        <p class="notif-date">{{n.CreatedAt | date:'dd MMM yyyy, h:mm a'}}</p>
+      </ion-label>
+      <ion-badge *ngIf="!n.IsRead" color="primary" slot="end"></ion-badge>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="!notifications || notifications.length === 0" class="empty-state">
+    <ion-icon name="notifications-outline" size="large" color="medium"></ion-icon>
+    <p>No notifications yet.</p>
+  </div>
+
+</ion-content>

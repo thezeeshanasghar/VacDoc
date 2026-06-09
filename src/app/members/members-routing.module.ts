@@ -29,6 +29,14 @@ const routes: Routes = [
         loadChildren: () => import('./message/message.module').then(m => m.MessagePageModule)
       },
       {
+        path: 'bookings',
+        loadChildren: () => import('./bookings/bookings.module').then(m => m.BookingsPageModule)
+      },
+      {
+        path: 'notifications',
+        loadChildren: () => import('./notifications/notifications.module').then(m => m.NotificationsPageModule)
+      },
+      {
         path: 'pa/assignments',
         loadChildren: () => import('./pa/assignments/assignments.module').then(m => m.AssignmentsPageModule)
       },

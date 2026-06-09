@@ -1,0 +1,104 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Bookings</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="loadBookings()">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <!-- Status filter -->
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="selectedStatus" (ionChange)="filterChange()">
+      <ion-segment-button value="">All</ion-segment-button>
+      <ion-segment-button value="Pending">Pending</ion-segment-button>
+      <ion-segment-button value="Confirmed">Confirmed</ion-segment-button>
+      <ion-segment-button value="Cancelled">Cancelled</ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+
+  <!-- Type filter -->
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="selectedType" (ionChange)="filterChange()">
+      <ion-segment-button value="">All Types</ion-segment-button>
+      <ion-segment-button value="HomeBooked">Home</ion-segment-button>
+      <ion-segment-button value="ClinicBooked">Clinic</ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-list *ngIf="bookings && bookings.length > 0">
+    <ion-card *ngFor="let b of bookings" class="booking-card">
+
+      <!-- Card header row -->
+      <ion-card-header (click)="toggleExpand(b)" style="cursor:pointer">
+        <ion-card-title>
+          {{b.ChildName}}
+          <ion-badge [color]="typeColor(b.Type)" style="margin-left:8px; font-size:11px;">{{typeLabel(b.Type)}}</ion-badge>
+          <ion-badge [color]="statusColor(b.Status)" style="margin-left:4px; font-size:11px;">{{b.Status}}</ion-badge>
+        </ion-card-title>
+        <ion-card-subtitle>{{b.FatherName}} &bull; {{b.Phone}}</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p><strong>Vaccines:</strong> {{b.Vaccines}}</p>
+        <p *ngIf="b.PreferredDate"><strong>Preferred Date:</strong> {{b.PreferredDate | date}}</p>
+        <p><strong>Booked:</strong> {{b.CreatedAt | date}}</p>
+
+        <!-- Home visit extras -->
+        <div *ngIf="b.Type === 'HomeBooked'">
+          <p *ngIf="b.Address"><strong>Address:</strong> {{b.Address}}</p>
+          <p *ngIf="b.City"><strong>City:</strong> {{b.City}}</p>
+          <ion-button *ngIf="b.Location" fill="outline" size="small" (click)="openLocation(b.Location)">
+            <ion-icon slot="start" name="navigate-outline"></ion-icon>
+            View Location
+          </ion-button>
+        </div>
+
+        <p *ngIf="b.Comments"><strong>Parent Note:</strong> {{b.Comments}}</p>
+        <p *ngIf="b.DoctorComment"><em>Note: {{b.DoctorComment}}</em></p>
+
+        <!-- Expanded action panel -->
+        <div *ngIf="expandedId === b.Id" class="action-panel">
+          <ion-item>
+            <ion-label position="stacked">Doctor's Note</ion-label>
+            <ion-textarea [(ngModel)]="doctorComment" rows="2" placeholder="Optional note to parent..."></ion-textarea>
+          </ion-item>
+
+          <div class="action-buttons">
+            <ion-button color="success" (click)="confirmBooking(b)" [disabled]="b.Status === 'Confirmed'">
+              <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+              Confirm
+            </ion-button>
+            <ion-button color="danger" fill="outline" (click)="cancelBooking(b)" [disabled]="b.Status === 'Cancelled'">
+              <ion-icon slot="start" name="close-circle-outline"></ion-icon>
+              Cancel
+            </ion-button>
+            <ion-button color="medium" fill="outline" (click)="saveComment(b)">
+              <ion-icon slot="start" name="save-outline"></ion-icon>
+              Save Note
+            </ion-button>
+          </div>
+        </div>
+
+        <ion-button fill="clear" size="small" (click)="toggleExpand(b)">
+          <ion-icon slot="start" [name]="expandedId === b.Id ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+          {{expandedId === b.Id ? 'Less' : 'Actions'}}
+        </ion-button>
+      </ion-card-content>
+
+    </ion-card>
+  </ion-list>
+
+  <div *ngIf="!bookings || bookings.length === 0" class="empty-state">
+    <ion-icon name="calendar-outline" size="large" color="medium"></ion-icon>
+    <p>No bookings found.</p>
+  </div>
+
+</ion-content>

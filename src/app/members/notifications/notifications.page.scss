@@ -1,0 +1,24 @@
+.unread-item {
+  --background: #f0f5ff;
+}
+
+.notif-date {
+  font-size: 11px;
+  color: #999;
+  margin-top: 2px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #aaa;
+
+  ion-icon {
+    font-size: 56px;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 15px;
+  }
+}
