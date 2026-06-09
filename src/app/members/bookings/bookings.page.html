@@ -147,11 +147,22 @@
           <!-- PA Assignment — Home bookings only -->
           <div *ngIf="b.Type === 'HomeBooked' && b.Status !== 'Cancelled'" class="pa-assign-section">
             <div class="pa-assign-label">Assign PA for Home Visit</div>
-            <div *ngIf="paList && paList.length > 0" class="pa-assign-row">
-              <ion-select [(ngModel)]="selectedPAId" placeholder="Select PA" interface="action-sheet" class="pa-select">
-                <ion-select-option *ngFor="let pa of paList" [value]="pa.Id">{{pa.Name}}</ion-select-option>
-              </ion-select>
-              <ion-button size="small" color="secondary" class="pa-assign-btn" (click)="assignPA(b)" [disabled]="!selectedPAId">
+            <div *ngIf="paList && paList.length > 0">
+              <div class="pa-assign-row">
+                <ion-select [(ngModel)]="selectedPAId" placeholder="Select PA" interface="action-sheet" class="pa-select">
+                  <ion-select-option *ngFor="let pa of paList" [value]="pa.Id">{{pa.Name}}</ion-select-option>
+                </ion-select>
+              </div>
+              <div class="pa-guidelines-wrap">
+                <div class="pa-guidelines-label">Guidelines <span class="pa-guidelines-optional">(optional)</span></div>
+                <textarea
+                  class="pa-guidelines-textarea"
+                  [(ngModel)]="paGuidelines"
+                  placeholder="Task description or special instructions for the PA..."
+                  rows="2">
+                </textarea>
+              </div>
+              <ion-button expand="block" size="small" color="secondary" class="pa-assign-btn-full" (click)="assignPA(b)" [disabled]="!selectedPAId">
                 <ion-icon slot="start" name="person-add-outline"></ion-icon>
                 Assign &amp; Confirm
               </ion-button>

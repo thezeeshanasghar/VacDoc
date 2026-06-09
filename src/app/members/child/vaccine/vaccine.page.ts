@@ -62,6 +62,9 @@ export class VaccinePage {
   activeAssignment: any = null;
   activeAssignmentLoading: boolean = false;
   reassignPopupOpen: boolean = false;
+  paGuidelines: string = '';
+  pendingAssignPA: any = null;
+  pendingReassignPA: any = null;
   paymentPopupOpen: boolean = false;
   paymentTargetScheduleId: number = null;
   paymentTargetScheduleIds: number[] = [];
@@ -1030,15 +1033,25 @@ this.downloadSpecialPdf();
       this.toastService.create('No PAs assigned to this clinic', 'warning');
       return;
     }
-    if (this.clinicPAs.length === 1) {
-      this.doAssign(this.clinicPAs[0]);
-      return;
-    }
+    this.paGuidelines = '';
+    this.pendingAssignPA = null;
     this.assignPopupOpen = true;
+  }
+
+  selectPendingAssign(pa: any) {
+    this.pendingAssignPA = pa;
+  }
+
+  confirmAssign() {
+    if (!this.pendingAssignPA) { return; }
+    this.doAssign(this.pendingAssignPA);
+    this.pendingAssignPA = null;
   }
 
   closeAssignPopup() {
     this.assignPopupOpen = false;
+    this.pendingAssignPA = null;
+    this.paGuidelines = '';
   }
 
   private loadInvoiceExistence() {
@@ -1173,8 +1186,9 @@ this.downloadSpecialPdf();
       ClinicId: this.clinicId,
       PersonalAssistantId: pa.Id,
       ChildId: Number(this.childId),
-      Notes: ''
+      Notes: this.paGuidelines || ''
     };
+    this.paGuidelines = '';
     this.paService.createAssignment(payload).subscribe(res => {
       if (res && res.IsSuccess) {
         this.loadActiveAssignment(() => {
@@ -1250,11 +1264,25 @@ this.downloadSpecialPdf();
       this.toastService.create('No PAs available at this clinic', 'warning');
       return;
     }
+    this.paGuidelines = '';
+    this.pendingReassignPA = null;
     this.reassignPopupOpen = true;
+  }
+
+  selectPendingReassign(pa: any) {
+    this.pendingReassignPA = pa;
+  }
+
+  confirmReassign() {
+    if (!this.pendingReassignPA) { return; }
+    this.doReassign(this.pendingReassignPA);
+    this.pendingReassignPA = null;
   }
 
   closeReassignPopup() {
     this.reassignPopupOpen = false;
+    this.pendingReassignPA = null;
+    this.paGuidelines = '';
   }
 
   async doReassign(pa: any) {

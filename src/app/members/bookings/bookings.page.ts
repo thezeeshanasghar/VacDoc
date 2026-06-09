@@ -27,6 +27,7 @@ export class BookingsPage {
   doctorId: number = 0;
   paList: any[] = [];
   selectedPAId: number = 0;
+  paGuidelines: string = '';
 
   constructor(
     public loadingController: LoadingController,
@@ -92,7 +93,7 @@ export class BookingsPage {
       this.toastService.create('Select a PA first.', 'danger');
       return;
     }
-    var notes = 'BookingId:' + booking.Id + ' | ' + booking.Vaccines;
+    var notes = (this.paGuidelines || '').trim() || ('BookingId:' + booking.Id + ' | ' + booking.Vaccines);
     this.bookingService.confirm(booking.Id, this.doctorComment).subscribe(
       (res) => {
         if (res && res.IsSuccess) {
@@ -109,6 +110,7 @@ export class BookingsPage {
               if (r && r.IsSuccess) {
                 this.expandedId = 0;
                 this.selectedPAId = 0;
+                this.paGuidelines = '';
                 this.toastService.create('PA assigned and booking confirmed.');
               } else {
                 this.toastService.create('Booking confirmed but PA assignment failed.', 'warning');

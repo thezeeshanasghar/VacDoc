@@ -249,11 +249,31 @@
     <ion-icon name="close-outline" class="assign-popup-close" (click)="closeAssignPopup()"></ion-icon>
   </div>
   <div class="assign-popup-list">
-    <div *ngFor="let pa of clinicPAs" class="assign-pa-row" (click)="doAssign(pa)">
+    <div *ngFor="let pa of clinicPAs"
+      class="assign-pa-row"
+      [class.assign-pa-row--selected]="pendingAssignPA && pendingAssignPA.Id === pa.Id"
+      (click)="selectPendingAssign(pa)">
       <ion-icon name="person-circle-outline" class="assign-pa-icon"></ion-icon>
       <span class="assign-pa-name">{{ pa.Name }}</span>
-      <ion-icon name="chevron-forward-outline" class="assign-pa-arrow"></ion-icon>
+      <ion-icon
+        [name]="pendingAssignPA && pendingAssignPA.Id === pa.Id ? 'checkmark-circle-outline' : 'chevron-forward-outline'"
+        class="assign-pa-arrow"
+        [class.assign-pa-arrow--checked]="pendingAssignPA && pendingAssignPA.Id === pa.Id">
+      </ion-icon>
     </div>
+  </div>
+  <div class="assign-guidelines-box" *ngIf="pendingAssignPA">
+    <div class="assign-guidelines-label">Guidelines for PA <span class="assign-guidelines-optional">(optional)</span></div>
+    <textarea
+      class="assign-guidelines-textarea"
+      [(ngModel)]="paGuidelines"
+      placeholder="Describe the task, special instructions, or notes for the PA..."
+      rows="3">
+    </textarea>
+    <ion-button expand="block" size="small" color="primary" class="assign-confirm-btn" (click)="confirmAssign()">
+      <ion-icon slot="start" name="person-add-outline"></ion-icon>
+      Confirm Assignment
+    </ion-button>
   </div>
 </div>
 
@@ -265,10 +285,30 @@
     <ion-icon name="close-outline" class="assign-popup-close" (click)="closeReassignPopup()"></ion-icon>
   </div>
   <div class="assign-popup-list">
-    <div *ngFor="let pa of clinicPAs" class="assign-pa-row" (click)="doReassign(pa)">
+    <div *ngFor="let pa of clinicPAs"
+      class="assign-pa-row"
+      [class.assign-pa-row--selected]="pendingReassignPA && pendingReassignPA.Id === pa.Id"
+      (click)="selectPendingReassign(pa)">
       <ion-icon name="person-circle-outline" class="assign-pa-icon"></ion-icon>
       <span class="assign-pa-name">{{ pa.Name }}</span>
-      <ion-icon name="chevron-forward-outline" class="assign-pa-arrow"></ion-icon>
+      <ion-icon
+        [name]="pendingReassignPA && pendingReassignPA.Id === pa.Id ? 'checkmark-circle-outline' : 'chevron-forward-outline'"
+        class="assign-pa-arrow"
+        [class.assign-pa-arrow--checked]="pendingReassignPA && pendingReassignPA.Id === pa.Id">
+      </ion-icon>
     </div>
+  </div>
+  <div class="assign-guidelines-box" *ngIf="pendingReassignPA">
+    <div class="assign-guidelines-label">Guidelines for PA <span class="assign-guidelines-optional">(optional)</span></div>
+    <textarea
+      class="assign-guidelines-textarea"
+      [(ngModel)]="paGuidelines"
+      placeholder="Describe the task, special instructions, or notes for the PA..."
+      rows="3">
+    </textarea>
+    <ion-button expand="block" size="small" color="primary" class="assign-confirm-btn" (click)="confirmReassign()">
+      <ion-icon slot="start" name="swap-horizontal-outline"></ion-icon>
+      Confirm Reassignment
+    </ion-button>
   </div>
 </div>
