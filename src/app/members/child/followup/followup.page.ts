@@ -147,6 +147,12 @@ export class FollowupPage implements OnInit {
     
   }
   
+  formatVisitDate(dateStr: string): string {
+    if (!dateStr) { return ''; }
+    const parsed = moment(dateStr, 'DD-MM-YYYY');
+    return parsed.isValid() ? parsed.format('DD MMM YYYY') : dateStr;
+  }
+
   downloadFollowUpPdf(childId) {
     this.followupService.downloadFollowUpPdf(childId).subscribe(blob => {
       const url = window.URL.createObjectURL(blob);

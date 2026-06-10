@@ -23,7 +23,7 @@
     <div class="visit-card-header">
       <span class="visit-number">Visit #{{ childData.length - i }}</span>
       <div class="visit-header-right">
-        <span class="visit-date">{{item.CurrentVisitDate}}</span>
+        <span class="visit-date">{{formatVisitDate(item.CurrentVisitDate)}}</span>
         <ion-icon *ngIf="canDeleteFollowup" name="trash-outline" class="delete-icon"
           (click)="alertforDeleteFollowup(item.Id)"></ion-icon>
       </div>
@@ -38,7 +38,7 @@
 
       <div class="visit-row" *ngIf="item.NextVisitDate">
         <span class="visit-label">Next Visit</span>
-        <span class="visit-value visit-value--next">{{item.NextVisitDate}}</span>
+        <span class="visit-value visit-value--next">{{formatVisitDate(item.NextVisitDate)}}</span>
       </div>
 
       <div class="visit-stats" *ngIf="item.Weight || item.Height || item.OFC || item.BloodSugar || item.BloodPressure">
