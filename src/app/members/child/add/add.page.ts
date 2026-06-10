@@ -936,20 +936,17 @@ filterCountryCodes(value: string) {
           if (res.ResponseData.Gender == "Girl")
             sms1 +=
               "Miss. " + this.titlecasePipe.transform(res.ResponseData.Name);
-          sms1 += " has been registered Successfully at ";
-          if (res.ResponseData.DoctorId === 1) {
-            sms1 += "Vaccine.pk";
-          } else {
-            sms1 += "https://vaccinationcentre.com/";
-          }
+          sms1 += ", your account has been created successfully.\n";
           sms1 +=
-            "\nId: +" +
+            "\n👤 User ID: +" +
             res.ResponseData.CountryCode +
-            res.ResponseData.MobileNumber +
-            " \nPassword: " +
-            res.ResponseData.Password;
-          sms1 += "\nClinic Phone Number: " + this.clinic.PhoneNumber;
-          sms1 += "\nWeb Link:  https://client.vaccinationcentre.com/";
+            res.ResponseData.MobileNumber;
+          sms1 += "\n🔑 Password: " + res.ResponseData.Password;
+          sms1 += "\n\n🌐 Login:\nhttps://client.vaccinationcentre.com/";
+          sms1 +=
+            "\n\nYou can now view vaccination records, upcoming vaccines, follow-up schedules, and receive reminders.";
+          sms1 += "\n\n📞 Clinic: " + this.clinic.PhoneNumber;
+          sms1 += "\n\nThank you.";
           console.log(sms1);
           const ChildId = res.ResponseData.Id;
           console.log("child id", ChildId);

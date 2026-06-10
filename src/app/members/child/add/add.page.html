@@ -63,7 +63,7 @@
         <mat-form-field appearance="outline" class="custom-input-item" (click)="picker.open()">
           <!-- <mat-label>Date of Birth <span class="required-asterisk">*</span></mat-label> -->
           <input matInput formControlName="DOB" [matDatepicker]="picker" placeholder="Date of Birth *" [max]="todaydate"
-            (dateChange)="checkEpi()" class="custom-input" />
+            (dateChange)="checkEpi()" class="custom-input" readonly />
           <!-- <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle> -->
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
