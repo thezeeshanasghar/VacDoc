@@ -25,8 +25,9 @@ export class BaseService {
     }
     // return an observable with a user-facing error message
     const MAX_LENGTH = 200;
-    let displayError = error.error.substring(0, MAX_LENGTH);
-    if (error.error.length > MAX_LENGTH) {
+    const errorBody = typeof error.error === 'string' ? error.error : JSON.stringify(error.error);
+    let displayError = errorBody.substring(0, MAX_LENGTH);
+    if (errorBody.length > MAX_LENGTH) {
       displayError += '... (Error message truncated)';
     }
     return throwError('Something bad happened; please try again later. ' + displayError);

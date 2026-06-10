@@ -12,6 +12,14 @@
   padding: 16px;
 }
 
+.patient-back-button {
+  flex-shrink: 0;
+  --color: var(--vac-blue);
+  --padding-start: 0;
+  --padding-end: 0;
+  margin-inline-end: -8px;
+}
+
 .patient-avatar {
   flex-shrink: 0;
   width: 52px;
