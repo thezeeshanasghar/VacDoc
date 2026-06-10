@@ -1,0 +1,113 @@
+// ── Empty state ───────────────────────────────────────────────────────────────
+.empty-state {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  color: var(--vac-border);
+}
+
+.empty-text {
+  color: #94a6b8;
+  font-size: 15px;
+  margin-top: 8px;
+}
+
+// ── Visit card ───────────────────────────────────────────────────────────────
+.visit-card {
+  border-radius: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(11, 45, 92, 0.08);
+}
+
+.visit-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--vac-surface);
+}
+
+.visit-number {
+  font-size: 14px;
+  font-weight: 700;
+  color: #5c6b7a;
+}
+
+.visit-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.visit-date {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--vac-black);
+}
+
+.delete-icon {
+  font-size: 20px;
+  color: var(--vac-red);
+  cursor: pointer;
+}
+
+.visit-card-content {
+  padding: 12px 16px 16px;
+}
+
+.visit-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+
+.visit-label {
+  font-size: 14px;
+  color: #5c6b7a;
+}
+
+.visit-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--vac-black);
+}
+
+.visit-value--next {
+  color: var(--vac-blue);
+}
+
+// ── Stat chips ───────────────────────────────────────────────────────────────
+.visit-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.stat-chip {
+  flex: 1 1 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: #eef4fd;
+  border-radius: 10px;
+  padding: 10px 8px;
+  min-width: 90px;
+}
+
+.stat-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--vac-blue);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #5c6b7a;
+}

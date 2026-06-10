@@ -9,7 +9,8 @@ import { AlertService } from 'src/app/shared/alert.service';
 import { PaService } from 'src/app/services/pa.service';
 @Component({
   selector: 'app-followup',
-  templateUrl: './followup.page.html'
+  templateUrl: './followup.page.html',
+  styleUrls: ['./followup.page.scss']
 })
 export class FollowupPage implements OnInit {
 

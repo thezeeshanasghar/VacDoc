@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button [defaultHref]="'/members/child/vaccine/' + childId"></ion-back-button>
     </ion-buttons>
-    <ion-title>Follow Up</ion-title>
+    <ion-title>Follow-up Visits</ion-title>
     <ion-buttons slot="end" style="margin-right: 10px;">
       <ion-icon *ngIf="canDownloadFollowup" color="light" name="download"
         (click)="downloadFollowUpPdf(childId)" style="font-size: 25px;"></ion-icon>
@@ -11,61 +11,57 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding followup-content">
 
-  <div *ngIf="!childData || childData.length === 0" style="text-align:center; margin-top: 40px;">
-    <ion-icon name="clipboard-outline" style="font-size: 48px; color: #ccc;"></ion-icon>
-    <p style="color: #999; font-size: 15px; margin-top: 8px;">No follow-up records found.</p>
+  <div *ngIf="!childData || childData.length === 0" class="empty-state">
+    <ion-icon name="clipboard-outline" class="empty-icon"></ion-icon>
+    <p class="empty-text">No follow-up records found.</p>
   </div>
 
-  <ion-card *ngFor="let item of childData" style="border-radius: 12px; margin-bottom: 10px;">
-    <ion-card-header style="padding-bottom: 4px;">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <ion-card-title style="font-size: 16px; font-weight: 600;">
-          {{item.Child.Name}}
-        </ion-card-title>
-        <ion-icon *ngIf="canDeleteFollowup" name="trash-outline" color="danger"
-          (click)="alertforDeleteFollowup(item.Id)"
-          style="font-size: 22px; cursor: pointer;"></ion-icon>
+  <ion-card *ngFor="let item of childData; let i = index" class="visit-card">
+    <div class="visit-card-header">
+      <span class="visit-number">Visit #{{ childData.length - i }}</span>
+      <div class="visit-header-right">
+        <span class="visit-date">{{item.CurrentVisitDate}}</span>
+        <ion-icon *ngIf="canDeleteFollowup" name="trash-outline" class="delete-icon"
+          (click)="alertforDeleteFollowup(item.Id)"></ion-icon>
       </div>
-    </ion-card-header>
+    </div>
 
-    <ion-card-content style="padding-top: 4px;">
+    <ion-card-content class="visit-card-content">
 
-      <p style="margin: 4px 0; font-size: 14px;">
-        <ion-icon name="calendar-outline" color="primary" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
-        <span style="color: #666;">Visit:</span>
-        &nbsp;<span style="color: rgb(55, 231, 10); font-weight: 500;">{{item.CurrentVisitDate}}</span>
-      </p>
-
-      <p style="margin: 4px 0; font-size: 14px;">
-        <ion-icon name="medical-outline" color="primary" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
-        <span style="color: #666;">Diagnosis:</span>
-        &nbsp;<strong>{{item.Disease}}</strong>
-      </p>
-
-      <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px;">
-        <span *ngIf="item.Weight" style="font-size: 13px; background: #f0f4ff; border-radius: 8px; padding: 3px 10px;">
-          <ion-icon name="barbell-outline" style="vertical-align: middle; margin-right: 3px; color: #4a90d9;"></ion-icon>
-          {{item.Weight}} kg
-          <span *ngIf="item.WeightMin" style="color: #999; font-size: 11px;">({{item.WeightMin}}-{{item.WeightMax}})</span>
-        </span>
-        <span *ngIf="item.Height" style="font-size: 13px; background: #f0f4ff; border-radius: 8px; padding: 3px 10px;">
-          <ion-icon name="resize-outline" style="vertical-align: middle; margin-right: 3px; color: #4a90d9;"></ion-icon>
-          {{item.Height}} cm
-          <span *ngIf="item.HeightMin" style="color: #999; font-size: 11px;">({{item.HeightMin}}-{{item.HeightMax}})</span>
-        </span>
-        <span *ngIf="item.OFC" style="font-size: 13px; background: #f0f4ff; border-radius: 8px; padding: 3px 10px;">
-          <ion-icon name="ellipse-outline" style="vertical-align: middle; margin-right: 3px; color: #4a90d9;"></ion-icon>
-          OFC: {{item.OFC}} cm
-          <span *ngIf="item.OfcMin" style="color: #999; font-size: 11px;">({{item.OfcMin}}-{{item.OfcMax}})</span>
-        </span>
+      <div class="visit-row">
+        <span class="visit-label">Reason / Disease</span>
+        <span class="visit-value">{{item.Disease}}</span>
       </div>
 
-      <p *ngIf="item.NextVisitDate" style="margin: 6px 0 0 0; font-size: 13px; color: #888;">
-        <ion-icon name="arrow-forward-circle-outline" color="primary" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
-        Next visit: <span style="color: #e67e22; font-weight: 500;">{{item.NextVisitDate}}</span>
-      </p>
+      <div class="visit-row" *ngIf="item.NextVisitDate">
+        <span class="visit-label">Next Visit</span>
+        <span class="visit-value visit-value--next">{{item.NextVisitDate}}</span>
+      </div>
+
+      <div class="visit-stats" *ngIf="item.Weight || item.Height || item.OFC || item.BloodSugar || item.BloodPressure">
+        <div class="stat-chip" *ngIf="item.Weight">
+          <span class="stat-value">{{item.Weight}} kg</span>
+          <span class="stat-label">Weight</span>
+        </div>
+        <div class="stat-chip" *ngIf="item.Height">
+          <span class="stat-value">{{item.Height}} cm</span>
+          <span class="stat-label">Height</span>
+        </div>
+        <div class="stat-chip" *ngIf="item.OFC">
+          <span class="stat-value">{{item.OFC}} cm</span>
+          <span class="stat-label">OFC</span>
+        </div>
+        <div class="stat-chip" *ngIf="item.BloodSugar">
+          <span class="stat-value">{{item.BloodSugar}}</span>
+          <span class="stat-label">Blood Sugar</span>
+        </div>
+        <div class="stat-chip" *ngIf="item.BloodPressure">
+          <span class="stat-value">{{item.BloodPressure}}</span>
+          <span class="stat-label">BP</span>
+        </div>
+      </div>
 
     </ion-card-content>
   </ion-card>
