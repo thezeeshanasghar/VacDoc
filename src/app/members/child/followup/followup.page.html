@@ -13,6 +13,19 @@
 
 <ion-content class="ion-padding followup-content">
 
+  <ion-card class="patient-card">
+    <div class="patient-card-content">
+      <div class="patient-avatar">{{childInitials}}</div>
+      <div class="patient-info">
+        <span class="patient-section-title">Follow-up Record</span>
+        <span class="patient-name">{{childName}}</span>
+        <span class="patient-dob" *ngIf="childDOB">Date of birth: {{childDOB}}</span>
+      </div>
+      <ion-icon *ngIf="canDownloadFollowup" name="print-outline" class="patient-print-icon"
+        (click)="downloadFollowUpPdf(childId)"></ion-icon>
+    </div>
+  </ion-card>
+
   <div *ngIf="!childData || childData.length === 0" class="empty-state">
     <ion-icon name="clipboard-outline" class="empty-icon"></ion-icon>
     <p class="empty-text">No follow-up records found.</p>

@@ -7,6 +7,8 @@ import { ActivatedRoute } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import { AlertService } from 'src/app/shared/alert.service';
 import { PaService } from 'src/app/services/pa.service';
+import { ChildService } from 'src/app/services/child.service';
+import * as moment from 'moment';
 @Component({
   selector: 'app-followup',
   templateUrl: './followup.page.html',
@@ -17,6 +19,9 @@ export class FollowupPage implements OnInit {
   childData: any;
   doctorId: any;
   childId: any;
+  childName: string;
+  childDOB: string;
+  childInitials: string;
   canAddFollowup = true;
   canDeleteFollowup = true;
   canDownloadFollowup = true;
@@ -28,6 +33,7 @@ export class FollowupPage implements OnInit {
     private storage: Storage,
     private alertService: AlertService,
     private paService: PaService,
+    private childService: ChildService,
   ) { }
 
   ngOnInit() {
@@ -36,6 +42,7 @@ export class FollowupPage implements OnInit {
       this.doctorId = val;
       this.getfollowupchild();
     });
+    this.getChildInfo();
     this.storage.get(environment.USER).then(user => {
       if (user && user.UserType === 'PA') {
         this.paService.getPaPermissions(Number(user.PAId)).subscribe(perm => {
@@ -43,6 +50,22 @@ export class FollowupPage implements OnInit {
           this.canDeleteFollowup   = (perm && perm.DeleteFollowUp)      || false;
           this.canDownloadFollowup = (perm && perm.DownloadFollowUpPdf) || false;
         });
+      }
+    });
+  }
+
+  getChildInfo() {
+    this.childService.getChildById(this.childId).subscribe(res => {
+      if (res.IsSuccess) {
+        const child = res.ResponseData;
+        this.childName = child.Name;
+        this.childDOB = moment(child.DOB).format('DD MMM YYYY');
+        this.childInitials = (child.Name || '')
+          .split(' ')
+          .filter(part => part.length > 0)
+          .map(part => part[0].toUpperCase())
+          .slice(0, 2)
+          .join('');
       }
     });
   }
@@ -125,8 +148,6 @@ export class FollowupPage implements OnInit {
   }
   
   downloadFollowUpPdf(childId) {
-    debugger
-    childId = this.childId; 
     this.followupService.downloadFollowUpPdf(childId).subscribe(blob => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');

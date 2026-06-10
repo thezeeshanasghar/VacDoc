@@ -1,3 +1,68 @@
+// ── Patient profile card ─────────────────────────────────────────────────────
+.patient-card {
+  border-radius: 14px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(11, 45, 92, 0.08);
+}
+
+.patient-card-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+}
+
+.patient-avatar {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0B2D5C 0%, #0D6EAD 100%);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.patient-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.patient-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--vac-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.patient-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--vac-black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.patient-dob {
+  font-size: 13px;
+  color: #5c6b7a;
+}
+
+.patient-print-icon {
+  flex-shrink: 0;
+  font-size: 24px;
+  color: var(--vac-blue);
+  cursor: pointer;
+}
+
 // ── Empty state ───────────────────────────────────────────────────────────────
 .empty-state {
   text-align: center;
