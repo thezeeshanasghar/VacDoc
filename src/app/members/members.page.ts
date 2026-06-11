@@ -493,6 +493,7 @@ export class MembersPage implements OnInit {
   hasClinics: boolean = false; // Flag to check if clinics are available
   defaultImageUrl: string = 'assets/male.png';
   user: any; // Declare the user property
+  hasPA: boolean = false; // Flag to check if doctor has any Personal Assistants
   public profile: any = [];
   public appPages: any = [];
   public doctorPages: any = [];
@@ -603,6 +604,12 @@ export class MembersPage implements OnInit {
           this.Name = this.doctorData.DisplayName;
           const clinics = this.doctorData.Clinics;
           this.hasClinics = clinics && clinics.length > 0;
+          try {
+            const pas = await this.paService.getPAsByDoctorId(this.DoctorId).toPromise();
+            this.hasPA = (pas || []).length > 0;
+          } catch (e) {
+            this.hasPA = false;
+          }
           const permissions = await this.checkPermissions(this.user.PAId);
           if (permissions) {
             const { AllowClinic, AllowAnalytics, AllowVacation, AllowSchedule, AllowChild } = permissions;
@@ -721,11 +728,6 @@ export class MembersPage implements OnInit {
 
             this.childPages = [
               {
-                title: "Unapproved",
-                url: "/members/child/unapprove",
-                icon: "alert-circle-outline"
-              },
-              {
                 title: "Bookings",
                 url: "/members/bookings",
                 icon: "calendar-outline"
@@ -736,7 +738,14 @@ export class MembersPage implements OnInit {
                 icon: "notifications-outline"
               }
             ];
-            this.loadPendingCount();
+            if (this.hasPA) {
+              this.childPages.unshift({
+                title: "Unapproved",
+                url: "/members/child/unapprove",
+                icon: "alert-circle-outline"
+              });
+              this.loadPendingCount();
+            }
             this.loadPendingBookingsCount();
             this.loadUnreadNotificationCount();
             if (assistantAllowed) {

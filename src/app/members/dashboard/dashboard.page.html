@@ -20,8 +20,8 @@
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
-      <!-- ── Unapproved (Doctor only) ─────────────────────────── -->
-      <div *ngIf="!isPa" routerLink="/members/child/unapprove" class="dash-card card-unapproved">
+      <!-- ── Unapproved (Doctor only, requires at least one PA) ── -->
+      <div *ngIf="!isPa && hasPA" routerLink="/members/child/unapprove" class="dash-card card-unapproved">
         <div class="dash-card-icon" style="position:relative">
           <ion-icon name="alert-circle-outline"></ion-icon>
           <span *ngIf="pendingApprovalsCount > 0" class="assignment-badge">{{ pendingApprovalsCount }}</span>

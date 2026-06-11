@@ -51,6 +51,7 @@ export class DashboardPage implements OnInit {
   showPersonalAssistant: boolean = false;
   assignmentCount: number = 0;
   pendingApprovalsCount: number = 0;
+  hasPA: boolean = false;
 
   constructor(
     private loadingController: LoadingController,
@@ -142,7 +143,15 @@ export class DashboardPage implements OnInit {
       this.showPatients  = true;
       this.showAlerts    = true;
       this.showSchedule  = true;
-      this.loadPendingCount();
+      try {
+        const pas = await this.paService.getPAsByDoctorId(String(this.doctorId)).toPromise();
+        this.hasPA = (pas || []).length > 0;
+      } catch (e) {
+        this.hasPA = false;
+      }
+      if (this.hasPA) {
+        this.loadPendingCount();
+      }
     }
   }
 
