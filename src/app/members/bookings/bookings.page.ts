@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { LoadingController, AlertController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
+import { forkJoin } from 'rxjs';
 import { environment } from 'src/environments/environment.prod';
 import { ToastService } from 'src/app/shared/toast.service';
 import { BookingService } from 'src/app/services/booking.service';
@@ -18,6 +19,7 @@ export class BookingsPage {
   selectedStatus: string = '';
   selectedType: string = '';
   clinic: any;
+  clinics: any[] = [];
   usertype: any;
   expandedId: number = 0;
   doctorComment: string = '';
@@ -46,6 +48,7 @@ export class BookingsPage {
         this.paService.getPaClinics(Number(user.PAId)).subscribe(
           (res) => {
             if (res && res.IsSuccess && res.ResponseData && res.ResponseData.length > 0) {
+              this.clinics = res.ResponseData;
               const online = res.ResponseData.find((c: any) => c.IsOnline);
               this.clinic = online ? online : res.ResponseData[0];
               this.loadBookings();
@@ -171,11 +174,19 @@ export class BookingsPage {
   }
 
   loadBookings() {
-    if (!this.clinic || !this.clinic.Id) { return; }
+    if (this.usertype && this.usertype.UserType === 'PA') {
+      this.loadBookingsForPA();
+    } else {
+      this.loadBookingsForDoctor();
+    }
+  }
+
+  private loadBookingsForDoctor() {
+    if (!this.doctorId) { return; }
     this.loadingController.create({ message: 'Loading bookings...' }).then((loading) => {
       loading.present();
-      this.bookingService.getByClinic(
-        this.clinic.Id,
+      this.bookingService.getByDoctor(
+        this.doctorId,
         this.selectedStatus || null,
         this.selectedType || null
       ).subscribe(
@@ -186,6 +197,33 @@ export class BookingsPage {
           } else {
             this.toastService.create((res && res.Message) ? res.Message : 'Failed to load bookings', 'danger');
           }
+        },
+        (err) => {
+          loading.dismiss();
+          this.toastService.create('Failed to load bookings', 'danger');
+        }
+      );
+    });
+  }
+
+  private loadBookingsForPA() {
+    if (!this.clinics || this.clinics.length === 0) { return; }
+    this.loadingController.create({ message: 'Loading bookings...' }).then((loading) => {
+      loading.present();
+      const requests = this.clinics.map((c: any) =>
+        this.bookingService.getByClinic(c.Id, this.selectedStatus || null, this.selectedType || null)
+      );
+      forkJoin(requests).subscribe(
+        (results: any[]) => {
+          loading.dismiss();
+          let merged: any[] = [];
+          for (const res of results) {
+            if (res && res.IsSuccess) {
+              merged = merged.concat(res.ResponseData || []);
+            }
+          }
+          merged.sort((a, b) => b.Id - a.Id);
+          this.bookings = merged;
         },
         (err) => {
           loading.dismiss();

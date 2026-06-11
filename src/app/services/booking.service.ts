@@ -26,6 +26,18 @@ export class BookingService extends BaseService {
     );
   }
 
+  getByDoctor(doctorId: number, status?: string, type?: string): Observable<any> {
+    let url = this.API + '/doctor/' + doctorId;
+    const params: string[] = [];
+    if (status) { params.push('status=' + status); }
+    if (type) { params.push('type=' + type); }
+    if (params.length > 0) { url = url + '?' + params.join('&'); }
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
   getSingle(id: number): Observable<any> {
     return this.http.get(this.API + '/' + id, this.httpOptions).pipe(
       map(this.extractData),
