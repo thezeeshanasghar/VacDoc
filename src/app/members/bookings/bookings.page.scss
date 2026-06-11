@@ -158,6 +158,14 @@
   &.chip-cancelled { background: #fde8e8; color: #c62828; }
 }
 
+.chip-clinic-name {
+  background: #f1f3f4;
+  color: #5f6368;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 600;
+}
+
 // ── Expanded panel ───────────────────────────────────────────────────────────
 
 .row-expanded {

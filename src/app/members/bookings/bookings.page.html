@@ -84,6 +84,9 @@
               <span class="chip chip-status" [ngClass]="'chip-' + (b.Status | lowercase)">
                 {{b.Status | uppercase}}
               </span>
+              <span class="chip chip-clinic-name" *ngIf="clinics.length > 1 && b.ClinicName">
+                {{b.ClinicName}}
+              </span>
             </div>
             <div class="row-vaccines">{{b.Vaccines}}</div>
             <div class="row-meta">

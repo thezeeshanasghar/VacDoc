@@ -64,6 +64,7 @@ export class BookingsPage {
             this.loadBookings();
             this.loadHomeCities();
             this.loadPAs();
+            this.loadClinics();
           });
         });
       }
@@ -85,6 +86,18 @@ export class BookingsPage {
       (res) => {
         if (res && res.IsSuccess) {
           this.paList = (res.ResponseData || []).filter(function(p: any) { return p.IsActive !== false; });
+        }
+      },
+      (err) => {}
+    );
+  }
+
+  loadClinics() {
+    if (!this.doctorId) { return; }
+    this.clinicService.getClinics(this.doctorId).subscribe(
+      (res) => {
+        if (res && res.IsSuccess) {
+          this.clinics = res.ResponseData || [];
         }
       },
       (err) => {}
