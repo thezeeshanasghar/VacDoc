@@ -13,6 +13,7 @@ import { ChildService } from "src/app/services/child.service";
 import { StockService } from "src/app/services/stock.service";
 import { ClinicService } from "src/app/services/clinic.service";
 import { PaService } from "src/app/services/pa.service";
+import { FollowupService } from "src/app/services/followup.service";
 
 @Component({
   selector: "app-bulk",
@@ -113,7 +114,8 @@ export class BulkPage implements OnInit {
     private childService: ChildService,
     private stockService: StockService,
     private clinicService: ClinicService,
-    private paService: PaService
+    private paService: PaService,
+    private followupService: FollowupService
   ) {}
 
   ngOnInit() {
@@ -528,8 +530,10 @@ export class BulkPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.toastService.create("Successfully Update");
-          this.validationOfInfiniteVaccine();
-          loading.dismiss();
+          this.autoCreateFollowUpForBulk(() => {
+            this.validationOfInfiniteVaccine();
+            loading.dismiss();
+          });
         } else {
           this.toastService.create(this.getApiErrorMessage(res, "Error: failed to fill vaccine"), "danger");
           loading.dismiss();
@@ -540,6 +544,28 @@ export class BulkPage implements OnInit {
         loading.dismiss();
       }
     );
+  }
+
+  private autoCreateFollowUpForBulk(onDone: () => void): void {
+    this.storage.get(environment.DOCTOR_Id).then(realDoctorId => {
+      const today = moment().format('DD-MM-YYYY');
+      // NextVisitDate is always null for auto-vaccine follow-up rows: vaccine
+      // reminders are driven by the Schedule table, not by FollowUp.NextVisitDate.
+      const payload = {
+        ChildId: Number(this.childId),
+        DoctorId: Number(realDoctorId),
+        Disease: 'Vaccination',
+        CurrentVisitDate: today,
+        NextVisitDate: null,
+        Weight: this.fg.value.Weight ? Number(this.fg.value.Weight) : null,
+        Height: this.fg.value.Height ? Number(this.fg.value.Height) : null,
+        OFC: this.fg.value.Circle ? Number(this.fg.value.Circle) : null,
+      };
+      this.followupService.addFollowupByChild(payload).subscribe(
+        () => { onDone(); },
+        err => { console.error('Auto follow-up create failed (bulk):', err); onDone(); }
+      );
+    });
   }
 
   private getApiErrorMessage(source: any, fallback: string): string {

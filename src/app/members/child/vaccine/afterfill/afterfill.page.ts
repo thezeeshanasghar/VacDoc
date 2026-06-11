@@ -53,6 +53,7 @@ export class AfterFillPage implements OnInit {
   allowInventory: boolean = true;
   scheduleDatecheck: string;
   clinicId: number;
+  isSameDayVisit: boolean = true;
 
   constructor(
     public loadingController: LoadingController,
@@ -136,6 +137,22 @@ export class AfterFillPage implements OnInit {
           this.vaccineData = res.ResponseData;
           console.log('Vaccine Data:', this.vaccineData);
           this.childId=this.vaccineData.ChildId;
+
+          // After-fill is same-day-only (PKT = UTC+5): vitals can only be edited on the
+          // same calendar day the dose was given. DoneAt is the authoritative UTC
+          // timestamp set when IsDone was marked; fall back to GivenDate if missing.
+          const todayPkt = moment().utcOffset(5 * 60).format('YYYY-MM-DD');
+          const visitDateSource = this.vaccineData.DoneAt
+            ? moment.utc(this.vaccineData.DoneAt).utcOffset(5 * 60)
+            : moment(this.vaccineData.GivenDate);
+          const visitDatePkt = visitDateSource.format('YYYY-MM-DD');
+          this.isSameDayVisit = !!this.vaccineData.IsDone && visitDatePkt === todayPkt;
+
+          if (!this.isSameDayVisit) {
+            this.toastService.create('This visit was not completed today. Vitals can only be edited on the same day.', 'danger');
+            this.fg.disable();
+          }
+
           this.fg.controls['Weight'].setValue(this.vaccineData.Weight);
           this.fg.controls['Height'].setValue(this.vaccineData.Height);
           this.fg.controls['Circle'].setValue(this.vaccineData.Circle);
@@ -315,6 +332,11 @@ export class AfterFillPage implements OnInit {
   }
 
   async fillVaccine() {
+    if (!this.isSameDayVisit) {
+      this.toastService.create('This visit was not completed today. Vitals can only be edited on the same day.', 'danger');
+      return;
+    }
+
     const loading = await this.loadingController.create({
       message: 'Updating'
     });
@@ -341,12 +363,12 @@ export class AfterFillPage implements OnInit {
 
         } else {
           loading.dismiss();
-          this.toastService.create("Error: Failed to update injection");
+          this.toastService.create(res.Message || "Error: Failed to update injection", 'danger');
         }
       },
       err => {
         loading.dismiss();
-        this.toastService.create("Error: Server Failure");
+        this.toastService.create("Error: Server Failure", 'danger');
       }
     );
   }
