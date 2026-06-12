@@ -443,6 +443,10 @@
     background: #E8EAF6;
     color: #283593;
   }
+  &.badge-awaiting {
+    background: #ECEFF1;
+    color: #607D8B;
+  }
 }
 
 .confirm-ts {
@@ -461,6 +465,12 @@
 .row-amendment {
   background: #FFFDE7;
   border-left: 3px solid #F9A825;
+}
+
+// Awaiting invoice rows — informational only, muted
+.row-awaiting {
+  background: #FAFAFA;
+  border-left: 3px solid #B0BEC5;
 }
 
 .amount-sub-detail {

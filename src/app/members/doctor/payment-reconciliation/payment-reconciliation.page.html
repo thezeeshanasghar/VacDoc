@@ -189,7 +189,8 @@
               <tr *ngFor="let row of filteredRows"
                   [class.row-confirmed]="row.IsConfirmed"
                   [class.row-pending]="!row.IsConfirmed && row.RowType === 'Invoice'"
-                  [class.row-amendment]="row.RowType !== 'Invoice'">
+                  [class.row-amendment]="row.RowType !== 'Invoice' && row.RowType !== 'AwaitingInvoice'"
+                  [class.row-awaiting]="row.RowType === 'AwaitingInvoice'">
                 <!-- Checkbox: only for normal invoice rows -->
                 <td class="col-check">
                   <input type="checkbox"
@@ -205,14 +206,18 @@
                   <div class="patient-pa" *ngIf="row.PaName">{{ row.PaName }}</div>
                 </td>
                 <td class="col-amount">
-                  <span class="amount-val">{{ row.Amount | number:'1.0-0' }}</span>
-                  <!-- For amendment rows show old→new -->
-                  <div *ngIf="row.RowType !== 'Invoice'" class="amount-sub-detail">
-                    {{ row.OldAmount | number:'1.0-0' }} → {{ row.NewAmount | number:'1.0-0' }}
-                  </div>
+                  <span class="amount-val" *ngIf="row.RowType === 'AwaitingInvoice'">—</span>
+                  <ng-container *ngIf="row.RowType !== 'AwaitingInvoice'">
+                    <span class="amount-val">{{ row.Amount | number:'1.0-0' }}</span>
+                    <!-- For amendment rows show old→new -->
+                    <div *ngIf="row.RowType !== 'Invoice'" class="amount-sub-detail">
+                      {{ row.OldAmount | number:'1.0-0' }} → {{ row.NewAmount | number:'1.0-0' }}
+                    </div>
+                  </ng-container>
                 </td>
                 <td class="col-mode">
-                  <span class="badge" [ngClass]="row.PaymentMode === 'Online' ? 'badge-online' : 'badge-cash'">
+                  <span class="amount-val" *ngIf="row.RowType === 'AwaitingInvoice'">—</span>
+                  <span class="badge" *ngIf="row.RowType !== 'AwaitingInvoice'" [ngClass]="row.PaymentMode === 'Online' ? 'badge-online' : 'badge-cash'">
                     {{ row.PaymentMode || '—' }}
                   </span>
                 </td>
@@ -237,6 +242,10 @@
                     <span class="badge badge-edit">Invoice Edit Reversal</span>
                     <div class="pending-sub">Amount1 pending your approval</div>
                   </ng-container>
+                  <!-- Awaiting invoice: assignment exists, nothing to action yet -->
+                  <ng-container *ngIf="row.RowType === 'AwaitingInvoice'">
+                    <span class="badge badge-awaiting">Awaiting Invoice</span>
+                  </ng-container>
                 </td>
                 <td class="col-action">
                   <!-- Normal invoice: Confirm button -->
@@ -248,7 +257,7 @@
                       (click)="confirmPayment(row)">Confirm</button>
                   </ng-container>
                   <!-- Amendment rows: Approve / Reject -->
-                  <ng-container *ngIf="row.RowType !== 'Invoice' && row.AmendmentId">
+                  <ng-container *ngIf="row.RowType !== 'Invoice' && row.RowType !== 'AwaitingInvoice' && row.AmendmentId">
                     <div class="amendment-actions">
                       <button class="btn-approve" (click)="approveAmendment(row)">
                         <ion-icon name="checkmark-outline"></ion-icon> Approve
