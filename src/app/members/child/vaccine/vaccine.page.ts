@@ -1108,14 +1108,17 @@ this.downloadSpecialPdf();
       const yesterdayStr = yest.toISOString().split('T')[0];
 
       return data.some((v) => {
-        if (!v.IsDone || v.IsPaymentCollected || !(v.Amount > 0)) return false;
+        // No per-schedule Amount check here — invoiceExistsMap[date] already confirms an
+        // invoice exists for this visit (e.g. consultation-fee-only invoices have Amount=0
+        // on every schedule row, but still need a payment mode recorded).
+        if (!v.IsDone || v.IsPaymentCollected) return false;
         if (v.PaymentCollectorPaId !== this.paId) return false;
         const doneDay = v.DoneAt ? String(v.DoneAt).split('T')[0] : null;
         return doneDay === todayStr || doneDay === yesterdayStr;
       });
     }
 
-    return data.some(function(v) { return v.IsDone && !v.IsPaymentCollected && v.Amount > 0; });
+    return data.some(function(v) { return v.IsDone && !v.IsPaymentCollected; });
   }
 
   getDoneScheduleId(data: any[]): number {
@@ -1125,9 +1128,10 @@ this.downloadSpecialPdf();
 
   async openPaymentPopup(scheduleId: number, groupVaccines: any[]) {
     this.paymentTargetScheduleId = scheduleId;
-    // Collect ALL done schedule IDs in this group that have an amount — payment is recorded for the whole bill
+    // Collect ALL done schedule IDs in this group — payment mode is recorded for the whole
+    // visit even when individual schedules have Amount=0 (e.g. consultation-fee-only invoices).
     this.paymentTargetScheduleIds = (groupVaccines || [])
-      .filter(function(v) { return v.IsDone && v.Id && v.Amount > 0; })
+      .filter(function(v) { return v.IsDone && v.Id; })
       .map(function(v) { return v.Id; });
     this.paymentDueAmount = 0;
     this.paymentPopupOpen = true;
