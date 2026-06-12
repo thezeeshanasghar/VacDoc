@@ -177,6 +177,7 @@
             <thead>
               <tr>
                 <th class="col-check"></th>
+                <th class="col-delete"></th>
                 <th class="col-date">Date</th>
                 <th class="col-patient">Patient Name</th>
                 <th class="col-amount">Amount</th>
@@ -199,6 +200,11 @@
                     [disabled]="row.IsConfirmed"
                     (change)="toggleRow(row, $any($event.target).checked)"
                     class="row-checkbox">
+                </td>
+                <td class="col-delete">
+                  <button *ngIf="row.AssignmentId" class="btn-delete-assignment" (click)="confirmDeleteAssignment(row)" title="Delete assignment">
+                    <ion-icon name="trash-outline"></ion-icon>
+                  </button>
                 </td>
                 <td class="col-date">{{ formatDate(row.Date) }}</td>
                 <td class="col-patient">
@@ -353,36 +359,6 @@
         <!-- Adjust Payable (only when a specific PA is selected) -->
         <div class="panel-adjust-row" *ngIf="selectedPaId">
           <button class="btn-adjust" (click)="promptAdjust()">&#177; Adjust Payable</button>
-        </div>
-
-        <!-- Manage Assignments (only when a specific PA is selected) -->
-        <div class="panel-assignments" *ngIf="selectedPaId">
-          <div class="panel-subheader">Manage Assignments for {{ selectedPaName }}</div>
-          <div class="assignments-empty" *ngIf="assignmentHistory.length === 0">
-            No assignments found.
-          </div>
-          <table class="assignments-table" *ngIf="assignmentHistory.length > 0">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Patient</th>
-                <th>Status</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let a of assignmentHistory">
-                <td>{{ formatDate(a.AssignedAt) }}</td>
-                <td>{{ a.Name }}</td>
-                <td>{{ a.AssignmentStatus }}</td>
-                <td>
-                  <button class="btn-delete-assignment" (click)="confirmDeleteAssignment(a)" title="Delete assignment">
-                    <ion-icon name="trash-outline"></ion-icon>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
 
