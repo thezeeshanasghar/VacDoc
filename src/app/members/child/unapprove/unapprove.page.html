@@ -98,6 +98,15 @@
       </div>
     </div>
 
+    <!-- Approve all pending vaccines for this patient (shown when there are multiple) -->
+    <div class="unap-vax-approve-all" *ngIf="usertype?.UserType !== 'PA' && getPendingSchedules(child).length > 1">
+      <span class="unap-vax-approve-all-text">{{ getPendingSchedules(child).length }} vaccines pending</span>
+      <ion-button size="small" color="success" (click)="approveAllSchedules(child)">
+        <ion-icon slot="start" name="checkmark-done-outline"></ion-icon>
+        Approve All
+      </ion-button>
+    </div>
+
     <!-- Pending vaccine rows — shown when the child profile is approved but a vaccine entry is not -->
     <div class="unap-vax-row" *ngFor="let s of getPendingSchedules(child)">
       <span class="unap-vax-label">

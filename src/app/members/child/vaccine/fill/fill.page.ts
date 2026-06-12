@@ -66,6 +66,7 @@ export class FillPage implements OnInit {
   onlineService: string = '';
   clinicPAs: any[] = [];
   paymentCollectorPaId: number = null;
+  paId: number = null;
   private readonly travelFieldStorageSuffix = 'travel-vaccine-fill-state';
 
   private getTodayIsoDate(): string {
@@ -146,9 +147,11 @@ export class FillPage implements OnInit {
         console.log('Retrieved user from storage:', user);
         this.usertype = user.UserType; // Ensure this is set correctly
         this.allowInventory = user.AllowInventory !== false;
-        const actorId = user.UserType === 'PA' ? Number(user.PAId) : Number(user.DoctorId);
-        if (actorId && !isNaN(actorId)) {
-          this.doctorId = actorId;
+        if (user.UserType === 'PA') {
+          const paId = Number(user.PAId);
+          if (paId && !isNaN(paId)) {
+            this.paId = paId;
+          }
         }
         if (user.UserType === 'DOCTOR' && user.DoctorId) {
           this.paService.getPAsByDoctorId(String(user.DoctorId)).subscribe(res => {
@@ -404,6 +407,9 @@ export class FillPage implements OnInit {
     this.fg.value.PaymentMode = this.paymentMode;
     this.fg.value.OnlineService = this.paymentMode === 'Online Transfer' ? this.onlineService : null;
     this.fg.value.PaymentCollectorPaId = this.paymentCollectorPaId || null;
+    if (this.usertype === 'PA' && this.paId) {
+      this.fg.value.PaId = this.paId;
+    }
 
     await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
       res => {

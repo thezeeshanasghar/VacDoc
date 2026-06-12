@@ -207,6 +207,27 @@ export class UnapprovePage {
     });
   }
 
+  async approveAllSchedules(child: any) {
+    const schedules = this.getPendingSchedules(child);
+    if (schedules.length === 0) { return; }
+    const loading = await this.loadingController.create({ message: 'Approving all…' });
+    await loading.present();
+    let done = 0;
+    const doNext = () => {
+      if (done >= schedules.length) {
+        loading.dismiss();
+        this.toastService.create(`${schedules.length} vaccine(s) approved`, 'success');
+        this.getUnapprovedPatients(false);
+        return;
+      }
+      this.scheduleService.patchIsApproved(schedules[done].Id).subscribe({
+        next: () => { done++; doNext(); },
+        error: () => { done++; doNext(); }
+      });
+    };
+    doNext();
+  }
+
   // Builds the list of pending approve actions (profile + per-vaccine) for one child,
   // restricted to the items attributable to the currently filtered PA (if any).
   private getPendingActionsForChild(child: any): { type: 'child' | 'schedule', id: number }[] {
