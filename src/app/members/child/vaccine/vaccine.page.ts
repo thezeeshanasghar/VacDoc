@@ -1054,11 +1054,14 @@ this.downloadSpecialPdf();
     this.paGuidelines = '';
   }
 
-  // GivenDate arrives as a "DD-MM-YYYY" string (OnlyDateConverter on the API side) —
-  // must be parsed with that explicit format, NOT new Date() / split('T'), which
-  // misreads "12-06-2026" as Dec 6 instead of Jun 12 for any day-of-month <= 12.
+  // GivenDate arrives over the wire as a "DD-MM-YYYY" string (OnlyDateConverter on the API
+  // side), but getVaccination() (line ~254) already normalizes it to "YYYY-MM-DD" before
+  // dataGrouping is built — so by the time this runs it's usually already YYYY-MM-DD.
+  // Accept both formats; reject anything else (e.g. "01-01-0001" null-date edge case),
+  // NOT new Date() / split('T'), which misreads "12-06-2026" as Dec 6 instead of Jun 12
+  // for any day-of-month <= 12.
   private toInvoiceDateStr(givenDate: any): string | null {
-    const parsed = moment(givenDate, "DD-MM-YYYY", true);
+    const parsed = moment(givenDate, ["YYYY-MM-DD", "DD-MM-YYYY"], true);
     return parsed.isValid() && parsed.year() > 2020 ? parsed.format("YYYY-MM-DD") : null;
   }
 
