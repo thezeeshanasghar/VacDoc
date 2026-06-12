@@ -851,9 +851,8 @@ export class MembersPage implements OnInit {
   }
 
   loadPendingCount() {
-    const clinic = this.clinicService.OnlineClinic;
-    if (!clinic || !clinic.Id) { return; }
-    this.childService.getPendingCount(clinic.Id).subscribe(
+    if (!this.DoctorId) { return; }
+    this.childService.getPendingCount(this.DoctorId).subscribe(
       (res) => {
         if (res && res.IsSuccess) {
           this.pendingApprovalsCount = res.ResponseData || 0;

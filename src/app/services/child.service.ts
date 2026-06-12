@@ -123,8 +123,8 @@ export class ChildService extends BaseService {
     );
   }
 
-  getPendingCount(clinicId: number): Observable<any> {
-    const url = `${this.API_CHILD}Child/pending-count/${clinicId}`;
+  getPendingCount(doctorId: number): Observable<any> {
+    const url = `${this.API_CHILD}Child/pending-count/${doctorId}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)

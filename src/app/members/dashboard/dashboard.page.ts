@@ -156,9 +156,8 @@ export class DashboardPage implements OnInit {
   }
 
   private loadPendingCount() {
-    const clinic = this.clinicService.OnlineClinic;
-    if (!clinic || !clinic.Id) { return; }
-    this.childService.getPendingCount(clinic.Id).subscribe(res => {
+    if (!this.doctorId) { return; }
+    this.childService.getPendingCount(this.doctorId).subscribe(res => {
       if (res && res.IsSuccess) {
         this.pendingApprovalsCount = res.ResponseData || 0;
       }

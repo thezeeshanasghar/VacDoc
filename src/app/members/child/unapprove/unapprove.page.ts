@@ -10,6 +10,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { HttpResponse } from '@angular/common/http';
 import { PaService } from 'src/app/services/pa.service';
+import { ScheduleService } from 'src/app/services/schedule.service';
 
 @Component({
   selector: 'app-unapprove',
@@ -45,6 +46,7 @@ export class UnapprovePage {
     private alertService: AlertService,
     private callNumber: CallNumber,
     private paService: PaService,
+    private scheduleService: ScheduleService,
   ) {
     this.fg = this.formBuilder.group({
       Name: ["", Validators.required],
@@ -52,74 +54,19 @@ export class UnapprovePage {
   }
 
   ionViewWillEnter() {
-    // Always fetch fresh unapproved patients when entering this page
+    // Always fetch fresh unapproved patients (across all clinics) when entering this page
     this.isSearchDisabled = true;
     this.storage.get(environment.USER).then((user) => {
       this.usertype = user;
-      // For PA users, load clinics to get PA-specific online clinic
-      if (user.UserType === 'PA') {
-        this.loadPaClinics();
-      } else {
-        // For DOCTOR users, use clinic from storage
-        this.storage.get(environment.ON_CLINIC).then((clinic) => {
-          this.clinic = clinic;
-          this.getUnapprovedPatients(false);
-        });
-      }
     });
     this.storage.get(environment.DOCTOR_Id).then((docId) => {
       this.doctorId = docId;
+      this.getUnapprovedPatients(false);
     });
-  }
-
-  async loadPaClinics() {
-    const loading = await this.loadingController.create({
-      message: 'Loading clinics...',
-    });
-    await loading.present();
-
-    try {
-      this.paService.getPaClinics(Number(this.usertype.PAId)).subscribe({
-        next: (response) => {
-          loading.dismiss();
-          if (response.IsSuccess) {
-            this.clinics = response.ResponseData;
-            // Find the online clinic for PA (using PA-specific IsOnline)
-            const onlineClinic = this.clinics.find(clinic => clinic.IsOnline);
-            if (onlineClinic) {
-              this.clinic = onlineClinic;
-              this.selectedClinicId = onlineClinic.Id;
-              this.storage.set(environment.ON_CLINIC, onlineClinic);
-              this.storage.set(environment.CLINIC_Id, onlineClinic.Id);
-            } else {
-              // If no online clinic, use first clinic
-              this.clinic = this.clinics.length > 0 ? this.clinics[0] : null;
-              this.selectedClinicId = this.clinic ? this.clinic.Id : null;
-              if (this.clinic) {
-                this.storage.set(environment.ON_CLINIC, this.clinic);
-                this.storage.set(environment.CLINIC_Id, this.selectedClinicId);
-              }
-            }
-            console.log('PA Clinics loaded, using clinic:', this.clinic);
-            this.getUnapprovedPatients(false);
-          } else {
-            this.toastService.create(response.Message, 'danger');
-          }
-        },
-        error: (error) => {
-          loading.dismiss();
-          console.error('Error fetching PA clinics:', error);
-          this.toastService.create('Failed to load clinics', 'danger');
-        },
-      });
-    } catch (error) {
-      loading.dismiss();
-      console.error('Error in loadPaClinics:', error);
-      this.toastService.create('An unexpected error occurred', 'danger');
-    }
   }
 
   async getUnapprovedPatients(isdelete: boolean) {
+    if (!this.doctorId) { return; }
     const loading = await this.loadingController.create({
       message: 'Loading Unapproved Patients...',
     });
@@ -138,7 +85,7 @@ export class UnapprovePage {
       this.isSearchDisabled = true;
     }
 
-    this.childService.getUnapprovedPatients(this.clinic.Id).subscribe({
+    this.childService.getUnapprovedPatients(this.doctorId).subscribe({
       next: (res) => {
         loading.dismiss();
         this.loading = false;
@@ -166,12 +113,32 @@ export class UnapprovePage {
     });
   }
 
+  // Returns the keys (one per distinct pending source) that this child should be grouped under.
+  // A child can appear under multiple keys if its profile was added by one PA and a pending
+  // vaccine was given by a different PA/doctor.
+  getPendingSourceKeys(child: any): string[] {
+    const keys = new Set<string>();
+    if (!child.IsPAApprove) {
+      keys.add(child.AddedByPaId ? (child.AddedByPaName || ('PA #' + child.AddedByPaId)) : 'Doctor');
+    }
+    for (const s of (child.Schedules || [])) {
+      if (s.IsDone && !s.IsPAApprove) {
+        keys.add(s.GivenByPaId ? (s.GivenByPaName || ('PA #' + s.GivenByPaId)) : 'Doctor');
+      }
+    }
+    if (keys.size === 0) {
+      keys.add(child.AddedByPaId ? (child.AddedByPaName || ('PA #' + child.AddedByPaId)) : 'Doctor');
+    }
+    return Array.from(keys);
+  }
+
   buildPaGroups() {
     const groups: any = {};
     for (const child of this.childs) {
-      const key = child.AddedByPaId ? (child.AddedByPaName || ('PA #' + child.AddedByPaId)) : 'Doctor';
-      if (!groups[key]) { groups[key] = []; }
-      groups[key].push(child);
+      for (const key of this.getPendingSourceKeys(child)) {
+        if (!groups[key]) { groups[key] = []; }
+        groups[key].push(child);
+      }
     }
     this.childsByPA = Object.keys(groups).map(k => ({ paName: k, children: groups[k] }));
     this.applyFilter();
@@ -180,10 +147,7 @@ export class UnapprovePage {
   applyFilter() {
     let list = this.childs;
     if (this.filterPa) {
-      list = list.filter((c: any) => {
-        const key = c.AddedByPaId ? (c.AddedByPaName || ('PA #' + c.AddedByPaId)) : 'Doctor';
-        return key === this.filterPa;
-      });
+      list = list.filter((c: any) => this.getPendingSourceKeys(c).includes(this.filterPa));
     }
     if (this.searchTerm && this.searchTerm.trim()) {
       const term = this.searchTerm.trim().toLowerCase();
@@ -215,20 +179,74 @@ export class UnapprovePage {
     return child.Schedules.filter((s: any) => s.IsDone && !s.IsPAApprove).length;
   }
 
+  getPendingSchedules(child: any): any[] {
+    if (!child.Schedules) { return []; }
+    return child.Schedules.filter((s: any) => s.IsDone && !s.IsPAApprove);
+  }
+
+  getVaccineLabel(schedule: any): string {
+    if (schedule && schedule.Dose && schedule.Dose.Vaccine) {
+      return schedule.Dose.Vaccine.Name + ' - ' + schedule.Dose.Name;
+    }
+    return '';
+  }
+
+  async approveSchedule(scheduleId: number) {
+    const loading = await this.loadingController.create({ message: 'Approving…' });
+    await loading.present();
+    this.scheduleService.patchIsApproved(scheduleId).subscribe({
+      next: () => {
+        loading.dismiss();
+        this.toastService.create('Vaccine approved', 'success');
+        this.getUnapprovedPatients(false);
+      },
+      error: () => {
+        loading.dismiss();
+        this.toastService.create('Failed to approve vaccine', 'danger');
+      }
+    });
+  }
+
+  // Builds the list of pending approve actions (profile + per-vaccine) for one child,
+  // restricted to the items attributable to the currently filtered PA (if any).
+  private getPendingActionsForChild(child: any): { type: 'child' | 'schedule', id: number }[] {
+    const actions: { type: 'child' | 'schedule', id: number }[] = [];
+    if (!child.IsPAApprove) {
+      const key = child.AddedByPaId ? (child.AddedByPaName || ('PA #' + child.AddedByPaId)) : 'Doctor';
+      if (!this.filterPa || this.filterPa === key) {
+        actions.push({ type: 'child', id: child.Id });
+      }
+    }
+    for (const s of this.getPendingSchedules(child)) {
+      const key = s.GivenByPaId ? (s.GivenByPaName || ('PA #' + s.GivenByPaId)) : 'Doctor';
+      if (!this.filterPa || this.filterPa === key) {
+        actions.push({ type: 'schedule', id: s.Id });
+      }
+    }
+    return actions;
+  }
+
   async approveAllFromPa() {
-    const toApprove = this.filteredChilds.filter((c: any) => !c.IsPAApprove);
-    if (toApprove.length === 0) { return; }
+    const actions: { type: 'child' | 'schedule', id: number }[] = [];
+    for (const c of this.filteredChilds) {
+      actions.push(...this.getPendingActionsForChild(c));
+    }
+    if (actions.length === 0) { return; }
     const loading = await this.loadingController.create({ message: 'Approving all…' });
     await loading.present();
     let done = 0;
     const doNext = () => {
-      if (done >= toApprove.length) {
+      if (done >= actions.length) {
         loading.dismiss();
-        this.toastService.create(`${toApprove.length} patient(s) approved`, 'success');
+        this.toastService.create(`${actions.length} item(s) approved`, 'success');
         this.getUnapprovedPatients(false);
         return;
       }
-      this.childService.approveChild(toApprove[done].Id).subscribe({
+      const action = actions[done];
+      const obs = action.type === 'child'
+        ? this.childService.approveChild(action.id)
+        : this.scheduleService.patchIsApproved(action.id);
+      obs.subscribe({
         next: () => { done++; doNext(); },
         error: () => { done++; doNext(); }
       });

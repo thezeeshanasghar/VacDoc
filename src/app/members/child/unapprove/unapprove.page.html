@@ -71,6 +71,9 @@
       <div class="unap-card-name-block">
         <span class="unap-child-name">{{ child.Name }}</span>
         <span class="unap-child-meta">{{ child.FatherName }} &bull; {{ child.DOB | date }}</span>
+        <span class="unap-child-meta" *ngIf="child.ClinicName">
+          <ion-icon name="business-outline"></ion-icon> {{ child.ClinicName }}
+        </span>
         <!-- Pending indicator -->
         <span class="unap-pending-label" *ngIf="!child.IsPAApprove">
           <ion-icon name="person-add-outline"></ion-icon> New patient
@@ -93,6 +96,23 @@
           <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
         </ion-button>
       </div>
+    </div>
+
+    <!-- Pending vaccine rows — shown when the child profile is approved but a vaccine entry is not -->
+    <div class="unap-vax-row" *ngFor="let s of getPendingSchedules(child)">
+      <span class="unap-vax-label">
+        <ion-icon name="medical-outline"></ion-icon>
+        {{ getVaccineLabel(s) }}
+        <span class="unap-vax-by">— given by {{ s.GivenByPaId ? (s.GivenByPaName || ('PA #' + s.GivenByPaId)) : 'Doctor' }}</span>
+      </span>
+      <ion-button
+        *ngIf="usertype?.UserType !== 'PA'"
+        size="small"
+        color="success"
+        (click)="approveSchedule(s.Id)">
+        <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+        Approve
+      </ion-button>
     </div>
 
     <!-- Card footer: action buttons -->
