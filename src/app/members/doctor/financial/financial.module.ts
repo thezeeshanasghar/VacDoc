@@ -31,10 +31,6 @@ const routes: Routes = [
     loadChildren: () => import('../personal-assistant/cash-handover/cash-handover.module').then(m => m.CashHandoverPageModule)
   },
   {
-    path: 'day-log',
-    loadChildren: () => import('./day-log/day-log.module').then(m => m.DayLogPageModule)
-  },
-  {
     path: 'sales-collection',
     loadChildren: () => import('./sales-collection/sales-collection.module').then(m => m.SalesCollectionPageModule)
   }

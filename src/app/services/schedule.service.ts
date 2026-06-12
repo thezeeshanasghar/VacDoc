@@ -50,13 +50,4 @@ export class ScheduleService extends BaseService {
     return this.http.patch(url, payload, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  getDayLog(doctorId: number, date: string): Observable<any> {
-    const url = `${this.API_SCHEDULE}Schedule/day-log/${doctorId}/${date}`;
-    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
-  }
-
-  approvePayment(scheduleId: number): Observable<any> {
-    const url = `${this.API_SCHEDULE}Schedule/${scheduleId}/approve-payment`;
-    return this.http.patch(url, {}, this.httpOptions).pipe(catchError(this.handleError));
-  }
 }
