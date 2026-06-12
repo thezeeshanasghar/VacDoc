@@ -1054,6 +1054,14 @@ this.downloadSpecialPdf();
     this.paGuidelines = '';
   }
 
+  // GivenDate arrives as a "DD-MM-YYYY" string (OnlyDateConverter on the API side) —
+  // must be parsed with that explicit format, NOT new Date() / split('T'), which
+  // misreads "12-06-2026" as Dec 6 instead of Jun 12 for any day-of-month <= 12.
+  private toInvoiceDateStr(givenDate: any): string | null {
+    const parsed = moment(givenDate, "DD-MM-YYYY", true);
+    return parsed.isValid() && parsed.year() > 2020 ? parsed.format("YYYY-MM-DD") : null;
+  }
+
   private loadInvoiceExistence() {
     this.invoiceExistsMap = {};
     const childId = Number(this.childId);
@@ -1066,7 +1074,8 @@ this.downloadSpecialPdf();
       const group: any[] = grouped[date];
       const doneVaccine = group.find(function(v: any) { return v.IsDone && v.GivenDate; });
       if (!doneVaccine) { return; }
-      const givenDateStr: string = String(doneVaccine.GivenDate).split('T')[0];
+      const givenDateStr = this.toInvoiceDateStr(doneVaccine.GivenDate);
+      if (!givenDateStr) { return; }
       this.invoiceService.getInvoiceTotal(childId, givenDateStr).toPromise().then(res => {
         if (res && res.IsSuccess) {
           this.invoiceExistsMap[date] = true;
@@ -1124,15 +1133,16 @@ this.downloadSpecialPdf();
     this.paymentPopupOpen = true;
     const doneVaccine = groupVaccines.find(function(v) { return v.IsDone && v.GivenDate; });
     if (doneVaccine) {
-      const utcDateStr = doneVaccine.GivenDate.toString().split('T')[0];
+      const givenDateStr = this.toInvoiceDateStr(doneVaccine.GivenDate);
       const childId = Number(this.childId);
       // Try current date first, then previous day (UTC vs local timezone offset)
       try {
-        const res = await this.invoiceService.getInvoiceTotal(childId, utcDateStr).toPromise();
+        if (!givenDateStr) { return; }
+        const res = await this.invoiceService.getInvoiceTotal(childId, givenDateStr).toPromise();
         if (res && res.IsSuccess && res.ResponseData > 0) {
           this.paymentDueAmount = res.ResponseData;
         } else {
-          const prev = new Date(utcDateStr);
+          const prev = new Date(givenDateStr);
           prev.setDate(prev.getDate() - 1);
           const prevStr = prev.toISOString().split('T')[0];
           const res2 = await this.invoiceService.getInvoiceTotal(childId, prevStr).toPromise();
