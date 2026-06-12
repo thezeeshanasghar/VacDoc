@@ -231,17 +231,27 @@ export class BulkInvoicePage implements OnInit {
 
   // Prefer the actual given date — money/stock/PA-assignment are all keyed on it,
   // and it's the exact value loadInvoiceExistence() looks up the invoice by.
-  // Guard against null/invalid GivenDate (the edge case that caused InvoiceDate
-  // to be switched to "always now", which broke the lookup match entirely).
-  private resolveInvoiceDate(): Date {
+  // GivenDate arrives as a "DD-MM-YYYY" string (OnlyDateConverter on the API side) —
+  // must be parsed with that explicit format, NOT new Date(), which reads ambiguous
+  // strings as MM-DD-YYYY and silently swaps day/month for any day-of-month <= 12
+  // (e.g. "08-06-2026" => Aug 6 instead of Jun 8). Strict mode rejects the
+  // null/default-date edge case ("01-01-0001").
+  //
+  // Returns a bare "YYYY-MM-DD" string — NOT a Date object. HttpClient JSON-serializes
+  // Date objects via toISOString() (UTC), and the backend deserializes that into a
+  // DateTime with Kind=Utc; .Date then truncates "local midnight" to the PREVIOUS day
+  // whenever the device's local timezone is ahead of UTC (PKT always is, UTC+5). A bare
+  // date string has no timezone component, so it's parsed as Kind=Unspecified at
+  // midnight — .Date is then exact.
+  private resolveInvoiceDate(): string {
     const givenDateRaw = this.bulkData && this.bulkData.length > 0 ? this.bulkData[0].GivenDate : null;
     if (givenDateRaw) {
-      const parsed = new Date(givenDateRaw);
-      if (!isNaN(parsed.getTime()) && parsed.getFullYear() > 2000) {
-        return parsed;
+      const parsed = moment(givenDateRaw, "DD-MM-YYYY", true);
+      if (parsed.isValid() && parsed.year() > 2020) {
+        return parsed.format("YYYY-MM-DD");
       }
     }
-    return this.currentDate1 || new Date();
+    return moment(this.currentDate1 || new Date()).format("YYYY-MM-DD");
   }
 
   buildInvoiceDTO(consultationFee: number): any {
