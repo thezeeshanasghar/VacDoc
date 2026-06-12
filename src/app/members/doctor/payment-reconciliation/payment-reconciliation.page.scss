@@ -880,3 +880,65 @@
     background: #EDE7F6;
   }
 }
+
+.panel-assignments {
+  margin-top: 16px;
+  border-top: 1px solid #ECEFF1;
+  padding-top: 12px;
+}
+
+.panel-subheader {
+  font-size: 12px;
+  font-weight: 700;
+  color: #607D8B;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
+}
+
+.assignments-empty {
+  font-size: 12px;
+  color: #90A4AE;
+  padding: 8px 0;
+}
+
+.assignments-table {
+  width: 100%;
+  font-size: 12px;
+  border-collapse: collapse;
+
+  th, td {
+    padding: 6px 4px;
+    text-align: left;
+    border-bottom: 1px solid #F1F3F4;
+  }
+
+  th {
+    color: #90A4AE;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+  }
+
+  td {
+    color: #455A64;
+  }
+}
+
+.btn-delete-assignment {
+  background: transparent;
+  border: none;
+  color: #E53935;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #FFEBEE;
+  }
+}

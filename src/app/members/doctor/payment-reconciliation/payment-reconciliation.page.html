@@ -354,6 +354,36 @@
         <div class="panel-adjust-row" *ngIf="selectedPaId">
           <button class="btn-adjust" (click)="promptAdjust()">&#177; Adjust Payable</button>
         </div>
+
+        <!-- Manage Assignments (only when a specific PA is selected) -->
+        <div class="panel-assignments" *ngIf="selectedPaId">
+          <div class="panel-subheader">Manage Assignments for {{ selectedPaName }}</div>
+          <div class="assignments-empty" *ngIf="assignmentHistory.length === 0">
+            No assignments found.
+          </div>
+          <table class="assignments-table" *ngIf="assignmentHistory.length > 0">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Patient</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let a of assignmentHistory">
+                <td>{{ formatDate(a.AssignedAt) }}</td>
+                <td>{{ a.Name }}</td>
+                <td>{{ a.AssignmentStatus }}</td>
+                <td>
+                  <button class="btn-delete-assignment" (click)="confirmDeleteAssignment(a)" title="Delete assignment">
+                    <ion-icon name="trash-outline"></ion-icon>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </div>

@@ -179,6 +179,16 @@ export class PaService extends BaseService {
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
+  getAssignmentHistory(paId: number, doctorId: number): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/pa/${paId}/history?doctorId=${doctorId}`;
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  deleteAssignment(assignmentId: number, doctorId: number): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}?doctorId=${doctorId}`;
+    return this.http.delete(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
   completeAssignment(assignmentId: number): Observable<any> {
     const url = `${this.API_PA}PAAssignment/${assignmentId}/complete`;
     return this.http.post(url, {}, this.httpOptions).pipe(catchError(this.handleError));

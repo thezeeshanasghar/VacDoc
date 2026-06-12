@@ -55,6 +55,8 @@ export class PaymentReconciliationPage {
   pendingReversals: any[] = [];
   pendingHandovers: any[] = [];
 
+  assignmentHistory: any[] = [];
+
   constructor(
     private paService: PaService,
     private clinicService: ClinicService,
@@ -117,6 +119,52 @@ export class PaymentReconciliationPage {
 
   onFilterChange() {
     this.load();
+    this.loadAssignmentHistory();
+  }
+
+  loadAssignmentHistory() {
+    this.assignmentHistory = [];
+    if (!this.selectedPaId || !this.doctorId) { return; }
+    this.paService.getAssignmentHistory(this.selectedPaId, this.doctorId).subscribe(
+      res => {
+        if (res && res.IsSuccess) {
+          this.assignmentHistory = res.ResponseData || [];
+        }
+      },
+      () => {}
+    );
+  }
+
+  async confirmDeleteAssignment(a: any) {
+    const alert = await this.alertController.create({
+      header: 'Delete Assignment',
+      message: `Delete this assignment for ${a.Name}? This will remove its invoice and reset the patient's vaccine records for this visit. Cannot be undone.`,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Delete',
+          cssClass: 'alert-btn-danger',
+          handler: async () => {
+            const loading = await this.loadingController.create({ message: 'Deleting...' });
+            await loading.present();
+            this.paService.deleteAssignment(a.AssignmentId, this.doctorId!).subscribe(
+              res => {
+                loading.dismiss();
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Assignment deleted', 'success');
+                  this.assignmentHistory = this.assignmentHistory.filter((x: any) => x.AssignmentId !== a.AssignmentId);
+                  this.load();
+                } else {
+                  this.toastService.create((res && res.Message) || 'Delete failed', 'danger');
+                }
+              },
+              () => { loading.dismiss(); this.toastService.create('Delete failed', 'danger'); }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
   load() {
