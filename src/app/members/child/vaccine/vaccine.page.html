@@ -25,6 +25,21 @@
     </div>
   </div>
 
+  <!-- Active assignment card (PA view) — lets a PA finish a remote-clinic visit without leaving this page -->
+  <div *ngIf="usertype === 'PA' && activeAssignment && activeAssignment.AssignmentStatus !== 'PendingHandover'" class="active-assignment-card">
+    <ion-icon name="person-outline" class="active-assign-icon"></ion-icon>
+    <span class="active-assign-label">Active assignment</span>
+    <div class="active-assign-actions">
+      <button class="assign-action-btn done-btn" (click)="promptDoneFromVaccinePage()">Mark Done</button>
+    </div>
+  </div>
+
+  <!-- Active assignment already handed off — informational only -->
+  <div *ngIf="usertype === 'PA' && activeAssignment && activeAssignment.AssignmentStatus === 'PendingHandover'" class="active-assignment-card">
+    <ion-icon name="checkmark-circle-outline" class="active-assign-icon"></ion-icon>
+    <span class="active-assign-label">Marked done — pending cash handover</span>
+  </div>
+
   <div *ngFor="let item of dataGrouping | keyvalue; let i = index">
     <ion-card class="date-group-card">
       <ion-card-content>

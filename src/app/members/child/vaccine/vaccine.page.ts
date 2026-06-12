@@ -159,6 +159,7 @@ export class VaccinePage {
           this.canUnskip         = (perm && perm.UnskipVaccine)      || false;
           this.canEditSchedule   = (perm && perm.EditVaccineSchedule)|| false;
         });
+        this.loadActivePAAssignment();
       }
       if (user.UserType === 'DOCTOR') {
         this.doctorId = user.DoctorId ? Number(user.DoctorId) : null;
@@ -1239,6 +1240,68 @@ this.downloadSpecialPdf();
       this.activeAssignmentLoading = false;
       if (onDone) onDone();
     });
+  }
+
+  // PA view of the active assignment — GetByPA is PA-scoped (no doctorId needed),
+  // and already returns AssignmentId + AssignmentStatus for this child.
+  loadActivePAAssignment(onDone?: () => void) {
+    if (!this.paId || !this.childId) { if (onDone) onDone(); return; }
+    this.paService.getAssignments(this.paId).subscribe(res => {
+      if (res && res.IsSuccess) {
+        const all: any[] = res.ResponseData || [];
+        this.activeAssignment = all.find(a => a.ChildId === Number(this.childId)) || null;
+      }
+      if (onDone) onDone();
+    }, () => { if (onDone) onDone(); });
+  }
+
+  // Mirrors payables.page.ts's promptDone()/doCompleteAssignment(), but checks payment
+  // status against this.vaccine (already loaded on this page) instead of a separate
+  // Schedules array — same source of truth, no extra request.
+  async promptDoneFromVaccinePage() {
+    if (!this.activeAssignment) { return; }
+    const unpaid = (this.vaccine || []).filter((s: any) =>
+      s.IsDone && s.PaymentCollectorPaId === this.paId && !s.IsPaymentCollected);
+
+    if (unpaid.length > 0) {
+      const names = unpaid.map((s: any) => s.Dose && s.Dose.Name ? s.Dose.Name : '').filter((n: string) => !!n).join(', ');
+      const alert = await this.alertController.create({
+        header: 'Payment Pending',
+        message: 'Please record payment for: ' + names + '. Use the money icon above first.',
+        buttons: [{ text: 'OK', role: 'cancel' }]
+      });
+      await alert.present();
+      return;
+    }
+
+    const confirm = await this.alertController.create({
+      header: 'Mark as Done',
+      message: 'Mark this assignment as done? This will move it to Pending Cash Handover for the doctor to confirm.',
+      buttons: [
+        { text: 'Back', role: 'cancel' },
+        { text: 'Mark Done', handler: () => { this.doCompleteAssignmentFromVaccinePage(); } }
+      ]
+    });
+    await confirm.present();
+  }
+
+  async doCompleteAssignmentFromVaccinePage() {
+    if (!this.activeAssignment || !this.paId) { return; }
+    const loading = await this.loadingController.create({ message: 'Marking done...' });
+    await loading.present();
+    this.paService.markAssignmentDone(this.activeAssignment.AssignmentId, this.paId).subscribe(
+      (res: any) => {
+        loading.dismiss();
+        if (res && res.IsSuccess) {
+          this.toastService.create('Marked as done — pending cash handover', 'success');
+          this.getVaccination();
+          this.loadActivePAAssignment();
+        } else {
+          this.toastService.create((res && res.Message) || 'Mark done failed', 'danger');
+        }
+      },
+      () => { loading.dismiss(); this.toastService.create('Mark done failed', 'danger'); }
+    );
   }
 
   async confirmCancelAssignment() {
