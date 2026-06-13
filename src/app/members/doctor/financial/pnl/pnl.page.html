@@ -1,0 +1,185 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/financial"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Profit &amp; Loss</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="pnl-content">
+  <div class="pnl-wrap" [formGroup]="form">
+
+    <!-- ── FILTER BAR ──────────────────────────────────────────── -->
+    <div class="filter-bar">
+      <select class="filter-select" [(ngModel)]="selectedClinicId" [ngModelOptions]="{standalone: true}" (change)="onFilterChange()">
+        <option [ngValue]="null">All Clinics</option>
+        <option *ngFor="let c of clinics" [ngValue]="c.Id">{{ c.Name }}</option>
+      </select>
+    </div>
+
+    <div class="filter-bar">
+      <input class="filter-date" type="date" formControlName="fromDate" (change)="onFilterChange()">
+      <input class="filter-date" type="date" formControlName="toDate" (change)="onFilterChange()">
+    </div>
+
+    <ion-segment [(ngModel)]="expenseMode" [ngModelOptions]="{standalone: true}" (ionChange)="setExpenseMode(expenseMode)" class="expense-mode-segment">
+      <ion-segment-button value="operational">
+        <ion-label>Operational</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="fullcapital">
+        <ion-label>+Capital</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="depreciated">
+        <ion-label>Depreciated</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <ng-container *ngIf="result">
+
+      <!-- ── SUMMARY CARDS ───────────────────────────────────────── -->
+      <div class="summary-strip">
+        <div class="summary-item">
+          <span class="summary-val">Rs {{ result.Consolidated.TotalIncome | number:'1.0-0' }}</span>
+          <span class="summary-lbl">Total Income</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-val">Rs {{ result.Consolidated.TotalExpenses | number:'1.0-0' }}</span>
+          <span class="summary-lbl">Total Expenses</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-val" [class.pnl-positive]="result.Consolidated.NetPnL >= 0" [class.pnl-negative]="result.Consolidated.NetPnL < 0">
+            Rs {{ result.Consolidated.NetPnL | number:'1.0-0' }}
+          </span>
+          <span class="summary-lbl">Net P&amp;L</span>
+        </div>
+      </div>
+
+      <!-- ── CONSOLIDATED INCOME BREAKDOWN ──────────────────────── -->
+      <div class="pnl-card">
+        <div class="pnl-card-title">Income</div>
+
+        <div class="pnl-row">
+          <span class="pnl-row-label">Vaccine Profit</span>
+          <span class="pnl-row-value">Rs {{ result.Consolidated.TotalVaccineProfit | number:'1.0-0' }}</span>
+        </div>
+        <div class="pnl-subrow">
+          <span>Revenue Rs {{ result.Consolidated.TotalVaccineRevenue | number:'1.0-0' }} − Cost Rs {{ result.Consolidated.TotalVaccineCost | number:'1.0-0' }}</span>
+        </div>
+
+        <div class="pnl-row">
+          <span class="pnl-row-label">Consultation Fee Income</span>
+          <span class="pnl-row-value">Rs {{ result.Consolidated.TotalConsultationIncome | number:'1.0-0' }}</span>
+        </div>
+
+        <div class="pnl-row">
+          <span class="pnl-row-label">Direct Sale Profit</span>
+          <span class="pnl-row-value">Rs {{ result.Consolidated.TotalDirectSaleProfit | number:'1.0-0' }}</span>
+        </div>
+        <div class="pnl-subrow">
+          <span>Revenue Rs {{ result.Consolidated.TotalDirectSaleRevenue | number:'1.0-0' }} − Cost Rs {{ result.Consolidated.TotalDirectSaleCost | number:'1.0-0' }}</span>
+        </div>
+
+        <div class="pnl-row pnl-row-total">
+          <span class="pnl-row-label">Total Income</span>
+          <span class="pnl-row-value">Rs {{ result.Consolidated.TotalIncome | number:'1.0-0' }}</span>
+        </div>
+      </div>
+
+      <!-- ── CONSOLIDATED EXPENSE BREAKDOWN ─────────────────────── -->
+      <div class="pnl-card">
+        <div class="pnl-card-title">Expenses</div>
+
+        <div class="pnl-row" *ngFor="let cat of result.Consolidated.SharedExpensesByCategory">
+          <span class="pnl-row-label">
+            <span class="cat-pill" [ngClass]="catClass(cat.Category)">
+              <ion-icon [name]="catIcon(cat.Category)"></ion-icon>
+              {{ cat.Category }} (Shared)
+            </span>
+          </span>
+          <span class="pnl-row-value">Rs {{ cat.Amount | number:'1.0-0' }}</span>
+        </div>
+
+        <div class="pnl-row">
+          <span class="pnl-row-label">Direct Expenses (all clinics)</span>
+          <span class="pnl-row-value">Rs {{ result.Consolidated.TotalDirectExpenses | number:'1.0-0' }}</span>
+        </div>
+
+        <div class="pnl-row">
+          <span class="pnl-row-label">Shared Expenses</span>
+          <span class="pnl-row-value">Rs {{ result.Consolidated.SharedExpensesTotal | number:'1.0-0' }}</span>
+        </div>
+
+        <div class="pnl-row pnl-row-total">
+          <span class="pnl-row-label">Total Expenses</span>
+          <span class="pnl-row-value">Rs {{ result.Consolidated.TotalExpenses | number:'1.0-0' }}</span>
+        </div>
+      </div>
+
+      <!-- ── NET P&L ─────────────────────────────────────────────── -->
+      <div class="pnl-card pnl-net-card" [class.pnl-net-positive]="result.Consolidated.NetPnL >= 0" [class.pnl-net-negative]="result.Consolidated.NetPnL < 0">
+        <span class="pnl-net-label">Net Profit &amp; Loss</span>
+        <span class="pnl-net-value">Rs {{ result.Consolidated.NetPnL | number:'1.0-0' }}</span>
+      </div>
+
+      <!-- ── PER-CLINIC BREAKDOWN (All Clinics view only) ───────── -->
+      <ng-container *ngIf="selectedClinicId === null && result.Clinics.length > 1">
+        <div class="pnl-section-label">By Clinic</div>
+
+        <div class="pnl-card" *ngFor="let c of result.Clinics">
+          <div class="pnl-card-title">{{ c.ClinicName }}</div>
+
+          <div class="pnl-row">
+            <span class="pnl-row-label">Vaccine Profit</span>
+            <span class="pnl-row-value">Rs {{ c.VaccineProfit | number:'1.0-0' }}</span>
+          </div>
+          <div class="pnl-row">
+            <span class="pnl-row-label">Consultation Fee Income</span>
+            <span class="pnl-row-value">Rs {{ c.ConsultationIncome | number:'1.0-0' }}</span>
+          </div>
+          <div class="pnl-row">
+            <span class="pnl-row-label">Direct Sale Profit</span>
+            <span class="pnl-row-value">Rs {{ c.DirectSaleProfit | number:'1.0-0' }}</span>
+          </div>
+          <div class="pnl-row pnl-row-total">
+            <span class="pnl-row-label">Total Income</span>
+            <span class="pnl-row-value">Rs {{ c.TotalIncome | number:'1.0-0' }}</span>
+          </div>
+
+          <div class="pnl-row" *ngFor="let cat of c.ExpensesByCategory">
+            <span class="pnl-row-label">
+              <span class="cat-pill" [ngClass]="catClass(cat.Category)">
+                <ion-icon [name]="catIcon(cat.Category)"></ion-icon>
+                {{ cat.Category }}
+              </span>
+            </span>
+            <span class="pnl-row-value">Rs {{ cat.Amount | number:'1.0-0' }}</span>
+          </div>
+
+          <div class="pnl-row">
+            <span class="pnl-row-label">Shared Expenses (your share: {{ c.SharedExpenseSharePercent }}%)</span>
+            <span class="pnl-row-value">Rs {{ c.SharedExpenseShare | number:'1.0-0' }}</span>
+          </div>
+
+          <div class="pnl-row pnl-row-total">
+            <span class="pnl-row-label">Total Expenses</span>
+            <span class="pnl-row-value">Rs {{ c.TotalExpenses | number:'1.0-0' }}</span>
+          </div>
+
+          <div class="pnl-row pnl-row-net" [class.pnl-positive]="c.NetPnL >= 0" [class.pnl-negative]="c.NetPnL < 0">
+            <span class="pnl-row-label">Net P&amp;L</span>
+            <span class="pnl-row-value">Rs {{ c.NetPnL | number:'1.0-0' }}</span>
+          </div>
+        </div>
+      </ng-container>
+
+    </ng-container>
+
+    <!-- ── EMPTY STATE ─────────────────────────────────────────── -->
+    <div *ngIf="!result && !loading" class="empty-state">
+      <ion-icon name="trending-up-outline"></ion-icon>
+      <p>No P&amp;L data for this period.</p>
+    </div>
+
+  </div>
+</ion-content>

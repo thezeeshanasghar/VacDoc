@@ -1,0 +1,194 @@
+.pnl-content {
+  --background: #F1F5F9;
+}
+
+.pnl-wrap {
+  padding: 16px 16px 32px;
+}
+
+// ── Filter bar ─────────────────────────────────────────────────────────────
+.filter-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.filter-select,
+.filter-date {
+  flex: 1;
+  border: 1.5px solid #CFD8DC;
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 13px;
+  color: #263238;
+  background: #fff;
+  outline: none;
+
+  &:focus { border-color: #0D6EAD; }
+}
+
+.expense-mode-segment {
+  margin-bottom: 16px;
+}
+
+// ── Summary strip ──────────────────────────────────────────────────────────
+.summary-strip {
+  display: flex;
+  gap: 0;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(10,61,121,0.10);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.summary-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px;
+  border-right: 1px solid #F1F5F9;
+
+  &:last-child { border-right: none; }
+}
+
+.summary-val {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0B2D5C;
+}
+
+.summary-lbl {
+  font-size: 11px;
+  color: #78909C;
+  margin-top: 2px;
+}
+
+.pnl-positive { color: #2E7D32 !important; }
+.pnl-negative { color: #C62828 !important; }
+
+// ── Section label ─────────────────────────────────────────────────────────
+.pnl-section-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #78909C;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 16px 4px 8px;
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────
+.pnl-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 12px rgba(10,61,121,0.10);
+}
+
+.pnl-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0B2D5C;
+  margin-bottom: 10px;
+}
+
+.pnl-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.pnl-subrow {
+  font-size: 11px;
+  color: #90A4AE;
+  padding: 0 0 6px;
+}
+
+.pnl-row-label {
+  font-size: 13px;
+  color: #546E7A;
+  display: flex;
+  align-items: center;
+}
+
+.pnl-row-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #263238;
+}
+
+.pnl-row-total {
+  border-top: 1px solid #F1F5F9;
+  margin-top: 4px;
+  padding-top: 10px;
+
+  .pnl-row-label, .pnl-row-value {
+    font-weight: 700;
+    color: #0B2D5C;
+  }
+}
+
+.pnl-row-net {
+  border-top: 1px solid #F1F5F9;
+  margin-top: 4px;
+  padding-top: 10px;
+
+  .pnl-row-label, .pnl-row-value {
+    font-weight: 700;
+  }
+}
+
+// ── Net P&L summary card ─────────────────────────────────────────────────
+.pnl-net-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pnl-net-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0B2D5C;
+}
+
+.pnl-net-value {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.pnl-net-positive .pnl-net-value { color: #2E7D32; }
+.pnl-net-negative .pnl-net-value { color: #C62828; }
+
+// ── Category pill ────────────────────────────────────────────────────────
+.cat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+
+  ion-icon { font-size: 13px; }
+}
+
+.cat-blue   { background: #E3F2FD; color: #0D6EAD; }
+.cat-grey   { background: #ECEFF1; color: #546E7A; }
+.cat-pink   { background: #FCE4EC; color: #AD1457; }
+.cat-orange { background: #FFF3E0; color: #EF6C00; }
+.cat-green  { background: #E8F5E9; color: #2E7D32; }
+.cat-teal   { background: #E0F2F1; color: #00796B; }
+.cat-purple { background: #F3E5F5; color: #6A1B9A; }
+
+// ── Empty state ───────────────────────────────────────────────────────────
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: #90A4AE;
+
+  ion-icon { font-size: 52px; display: block; margin: 0 auto 12px; }
+  p { margin: 0 0 4px; font-size: 15px; font-weight: 600; color: #546E7A; }
+}

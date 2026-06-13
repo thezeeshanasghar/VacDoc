@@ -23,6 +23,10 @@ const routes: Routes = [
     loadChildren: () => import('./fixed-assets/fixed-assets.module').then(m => m.FixedAssetsPageModule)
   },
   {
+    path: 'pnl',
+    loadChildren: () => import('./pnl/pnl.module').then(m => m.PnlPageModule)
+  },
+  {
     path: 'reporting',
     loadChildren: () => import('./reporting/reporting.module').then(m => m.ReportingPageModule)
   },
