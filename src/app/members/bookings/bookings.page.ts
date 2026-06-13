@@ -84,9 +84,7 @@ export class BookingsPage {
     if (!this.doctorId) { return; }
     this.paService.getPAsForDoctor(this.doctorId).subscribe(
       (res) => {
-        if (res && res.IsSuccess) {
-          this.paList = (res.ResponseData || []).filter(function(p: any) { return p.IsActive !== false; });
-        }
+        this.paList = (res || []).filter(function(p: any) { return p.IsActive !== false; });
       },
       (err) => {}
     );
