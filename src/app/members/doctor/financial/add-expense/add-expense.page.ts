@@ -226,9 +226,6 @@ export class AddExpensePage {
       if (!this.expectedLifeYrs || this.expectedLifeYrs < 1) {
         this.toastService.create('Enter useful life in years', 'danger'); return;
       }
-      if (!this.isEdit && !this.receiptFile) {
-        this.toastService.create('Receipt image is required for fixed asset expenses', 'danger'); return;
-      }
     }
 
     const loading = await this.loadingController.create({ message: 'Saving...' });

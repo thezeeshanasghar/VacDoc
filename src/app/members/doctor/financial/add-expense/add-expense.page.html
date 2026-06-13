@@ -100,9 +100,9 @@
         <input type="date" [(ngModel)]="warrantyExpiry" class="field-input">
       </div>
 
-      <!-- Receipt image (required) -->
+      <!-- Receipt image (optional) -->
       <div class="field field-full">
-        <label class="field-label">Receipt / Invoice Image *</label>
+        <label class="field-label">Receipt / Invoice Image <span class="hint">(optional)</span></label>
         <div class="img-upload-box" (click)="pickReceipt()">
           <img *ngIf="receiptPreview" [src]="receiptPreview" class="img-preview">
           <div *ngIf="!receiptPreview" class="img-placeholder">
