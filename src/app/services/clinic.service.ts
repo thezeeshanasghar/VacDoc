@@ -4,9 +4,8 @@ import { Response } from "src/app/models/Response";
 import { BaseService } from "./base.service";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { map, catchError, shareReplay, tap } from "rxjs/operators";
+import { map, catchError } from "rxjs/operators";
 import { Storage } from "@ionic/storage";
-import { DashboardService } from "./dashboard.service";
 
 @Injectable({
   providedIn: "root"
@@ -18,14 +17,10 @@ export class ClinicService extends BaseService {
   OnlineClinic: any;
   response: Response;
 
-  // Cached shell data (menu + dashboard counts/permissions) shared across
-  // the members shell and dashboard page for the current session.
-  private shellData$: Observable<any> = null;
-
   private readonly API_DOC = `${environment.BASE_URL}doctor/`;
   private readonly API_CLINIC = `${environment.BASE_URL}clinic/`;
 
-  constructor(protected http: HttpClient, private storage: Storage, private dashboardService: DashboardService) {
+  constructor(protected http: HttpClient, private storage: Storage) {
     super(http);
     // Eagerly restore OnlineClinic from storage so all pages see it
     // even when navigating directly without going through the dashboard first.
@@ -35,30 +30,6 @@ export class ClinicService extends BaseService {
         this.OnlineClinicId = clinic.Id;
       }
     });
-  }
-
-  // Returns cached shell data, fetching once and sharing the result with
-  // any subsequent callers within the same session (until refreshShellData()).
-  getShellData(userType: string, id: number): Observable<any> {
-    if (!this.shellData$) {
-      this.shellData$ = this.dashboardService.getShellData(userType, id).pipe(
-        tap(res => {
-          if (res && res.IsSuccess && res.ResponseData) {
-            const data = res.ResponseData;
-            if (data.OnlineClinic) {
-              this.updateClinic(data.OnlineClinic);
-            }
-          }
-        }),
-        shareReplay(1)
-      );
-    }
-    return this.shellData$;
-  }
-
-  // Forces the next getShellData() call to re-fetch (e.g. after permission changes or logout).
-  refreshShellData() {
-    this.shellData$ = null;
   }
 
   updateClinic(clinic) {
