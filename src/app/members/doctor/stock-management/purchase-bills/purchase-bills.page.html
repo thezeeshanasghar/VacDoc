@@ -14,6 +14,10 @@
       <option value="">All Suppliers</option>
       <option *ngFor="let s of suppliers" [value]="s">{{ s }}</option>
     </select>
+    <select class="supplier-select status-select" [(ngModel)]="selectedStatus" (change)="onStatusChange()">
+      <option value="">All Status</option>
+      <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+    </select>
   </div>
 
   <div *ngIf="filteredBills.length === 0" class="empty-state">

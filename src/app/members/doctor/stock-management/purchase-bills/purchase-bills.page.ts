@@ -16,6 +16,8 @@ export class PurchaseBillsPage {
   filteredBills: any[] = [];
   suppliers: string[] = [];
   selectedSupplier: string = '';
+  selectedStatus: string = '';
+  statuses: string[] = ['Unpaid', 'Partial', 'Paid'];
   doctorId: number = 0;
   clinicId: number = 0;
 
@@ -42,7 +44,7 @@ export class PurchaseBillsPage {
       (res: any) => {
         loading.dismiss();
         if (res.IsSuccess) {
-          this.bills = (res.ResponseData || []).slice().reverse();
+          this.bills = (res.ResponseData || []).slice().sort((a: any, b: any) => b.Id - a.Id);
           // Build unique supplier list from bills
           const seen: any = {};
           this.suppliers = [];
@@ -67,16 +69,19 @@ export class PurchaseBillsPage {
   }
 
   applyFilter() {
-    if (!this.selectedSupplier) {
-      this.filteredBills = this.bills.slice();
-    } else {
-      this.filteredBills = this.bills.filter((b: any) =>
-        (b.SupplierName || '').toLowerCase() === this.selectedSupplier.toLowerCase()
-      );
-    }
+    this.filteredBills = this.bills.filter((b: any) => {
+      const supplierMatch = !this.selectedSupplier ||
+        (b.SupplierName || '').toLowerCase() === this.selectedSupplier.toLowerCase();
+      const statusMatch = !this.selectedStatus || b.PaymentStatus === this.selectedStatus;
+      return supplierMatch && statusMatch;
+    });
   }
 
   onSupplierChange() {
+    this.applyFilter();
+  }
+
+  onStatusChange() {
     this.applyFilter();
   }
 
