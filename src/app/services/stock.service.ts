@@ -80,6 +80,14 @@ export class StockService {
     return this.http.post<any>(`${this.apiUrl}bill/${billId}/payment`, dto);
   }
 
+  consumedCheck(billId: number, stockId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}bill/${billId}/line/${stockId}/consumed-check`);
+  }
+
+  splitConsumed(billId: number, stockId: number): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}bill/${billId}/line/${stockId}/split-consumed`, {});
+  }
+
   getPayments(billId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}bill/${billId}/payments`);
   }

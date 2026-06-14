@@ -165,6 +165,86 @@ export class PurchaseBillsPage {
   }
 
   async confirmReverse(bill: any) {
+    const loading = await this.loadingController.create({ message: 'Checking...' });
+    await loading.present();
+    this.stockService.getBillById(bill.Id).subscribe(
+      async (res: any) => {
+        loading.dismiss();
+        if (!res.IsSuccess) {
+          this.toastService.create(res.Message || 'Failed to load bill', 'danger');
+          return;
+        }
+        const lines = (res.ResponseData.Lines || []);
+        const consumedLines: any[] = [];
+        for (const line of lines) {
+          const check = await new Promise<any>((resolve) => {
+            this.stockService.consumedCheck(bill.Id, line.StockId).subscribe(
+              (cres: any) => resolve(cres.IsSuccess ? cres.ResponseData : null),
+              () => resolve(null)
+            );
+          });
+          if (check && check.Consumed > 0) consumedLines.push(check);
+        }
+        if (consumedLines.length > 0) {
+          await this.promptConsumedBeforeReverse(bill, consumedLines, 0);
+        } else {
+          await this.showReverseConfirm(bill);
+        }
+      },
+      () => {
+        loading.dismiss();
+        this.toastService.create('Failed to load bill', 'danger');
+      }
+    );
+  }
+
+  async promptConsumedBeforeReverse(bill: any, consumedLines: any[], idx: number) {
+    if (idx >= consumedLines.length) {
+      await this.showReverseConfirm(bill);
+      return;
+    }
+    const c = consumedLines[idx];
+    const alert = await this.alertController.create({
+      header: 'Units Already Used',
+      message: c.Consumed + ' unit(s) of ' + c.BrandName + ' (Batch ' + c.BatchLot + ') from ' + bill.BillNo + ' have already been used. Create a separate fully-paid bill of Rs ' + c.ConsumedAmount.toFixed(2) + ' for these units to keep purchase records accurate? Otherwise skip and adjust stock manually later.',
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Skip',
+          handler: () => { this.promptConsumedBeforeReverse(bill, consumedLines, idx + 1); }
+        },
+        {
+          text: 'Create Bill',
+          handler: () => { this.splitConsumedThenContinue(bill, c, consumedLines, idx); }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async splitConsumedThenContinue(bill: any, c: any, consumedLines: any[], idx: number) {
+    const loading = await this.loadingController.create({ message: 'Creating bill...' });
+    await loading.present();
+    this.stockService.splitConsumed(bill.Id, c.StockId).subscribe(
+      (res: any) => {
+        loading.dismiss();
+        if (res.IsSuccess) {
+          const data = res.ResponseData;
+          this.toastService.create('Created ' + data.NewBillNo + ' (Rs ' + data.ConsumedAmount.toFixed(2) + ') for consumed units', 'success');
+        } else {
+          this.toastService.create(res.Message || 'Failed to create bill', 'danger');
+        }
+        this.promptConsumedBeforeReverse(bill, consumedLines, idx + 1);
+      },
+      () => {
+        loading.dismiss();
+        this.toastService.create('Failed to create bill', 'danger');
+        this.promptConsumedBeforeReverse(bill, consumedLines, idx + 1);
+      }
+    );
+  }
+
+  async showReverseConfirm(bill: any) {
     let message = 'This will remove all remaining stock entries for ' + bill.BillNo + '. Continue?';
     if (bill.PaymentStatus === 'Paid' || bill.PaymentStatus === 'Partial') {
       message = 'Rs ' + (bill.AmountPaid || 0).toFixed(2) + ' was recorded as paid for ' + bill.BillNo + '. Reversing will remove all remaining stock. Payment recovery must be handled separately. Continue?';

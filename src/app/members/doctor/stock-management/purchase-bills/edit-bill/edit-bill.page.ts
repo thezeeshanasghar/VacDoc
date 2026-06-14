@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
 import { StockService } from 'src/app/services/stock.service';
@@ -61,6 +61,7 @@ export class EditBillPage implements OnInit {
     private route: ActivatedRoute,
     private storage: Storage,
     private toastService: ToastService,
+    private alertController: AlertController,
   ) {}
 
   async ngOnInit() {
@@ -124,6 +125,7 @@ export class EditBillPage implements OnInit {
               expStr = ed.getFullYear() + '-' + em + '-' + eday;
             }
             return {
+              stockId: l.StockId,
               brandId: l.BrandId,
               brandSearch: brand ? brand.BrandName : l.BrandName || '',
               brandDropOpen: false,
@@ -193,8 +195,74 @@ export class EditBillPage implements OnInit {
     this.lines.push({ brandId: null, brandSearch: '', brandDropOpen: false, batchLot: '', expiry: '', qty: null, unitPrice: null });
   }
 
-  removeLine(i: number) {
-    this.lines.splice(i, 1);
+  async removeLine(i: number) {
+    const line = this.lines[i];
+    if (!line.stockId) {
+      this.lines.splice(i, 1);
+      return;
+    }
+
+    const loading = await this.loadingController.create({ message: 'Checking...' });
+    await loading.present();
+    this.stockService.consumedCheck(this.billId, line.stockId).subscribe(
+      async (res: any) => {
+        loading.dismiss();
+        if (!res.IsSuccess) {
+          this.toastService.create(res.Message || 'Failed to check line', 'danger');
+          return;
+        }
+        const data = res.ResponseData;
+        if (!data.Consumed || data.Consumed <= 0) {
+          this.lines.splice(i, 1);
+          return;
+        }
+        await this.promptConsumed(i, line, data);
+      },
+      () => {
+        loading.dismiss();
+        this.toastService.create('Failed to check line', 'danger');
+      }
+    );
+  }
+
+  async promptConsumed(i: number, line: any, data: any) {
+    const alert = await this.alertController.create({
+      header: 'Units Already Used',
+      message: data.Consumed + ' unit(s) of ' + data.BrandName + ' (Batch ' + data.BatchLot + ') from this row have already been used. Create a separate fully-paid bill of Rs ' + data.ConsumedAmount.toFixed(2) + ' for these units to keep purchase records accurate? Otherwise skip and adjust stock manually later.',
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Skip',
+          handler: () => { this.lines.splice(i, 1); }
+        },
+        {
+          text: 'Create Bill',
+          handler: () => { this.splitConsumed(i, line); }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async splitConsumed(i: number, line: any) {
+    const loading = await this.loadingController.create({ message: 'Creating bill...' });
+    await loading.present();
+    this.stockService.splitConsumed(this.billId, line.stockId).subscribe(
+      (res: any) => {
+        loading.dismiss();
+        if (res.IsSuccess) {
+          const data = res.ResponseData;
+          this.toastService.create('Created ' + data.NewBillNo + ' (Rs ' + data.ConsumedAmount.toFixed(2) + ') for consumed units', 'success');
+          this.lines.splice(i, 1);
+        } else {
+          this.toastService.create(res.Message || 'Failed to create bill', 'danger');
+        }
+      },
+      () => {
+        loading.dismiss();
+        this.toastService.create('Failed to create bill', 'danger');
+      }
+    );
   }
 
   async save() {
