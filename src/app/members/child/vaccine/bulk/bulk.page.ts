@@ -53,6 +53,7 @@ export class BulkPage implements OnInit {
   availableExpiriesPerRow: string[][] = [];
   selectedLotsPerRow: string[] = [];
   selectedExpiriesPerRow: string[] = [];
+  selectedValidityPerRow: string[] = [];
 
   // Clinic mismatch
   clinicId: any = null;
@@ -137,8 +138,7 @@ export class BulkPage implements OnInit {
       BrandId2: [null],
       BrandId3: [null],
       GivenDate: this.currentDate,
-      IsPAApprove: [null],
-      Validity: [""]
+      IsPAApprove: [null]
     });
 
     this.applyTravelGivenDateToday();
@@ -232,6 +232,7 @@ export class BulkPage implements OnInit {
     this.availableExpiriesPerRow = [];
     this.selectedLotsPerRow = [];
     this.selectedExpiriesPerRow = [];
+    this.selectedValidityPerRow = [];
 
     schedules.forEach((schedule: any, index: number) => {
       const brands = this.getSortedBrands(schedule);
@@ -251,6 +252,7 @@ export class BulkPage implements OnInit {
       this.availableExpiriesPerRow[index] = [];
       this.selectedLotsPerRow[index] = "";
       this.selectedExpiriesPerRow[index] = "";
+      this.selectedValidityPerRow[index] = (schedule && schedule.Validity != null) ? String(schedule.Validity) : "";
 
       if (selectedBrand && this.BrandIds[index] && this.allowInventory) {
         this.loadBatchLotsForRow(index, Number(this.BrandIds[index]));
@@ -392,6 +394,11 @@ export class BulkPage implements OnInit {
     this.selectedExpiriesPerRow[index] = expiryValue || "";
   }
 
+  onValidityChange(index: number, event: any): void {
+    const validityValue = event && event.detail ? event.detail.value : event;
+    this.selectedValidityPerRow[index] = validityValue || "";
+  }
+
   private refreshExpiriesForRow(index: number, lotValue: string): void {
     if (!lotValue) {
       this.availableExpiriesPerRow[index] = [];
@@ -463,13 +470,17 @@ export class BulkPage implements OnInit {
       const lotVal = this.allowInventory ? (this.selectedLotsPerRow[i] || "") : "";
       const expiryVal = this.allowInventory ? (this.selectedExpiriesPerRow[i] || null) : null;
       const manufacturerVal = this.manufacturerValues[i] || "";
+      const validityVal = this.isTravelType && this.selectedValidityPerRow[i]
+        ? Number(this.selectedValidityPerRow[i])
+        : null;
 
       brands.push({
         BrandId: this.ohfSelections[i] ? null : (this.BrandIds[i] || null),
         ScheduleId: element.Id,
         Manufacturer: manufacturerVal,
         Lot: lotVal,
-        Expiry: expiryVal
+        Expiry: expiryVal,
+        Validity: validityVal
       });
       i++;
     });
@@ -487,7 +498,6 @@ export class BulkPage implements OnInit {
       ScheduleBrands: brands,
       Id: this.bulkData[0].Id,
       IsPAApprove: this.fg.value.IsPAApprove,
-      Validity: this.isTravelType ? (this.fg.value.Validity || "") : null,
       PaymentMode: this.paymentMode,
       OnlineService: this.paymentMode === 'Online Transfer' ? this.onlineService : null,
       PaymentCollectorPaId: this.paymentCollectorPaId || null
