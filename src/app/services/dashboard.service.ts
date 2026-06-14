@@ -22,6 +22,15 @@ export class DashboardService extends BaseService {
     );
   }
 
+  // Combined call for the members shell (menu) + dashboard page.
+  // userType: "DOCTOR" (id = DoctorId) or "PA" (id = PersonalAssistantId)
+  getShellData(userType: string, id: number): Observable<any> {
+    const url = `${this.API_DASHBOARD}/shell-data/${userType}/${id}`;
+    return this.http.get<any>(url).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   getAnalyticsData(doctorId: number): Observable<any> {
     const url = `${this.API_DASHBOARD}/analytics/${doctorId}`;
     return this.http.get<any>(url).pipe(

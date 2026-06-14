@@ -474,11 +474,6 @@ import { LoadingController } from "@ionic/angular";
 import { environment } from "src/environments/environment";
 import { ClinicService } from "../services/clinic.service";
 import { ToastService } from "../shared/toast.service";
-import { DoctorService } from "src/app/services/doctor.service";
-import { PaService } from "src/app/services/pa.service";
-import { ChildService } from "src/app/services/child.service";
-import { BookingService } from "src/app/services/booking.service";
-import { NotificationService } from "src/app/services/notification.service";
 
 @Component({
   selector: "app-members",
@@ -486,7 +481,6 @@ import { NotificationService } from "src/app/services/notification.service";
   styleUrls: ["./members.page.scss"]
 })
 export class MembersPage implements OnInit {
-  doctorData: any;
   DoctorId: any;
   profileImagePath: string = '';
   Name: any;
@@ -509,11 +503,6 @@ export class MembersPage implements OnInit {
     private storage: Storage,
     public clinicService: ClinicService,
     private toastService: ToastService,
-    private doctorService: DoctorService,
-    private paService: PaService,
-    private childService: ChildService,
-    private bookingService: BookingService,
-    private notificationService: NotificationService,
   ) {}
 
   async ngOnInit() {
@@ -521,16 +510,7 @@ export class MembersPage implements OnInit {
       // Retrieve DoctorId and User from storage
       this.DoctorId = await this.storage.get(environment.DOCTOR_Id);
       this.user = await this.storage.get(environment.USER);
-  
-      console.log(this.user);
-  
-      if (this.user.UserType === "PA") {
-        const permissions = await this.checkPermissions(this.user.PAId);
-        if (permissions) {
-          console.log('Permissions:', permissions);
-        }
-      }
-  
+
       // Call getProfile
       this.getProfile(this.user.UserType);
     } catch (error) {
@@ -538,7 +518,7 @@ export class MembersPage implements OnInit {
     }
   }
 
-  async checkPermissions(id: string): Promise<{
+  private permissionsFromShellData(shellData: any): {
     AllowStock: boolean;
     AllowAlert: boolean;
     AllowSchedule: boolean;
@@ -546,33 +526,9 @@ export class MembersPage implements OnInit {
     AllowAnalytics: boolean;
     AllowClinic: boolean;
     AllowChild: boolean;
-  }> {
-    try {
-      if (this.user.UserType === "PA") {
-        const perm = await this.paService.getPaPermissions(Number(id)).toPromise();
-        if (perm) {
-          return {
-            AllowStock: (perm.StockSuppliers || perm.StockPurchaseBills || perm.StockOverview || perm.StockAdjust || perm.StockTransfer || perm.StockDirectSale || perm.StockReports) || false,
-            AllowAlert: perm.ViewAlerts || false,
-            AllowSchedule: perm.ViewSchedule || false,
-            AllowVacation: perm.SetVacationDates || false,
-            AllowAnalytics: perm.ViewAnalytics || false,
-            AllowClinic: perm.SetClinicOnline || false,
-            AllowChild: perm.SearchPatient || false,
-          };
-        }
-      }
-      return {
-        AllowStock: false,
-        AllowAlert: false,
-        AllowSchedule: false,
-        AllowVacation: false,
-        AllowAnalytics: false,
-        AllowClinic: false,
-        AllowChild: false,
-      };
-    } catch (error) {
-      console.error('Error checking permissions:', error);
+  } {
+    const perm = shellData && shellData.PaPermissions;
+    if (!perm) {
       return {
         AllowStock: false,
         AllowAlert: false,
@@ -583,6 +539,15 @@ export class MembersPage implements OnInit {
         AllowChild: false,
       };
     }
+    return {
+      AllowStock: (perm.StockSuppliers || perm.StockPurchaseBills || perm.StockOverview || perm.StockAdjust || perm.StockTransfer || perm.StockDirectSale || perm.StockReports) || false,
+      AllowAlert: perm.ViewAlerts || false,
+      AllowSchedule: perm.ViewSchedule || false,
+      AllowVacation: perm.SetVacationDates || false,
+      AllowAnalytics: perm.ViewAnalytics || false,
+      AllowClinic: perm.SetClinicOnline || false,
+      AllowChild: perm.SearchPatient || false,
+    };
   }
 
   async getProfile(data: any) {
@@ -591,36 +556,32 @@ export class MembersPage implements OnInit {
     });
 
     await loading.present();
-    this.doctorService.getDoctorProfile(this.DoctorId).subscribe(
-      async (res) => {
+    const userType = data === "PA" ? "PA" : "DOCTOR";
+    const id = userType === "PA" ? Number(this.user.PAId) : Number(this.DoctorId);
+    this.clinicService.getShellData(userType, id).subscribe(
+      (res) => {
         if (res.IsSuccess) {
-          this.doctorData = res.ResponseData;
-          const inventoryAllowed   = this.doctorData.AllowInventory  !== false;
-          const financialAllowed   = this.doctorData.AllowFinancial  === true;
-          const agentAllowed       = this.doctorData.AllowAgent       === true;
-          const analyticsAllowed   = this.doctorData.AllowAnalytics   === true;
-          const assistantAllowed   = this.doctorData.AllowAssistant   === true;
-          this.profileImagePath = this.doctorData.ProfileImage;
-          this.Name = this.doctorData.DisplayName;
-          const clinics = this.doctorData.Clinics;
+          const shellData = res.ResponseData;
+          const inventoryAllowed   = shellData.AllowInventory  !== false;
+          const financialAllowed   = shellData.AllowFinancial  === true;
+          const agentAllowed       = shellData.AllowAgent       === true;
+          const analyticsAllowed   = shellData.AllowAnalytics   === true;
+          const assistantAllowed   = shellData.AllowAssistant   === true;
+          this.profileImagePath = shellData.ProfileImage;
+          this.Name = shellData.DisplayName;
+          const clinics = shellData.Clinics;
           this.hasClinics = clinics && clinics.length > 0;
-          try {
-            const pas = await this.paService.getPAsByDoctorId(this.DoctorId).toPromise();
-            this.hasPA = (pas || []).length > 0;
-          } catch (e) {
-            this.hasPA = false;
-          }
-          const permissions = await this.checkPermissions(this.user.PAId);
-          if (permissions) {
+          this.hasPA = shellData.HasPA || false;
+          this.pendingApprovalsCount = shellData.PendingApprovalsCount || 0;
+          this.pendingBookingsCount = shellData.PendingBookingsCount || 0;
+          this.unreadNotificationCount = shellData.UnreadNotificationCount || 0;
+          {
+            const permissions = this.permissionsFromShellData(shellData);
             const { AllowClinic, AllowAnalytics, AllowVacation, AllowSchedule, AllowChild } = permissions;
 
           if (data === "PA") {
             this.isPaUser = true;
-            this.paService.getAssignments(Number(this.user.PAId)).subscribe(res => {
-              if (res && res.IsSuccess) {
-                this.paAssignmentCount = (res.ResponseData || []).length;
-              }
-            });
+            this.paAssignmentCount = shellData.PaAssignmentCount || 0;
 
             this.appPages = [
               {
@@ -744,10 +705,7 @@ export class MembersPage implements OnInit {
                 url: "/members/child/unapprove",
                 icon: "alert-circle-outline"
               });
-              this.loadPendingCount();
             }
-            this.loadPendingBookingsCount();
-            this.loadUnreadNotificationCount();
             if (assistantAllowed) {
               this.appPages.push({
                 title: "Personal Assistant",
@@ -850,47 +808,11 @@ export class MembersPage implements OnInit {
     );
   }
 
-  loadPendingCount() {
-    if (!this.DoctorId) { return; }
-    this.childService.getPendingCount(this.DoctorId).subscribe(
-      (res) => {
-        if (res && res.IsSuccess) {
-          this.pendingApprovalsCount = res.ResponseData || 0;
-        }
-      },
-      (err) => { console.error('Error fetching pending count', err); }
-    );
-  }
-
-  loadPendingBookingsCount() {
-    const clinic = this.clinicService.OnlineClinic;
-    if (!clinic || !clinic.Id) { return; }
-    this.bookingService.getPendingCount(clinic.Id).subscribe(
-      (res) => {
-        if (res && res.IsSuccess) {
-          this.pendingBookingsCount = res.ResponseData || 0;
-        }
-      },
-      (err) => {}
-    );
-  }
-
-  loadUnreadNotificationCount() {
-    if (!this.DoctorId) { return; }
-    this.notificationService.getUnreadCount(this.DoctorId).subscribe(
-      (res) => {
-        if (res && res.IsSuccess) {
-          this.unreadNotificationCount = res.ResponseData || 0;
-        }
-      },
-      (err) => {}
-    );
-  }
-
   clearStorage() {
     this.storage.clear();
     this.clinicService.clinics = null;
     this.clinicService.doctorId = null;
     this.clinicService.OnlineClinicId = null;
+    this.clinicService.refreshShellData();
   }
 }
