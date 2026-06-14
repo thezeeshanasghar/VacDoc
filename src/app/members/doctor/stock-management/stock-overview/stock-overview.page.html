@@ -69,7 +69,6 @@
         <span>Batch</span>
         <span>Expiry</span>
         <span class="col-right">Qty</span>
-        <span class="col-right">Unit Price</span>
       </div>
 
       <div
@@ -85,7 +84,6 @@
           <span class="expiry-tag soon-tag" *ngIf="!isExpired(batch.Expiry) && isExpiringSoon(batch.Expiry)">Soon</span>
         </span>
         <span class="col-right">{{ batch.Quantity }}</span>
-        <span class="col-right">Rs {{ batch.UnitPrice | number:'1.2-2' }}</span>
       </div>
 
     </div>

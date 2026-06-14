@@ -161,7 +161,7 @@
 
 .batch-header {
   display: grid;
-  grid-template-columns: 1.2fr 1.4fr 60px 90px;
+  grid-template-columns: 1.2fr 1.4fr 60px;
   padding: 6px 16px;
   background: #F1F5F9;
   border-bottom: 1px solid #CFD8DC;
@@ -177,7 +177,7 @@
 
 .batch-row {
   display: grid;
-  grid-template-columns: 1.2fr 1.4fr 60px 90px;
+  grid-template-columns: 1.2fr 1.4fr 60px;
   padding: 8px 16px;
   border-bottom: 1px solid #F5F7FA;
   align-items: center;
