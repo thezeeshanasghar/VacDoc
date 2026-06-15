@@ -46,6 +46,15 @@ export class AssignmentsPage {
     );
   }
 
+  // Step 1: record payment mode, or Step 2: mark done — depending on sale state
+  async confirmDirectSaleAction(sale: any) {
+    if (!sale.IsPaymentCollected) {
+      await this.confirmRecordDirectSalePayment(sale);
+    } else {
+      await this.confirmMarkDirectSaleDone(sale);
+    }
+  }
+
   async confirmRecordDirectSalePayment(sale: any) {
     const alert = await this.alertController.create({
       header: 'Record Payment Mode',
@@ -74,8 +83,9 @@ export class AssignmentsPage {
       res => {
         loading.dismiss();
         if (res && res.IsSuccess) {
-          this.pendingDirectSales = this.pendingDirectSales.filter(s => s.SaleBillNo !== sale.SaleBillNo);
-          this.toastService.create('Payment recorded.');
+          sale.IsPaymentCollected = true;
+          sale.PaymentMode = mode;
+          this.toastService.create('Payment recorded. Tap again to mark as done.');
         } else {
           this.toastService.create((res && res.Message) || 'Failed to record payment', 'danger');
         }
@@ -83,6 +93,43 @@ export class AssignmentsPage {
       () => {
         loading.dismiss();
         this.toastService.create('Failed to record payment mode', 'danger');
+      }
+    );
+  }
+
+  async confirmMarkDirectSaleDone(sale: any) {
+    const alert = await this.alertController.create({
+      header: 'Mark as Done',
+      message: `Mark this sale (${sale.PaymentMode}) as handed off to the doctor?`,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Mark Done',
+          handler: () => {
+            this.markDirectSaleDone(sale);
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  private async markDirectSaleDone(sale: any) {
+    const loading = await this.loadingController.create({ message: 'Updating...' });
+    await loading.present();
+    this.stockService.markDirectSaleDone(sale.SaleBillNo).subscribe(
+      res => {
+        loading.dismiss();
+        if (res && res.IsSuccess) {
+          this.pendingDirectSales = this.pendingDirectSales.filter(s => s.SaleBillNo !== sale.SaleBillNo);
+          this.toastService.create('Marked as done.');
+        } else {
+          this.toastService.create((res && res.Message) || 'Failed to update', 'danger');
+        }
+      },
+      () => {
+        loading.dismiss();
+        this.toastService.create('Failed to update', 'danger');
       }
     );
   }

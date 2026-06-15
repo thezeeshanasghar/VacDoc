@@ -26,9 +26,9 @@
         </div>
         <div class="icons-right">
           <ion-icon
-            name="checkmark-done-circle-outline"
+            [name]="s.IsPaymentCollected ? 'checkmark-done-circle-outline' : 'cash-outline'"
             class="iconchild complete-icon"
-            (click)="confirmRecordDirectSalePayment(s)">
+            (click)="confirmDirectSaleAction(s)">
           </ion-icon>
         </div>
       </div>
@@ -38,6 +38,8 @@
         <ion-icon name="calendar"></ion-icon> {{ s.Date | date:'dd MMM yyyy' }}
       </div>
       <div *ngIf="s.SaleBillNo" class="ds-bill-no">{{ s.SaleBillNo }}</div>
+      <div class="ds-status" *ngIf="!s.IsPaymentCollected">Tap to record payment mode</div>
+      <div class="ds-status" *ngIf="s.IsPaymentCollected">{{ s.PaymentMode }} — tap to mark as done</div>
     </ion-card-content>
   </ion-card>
 

@@ -147,4 +147,12 @@ export class StockService {
   recordDirectSalePaymentMode(saleBillNo: string, body: { PaymentMode: string; OnlineService?: string }): Observable<any> {
     return this.http.patch<any>(`${this.apiUrl}directsale/by-bill/${encodeURIComponent(saleBillNo)}/record-payment-mode`, body);
   }
+
+  markDirectSaleDone(saleBillNo: string): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}directsale/by-bill/${encodeURIComponent(saleBillNo)}/mark-done`, {});
+  }
+
+  confirmDirectSale(saleBillNo: string): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}directsale/by-bill/${encodeURIComponent(saleBillNo)}/confirm`, {});
+  }
 }

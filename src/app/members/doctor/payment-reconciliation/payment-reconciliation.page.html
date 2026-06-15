@@ -224,7 +224,8 @@
                 </td>
                 <td class="col-mode">
                   <span class="amount-val" *ngIf="row.RowType === 'AwaitingInvoice'">—</span>
-                  <span class="badge" *ngIf="row.RowType !== 'AwaitingInvoice'" [ngClass]="row.PaymentMode === 'Online' ? 'badge-online' : 'badge-cash'">
+                  <span class="amount-val" *ngIf="row.RowType === 'DirectSale' && !row.IsPaymentCollected">—</span>
+                  <span class="badge" *ngIf="row.RowType !== 'AwaitingInvoice' && !(row.RowType === 'DirectSale' && !row.IsPaymentCollected)" [ngClass]="row.PaymentMode === 'Online' ? 'badge-online' : 'badge-cash'">
                     {{ row.PaymentMode || '—' }}
                   </span>
                 </td>
@@ -253,9 +254,17 @@
                   <ng-container *ngIf="row.RowType === 'AwaitingInvoice'">
                     <span class="badge badge-awaiting">Awaiting Invoice</span>
                   </ng-container>
-                  <!-- PA-collected direct sale: pooled cash, settled via cash handover -->
+                  <!-- PA-assigned direct sale: pooled cash, settled via cash handover -->
                   <ng-container *ngIf="row.RowType === 'DirectSale'">
-                    <span class="badge badge-directsale">Direct Sale — Pooled Cash</span>
+                    <ng-container *ngIf="row.IsConfirmed">
+                      <span class="badge badge-confirmed">Confirmed</span>
+                      <div class="confirm-ts">{{ formatDateTime(row.ConfirmedAt) }}</div>
+                    </ng-container>
+                    <ng-container *ngIf="!row.IsConfirmed">
+                      <span class="badge badge-pending" *ngIf="!row.IsPaymentCollected">Pending With PA</span>
+                      <span class="badge badge-cash" *ngIf="row.IsPaymentCollected && !row.PendingHandover">Payment Recorded</span>
+                      <span class="badge badge-handover" *ngIf="row.PendingHandover">Pending Handover</span>
+                    </ng-container>
                     <div class="directsale-sub" *ngIf="row.DirectSaleBillNo">{{ row.DirectSaleBillNo }}</div>
                   </ng-container>
                 </td>
@@ -278,6 +287,14 @@
                         <ion-icon name="close-outline"></ion-icon> Reject
                       </button>
                     </div>
+                  </ng-container>
+                  <!-- PA-assigned direct sale: Confirm once PA has recorded the payment mode -->
+                  <ng-container *ngIf="row.RowType === 'DirectSale'">
+                    <div *ngIf="row.IsConfirmed" class="action-confirmed">
+                      <ion-icon name="checkmark-circle" class="icon-confirmed"></ion-icon>
+                    </div>
+                    <button *ngIf="!row.IsConfirmed && row.IsPaymentCollected" class="btn-confirm-row"
+                      (click)="confirmDirectSale(row)">Confirm</button>
                   </ng-container>
                 </td>
               </tr>

@@ -3,6 +3,7 @@ import { AlertController, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { PaService } from 'src/app/services/pa.service';
+import { StockService } from 'src/app/services/stock.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 
@@ -25,6 +26,7 @@ interface PaymentRow {
   InvoiceStatus?: string;
   HasPendingAmendment?: boolean;
   PendingHandover?: boolean;
+  IsPaymentCollected?: boolean; // DirectSale rows only — false until PA records Cash/Online
   PaId: number;
   PaName: string;
   ClinicId: number;
@@ -60,6 +62,7 @@ export class PaymentReconciliationPage {
   constructor(
     private paService: PaService,
     private clinicService: ClinicService,
+    private stockService: StockService,
     private storage: Storage,
     private toastService: ToastService,
     private alertController: AlertController,
@@ -568,6 +571,42 @@ export class PaymentReconciliationPage {
           cssClass: 'alert-btn-confirm',
           handler: () => {
             this.doConfirm([row]);
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  // Direct-sale row confirm
+  async confirmDirectSale(row: PaymentRow) {
+    const alert = await this.alertController.create({
+      header: 'Confirm Payment Receipt',
+      message: `Have you received PKR ${row.Amount.toLocaleString()} (${row.PaymentMode}) from ${row.PaName} for direct sale ${row.DirectSaleBillNo}?`,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Confirm Receipt',
+          cssClass: 'alert-btn-confirm',
+          handler: async () => {
+            const loading = await this.loadingController.create({ message: 'Confirming...' });
+            await loading.present();
+            this.stockService.confirmDirectSale(row.DirectSaleBillNo!).subscribe(
+              res => {
+                loading.dismiss();
+                if (res && res.IsSuccess) {
+                  row.IsConfirmed = true;
+                  row.ConfirmedAt = new Date().toISOString();
+                  this.toastService.create('Payment confirmed', 'success');
+                } else {
+                  this.toastService.create((res && res.Message) || 'Failed to confirm', 'danger');
+                }
+              },
+              () => {
+                loading.dismiss();
+                this.toastService.create('Failed to confirm', 'danger');
+              }
+            );
           }
         }
       ]
