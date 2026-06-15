@@ -6,6 +6,19 @@ import { BrandService } from 'src/app/services/brand.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 
+interface AdjustmentRow {
+  adjustType: string;
+  brandId: number;
+  brandSearch: string;
+  batchLot: string;
+  expiryDate: string;
+  availableQty: number;
+  qty: number;
+  reason: string;
+  price: number;
+  batches: any[];
+}
+
 @Component({
   selector: 'app-adjust-stock',
   templateUrl: './adjust-stock.page.html',
@@ -16,27 +29,20 @@ export class AdjustStockPage {
   clinicId: number = 0;
   clinics: any[] = [];
 
-  // Form fields
-  adjustType: string = 'Increase';
-  brandId: number = null;
-  brandSearch: string = '';
-  brandDropOpen: boolean = false;
-  batchLot: string = '';
-  expiryDate: string = '';
-  availableQty: number = 0;
-  qty: number = null;
+  // Shared date across all rows
   adjustDate: string = '';
-  reason: string = '';
-  price: number = null;
 
-  // Batch popup
-  batchModalOpen: boolean = false;
-  batches: any[] = [];
+  // Form rows — one per brand
+  rows: AdjustmentRow[] = [];
 
-  // Brand picker modal
+  // Brand picker modal — operates on the row at activeRowIndex
+  activeRowIndex: number = -1;
   brands: any[] = [];
   brandModalOpen: boolean = false;
   brandModalSearch: string = '';
+
+  // Batch picker modal — operates on the row at activeRowIndex
+  batchModalOpen: boolean = false;
 
   get filteredBrandModal(): any[] {
     const q = (this.brandModalSearch || '').toLowerCase();
@@ -77,17 +83,48 @@ export class AdjustStockPage {
     const allClinics = await this.storage.get(environment.CLINICS);
     this.clinics = allClinics || (clinic ? [clinic] : []);
 
-    const today = new Date();
-    const mm = (today.getMonth() + 1).toString().padStart(2, '0');
-    const dd = today.getDate().toString().padStart(2, '0');
-    this.adjustDate = today.getFullYear() + '-' + mm + '-' + dd;
+    this.setTodayDate();
+    this.rows = [this.newRow()];
 
     this.loadBrands();
     this.loadHistory();
   }
 
+  setTodayDate() {
+    const today = new Date();
+    const mm = (today.getMonth() + 1).toString().padStart(2, '0');
+    const dd = today.getDate().toString().padStart(2, '0');
+    this.adjustDate = today.getFullYear() + '-' + mm + '-' + dd;
+  }
+
+  newRow(): AdjustmentRow {
+    return {
+      adjustType: 'Increase',
+      brandId: null,
+      brandSearch: '',
+      batchLot: '',
+      expiryDate: '',
+      availableQty: 0,
+      qty: null,
+      reason: '',
+      price: null,
+      batches: [],
+    };
+  }
+
+  addRow() {
+    this.rows.push(this.newRow());
+  }
+
+  removeRow(index: number) {
+    this.rows.splice(index, 1);
+    if (this.rows.length === 0) {
+      this.rows.push(this.newRow());
+    }
+  }
+
   onClinicChange() {
-    this.resetForm();
+    this.rows = [this.newRow()];
     this.loadBrands();
     this.loadHistory();
   }
@@ -115,54 +152,59 @@ export class AdjustStockPage {
   }
 
   // Brand modal
-  openBrandModal() {
+  openBrandModal(index: number) {
+    this.activeRowIndex = index;
     this.brandModalSearch = '';
     this.brandModalOpen = true;
   }
 
   closeBrandModal() {
     this.brandModalOpen = false;
+    this.activeRowIndex = -1;
   }
 
   selectBrandModal(b: any) {
-    this.brandId = b.BrandId;
-    this.brandSearch = b.BrandName;
+    const row = this.rows[this.activeRowIndex];
+    if (!row) return;
+    row.brandId = b.BrandId;
+    row.brandSearch = b.BrandName;
+    row.batchLot = '';
+    row.expiryDate = '';
+    row.availableQty = 0;
     this.brandModalOpen = false;
-    this.batchLot = '';
-    this.expiryDate = '';
-    this.availableQty = 0;
-    this.loadBatchesForBrand();
+    this.loadBatchesForRow(this.activeRowIndex);
+    this.activeRowIndex = -1;
   }
 
-  clearBrand() {
-    this.brandId = null;
-    this.brandSearch = '';
-    this.brandDropOpen = false;
-    this.batchLot = '';
-    this.expiryDate = '';
-    this.availableQty = 0;
-    this.batches = [];
+  clearBrand(row: AdjustmentRow) {
+    row.brandId = null;
+    row.brandSearch = '';
+    row.batchLot = '';
+    row.expiryDate = '';
+    row.availableQty = 0;
+    row.batches = [];
   }
 
-  loadBatchesForBrand() {
-    if (!this.brandId) return;
-    this.stockService.getBatchLotsByBrand(this.brandId, this.clinicId).subscribe(
+  loadBatchesForRow(index: number) {
+    const row = this.rows[index];
+    if (!row || !row.brandId) return;
+    this.stockService.getBatchLotsByBrand(row.brandId, this.clinicId).subscribe(
       (res: any) => {
         if (res.IsSuccess) {
-          this.batches = res.ResponseData || [];
-          if (this.batches.length > 0) {
+          row.batches = res.ResponseData || [];
+          if (row.batches.length > 0) {
             // FEFO — first result is oldest expiry (API returns ordered by expiry asc)
-            const first = this.batches[0];
-            this.batchLot = first.BatchLot || '';
-            this.expiryDate = first.Expiry ? this.formatDateInput(first.Expiry) : '';
-            this.availableQty = first.Quantity || 0;
-            if (this.adjustType === 'Increase') {
-              this.price = first.StockAmount || null;
+            const first = row.batches[0];
+            row.batchLot = first.BatchLot || '';
+            row.expiryDate = first.Expiry ? this.formatDateInput(first.Expiry) : '';
+            row.availableQty = first.Quantity || 0;
+            if (row.adjustType === 'Increase') {
+              row.price = first.StockAmount || null;
             }
           } else {
-            this.batchLot = '';
-            this.expiryDate = '';
-            this.availableQty = 0;
+            row.batchLot = '';
+            row.expiryDate = '';
+            row.availableQty = 0;
           }
         }
       },
@@ -171,23 +213,29 @@ export class AdjustStockPage {
   }
 
   // Batch popup
-  openBatchModal() {
-    if (!this.brandId) return;
+  openBatchModal(index: number) {
+    const row = this.rows[index];
+    if (!row || !row.brandId) return;
+    this.activeRowIndex = index;
     this.batchModalOpen = true;
   }
 
   closeBatchModal() {
     this.batchModalOpen = false;
+    this.activeRowIndex = -1;
   }
 
   selectBatch(batch: any) {
-    this.batchLot = batch.BatchLot || '';
-    this.expiryDate = batch.Expiry ? this.formatDateInput(batch.Expiry) : '';
-    this.availableQty = batch.Quantity || 0;
-    if (this.adjustType === 'Increase') {
-      this.price = batch.StockAmount || null;
+    const row = this.rows[this.activeRowIndex];
+    if (!row) return;
+    row.batchLot = batch.BatchLot || '';
+    row.expiryDate = batch.Expiry ? this.formatDateInput(batch.Expiry) : '';
+    row.availableQty = batch.Quantity || 0;
+    if (row.adjustType === 'Increase') {
+      row.price = batch.StockAmount || null;
     }
     this.batchModalOpen = false;
+    this.activeRowIndex = -1;
   }
 
   formatDateInput(d: string): string {
@@ -198,71 +246,103 @@ export class AdjustStockPage {
     return dt.getFullYear() + '-' + mm + '-' + dd;
   }
 
-  setType(t: string) {
-    this.adjustType = t;
+  setType(row: AdjustmentRow, t: string) {
+    row.adjustType = t;
     if (t === 'Loss') {
-      this.price = null;
+      row.price = null;
     }
   }
 
+  get activeBatches(): any[] {
+    const row = this.rows[this.activeRowIndex];
+    return row ? row.batches : [];
+  }
+
+  get activeBatchLot(): string {
+    const row = this.rows[this.activeRowIndex];
+    return row ? row.batchLot : '';
+  }
+
   async save() {
-    if (!this.brandId) {
-      this.toastService.create('Select a brand', 'danger');
-      return;
-    }
-    if (!this.batchLot || this.batchLot.trim() === '') {
-      this.toastService.create('Batch is required', 'danger');
-      return;
-    }
-    if (!this.qty || this.qty <= 0) {
-      this.toastService.create('Quantity must be greater than 0', 'danger');
+    if (this.rows.length === 0) {
+      this.toastService.create('Add at least one brand', 'danger');
       return;
     }
     if (!this.adjustDate) {
       this.toastService.create('Date is required', 'danger');
       return;
     }
-    if (!this.reason || this.reason.trim() === '') {
-      this.toastService.create('Reason is required', 'danger');
-      return;
-    }
-    if (this.adjustType === 'Increase' && (!this.price || this.price <= 0)) {
-      this.toastService.create('Price per unit is required for Increase', 'danger');
-      return;
+
+    for (let i = 0; i < this.rows.length; i++) {
+      const row = this.rows[i];
+      const rowLabel = 'Row ' + (i + 1);
+      if (!row.brandId) {
+        this.toastService.create(rowLabel + ': Select a brand', 'danger');
+        return;
+      }
+      if (!row.batchLot || row.batchLot.trim() === '') {
+        this.toastService.create(rowLabel + ': Batch is required', 'danger');
+        return;
+      }
+      if (!row.qty || row.qty <= 0) {
+        this.toastService.create(rowLabel + ': Quantity must be greater than 0', 'danger');
+        return;
+      }
+      if (!row.reason || row.reason.trim() === '') {
+        this.toastService.create(rowLabel + ': Reason is required', 'danger');
+        return;
+      }
+      if (row.adjustType === 'Increase' && (!row.price || row.price <= 0)) {
+        this.toastService.create(rowLabel + ': Price per unit is required for Increase', 'danger');
+        return;
+      }
     }
 
     const loading = await this.loadingController.create({ message: 'Saving...' });
     await loading.present();
 
-    const payload = {
-      DoctorId: this.doctorId,
-      ClinicId: this.clinicId,
-      BrandId: this.brandId,
-      Quantity: this.qty,
-      Type: this.adjustType,
-      Reason: this.reason,
-      Price: this.adjustType === 'Increase' ? (this.price || 0) : 0,
-      BatchLot: this.batchLot,
-      ExpiryDate: this.expiryDate ? this.expiryDate : null,
-      Date: this.adjustDate
-    };
+    let successCount = 0;
+    let failedRows: string[] = [];
 
-    this.stockService.createAdjustment(payload).subscribe(
-      (res: any) => {
-        loading.dismiss();
+    for (let i = 0; i < this.rows.length; i++) {
+      const row = this.rows[i];
+      const payload = {
+        DoctorId: this.doctorId,
+        ClinicId: this.clinicId,
+        BrandId: row.brandId,
+        Quantity: row.qty,
+        Type: row.adjustType,
+        Reason: row.reason,
+        Price: row.adjustType === 'Increase' ? (row.price || 0) : 0,
+        BatchLot: row.batchLot,
+        ExpiryDate: row.expiryDate ? row.expiryDate : null,
+        Date: this.adjustDate
+      };
+
+      try {
+        const res: any = await this.stockService.createAdjustment(payload).toPromise();
         if (res.IsSuccess) {
-          this.toastService.create('Adjustment saved', 'success');
-          this.resetForm();
-          this.loadHistory();
+          successCount++;
         } else {
-          this.toastService.create(res.Message || 'Failed to save', 'danger');
+          failedRows.push(row.brandSearch || ('Row ' + (i + 1)));
         }
-      },
-      () => {
-        loading.dismiss();
-        this.toastService.create('Failed to save adjustment', 'danger');
+      } catch {
+        failedRows.push(row.brandSearch || ('Row ' + (i + 1)));
       }
-    );
+    }
+
+    loading.dismiss();
+
+    if (failedRows.length === 0) {
+      this.toastService.create(successCount + ' adjustment(s) saved', 'success');
+      this.resetForm();
+    } else if (successCount === 0) {
+      this.toastService.create('Failed to save adjustments: ' + failedRows.join(', '), 'danger');
+    } else {
+      this.toastService.create(successCount + ' saved, failed: ' + failedRows.join(', '), 'danger');
+    }
+
+    this.loadHistory();
   }
 
   async confirmDelete(id: number) {
@@ -298,20 +378,8 @@ export class AdjustStockPage {
   }
 
   resetForm() {
-    this.adjustType = 'Increase';
-    this.brandId = null;
-    this.brandSearch = '';
-    this.batchLot = '';
-    this.expiryDate = '';
-    this.availableQty = 0;
-    this.qty = null;
-    this.reason = '';
-    this.price = null;
-    this.batches = [];
-    const today = new Date();
-    const mm = (today.getMonth() + 1).toString().padStart(2, '0');
-    const dd = today.getDate().toString().padStart(2, '0');
-    this.adjustDate = today.getFullYear() + '-' + mm + '-' + dd;
+    this.rows = [this.newRow()];
+    this.setTodayDate();
   }
 
   formatDate(d: string): string {

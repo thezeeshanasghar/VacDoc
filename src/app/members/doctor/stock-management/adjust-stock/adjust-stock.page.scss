@@ -342,9 +342,29 @@
   }
 }
 
+// Row header (per-brand card)
+.row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.row-remove-icon {
+  font-size: 20px;
+  color: #E53935;
+  cursor: pointer;
+}
+
+// Add another brand button
+.add-row-btn {
+  margin-bottom: 12px;
+}
+
 // Save button
 .save-btn {
   margin-top: 4px;
+  margin-bottom: 20px;
 }
 
 // Number inputs — no spinners

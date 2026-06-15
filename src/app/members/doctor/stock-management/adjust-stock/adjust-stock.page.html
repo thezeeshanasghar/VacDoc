@@ -17,27 +17,40 @@
     </select>
   </div>
 
-  <!-- New Adjustment card -->
+  <!-- Shared Date -->
   <ion-card class="form-card">
     <ion-card-content class="form-card-content">
+      <div class="field-wrap" style="margin-bottom: 0;">
+        <label class="field-label">Date *</label>
+        <input type="date" [(ngModel)]="adjustDate" class="header-input">
+      </div>
+    </ion-card-content>
+  </ion-card>
 
-      <div class="section-label">New Adjustment</div>
+  <!-- New Adjustment rows -->
+  <ion-card class="form-card" *ngFor="let row of rows; let i = index; let first = first">
+    <ion-card-content class="form-card-content">
+
+      <div class="row-header">
+        <div class="section-label" style="margin-bottom: 0;">Brand {{ i + 1 }}</div>
+        <ion-icon *ngIf="!first || rows.length > 1" name="trash-outline" class="row-remove-icon" (click)="removeRow(i)"></ion-icon>
+      </div>
 
       <!-- Type toggle -->
       <div class="type-toggle-row">
         <button
           class="type-btn"
-          [class.type-btn-increase]="adjustType === 'Increase'"
-          [class.type-btn-inactive]="adjustType !== 'Increase'"
-          (click)="setType('Increase')">
+          [class.type-btn-increase]="row.adjustType === 'Increase'"
+          [class.type-btn-inactive]="row.adjustType !== 'Increase'"
+          (click)="setType(row, 'Increase')">
           <ion-icon name="arrow-up-circle-outline"></ion-icon>
           Increase
         </button>
         <button
           class="type-btn"
-          [class.type-btn-loss]="adjustType === 'Loss'"
-          [class.type-btn-inactive]="adjustType !== 'Loss'"
-          (click)="setType('Loss')">
+          [class.type-btn-loss]="row.adjustType === 'Loss'"
+          [class.type-btn-inactive]="row.adjustType !== 'Loss'"
+          (click)="setType(row, 'Loss')">
           <ion-icon name="arrow-down-circle-outline"></ion-icon>
           Stock Loss
         </button>
@@ -46,74 +59,74 @@
       <!-- Brand picker -->
       <div class="field-wrap">
         <label class="field-label">Brand *</label>
-        <div class="supplier-pick-row" (click)="openBrandModal()">
-          <span class="supplier-pick-value" [class.placeholder]="!brandId">
-            {{ brandId ? brandSearch : 'Tap to select brand...' }}
+        <div class="supplier-pick-row" (click)="openBrandModal(i)">
+          <span class="supplier-pick-value" [class.placeholder]="!row.brandId">
+            {{ row.brandId ? row.brandSearch : 'Tap to select brand...' }}
           </span>
           <span class="supplier-pick-icons">
-            <ion-icon *ngIf="brandId" name="close-circle" class="supplier-clear-icon" (click)="clearBrand(); $event.stopPropagation()"></ion-icon>
+            <ion-icon *ngIf="row.brandId" name="close-circle" class="supplier-clear-icon" (click)="clearBrand(row); $event.stopPropagation()"></ion-icon>
             <ion-icon name="chevron-down-outline" class="supplier-chevron"></ion-icon>
           </span>
         </div>
       </div>
 
       <!-- Batch row — only shown after brand selected -->
-      <div *ngIf="brandId">
+      <div *ngIf="row.brandId">
         <div class="two-col-row">
           <div class="field-wrap">
             <label class="field-label">Batch <span class="hint">(tap to change)</span></label>
-            <div class="batch-pick-row" (click)="openBatchModal()">
-              <span class="batch-pick-value" [class.placeholder]="!batchLot">
-                {{ batchLot || 'No batches available' }}
+            <div class="batch-pick-row" (click)="openBatchModal(i)">
+              <span class="batch-pick-value" [class.placeholder]="!row.batchLot">
+                {{ row.batchLot || 'No batches available' }}
               </span>
               <ion-icon name="chevron-down-outline" class="batch-chevron"></ion-icon>
             </div>
           </div>
           <div class="field-wrap">
             <label class="field-label">Expiry</label>
-            <input type="text" class="header-input" [value]="expiryDate ? formatDate(expiryDate) : '—'" readonly>
+            <input type="text" class="header-input" [value]="row.expiryDate ? formatDate(row.expiryDate) : '—'" readonly>
           </div>
         </div>
 
         <div class="avail-row">
           <ion-icon name="cube-outline" class="avail-icon"></ion-icon>
           <span class="avail-label">Available in batch:</span>
-          <span class="avail-count" [class.avail-zero]="availableQty === 0">{{ availableQty }} units</span>
+          <span class="avail-count" [class.avail-zero]="row.availableQty === 0">{{ row.availableQty }} units</span>
         </div>
       </div>
 
-      <!-- Qty + Date -->
-      <div class="two-col-row">
-        <div class="field-wrap">
-          <label class="field-label">Quantity *</label>
-          <input type="number" [(ngModel)]="qty" class="header-input" placeholder="0" min="1">
-        </div>
-        <div class="field-wrap">
-          <label class="field-label">Date *</label>
-          <input type="date" [(ngModel)]="adjustDate" class="header-input">
-        </div>
+      <!-- Qty -->
+      <div class="field-wrap">
+        <label class="field-label">Quantity *</label>
+        <input type="number" [(ngModel)]="row.qty" class="header-input" placeholder="0" min="1">
       </div>
 
       <!-- Reason -->
       <div class="field-wrap">
         <label class="field-label">Reason *</label>
-        <input type="text" [(ngModel)]="reason" class="header-input" placeholder="e.g. Stock count correction">
+        <input type="text" [(ngModel)]="row.reason" class="header-input" placeholder="e.g. Stock count correction">
       </div>
 
       <!-- Price — Increase only -->
-      <div class="field-wrap" *ngIf="adjustType === 'Increase'">
+      <div class="field-wrap" *ngIf="row.adjustType === 'Increase'">
         <label class="field-label">Price / unit (incl. AWT) *</label>
-        <input type="number" [(ngModel)]="price" class="header-input" placeholder="0.00" min="0" step="0.01">
+        <input type="number" [(ngModel)]="row.price" class="header-input" placeholder="0.00" min="0" step="0.01">
       </div>
-
-      <ion-button expand="block" (click)="save()" class="save-btn"
-        [color]="adjustType === 'Loss' ? 'danger' : 'primary'">
-        <ion-icon [name]="adjustType === 'Loss' ? 'arrow-down-circle-outline' : 'arrow-up-circle-outline'" slot="start"></ion-icon>
-        Save {{ adjustType }} Adjustment
-      </ion-button>
 
     </ion-card-content>
   </ion-card>
+
+  <!-- Add another brand -->
+  <ion-button expand="block" fill="outline" (click)="addRow()" class="add-row-btn">
+    <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+    Add another brand
+  </ion-button>
+
+  <!-- Save All -->
+  <ion-button expand="block" (click)="save()" class="save-btn" color="primary">
+    <ion-icon name="save-outline" slot="start"></ion-icon>
+    Save All
+  </ion-button>
 
   <!-- History section -->
   <div class="section-title">History</div>
@@ -187,7 +200,7 @@
     <div *ngIf="filteredBrandModal.length === 0" class="brand-modal-empty">No brands found</div>
     <div class="brand-modal-item" *ngFor="let b of filteredBrandModal" (click)="selectBrandModal(b)">
       <span class="bmi-name">{{ b.BrandName }}</span>
-      <ion-icon *ngIf="brandId === b.BrandId" name="checkmark-circle" class="bmi-check"></ion-icon>
+      <ion-icon *ngIf="rows[activeRowIndex] && rows[activeRowIndex].brandId === b.BrandId" name="checkmark-circle" class="bmi-check"></ion-icon>
     </div>
   </div>
 </div>
@@ -205,15 +218,15 @@
     <span>Qty</span>
   </div>
   <div class="batch-modal-list">
-    <div *ngIf="batches.length === 0" class="batch-modal-empty">No batches in stock</div>
+    <div *ngIf="activeBatches.length === 0" class="batch-modal-empty">No batches in stock</div>
     <div class="batch-modal-row"
-         *ngFor="let b of batches"
+         *ngFor="let b of activeBatches"
          (click)="selectBatch(b)"
-         [class.batch-row-selected]="b.BatchLot === batchLot"
+         [class.batch-row-selected]="b.BatchLot === activeBatchLot"
          [class.batch-row-expired]="isExpired(b.Expiry)"
          [class.batch-row-soon]="!isExpired(b.Expiry) && isExpiringSoon(b.Expiry)">
       <span class="bmr-batch">
-        <ion-icon *ngIf="b.BatchLot === batchLot" name="checkmark-circle" class="bmr-check"></ion-icon>
+        <ion-icon *ngIf="b.BatchLot === activeBatchLot" name="checkmark-circle" class="bmr-check"></ion-icon>
         {{ b.BatchLot }}
       </span>
       <span class="bmr-expiry">
