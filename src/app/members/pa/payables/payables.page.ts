@@ -73,7 +73,9 @@ export class PayablesPage {
 
       let completedList: any[] = [];
       if (reconRes && reconRes.IsSuccess && reconRes.ResponseData) {
-        completedList = reconRes.ResponseData.Rows || [];
+        // Exclude pooled-cash "DirectSale" rows here — they're shown via completedDsRes below,
+        // which carries SaleBillNo/IsConfirmedByDoctor/PaymentMode for the PA's own card.
+        completedList = (reconRes.ResponseData.Rows || []).filter((r: any) => r.RowType !== 'DirectSale');
         this.totalPayable = reconRes.ResponseData.TotalPending || 0;
       }
 
