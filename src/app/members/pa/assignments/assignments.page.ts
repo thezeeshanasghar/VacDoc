@@ -3,6 +3,7 @@ import { AlertController, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { PaService } from 'src/app/services/pa.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
+import { StockService } from 'src/app/services/stock.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 
@@ -13,11 +14,13 @@ import { environment } from 'src/environments/environment';
 })
 export class AssignmentsPage {
   assignments: any[] = [];
+  pendingDirectSales: any[] = [];
   loading: boolean = false;
 
   constructor(
     private paService: PaService,
     private scheduleService: ScheduleService,
+    private stockService: StockService,
     private storage: Storage,
     private toastService: ToastService,
     private alertController: AlertController,
@@ -28,7 +31,60 @@ export class AssignmentsPage {
     const user = await this.storage.get(environment.USER);
     if (user && user.PAId) {
       this.loadAssignments(Number(user.PAId));
+      this.loadPendingDirectSales(Number(user.PAId));
     }
+  }
+
+  loadPendingDirectSales(paId: number) {
+    this.stockService.getPendingDirectSalesForPa(paId).subscribe(
+      res => {
+        if (res && res.IsSuccess) {
+          this.pendingDirectSales = res.ResponseData || [];
+        }
+      },
+      () => {}
+    );
+  }
+
+  async confirmRecordDirectSalePayment(sale: any) {
+    const alert = await this.alertController.create({
+      header: 'Record Payment Mode',
+      message: 'Select how the client paid for this sale.',
+      inputs: [
+        { type: 'radio', label: 'Cash', value: 'Cash', checked: true },
+        { type: 'radio', label: 'Online', value: 'Online' },
+      ],
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Confirm',
+          handler: (selectedMode: string) => {
+            this.recordDirectSalePayment(sale, selectedMode || 'Cash');
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  private async recordDirectSalePayment(sale: any, mode: string) {
+    const loading = await this.loadingController.create({ message: 'Recording payment...' });
+    await loading.present();
+    this.stockService.recordDirectSalePaymentMode(sale.SaleBillNo, { PaymentMode: mode }).subscribe(
+      res => {
+        loading.dismiss();
+        if (res && res.IsSuccess) {
+          this.pendingDirectSales = this.pendingDirectSales.filter(s => s.SaleBillNo !== sale.SaleBillNo);
+          this.toastService.create('Payment recorded.');
+        } else {
+          this.toastService.create((res && res.Message) || 'Failed to record payment', 'danger');
+        }
+      },
+      () => {
+        loading.dismiss();
+        this.toastService.create('Failed to record payment mode', 'danger');
+      }
+    );
   }
 
   loadAssignments(paId: number) {

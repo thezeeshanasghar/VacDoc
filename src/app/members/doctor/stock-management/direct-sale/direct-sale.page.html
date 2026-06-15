@@ -148,7 +148,7 @@
         <!-- Payment Mode -->
         <div class="field-wrap">
           <label class="field-label">Payment Mode *</label>
-          <select [(ngModel)]="paymentMode" class="header-select">
+          <select [(ngModel)]="paymentMode" class="header-select" (change)="onPaymentModeChange()">
             <option value="Cash">Cash</option>
             <option value="Online Transfer">Online Transfer</option>
             <option value="Cheque">Cheque</option>
@@ -159,6 +159,15 @@
         <div class="field-wrap" *ngIf="paymentMode === 'Online Transfer'">
           <label class="field-label">Online Service</label>
           <input type="text" class="header-input" [(ngModel)]="onlineService" placeholder="e.g. EasyPaisa, JazzCash...">
+        </div>
+
+        <!-- PA cash collector — only for Cash sales, if PAs exist at this clinic -->
+        <div class="field-wrap" *ngIf="paymentMode === 'Cash' && pasForClinic.length > 0">
+          <label class="field-label">Assign PA for Cash Collection <span class="hint">(optional)</span></label>
+          <select [(ngModel)]="selectedCollectorPaId" class="header-select">
+            <option [ngValue]="null">None — I'll keep the cash</option>
+            <option *ngFor="let pa of pasForClinic" [ngValue]="pa.Id">{{ pa.Name }}</option>
+          </select>
         </div>
 
         <!-- Notes -->
@@ -251,6 +260,14 @@
           <span class="meta-chip">
             <ion-icon name="cash-outline"></ion-icon>
             {{ group.PaymentMode }}<span *ngIf="group.OnlineService"> / {{ group.OnlineService }}</span>
+          </span>
+          <span class="meta-chip" *ngIf="group.PaymentCollectorPaName">
+            <ion-icon name="person-circle-outline"></ion-icon>
+            Collected by: {{ group.PaymentCollectorPaName }}
+          </span>
+          <span class="meta-chip" *ngIf="group.PaymentMode === 'Pending'" color="warning">
+            <ion-icon name="time-outline"></ion-icon>
+            Awaiting PA to record payment
           </span>
           <span class="meta-chip" *ngIf="group.Notes">
             <ion-icon name="document-text-outline"></ion-icon>

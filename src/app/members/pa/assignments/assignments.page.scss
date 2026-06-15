@@ -126,6 +126,35 @@
   ion-icon { font-size: 11px; }
 }
 
+// ── Direct sale cards (PA payment-mode collection) ──────────────────────────
+.direct-sale-card {
+  border-left: 4px solid #FFB300 !important;
+  box-shadow: 0 2px 12px rgba(255, 179, 0, 0.12) !important;
+}
+
+.ds-money-icon {
+  font-size: 22px;
+  color: #ffffff !important;
+}
+
+.ds-details {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #37474F;
+
+  ion-icon {
+    font-size: 13px;
+    vertical-align: middle;
+    margin-right: 2px;
+  }
+}
+
+.ds-bill-no {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #90A4AE;
+}
+
 // ── Assignment notes ──────────────────────────────────────────────────────────
 .assignment-notes {
   margin-top: 8px;

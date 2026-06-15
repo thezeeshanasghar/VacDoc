@@ -9,10 +9,37 @@
 
 <ion-content class="ion-padding">
 
-  <div *ngIf="assignments.length === 0 && !loading" class="empty-state">
+  <div *ngIf="assignments.length === 0 && pendingDirectSales.length === 0 && !loading" class="empty-state">
     <ion-icon name="clipboard-outline"></ion-icon>
     <p>No active assignments</p>
   </div>
+
+  <ion-list-header *ngIf="pendingDirectSales.length > 0">
+    <ion-label>Direct Sales — Record Payment</ion-label>
+  </ion-list-header>
+  <ion-card *ngFor="let s of pendingDirectSales" class="direct-sale-card">
+    <ion-card-content>
+      <div class="icons">
+        <div class="icons-left">
+          <ion-icon name="cash-outline" class="ds-money-icon"></ion-icon>
+          <span class="icons-name">{{ s.ClientName }}</span>
+        </div>
+        <div class="icons-right">
+          <ion-icon
+            name="checkmark-done-circle-outline"
+            class="iconchild complete-icon"
+            (click)="confirmRecordDirectSalePayment(s)">
+          </ion-icon>
+        </div>
+      </div>
+      <div class="ds-details">
+        <span>Rs. {{ s.Amount | number:'1.0-0' }}</span>
+        &nbsp;&nbsp;
+        <ion-icon name="calendar"></ion-icon> {{ s.Date | date:'dd MMM yyyy' }}
+      </div>
+      <div *ngIf="s.SaleBillNo" class="ds-bill-no">{{ s.SaleBillNo }}</div>
+    </ion-card-content>
+  </ion-card>
 
   <ion-card *ngFor="let a of assignments" [ngClass]="[a.Gender === 'Girl' ? 'girl' : 'boy', isBulkGroup(a) ? 'bulk-group' : '']">
 

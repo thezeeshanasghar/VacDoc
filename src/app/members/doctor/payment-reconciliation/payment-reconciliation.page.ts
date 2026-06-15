@@ -11,7 +11,8 @@ interface PaymentRow {
   ScheduleId: number;       // alias = InvoiceSubmissionId, kept for backwards compat
   AmendmentId?: number;     // set when RowType is UngiveReversal or EditReversal
   AssignmentId?: number;    // PAAssignment.Id — used for "delete assignment" cascade
-  RowType: 'Invoice' | 'UngiveReversal' | 'EditReversal' | 'AwaitingInvoice';
+  DirectSaleBillNo?: string; // set when RowType is DirectSale
+  RowType: 'Invoice' | 'UngiveReversal' | 'EditReversal' | 'AwaitingInvoice' | 'DirectSale';
   Date: string;
   PatientName: string;
   Vaccines: string;
@@ -532,13 +533,13 @@ export class PaymentReconciliationPage {
   }
 
   get allChecked(): boolean {
-    const pending = this.filteredRows.filter(r => !r.IsConfirmed);
+    const pending = this.filteredRows.filter(r => !r.IsConfirmed && r.RowType === 'Invoice');
     return pending.length > 0 && pending.every(r => this.selectedIds.has(r.ScheduleId));
   }
 
   toggleAll(checked: boolean) {
     if (checked) {
-      this.filteredRows.filter(r => !r.IsConfirmed).forEach(r => this.selectedIds.add(r.ScheduleId));
+      this.filteredRows.filter(r => !r.IsConfirmed && r.RowType === 'Invoice').forEach(r => this.selectedIds.add(r.ScheduleId));
     } else {
       this.selectedIds = new Set();
     }

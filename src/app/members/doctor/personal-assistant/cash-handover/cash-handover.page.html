@@ -53,6 +53,26 @@
       </ion-card-content>
     </ion-card>
 
+    <!-- Direct sales where I collected the cash -->
+    <ng-container *ngIf="myDirectSaleRows.length > 0">
+      <ion-list-header>
+        <ion-label>Direct Sales — Cash Collected by Me</ion-label>
+      </ion-list-header>
+      <ion-card *ngFor="let row of myDirectSaleRows">
+        <ion-card-content>
+          <ion-item lines="none">
+            <ion-label>
+              <h2>Rs. {{ row.Amount | number:'1.0-0' }}</h2>
+              <p>{{ row.PatientName }}</p>
+              <p *ngIf="row.DirectSaleBillNo">{{ row.DirectSaleBillNo }}</p>
+              <p>{{ row.Date | date:'dd MMM yyyy' }}</p>
+            </ion-label>
+            <ion-badge slot="end" color="medium">Direct Sale</ion-badge>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+    </ng-container>
+
     <ion-list-header>
       <ion-label>Handover History</ion-label>
     </ion-list-header>

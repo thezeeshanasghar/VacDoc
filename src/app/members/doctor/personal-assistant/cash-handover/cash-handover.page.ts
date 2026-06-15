@@ -20,7 +20,12 @@ export class CashHandoverPage {
   handovers: any[] = [];
   pendingHandovers: any[] = [];
   isDoctorView: boolean = false;
-  myRecon: { TotalCollected: number; TotalConfirmed: number; TotalPending: number } = null;
+  myRecon: { TotalCollected: number; TotalConfirmed: number; TotalPending: number; Rows: any[] } = null;
+
+  get myDirectSaleRows(): any[] {
+    if (!this.myRecon || !this.myRecon.Rows) return [];
+    return this.myRecon.Rows.filter(r => r.RowType === 'DirectSale');
+  }
 
   // Cached flag — recomputed whenever handovers array is replaced
   hasRejectedHandover: boolean = false;

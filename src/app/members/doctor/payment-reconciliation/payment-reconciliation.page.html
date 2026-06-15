@@ -190,8 +190,9 @@
               <tr *ngFor="let row of filteredRows"
                   [class.row-confirmed]="row.IsConfirmed"
                   [class.row-pending]="!row.IsConfirmed && row.RowType === 'Invoice'"
-                  [class.row-amendment]="row.RowType !== 'Invoice' && row.RowType !== 'AwaitingInvoice'"
-                  [class.row-awaiting]="row.RowType === 'AwaitingInvoice'">
+                  [class.row-amendment]="row.RowType !== 'Invoice' && row.RowType !== 'AwaitingInvoice' && row.RowType !== 'DirectSale'"
+                  [class.row-awaiting]="row.RowType === 'AwaitingInvoice'"
+                  [class.row-directsale]="row.RowType === 'DirectSale'">
                 <!-- Checkbox: only for normal invoice rows -->
                 <td class="col-check">
                   <input type="checkbox"
@@ -216,7 +217,7 @@
                   <ng-container *ngIf="row.RowType !== 'AwaitingInvoice'">
                     <span class="amount-val">{{ row.Amount | number:'1.0-0' }}</span>
                     <!-- For amendment rows show old→new -->
-                    <div *ngIf="row.RowType !== 'Invoice'" class="amount-sub-detail">
+                    <div *ngIf="row.RowType === 'UngiveReversal' || row.RowType === 'EditReversal'" class="amount-sub-detail">
                       {{ row.OldAmount | number:'1.0-0' }} → {{ row.NewAmount | number:'1.0-0' }}
                     </div>
                   </ng-container>
@@ -251,6 +252,11 @@
                   <!-- Awaiting invoice: assignment exists, nothing to action yet -->
                   <ng-container *ngIf="row.RowType === 'AwaitingInvoice'">
                     <span class="badge badge-awaiting">Awaiting Invoice</span>
+                  </ng-container>
+                  <!-- PA-collected direct sale: pooled cash, settled via cash handover -->
+                  <ng-container *ngIf="row.RowType === 'DirectSale'">
+                    <span class="badge badge-directsale">Direct Sale — Pooled Cash</span>
+                    <div class="directsale-sub" *ngIf="row.DirectSaleBillNo">{{ row.DirectSaleBillNo }}</div>
                   </ng-container>
                 </td>
                 <td class="col-action">

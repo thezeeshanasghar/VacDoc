@@ -139,4 +139,12 @@ export class StockService {
   downloadDirectSalePdf(saleBillNo: string): Observable<any> {
     return this.http.get(`${this.apiUrl}directsale/pdf?saleBillNo=${encodeURIComponent(saleBillNo)}`, { responseType: 'blob' });
   }
+
+  getPendingDirectSalesForPa(paId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}directsale/pending-for-pa/${paId}`);
+  }
+
+  recordDirectSalePaymentMode(saleBillNo: string, body: { PaymentMode: string; OnlineService?: string }): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}directsale/by-bill/${encodeURIComponent(saleBillNo)}/record-payment-mode`, body);
+  }
 }

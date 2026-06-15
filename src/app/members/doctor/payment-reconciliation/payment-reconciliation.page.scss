@@ -448,6 +448,10 @@
     background: #ECEFF1;
     color: #607D8B;
   }
+  &.badge-directsale {
+    background: #E0F2F1;
+    color: #00695C;
+  }
 }
 
 .confirm-ts {
@@ -472,6 +476,18 @@
 .row-awaiting {
   background: #FAFAFA;
   border-left: 3px solid #B0BEC5;
+}
+
+// PA-collected direct sale rows — pooled cash, settled via cash handover
+.row-directsale {
+  background: #E0F7FA;
+  border-left: 3px solid #00897B;
+}
+
+.directsale-sub {
+  font-size: 10px;
+  color: #00695C;
+  margin-top: 3px;
 }
 
 .amount-sub-detail {

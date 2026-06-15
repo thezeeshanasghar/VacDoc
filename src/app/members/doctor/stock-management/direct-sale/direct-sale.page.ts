@@ -3,6 +3,7 @@ import { AlertController, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { StockService } from 'src/app/services/stock.service';
 import { BrandService } from 'src/app/services/brand.service';
+import { PaService } from 'src/app/services/pa.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 
@@ -37,6 +38,10 @@ export class DirectSalePage {
   notes: string = '';
   saleDate: string = '';
 
+  // PA cash collection (optional, Cash sales only)
+  pasForClinic: any[] = [];
+  selectedCollectorPaId: number | null = null;
+
   // History
   history: any[] = [];
   historySearch: string = '';
@@ -55,6 +60,7 @@ export class DirectSalePage {
           OnlineService: h.OnlineService,
           Notes: h.Notes,
           SaleDate: h.SaleDate,
+          PaymentCollectorPaName: h.PaymentCollectorPaName,
           items: [],
           grandTotal: 0,
           firstId: h.Id
@@ -101,6 +107,7 @@ export class DirectSalePage {
   constructor(
     private stockService: StockService,
     private brandService: BrandService,
+    private paService: PaService,
     private loadingController: LoadingController,
     private alertController: AlertController,
     private storage: Storage,
@@ -119,8 +126,29 @@ export class DirectSalePage {
 
     this.loadBrands();
     this.loadHistory();
+    this.loadPasForClinic();
     if (this.items.length === 0) {
       this.addItem();
+    }
+  }
+
+  loadPasForClinic() {
+    if (!this.clinicId) {
+      this.pasForClinic = [];
+      return;
+    }
+    var self = this;
+    this.paService.getPAsForClinic(this.clinicId).subscribe(
+      function(res: any) {
+        self.pasForClinic = (res && res.IsSuccess) ? (res.ResponseData || []) : [];
+      },
+      function() { self.pasForClinic = []; }
+    );
+  }
+
+  onPaymentModeChange() {
+    if (this.paymentMode !== 'Cash') {
+      this.selectedCollectorPaId = null;
     }
   }
 
@@ -313,7 +341,8 @@ export class DirectSalePage {
       OnlineService: this.onlineService || '',
       Notes: this.notes || '',
       SaleDate: this.saleDate,
-      Items: itemPayloads
+      Items: itemPayloads,
+      PaymentCollectorPaId: this.paymentMode === 'Cash' ? (this.selectedCollectorPaId || null) : null
     };
 
     var self = this;
@@ -391,6 +420,7 @@ export class DirectSalePage {
     this.paymentMode = 'Cash';
     this.onlineService = '';
     this.notes = '';
+    this.selectedCollectorPaId = null;
     const today = new Date();
     const mm = (today.getMonth() + 1).toString().padStart(2, '0');
     const dd = today.getDate().toString().padStart(2, '0');
