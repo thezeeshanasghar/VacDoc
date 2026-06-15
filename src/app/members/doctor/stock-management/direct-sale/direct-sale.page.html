@@ -145,29 +145,35 @@
           </div>
         </div>
 
-        <!-- Payment Mode -->
-        <div class="field-wrap">
+        <!-- PA cash collector — if PAs exist at this clinic -->
+        <div class="field-wrap" *ngIf="pasForClinic.length > 0">
+          <label class="field-label">Assign PA for Cash Collection <span class="hint">(optional)</span></label>
+          <select [(ngModel)]="selectedCollectorPaId" class="header-select">
+            <option [ngValue]="null">None — I'll record the payment</option>
+            <option *ngFor="let pa of pasForClinic" [ngValue]="pa.Id">{{ pa.Name }}</option>
+          </select>
+        </div>
+
+        <!-- Payment Mode — hidden once a PA is assigned; PA records it later -->
+        <div class="field-wrap" *ngIf="!selectedCollectorPaId">
           <label class="field-label">Payment Mode *</label>
-          <select [(ngModel)]="paymentMode" class="header-select" (change)="onPaymentModeChange()">
+          <select [(ngModel)]="paymentMode" class="header-select">
+            <option value="" disabled>Select payment mode</option>
             <option value="Cash">Cash</option>
-            <option value="Online Transfer">Online Transfer</option>
-            <option value="Cheque">Cheque</option>
+            <option value="Online">Online</option>
           </select>
         </div>
 
         <!-- Online service — only if Online selected -->
-        <div class="field-wrap" *ngIf="paymentMode === 'Online Transfer'">
+        <div class="field-wrap" *ngIf="!selectedCollectorPaId && paymentMode === 'Online'">
           <label class="field-label">Online Service</label>
           <input type="text" class="header-input" [(ngModel)]="onlineService" placeholder="e.g. EasyPaisa, JazzCash...">
         </div>
 
-        <!-- PA cash collector — only for Cash sales, if PAs exist at this clinic -->
-        <div class="field-wrap" *ngIf="paymentMode === 'Cash' && pasForClinic.length > 0">
-          <label class="field-label">Assign PA for Cash Collection <span class="hint">(optional)</span></label>
-          <select [(ngModel)]="selectedCollectorPaId" class="header-select">
-            <option [ngValue]="null">None — I'll keep the cash</option>
-            <option *ngFor="let pa of pasForClinic" [ngValue]="pa.Id">{{ pa.Name }}</option>
-          </select>
+        <!-- Note when PA assigned -->
+        <div class="field-wrap pending-note" *ngIf="selectedCollectorPaId">
+          <ion-icon name="time-outline"></ion-icon>
+          Payment mode will be recorded by the assigned PA once collected.
         </div>
 
         <!-- Notes -->

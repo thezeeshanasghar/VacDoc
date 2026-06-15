@@ -87,6 +87,23 @@
   font-weight: 400;
 }
 
+.pending-note {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #B26A00;
+  background: #FFF8E1;
+  border: 1px solid #FFE0A3;
+  border-radius: 8px;
+  padding: 8px 10px;
+
+  ion-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+}
+
 .header-input {
   display: block;
   width: 100%;

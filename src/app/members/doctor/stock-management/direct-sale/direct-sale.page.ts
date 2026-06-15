@@ -33,12 +33,13 @@ export class DirectSalePage {
   // Form fields
   items: SaleItem[] = [];
   clientName: string = '';
-  paymentMode: string = 'Cash';
+  paymentMode: string = '';
   onlineService: string = '';
   notes: string = '';
   saleDate: string = '';
 
-  // PA cash collection (optional, Cash sales only)
+  // PA cash collection (optional) — when assigned, PaymentMode is left
+  // "Pending" and the PA records Cash/Online later from their Assignments page.
   pasForClinic: any[] = [];
   selectedCollectorPaId: number | null = null;
 
@@ -144,12 +145,6 @@ export class DirectSalePage {
       },
       function() { self.pasForClinic = []; }
     );
-  }
-
-  onPaymentModeChange() {
-    if (this.paymentMode !== 'Cash') {
-      this.selectedCollectorPaId = null;
-    }
   }
 
   newItem(): SaleItem {
@@ -286,7 +281,7 @@ export class DirectSalePage {
       this.toastService.create('Client name is required', 'danger');
       return;
     }
-    if (!this.paymentMode) {
+    if (!this.selectedCollectorPaId && !this.paymentMode) {
       this.toastService.create('Payment mode is required', 'danger');
       return;
     }
@@ -337,12 +332,12 @@ export class DirectSalePage {
       DoctorId: this.doctorId,
       ClinicId: this.clinicId,
       ClientName: this.clientName,
-      PaymentMode: this.paymentMode,
+      PaymentMode: this.selectedCollectorPaId ? 'Cash' : this.paymentMode,
       OnlineService: this.onlineService || '',
       Notes: this.notes || '',
       SaleDate: this.saleDate,
       Items: itemPayloads,
-      PaymentCollectorPaId: this.paymentMode === 'Cash' ? (this.selectedCollectorPaId || null) : null
+      PaymentCollectorPaId: this.selectedCollectorPaId || null
     };
 
     var self = this;
@@ -417,7 +412,7 @@ export class DirectSalePage {
   resetForm() {
     this.items = [this.newItem()];
     this.clientName = '';
-    this.paymentMode = 'Cash';
+    this.paymentMode = '';
     this.onlineService = '';
     this.notes = '';
     this.selectedCollectorPaId = null;
