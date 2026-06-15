@@ -128,11 +128,24 @@
       </div>
     </div>
 
-    <!-- Main Content: Table + Right Panel -->
+    <!-- Main Content: Table -->
     <div class="main-content-area">
 
       <!-- Table Section -->
       <div class="table-section">
+
+        <!-- Pending Handover + Adjust Payable (only when a specific PA is selected) -->
+        <div class="pa-actions-bar" *ngIf="selectedPaId">
+          <ng-container *ngIf="panelPendingHandover as h">
+            <div class="handover-inline">
+              <ion-icon name="swap-horizontal-outline"></ion-icon>
+              <span>Handover Pending: Rs {{ h.Amount | number:'1.0-0' }}</span>
+              <button class="btn-confirm-handover" (click)="confirmHandover(h)">Cash Received</button>
+              <button class="btn-reject-handover" (click)="rejectHandover(h)">Reject</button>
+            </div>
+          </ng-container>
+          <button class="btn-adjust" (click)="promptAdjust()">&#177; Adjust Payable</button>
+        </div>
 
         <!-- Bulk Action Bar -->
         <div class="bulk-action-bar">
@@ -310,82 +323,6 @@
           Showing {{ filteredRows.length }} of {{ allRows.length }} entries
         </div>
 
-      </div>
-
-      <!-- Right Panel -->
-      <div class="right-panel">
-        <div class="panel-header">Reconciliation Summary</div>
-
-        <div class="panel-meta">
-          <div class="panel-meta-row">
-            <ion-icon name="person-outline" class="panel-icon"></ion-icon>
-            <div>
-              <div class="panel-meta-label">Selected PA</div>
-              <div class="panel-meta-value">{{ selectedPaName }}</div>
-            </div>
-          </div>
-          <div class="panel-meta-row">
-            <ion-icon name="business-outline" class="panel-icon"></ion-icon>
-            <div>
-              <div class="panel-meta-label">Selected Clinic</div>
-              <div class="panel-meta-value">{{ selectedClinicName }}</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel-stats">
-          <div class="panel-stat-row">
-            <span class="panel-stat-label">Cash Pending</span>
-            <span class="panel-stat-val orange">PKR {{ panelCashPending | number:'1.0-0' }}</span>
-          </div>
-          <div class="panel-stat-row">
-            <span class="panel-stat-label">Online Pending Verification</span>
-            <span class="panel-stat-val sky">PKR {{ panelOnlinePending | number:'1.0-0' }}</span>
-          </div>
-          <div class="panel-stat-divider"></div>
-          <div class="panel-stat-row total-row">
-            <span class="panel-stat-label-bold">Total Outstanding</span>
-            <span class="panel-stat-val-bold" [class.orange]="panelTotalOutstanding > 0" [class.green]="panelTotalOutstanding === 0">
-              PKR {{ panelTotalOutstanding | number:'1.0-0' }}
-            </span>
-          </div>
-        </div>
-
-        <!-- Outstanding Warning Card -->
-        <div class="panel-warning-card" *ngIf="panelTotalOutstanding > 0">
-          <div class="warning-header">
-            <ion-icon name="warning-outline" class="warning-icon"></ion-icon>
-            <span>Outstanding Amount</span>
-          </div>
-          <div class="warning-amount">PKR {{ panelTotalOutstanding | number:'1.0-0' }}</div>
-          <div class="warning-sub">Funds not yet reconciled with owner</div>
-        </div>
-
-        <!-- All Clear Card -->
-        <div class="panel-clear-card" *ngIf="panelTotalOutstanding === 0 && allRows.length > 0">
-          <ion-icon name="checkmark-circle-outline" class="clear-icon"></ion-icon>
-          <div class="clear-text">All Clear</div>
-          <div class="clear-sub">All payments reconciled</div>
-        </div>
-
-        <!-- Pending Handover for selected PA -->
-        <ng-container *ngIf="selectedPaId && panelPendingHandover as h">
-          <div class="panel-handover-card">
-            <div class="handover-label">
-              <ion-icon name="swap-horizontal-outline"></ion-icon>
-              Handover Pending: Rs {{ h.Amount | number:'1.0-0' }}
-            </div>
-            <div class="handover-btns">
-              <button class="btn-confirm-handover" (click)="confirmHandover(h)">Cash Received</button>
-              <button class="btn-reject-handover" (click)="rejectHandover(h)">Reject</button>
-            </div>
-          </div>
-        </ng-container>
-
-        <!-- Adjust Payable (only when a specific PA is selected) -->
-        <div class="panel-adjust-row" *ngIf="selectedPaId">
-          <button class="btn-adjust" (click)="promptAdjust()">&#177; Adjust Payable</button>
-        </div>
       </div>
 
     </div>

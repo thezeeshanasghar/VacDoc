@@ -514,44 +514,6 @@ export class PaymentReconciliationPage {
       .reduce((s, r) => s + (r.Amount || 0), 0);
   }
 
-  // Right-panel getters (based on selected PA or all PAs)
-  get panelRows(): PaymentRow[] {
-    if (this.selectedPaId) {
-      return this.allRows.filter(r => r.PaId === this.selectedPaId);
-    }
-    return this.allRows;
-  }
-
-  get panelCashPending(): number {
-    return this.panelRows
-      .filter(r => !r.IsConfirmed && r.PaymentMode === 'Cash')
-      .reduce((s, r) => s + (r.Amount || 0), 0);
-  }
-
-  get panelOnlinePending(): number {
-    return this.panelRows
-      .filter(r => !r.IsConfirmed && r.PaymentMode === 'Online')
-      .reduce((s, r) => s + (r.Amount || 0), 0);
-  }
-
-  get panelTotalOutstanding(): number {
-    return this.panelRows
-      .filter(r => !r.IsConfirmed)
-      .reduce((s, r) => s + (r.Amount || 0), 0);
-  }
-
-  get selectedPaName(): string {
-    if (!this.selectedPaId) { return 'All Staff / PA'; }
-    const pa = this.pas.find(p => p.PaId === this.selectedPaId || p.Id === this.selectedPaId);
-    return pa ? pa.Name || pa.PaName : 'Selected PA';
-  }
-
-  get selectedClinicName(): string {
-    if (!this.selectedClinicId) { return 'All Clinics'; }
-    const c = this.clinics.find(cl => cl.Id === this.selectedClinicId);
-    return c ? c.Name : 'Selected Clinic';
-  }
-
   // Checkbox / bulk
   isSelected(row: PaymentRow): boolean {
     return this.selectedIds.has(row.ScheduleId);
