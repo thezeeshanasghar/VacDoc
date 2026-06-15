@@ -124,6 +124,37 @@ export class PaymentReconciliationPage {
     this.load();
   }
 
+  async confirmDeleteDirectSale(row: PaymentRow) {
+    const alert = await this.alertController.create({
+      header: 'Reverse Sale',
+      message: `Reverse direct sale ${row.DirectSaleBillNo} for ${row.PatientName}? This will undo the sale and restore stock. Cannot be undone.`,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Reverse',
+          cssClass: 'alert-btn-danger',
+          handler: async () => {
+            const loading = await this.loadingController.create({ message: 'Reversing...' });
+            await loading.present();
+            this.stockService.deleteDirectSale(row.ScheduleId).subscribe(
+              res => {
+                loading.dismiss();
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Sale reversed', 'success');
+                  this.load();
+                } else {
+                  this.toastService.create((res && res.Message) || 'Failed to reverse', 'danger');
+                }
+              },
+              () => { loading.dismiss(); this.toastService.create('Failed to reverse', 'danger'); }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
   async confirmDeleteAssignment(row: PaymentRow) {
     if (!row.AssignmentId) {
       this.toastService.create('No assignment linked to this row', 'warning');
