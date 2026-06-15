@@ -58,28 +58,39 @@
         <div
           *ngFor="let a of newAssignments; let i = index"
           class="assignment-card"
-          (click)="goToSchedule(a.ChildId)"
+          [class.direct-sale-card]="a.IsDirectSale"
+          (click)="onCardClick(a, a.ChildId)"
         >
           <!-- Card Header -->
           <div class="card-header-row">
             <div class="card-index">{{ i + 1 }}</div>
-            <div class="card-name-block">
+            <div class="card-name-block" *ngIf="!a.IsDirectSale">
               <div class="card-name">{{ a.Name }}</div>
               <div class="card-pid">{{ formatMR(a.ChildId) }}</div>
             </div>
+            <div class="card-name-block" *ngIf="a.IsDirectSale">
+              <div class="card-name">{{ a.Name }}</div>
+              <div class="card-pid">{{ a.SaleBillNo }}</div>
+            </div>
             <div class="card-badge-wrap">
-              <span class="badge badge-handover" *ngIf="a.AssignmentStatus === 'PendingHandover'">Handover</span>
-              <span class="badge badge-pending" *ngIf="a.AssignmentStatus !== 'PendingHandover'">Pending</span>
+              <span class="badge badge-handover" *ngIf="!a.IsDirectSale && a.AssignmentStatus === 'PendingHandover'">Handover</span>
+              <span class="badge badge-pending" *ngIf="!a.IsDirectSale && a.AssignmentStatus !== 'PendingHandover'">Pending</span>
+              <span class="badge badge-handover" *ngIf="a.IsDirectSale && a.IsPaymentCollected">Record Done</span>
+              <span class="badge badge-pending" *ngIf="a.IsDirectSale && !a.IsPaymentCollected">Direct Sale</span>
             </div>
           </div>
 
           <!-- Amount + Actions Row -->
           <div class="card-footer-row">
-            <div class="card-amount">
+            <div class="card-amount" *ngIf="!a.IsDirectSale">
               <span class="amt-label">Invoice</span>
               <span class="amt-value">PKR {{ (a.InvoiceAmount || 0) | number }}</span>
             </div>
-            <div class="card-actions">
+            <div class="card-amount" *ngIf="a.IsDirectSale">
+              <span class="amt-label">Sale</span>
+              <span class="amt-value">PKR {{ (a.Amount || 0) | number }}</span>
+            </div>
+            <div class="card-actions" *ngIf="!a.IsDirectSale">
               <button class="action-btn action-done" (click)="promptDone(a, $event)">
                 <ion-icon name="checkmark-outline"></ion-icon>
                 Done
@@ -87,6 +98,12 @@
               <button class="action-btn action-cancel" (click)="promptCancel(a, $event)">
                 <ion-icon name="close-outline"></ion-icon>
                 Cancel
+              </button>
+            </div>
+            <div class="card-actions" *ngIf="a.IsDirectSale">
+              <button class="action-btn action-done" (click)="promptDoneDirectSale(a, $event)">
+                <ion-icon name="checkmark-outline"></ion-icon>
+                {{ a.IsPaymentCollected ? 'Mark Done' : 'Record Payment' }}
               </button>
             </div>
           </div>
@@ -105,13 +122,18 @@
         <div
           *ngFor="let r of completedRows; let i = index"
           class="assignment-card"
-          (click)="goToSchedule(r.ChildId)"
+          [class.direct-sale-card]="r.IsDirectSale"
+          (click)="onCardClick(r, r.ChildId)"
         >
           <div class="card-header-row">
             <div class="card-index">{{ i + 1 }}</div>
-            <div class="card-name-block">
+            <div class="card-name-block" *ngIf="!r.IsDirectSale">
               <div class="card-name">{{ r.PatientName }}</div>
               <div class="card-pid">{{ formatMR(r.ChildId) }}</div>
+            </div>
+            <div class="card-name-block" *ngIf="r.IsDirectSale">
+              <div class="card-name">{{ r.PatientName }}</div>
+              <div class="card-pid">{{ r.SaleBillNo }}</div>
             </div>
             <div class="card-badge-wrap">
               <span class="badge" [class.badge-done]="r.IsConfirmed" [class.badge-pending]="!r.IsConfirmed">
@@ -121,8 +143,12 @@
           </div>
 
           <div class="card-footer-row">
-            <div class="card-amount">
+            <div class="card-amount" *ngIf="!r.IsDirectSale">
               <span class="amt-label">Invoice</span>
+              <span class="amt-value">PKR {{ r.Amount | number }}</span>
+            </div>
+            <div class="card-amount" *ngIf="r.IsDirectSale">
+              <span class="amt-label">Sale ({{ r.PaymentMode }})</span>
               <span class="amt-value">PKR {{ r.Amount | number }}</span>
             </div>
             <div class="card-status-icon">

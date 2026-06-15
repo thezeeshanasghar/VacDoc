@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AlertController, LoadingController, NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { PaService } from 'src/app/services/pa.service';
+import { StockService } from 'src/app/services/stock.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 
@@ -22,6 +23,7 @@ export class PayablesPage {
   constructor(
     private storage: Storage,
     private paService: PaService,
+    private stockService: StockService,
     private loadingController: LoadingController,
     private toastService: ToastService,
     private navCtrl: NavController,
@@ -37,23 +39,57 @@ export class PayablesPage {
     await loading.present();
 
     try {
-      const [assignRes, reconRes] = await Promise.all([
+      const [assignRes, reconRes, pendingDsRes, completedDsRes] = await Promise.all([
         this.paService.getAssignments(paId).toPromise(),
-        this.paService.getMyReconciliation(paId).toPromise()
+        this.paService.getMyReconciliation(paId).toPromise(),
+        this.stockService.getPendingDirectSalesForPa(paId).toPromise(),
+        this.stockService.getCompletedDirectSalesForPa(paId).toPromise()
       ]);
 
+      let newList: any[] = [];
       if (assignRes && assignRes.IsSuccess) {
         // Show all active assignments regardless of IsAutoCreated (includes remote-clinic invoice-driven ones)
-        this.newAssignments = (assignRes.ResponseData || []).filter(
+        newList = (assignRes.ResponseData || []).filter(
           (a: any) => !a.IsCompleted && !a.IsCancelled && a.AssignmentStatus !== 'Completed' && a.AssignmentStatus !== 'PendingHandover'
-        ).sort((a: any, b: any) => new Date(b.AssignedAt).getTime() - new Date(a.AssignedAt).getTime());
-        this.pendingCount = this.newAssignments.length;
+        );
       }
 
+      if (pendingDsRes && pendingDsRes.IsSuccess) {
+        const dsRows = (pendingDsRes.ResponseData || []).map((s: any) => ({
+          IsDirectSale: true,
+          SaleBillNo: s.SaleBillNo,
+          Name: s.ClientName,
+          Amount: s.Amount,
+          IsPaymentCollected: s.IsPaymentCollected,
+          PaymentMode: s.PaymentMode,
+          AssignedAt: s.Date,
+          ClinicId: s.ClinicId
+        }));
+        newList = newList.concat(dsRows);
+      }
+
+      this.newAssignments = newList.sort((a: any, b: any) => new Date(b.AssignedAt).getTime() - new Date(a.AssignedAt).getTime());
+      this.pendingCount = this.newAssignments.length;
+
+      let completedList: any[] = [];
       if (reconRes && reconRes.IsSuccess && reconRes.ResponseData) {
-        this.completedRows = reconRes.ResponseData.Rows || [];
+        completedList = reconRes.ResponseData.Rows || [];
         this.totalPayable = reconRes.ResponseData.TotalPending || 0;
       }
+
+      if (completedDsRes && completedDsRes.IsSuccess) {
+        const dsRows = (completedDsRes.ResponseData || []).map((s: any) => ({
+          IsDirectSale: true,
+          SaleBillNo: s.SaleBillNo,
+          PatientName: s.ClientName,
+          Amount: s.Amount,
+          IsConfirmed: s.IsConfirmedByDoctor,
+          PaymentMode: s.PaymentMode
+        }));
+        completedList = completedList.concat(dsRows);
+      }
+
+      this.completedRows = completedList;
     } catch (e) {
       this.toastService.create('Failed to load payables', 'danger');
     } finally {
@@ -63,6 +99,11 @@ export class PayablesPage {
 
   goToSchedule(childId: number) {
     this.navCtrl.navigateForward('/members/child/vaccine/' + childId);
+  }
+
+  onCardClick(item: any, childId: number) {
+    if (item.IsDirectSale) return;
+    this.goToSchedule(childId);
   }
 
   formatMR(childId: number): string {
@@ -110,6 +151,79 @@ export class PayablesPage {
       }
     } catch (e) {
       this.toastService.create('Mark done failed', 'danger');
+    } finally {
+      loading.dismiss();
+    }
+  }
+
+  // Direct sale "Done" action: step 1 records Cash/Online, step 2 marks done
+  async promptDoneDirectSale(s: any, event: Event) {
+    event.stopPropagation();
+
+    if (!s.IsPaymentCollected) {
+      const alert = await this.alertCtrl.create({
+        header: 'Record Payment Mode',
+        message: 'Select how the client paid for this sale.',
+        inputs: [
+          { type: 'radio', label: 'Cash', value: 'Cash', checked: true },
+          { type: 'radio', label: 'Online', value: 'Online' },
+        ],
+        buttons: [
+          { text: 'Cancel', role: 'cancel' },
+          {
+            text: 'Confirm',
+            handler: (selectedMode: string) => {
+              this.recordDirectSalePayment(s, selectedMode || 'Cash');
+            }
+          }
+        ]
+      });
+      await alert.present();
+      return;
+    }
+
+    const confirm = await this.alertCtrl.create({
+      header: 'Mark as Done',
+      message: `Mark this sale (${s.PaymentMode}) as handed off to the doctor?`,
+      buttons: [
+        { text: 'Back', role: 'cancel' },
+        { text: 'Mark Done', handler: () => { this.markDirectSaleDone(s); } }
+      ]
+    });
+    await confirm.present();
+  }
+
+  private async recordDirectSalePayment(s: any, mode: string) {
+    const loading = await this.loadingController.create({ message: 'Recording payment...' });
+    await loading.present();
+    try {
+      const res = await this.stockService.recordDirectSalePaymentMode(s.SaleBillNo, { PaymentMode: mode }).toPromise();
+      if (res && res.IsSuccess) {
+        this.toastService.create('Payment recorded. Tap Done again to mark as done.', 'success');
+        await this.ionViewWillEnter();
+      } else {
+        this.toastService.create((res && res.Message) || 'Failed to record payment', 'danger');
+      }
+    } catch {
+      this.toastService.create('Failed to record payment mode', 'danger');
+    } finally {
+      loading.dismiss();
+    }
+  }
+
+  private async markDirectSaleDone(s: any) {
+    const loading = await this.loadingController.create({ message: 'Updating...' });
+    await loading.present();
+    try {
+      const res = await this.stockService.markDirectSaleDone(s.SaleBillNo).toPromise();
+      if (res && res.IsSuccess) {
+        this.toastService.create('Marked as done.', 'success');
+        await this.ionViewWillEnter();
+      } else {
+        this.toastService.create((res && res.Message) || 'Failed to update', 'danger');
+      }
+    } catch {
+      this.toastService.create('Failed to update', 'danger');
     } finally {
       loading.dismiss();
     }

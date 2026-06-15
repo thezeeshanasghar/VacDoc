@@ -117,6 +117,11 @@
   &:active { box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
 }
 
+.direct-sale-card {
+  border-left: 4px solid #FFB300;
+  box-shadow: 0 2px 12px rgba(255, 179, 0, 0.12);
+}
+
 // Top row: index + name + badge
 .card-header-row {
   display: flex;

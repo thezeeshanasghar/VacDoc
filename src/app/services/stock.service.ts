@@ -152,6 +152,10 @@ export class StockService {
     return this.http.patch<any>(`${this.apiUrl}directsale/by-bill/${encodeURIComponent(saleBillNo)}/mark-done`, {});
   }
 
+  getCompletedDirectSalesForPa(paId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}directsale/completed-for-pa/${paId}`);
+  }
+
   confirmDirectSale(saleBillNo: string): Observable<any> {
     return this.http.patch<any>(`${this.apiUrl}directsale/by-bill/${encodeURIComponent(saleBillNo)}/confirm`, {});
   }
