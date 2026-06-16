@@ -87,8 +87,12 @@
         routerLink="/members/child/followup/{{ a.ChildId }}">
         Follow Up
       </ion-button>
-      <div *ngIf="a.Notes" class="assignment-notes">
-        <ion-icon name="document-text-outline"></ion-icon> {{ a.Notes }}
+      <div *ngIf="a.Notes" class="assignment-guidelines">
+        <div class="assignment-guidelines-header">
+          <ion-icon name="clipboard-outline" class="assignment-guidelines-icon"></ion-icon>
+          <span class="assignment-guidelines-title">Doctor's Guidelines</span>
+        </div>
+        <p class="assignment-guidelines-text">{{ a.Notes }}</p>
       </div>
     </ion-card-content>
 
