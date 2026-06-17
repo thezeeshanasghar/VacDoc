@@ -94,6 +94,7 @@
         </div>
         <p class="assignment-guidelines-text">{{ a.Notes }}</p>
       </div>
+      <p *ngIf="!a.Notes" class="no-guidelines-note">No special guidelines.</p>
     </ion-card-content>
 
   </ion-card>

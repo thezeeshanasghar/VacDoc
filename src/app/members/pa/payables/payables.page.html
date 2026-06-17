@@ -107,6 +107,16 @@
               </button>
             </div>
           </div>
+
+          <!-- Doctor's Guidelines — shown for both states (has notes / no notes), any assignment source -->
+          <div *ngIf="!a.IsDirectSale && a.Notes" class="assignment-guidelines">
+            <div class="assignment-guidelines-header">
+              <ion-icon name="clipboard-outline" class="assignment-guidelines-icon"></ion-icon>
+              <span class="assignment-guidelines-title">Doctor's Guidelines</span>
+            </div>
+            <p class="assignment-guidelines-text">{{ a.Notes }}</p>
+          </div>
+          <p *ngIf="!a.IsDirectSale && !a.Notes" class="no-guidelines-note">No special guidelines.</p>
         </div>
       </div>
     </ng-container>
