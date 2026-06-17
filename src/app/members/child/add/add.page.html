@@ -27,7 +27,7 @@
           Guardian's Name <span class="required-asterisk">*</span>
         </ion-label> -->
         <ion-input type="text" formControlName="FatherName" required placeholder="Guardian's Name *" required
-          [(ngModel)]="fg1.value.FatherName" class="ion-text-capitalize custom-input">
+          [(ngModel)]="fg1.value.FatherName" class="ion-text-uppercase custom-input">
         </ion-input>
       </ion-item>
       <div class="validation-errors">
@@ -144,7 +144,7 @@
           CNIC/Passport No. <span *ngIf="isCnicRequired" class="required-asterisk ion-text-capitalize custom-input">*</span>
         </ion-label> -->
         <ion-input type="text" formControlName="CNIC" placeholder="CNIC/Passport No."
-          class="ion-text-capitalize custom-input"></ion-input>
+          class="ion-text-uppercase custom-input"></ion-input>
       </ion-item>
       <div *ngIf="isCnicRequired && fg1.get('CNIC').hasError('required')" style="color: red;">
         CNIC number is required when traveling.
@@ -230,7 +230,7 @@
               Nationality <span class="required-asterisk">*</span>
             </ion-label> -->
             <ion-input type="text" formControlName="Nationality" placeholder="Nationality" required
-              class="ion-text-capitalize custom-input"></ion-input>
+              class="ion-text-uppercase custom-input"></ion-input>
           </ion-item>
           <div class="validation-errors">
             <ng-container *ngFor="let validation of validation_messages.nationality">
