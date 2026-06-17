@@ -1368,9 +1368,11 @@ this.downloadSpecialPdf();
   async doReassign(pa: any) {
     this.reassignPopupOpen = false;
     if (!this.activeAssignment) return;
+    const notes = this.paGuidelines || '';
+    this.paGuidelines = '';
     const loading = await this.loadingController.create({ message: 'Reassigning...' });
     await loading.present();
-    this.paService.reassignAssignment(this.activeAssignment.AssignmentId, pa.Id).subscribe(
+    this.paService.reassignAssignment(this.activeAssignment.AssignmentId, pa.Id, notes).subscribe(
       res => {
         loading.dismiss();
         if (res && res.IsSuccess) {
