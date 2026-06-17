@@ -209,9 +209,9 @@ export class PaService extends BaseService {
     return this.http.patch(url, { CallerType: callerType, CallerId: callerId, Reason: reason }, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  reassignAssignment(assignmentId: number, newPaId: number, notes: string = ''): Observable<any> {
+  reassignAssignment(assignmentId: number, newPaId: number): Observable<any> {
     const url = `${this.API_PA}PAAssignment/${assignmentId}/reassign`;
-    return this.http.patch(url, { NewPaId: newPaId, Notes: notes }, this.httpOptions).pipe(catchError(this.handleError));
+    return this.http.patch(url, { NewPaId: newPaId }, this.httpOptions).pipe(catchError(this.handleError));
   }
 
   getActiveAssignmentsForDoctor(doctorId: number): Observable<any> {

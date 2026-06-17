@@ -276,44 +276,6 @@
   &::before { background: #283593; }
 }
 
-// ── Doctor's Guidelines box ───────────────────────────────────────────────────
-.assignment-guidelines {
-  margin: 0 14px 12px;
-  background: #fffbea;
-  border: 1px solid #ffe082;
-  border-left: 4px solid #f9a825;
-  border-radius: 8px;
-  padding: 9px 12px;
-}
-
-.assignment-guidelines-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 5px;
-}
-
-.assignment-guidelines-icon {
-  font-size: 15px;
-  color: #f9a825;
-}
-
-.assignment-guidelines-title {
-  font-size: 11px;
-  font-weight: 700;
-  color: #a07800;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-
-.assignment-guidelines-text {
-  font-size: 13px;
-  color: #4a3800;
-  line-height: 1.6;
-  margin: 0;
-  font-style: italic;
-}
-
 // ── Empty State ───────────────────────────────────────────────────────────────
 .empty-state {
   text-align: center;
