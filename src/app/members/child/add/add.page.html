@@ -4,7 +4,7 @@
     <form [formGroup]="fg1" (ngSubmit)="moveNextStep()">
       <ion-item lines="none" class="custom-input-item">
         <ion-input type="text" formControlName="Name" required placeholder="Name of patient *"
-          [(ngModel)]="fg1.value.Name" class="custom-input ion-text-capitalize">
+          [(ngModel)]="fg1.value.Name" class="custom-input ion-text-uppercase">
         </ion-input>
       </ion-item>
       <!-- <ion-item>

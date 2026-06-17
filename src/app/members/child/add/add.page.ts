@@ -890,6 +890,7 @@ filterCountryCodes(value: string) {
     this.fg1.value.DOB = await moment(this.fg1.value.DOB, "YYYY-MM-DD").format(
       "DD-MM-YYYY"
     );
+    if (this.fg1.value.Name) this.fg1.value.Name = this.fg1.value.Name.toUpperCase();
     if (this.fg1.value.FatherName) this.fg1.value.FatherName = this.fg1.value.FatherName.toUpperCase();
     if (this.fg1.value.Nationality) this.fg1.value.Nationality = this.fg1.value.Nationality.toUpperCase();
     if (this.fg1.value.CNIC) this.fg1.value.CNIC = this.fg1.value.CNIC.toUpperCase();
