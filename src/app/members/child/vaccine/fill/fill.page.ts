@@ -412,7 +412,7 @@ export class FillPage implements OnInit {
     }
 
     await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
-      res => {
+      async res => {
         if (res.IsSuccess) {
           loading.dismiss();
           this.autoCreateFollowUp(() => {
@@ -422,6 +422,39 @@ export class FillPage implements OnInit {
               this.router.navigate(['/members/child/vaccine/' + this.childId]);
             }
           });
+        } else if (res.IsWarning) {
+          loading.dismiss();
+          const alert = await this.alertController.create({
+            header: 'Rule Violation',
+            message: res.Message,
+            buttons: [
+              { text: 'Cancel', role: 'cancel' },
+              {
+                text: 'Ignore & Inject',
+                handler: () => {
+                  this.fg.value.IgnoreMinAgeAtGiveTime = true;
+                  this.fg.value.IgnoreMinGapAtGiveTime = true;
+                  this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
+                    res2 => {
+                      if (res2.IsSuccess) {
+                        this.autoCreateFollowUp(() => {
+                          if (this.vaccine) {
+                            this.addNewVaccineInScheduleTable(this.scheduleDatecheck);
+                          } else {
+                            this.router.navigate(['/members/child/vaccine/' + this.childId]);
+                          }
+                        });
+                      } else {
+                        this.toastService.create(res2.Message || "Error: Failed to update injection", 'danger');
+                      }
+                    },
+                    () => { this.toastService.create("Error: Server Failure", 'danger'); }
+                  );
+                }
+              }
+            ]
+          });
+          await alert.present();
         } else {
           this.toastService.create(res.Message || "Error: Failed to update injection", 'danger');
           loading.dismiss();

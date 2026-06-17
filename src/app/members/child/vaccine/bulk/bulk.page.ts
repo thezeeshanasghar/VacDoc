@@ -537,13 +537,43 @@ export class BulkPage implements OnInit {
     }
 
     this.bulkService.updateVaccine(data).subscribe(
-      res => {
+      async res => {
         if (res.IsSuccess) {
           this.toastService.create("Successfully Update");
           this.autoCreateFollowUpForBulk(() => {
             this.validationOfInfiniteVaccine();
             loading.dismiss();
           });
+        } else if (res.IsWarning) {
+          loading.dismiss();
+          const alert = await this.alertController.create({
+            header: 'Rule Violation',
+            message: res.Message,
+            buttons: [
+              { text: 'Cancel', role: 'cancel' },
+              {
+                text: 'Ignore & Inject',
+                handler: () => {
+                  data.IgnoreMinAgeAtGiveTime = true;
+                  data.IgnoreMinGapAtGiveTime = true;
+                  this.bulkService.updateVaccine(data).subscribe(
+                    res2 => {
+                      if (res2.IsSuccess) {
+                        this.toastService.create("Successfully Update");
+                        this.autoCreateFollowUpForBulk(() => {
+                          this.validationOfInfiniteVaccine();
+                        });
+                      } else {
+                        this.toastService.create(this.getApiErrorMessage(res2, "Error: failed to fill vaccine"), "danger");
+                      }
+                    },
+                    err2 => { this.toastService.create(this.getApiErrorMessage(err2, "Error: server failure"), "danger"); }
+                  );
+                }
+              }
+            ]
+          });
+          await alert.present();
         } else {
           this.toastService.create(this.getApiErrorMessage(res, "Error: failed to fill vaccine"), "danger");
           loading.dismiss();
