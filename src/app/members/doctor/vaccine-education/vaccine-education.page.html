@@ -65,6 +65,11 @@
         <div class="section-content" [innerHTML]="selectedVaccineInfo.ScheduleHtml"></div>
       </div>
 
+      <div class="detail-section" *ngIf="selectedVaccineInfo.BrandsAvailableHtml">
+        <h3 class="section-heading">Brands available</h3>
+        <div class="section-content" [innerHTML]="selectedVaccineInfo.BrandsAvailableHtml"></div>
+      </div>
+
       <div class="detail-section" *ngIf="selectedVaccineInfo.WhyVaccinateHtml">
         <h3 class="section-heading">Why vaccinate</h3>
         <div class="section-content" [innerHTML]="selectedVaccineInfo.WhyVaccinateHtml"></div>
