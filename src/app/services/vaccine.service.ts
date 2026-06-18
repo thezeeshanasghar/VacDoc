@@ -172,4 +172,13 @@ export class VaccineService extends BaseService {
   getLastContentDisposition(): string {
     return this.lastContentDisposition;
   }
+
+  // Read-only: fetch all VaccineInfo (vaccine education content) entries.
+  getVaccineInfos(): Observable<any> {
+    const url = `${this.API_VACCINE}vaccineinfo`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
 }

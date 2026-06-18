@@ -1,0 +1,85 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Vaccine Education</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <p class="section-label">Tap a vaccine to learn more</p>
+
+  <div *ngIf="loading" class="loading-state">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div class="vaccine-grid" *ngIf="!loading">
+    <div class="vaccine-tile" *ngFor="let info of vaccineInfos" (click)="openDetail(info)">
+      <div class="tile-icon-wrap">
+        <ion-icon [name]="info.Icon || 'medkit'"></ion-icon>
+      </div>
+      <span class="tile-name">{{info.Name}}</span>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && vaccineInfos.length === 0">
+    <ion-icon name="medkit-outline"></ion-icon>
+    <h3>No vaccine education content yet</h3>
+  </div>
+
+</ion-content>
+
+<!-- Detail overlay (custom modal, no ModalController used elsewhere in VacDoc) -->
+<div class="vaccine-detail-overlay" *ngIf="selectedVaccineInfo">
+  <div class="vaccine-detail-card">
+
+    <div class="detail-header">
+      <div class="detail-header-icon">
+        <ion-icon [name]="selectedVaccineInfo.Icon || 'medkit'"></ion-icon>
+      </div>
+      <div class="detail-header-text">
+        <h2>{{selectedVaccineInfo.Name}}</h2>
+        <p>Complete information about this vaccine</p>
+      </div>
+      <ion-button fill="clear" color="light" class="detail-close-btn" (click)="closeDetail()">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+
+    <div class="detail-body">
+
+      <div class="detail-section" *ngIf="selectedVaccineInfo.ProtectsAgainstHtml">
+        <h3 class="section-heading">Protects against</h3>
+        <div class="section-content" [innerHTML]="selectedVaccineInfo.ProtectsAgainstHtml"></div>
+      </div>
+
+      <div class="detail-section" *ngIf="selectedVaccineInfo.WhoShouldGetItHtml">
+        <h3 class="section-heading">Who should get it</h3>
+        <div class="section-content" [innerHTML]="selectedVaccineInfo.WhoShouldGetItHtml"></div>
+      </div>
+
+      <div class="detail-section" *ngIf="selectedVaccineInfo.ScheduleHtml">
+        <h3 class="section-heading">Schedule</h3>
+        <div class="section-content" [innerHTML]="selectedVaccineInfo.ScheduleHtml"></div>
+      </div>
+
+      <div class="detail-section" *ngIf="selectedVaccineInfo.WhyVaccinateHtml">
+        <h3 class="section-heading">Why vaccinate</h3>
+        <div class="section-content" [innerHTML]="selectedVaccineInfo.WhyVaccinateHtml"></div>
+      </div>
+
+      <div class="detail-section" *ngIf="selectedVaccineInfo.ImportantNoteHtml">
+        <h3 class="section-heading">Important note</h3>
+        <div class="section-content" [innerHTML]="selectedVaccineInfo.ImportantNoteHtml"></div>
+      </div>
+
+    </div>
+
+    <div class="detail-footer">
+      <ion-button expand="block" (click)="closeDetail()">Close</ion-button>
+    </div>
+
+  </div>
+</div>

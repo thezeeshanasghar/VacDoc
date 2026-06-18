@@ -61,6 +61,10 @@ const routes: Routes = [
   {
     path: "payment-reconciliation",
     loadChildren: () => import('./payment-reconciliation/payment-reconciliation.module').then(m => m.PaymentReconciliationPageModule)
+  },
+  {
+    path: "vaccine-education",
+    loadChildren: () => import('./vaccine-education/vaccine-education.module').then(m => m.VaccineEducationPageModule)
   }
 ];
 
