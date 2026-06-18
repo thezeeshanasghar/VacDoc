@@ -47,7 +47,9 @@ export class StockOverviewPage {
       (res: any) => {
         loading.dismiss();
         if (res.IsSuccess) {
-          this.brands = res.ResponseData || [];
+          this.brands = (res.ResponseData || []).sort((a: any, b: any) =>
+            (a.BrandName || '').localeCompare(b.BrandName || '', undefined, { sensitivity: 'base' })
+          );
           this.applyFilter();
         } else {
           this.toastService.create(res.Message || 'Failed to load stock', 'danger');
