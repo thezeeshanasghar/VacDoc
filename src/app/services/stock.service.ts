@@ -68,8 +68,8 @@ export class StockService {
     return this.http.post<any>(`${this.apiUrl}bill`, dto);
   }
 
-  reverseBill(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}bill/${id}/reverse`);
+  reverseBill(id: number, force: boolean = false): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}bill/${id}/reverse${force ? '?force=true' : ''}`);
   }
 
   updateBill(id: number, dto: any): Observable<any> {

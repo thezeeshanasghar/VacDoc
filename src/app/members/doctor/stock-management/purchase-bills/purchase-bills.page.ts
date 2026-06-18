@@ -264,15 +264,25 @@ export class PurchaseBillsPage {
     await alert.present();
   }
 
-  async reverseBill(id: number) {
+  async reverseBill(id: number, force: boolean = false) {
     const loading = await this.loadingController.create({ message: 'Reversing...' });
     await loading.present();
-    this.stockService.reverseBill(id).subscribe(
-      (res: any) => {
+    this.stockService.reverseBill(id, force).subscribe(
+      async (res: any) => {
         loading.dismiss();
         if (res.IsSuccess) {
           this.toastService.create('Bill reversed', 'success');
           this.loadBills();
+        } else if (res.ResponseData && res.ResponseData.RequiresForce) {
+          const alert = await this.alertController.create({
+            header: 'No Stock To Reverse',
+            message: res.Message,
+            buttons: [
+              { text: 'Cancel', role: 'cancel' },
+              { text: 'Reverse Anyway', cssClass: 'danger', handler: () => { this.reverseBill(id, true); } }
+            ]
+          });
+          await alert.present();
         } else {
           this.toastService.create(res.Message || 'Failed to reverse', 'danger');
         }
