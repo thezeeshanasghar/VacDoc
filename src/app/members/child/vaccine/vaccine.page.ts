@@ -717,9 +717,13 @@ this.downloadSpecialPdf();
   }
 
   // Returns CSS class for the date group label colour:
-  // green = all given, red = missed (past + not all done), yellow = due within 7 days
+  // green = all given, orange = all given but payment pending, red = missed (past + not all done), yellow = due within 7 days
   getGroupDateClass(dateKey: string, vaccines: any[]): string {
-    if (this.allVaccinesGiven(vaccines)) return 'date-label--given';
+    if (this.allVaccinesGiven(vaccines)) {
+      if (this.canCollectPayment && this.hasUnpaidDoneVaccine(vaccines, dateKey))
+        return 'date-label--payment-pending';
+      return 'date-label--given';
+    }
     const today = new Date(); today.setHours(0, 0, 0, 0);
     const d = new Date(dateKey); d.setHours(0, 0, 0, 0);
     if (d < today) return 'date-label--missed';

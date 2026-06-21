@@ -65,10 +65,11 @@ ion-buttons {
 }
 
 // Date colour states
-.date-label--given    { color: #2e7d32; }   // green  — all vaccines done
-.date-label--missed   { color: #c62828; }   // red    — past date, not done
-.date-label--due-soon { color: #e65100; }   // amber  — due within 7 days
-.date-label--upcoming { color: #5c6b7a; }   // grey   — future, no urgency
+.date-label--given           { color: #2e7d32; }   // green  — all vaccines done
+.date-label--payment-pending { color: #f57c00; }   // orange — all given, payment not yet collected
+.date-label--missed          { color: #c62828; }   // red    — past date, not done
+.date-label--due-soon        { color: #e65100; }   // amber  — due within 7 days
+.date-label--upcoming        { color: #5c6b7a; }   // grey   — future, no urgency
 
 .date-group-actions {
   display: flex;
