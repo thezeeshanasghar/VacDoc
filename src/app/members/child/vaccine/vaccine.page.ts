@@ -732,6 +732,17 @@ this.downloadSpecialPdf();
     return 'date-label--upcoming';
   }
 
+  // Tag shown to a PA on each date-group: tells them whether this group is
+  // theirs to act on, or was already handled by the doctor.
+  getPaAssignmentTag(vaccines: any[]): 'assigned' | 'given-by-doctor' | null {
+    if (this.usertype !== 'PA' || !this.activeAssignment) return null;
+    if (this.allVaccinesGiven(vaccines)) {
+      const givenByDoctor = vaccines.some(v => !v.GivenByPaId);
+      return givenByDoctor ? 'given-by-doctor' : null;
+    }
+    return 'assigned';
+  }
+
   async addNewVaccineInScheduleTable(scheduleDate, unfillData) {
     const loading = await this.loadingController.create({
       message: 'Updating Schedule'

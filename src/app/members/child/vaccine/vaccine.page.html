@@ -47,6 +47,8 @@
         <!-- ── Date Group Header ─────────────────────────────────────────── -->
         <div class="date-group-header">
           <span class="date-group-label" [ngClass]="getGroupDateClass(item.key, item.value)">{{ item.key | date }}</span>
+          <ion-badge *ngIf="getPaAssignmentTag(item.value) === 'assigned'" color="primary" class="pa-assign-badge">Assigned to you</ion-badge>
+          <ion-badge *ngIf="getPaAssignmentTag(item.value) === 'given-by-doctor'" class="pa-assign-badge pa-assign-badge--muted">Given by Doctor</ion-badge>
 
           <div class="date-group-actions">
 

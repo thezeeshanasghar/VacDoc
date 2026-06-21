@@ -193,6 +193,20 @@ ion-buttons {
   vertical-align: middle;
 }
 
+// PA-facing tag on a date-group: tells the PA whether this group is theirs
+// to act on, or was already given by the doctor.
+.pa-assign-badge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: none;
+  vertical-align: middle;
+
+  &--muted {
+    --background: #eceff1;
+    --color: #607d8b;
+  }
+}
+
 .vaccine-status {
   display: flex;
   align-items: center;
