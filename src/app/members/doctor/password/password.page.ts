@@ -77,7 +77,7 @@ export class PasswordPage implements OnInit {
       if (res.IsSuccess) {
         loading.dismiss();
         this.toastService.create('Successfully Updated');
-        this.endSession(); 
+        this.clearStorage();
         this.router.navigate(['/login']);
       } else {
         loading.dismiss();
@@ -88,10 +88,6 @@ export class PasswordPage implements OnInit {
       this.toastService.create(err, 'danger');
     });
 }
-endSession() {
-  this.storage.remove(environment.USER_Id);
-}
-
 clearStorage() {
   this.storage.clear().then(() => {
     this.clinicService.clinics = null;

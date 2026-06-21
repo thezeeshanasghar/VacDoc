@@ -22,6 +22,7 @@ export const environment = {
   DOCTOR_Id: "DoctorId",
   CLINIC_Id: "ClinicId",
   USER_Id: "UserId",
+  SECURITY_STAMP: "SecurityStamp",
   SMS: "SMS",
   CLINICS: 'Clinics',
   Childs: 'Childs',

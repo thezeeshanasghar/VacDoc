@@ -353,6 +353,7 @@ export class LoginPage implements OnInit {
           this.storage.set(environment.USER, res.ResponseData);
           this.storage.set(environment.DOCTOR_Id, res.ResponseData.DoctorId);
           this.storage.set(environment.USER_Id, res.ResponseData.Id);
+          this.storage.set(environment.SECURITY_STAMP, res.ResponseData.SecurityStamp);
           let state = true;
           this.loginservice.changeState(state);
           this.getdoctorprofile(res.ResponseData.Id);

@@ -55,4 +55,12 @@ export class LoginService extends BaseService {
       );
   }
 
+  validateSession(userId: number, securityStamp: string): Observable<any> {
+    const url = `${this.API_LOGIN}validate-session?userId=${userId}&securityStamp=${encodeURIComponent(securityStamp)}`;
+    return this.http.get(url, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
 }

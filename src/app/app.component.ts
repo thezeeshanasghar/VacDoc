@@ -4,6 +4,7 @@ import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Storage } from '@ionic/storage';
+import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { LoginService } from './services/login.service';
 
@@ -17,7 +18,8 @@ export class AppComponent {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private storage: Storage,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private router: Router
   ) {
     this.initializeApp();
   }
@@ -32,9 +34,40 @@ export class AppComponent {
         if (value) {
           let state = true;
           this.loginService.changeState(state);
+          this.checkSessionValidity();
         }
       });
 
+      this.platform.resume.subscribe(() => {
+        this.checkSessionValidity();
+      });
+
+    });
+  }
+
+  // Password changed on another device rotates the stamp on the server; a stale local
+  // stamp means this device must be force-logged-out.
+  checkSessionValidity() {
+    this.storage.get(environment.USER_Id).then(userId => {
+      this.storage.get(environment.SECURITY_STAMP).then(securityStamp => {
+        if (!userId || !securityStamp) {
+          return;
+        }
+        this.loginService.validateSession(userId, securityStamp).subscribe(res => {
+          if (res.IsSuccess && res.ResponseData === false) {
+            this.forceLogout();
+          }
+        });
+      });
+    });
+  }
+
+  forceLogout() {
+    this.storage.clear().then(() => {
+      this.loginService.changeState(false);
+      this.router.navigate(['/login']).then(() => {
+        window.location.reload();
+      });
     });
   }
 }
