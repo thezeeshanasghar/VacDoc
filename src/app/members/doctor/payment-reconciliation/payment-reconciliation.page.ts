@@ -161,33 +161,56 @@ export class PaymentReconciliationPage {
       return;
     }
     const alert = await this.alertController.create({
-      header: 'Delete Assignment',
-      message: `Delete this assignment for ${row.PatientName}? This will remove its invoice and reset the patient's vaccine records for this visit. Cannot be undone.`,
+      header: 'Remove Assignment',
+      message: `How should this assignment for ${row.PatientName} be removed?`,
       buttons: [
         { text: 'Cancel', role: 'cancel' },
         {
-          text: 'Delete',
+          text: 'Remove from list only',
+          cssClass: 'alert-btn-neutral',
+          handler: () => this.runDeleteAssignment(row, 'UnassignOnly',
+            'This only removes the assignment from your reconciliation table and the PA\'s list. The child\'s vaccine and payment records are not affected.')
+        },
+        {
+          text: 'Reverse everything',
           cssClass: 'alert-btn-danger',
+          handler: () => this.runDeleteAssignment(row, 'FullReset',
+            'This will delete the invoice, restore any consumed stock, and reset the patient\'s vaccine records for this visit back to never-given. Cannot be undone.')
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  private async runDeleteAssignment(row: PaymentRow, mode: 'UnassignOnly' | 'FullReset', confirmMessage: string) {
+    const confirm = await this.alertController.create({
+      header: mode === 'FullReset' ? 'Reverse Everything?' : 'Remove From List Only?',
+      message: confirmMessage,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: mode === 'FullReset' ? 'Reverse' : 'Remove',
+          cssClass: mode === 'FullReset' ? 'alert-btn-danger' : 'alert-btn-neutral',
           handler: async () => {
-            const loading = await this.loadingController.create({ message: 'Deleting...' });
+            const loading = await this.loadingController.create({ message: 'Processing...' });
             await loading.present();
-            this.paService.deleteAssignment(row.AssignmentId!, this.doctorId!).subscribe(
+            this.paService.deleteAssignment(row.AssignmentId!, this.doctorId!, mode).subscribe(
               res => {
                 loading.dismiss();
                 if (res && res.IsSuccess) {
-                  this.toastService.create('Assignment deleted', 'success');
+                  this.toastService.create(mode === 'FullReset' ? 'Assignment reset and removed' : 'Assignment removed', 'success');
                   this.load();
                 } else {
-                  this.toastService.create((res && res.Message) || 'Delete failed', 'danger');
+                  this.toastService.create((res && res.Message) || 'Action failed', 'danger');
                 }
               },
-              () => { loading.dismiss(); this.toastService.create('Delete failed', 'danger'); }
+              () => { loading.dismiss(); this.toastService.create('Action failed', 'danger'); }
             );
           }
         }
       ]
     });
-    await alert.present();
+    await confirm.present();
   }
 
   load() {

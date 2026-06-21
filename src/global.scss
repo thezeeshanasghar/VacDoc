@@ -461,6 +461,22 @@ ion-content.ion-padding > ion-card {
   box-shadow: 0 3px 12px rgba(13, 110, 173, 0.35) !important;
 }
 
+// Destructive action — red (overrides the :last-child blue default above)
+.alert-button.alert-btn-danger {
+  background: var(--vac-red) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 3px 12px rgba(198, 40, 40, 0.35) !important;
+}
+
+// Safe/non-destructive action — neutral grey (overrides the :last-child blue default above)
+.alert-button.alert-btn-neutral {
+  background: var(--vac-surface) !important;
+  color: var(--vac-near-black) !important;
+  border: 1.5px solid var(--vac-border) !important;
+  box-shadow: none !important;
+}
+
 // ── Action sheets (country-code pickers etc.) ─────────────────────────────────
 .action-sheet-group {
   border-radius: 16px 16px 0 0 !important;

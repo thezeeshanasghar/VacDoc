@@ -179,8 +179,8 @@ export class PaService extends BaseService {
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  deleteAssignment(assignmentId: number, doctorId: number): Observable<any> {
-    const url = `${this.API_PA}PAAssignment/${assignmentId}?doctorId=${doctorId}`;
+  deleteAssignment(assignmentId: number, doctorId: number, mode: 'UnassignOnly' | 'FullReset' = 'UnassignOnly'): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}?doctorId=${doctorId}&mode=${mode}`;
     return this.http.delete(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
