@@ -64,6 +64,7 @@ export class VaccinePage {
   reassignPopupOpen: boolean = false;
   paGuidelines: string = '';
   pendingAssignPA: any = null;
+  pendingAssignScheduleIds: number[] = [];
   pendingReassignPA: any = null;
   paymentPopupOpen: boolean = false;
   paymentTargetScheduleId: number = null;
@@ -1043,7 +1044,7 @@ this.downloadSpecialPdf();
     });
   }
 
-  openAssignPopup() {
+  openAssignPopup(groupVaccines: any[]) {
     if (this.assigningPA) { return; }
     if (this.clinicPAs.length === 0) {
       this.toastService.create('No PAs assigned to this clinic', 'warning');
@@ -1051,6 +1052,11 @@ this.downloadSpecialPdf();
     }
     this.paGuidelines = '';
     this.pendingAssignPA = null;
+    // Undone schedule IDs in this date-group only — pinned to the new assignment
+    // via PAAssignmentSchedule at creation time, no later re-inference.
+    this.pendingAssignScheduleIds = (groupVaccines || [])
+      .filter(function(v) { return !v.IsDone; })
+      .map(function(v) { return v.Id; });
     this.assignPopupOpen = true;
   }
 
@@ -1068,6 +1074,7 @@ this.downloadSpecialPdf();
     this.assignPopupOpen = false;
     this.pendingAssignPA = null;
     this.paGuidelines = '';
+    this.pendingAssignScheduleIds = [];
   }
 
   // GivenDate arrives over the wire as a "DD-MM-YYYY" string (OnlyDateConverter on the API
@@ -1219,9 +1226,11 @@ this.downloadSpecialPdf();
       ClinicId: this.clinicId,
       PersonalAssistantId: pa.Id,
       ChildId: Number(this.childId),
-      Notes: this.paGuidelines || ''
+      Notes: this.paGuidelines || '',
+      ScheduleIds: this.pendingAssignScheduleIds || []
     };
     this.paGuidelines = '';
+    this.pendingAssignScheduleIds = [];
     this.paService.createAssignment(payload).subscribe(res => {
       if (res && res.IsSuccess) {
         this.loadActiveAssignment(() => {

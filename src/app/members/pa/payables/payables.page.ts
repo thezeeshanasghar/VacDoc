@@ -114,7 +114,11 @@ export class PayablesPage {
 
   async promptDone(a: any, event: Event) {
     event.stopPropagation();
-    const unpaid = (a.Schedules || []).filter(function(s: any) { return !s.IsPaymentCollected && s.Amount > 0; });
+    const user = await this.storage.get(environment.USER);
+    const paId = Number(user.PAId);
+    const unpaid = (a.Schedules || []).filter(function(s: any) {
+      return s.IsDone && !s.IsPaymentCollected && s.Amount > 0 && s.PaymentCollectorPaId === paId;
+    });
 
     if (unpaid.length > 0) {
       const names = unpaid.map(function(s: any) { return s.DoseName; }).join(', ');
@@ -233,9 +237,9 @@ export class PayablesPage {
 
   hasGivenOrPaidSchedules(a: any): boolean {
     if (!a.Schedules || !Array.isArray(a.Schedules)) { return false; }
-    // Schedules array from GetByPA is already pre-filtered to IsDone === true,
-    // so any entry here means a vaccine was given; IsPaymentCollected covers payment.
-    return a.Schedules.length > 0 || a.Schedules.some(function(s: any) { return s.IsPaymentCollected; });
+    // GetByPA's Schedules array is pinned via PAAssignmentSchedule and may include
+    // not-yet-given doses (assign-time auto-include) — check IsDone explicitly now.
+    return a.Schedules.some(function(s: any) { return s.IsDone; }) || a.Schedules.some(function(s: any) { return s.IsPaymentCollected; });
   }
 
   async promptCancel(a: any, event: Event) {

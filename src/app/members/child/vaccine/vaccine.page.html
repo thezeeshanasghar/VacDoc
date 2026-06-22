@@ -99,13 +99,13 @@
               title="Record payment">
             </ion-icon>
 
-            <!-- Assign to PA (Doctor only) — hidden when assignment is active -->
+            <!-- Assign to PA (Doctor only) — per date-group, hidden when assignment is active -->
             <ion-icon
               *ngIf="usertype === 'DOCTOR' && clinicPAs.length > 0 && !activeAssignment"
               name="person-add-outline"
               class="hdr-icon hdr-icon--assign"
-              (click)="openAssignPopup()"
-              title="Assign patient to PA">
+              (click)="openAssignPopup(item.value)"
+              title="Assign patient to PA for this visit">
             </ion-icon>
 
           </div>

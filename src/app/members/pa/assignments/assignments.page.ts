@@ -16,6 +16,7 @@ export class AssignmentsPage {
   assignments: any[] = [];
   pendingDirectSales: any[] = [];
   loading: boolean = false;
+  paId: number = null;
 
   constructor(
     private paService: PaService,
@@ -30,8 +31,9 @@ export class AssignmentsPage {
   async ionViewWillEnter() {
     const user = await this.storage.get(environment.USER);
     if (user && user.PAId) {
-      this.loadAssignments(Number(user.PAId));
-      this.loadPendingDirectSales(Number(user.PAId));
+      this.paId = Number(user.PAId);
+      this.loadAssignments(this.paId);
+      this.loadPendingDirectSales(this.paId);
     }
   }
 
@@ -151,12 +153,13 @@ export class AssignmentsPage {
   }
 
   isBulkGroup(a: any): boolean {
-    return Array.isArray(a.Schedules) && a.Schedules.length >= 2;
+    return Array.isArray(a.Schedules) && a.Schedules.filter(function(s: any) { return s.IsDone; }).length >= 2;
   }
 
   hasUnpaidSchedules(a: any): boolean {
     if (!a.Schedules || !Array.isArray(a.Schedules)) { return false; }
-    return a.Schedules.some(function(s) { return !s.IsPaymentCollected && s.Amount > 0; });
+    const paId = this.paId;
+    return a.Schedules.some(function(s) { return s.IsDone && !s.IsPaymentCollected && s.Amount > 0 && s.PaymentCollectorPaId === paId; });
   }
 
   hasInvoiceForAssignment(a: any): boolean {
@@ -165,9 +168,9 @@ export class AssignmentsPage {
 
   hasGivenOrPaidSchedules(a: any): boolean {
     if (!a.Schedules || !Array.isArray(a.Schedules)) { return false; }
-    // Schedules array from GetByPA is already pre-filtered to IsDone === true,
-    // so any entry here means a vaccine was given; IsPaymentCollected covers payment.
-    return a.Schedules.length > 0 || a.Schedules.some(function(s: any) { return s.IsPaymentCollected; });
+    // GetByPA's Schedules array is pinned via PAAssignmentSchedule and may include
+    // not-yet-given doses (assign-time auto-include) — check IsDone explicitly now.
+    return a.Schedules.some(function(s: any) { return s.IsDone; }) || a.Schedules.some(function(s: any) { return s.IsPaymentCollected; });
   }
 
   getMissingGrowthVaccines(a: any): string[] {
@@ -204,7 +207,10 @@ export class AssignmentsPage {
   }
 
   private async recordPaymentModeForAll(assignment: any, mode: string): Promise<boolean> {
-    const unpaid = (assignment.Schedules || []).filter(function(s: any) { return !s.IsPaymentCollected && s.Amount > 0; });
+    const paId = this.paId;
+    const unpaid = (assignment.Schedules || []).filter(function(s: any) {
+      return s.IsDone && !s.IsPaymentCollected && s.Amount > 0 && s.PaymentCollectorPaId === paId;
+    });
     if (unpaid.length === 0) { return true; }
     const loading = await this.loadingController.create({ message: 'Recording payment...' });
     await loading.present();
