@@ -216,12 +216,8 @@
                     class="row-checkbox">
                 </td>
                 <td class="col-delete">
-                  <button *ngIf="row.AssignmentId" class="btn-delete-assignment" (click)="confirmDeleteAssignment(row)" title="Delete assignment">
-                    <ion-icon name="trash-outline"></ion-icon>
-                  </button>
-                  <button *ngIf="row.RowType === 'DirectSale'" class="btn-delete-assignment" (click)="confirmDeleteDirectSale(row)" title="Reverse sale">
-                    <ion-icon name="trash-outline"></ion-icon>
-                  </button>
+                  <button *ngIf="row.AssignmentId" class="btn-delete-assignment" (click)="confirmDeleteAssignment(row)" title="Delete assignment">🗑️</button>
+                  <button *ngIf="row.RowType === 'DirectSale'" class="btn-delete-assignment" (click)="confirmDeleteDirectSale(row)" title="Reverse sale">🗑️</button>
                 </td>
                 <td class="col-date">{{ formatDate(row.Date) }}</td>
                 <td class="col-patient">
