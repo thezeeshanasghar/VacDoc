@@ -26,6 +26,7 @@ interface PaymentRow {
   InvoiceStatus?: string;
   HasPendingAmendment?: boolean;
   PendingHandover?: boolean;
+  HasUnbilledPayment?: boolean; // AwaitingInvoice rows only — cash already collected, no invoice yet
   IsPaymentCollected?: boolean; // DirectSale rows only — false until PA records Cash/Online
   PaId: number;
   PaName: string;

@@ -737,6 +737,13 @@ this.downloadSpecialPdf();
   // theirs to act on, or was already handled by the doctor.
   getPaAssignmentTag(vaccines: any[]): 'assigned' | 'given-by-doctor' | null {
     if (this.usertype !== 'PA' || !this.activeAssignment) return null;
+    // GetByPA's Schedules array is pinned via PAAssignmentSchedule — only Schedule IDs
+    // actually linked to this assignment, not every group for this child. Check this
+    // group's own IDs against that list instead of assuming any active assignment
+    // applies to every date-group.
+    const pinnedIds = new Set((this.activeAssignment.Schedules || []).map((s: any) => s.Id));
+    const groupIsPinned = vaccines.some(v => pinnedIds.has(v.Id));
+    if (!groupIsPinned) return null;
     if (this.allVaccinesGiven(vaccines)) {
       const givenByDoctor = vaccines.some(v => !v.GivenByPaId);
       return givenByDoctor ? 'given-by-doctor' : null;

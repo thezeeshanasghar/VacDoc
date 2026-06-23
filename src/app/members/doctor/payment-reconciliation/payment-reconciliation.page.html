@@ -204,7 +204,8 @@
                   [class.row-confirmed]="row.IsConfirmed"
                   [class.row-pending]="!row.IsConfirmed && row.RowType === 'Invoice'"
                   [class.row-amendment]="row.RowType !== 'Invoice' && row.RowType !== 'AwaitingInvoice' && row.RowType !== 'DirectSale'"
-                  [class.row-awaiting]="row.RowType === 'AwaitingInvoice'"
+                  [class.row-awaiting]="row.RowType === 'AwaitingInvoice' && !row.HasUnbilledPayment"
+                  [class.row-unbilled]="row.RowType === 'AwaitingInvoice' && row.HasUnbilledPayment"
                   [class.row-directsale]="row.RowType === 'DirectSale'">
                 <!-- Checkbox: only for normal invoice rows -->
                 <td class="col-check">
@@ -262,9 +263,11 @@
                     <span class="badge badge-edit">Invoice Edit Reversal</span>
                     <div class="pending-sub">Amount1 pending your approval</div>
                   </ng-container>
-                  <!-- Awaiting invoice: assignment exists, nothing to action yet -->
+                  <!-- Awaiting invoice: same label either way — row colour (badge-unbilled vs
+                       badge-awaiting, bound above on the <tr>) is the only signal that payment
+                       was already collected with no invoice yet. -->
                   <ng-container *ngIf="row.RowType === 'AwaitingInvoice'">
-                    <span class="badge badge-awaiting">Awaiting Invoice</span>
+                    <span class="badge" [ngClass]="row.HasUnbilledPayment ? 'badge-unbilled' : 'badge-awaiting'">Awaiting Invoice</span>
                   </ng-container>
                   <!-- PA-assigned direct sale: pooled cash, settled via cash handover -->
                   <ng-container *ngIf="row.RowType === 'DirectSale'">

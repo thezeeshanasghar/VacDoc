@@ -441,6 +441,10 @@
     background: #ECEFF1;
     color: #607D8B;
   }
+  &.badge-unbilled {
+    background: #FFE0B2;
+    color: #A85C00;
+  }
   &.badge-directsale {
     background: #E0F2F1;
     color: #00695C;
@@ -469,6 +473,12 @@
 .row-awaiting {
   background: #FAFAFA;
   border-left: 3px solid #B0BEC5;
+}
+
+// Awaiting invoice, but cash already collected by the PA — needs the doctor's attention
+.row-unbilled {
+  background: #FFF3E0;
+  border-left: 3px solid #F57C00;
 }
 
 // PA-collected direct sale rows — pooled cash, settled via cash handover
