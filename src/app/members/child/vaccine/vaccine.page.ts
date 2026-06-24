@@ -1135,19 +1135,17 @@ this.downloadSpecialPdf();
     const isPA = this.usertype === 'PA' && !!this.paId;
 
     if (isPA) {
-      const now = new Date();
-      const todayStr = now.toISOString().split('T')[0];
-      const yest = new Date(now); yest.setDate(yest.getDate() - 1);
-      const yesterdayStr = yest.toISOString().split('T')[0];
-
       return data.some((v) => {
         // No per-schedule Amount check here — invoiceExistsMap[date] already confirms an
         // invoice exists for this visit (e.g. consultation-fee-only invoices have Amount=0
         // on every schedule row, but still need a payment mode recorded).
+        // No DoneAt recency window either — PaymentCollectorPaId is the correct, exact gate
+        // (backfilled at invoice-link time even for doses given before the PA was assigned,
+        // see SyncInvoicePaToActiveAssignment/PAAssignmentController.Create). A recency window
+        // here would only re-hide the icon for exactly the doctor-gives-then-assigns-later
+        // ordering this gate exists to support.
         if (!v.IsDone || v.IsPaymentCollected) return false;
-        if (v.PaymentCollectorPaId !== this.paId) return false;
-        const doneDay = v.DoneAt ? String(v.DoneAt).split('T')[0] : null;
-        return doneDay === todayStr || doneDay === yesterdayStr;
+        return v.PaymentCollectorPaId === this.paId;
       });
     }
 
