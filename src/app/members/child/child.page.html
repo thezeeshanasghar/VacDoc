@@ -43,7 +43,7 @@
       </div>
       <div class="icons-right">
         <ion-icon class="iconchild" name="ellipsis-vertical"
-          *ngIf="canEditPatient || canDeletePatient || canSmsPatient || canCallPatient"
+          *ngIf="canEditPatient || canDeletePatient || canSmsPatient || canCallPatient || canToggleStatus"
           (click)="openActions($event, child)"></ion-icon>
       </div>
     </div>
@@ -63,11 +63,6 @@
       <ion-button *ngIf="canViewFollowup" size="small" fill="outline" color="primary"
         routerLink="/members/child/followup/{{child.Id}}">
         Follow Up
-      </ion-button>
-      &nbsp;
-      <ion-button *ngIf="canToggleStatus" size="small" fill="outline" [color]="child.IsInactive ? 'success' : 'danger'"
-        (click)="toggleChildActiveStatus(child.Id)">
-        {{ child.IsInactive ? 'Activate' : 'Deactivate' }}
       </ion-button>
       &nbsp;
       <ion-button *ngIf="canDownloadPid" size="small" fill="outline" color="primary" (click)="downloadPdf(child.Id)">

@@ -161,6 +161,8 @@ export class ChildPage {
         canMessage: this.canSmsPatient,
         canCall: this.canCallPatient,
         canDelete: this.canDeletePatient,
+        canToggleStatus: this.canToggleStatus,
+        isInactive: child.IsInactive,
       },
       event,
       translucent: true,
@@ -176,6 +178,8 @@ export class ChildPage {
       this.callFunction(child.User.MobileNumber);
     } else if (action === 'delete') {
       this.alertforDeleteChild(child.Id);
+    } else if (action === 'toggleStatus') {
+      this.toggleChildActiveStatus(child.Id);
     }
   }
 

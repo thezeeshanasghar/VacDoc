@@ -11,6 +11,8 @@ export class PatientActionsPopoverComponent {
   @Input() canMessage: boolean;
   @Input() canCall: boolean;
   @Input() canDelete: boolean;
+  @Input() canToggleStatus: boolean;
+  @Input() isInactive: boolean;
 
   constructor(private popoverController: PopoverController) {}
 
