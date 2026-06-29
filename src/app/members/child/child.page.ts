@@ -13,6 +13,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { PaService } from "src/app/services/pa.service";
+import * as moment from 'moment';
 // import { ClinicService } from 'src/app/services/clinic.service';
 
 @Component({
@@ -123,6 +124,25 @@ export class ChildPage {
     } else {
       return value.toString();
     }
+  }
+
+  getAvatarImage(child: any): string {
+    const isGirl = child.Gender === 'Girl';
+    const dob = moment(child.DOB, 'DD-MM-YYYY');
+    const years = dob.isValid() ? moment().diff(dob, 'years') : 0;
+    let stage: string;
+    if (years < 2) {
+      stage = 'baby';
+    } else if (years < 18) {
+      stage = 'child';
+    } else if (years < 50) {
+      stage = 'adult';
+    } else {
+      stage = 'older';
+    }
+    const genderWord = stage === 'baby' ? (isGirl ? 'girl' : 'boy') : (isGirl ? 'woman' : 'man');
+    const fileName = stage === 'child' ? (isGirl ? 'child-girl' : 'child-boy') : `${stage}-${genderWord}`;
+    return `../../assets/avatars/${fileName}.png`;
   }
 
   loadData() {

@@ -37,7 +37,7 @@
     <div class="icons">
       <div class="icons-left">
         <ion-thumbnail class="icons-thumb">
-          <ion-img [src]="child.Gender=='Girl' ? '../../assets/female.png' : '../../assets/male.png'"></ion-img>
+          <ion-img [src]="getAvatarImage(child)"></ion-img>
         </ion-thumbnail>
         <span class="icons-name">{{child.Name}}</span>
       </div>

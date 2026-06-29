@@ -1,19 +1,19 @@
-// ── Child gender card borders ─────────────────────────────────────────────────
-.girl {
-  border-left: 4px solid #E91E9A !important;
-  box-shadow: 0 2px 12px rgba(233, 30, 154, 0.12) !important;
+// ── Child gender card tint ─────────────────────────────────────────────────────
+ion-card.girl {
+  --background: #FDEEF5;
+  background: #FDEEF5;
+  box-shadow: 0 1px 3px rgba(20, 30, 60, 0.06) !important;
 }
 
-.boy {
-  border-left: 4px solid #0D6EAD !important;
-  box-shadow: 0 2px 12px rgba(13, 110, 173, 0.12) !important;
+ion-card.boy {
+  --background: #EAF2FF;
+  background: #EAF2FF;
+  box-shadow: 0 1px 3px rgba(20, 30, 60, 0.06) !important;
 }
 
-// ── Compact card header bar ───────────────────────────────────────────────────
+// ── Compact card header row ───────────────────────────────────────────────────
 .icons {
-  background: linear-gradient(135deg, #0B2D5C 0%, #0D6EAD 100%);
-  border-radius: 12px 12px 0 0;
-  padding: 6px 12px;
+  padding: 12px 14px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -22,28 +22,34 @@
 .icons-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex: 1;
   min-width: 0;
 }
 
 .icons-thumb {
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
 
   ion-img {
-    border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.45);
-    width: 34px;
-    height: 34px;
+    width: 38px;
+    height: 38px;
+
+    img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 
 .icons-name {
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 700;
-  color: #ffffff;
+  color: #16264A;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -56,8 +62,8 @@
 }
 
 .iconchild {
-  font-size: 22px;
-  color: #ffffff !important;
+  font-size: 20px;
+  color: #50597A !important;
   cursor: pointer;
   transition: transform 0.15s ease;
   padding: 4px;
@@ -93,20 +99,22 @@ form ion-item {
 
 // ── Card content area ─────────────────────────────────────────────────────────
 ion-card ion-card-content {
-  padding: 8px 14px 10px;
-  color: #374151;
-  font-size: 13px;
+  padding: 6px 14px 12px;
+  color: #5B6680;
+  font-size: 12.5px;
   line-height: 1.6;
+  --background: transparent;
 }
 
 ion-card ion-card-content ion-button {
-  margin-top: 6px;
+  margin-top: 8px;
 }
 
 ion-card ion-card-content ion-icon {
-  color: #0D6EAD;
+  color: #5B6680;
   vertical-align: middle;
   margin-right: 3px;
+  font-size: 13px;
 }
 
 // ── Mobile improvements ───────────────────────────────────────────────────────
