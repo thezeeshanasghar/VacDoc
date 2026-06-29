@@ -42,6 +42,9 @@ export class ChildPage {
   canDownloadCard = true;
   canViewVaccine = true;
   canViewFollowup = true;
+  isActionsOpen = false;
+  actionsEvent: any;
+  selectedChild: any;
   constructor(
     public router: Router,
     public loadingController: LoadingController,
@@ -128,6 +131,13 @@ export class ChildPage {
       this.getChlidbyUser(false);
     else
       this.getChlidByClinic(false);
+  }
+
+  openActions(event: Event, child: any) {
+    event.stopPropagation();
+    this.selectedChild = child;
+    this.actionsEvent = event;
+    this.isActionsOpen = true;
   }
 
   async alertforDeleteChild(id) {

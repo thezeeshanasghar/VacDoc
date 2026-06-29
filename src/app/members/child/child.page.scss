@@ -52,7 +52,6 @@
 .icons-right {
   display: flex;
   align-items: center;
-  gap: 14px;
   flex-shrink: 0;
 }
 
@@ -61,6 +60,7 @@
   color: #ffffff !important;
   cursor: pointer;
   transition: transform 0.15s ease;
+  padding: 4px;
 
   &:active { transform: scale(0.92); }
 }
@@ -93,10 +93,14 @@ form ion-item {
 
 // ── Card content area ─────────────────────────────────────────────────────────
 ion-card ion-card-content {
-  padding: 10px 14px 12px;
+  padding: 8px 14px 10px;
   color: #374151;
   font-size: 13px;
-  line-height: 1.8;
+  line-height: 1.6;
+}
+
+ion-card ion-card-content ion-button {
+  margin-top: 6px;
 }
 
 ion-card ion-card-content ion-icon {
@@ -136,6 +140,12 @@ ion-card ion-card-content ion-icon {
     --padding-end: 6px !important;
     margin: 2px 2px 2px 0 !important;
   }
+}
+
+// ── Patient card action popover ───────────────────────────────────────────────
+ion-popover ion-item {
+  --min-height: 44px;
+  font-size: 14px;
 }
 
 // ── Utility ───────────────────────────────────────────────────────────────────

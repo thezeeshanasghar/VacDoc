@@ -42,14 +42,9 @@
         <span class="icons-name">{{child.Name}}</span>
       </div>
       <div class="icons-right">
-        <ion-icon class="iconchild" *ngIf="canEditPatient" name="create"
-          routerLink="/members/child/edit/{{child.Id}}"></ion-icon>
-        <ion-icon class="iconchild" *ngIf="canDeletePatient" name="trash"
-          (click)="alertforDeleteChild(child.Id)"></ion-icon>
-        <ion-icon class="iconchild" *ngIf="canSmsPatient" name="mail"
-          routerLink="/members/child/cmsg/{{child.Id}}"></ion-icon>
-        <ion-icon class="iconchild" *ngIf="canCallPatient" name="call"
-          (click)="callFunction(child.User.MobileNumber)"></ion-icon>
+        <ion-icon class="iconchild" name="ellipsis-vertical"
+          *ngIf="canEditPatient || canDeletePatient || canSmsPatient || canCallPatient"
+          (click)="openActions($event, child)"></ion-icon>
       </div>
     </div>
 
@@ -92,5 +87,32 @@
     <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
+
+  <ion-popover #actionsPopover [isOpen]="isActionsOpen" [event]="actionsEvent" (didDismiss)="isActionsOpen = false">
+    <ng-template>
+      <ion-list>
+        <ion-item *ngIf="canEditPatient" button detail="false" lines="full"
+          [routerLink]="['/members/child/edit', selectedChild?.Id]" (click)="isActionsOpen = false">
+          <ion-icon name="create" slot="start" color="primary"></ion-icon>
+          <ion-label>Edit</ion-label>
+        </ion-item>
+        <ion-item *ngIf="canSmsPatient" button detail="false" lines="full"
+          [routerLink]="['/members/child/cmsg', selectedChild?.Id]" (click)="isActionsOpen = false">
+          <ion-icon name="mail" slot="start" color="primary"></ion-icon>
+          <ion-label>Message</ion-label>
+        </ion-item>
+        <ion-item *ngIf="canCallPatient" button detail="false" lines="full"
+          (click)="isActionsOpen = false; callFunction(selectedChild?.User?.MobileNumber)">
+          <ion-icon name="call" slot="start" color="primary"></ion-icon>
+          <ion-label>Call</ion-label>
+        </ion-item>
+        <ion-item *ngIf="canDeletePatient" button detail="false" lines="none"
+          (click)="isActionsOpen = false; alertforDeleteChild(selectedChild?.Id)">
+          <ion-icon name="trash" slot="start" color="danger"></ion-icon>
+          <ion-label color="danger">Delete</ion-label>
+        </ion-item>
+      </ion-list>
+    </ng-template>
+  </ion-popover>
 
 </ion-content>
