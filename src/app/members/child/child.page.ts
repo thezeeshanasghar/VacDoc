@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { IonInfiniteScroll } from '@ionic/angular';
-import { LoadingController } from '@ionic/angular';
+import { LoadingController, PopoverController } from '@ionic/angular';
+import { PatientActionsPopoverComponent } from './patient-actions-popover/patient-actions-popover.component';
 import { ChildService } from 'src/app/services/child.service';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { ToastService } from 'src/app/shared/toast.service';
@@ -42,9 +43,6 @@ export class ChildPage {
   canDownloadCard = true;
   canViewVaccine = true;
   canViewFollowup = true;
-  isActionsOpen = false;
-  actionsEvent: any;
-  selectedChild: any;
   constructor(
     public router: Router,
     public loadingController: LoadingController,
@@ -56,6 +54,7 @@ export class ChildPage {
     private callNumber: CallNumber,
     private paService: PaService,
     public clinicService: ClinicService,
+    private popoverController: PopoverController,
   ) {
     this.fg = this.formBuilder.group({
       Name: ["", Validators.required],
@@ -133,11 +132,31 @@ export class ChildPage {
       this.getChlidByClinic(false);
   }
 
-  openActions(event: Event, child: any) {
+  async openActions(event: Event, child: any) {
     event.stopPropagation();
-    this.selectedChild = child;
-    this.actionsEvent = event;
-    this.isActionsOpen = true;
+    const popover = await this.popoverController.create({
+      component: PatientActionsPopoverComponent,
+      componentProps: {
+        canEdit: this.canEditPatient,
+        canMessage: this.canSmsPatient,
+        canCall: this.canCallPatient,
+        canDelete: this.canDeletePatient,
+      },
+      event,
+      translucent: true,
+      cssClass: 'patient-actions-popover',
+    });
+    await popover.present();
+    const { data: action } = await popover.onDidDismiss();
+    if (action === 'edit') {
+      this.router.navigate(['/members/child/edit', child.Id]);
+    } else if (action === 'message') {
+      this.router.navigate(['/members/child/cmsg', child.Id]);
+    } else if (action === 'call') {
+      this.callFunction(child.User.MobileNumber);
+    } else if (action === 'delete') {
+      this.alertforDeleteChild(child.Id);
+    }
   }
 
   async alertforDeleteChild(id) {
