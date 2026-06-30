@@ -55,17 +55,17 @@
       &nbsp;&nbsp;
       <ion-icon name="call"></ion-icon> {{child.MobileNumber}}
       <br>
-      <ion-button *ngIf="canViewVaccine" size="small" fill="outline" color="primary"
+      <ion-button *ngIf="canViewVaccine" class="chip-tonal" size="small" fill="solid"
         routerLink="/members/child/vaccine/{{child.Id}}">
         Vaccine
       </ion-button>
       &nbsp;
-      <ion-button *ngIf="canViewFollowup" size="small" fill="outline" color="primary"
+      <ion-button *ngIf="canViewFollowup" class="chip-tonal" size="small" fill="solid"
         routerLink="/members/child/followup/{{child.Id}}">
         Follow Up
       </ion-button>
       &nbsp;
-      <ion-button *ngIf="canDownloadPid" size="small" fill="outline" color="primary" (click)="downloadPdf(child.Id)">
+      <ion-button *ngIf="canDownloadPid" class="chip-tonal" size="small" fill="solid" (click)="downloadPdf(child.Id)">
         PID
       </ion-button>
       &nbsp;

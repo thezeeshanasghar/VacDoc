@@ -1,14 +1,25 @@
 // ── Child gender card tint ─────────────────────────────────────────────────────
+ion-card.girl,
+ion-card.boy {
+  border-radius: 16px;
+}
+
 ion-card.girl {
-  --background: #FDEEF5;
-  background: #FDEEF5;
-  box-shadow: 0 1px 3px rgba(20, 30, 60, 0.06) !important;
+  --background: #FEF3F8;
+  background: #FEF3F8;
+  border: 1px solid #FAD0E4;
+  box-shadow: 0 1px 3px rgba(20, 30, 60, 0.05) !important;
+
+  .icons-name { color: #C23B7B; }
 }
 
 ion-card.boy {
-  --background: #EAF2FF;
-  background: #EAF2FF;
-  box-shadow: 0 1px 3px rgba(20, 30, 60, 0.06) !important;
+  --background: #F3F8FF;
+  background: #F3F8FF;
+  border: 1px solid #CFE2FF;
+  box-shadow: 0 1px 3px rgba(20, 30, 60, 0.05) !important;
+
+  .icons-name { color: #1B5DAD; }
 }
 
 // ── Compact card header row ───────────────────────────────────────────────────
@@ -28,15 +39,15 @@ ion-card.boy {
 }
 
 .icons-thumb {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   flex-shrink: 0;
-  border-radius: 50%;
+  border-radius: 11px;
   overflow: hidden;
 
   ion-img {
-    width: 38px;
-    height: 38px;
+    width: 42px;
+    height: 42px;
 
     img {
       object-fit: cover;
@@ -47,9 +58,8 @@ ion-card.boy {
 }
 
 .icons-name {
-  font-size: 14.5px;
+  font-size: 15px;
   font-weight: 700;
-  color: #16264A;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -108,6 +118,22 @@ ion-card ion-card-content {
 
 ion-card ion-card-content ion-button {
   margin-top: 8px;
+  --border-radius: 10px;
+  --box-shadow: none;
+  font-weight: 700;
+  text-transform: none;
+}
+
+.boy ion-card-content ion-button.chip-tonal {
+  --background: #E3EEFF;
+  --background-activated: #CFE2FF;
+  --color: #1B5DAD;
+}
+
+.girl ion-card-content ion-button.chip-tonal {
+  --background: #FCE3EE;
+  --background-activated: #FAD0E4;
+  --color: #C23B7B;
 }
 
 ion-card ion-card-content ion-icon {
