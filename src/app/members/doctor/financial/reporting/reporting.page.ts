@@ -158,17 +158,17 @@ export class ReportingPage implements OnInit {
     await loader.present();
     this.stockService.getSalesReportFile(this.selectedClinicId, new Date(this.fromDate), new Date(this.toDate))
       .subscribe({
-        next: (res) => { loader.dismiss(); this.downloadBlob(res.body, `SalesReport_${this.fromDate}_${this.toDate}.pdf`); },
+        next: (res) => { loader.dismiss(); this.downloadBlob(res, `SalesReport_${this.fromDate}_${this.toDate}.pdf`); },
         error: (err: any) => { loader.dismiss(); if (err.status === 404) this.toastService.create('No sales in period', 'warning'); else this.toastService.create('Failed', 'danger'); }
       });
   }
 
   async getItemReport() {
     if (!this.selectedClinicId || !this.selectedBrandId) { this.toastService.create('Select clinic and brand', 'danger'); return; }
-    const loader = await this.loadingCtrl.create({ message: 'Generating item report...' });
+    const loader = await this.loadingCtrl.create({ message: 'Generating item stock report...' });
     await loader.present();
     this.stockService.getItemsReportFile(this.selectedClinicId, this.selectedBrandId, this.fromDate, this.toDate)
-      .subscribe({ next: (res) => { loader.dismiss(); this.downloadBlob(res.body, `ItemReport_${this.fromDate}.pdf`); }, error: () => { loader.dismiss(); this.toastService.create('Failed', 'danger'); } });
+      .subscribe({ next: (res) => { loader.dismiss(); this.downloadBlob(res, `ItemStockReport_${this.fromDate}.pdf`); }, error: () => { loader.dismiss(); this.toastService.create('Failed', 'danger'); } });
   }
 
   async getItemPurchaseReport() {
@@ -176,7 +176,7 @@ export class ReportingPage implements OnInit {
     const loader = await this.loadingCtrl.create({ message: 'Generating purchase report...' });
     await loader.present();
     this.stockService.getItemsPurchaseReportFile(this.selectedClinicId, this.selectedPurchaseBrandId, this.fromDate, this.toDate)
-      .subscribe({ next: (res) => { loader.dismiss(); this.downloadBlob(res.body, `PurchaseReport_${this.fromDate}.pdf`); }, error: () => { loader.dismiss(); this.toastService.create('Failed', 'danger'); } });
+      .subscribe({ next: (res) => { loader.dismiss(); this.downloadBlob(res, `PurchaseReport_${this.fromDate}.pdf`); }, error: () => { loader.dismiss(); this.toastService.create('Failed', 'danger'); } });
   }
 
   async getSupplierReport() {
@@ -184,10 +184,20 @@ export class ReportingPage implements OnInit {
     const loader = await this.loadingCtrl.create({ message: 'Generating supplier report...' });
     await loader.present();
     this.stockService.getItemsSupplierReportFile(this.selectedClinicId, this.selectedAgent, this.fromDate, this.toDate)
-      .subscribe({ next: (res) => { loader.dismiss(); this.downloadBlob(res.body, `SupplierReport_${this.fromDate}.pdf`); }, error: () => { loader.dismiss(); this.toastService.create('Failed', 'danger'); } });
+      .subscribe({ next: (res) => { loader.dismiss(); this.downloadBlob(res, `SupplierReport_${this.fromDate}.pdf`); }, error: () => { loader.dismiss(); this.toastService.create('Failed', 'danger'); } });
   }
 
-  private downloadBlob(blob: Blob, filename: string) {
+  // Prefers the filename the server actually sent via Content-Disposition (already includes
+  // the clinic name, see ReportFileName.Build on the backend) — falls back to `defaultFilename`
+  // only if that header is missing.
+  private downloadBlob(res: any, defaultFilename: string) {
+    const blob: Blob = res.body;
+    const disposition: string | null = (res.headers && typeof res.headers.get === 'function') ? res.headers.get('content-disposition') : null;
+    let filename = defaultFilename;
+    if (disposition) {
+      const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition);
+      if (match && match[1]) filename = decodeURIComponent(match[1]);
+    }
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;

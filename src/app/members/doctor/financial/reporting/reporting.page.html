@@ -48,13 +48,13 @@
     </ion-button>
   </div>
 
-  <!-- 2. Item-wise Sale Report -->
+  <!-- 2. Item Stock Report -->
   <ion-card style="margin-top: 12px;">
     <ion-card-header style="--background: linear-gradient(135deg,#1B5E20,#2E7D32);">
       <ion-card-title style="color:#fff; display:flex; align-items:center; gap:8px;">
-        <ion-icon name="file-tray-outline"></ion-icon> Item-wise Sale Report
+        <ion-icon name="layers-outline"></ion-icon> Item Stock Report
       </ion-card-title>
-      <ion-card-subtitle style="color:rgba(255,255,255,0.75);">Per-vaccine sales analysis</ion-card-subtitle>
+      <ion-card-subtitle style="color:rgba(255,255,255,0.75);">Date-wise opening/closing stock, sold, transferred, purchased and adjusted</ion-card-subtitle>
     </ion-card-header>
     <ion-card-content style="padding-top: 12px;">
       <div class="field-label">Select Brand</div>
@@ -69,7 +69,7 @@
       </div>
       <div style="text-align:right; margin-top:4px;">
         <ion-button color="secondary" fill="solid" (click)="getItemReport()">
-          <ion-icon name="download-outline" slot="start"></ion-icon>Download PDF
+          <ion-icon name="download-outline" slot="start"></ion-icon>Download Stock Report PDF
         </ion-button>
       </div>
     </ion-card-content>
