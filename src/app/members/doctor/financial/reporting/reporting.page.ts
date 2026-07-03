@@ -23,8 +23,11 @@ export class ReportingPage implements OnInit {
   selectedPurchaseBrandId: any = null;
   selectedAgent: string | null = null;
   purchaseReportType: 'item' | 'supplier' = 'item';
-  filteredBrands: any[] = [];
   form: FormGroup;
+
+  pickerOpen: boolean = false;
+  pickerType: 'itemBrand' | 'purchaseBrand' | 'agent' | null = null;
+  pickerSearch: string = '';
   todaydate: string;
   doctorId: any;
   usertype: any;
@@ -75,11 +78,52 @@ export class ReportingPage implements OnInit {
       next: (res: any) => {
         if (res && res.IsSuccess) {
           this.brands = (res.ResponseData || []).map((b: any) => ({ id: b.Id, name: b.Name, displayName: b.Name }));
-          this.filteredBrands = this.brands.slice();
         }
       },
       error: () => {}
     });
+  }
+
+  brandNameById(id: any): string {
+    const b = this.brands.find((x: any) => x.id === id);
+    return b ? b.displayName : '';
+  }
+
+  openPicker(type: 'itemBrand' | 'purchaseBrand' | 'agent') {
+    this.pickerType = type;
+    this.pickerSearch = '';
+    this.pickerOpen = true;
+  }
+
+  closePicker() {
+    this.pickerOpen = false;
+    this.pickerType = null;
+  }
+
+  get filteredPickerOptions(): { label: string; value: any }[] {
+    const q = (this.pickerSearch || '').toLowerCase();
+    let source: { label: string; value: any }[] = [];
+    if (this.pickerType === 'agent') {
+      source = this.agents.map(a => ({ label: a.name, value: a.name }));
+    } else {
+      source = this.brands.map(b => ({ label: b.displayName, value: b.id }));
+    }
+    if (!q) return source;
+    return source.filter(o => (o.label || '').toLowerCase().indexOf(q) >= 0);
+  }
+
+  isPickerOptionSelected(opt: { label: string; value: any }): boolean {
+    if (this.pickerType === 'itemBrand') return this.selectedBrandId === opt.value;
+    if (this.pickerType === 'purchaseBrand') return this.selectedPurchaseBrandId === opt.value;
+    if (this.pickerType === 'agent') return this.selectedAgent === opt.value;
+    return false;
+  }
+
+  selectPickerOption(opt: { label: string; value: any }) {
+    if (this.pickerType === 'itemBrand') this.selectedBrandId = opt.value;
+    if (this.pickerType === 'purchaseBrand') this.selectedPurchaseBrandId = opt.value;
+    if (this.pickerType === 'agent') this.selectedAgent = opt.value;
+    this.closePicker();
   }
 
   loadAgents() {

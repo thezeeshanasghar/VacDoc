@@ -32,3 +32,155 @@
 .full-w { width: 100%; }
 
 ion-card-header[color="primary"] ion-card-title { color: white; font-size: 15px; font-weight: 700; }
+
+// Searchable picker (brand / supplier) — matches add-bill.page.scss pattern
+.field-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #546E7A;
+  margin-bottom: 6px;
+}
+
+.supplier-pick-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 9px 12px;
+  background: #fff;
+  border: 1.5px solid #B0BEC5;
+  border-radius: 8px;
+  cursor: pointer;
+  box-sizing: border-box;
+  min-height: 40px;
+
+  &:active { background: #F5F7FA; }
+}
+
+.supplier-pick-value {
+  font-size: 15px;
+  color: #1A1A2E;
+  flex: 1;
+
+  &.placeholder { color: #90A4AE; }
+}
+
+.supplier-pick-icons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #90A4AE;
+  font-size: 18px;
+}
+
+.supplier-clear-icon { color: #B0BEC5; cursor: pointer; }
+.supplier-chevron { font-size: 16px; }
+
+.supplier-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+}
+
+.supplier-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 88%;
+  max-width: 360px;
+  max-height: 60vh;
+  background: #fff;
+  border-radius: 14px;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+  overflow: hidden;
+}
+
+.supplier-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 0;
+
+  .supplier-modal-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1A1A2E;
+  }
+
+  .supplier-modal-close {
+    font-size: 20px;
+    color: #90A4AE;
+    cursor: pointer;
+  }
+}
+
+.supplier-modal-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 12px;
+  padding: 7px 10px;
+  background: #F5F7FA;
+  border-radius: 8px;
+  border: 1px solid #CFD8DC;
+
+  .sms-icon { font-size: 16px; color: #90A4AE; flex-shrink: 0; }
+
+  .sms-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: #1A1A2E;
+    outline: none;
+  }
+
+  .sms-clear {
+    background: none;
+    border: none;
+    color: #90A4AE;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+  }
+}
+
+.supplier-modal-list {
+  overflow-y: auto;
+  flex: 1;
+  padding-bottom: 6px;
+}
+
+.supplier-modal-empty {
+  text-align: center;
+  padding: 24px 16px;
+  color: #90A4AE;
+  font-size: 13px;
+}
+
+.supplier-modal-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #F5F7FA;
+  cursor: pointer;
+
+  &:last-child { border-bottom: none; }
+  &:active { background: #F5F7FA; }
+
+  .smi-name {
+    font-size: 14px;
+    color: #1A1A2E;
+    font-weight: 500;
+  }
+
+  .smi-check { font-size: 18px; color: #2dd36f; }
+}
