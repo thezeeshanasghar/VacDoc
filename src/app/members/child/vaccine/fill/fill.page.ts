@@ -146,7 +146,13 @@ export class FillPage implements OnInit {
       if (user) {
         console.log('Retrieved user from storage:', user);
         this.usertype = user.UserType; // Ensure this is set correctly
-        this.allowInventory = user.AllowInventory !== false;
+        // Inventory (batch/lot/expiry + stock deduction) is on only when the doctor allows it
+        // AND the currently-online clinic has opted in via its per-clinic MaintainInventory flag.
+        const doctorAllows = user.AllowInventory !== false;
+        this.storage.get(environment.ON_CLINIC).then((onlineClinic) => {
+          const clinicMaintains = !onlineClinic || onlineClinic.MaintainInventory !== false;
+          this.allowInventory = doctorAllows && clinicMaintains;
+        });
         if (user.UserType === 'PA') {
           const paId = Number(user.PAId);
           if (paId && !isNaN(paId)) {

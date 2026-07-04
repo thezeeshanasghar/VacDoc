@@ -99,6 +99,29 @@
       </ng-container>
     </div>
 
+    <ion-card *ngIf="allowInventory" class="inventory-toggle-card">
+      <ion-item lines="none">
+        <ion-label class="ion-text-wrap">
+          <h2 style="font-weight: 600;">Maintain stock &amp; inventory</h2>
+          <p style="white-space: normal;">
+            <span *ngIf="fg1.get('MaintainInventory').value">
+              On &mdash; full inventory with batch, lot &amp; expiry.
+            </span>
+            <span *ngIf="!fg1.get('MaintainInventory').value">
+              Off &mdash; brand &amp; price only, no batch/lot/expiry.
+            </span>
+          </p>
+        </ion-label>
+        <ion-toggle slot="end" color="primary" formControlName="MaintainInventory"></ion-toggle>
+      </ion-item>
+      <ion-card-content style="padding-top: 0;">
+        <p style="font-size: 12px; color: var(--ion-color-medium);">
+          Turn off for clinics where patients bring their own vaccines. Existing stock is kept and
+          simply stops being deducted &mdash; turn it back on any time to resume full inventory.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
     <ion-item>
       <div>
         <label for="file">Profile Image</label>

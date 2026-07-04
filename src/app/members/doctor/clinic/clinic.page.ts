@@ -29,6 +29,7 @@ export class ClinicPage {
   canEdit = true;
   canDelete = true;
   canSetOnline = true;
+  allowInventory = false;
   constructor(public loadingController: LoadingController, 
     public clinicService: ClinicService,
     private toastService: ToastService, 
@@ -52,6 +53,8 @@ export class ClinicPage {
    this.usertype = await this.storage.get(environment.USER);
    console.log("User Type:", this.usertype.UserType);
    this.type= this.usertype.UserType;
+   // Only doctors with inventory permission see per-clinic inventory status badges.
+   this.allowInventory = this.usertype.UserType === 'DOCTOR' && this.usertype.AllowInventory === true;
 
    if (this.type === 'PA') {
      const paId = Number(this.usertype.PAId);

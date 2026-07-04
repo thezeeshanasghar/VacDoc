@@ -16,8 +16,12 @@
 
 <ion-content *ngIf="Clinics">
   <ion-card *ngFor="let clinic of Clinics">
-    <ion-item> 
-      <ion-label color="dark">{{clinic.Name}}</ion-label>
+    <ion-item>
+      <ion-label color="dark">
+        {{clinic.Name}}
+        <ion-badge *ngIf="allowInventory && clinic.MaintainInventory !== false" color="success" style="margin-left: 6px; vertical-align: middle; font-weight: 500;">Inventory On</ion-badge>
+        <ion-badge *ngIf="allowInventory && clinic.MaintainInventory === false" color="medium" style="margin-left: 6px; vertical-align: middle; font-weight: 500;">Inventory Off</ion-badge>
+      </ion-label>
       <ion-button fill="clear" slot="end" *ngIf="canEdit" [routerLink]="['/members/doctor/clinic/edit', clinic.Id]" class="header-icon-btn">
         <ion-icon slot="icon-only" name="pencil-outline"></ion-icon>
       </ion-button>

@@ -170,7 +170,9 @@ export class BulkPage implements OnInit {
 
       if (user) {
         this.usertype = user.UserType;
-        this.allowInventory = user.AllowInventory !== false;
+        // Inventory is on only when the doctor allows it AND the online clinic has opted in.
+        this.allowInventory = user.AllowInventory !== false
+          && (!onlineClinic || onlineClinic.MaintainInventory !== false);
         if (user.UserType === "PA") {
           this.paId = Number(user.PAId) || null;
         } else if (user.UserType === "DOCTOR" && user.DoctorId) {

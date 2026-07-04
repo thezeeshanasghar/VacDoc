@@ -44,6 +44,7 @@ export class EditPage implements OnInit {
   private readonly DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm";
   usertype: any;
   canEdit = true;
+  allowInventory = false;
 
   constructor(
     public loadingController: LoadingController,
@@ -73,6 +74,8 @@ export class EditPage implements OnInit {
       if (user) {
         console.log('Retrieved user from storage:', user);
         this.usertype = user.UserType;
+        // Only doctors with inventory permission may toggle per-clinic stock maintenance.
+        this.allowInventory = user.UserType === 'DOCTOR' && user.AllowInventory === true;
         if (user.UserType === 'PA') {
           this.paService.getPaPermissions(Number(user.PAId)).subscribe(perm => {
             this.canEdit = (perm && perm.EditClinic) || false;
@@ -110,6 +113,7 @@ export class EditPage implements OnInit {
       Lat: [null],
       Long: [null],
       IsOnline: [false],
+      MaintainInventory: [true],
       MonogramImage: [null],
       RegNo: new FormControl(
         "",
@@ -282,6 +286,7 @@ export class EditPage implements OnInit {
           this.fg1.controls["Address"].setValue(this.clinic.Address);
           this.fg1.controls["ConsultationFee"].setValue(this.clinic.ConsultationFee);
           this.fg1.controls["RegNo"].setValue(this.clinic.RegNo);
+          this.fg1.controls["MaintainInventory"].setValue(this.clinic.MaintainInventory !== false);
           // this.fg1.controls["MonogramImage"].setValue(this.resourceURL+this.clinic.MonogramImage);
           localStorage.setItem('monogramImage', this.clinic.MonogramImage);
           const monogramImageUrl = localStorage.getItem('monogramImage');
