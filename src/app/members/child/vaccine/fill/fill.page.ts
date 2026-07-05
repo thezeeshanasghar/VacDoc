@@ -376,9 +376,35 @@ export class FillPage implements OnInit {
     });
   }
 
+  // §10 twin echo: if the chosen brand has a case-only look-alike (HEXAXIM vs Hexaxim),
+  // make the operator confirm they picked the right one. Returns false to abort the give.
+  async confirmTwinBrand(): Promise<boolean> {
+    const bid = this.fg.value.BrandId;
+    if (!bid || bid === 'OHF') { return true; }
+    const brand = (this.brandName || []).find(b => b && b.Id == bid);
+    if (!brand || !brand.HasCaseTwin) { return true; }
+
+    return await new Promise<boolean>(async resolve => {
+      const alert = await this.alertController.create({
+        header: 'Confirm the exact brand',
+        message: `⚠ This is "${brand.Name}" — a look-alike with different capitalisation also exists. ` +
+                 `Make sure this is the one you actually gave.`,
+        buttons: [
+          { text: 'Back', role: 'cancel', handler: () => resolve(false) },
+          { text: `Yes, ${brand.Name}`, handler: () => resolve(true) }
+        ]
+      });
+      await alert.present();
+    });
+  }
+
   async fillVaccine() {
     const canProceed = await this.confirmAndHandleClinicMismatch();
     if (!canProceed) {
+      return;
+    }
+
+    if (!(await this.confirmTwinBrand())) {
       return;
     }
 

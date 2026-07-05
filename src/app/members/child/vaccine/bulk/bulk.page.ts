@@ -537,7 +537,42 @@ export class BulkPage implements OnInit {
     });
   }
 
+  // §10 twin echo: if any chosen brand in the batch has a case-only look-alike, confirm once
+  // (listing them) before the give proceeds. Returns false to abort.
+  async confirmTwinBrands(data: any): Promise<boolean> {
+    if (!Array.isArray(data.ScheduleBrands)) { return true; }
+    const chosenIds = data.ScheduleBrands.filter((b: any) => b && b.BrandId).map((b: any) => Number(b.BrandId));
+    if (chosenIds.length === 0) { return true; }
+
+    // Look up each chosen brand across the per-row option lists to read HasCaseTwin.
+    const allBrands = ([] as any[]).concat(...(this.filteredBrandOptions || []));
+    const twinNames: string[] = [];
+    chosenIds.forEach(id => {
+      const b = allBrands.find(x => x && Number(x.Id) === id);
+      if (b && b.HasCaseTwin && twinNames.indexOf(b.Name) < 0) { twinNames.push(b.Name); }
+    });
+    if (twinNames.length === 0) { return true; }
+
+    return await new Promise<boolean>(async resolve => {
+      const alert = await this.alertController.create({
+        header: 'Confirm the exact brand',
+        message: `⚠ ${twinNames.map(n => `"${n}"`).join(', ')} ` +
+                 `${twinNames.length > 1 ? 'each have' : 'has'} a look-alike with different ` +
+                 `capitalisation. Make sure you picked the right one.`,
+        buttons: [
+          { text: 'Back', role: 'cancel', handler: () => resolve(false) },
+          { text: 'Yes, correct', handler: () => resolve(true) }
+        ]
+      });
+      await alert.present();
+    });
+  }
+
   async fillVaccine(data: any) {
+    if (!(await this.confirmTwinBrands(data))) {
+      return;
+    }
+
     this.applyTravelGivenDateToday();
     data.GivenDate = (moment as any)(this.fg.value.GivenDate, "YYYY-MM-DD").format("DD-MM-YYYY");
 
