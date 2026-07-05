@@ -56,6 +56,17 @@ export class StockService {
     return this.http.get<any>(`${this.apiUrl}stock/items-supplier-report?clinicId=${clinicId}&supplier=${encodeURIComponent(supplier)}&from=${fromDate}&to=${toDate}`, { observe: 'response', responseType: 'blob' as 'json' });
   }
 
+  // v2 §7 — drift audit: counter vs ledger, per brand, floored at StockPeriodStart.
+  checkIntegrity(clinicId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}stock/integrity?clinicId=${clinicId}`);
+  }
+
+  // v2 §7 — repair: rewrite counters from the ledger (never invents stock).
+  reconcileStock(clinicId: number, brandId: number = 0): Observable<any> {
+    const bq = brandId > 0 ? `&brandId=${brandId}` : '';
+    return this.http.post<any>(`${this.apiUrl}stock/reconcile?clinicId=${clinicId}${bq}`, {});
+  }
+
   getBills(doctorId: number, clinicId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}bill?doctorId=${doctorId}&clinicId=${clinicId}`);
   }

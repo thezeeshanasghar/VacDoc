@@ -32,6 +32,14 @@
     >
   </div>
 
+  <!-- v2 §7 — verify counters match the ledger; doctor can reconcile any drift. -->
+  <div class="integrity-wrap">
+    <ion-button size="small" fill="outline" (click)="checkIntegrity()">
+      <ion-icon name="shield-checkmark-outline" slot="start"></ion-icon>
+      Check stock integrity
+    </ion-button>
+  </div>
+
   <!-- Empty state -->
   <div *ngIf="filteredBrands.length === 0" class="empty-state">
     <ion-icon name="cube-outline"></ion-icon>

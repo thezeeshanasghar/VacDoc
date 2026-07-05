@@ -232,3 +232,10 @@
   background: #FFF9C4;
   color: #F57F17;
 }
+
+.integrity-wrap {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 12px 4px;
+  --color: #1565C0;
+}
