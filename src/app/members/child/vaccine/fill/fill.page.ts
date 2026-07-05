@@ -352,9 +352,28 @@ export class FillPage implements OnInit {
   }
   
   isScheduleDateValid(): boolean {
-    const today = new Date().toISOString().split('T')[0]; 
-    const givenDate = this.fg.get('GivenDate').value; 
+    const today = new Date().toISOString().split('T')[0];
+    const givenDate = this.fg.get('GivenDate').value;
     return givenDate > today;
+  }
+
+  // v2 (§6.2a): backdated brand give — ask whether the vaccine came from our stock.
+  // Resolves 'stock' (deduct), 'historical' (just recording, no deduct), or 'cancel'.
+  async askReRecordChoice(): Promise<'stock' | 'historical' | 'cancel'> {
+    return new Promise(async resolve => {
+      const alert = await this.alertController.create({
+        header: 'This dose is backdated',
+        message: 'Was this vaccine taken from your current stock, or are you just recording a past dose?',
+        backdropDismiss: false,
+        buttons: [
+          { text: 'Just recording — don\'t deduct', handler: () => resolve('historical') },
+          { text: 'From our stock — deduct', handler: () => resolve('stock') }
+        ]
+      });
+      // Any dismissal without a button (rare, backdropDismiss is off) = cancel.
+      alert.onDidDismiss().then(d => { if (!d || !d.role) { /* handled by buttons */ } });
+      await alert.present();
+    });
   }
 
   async fillVaccine() {
@@ -415,6 +434,19 @@ export class FillPage implements OnInit {
     this.fg.value.PaymentCollectorPaId = this.paymentCollectorPaId || null;
     if (this.usertype === 'PA' && this.paId) {
       this.fg.value.PaId = this.paId;
+    }
+
+    // v2 deduction-decision prompt (§6.2a): a backdated give with a real brand is ambiguous —
+    // ask whether the vaccine came from our stock. Today's gives, OHF, and pre-period gives are
+    // auto-decided by the backend and never prompt. (givenDate here is a Date, currentDate too.)
+    const isBackdated = givenDate < currentDate;
+    const hasRealBrand = !!this.fg.value.BrandId; // OHF was already nulled above
+    if (isBackdated && hasRealBrand) {
+      const choice = await this.askReRecordChoice();
+      if (choice === 'cancel') { return; }
+      this.fg.value.ReRecordHistorical = (choice === 'historical');
+    } else {
+      this.fg.value.ReRecordHistorical = null;
     }
 
     await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(

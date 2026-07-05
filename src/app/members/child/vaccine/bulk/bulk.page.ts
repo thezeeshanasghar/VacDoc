@@ -520,6 +520,23 @@ export class BulkPage implements OnInit {
     return formattedDate > today;
   }
 
+  // v2 (§6.2a): backdated bulk give with real brands — ask ONCE for the whole batch whether the
+  // vaccines came from our stock. Resolves 'stock' (deduct), 'historical' (no deduct), or 'cancel'.
+  async askReRecordChoice(): Promise<'stock' | 'historical' | 'cancel'> {
+    return new Promise(async resolve => {
+      const alert = await this.alertController.create({
+        header: 'These doses are backdated',
+        message: 'Were these vaccines taken from your current stock, or are you just recording past doses?',
+        backdropDismiss: false,
+        buttons: [
+          { text: 'Just recording — don\'t deduct', handler: () => resolve('historical') },
+          { text: 'From our stock — deduct', handler: () => resolve('stock') }
+        ]
+      });
+      await alert.present();
+    });
+  }
+
   async fillVaccine(data: any) {
     this.applyTravelGivenDateToday();
     data.GivenDate = (moment as any)(this.fg.value.GivenDate, "YYYY-MM-DD").format("DD-MM-YYYY");
@@ -536,6 +553,22 @@ export class BulkPage implements OnInit {
       this.toastService.create("Given date is not today. Cannot update injection.", "danger");
       loading.dismiss();
       return;
+    }
+
+    // v2 deduction-decision prompt (§6.2a): a backdated bulk give containing at least one real
+    // brand is ambiguous — ask ONCE for the whole batch. Today / OHF-only / pre-period batches
+    // are auto-decided by the backend and never prompt. OHF entries in the batch are unaffected.
+    const isBackdatedBulk = givenDate < currentDate;
+    const hasRealBrand = Array.isArray(data.ScheduleBrands)
+      && data.ScheduleBrands.some((b: any) => b && b.BrandId);
+    if (isBackdatedBulk && hasRealBrand) {
+      loading.dismiss();
+      const choice = await this.askReRecordChoice();
+      if (choice === 'cancel') { return; }
+      data.ReRecordHistorical = (choice === 'historical');
+      await loading.present();
+    } else {
+      data.ReRecordHistorical = null;
     }
 
     this.bulkService.updateVaccine(data).subscribe(
