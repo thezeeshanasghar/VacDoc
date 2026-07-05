@@ -102,7 +102,16 @@ export class VaccineService extends BaseService {
       .pipe(
         catchError(this.handleError)
       );
-  } 
+  }
+
+  // §6.3a: label-only correction of a given dose's batch/expiry/manufacturer (no stock movement).
+  CorrectBatch(scheduleId: number, data): Observable<any> {
+    const url = `${this.API_VACCINE}schedule/${scheduleId}/correct-batch`;
+    return this.http.patch(url, data, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
 
   DeleteVaccineByChildidDoseidDate(Childid: string, Doseid: string, date: String, paId?: number, doctorId?: number) {
     let url = `${this.API_VACCINE}schedule/${Childid}/${Doseid}/${date}`;

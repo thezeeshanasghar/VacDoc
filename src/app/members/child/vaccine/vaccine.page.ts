@@ -665,6 +665,69 @@ this.downloadSpecialPdf();
       );
   }
 
+  // §6.3a: correct a given dose's batch/expiry/manufacturer label — used to fill in a
+  // give-at-zero dose's blank batch later, or fix a typo'd lot. Moves NO stock. Doctor + PA.
+  async correctBatch(v: any) {
+    if (!v || !v.IsDone) { return; }
+    if (!v.BrandId) {
+      this.toastService.create('This dose is OHF (no brand); there is no batch to correct.', 'warning');
+      return;
+    }
+
+    const existingExpiry = v.Expiry ? new Date(v.Expiry).toISOString().substring(0, 10) : '';
+    const alert = await this.alertController.create({
+      header: 'Correct Batch Details',
+      subHeader: (v.Brand && v.Brand.Name) ? v.Brand.Name : '',
+      message: 'Label only — this does not change any stock quantity.',
+      inputs: [
+        { name: 'lot', type: 'text', placeholder: 'Batch / Lot no.', value: v.Lot || '' },
+        { name: 'manufacturer', type: 'text', placeholder: 'Manufacturer', value: v.Manufacturer || '' },
+        { name: 'expiry', type: 'date', value: existingExpiry }
+      ],
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Save',
+          handler: (data) => {
+            this.submitCorrectBatch(v.Id, data);
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  private async submitCorrectBatch(scheduleId: number, data: any) {
+    const loading = await this.loadingController.create({ message: 'Saving batch details' });
+    await loading.present();
+
+    const payload: any = {
+      Lot: (data && data.lot) ? data.lot : '',
+      Manufacturer: (data && data.manufacturer) ? data.manufacturer : '',
+      Expiry: (data && data.expiry) ? data.expiry : null,
+      DoctorId: this.doctorId
+    };
+    if (this.usertype === 'PA' && this.paId) {
+      payload.CorrectByPaId = this.paId;
+    }
+
+    this.vaccineService.CorrectBatch(scheduleId, payload).subscribe(
+      res => {
+        loading.dismiss();
+        if (res.IsSuccess) {
+          this.toastService.create('Batch details corrected.', 'success');
+          this.getVaccination();
+        } else {
+          this.toastService.create(res.Message || 'Could not correct batch.', 'danger');
+        }
+      },
+      () => {
+        loading.dismiss();
+        this.toastService.create('Error: server failure', 'danger');
+      }
+    );
+  }
+
   async deleteFutureSchedules(ChildId: string, DoseId: string, date: String) {
     const loading = await this.loadingController.create({
       message: 'Deleting Doses'

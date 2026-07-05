@@ -195,6 +195,16 @@
               <img slot="icon-only" src="../../assets/add-parameter.png" class="action-img" />
             </ion-button>
 
+            <!-- Correct Batch (§6.3a) — label-only, no stock movement. Doctor + PA. -->
+            <ion-button
+              *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && v.BrandId && (usertype === 'DOCTOR' || canAddParams)"
+              fill="clear"
+              class="action-btn action-btn--correct-batch"
+              (click)="correctBatch(v)"
+              title="Correct Batch Details">
+              <ion-icon slot="icon-only" name="create-outline" class="action-icon"></ion-icon>
+            </ion-button>
+
             <!-- Approve — icon on mobile, text button on desktop -->
             <ng-container *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && usertype === 'DOCTOR' && !v.IsPAApprove">
               <ion-button fill="clear" class="action-btn action-btn--approve action-btn--approve-icon" (click)="updateScheduleApproval(v.Id)" title="Approve">
