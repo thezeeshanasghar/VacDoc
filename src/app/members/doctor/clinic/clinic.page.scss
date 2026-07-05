@@ -1,62 +1,181 @@
-// ── Clinic card ───────────────────────────────────────────────────────────────
-ion-card {
-  border-radius: 16px !important;
-  border-left: 4px solid #0D6EAD;
-  box-shadow: 0 3px 14px rgba(13, 110, 173, 0.12), 0 1px 4px rgba(0,0,0,0.06) !important;
-  background: #ffffff;
-  margin: 0 0 14px;
-  overflow: hidden;
+// ── Page background (matches Stock Management dashboard) ───────────────────────
+.clinic-content {
+  --background: #F1F5F9;
 }
 
-// ── Clinic name row ────────────────────────────────────────────────────────────
-ion-card > ion-item {
-  --background: linear-gradient(135deg, #0B2D5C 0%, #0D6EAD 100%);
-  --color: #ffffff;
-  --border-color: transparent;
-  --inner-border-width: 0;
-  border-radius: 12px 12px 0 0;
+.clinic-wrap {
+  padding: 20px 16px 28px;
+}
 
-  ion-label {
-    font-size: 16px !important;
-    font-weight: 700 !important;
-    color: #ffffff !important;
-    letter-spacing: 0.2px;
-  }
+// ── Compact clinic card — same shape recipe as .stock-card ─────────────────────
+.clinic-card {
+  border-radius: 16px;
+  border: 1.5px solid transparent;
+  box-shadow: 0 2px 12px rgba(11, 45, 92, 0.08);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.name-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.clinic-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   ion-icon {
-    color: rgba(255,255,255,0.80) !important;
-    font-size: 22px;
-  }
-
-  ion-button.header-icon-btn {
-    --color: rgba(255,255,255,0.90);
-    --padding-start: 6px;
-    --padding-end: 6px;
-    height: 36px;
+    font-size: 20px;
   }
 }
 
-// ── Card content ──────────────────────────────────────────────────────────────
-ion-card-content {
-  padding: 14px 16px 16px !important;
-  background: #ffffff;
-
-  p {
-    font-size: 13px;
-    color: #374151;
-    margin: 4px 0;
-
-    &:before {
-      content: '';
-    }
-  }
+.name-block {
+  min-width: 0;
 }
 
-// ── Online badge ──────────────────────────────────────────────────────────────
-ion-badge[color="success"] {
-  background: #E8F5E9;
-  color: #2E7D32;
-  font-size: 11px;
-  padding: 3px 10px;
+.clinic-name {
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.inv-badge {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 8px;
   border-radius: 20px;
+  letter-spacing: 0.2px;
+}
+
+.inv-on  { background: rgba(46, 125, 50, 0.14); color: #2E7D32; }
+.inv-off { background: rgba(120, 144, 156, 0.18); color: #607d8b; }
+
+.actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.55);
+  border: none;
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 16px;
+  }
+}
+
+// ── Footer buttons ─────────────────────────────────────────────────────────────
+.card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1.5px solid;
+  background: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+
+  .count {
+    color: #fff;
+    border-radius: 20px;
+    font-size: 11px;
+    padding: 1px 7px;
+    font-weight: 700;
+  }
+}
+
+.pill.online {
+  background: #2E7D32;
+  border-color: #2E7D32;
+  color: #fff;
+
+  ion-icon { font-size: 15px; }
+}
+
+.pill.setonline {
+  color: #607d8b;
+  border-color: #cfd8dc;
+}
+
+// ── Colour themes (cycled per clinic, from Stock dashboard palette) ────────────
+.c-blue {
+  background: #E3F0FF;
+  border-color: #BBDEFB;
+  .clinic-icon { background: #C9E2FB; ion-icon { color: #0D6EAD; } }
+  .clinic-name { color: #0D6EAD; }
+  .pill:not(.online):not(.setonline) { color: #0D6EAD; border-color: #0D6EAD; .count { background: #0D6EAD; } }
+}
+
+.c-green {
+  background: #E8F5E9;
+  border-color: #C8E6C9;
+  .clinic-icon { background: #C3E6C4; ion-icon { color: #2E7D32; } }
+  .clinic-name { color: #2E7D32; }
+  .pill:not(.online):not(.setonline) { color: #2E7D32; border-color: #2E7D32; .count { background: #2E7D32; } }
+}
+
+.c-purple {
+  background: #F3E5F5;
+  border-color: #E1BEE7;
+  .clinic-icon { background: #E1BEE7; ion-icon { color: #7B1FA2; } }
+  .clinic-name { color: #7B1FA2; }
+  .pill:not(.online):not(.setonline) { color: #7B1FA2; border-color: #7B1FA2; .count { background: #7B1FA2; } }
+}
+
+.c-orange {
+  background: #FFF3E0;
+  border-color: #FFCC80;
+  .clinic-icon { background: #FFE0B2; ion-icon { color: #E65100; } }
+  .clinic-name { color: #E65100; }
+  .pill:not(.online):not(.setonline) { color: #E65100; border-color: #E65100; .count { background: #E65100; } }
+}
+
+.c-teal {
+  background: #E6FAF8;
+  border-color: #99E6DE;
+  .clinic-icon { background: #C2F0EB; ion-icon { color: #0E7C72; } }
+  .clinic-name { color: #0E7C72; }
+  .pill:not(.online):not(.setonline) { color: #0E7C72; border-color: #0E7C72; .count { background: #0E7C72; } }
+}
+
+.c-indigo {
+  background: #E8EAF6;
+  border-color: #C5CAE9;
+  .clinic-icon { background: #C5CAE9; ion-icon { color: #3949AB; } }
+  .clinic-name { color: #3949AB; }
+  .pill:not(.online):not(.setonline) { color: #3949AB; border-color: #3949AB; .count { background: #3949AB; } }
 }

@@ -30,6 +30,8 @@ export class ClinicPage {
   canDelete = true;
   canSetOnline = true;
   allowInventory = false;
+  // Rotating colour themes for clinic cards (matches Stock Management dashboard palette)
+  cardColors = ["blue", "green", "purple", "orange", "teal", "indigo"];
   constructor(public loadingController: LoadingController, 
     public clinicService: ClinicService,
     private toastService: ToastService, 
@@ -80,6 +82,10 @@ export class ClinicPage {
         }
       }
     });
+  }
+
+  colorFor(index: number): string {
+    return this.cardColors[index % this.cardColors.length];
   }
 
   clearRefreshFlag() {

@@ -14,50 +14,45 @@
 </ion-header>
 
 
-<ion-content *ngIf="Clinics">
-  <ion-card *ngFor="let clinic of Clinics">
-    <ion-item>
-      <ion-label color="dark">
-        {{clinic.Name}}
-        <ion-badge *ngIf="allowInventory && clinic.MaintainInventory !== false" color="success" style="margin-left: 6px; vertical-align: middle; font-weight: 500;">Inventory On</ion-badge>
-        <ion-badge *ngIf="allowInventory && clinic.MaintainInventory === false" color="medium" style="margin-left: 6px; vertical-align: middle; font-weight: 500;">Inventory Off</ion-badge>
-      </ion-label>
-      <ion-button fill="clear" slot="end" *ngIf="canEdit" [routerLink]="['/members/doctor/clinic/edit', clinic.Id]" class="header-icon-btn">
-        <ion-icon slot="icon-only" name="pencil-outline"></ion-icon>
-      </ion-button>
-      <ion-button fill="clear" slot="end" *ngIf="canDelete" (click)="alertDeleteClinic(clinic.Id)" class="header-icon-btn">
-        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-      </ion-button>
-    </ion-item>
+<ion-content *ngIf="Clinics" class="clinic-content">
+  <div class="clinic-wrap">
+    <div class="clinic-card" *ngFor="let clinic of Clinics; let i = index" [ngClass]="'c-' + colorFor(i)">
+      <div class="card-head">
+        <div class="name-wrap">
+          <div class="clinic-icon">
+            <ion-icon name="business-outline"></ion-icon>
+          </div>
+          <div class="name-block">
+            <div class="clinic-name">{{clinic.Name}}</div>
+            <span *ngIf="allowInventory && clinic.MaintainInventory !== false" class="inv-badge inv-on">Inventory On</span>
+            <span *ngIf="allowInventory && clinic.MaintainInventory === false" class="inv-badge inv-off">Inventory Off</span>
+          </div>
+        </div>
+        <div class="actions">
+          <button *ngIf="canEdit" class="icon-btn" [routerLink]="['/members/doctor/clinic/edit', clinic.Id]">
+            <ion-icon name="create-outline"></ion-icon>
+          </button>
+          <button *ngIf="canDelete" class="icon-btn" (click)="alertDeleteClinic(clinic.Id)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </button>
+        </div>
+      </div>
 
-    <ion-card-content color="primary">
-      <p>Consultation Fee: {{ clinic.ConsultationFee }}</p>
-      <p>Phone Number: {{ clinic.PhoneNumber }}</p>
-      <p>Address: {{ clinic.Address }}</p>
-      <!-- <p *ngIf="clinic.ClinicTimings && clinic.ClinicTimings.length">
-        Timings:
-        <span *ngFor="let timing of clinic.ClinicTimings">
-          {{timing.Day}}
-          {{ timing.StartTime }} - {{ timing.EndTime }}<br>
-        </span>
-      </p>
-      <p *ngIf="!clinic.ClinicTimings || !clinic.ClinicTimings.length">No timings available</p> -->
-      <ion-button size="small" *ngIf="type !== 'PA'" fill="outline" color="primary" routerLink="/members/child">
-        Patients &nbsp;<ion-badge size="small" color="primary">{{clinic.childrenCount}}</ion-badge>
-      </ion-button>
-      <ion-button *ngIf="!clinic.IsOnline && canSetOnline" size="small" fill="outline" color="primary"
-        (click)="setOnlineClinic(clinic.Id)">
-        Set as Online
-      </ion-button>
-      <ion-button *ngIf="clinic.IsOnline && canSetOnline" size="small" color="success" enabled="false" routerLink="/members/dashboard">
-        <ion-icon slot="start" name="checkmark"></ion-icon>
-        Online
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
+      <div class="card-footer">
+        <button *ngIf="type !== 'PA'" class="pill" routerLink="/members/child">
+          Patients <span class="count">{{clinic.childrenCount}}</span>
+        </button>
+        <button *ngIf="!clinic.IsOnline && canSetOnline" class="pill setonline" (click)="setOnlineClinic(clinic.Id)">
+          Set as Online
+        </button>
+        <button *ngIf="clinic.IsOnline && canSetOnline" class="pill online" routerLink="/members/dashboard">
+          <ion-icon name="checkmark"></ion-icon> Online
+        </button>
+      </div>
+    </div>
+  </div>
+
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-  
-
 </ion-content>
