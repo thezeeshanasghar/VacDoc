@@ -1,0 +1,110 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/stock-management"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Opening Stock</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Clinic selector -->
+  <div class="clinic-row" *ngIf="clinics.length > 1">
+    <label class="field-label">Clinic</label>
+    <select [(ngModel)]="clinicId" class="header-select" (change)="onClinicChange()">
+      <option *ngFor="let c of clinics" [ngValue]="c.Id">{{ c.Name }}</option>
+    </select>
+  </div>
+
+  <div class="intro-note">
+    Record the physical stock already on your shelf at the reset date. Each item is added as
+    your starting on-hand. Record this once per clinic.
+  </div>
+
+  <!-- Opening rows -->
+  <ion-card class="form-card" *ngFor="let row of rows; let i = index; let first = first">
+    <ion-card-content class="form-card-content">
+
+      <div class="row-header">
+        <div class="section-label" style="margin-bottom: 0;">Item {{ i + 1 }}</div>
+        <ion-icon *ngIf="!first || rows.length > 1" name="trash-outline" class="row-remove-icon" (click)="removeRow(i)"></ion-icon>
+      </div>
+
+      <!-- Brand picker -->
+      <div class="field-wrap">
+        <label class="field-label">Brand *</label>
+        <div class="supplier-pick-row" (click)="openBrandModal(i)">
+          <span class="supplier-pick-value" [class.placeholder]="!row.brandId">
+            {{ row.brandId ? row.brandSearch : 'Tap to select brand...' }}
+          </span>
+          <span class="supplier-pick-icons">
+            <ion-icon *ngIf="row.brandId" name="close-circle" class="supplier-clear-icon" (click)="clearBrand(row); $event.stopPropagation()"></ion-icon>
+            <ion-icon name="chevron-down-outline" class="supplier-chevron"></ion-icon>
+          </span>
+        </div>
+      </div>
+
+      <!-- Batch + Expiry -->
+      <div class="two-col-row">
+        <div class="field-wrap">
+          <label class="field-label">Batch / Lot</label>
+          <input type="text" [(ngModel)]="row.batchLot" class="header-input" placeholder="Optional">
+        </div>
+        <div class="field-wrap">
+          <label class="field-label">Expiry</label>
+          <input type="date" [(ngModel)]="row.expiryDate" class="header-input">
+        </div>
+      </div>
+
+      <!-- Qty + Cost -->
+      <div class="two-col-row">
+        <div class="field-wrap">
+          <label class="field-label">Quantity on hand *</label>
+          <input type="number" [(ngModel)]="row.qty" class="header-input" placeholder="0" min="1">
+        </div>
+        <div class="field-wrap">
+          <label class="field-label">Cost / unit</label>
+          <input type="number" [(ngModel)]="row.unitCost" class="header-input" placeholder="0.00" min="0" step="0.01">
+        </div>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Add another item -->
+  <ion-button expand="block" fill="outline" (click)="addRow()" class="add-row-btn">
+    <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+    Add another item
+  </ion-button>
+
+  <!-- Record -->
+  <ion-button expand="block" (click)="save()" class="save-btn" color="primary">
+    <ion-icon name="save-outline" slot="start"></ion-icon>
+    Record Opening Stock
+  </ion-button>
+
+  <div style="height: 32px;"></div>
+
+</ion-content>
+
+<!-- Brand picker modal -->
+<div class="modal-backdrop" *ngIf="brandModalOpen" (click)="closeBrandModal()"></div>
+<div class="brand-modal" *ngIf="brandModalOpen">
+  <div class="brand-modal-header">
+    <span class="brand-modal-title">Select Brand</span>
+    <ion-icon name="close-outline" class="brand-modal-close" (click)="closeBrandModal()"></ion-icon>
+  </div>
+  <div class="brand-modal-search">
+    <ion-icon name="search-outline" class="bms-icon"></ion-icon>
+    <input type="text" [(ngModel)]="brandModalSearch" placeholder="Search brand..." class="bms-input" autocomplete="off">
+    <button *ngIf="brandModalSearch" class="bms-clear" (click)="brandModalSearch = ''">&times;</button>
+  </div>
+  <div class="brand-modal-list">
+    <div *ngIf="filteredBrandModal.length === 0" class="brand-modal-empty">No brands found</div>
+    <div class="brand-modal-item" *ngFor="let b of filteredBrandModal" (click)="selectBrandModal(b)">
+      <span class="bmi-name">{{ b.BrandName }}</span>
+      <ion-icon *ngIf="rows[activeRowIndex] && rows[activeRowIndex].brandId === b.BrandId" name="checkmark-circle" class="bmi-check"></ion-icon>
+    </div>
+  </div>
+</div>

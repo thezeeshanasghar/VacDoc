@@ -52,6 +52,16 @@
         <ion-icon name="chevron-forward-outline" class="stock-card-arrow"></ion-icon>
       </div>
 
+      <!-- Opening Stock (doctor only) — record physical on-hand at a reset -->
+      <div *ngIf="showOpeningBalance" routerLink="/members/doctor/stock-management/opening-balance" class="stock-card card-adjust">
+        <div class="stock-card-icon">
+          <ion-icon name="albums-outline"></ion-icon>
+        </div>
+        <span class="stock-card-label">Opening Stock</span>
+        <span class="stock-card-sub">Starting on-hand at reset</span>
+        <ion-icon name="chevron-forward-outline" class="stock-card-arrow"></ion-icon>
+      </div>
+
       <!-- Stock Transfer -->
       <div *ngIf="showTransfer" routerLink="/members/doctor/stock-management/stock-transfer" class="stock-card card-transfer">
         <div class="stock-card-icon">

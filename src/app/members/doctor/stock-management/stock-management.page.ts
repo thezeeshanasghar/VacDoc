@@ -16,6 +16,7 @@ export class StockManagementPage {
   showTransfer     = true;
   showDirectSale   = true;
   showReports      = true;
+  showOpeningBalance = true;   // doctor-only reset op; hidden for PAs
 
   constructor(
     private storage: Storage,
@@ -25,6 +26,7 @@ export class StockManagementPage {
   async ionViewWillEnter() {
     const user = await this.storage.get(environment.USER);
     if (user && user.UserType === 'PA') {
+      this.showOpeningBalance = false;   // doctor-only
       try {
         const perm: any = await this.paService.getPaPermissions(Number(user.PAId)).toPromise();
         this.showSuppliers     = !!(perm && perm.StockSuppliers);

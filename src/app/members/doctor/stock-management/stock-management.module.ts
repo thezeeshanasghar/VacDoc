@@ -43,6 +43,10 @@ const routes: Routes = [
     loadChildren: () => import('./adjust-stock/adjust-stock.module').then(m => m.AdjustStockPageModule)
   },
   {
+    path: 'opening-balance',
+    loadChildren: () => import('./opening-balance/opening-balance.module').then(m => m.OpeningBalancePageModule)
+  },
+  {
     path: 'stock-transfer',
     loadChildren: () => import('./stock-transfer/stock-transfer.module').then(m => m.StockTransferPageModule)
   },

@@ -1,0 +1,12 @@
+// Reuse the Adjust Stock form styling (clinic selector, cards, brand modal, buttons).
+@import '../adjust-stock/adjust-stock.page.scss';
+
+.intro-note {
+  font-size: 13px;
+  color: #546E7A;
+  background: #E8F1FB;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}

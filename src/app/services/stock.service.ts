@@ -56,6 +56,11 @@ export class StockService {
     return this.http.get<any>(`${this.apiUrl}stock/items-supplier-report?clinicId=${clinicId}&supplier=${encodeURIComponent(supplier)}&from=${fromDate}&to=${toDate}`, { observe: 'response', responseType: 'blob' as 'json' });
   }
 
+  // v2 — record physical on-hand at the reset. dto = { DoctorId, ClinicId, Lines: [...] }.
+  postOpeningBalance(dto: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}stock/opening-balance`, dto);
+  }
+
   // v2 §7 — drift audit: counter vs ledger, per brand, floored at StockPeriodStart.
   checkIntegrity(clinicId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}stock/integrity?clinicId=${clinicId}`);
