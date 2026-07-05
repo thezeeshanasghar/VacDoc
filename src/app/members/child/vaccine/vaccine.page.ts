@@ -625,6 +625,30 @@ this.downloadSpecialPdf();
               loading.dismiss();
             }
           }
+          else if (res.IsWarning) {
+            // v2 §6.5a: doctor ungiving a pre-reset historical dose — confirm "history only".
+            loading.dismiss();
+            this.alertController.create({
+              header: 'Undo a historical dose?',
+              message: res.Message,
+              buttons: [
+                { text: 'Cancel', role: 'cancel' },
+                {
+                  text: 'Undo anyway',
+                  handler: () => {
+                    unfillData.ConfirmPreResetUngive = true;
+                    this.vaccineService.UnfillChildVaccine(unfillData).subscribe(
+                      res2 => {
+                        if (res2.IsSuccess) { this.getVaccination(); }
+                        else { this.toastService.create(res2.Message || 'Error: failed to undo', 'danger'); }
+                      },
+                      () => { this.toastService.create('Error: server failure', 'danger'); }
+                    );
+                  }
+                }
+              ]
+            }).then(a => a.present());
+          }
           else {
             loading.dismiss();
             this.alertController.create({
