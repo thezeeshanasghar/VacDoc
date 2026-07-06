@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import * as moment from 'moment';
+import { BrandService } from 'src/app/services/brand.service';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { PaService } from 'src/app/services/pa.service';
 import { StockService } from 'src/app/services/stock.service';
@@ -25,6 +26,7 @@ export class SalesCollectionPage implements OnInit {
 
   constructor(
     private stockService: StockService,
+    private brandService: BrandService,
     private clinicService: ClinicService,
     private paService: PaService,
     private loadingController: LoadingController,
@@ -96,7 +98,7 @@ export class SalesCollectionPage implements OnInit {
     const toDate = moment(this.form.value.toDate).format('YYYY-MM-DD');
     const loading = await this.loadingController.create({ message: 'Generating report...' });
     await loading.present();
-    this.stockService.getSalesCollectionReportFile(this.selectedClinicId, new Date(fromDate), new Date(toDate)).subscribe({
+    this.stockService.getSalesCollectionReportFile(this.selectedClinicId, Number(this.doctorId), new Date(fromDate), new Date(toDate)).subscribe({
       next: (response: any) => {
         loading.dismiss();
         const blob = new Blob([response.body], { type: 'application/pdf' });
@@ -106,15 +108,38 @@ export class SalesCollectionPage implements OnInit {
         link.click();
         window.URL.revokeObjectURL(link.href);
         this.toastService.create('Report downloaded successfully', 'success');
+        this.warnIfNoPriceList();
       },
       error: (err) => {
         loading.dismiss();
         if (err.status === 404) {
           this.toastService.create('No sales data in the selected period', 'warning');
+        } else if (err.status === 403) {
+          this.toastService.create('You do not have access to this clinic', 'danger');
         } else {
           this.toastService.create('Failed to generate report', 'danger');
         }
       }
+    });
+  }
+
+  // Item prices in the report come from the clinic's Brand Prices list (falling back to 0/"-"
+  // when unset). A doctor who never configured prices gets a report with blank item amounts,
+  // which reads as broken. Nudge them once, after the download, so the report still succeeds.
+  private warnIfNoPriceList() {
+    if (!this.selectedClinicId || !this.doctorId) { return; }
+    this.brandService.getBrandAmount(Number(this.doctorId), Number(this.selectedClinicId)).subscribe({
+      next: (res) => {
+        const list = (res && res.ResponseData) || [];
+        const hasPrice = Array.isArray(list) && list.some((b: any) => b && b.Amount > 0);
+        if (!hasPrice) {
+          this.toastService.create(
+            'Item prices are blank because no Brand Prices are set for this clinic. Set them up to see per-item amounts.',
+            'warning'
+          );
+        }
+      },
+      error: () => { /* non-critical nudge — ignore lookup failures */ }
     });
   }
 }

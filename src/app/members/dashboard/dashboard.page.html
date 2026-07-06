@@ -61,6 +61,16 @@
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
+      <!-- ── Patient Collections (Sales Report) ───────────────── -->
+      <div *ngIf="showSalesReport" routerLink="/members/doctor/financial/sales-collection" class="dash-card card-collections">
+        <div class="dash-card-icon">
+          <ion-icon name="receipt-outline"></ion-icon>
+        </div>
+        <span class="dash-card-label">Patient Collections</span>
+        <span class="dash-card-sub">Sales &amp; billing report</span>
+        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
+      </div>
+
       <!-- ── Analytics ────────────────────────────────────────── -->
       <div *ngIf="showAnalytics" routerLink="/members/doctor/analytics" class="dash-card card-analytics">
         <div class="dash-card-icon">

@@ -190,6 +190,14 @@
   .dash-card-arrow { color: #7B1FA2; }
 }
 
+// Green family (collections / money in)
+.card-collections {
+  background: #E7F6EC; border-color: #B6E2C4;
+  .dash-card-icon { background: #C6ECD2; ion-icon { color: #1F9D55; } }
+  .dash-card-label { color: #1B8049; }
+  .dash-card-arrow { color: #1F9D55; }
+}
+
 // Amber family
 .card-analytics {
   background: #FFF8E1; border-color: #FFE082;

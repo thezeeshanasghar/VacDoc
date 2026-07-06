@@ -36,24 +36,24 @@ export class StockService {
     return this.http.get<any>(`${this.apiUrl}supplier?doctorId=${doctorId}`);
   }
 
-  getSalesReportFile(clinicId: number, fromDate: Date, toDate: Date): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}stock/sales-report?clinicId=${clinicId}&from=${fromDate.toISOString()}&to=${toDate.toISOString()}`, { observe: 'response', responseType: 'blob' as 'json' });
+  getSalesReportFile(clinicId: number, doctorId: number, fromDate: Date, toDate: Date): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}stock/sales-report?clinicId=${clinicId}&doctorId=${doctorId}&from=${fromDate.toISOString()}&to=${toDate.toISOString()}`, { observe: 'response', responseType: 'blob' as 'json' });
   }
 
-  getSalesCollectionReportFile(clinicId: number, fromDate: Date, toDate: Date): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}stock/sales-collection-report?clinicId=${clinicId}&from=${fromDate.toISOString()}&to=${toDate.toISOString()}`, { observe: 'response', responseType: 'blob' as 'json' });
+  getSalesCollectionReportFile(clinicId: number, doctorId: number, fromDate: Date, toDate: Date): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}stock/sales-collection-report?clinicId=${clinicId}&doctorId=${doctorId}&from=${fromDate.toISOString()}&to=${toDate.toISOString()}`, { observe: 'response', responseType: 'blob' as 'json' });
   }
 
-  getItemsReportFile(clinicId: number, brandId: number, fromDate: any, toDate: any): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}stock/items-report?clinicId=${clinicId}&brandId=${brandId}&from=${fromDate}&to=${toDate}`, { observe: 'response', responseType: 'blob' as 'json' });
+  getItemsReportFile(clinicId: number, doctorId: number, brandId: number, fromDate: any, toDate: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}stock/items-report?clinicId=${clinicId}&doctorId=${doctorId}&brandId=${brandId}&from=${fromDate}&to=${toDate}`, { observe: 'response', responseType: 'blob' as 'json' });
   }
 
-  getItemsPurchaseReportFile(clinicId: number, brandId: number, fromDate: any, toDate: any): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}stock/items-purchase-report?clinicId=${clinicId}&brandId=${brandId}&from=${fromDate}&to=${toDate}`, { observe: 'response', responseType: 'blob' as 'json' });
+  getItemsPurchaseReportFile(clinicId: number, doctorId: number, brandId: number, fromDate: any, toDate: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}stock/items-purchase-report?clinicId=${clinicId}&doctorId=${doctorId}&brandId=${brandId}&from=${fromDate}&to=${toDate}`, { observe: 'response', responseType: 'blob' as 'json' });
   }
 
-  getItemsSupplierReportFile(clinicId: number, supplier: string, fromDate: any, toDate: any): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}stock/items-supplier-report?clinicId=${clinicId}&supplier=${encodeURIComponent(supplier)}&from=${fromDate}&to=${toDate}`, { observe: 'response', responseType: 'blob' as 'json' });
+  getItemsSupplierReportFile(clinicId: number, doctorId: number, supplier: string, fromDate: any, toDate: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}stock/items-supplier-report?clinicId=${clinicId}&doctorId=${doctorId}&supplier=${encodeURIComponent(supplier)}&from=${fromDate}&to=${toDate}`, { observe: 'response', responseType: 'blob' as 'json' });
   }
 
   // v2 — record physical on-hand at the reset. dto = { DoctorId, ClinicId, Lines: [...] }.

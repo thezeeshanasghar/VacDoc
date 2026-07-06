@@ -46,6 +46,7 @@ export class DashboardPage implements OnInit {
   showClinics: boolean = true;
   showStock: boolean = true;
   showFinancial: boolean = false;
+  showSalesReport: boolean = false;
   showVacation: boolean = true;
   showAgent: boolean = false;
   showPersonalAssistant: boolean = false;
@@ -118,6 +119,7 @@ export class DashboardPage implements OnInit {
         this.showStock     = (perm && (perm.StockSuppliers || perm.StockPurchaseBills || perm.StockOverview || perm.StockAdjust || perm.StockTransfer || perm.StockDirectSale || perm.StockReports)) || false;
         this.showVacation  = (perm && perm.SetVacationDates) || false;
         this.showFinancial = false;
+        this.showSalesReport = false;
         this.showAgent     = false;
         this.showPersonalAssistant = false;
         this.paService.getAssignments(Number(this.user.PAId)).subscribe(res => {
@@ -130,11 +132,13 @@ export class DashboardPage implements OnInit {
           this.showSchedule = this.showClinics = this.showStock =
           this.showVacation = false;
         this.showFinancial = false;
+        this.showSalesReport = false;
       }
     } else {
       // Doctor permissions from user/doctor profile flags
       this.showStock     = this.user && this.user.AllowInventory !== false;
       this.showFinancial = this.user && this.user.AllowFinancial === true;
+      this.showSalesReport = this.user && this.user.AllowSalesReport === true;
       this.showAnalytics = this.user && this.user.AllowAnalytics === true;
       this.showAgent     = this.user && this.user.AllowAgent === true;
       this.showPersonalAssistant = this.doctorId === 1;
