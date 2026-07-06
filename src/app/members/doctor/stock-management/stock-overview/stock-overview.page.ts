@@ -165,8 +165,10 @@ export class StockOverviewPage {
     if (!expiryStr) return false;
     const expiry = new Date(expiryStr);
     const today = new Date();
-    const diffDays = (expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
-    return diffDays <= 90 && diffDays >= 0;
+    if (expiry < today) return false;
+    const sixMonths = new Date(today);
+    sixMonths.setMonth(sixMonths.getMonth() + 6);
+    return expiry <= sixMonths;
   }
 
   isExpired(expiryStr: string): boolean {
