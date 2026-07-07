@@ -102,6 +102,25 @@
         ></ion-input>
       </ion-item>
 
+      <!-- Route: fixed by brand, read-only -->
+      <ion-item *ngIf="routeValues[i]" lines="none" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
+        <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Route</ion-label>
+        <ion-input type="text" readonly [(ngModel)]="routeValues[i]" [ngModelOptions]="{ standalone: true }" style="font-size: 12px; color: #444;"></ion-input>
+      </ion-item>
+
+      <!-- Site: constrained by Route, chip-row, auto-distributed, editable (single-site auto-locks) -->
+      <div *ngIf="availableSitesPerRow[i] && availableSitesPerRow[i].length" class="site-chip-block">
+        <div class="site-chip-label">Site<span *ngIf="siteLockedPerRow[i]" class="site-locked-tag"> &middot; fixed</span></div>
+        <div class="site-chip-row">
+          <button type="button" class="site-chip"
+                  *ngFor="let s of availableSitesPerRow[i]"
+                  [class.on]="siteValues[i] === s"
+                  [class.locked]="siteLockedPerRow[i]"
+                  [disabled]="siteLockedPerRow[i]"
+                  (click)="selectBulkSite(i, s)">{{ s }}</button>
+        </div>
+      </div>
+
       <ion-item *ngIf="allowInventory" lines="none" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
         <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Batch/Lot</ion-label>
         <ion-select

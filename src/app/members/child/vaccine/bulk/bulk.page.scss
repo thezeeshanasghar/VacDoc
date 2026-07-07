@@ -148,3 +148,51 @@ input
 :host ::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
     color: var(--ion-text-color, #000000) !important;
 }
+/* Site of administration — per-dose chip-row picker (constrained by Route). */
+.site-chip-block {
+  padding: 6px 12px 10px;
+}
+.site-chip-label {
+  font-size: 12px;
+  color: var(--ion-color-medium, #92949c);
+  margin-bottom: 6px;
+}
+.site-locked-tag {
+  color: #9aa7b2;
+  font-size: 11px;
+}
+.site-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.site-chip {
+  border: 1.5px solid #c3ccd4;
+  background: #f4f6f8;
+  color: #3a4652;
+  border-radius: 20px;
+  padding: 9px 15px;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.site-chip.on {
+  background: var(--ion-color-primary, #3880ff);
+  border-color: var(--ion-color-primary, #3880ff);
+  color: #fff;
+  font-weight: 700;
+}
+.site-chip.locked {
+  border-style: dashed;
+  color: #9aa7b2;
+  cursor: default;
+  opacity: 0.9;
+}
+@media (max-width: 767px) {
+  .site-chip {
+    padding: 11px 16px;
+    font-size: 15px;
+  }
+}

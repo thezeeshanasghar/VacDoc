@@ -87,6 +87,26 @@
       <ion-input type="text" readonly formControlName="Manufacturer" style="font-size: 12px; color: #444;"></ion-input>
     </ion-item>
 
+    <!-- Route of administration: fixed by brand, read-only. No override at any role. -->
+    <ion-item *ngIf="fg.get('Route').value" lines="none" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
+      <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Route</ion-label>
+      <ion-input type="text" readonly formControlName="Route" style="font-size: 12px; color: #444;"></ion-input>
+    </ion-item>
+
+    <!-- Site of administration: constrained by Route. Chip-row (big touch targets, no dropdown).
+         Single-site routes (Oral/Intranasal) auto-lock; multi-site are editable. -->
+    <div *ngIf="availableSites && availableSites.length" class="site-chip-block">
+      <div class="site-chip-label">Site<span *ngIf="siteLocked" class="site-locked-tag"> &middot; fixed</span></div>
+      <div class="site-chip-row">
+        <button type="button" class="site-chip"
+                *ngFor="let s of availableSites"
+                [class.on]="fg.get('Site').value === s"
+                [class.locked]="siteLocked"
+                [disabled]="siteLocked"
+                (click)="selectSite(s)">{{ s }}</button>
+      </div>
+    </div>
+
     <ion-item *ngIf="allowInventory" lines="none" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
       <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Batch/Lot</ion-label>
       <ion-select

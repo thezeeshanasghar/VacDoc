@@ -36,6 +36,18 @@ export class FillPage implements OnInit {
   availableLots: string[] = [];
   availableExpiries: string[] = [];
   brandSearchTerm: string = '';
+
+  // Site of administration, constrained by the brand's Route. Single source of truth (also
+  // enforced server-side). Age-driven default handled in computeSiteOptions().
+  static readonly ROUTE_SITES: { [route: string]: string[] } = {
+    Oral: ['Oral'],
+    Intranasal: ['Intranasal'],
+    ID: ['R Arm', 'L Arm'],
+    IM: ['R Thigh', 'L Thigh', 'R Deltoid', 'L Deltoid'],
+    SC: ['R Thigh', 'L Thigh', 'R Deltoid', 'L Deltoid'], // same list as IM
+  };
+  availableSites: string[] = [];
+  siteLocked: boolean = false; // true when the route forces a single site (Oral/Intranasal)
   Date: any;
   todaydate: any;
   birthYear: any;
@@ -180,7 +192,9 @@ export class FillPage implements OnInit {
       Height: new FormControl(''),
       Circle: new FormControl(''),
       Manufacturer: new FormControl(''),
-      // ['', Validators.required], 
+      Route: new FormControl(''),   // auto-loaded read-only from Brand
+      Site: new FormControl(''),    // nurse-chosen, constrained by Route
+      // ['', Validators.required],
       Lot: new FormControl(''),
       // ['', Validators.required],
       Expiry: [],
@@ -883,16 +897,21 @@ export class FillPage implements OnInit {
   onBrandChange(event: any): void {
     const brandId = event && event.detail ? event.detail.value : event;
     const selectedManufacturer = this.getBrandManufacturer(brandId);
+    const selectedRoute = this.getBrandRoute(brandId);
+    const selectedBrand = (this.brandName || []).find((b) => b && b.Id == brandId);
 
     if (!brandId || brandId === 'OHF') {
       this.availableBatchLots = [];
       this.availableLots = [];
       this.availableExpiries = [];
-      this.fg.patchValue({ Manufacturer: selectedManufacturer || '', Lot: '', Expiry: null }, { emitEvent: true });
+      this.availableSites = [];
+      this.siteLocked = false;
+      this.fg.patchValue({ Manufacturer: selectedManufacturer || '', Route: '', Site: '', Lot: '', Expiry: null }, { emitEvent: true });
       return;
     }
 
-    this.fg.patchValue({ Manufacturer: selectedManufacturer || '' }, { emitEvent: true });
+    this.fg.patchValue({ Manufacturer: selectedManufacturer || '', Route: selectedRoute || '' }, { emitEvent: true });
+    this.computeSiteOptions(selectedRoute, selectedBrand ? (selectedBrand.SiteDefault || selectedBrand.siteDefault) : '');
 
     const parsedBrandId = Number(brandId);
     if (!parsedBrandId || isNaN(parsedBrandId)) {
@@ -1093,6 +1112,63 @@ export class FillPage implements OnInit {
     }
 
     return selectedBrand.Manufacturer || selectedBrand.manufacturer || '';
+  }
+
+  private getBrandRoute(brandId: any): string {
+    if (!brandId || brandId === 'OHF') {
+      return '';
+    }
+    const selectedBrand = (this.brandName || []).find((brand) => brand && brand.Id == brandId);
+    if (!selectedBrand) {
+      return '';
+    }
+    return selectedBrand.Route || selectedBrand.route || '';
+  }
+
+  // Child age in whole years (from DOB, DD-MM-YYYY). Used for the thigh/deltoid default.
+  private childAgeYears(): number | null {
+    const dob = this.childData && this.childData.DOB;
+    if (!dob) { return null; }
+    const m = moment(dob, 'DD-MM-YYYY');
+    if (!m.isValid()) { return null; }
+    return moment().diff(m, 'years');
+  }
+
+  // Populate availableSites + default the Site control for the given route.
+  // Rule: single-site route → auto-set + locked; multi-site → age default (<5y Thigh, >=5y Deltoid),
+  // side defaults to Right. Respects the brand's SiteDefault when it is valid for the route.
+  private computeSiteOptions(route: string, brandSiteDefault?: string): void {
+    const sites = FillPage.ROUTE_SITES[route] || [];
+    this.availableSites = sites;
+
+    if (sites.length === 0) {
+      this.siteLocked = false;
+      this.fg.patchValue({ Site: '' }, { emitEvent: false });
+      return;
+    }
+    if (sites.length === 1) {
+      // Oral / Intranasal — forced single site.
+      this.siteLocked = true;
+      this.fg.patchValue({ Site: sites[0] }, { emitEvent: false });
+      return;
+    }
+
+    // Multi-site: prefer a valid brand default, else age-driven muscle, Right side.
+    this.siteLocked = false;
+    let def = brandSiteDefault && sites.indexOf(brandSiteDefault) !== -1 ? brandSiteDefault : '';
+    if (!def) {
+      const age = this.childAgeYears();
+      const muscle = (age !== null && age >= 5) ? 'Deltoid' : 'Thigh';
+      def = 'R ' + muscle;
+      if (sites.indexOf(def) === -1) { def = sites[0]; }
+    }
+    this.fg.patchValue({ Site: def }, { emitEvent: false });
+  }
+
+  // Chip-row tap handler — only allowed when the route is not single-site-locked.
+  selectSite(site: string): void {
+    if (this.siteLocked) { return; }
+    this.fg.patchValue({ Site: site }, { emitEvent: false });
   }
 
   private getTravelFieldStorageKey(): string {

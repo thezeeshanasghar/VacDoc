@@ -55,6 +55,20 @@ export class BulkPage implements OnInit {
   selectedExpiriesPerRow: string[] = [];
   selectedValidityPerRow: string[] = [];
 
+  // Per-row Route/Site state. Route = fixed from brand (read-only). Site = constrained by Route,
+  // auto-distributed across doses, nurse-editable. Same ROUTE_SITES source of truth as fill.page.
+  static readonly ROUTE_SITES: { [route: string]: string[] } = {
+    Oral: ['Oral'],
+    Intranasal: ['Intranasal'],
+    ID: ['R Arm', 'L Arm'],
+    IM: ['R Thigh', 'L Thigh', 'R Deltoid', 'L Deltoid'],
+    SC: ['R Thigh', 'L Thigh', 'R Deltoid', 'L Deltoid'],
+  };
+  routeValues: string[] = [];
+  siteValues: string[] = [];
+  availableSitesPerRow: string[][] = [];
+  siteLockedPerRow: boolean[] = [];
+
   // Clinic mismatch
   clinicId: any = null;
   onlineClinicId: any = null;
@@ -235,6 +249,10 @@ export class BulkPage implements OnInit {
     this.selectedLotsPerRow = [];
     this.selectedExpiriesPerRow = [];
     this.selectedValidityPerRow = [];
+    this.routeValues = [];
+    this.siteValues = [];
+    this.availableSitesPerRow = [];
+    this.siteLockedPerRow = [];
 
     schedules.forEach((schedule: any, index: number) => {
       const brands = this.getSortedBrands(schedule);
@@ -249,6 +267,10 @@ export class BulkPage implements OnInit {
       this.brandSearchTerms[index] = selectedBrand ? selectedBrand.Name : "OHF";
       this.ohfSelections[index] = !selectedBrand;
       this.manufacturerValues[index] = selectedBrand ? (selectedBrand.Manufacturer || "") : "";
+      this.routeValues[index] = selectedBrand ? (selectedBrand.Route || selectedBrand.route || "") : "";
+      this.siteValues[index] = "";
+      this.availableSitesPerRow[index] = [];
+      this.siteLockedPerRow[index] = false;
       this.availableBatchLotsPerRow[index] = [];
       this.availableLotsPerRow[index] = [];
       this.availableExpiriesPerRow[index] = [];
@@ -260,6 +282,91 @@ export class BulkPage implements OnInit {
         this.loadBatchLotsForRow(index, Number(this.BrandIds[index]));
       }
     });
+
+    this.recomputeSiteDistribution();
+  }
+
+  // Site helpers ------------------------------------------------------------------------
+
+  private brandById(index: number, brandId: any): any {
+    const brands = this.getSortedBrands(this.bulkData && this.bulkData[index]);
+    return brands.find((b: any) => b && b.Id == brandId) || null;
+  }
+
+  private childAgeYears(): number | null {
+    const dob = this.childData && this.childData.DOB;
+    if (!dob) { return null; }
+    const m = moment(dob, 'DD-MM-YYYY');
+    if (!m.isValid()) { return null; }
+    return moment().diff(m, 'years');
+  }
+
+  // "Fill R+L then other muscle": walk injectable (multi-site) rows in order and assign
+  // R[base] -> L[base] -> R[other] -> L[other] -> wrap. Single-site rows (Oral/Intranasal) take
+  // their forced site and are skipped from the rotation. No re-flow: a row the nurse already
+  // changed (siteValues set to something other than its previous auto value) is left alone here
+  // only on explicit override via selectBulkSite(); this method (re)seeds defaults.
+  recomputeSiteDistribution(): void {
+    const age = this.childAgeYears();
+    const base = (age !== null && age >= 5) ? 'Deltoid' : 'Thigh';
+    const other = base === 'Deltoid' ? 'Thigh' : 'Deltoid';
+    // rotation order for multi-site muscle routes (IM/SC)
+    const rotation = ['R ' + base, 'L ' + base, 'R ' + other, 'L ' + other];
+    let rot = 0;
+
+    const rows = (this.bulkData || []);
+    rows.forEach((_row: any, i: number) => {
+      const route = this.routeValues[i] || '';
+      const sites = BulkPage.ROUTE_SITES[route] || [];
+      this.availableSitesPerRow[i] = sites;
+
+      if (sites.length === 0) {
+        this.siteLockedPerRow[i] = false;
+        this.siteValues[i] = '';
+        return;
+      }
+      if (sites.length === 1) {
+        this.siteLockedPerRow[i] = true;
+        this.siteValues[i] = sites[0];
+        return;
+      }
+      // Multi-site: prefer valid brand default, else next slot in the R+L rotation.
+      this.siteLockedPerRow[i] = false;
+      const brand = this.brandById(i, this.BrandIds[i]);
+      const bDefault = brand ? (brand.SiteDefault || brand.siteDefault || '') : '';
+      if (bDefault && sites.indexOf(bDefault) !== -1) {
+        this.siteValues[i] = bDefault;
+      } else {
+        let pick = rotation[rot % rotation.length];
+        if (sites.indexOf(pick) === -1) { pick = sites[0]; }
+        this.siteValues[i] = pick;
+        rot++;
+      }
+    });
+  }
+
+  // Recompute just one row's options + default after its brand changes (does not re-flow others).
+  private computeRowSite(index: number): void {
+    const route = this.routeValues[index] || '';
+    const sites = BulkPage.ROUTE_SITES[route] || [];
+    this.availableSitesPerRow[index] = sites;
+    if (sites.length === 0) { this.siteLockedPerRow[index] = false; this.siteValues[index] = ''; return; }
+    if (sites.length === 1) { this.siteLockedPerRow[index] = true; this.siteValues[index] = sites[0]; return; }
+    this.siteLockedPerRow[index] = false;
+    const brand = this.brandById(index, this.BrandIds[index]);
+    const bDefault = brand ? (brand.SiteDefault || brand.siteDefault || '') : '';
+    if (bDefault && sites.indexOf(bDefault) !== -1) { this.siteValues[index] = bDefault; return; }
+    const age = this.childAgeYears();
+    const muscle = (age !== null && age >= 5) ? 'Deltoid' : 'Thigh';
+    let def = 'R ' + muscle;
+    if (sites.indexOf(def) === -1) { def = sites[0]; }
+    this.siteValues[index] = def;
+  }
+
+  // Chip tap handler for a bulk row.
+  selectBulkSite(index: number, site: string): void {
+    if (this.siteLockedPerRow[index]) { return; }
+    this.siteValues[index] = site;
   }
 
   onBrandSearchChange(index: number, value: string): void {
@@ -272,6 +379,8 @@ export class BulkPage implements OnInit {
       this.ohfSelections[index] = true;
       this.BrandIds[index] = null;
       this.manufacturerValues[index] = "";
+      this.routeValues[index] = "";
+      this.computeRowSite(index);
       this.clearLotsAndExpiries(index);
       return;
     }
@@ -284,6 +393,8 @@ export class BulkPage implements OnInit {
     const exactMatch = brands.find((b: any) => ((b && b.Name) || "").toLowerCase() === normalized);
     this.BrandIds[index] = exactMatch ? exactMatch.Id : null;
     this.manufacturerValues[index] = exactMatch ? (exactMatch.Manufacturer || "") : "";
+    this.routeValues[index] = exactMatch ? (exactMatch.Route || exactMatch.route || "") : "";
+    this.computeRowSite(index);
 
     if (exactMatch && this.allowInventory) {
       this.loadBatchLotsForRow(index, Number(exactMatch.Id));
@@ -298,6 +409,8 @@ export class BulkPage implements OnInit {
       this.ohfSelections[index] = true;
       this.BrandIds[index] = null;
       this.manufacturerValues[index] = "";
+      this.routeValues[index] = "";
+      this.computeRowSite(index);
       this.clearLotsAndExpiries(index);
       return;
     }
@@ -307,6 +420,8 @@ export class BulkPage implements OnInit {
     const selectedBrand = brands.find((b: any) => b && b.Name === this.brandSearchTerms[index]);
     this.BrandIds[index] = selectedBrand ? selectedBrand.Id : null;
     this.manufacturerValues[index] = selectedBrand ? (selectedBrand.Manufacturer || "") : "";
+    this.routeValues[index] = selectedBrand ? (selectedBrand.Route || selectedBrand.route || "") : "";
+    this.computeRowSite(index);
 
     if (selectedBrand && this.BrandIds[index] && this.allowInventory) {
       this.loadBatchLotsForRow(index, Number(this.BrandIds[index]));
@@ -325,6 +440,8 @@ export class BulkPage implements OnInit {
       this.BrandIds[index] = null;
       this.brandSearchTerms[index] = "OHF";
       this.manufacturerValues[index] = "";
+      this.routeValues[index] = "";
+      this.computeRowSite(index);
       this.clearLotsAndExpiries(index);
       return;
     }
@@ -336,6 +453,8 @@ export class BulkPage implements OnInit {
       this.brandSearchTerms[index] = exactMatch.Name;
       this.BrandIds[index] = exactMatch.Id;
       this.manufacturerValues[index] = exactMatch.Manufacturer || "";
+      this.routeValues[index] = exactMatch.Route || exactMatch.route || "";
+      this.computeRowSite(index);
       if (this.allowInventory) { this.loadBatchLotsForRow(index, Number(exactMatch.Id)); }
     }
   }
@@ -480,6 +599,7 @@ export class BulkPage implements OnInit {
         BrandId: this.ohfSelections[i] ? null : (this.BrandIds[i] || null),
         ScheduleId: element.Id,
         Manufacturer: manufacturerVal,
+        Site: this.siteValues[i] || null,   // nurse-chosen site for this dose (Route re-derived on server)
         Lot: lotVal,
         Expiry: expiryVal,
         Validity: validityVal
