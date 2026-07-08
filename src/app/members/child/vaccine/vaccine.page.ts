@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from "@angular/core";
-import { LoadingController, IonContent, PopoverController, ActionSheetController } from "@ionic/angular";
+import { LoadingController, IonContent, PopoverController } from "@ionic/angular";
 import { VaccineService } from "src/app/services/vaccine.service";
 import { ScheduleService } from "src/app/services/schedule.service";
 import { ToastService } from "src/app/shared/toast.service";
@@ -15,6 +15,7 @@ import { FormBuilder, FormGroup } from "@angular/forms";
 import { PaService } from "src/app/services/pa.service";
 import { InvoiceService } from "src/app/services/invoice.service";
 import { AuditPopoverComponent } from "./audit-popover/audit-popover.component";
+import { PdfOptionsPopoverComponent } from "./pdf-options-popover/pdf-options-popover.component";
 
 @Component({
   selector: "app-vaccine",
@@ -111,7 +112,6 @@ export class VaccinePage {
     private invoiceService: InvoiceService,
     private popoverController: PopoverController,
     private cdr: ChangeDetectorRef,
-    private actionSheetController: ActionSheetController,
   ) {
     this.type = '';
   }
@@ -534,11 +534,11 @@ removal(type: string){
     }
 }
 
-  printdata() {
+  printdata(event?: Event) {
     if (this.type === 'travel') {
-      this.presentPdfOptions('travel');
+      this.presentPdfOptions('travel', event);
     } else if (this.type === 'special') {
-      this.presentPdfOptions('special');
+      this.presentPdfOptions('special', event);
     }
     else {
       if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
@@ -550,32 +550,26 @@ removal(type: string){
     }
   }
 
-  // Travel & custom (special) schedules offer two variants:
-  // all vaccines, or given-only (hide not-yet-administered / future doses).
-  async presentPdfOptions(kind: 'travel' | 'special') {
-    const actionSheet = await this.actionSheetController.create({
-      header: 'Download Immunization Record',
-      buttons: [
-        {
-          text: 'All vaccines',
-          icon: 'document-outline',
-          handler: () => {
-            if (kind === 'travel') { this.downloadTravelPdf(true); }
-            else { this.downloadSpecialPdf(true); }
-          }
-        },
-        {
-          text: 'Given only (hide future)',
-          icon: 'checkmark-done-outline',
-          handler: () => {
-            if (kind === 'travel') { this.downloadTravelPdf(false); }
-            else { this.downloadSpecialPdf(false); }
-          }
-        },
-        { text: 'Cancel', icon: 'close', role: 'cancel' }
-      ]
+  // Travel & custom (special) schedules offer two variants: all vaccines, or
+  // given-only (hide not-yet-administered / future doses). On desktop the menu
+  // is anchored to the print icon (passing `event`) so it opens at the cursor;
+  // on mobile we omit the event so the popover centres on screen instead of
+  // hugging the top-right edge.
+  async presentPdfOptions(kind: 'travel' | 'special', event?: Event) {
+    const anchorToIcon = this.platform.is('desktop') || this.platform.is('mobileweb');
+    const popover = await this.popoverController.create({
+      component: PdfOptionsPopoverComponent,
+      event: anchorToIcon ? event : undefined,
+      translucent: true,
+      cssClass: anchorToIcon ? 'pdf-options-popover' : 'pdf-options-popover pdf-options-popover--centered',
     });
-    await actionSheet.present();
+    await popover.present();
+
+    const { data } = await popover.onDidDismiss();
+    if (data && typeof data.includeFuture === 'boolean') {
+      if (kind === 'travel') { this.downloadTravelPdf(data.includeFuture); }
+      else { this.downloadSpecialPdf(data.includeFuture); }
+    }
   }
 
   download(id) {

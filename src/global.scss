@@ -529,6 +529,21 @@ ion-content.ion-padding > ion-card {
   border-top: 1px solid rgba(20, 184, 166, 0.20) !important;
 }
 
+// PDF "Download Immunization Record" menu — an ion-popover. On desktop it's
+// anchored to the print icon (via the click event) so it opens at the cursor;
+// on mobile the event is omitted and Ionic centres it (the --centered variant),
+// so it doesn't hug the top-right edge on a narrow screen.
+.pdf-options-popover .popover-content {
+  border-radius: 14px !important;
+  box-shadow: 0 20px 60px rgba(11, 45, 92, 0.35) !important;
+  overflow: hidden !important;
+}
+
+.pdf-options-popover--centered .popover-content {
+  width: 280px !important;
+  max-width: calc(100% - 32px) !important;
+}
+
 // ── Popover selects ───────────────────────────────────────────────────────────
 .popover-content {
   border-radius: 14px !important;

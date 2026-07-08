@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { VaccinePage } from './vaccine.page';
 import { AuditPopoverComponent } from './audit-popover/audit-popover.component';
+import { PdfOptionsPopoverComponent } from './pdf-options-popover/pdf-options-popover.component';
 
 import { Downloader} from '@ionic-native/downloader/ngx';
 import {MatDatepickerModule} from '@angular/material/datepicker';
@@ -35,8 +36,8 @@ const routes: Routes = [
     MatFormFieldModule,
     MatInputModule
   ],
-  declarations: [VaccinePage, AuditPopoverComponent],
-  entryComponents: [AuditPopoverComponent],
+  declarations: [VaccinePage, AuditPopoverComponent, PdfOptionsPopoverComponent],
+  entryComponents: [AuditPopoverComponent, PdfOptionsPopoverComponent],
   providers: [
      Downloader
   ],
