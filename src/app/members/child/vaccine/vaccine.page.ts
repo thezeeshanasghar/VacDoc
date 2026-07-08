@@ -313,7 +313,7 @@ export class VaccinePage {
           this.toastService.create(res.Message);
         } else {
           //this.toastService.create(res.Message, "danger");
-          this.resheduleAlert(res.Message, data);
+          this.resheduleAlert(res.Message, data, res.RuleCode);
         }
       },
       err => {
@@ -334,7 +334,7 @@ export class VaccinePage {
           this.toastService.create(res.Message);
         } else {
           //this.toastService.create(res.Message, "danger");
-          this.resheduleBulkAlert(res.Message, data);
+          this.resheduleBulkAlert(res.Message, data, res.RuleCode);
         }
       },
       err => {
@@ -343,8 +343,8 @@ export class VaccinePage {
     );
   }
 
-  async resheduleAlert(message, data) {
-    if (message.includes('before or on the same date as the previous dose')) {
+  async resheduleAlert(message, data, ruleCode?) {
+    if (ruleCode === 'BEFORE_PREV_DOSE' || message.includes('before or on the same date as the previous dose')) {
       const alert = await this.alertController.create({
         header: 'Cannot Reschedule',
         message: message,
@@ -363,7 +363,7 @@ export class VaccinePage {
           // role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            if (message.search("it is greater than the Max Age of dose") != -1) {
+            if (ruleCode === 'MAX_AGE') {
               this.vaccineService.updateVaccinationDate(data, true, false, false).subscribe(
                 res => {
                   if (res.IsSuccess) {
@@ -371,7 +371,7 @@ export class VaccinePage {
                     this.toastService.create(res.Message);
                   } else {
                     //this.toastService.create(res.Message, "danger");
-                    this.resheduleAlert(res.Message, data);
+                    this.resheduleAlert(res.Message, data, res.RuleCode);
                   }
                 },
                 err => {
@@ -379,7 +379,7 @@ export class VaccinePage {
                 }
               );
             }
-            else if (message.search("Minimum Age of this vaccine from date of birth should be") != -1) {
+            else if (ruleCode === 'MIN_AGE_FROM_DOB') {
               this.vaccineService.updateVaccinationDate(data, false, true, false).subscribe(
                 res => {
                   if (res.IsSuccess) {
@@ -387,7 +387,7 @@ export class VaccinePage {
                     this.toastService.create(res.Message);
                   } else {
                     //this.toastService.create(res.Message, "danger");
-                    this.resheduleAlert(res.Message, data);
+                    this.resheduleAlert(res.Message, data, res.RuleCode);
                   }
                 },
                 err => {
@@ -395,7 +395,7 @@ export class VaccinePage {
                 }
               );
             }
-            else if (message.search("Minimum Gap from previous dose of this vaccine should be") != -1) {
+            else if (ruleCode === 'MIN_GAP_FROM_PREV') {
               this.vaccineService.updateVaccinationDate(data, false, false, true).subscribe(
                 res => {
                   if (res.IsSuccess) {
@@ -403,7 +403,7 @@ export class VaccinePage {
                     this.toastService.create(res.Message);
                   } else {
                     //this.toastService.create(res.Message, "danger");
-                    this.resheduleAlert(res.Message, data);
+                    this.resheduleAlert(res.Message, data, res.RuleCode);
                   }
                 },
                 err => {
@@ -426,8 +426,8 @@ export class VaccinePage {
     await alert.present();
   }
 
-  async resheduleBulkAlert(message, data) {
-    if (message.includes('before or on the same date as the previous dose')) {
+  async resheduleBulkAlert(message, data, ruleCode?) {
+    if (ruleCode === 'BEFORE_PREV_DOSE' || message.includes('before or on the same date as the previous dose')) {
       const alert = await this.alertController.create({
         header: 'Cannot Reschedule',
         message: message,
@@ -445,7 +445,7 @@ export class VaccinePage {
           // role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            if (message.search("it is greater than the Max Age of dose") != -1) {
+            if (ruleCode === 'MAX_AGE') {
               this.bulkService.updateInjectionDate(data, true, false, false).subscribe(
                 res => {
                   if (res.IsSuccess) {
@@ -453,7 +453,7 @@ export class VaccinePage {
                     this.toastService.create(res.Message);
                   } else {
                     //this.toastService.create(res.Message, "danger");
-                    this.resheduleBulkAlert(res.Message, data);
+                    this.resheduleBulkAlert(res.Message, data, res.RuleCode);
                   }
                 },
                 err => {
@@ -461,7 +461,7 @@ export class VaccinePage {
                 }
               );
             }
-            else if (message.search("Minimum Age of this vaccine from date of birth should be") != -1) {
+            else if (ruleCode === 'MIN_AGE_FROM_DOB') {
               this.bulkService.updateInjectionDate(data, false, true, false).subscribe(
                 res => {
                   if (res.IsSuccess) {
@@ -469,14 +469,14 @@ export class VaccinePage {
                     this.toastService.create(res.Message);
                   } else {
                     //this.toastService.create(res.Message, "danger");
-                    this.resheduleBulkAlert(res.Message, data);
+                    this.resheduleBulkAlert(res.Message, data, res.RuleCode);
                   }
                 },
                 err => {
                   this.toastService.create(err, "danger");
                 }
               );
-            }else if (message.search("Minimum Gap from previous dose of this vaccine should be") != -1) {
+            }else if (ruleCode === 'MIN_GAP_FROM_PREV') {
               this.bulkService.updateInjectionDate(data, false, false, true).subscribe(
                 res => {
                   if (res.IsSuccess) {
@@ -484,7 +484,7 @@ export class VaccinePage {
                     this.toastService.create(res.Message);
                   } else {
                     //this.toastService.create(res.Message, "danger");
-                    this.resheduleBulkAlert(res.Message, data);
+                    this.resheduleBulkAlert(res.Message, data, res.RuleCode);
                   }
                 },
                 err => {
