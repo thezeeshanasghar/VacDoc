@@ -145,9 +145,10 @@ export class VaccineService extends BaseService {
     );
   }
 
-  // Method to call the GenerateTravelPdf API
-  generateTravelPdf(childId: number): Observable<Blob> {
-    return this.http.get(`${this.API_VACCINE}Child/Travel-PDF-Download-verify/${childId}`, { 
+  // Method to call the GenerateTravelPdf API.
+  // includeFuture=false hides not-yet-given (future/due) doses.
+  generateTravelPdf(childId: number, includeFuture: boolean = true): Observable<Blob> {
+    return this.http.get(`${this.API_VACCINE}Child/Travel-PDF-Download-verify/${childId}?includeFuture=${includeFuture}`, {
       responseType: 'blob',
       observe: 'response'
     }).pipe(
@@ -162,8 +163,9 @@ export class VaccineService extends BaseService {
     );
   }
 
-   generateSpecialPdf(childId: number): Observable<Blob> {
-    return this.http.get(`${this.API_VACCINE}Child/${childId}/CustomVerify`, { 
+   // includeFuture=false hides not-yet-given (future/due) doses.
+   generateSpecialPdf(childId: number, includeFuture: boolean = true): Observable<Blob> {
+    return this.http.get(`${this.API_VACCINE}Child/${childId}/CustomVerify?includeFuture=${includeFuture}`, {
       responseType: 'blob',
       observe: 'response'
     }).pipe(

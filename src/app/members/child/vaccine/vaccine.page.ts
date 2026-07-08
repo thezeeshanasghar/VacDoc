@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from "@angular/core";
-import { LoadingController, IonContent, PopoverController } from "@ionic/angular";
+import { LoadingController, IonContent, PopoverController, ActionSheetController } from "@ionic/angular";
 import { VaccineService } from "src/app/services/vaccine.service";
 import { ScheduleService } from "src/app/services/schedule.service";
 import { ToastService } from "src/app/shared/toast.service";
@@ -111,6 +111,7 @@ export class VaccinePage {
     private invoiceService: InvoiceService,
     private popoverController: PopoverController,
     private cdr: ChangeDetectorRef,
+    private actionSheetController: ActionSheetController,
   ) {
     this.type = '';
   }
@@ -535,9 +536,9 @@ removal(type: string){
 
   printdata() {
     if (this.type === 'travel') {
-      this.downloadTravelPdf();
-    } else if (this.type === 'special'){
-this.downloadSpecialPdf();
+      this.presentPdfOptions('travel');
+    } else if (this.type === 'special') {
+      this.presentPdfOptions('special');
     }
     else {
       if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
@@ -547,6 +548,34 @@ this.downloadSpecialPdf();
         this.download(this.childId);
       }
     }
+  }
+
+  // Travel & custom (special) schedules offer two variants:
+  // all vaccines, or given-only (hide not-yet-administered / future doses).
+  async presentPdfOptions(kind: 'travel' | 'special') {
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Download Immunization Record',
+      buttons: [
+        {
+          text: 'All vaccines',
+          icon: 'document-outline',
+          handler: () => {
+            if (kind === 'travel') { this.downloadTravelPdf(true); }
+            else { this.downloadSpecialPdf(true); }
+          }
+        },
+        {
+          text: 'Given only (hide future)',
+          icon: 'checkmark-done-outline',
+          handler: () => {
+            if (kind === 'travel') { this.downloadTravelPdf(false); }
+            else { this.downloadSpecialPdf(false); }
+          }
+        },
+        { text: 'Cancel', icon: 'close', role: 'cancel' }
+      ]
+    });
+    await actionSheet.present();
   }
 
   download(id) {
@@ -1085,8 +1114,8 @@ this.downloadSpecialPdf();
   //     );
   // }
   // Method to download the travel PDF
-  downloadTravelPdf() {
-    this.vaccineService.generateTravelPdf(this.childId).subscribe((response: Blob) => {
+  downloadTravelPdf(includeFuture: boolean = true) {
+    this.vaccineService.generateTravelPdf(this.childId, includeFuture).subscribe((response: Blob) => {
       const blob = new Blob([response], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -1113,8 +1142,8 @@ this.downloadSpecialPdf();
     });
   }
 
-  downloadSpecialPdf() {
-    this.vaccineService.generateSpecialPdf(this.childId).subscribe((response: Blob) => {
+  downloadSpecialPdf(includeFuture: boolean = true) {
+    this.vaccineService.generateSpecialPdf(this.childId, includeFuture).subscribe((response: Blob) => {
       const blob = new Blob([response], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
