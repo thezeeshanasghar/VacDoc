@@ -78,7 +78,7 @@ export class AddPage implements OnInit {
         Validators.compose([
           Validators.required,
           Validators.minLength(10),
-          Validators.pattern("^([0-9]*)$")
+          Validators.pattern("^[+0-9][0-9 ]*$")
         ])
       ),
       Address: [null],
@@ -978,7 +978,7 @@ export class AddPage implements OnInit {
         type: "minlength",
         message: "Phone Number must be at least 10 Digits long."
       },
-      { type: "pattern", message: "Enter Must be Number" }
+      { type: "pattern", message: "Only numbers, spaces and a leading + are allowed" }
     ],
     Address: [{ type: "required", message: "Address is required." }],
     RegNo: [
