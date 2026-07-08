@@ -512,6 +512,7 @@ export class FillPage implements OnInit {
                 handler: () => {
                   this.fg.value.IgnoreMinAgeAtGiveTime = true;
                   this.fg.value.IgnoreMinGapAtGiveTime = true;
+                  this.fg.value.IgnoreMaxAgeAtGiveTime = true;
                   this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
                     res2 => {
                       if (res2.IsSuccess) {

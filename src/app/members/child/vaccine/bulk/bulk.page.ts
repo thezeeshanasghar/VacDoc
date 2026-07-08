@@ -746,6 +746,7 @@ export class BulkPage implements OnInit {
                 handler: () => {
                   data.IgnoreMinAgeAtGiveTime = true;
                   data.IgnoreMinGapAtGiveTime = true;
+                  data.IgnoreMaxAgeAtGiveTime = true;
                   this.bulkService.updateVaccine(data).subscribe(
                     res2 => {
                       if (res2.IsSuccess) {
