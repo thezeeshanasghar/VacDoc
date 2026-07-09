@@ -730,6 +730,7 @@ export class BulkPage implements OnInit {
       async res => {
         if (res.IsSuccess) {
           this.toastService.create("Successfully Update");
+          if (res.GraceApplied) { await this.showCdcGraceNote(res.GraceMessage); }
           this.autoCreateFollowUpForBulk(() => {
             this.validationOfInfiniteVaccine();
             loading.dismiss();
@@ -748,9 +749,10 @@ export class BulkPage implements OnInit {
                   data.IgnoreMinGapAtGiveTime = true;
                   data.IgnoreMaxAgeAtGiveTime = true;
                   this.bulkService.updateVaccine(data).subscribe(
-                    res2 => {
+                    async res2 => {
                       if (res2.IsSuccess) {
                         this.toastService.create("Successfully Update");
+                        if (res2.GraceApplied) { await this.showCdcGraceNote(res2.GraceMessage); }
                         this.autoCreateFollowUpForBulk(() => {
                           this.validationOfInfiniteVaccine();
                         });
@@ -775,6 +777,19 @@ export class BulkPage implements OnInit {
         loading.dismiss();
       }
     );
+  }
+
+  // Informational note when one or more doses in the batch were accepted under the
+  // CDC 4-day grace period. Includes a "Learn more" link to the CDC guidance.
+  private async showCdcGraceNote(graceMessage?: string) {
+    const cdcUrl = 'https://www.cdc.gov/vaccines/hcp/imz-best-practices/timing-spacing-immunobiologics.html';
+    const body = graceMessage || 'Dose accepted as valid under the CDC 4-day grace period.';
+    const alert = await this.alertController.create({
+      header: 'Accepted — CDC 4-day grace',
+      message: body + `<br><br><a href="${cdcUrl}" target="_blank" rel="noopener">Learn more (CDC)</a>`,
+      buttons: ['OK']
+    });
+    await alert.present();
   }
 
   private autoCreateFollowUpForBulk(onDone: () => void): void {

@@ -493,6 +493,7 @@ export class FillPage implements OnInit {
       async res => {
         if (res.IsSuccess) {
           loading.dismiss();
+          if (res.GraceApplied) { await this.showCdcGraceNote(res.GraceMessage); }
           this.autoCreateFollowUp(() => {
             if (this.vaccine) {
               this.addNewVaccineInScheduleTable(this.scheduleDatecheck);
@@ -514,8 +515,9 @@ export class FillPage implements OnInit {
                   this.fg.value.IgnoreMinGapAtGiveTime = true;
                   this.fg.value.IgnoreMaxAgeAtGiveTime = true;
                   this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
-                    res2 => {
+                    async res2 => {
                       if (res2.IsSuccess) {
+                        if (res2.GraceApplied) { await this.showCdcGraceNote(res2.GraceMessage); }
                         this.autoCreateFollowUp(() => {
                           if (this.vaccine) {
                             this.addNewVaccineInScheduleTable(this.scheduleDatecheck);
@@ -544,6 +546,20 @@ export class FillPage implements OnInit {
         loading.dismiss();
       }
     );
+  }
+
+  // Informational note shown when a give was accepted as valid under the CDC 4-day
+  // grace period (dose given up to 4 days before its minimum interval). Includes a
+  // "Learn more" link to the CDC timing & spacing guidance.
+  private async showCdcGraceNote(graceMessage?: string) {
+    const cdcUrl = 'https://www.cdc.gov/vaccines/hcp/imz-best-practices/timing-spacing-immunobiologics.html';
+    const body = graceMessage || 'Dose accepted as valid under the CDC 4-day grace period.';
+    const alert = await this.alertController.create({
+      header: 'Accepted — CDC 4-day grace',
+      message: body + `<br><br><a href="${cdcUrl}" target="_blank" rel="noopener">Learn more (CDC)</a>`,
+      buttons: ['OK']
+    });
+    await alert.present();
   }
 
   private getRegisteredClinicId(): number {
