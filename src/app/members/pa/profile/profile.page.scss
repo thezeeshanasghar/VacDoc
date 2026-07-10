@@ -1,0 +1,92 @@
+// ── Avatar ────────────────────────────────────────────────────────────────
+.ava-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 8px 0 22px;
+}
+
+.ava {
+  position: relative;
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #0b6098 0%, #43A047 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(13, 110, 173, 0.4);
+
+  img { width: 100%; height: 100%; object-fit: cover; }
+  ion-icon { font-size: 46px; color: #fff; }
+}
+
+.cam {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #0D6EAD;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon { font-size: 16px; color: #0D6EAD; }
+}
+
+.ava-hint {
+  margin-top: 9px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+// ── Validation ────────────────────────────────────────────────────────────
+.validation-errors { padding: 2px 8px 0; }
+.error-message {
+  color: #C62828;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  ion-icon { font-size: 14px; }
+}
+
+// ── Locked number ─────────────────────────────────────────────────────────
+.locked-item {
+  margin-top: 18px;
+  --background: #eef0f4;
+  border: 1.5px dashed #c4cbd8;
+  border-radius: 12px;
+}
+.locked-label {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0 0 2px;
+}
+.locked-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #4b5563;
+  margin: 0;
+}
+.locked-note {
+  font-size: 11px;
+  color: #9aa1ad;
+  line-height: 1.5;
+  margin: 6px 10px 0;
+}
+
+// ── Save ──────────────────────────────────────────────────────────────────
+.save-btn {
+  margin-top: 26px;
+  --background: linear-gradient(135deg, #0D6EAD 0%, #0b6098 100%);
+  --border-radius: 12px;
+  height: 50px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
