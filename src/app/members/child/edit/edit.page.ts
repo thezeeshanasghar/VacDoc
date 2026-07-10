@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CityService } from 'src/app/services/city.service';
 import { ChildService } from 'src/app/services/child.service';
 import { ToastService } from 'src/app/shared/toast.service';
-import { LoadingController } from '@ionic/angular';
+import { LoadingController, AlertController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
 
@@ -33,6 +33,7 @@ export class EditPage implements OnInit {
 
   constructor(
     public loadingController: LoadingController,
+    public alertController: AlertController,
     public router: Router,
     public route: ActivatedRoute,
     private formBuilder: FormBuilder,
@@ -399,27 +400,49 @@ console.log(this.isCnicRequired);
     { name: 'Zimbabwe', code: '263' },
   ];
 
-  async editChild() {
+  async editChild(confirmMerge: boolean = false) {
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
     await loading.present();
-    console.log(this.fg.value.Gender);
-    await this.childService.editChild(this.fg.value)
+    // IsSkip doubles as the "merge anyway" confirm flag for the same-name guard
+    // on the backend (ChildController.Put). Only sent true after the doctor
+    // confirms the merge warning.
+    const payload = { ...this.fg.value, IsSkip: confirmMerge };
+    await this.childService.editChild(payload)
       .subscribe(res => {
+        loading.dismiss();
         if (res.IsSuccess) {
-          loading.dismiss();
-          this.toastService.create("successfully updated");
+          // Backend returns a message when a merge happened; fall back to the
+          // generic text for a plain edit.
+          this.toastService.create(res.Message || "successfully updated");
           this.router.navigate(['/members/child/']);
         }
+        else if (res.IsWarning && res.RuleCode === 'MergeNameClash') {
+          this.presentMergeConfirm(res.Message);
+        }
         else {
-          loading.dismiss();
           this.toastService.create(res.Message, 'danger');
         }
       }, (err) => {
         loading.dismiss();
         this.toastService.create(err, 'danger')
       });
+  }
+
+  async presentMergeConfirm(message: string) {
+    const alert = await this.alertController.create({
+      header: 'Merge patient records?',
+      message: message,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Merge anyway',
+          handler: () => { this.editChild(true); }
+        }
+      ]
+    });
+    await alert.present();
   }
   
 
