@@ -53,8 +53,7 @@ export class LoginPage implements OnInit {
         this.fg = this.formBuilder.group({
           'MobileNumber': [null, [Validators.required, this.onlyNumbersValidator()]],
           'Password': [null, [Validators.required, this.passwordValidator()]],
-          'CountryCode': ['92'],
-          'UserType': ['DOCTOR']
+          'CountryCode': ['92']
         });
       }
     });
@@ -347,31 +346,52 @@ export class LoginPage implements OnInit {
       message: 'Loading'
     });
     await loading.present();
-    await this.loginservice.checkAuth(this.fg.value)
+    // Single login screen for both Doctor and PA: try DOCTOR first, then
+    // silently retry as PA. The user never picks a role.
+    this.attemptLogin('DOCTOR', loading);
+  }
+
+  private attemptLogin(userType: string, loading: HTMLIonLoadingElement) {
+    const data = { ...this.fg.value, UserType: userType };
+    this.loginservice.checkAuth(data)
       .subscribe(res => {
         if (res.IsSuccess) {
-          this.storage.set(environment.USER, res.ResponseData);
-          this.storage.set(environment.DOCTOR_Id, res.ResponseData.DoctorId);
-          this.storage.set(environment.USER_Id, res.ResponseData.Id);
-          this.storage.set(environment.SECURITY_STAMP, res.ResponseData.SecurityStamp);
-          let state = true;
-          this.loginservice.changeState(state);
-          this.getdoctorprofile(res.ResponseData.Id);
-          this.router.navigate(['/members']).then(() => {
-            window.location.reload();
-          });
-          localStorage.setItem('docid', res.ResponseData.DoctorId)
-          loading.dismiss();
+          this.onLoginSuccess(res, userType, loading);
+        }
+        else if (userType === 'DOCTOR') {
+          // Not a doctor account — retry the same credentials as a PA.
+          this.attemptLogin('PA', loading);
         }
         else {
           loading.dismiss();
           this.toastService.create(res.Message, 'danger');
-
         }
       }, (err) => {
-        loading.dismiss();
-        this.toastService.create(err, 'danger');
+        if (userType === 'DOCTOR') {
+          this.attemptLogin('PA', loading);
+        } else {
+          loading.dismiss();
+          this.toastService.create(err, 'danger');
+        }
       });
+  }
+
+  private onLoginSuccess(res: any, userType: string, loading: HTMLIonLoadingElement) {
+    this.storage.set(environment.USER, res.ResponseData);
+    this.storage.set(environment.DOCTOR_Id, res.ResponseData.DoctorId);
+    this.storage.set(environment.USER_Id, res.ResponseData.Id);
+    this.storage.set(environment.SECURITY_STAMP, res.ResponseData.SecurityStamp);
+    let state = true;
+    this.loginservice.changeState(state);
+    // Doctor profile is keyed on the user's own Id for a doctor, but on the
+    // owning doctor's DoctorId for a PA.
+    const profileId = userType === 'PA' ? res.ResponseData.DoctorId : res.ResponseData.Id;
+    this.getdoctorprofile(profileId);
+    this.router.navigate(['/members']).then(() => {
+      window.location.reload();
+    });
+    localStorage.setItem('docid', res.ResponseData.DoctorId)
+    loading.dismiss();
   }
   async getdoctorprofile(id) {
     await this.loginservice.getDoctorProfile(id).subscribe(res => {
@@ -391,12 +411,17 @@ export class LoginPage implements OnInit {
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
+    await loading.present();
+    // Mirror the login flow: try DOCTOR, fall back to PA for the same number.
+    this.attemptForgot('DOCTOR', loading);
+  }
+
+  private attemptForgot(userType: string, loading: HTMLIonLoadingElement) {
     let data = {
       "MobileNumber": this.MobileNumber,
       "CountryCode": "92",
-      "UserType": "DOCTOR"
+      "UserType": userType
     }
-    await loading.present();
     this.loginservice.forgotPassword(data).subscribe(
       res => {
         if (res.IsSuccess) {
@@ -404,14 +429,21 @@ export class LoginPage implements OnInit {
           loading.dismiss();
           this.forgot = false;
         }
+        else if (userType === 'DOCTOR') {
+          this.attemptForgot('PA', loading);
+        }
         else {
           loading.dismiss();
           this.toastService.create(res.Message, 'danger');
         }
       },
       err => {
-        loading.dismiss();
-        this.toastService.create(err, 'danger');
+        if (userType === 'DOCTOR') {
+          this.attemptForgot('PA', loading);
+        } else {
+          loading.dismiss();
+          this.toastService.create(err, 'danger');
+        }
       }
     );
   }

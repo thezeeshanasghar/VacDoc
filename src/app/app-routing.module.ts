@@ -9,11 +9,7 @@ const routes: Routes = [
     loadChildren: () => import('./public/login/login.module').then(m => m.LoginPageModule)
   },
   {
-    path: 'loginpa',
-    loadChildren: () => import('./public/loginpa/loginpa.module').then(m => m.LoginPAPageModule)
-  },
-  { 
-    path: 'signup', 
+    path: 'signup',
     loadChildren: () => import('./public/signup/signup.module').then(m => m.SignupPageModule)
   },
   { 
