@@ -10,10 +10,19 @@
 <ion-content class="ion-padding">
 
   <div class="pa-header-card">
-    <ion-icon name="person-circle-outline" class="pa-avatar"></ion-icon>
+    <div class="pa-photo-wrap">
+      <img [src]="previewSrc || 'assets/avatars/adult-woman.png'" class="pa-photo" alt="PA photo" />
+      <label class="pa-photo-edit" [class.pa-photo-edit--busy]="uploadingImage">
+        <ion-spinner *ngIf="uploadingImage" name="crescent"></ion-spinner>
+        <ion-icon *ngIf="!uploadingImage" name="camera-outline"></ion-icon>
+        <input type="file" accept="image/*" hidden
+               (change)="selectProfileImage($event.target.files)" />
+      </label>
+    </div>
     <div>
       <div class="pa-label">Editing profile for</div>
       <div class="pa-name-display">{{ paName || 'Personal Assistant' }}</div>
+      <div class="pa-photo-hint">Tap the camera to set a photo parents will see</div>
     </div>
   </div>
 

@@ -5,6 +5,7 @@ import { LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { PaService } from 'src/app/services/pa.service';
+import { UploadService } from 'src/app/services/upload.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 
@@ -22,6 +23,12 @@ export class EditPaPage implements OnInit {
   paAccessRows: any[] = [];   // PaAccess rows for this PA (each has .Id + .ClinicId)
   togglingClinicId: number = null;
 
+  // PA profile photo — filename stored on the PA; previewSrc is the resolvable URL shown
+  // in the picker. Empty/default filename falls back to the silhouette in the template.
+  profileImage = '';
+  previewSrc = '';
+  uploadingImage = false;
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -29,6 +36,7 @@ export class EditPaPage implements OnInit {
     private storage: Storage,
     private loadingCtrl: LoadingController,
     private paService: PaService,
+    private uploadService: UploadService,
     private clinicService: ClinicService,
     private toastService: ToastService
   ) {}
@@ -43,11 +51,64 @@ export class EditPaPage implements OnInit {
     this.fg = this.fb.group({
       Name:         [this.paName, Validators.required],
       Email:        [email,  [Validators.required, Validators.email]],
-      MobileNumber: [mobile, [Validators.required, Validators.pattern('[0-9]{10}$')]]
+      MobileNumber: [mobile, [Validators.required, Validators.pattern('[0-9]{10}$')]],
+      ProfileImage: ['']
     });
+
+    this.loadPaPhoto();
 
     const doctorId = await this.storage.get(environment.DOCTOR_Id);
     this.loadClinicAccess(doctorId);
+  }
+
+  // Fetch the PA so the picker shows the current photo (query params don't carry it).
+  private loadPaPhoto() {
+    this.paService.getPa(String(this.paId)).subscribe({
+      next: (res: any) => {
+        const pa = (res && res.ResponseData) ? res.ResponseData : res;
+        const img = (pa && pa.ProfileImage) ? pa.ProfileImage : '';
+        this.profileImage = img;
+        this.previewSrc = this.resolveImage(img);
+      }
+    });
+  }
+
+  // Build a displayable URL from a stored relative path (e.g. "Resources/Images/x.png").
+  // Empty or the default silhouette resolves to the local asset so nothing 404s before an
+  // upload happens. UploadController returns the full relative dbPath, so we only prefix the
+  // API host — normalising backslashes Windows-side servers may hand back.
+  resolveImage(img: string): string {
+    if (!img || img === 'Resources/Images/avatar.png') {
+      return 'assets/avatars/adult-woman.png';
+    }
+    if (img.indexOf('http') === 0) { return img; }
+    return environment.RESOURCE_URL + img.replace(/\\/g, '/');
+  }
+
+  // Same flow as the doctor profile page: upload via UploadController (returns { dbPath }),
+  // keep the returned relative path on the form; it's persisted through updatePaProfile on Save.
+  async selectProfileImage(files: FileList) {
+    if (!files || files.length === 0) { return; }
+    this.uploadingImage = true;
+    const fd = new FormData();
+    fd.append('ProfileImage', files.item(0));
+    this.uploadService.uploadImage(fd).subscribe(
+      (res: any) => {
+        this.uploadingImage = false;
+        if (res && res.dbPath) {
+          const dbPath = String(res.dbPath).replace(/\\/g, '/');
+          this.profileImage = dbPath;
+          this.fg.patchValue({ ProfileImage: dbPath });
+          this.previewSrc = this.resolveImage(dbPath);
+        } else {
+          this.toastService.create('Failed to upload image. Try again.', 'danger');
+        }
+      },
+      () => {
+        this.uploadingImage = false;
+        this.toastService.create('Failed to upload image. Try again.', 'danger');
+      }
+    );
   }
 
   private loadClinicAccess(doctorId: any) {

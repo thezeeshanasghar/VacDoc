@@ -127,7 +127,7 @@ export class PaService extends BaseService {
       );
   }
 
-  updatePaProfile(paId: number, data: { Name: string; Email: string; MobileNumber: string }): Observable<any> {
+  updatePaProfile(paId: number, data: { Name: string; Email: string; MobileNumber: string; ProfileImage?: string }): Observable<any> {
     const url = `${this.API_PA}PersonalAssistant/${paId}/profile`;
     return this.http.put(url, data, this.httpOptions).pipe(catchError(this.handleError));
   }
