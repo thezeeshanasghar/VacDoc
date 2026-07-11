@@ -18,18 +18,37 @@
   overflow: hidden;
 }
 
-// ── Shell Toolbar 1 — Medical Blue ───────────────────────────────────────────
+// ── Shell Toolbar 1 — Petrol (clinic name) ───────────────────────────────────
 .toolbar-blue {
-  --background: #0D6EAD;
+  --background: var(--vac-petrol);
   --color: #ffffff;
   --min-height: 44px;
   --padding-top: 0;
   --padding-bottom: 0;
+  // Gold signature hairline under row 1
+  --border-width: 0 0 2px 0;
+  --border-color: transparent;
+  position: relative;
+}
+.toolbar-blue::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--vac-gold), var(--vac-gold-soft), var(--vac-gold));
+  z-index: 2;
+}
+.toolbar-blue ion-title {
+  font-family: var(--vac-font-head);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: .05em;
+  color: #fff;
 }
 
-// ── Shell Toolbar 2 — Navy ────────────────────────────────────────────────────
+// ── Shell Toolbar 2 — Petrol dark (quick-action icons) ───────────────────────
 .toolbar-green {
-  --background: #0B2D5C;
+  --background: var(--vac-petrol-dark);
   --color: #ffffff;
   --min-height: 44px;
   --padding-top: 0;
@@ -38,11 +57,11 @@
 
 // ── Side menu ─────────────────────────────────────────────────────────────────
 ion-menu {
-  --background: #0B2D5C;
+  --background: var(--vac-petrol);
 }
 
 ion-menu ion-header ion-toolbar {
-  --background: linear-gradient(135deg, #0B2D5C 0%, #0D6EAD 100%);
+  --background: linear-gradient(180deg, var(--vac-petrol-dark) 0%, var(--vac-petrol) 100%);
 }
 
 ion-menu ion-header ion-title {
@@ -75,16 +94,17 @@ ion-menu ion-item {
 }
 
 ion-menu ion-item ion-icon {
-  color: #14B8A6 !important;
+  color: var(--vac-teal-icon) !important;
   font-size: 20px;
 }
 
 ion-menu ion-item ion-label {
   color: rgba(255, 255, 255, 0.85) !important;
+  font-family: var(--vac-font-body);
 }
 
 ion-menu ion-avatar ion-icon {
-  color: #14B8A6 !important;
+  color: var(--vac-teal-icon) !important;
   font-size: 32px;
 }
 

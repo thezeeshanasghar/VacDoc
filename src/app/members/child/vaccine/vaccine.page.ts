@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from "@angular/core";
-import { LoadingController, IonContent, PopoverController } from "@ionic/angular";
+import { LoadingController, IonContent, PopoverController, ActionSheetController } from "@ionic/angular";
 import { VaccineService } from "src/app/services/vaccine.service";
 import { ScheduleService } from "src/app/services/schedule.service";
 import { ToastService } from "src/app/shared/toast.service";
@@ -111,6 +111,7 @@ export class VaccinePage {
     private paService: PaService,
     private invoiceService: InvoiceService,
     private popoverController: PopoverController,
+    private actionSheetController: ActionSheetController,
     private cdr: ChangeDetectorRef,
   ) {
     this.type = '';
@@ -228,7 +229,185 @@ export class VaccinePage {
   anyVaccineGiven(data: any[]): boolean {
     return data.some(v => v.IsDone && !v.Due2EPI);
   }
-  
+
+  // ── Sequential action pipeline (spec §3) ──────────────────────────────────
+  // A skipped dose leaves the pipeline entirely (§3.3): never counted, given,
+  // invoiced or printed. isActiveDose() = a dose still "in" the pipeline.
+  isSkippedDose(v: any): boolean {
+    return !!(v && v.IsSkip);
+  }
+  isActiveDose(v: any): boolean {
+    return !!v && !v.IsSkip && !v.Due2EPI;
+  }
+  // Doses in this group that are due (active + not yet given) — the GIVE n count.
+  dueDoses(data: any[]): any[] {
+    return (data || []).filter(v => this.isActiveDose(v) && !v.IsDone);
+  }
+  giveCount(data: any[]): number {
+    return this.dueDoses(data).length;
+  }
+  skippedCount(data: any[]): number {
+    return (data || []).filter(v => this.isSkippedDose(v)).length;
+  }
+  hasSkipped(data: any[]): boolean {
+    return this.skippedCount(data) > 0;
+  }
+  // Active doses that have been given.
+  givenActiveDoses(data: any[]): any[] {
+    return (data || []).filter(v => this.isActiveDose(v) && v.IsDone);
+  }
+
+  /**
+   * Derive the group's pipeline stage from existing dose state + invoice map.
+   *   1 DUE       — one or more active doses still to give
+   *   2 GIVEN     — all active doses given, no invoice yet
+   *   3 INVOICED  — invoice exists, at least one done dose unpaid
+   *   4 PAID      — invoice exists, all done doses paid
+   * EPI-only / empty groups fall through to stage 1 (nothing to do here).
+   */
+  groupStage(data: any[], date: string): 1 | 2 | 3 | 4 {
+    const given = this.givenActiveDoses(data);
+    const anyDue = this.dueDoses(data).length > 0;
+    if (anyDue || given.length === 0) { return 1; }
+
+    const invoiced = !!this.invoiceExistsMap[date];
+    if (!invoiced) { return 2; }
+
+    const anyUnpaid = given.some(v => !v.IsPaymentCollected);
+    return anyUnpaid ? 3 : 4;
+  }
+
+  isStage(data: any[], date: string, stage: number): boolean {
+    return this.groupStage(data, date) === stage;
+  }
+
+  // Header sub-line copy under the group date (spec §3.1).
+  groupStageSubline(data: any[], date: string): string {
+    const stage = this.groupStage(data, date);
+    const skips = this.skippedCount(data);
+    const skipStr = skips > 0 ? ` · ${skips} skipped` : '';
+    if (stage === 1) {
+      const n = this.giveCount(data);
+      return `${n} to give${skipStr}`;
+    }
+    if (stage === 2) {
+      const n = this.givenActiveDoses(data).length;
+      return `${n} dose${n === 1 ? '' : 's'} · not invoiced yet`;
+    }
+    if (stage === 3) { return 'invoiced · unpaid'; }
+    return 'paid';
+  }
+
+  // Two-letter initials for the PA avatar (spec §4.1).
+  paInitials(name: string): string {
+    if (!name) { return '?'; }
+    const parts = name.trim().split(/\s+/);
+    const a = parts[0] ? parts[0][0] : '';
+    const b = parts.length > 1 ? parts[parts.length - 1][0] : '';
+    return (a + b).toUpperCase();
+  }
+
+  // ── Overdue helper for the row subtitle (spec §3.2) ───────────────────────
+  isOverdue(v: any): boolean {
+    if (!v || v.IsDone || v.IsSkip || v.Due2EPI || !v.Date) { return false; }
+    const due = moment(v.Date, 'YYYY-MM-DD');
+    return due.isValid() && due.isBefore(moment().startOf('day'));
+  }
+  overdueLabel(v: any): string {
+    const due = moment(v.Date, 'YYYY-MM-DD');
+    if (!due.isValid()) { return 'overdue'; }
+    const days = moment().startOf('day').diff(due.startOf('day'), 'days');
+    return days <= 0 ? 'overdue' : `overdue ${days}d`;
+  }
+
+  // ── Guarded ungive (spec §3.4, §7.3) ──────────────────────────────────────
+  // Stage 2 (given, not invoiced): instant. Stage 3 (invoiced): confirm dialog
+  // that spells out the invoice + stock-restore consequence before proceeding.
+  async requestUngive(v: any, date: string) {
+    const invoiced = !!this.invoiceExistsMap[date];
+    if (!invoiced) {
+      // Stage 2 — instant ungive, stock restored by the backend.
+      await this.UnfillVaccine(v.Id);
+      return;
+    }
+    // Stage 3 — guarded confirm.
+    const batch = v.BatchNo || v.LotNo || v.Batch || 'this batch';
+    const doseName = (v.Dose && v.Dose.Name) ? v.Dose.Name : 'this dose';
+    const alert = await this.alertController.create({
+      header: 'Ungive ' + doseName + '?',
+      cssClass: 'vac-confirm',
+      message:
+        'This dose is on the invoice for this visit. Ungiving will remove it and the ' +
+        'invoice will be regenerated. Stock for ' + batch + ' will be restored.',
+      buttons: [
+        { text: 'Keep', role: 'cancel', cssClass: 'alert-btn-neutral' },
+        {
+          text: 'UNGIVE',
+          cssClass: 'alert-btn-danger',
+          handler: () => { this.UnfillVaccine(v.Id); }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  // ── Invoice options menu (spec §3.4) — stage 3 receipt icon ───────────────
+  // Presented via a proper Ionic ActionSheet (re-download / edit & regenerate / void).
+  async openInvoiceMenu(ev: Event, groupVaccines: any[], date: string) {
+    const sheet = await this.actionSheetController.create({
+      header: 'Invoice',
+      cssClass: 'invoice-action-sheet',
+      buttons: [
+        {
+          text: 'Re-download PDF',
+          icon: 'download-outline',
+          handler: () => {
+            this.router.navigate([`/members/child/vaccine/${this.childId}/bulkinvoice/${date}`]);
+          }
+        },
+        {
+          text: 'Edit & regenerate',
+          icon: 'create-outline',
+          handler: () => {
+            this.router.navigate([`/members/child/vaccine/${this.childId}/bulkinvoice/${date}`]);
+          }
+        },
+        {
+          text: 'Void invoice',
+          icon: 'close-circle-outline',
+          role: 'destructive',
+          handler: () => { this.confirmVoidInvoice(groupVaccines, date); }
+        },
+        { text: 'Cancel', role: 'cancel' }
+      ]
+    });
+    await sheet.present();
+  }
+
+  async confirmVoidInvoice(groupVaccines: any[], date: string) {
+    const alert = await this.alertController.create({
+      header: 'Void this invoice?',
+      cssClass: 'vac-confirm',
+      message:
+        'The invoice for this visit will be voided and this group returns to the ' +
+        '“not invoiced” state. The doses stay given; you can re-invoice or ungive them.',
+      buttons: [
+        { text: 'Keep', role: 'cancel', cssClass: 'alert-btn-neutral' },
+        {
+          text: 'VOID',
+          cssClass: 'alert-btn-danger',
+          handler: () => {
+            // Locally reflect the reverse transition (stage 3 → 2). The backend
+            // invoice is regenerated/rebuilt on the next invoice action.
+            this.invoiceExistsMap[date] = false;
+            this.cdr.detectChanges();
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
 
  async getVaccination() {
   const scrollPosition = await this.content.getScrollElement().then(element => element.scrollTop); 

@@ -1,5 +1,5 @@
 .dashboard-content {
-  --background: #F1F5F9;
+  --background: #F6F7F5;
 }
 
 .dash-wrap {
@@ -11,9 +11,10 @@
 }
 
 .dash-hello {
+  font-family: var(--vac-font-head);
   font-size: 22px;
   font-weight: 700;
-  color: #0B2D5C;
+  color: var(--vac-petrol);
   margin: 0 0 4px;
 }
 
@@ -67,8 +68,9 @@
 }
 
 .dash-card-label {
-  font-size: 14px;
-  font-weight: 700;
+  font-family: var(--vac-font-head);
+  font-size: 13px;
+  font-weight: 600;
   margin-bottom: 3px;
   letter-spacing: 0.1px;
 }
@@ -91,75 +93,75 @@
 // Blue family
 .card-patients {
   background: #E3F0FF; border-color: #BBDEFB;
-  .dash-card-icon { background: #C9E2FB; ion-icon { color: #0D6EAD; } }
-  .dash-card-label { color: #0D6EAD; }
-  .dash-card-arrow { color: #0D6EAD; }
+  .dash-card-icon { background: #D6EAF6; ion-icon { color: #1178A9; } }
+  .dash-card-label { color: #1178A9; }
+  .dash-card-arrow { color: #1178A9; }
 }
 .card-add-patient {
   background: #E3F0FF; border-color: #BBDEFB;
-  .dash-card-icon { background: #C9E2FB; ion-icon { color: #0D6EAD; } }
-  .dash-card-label { color: #0D6EAD; }
-  .dash-card-arrow { color: #0D6EAD; }
+  .dash-card-icon { background: #D6EAF6; ion-icon { color: #1178A9; } }
+  .dash-card-label { color: #1178A9; }
+  .dash-card-arrow { color: #1178A9; }
 }
 .card-schedule {
   background: #E3F0FF; border-color: #BBDEFB;
-  .dash-card-icon { background: #C9E2FB; ion-icon { color: #0D6EAD; } }
-  .dash-card-label { color: #0D6EAD; }
-  .dash-card-arrow { color: #0D6EAD; }
+  .dash-card-icon { background: #D6EAF6; ion-icon { color: #1178A9; } }
+  .dash-card-label { color: #1178A9; }
+  .dash-card-arrow { color: #1178A9; }
 }
 .card-payables {
   background: #E3F0FF; border-color: #BBDEFB;
-  .dash-card-icon { background: #C9E2FB; ion-icon { color: #0D6EAD; } }
-  .dash-card-label { color: #0D6EAD; }
-  .dash-card-arrow { color: #0D6EAD; }
+  .dash-card-icon { background: #D6EAF6; ion-icon { color: #1178A9; } }
+  .dash-card-label { color: #1178A9; }
+  .dash-card-arrow { color: #1178A9; }
 }
 
 // Navy family
 .card-clinic {
   background: #E8EEF6; border-color: #C5D3E8;
-  .dash-card-icon { background: #D0DCED; ion-icon { color: #0B2D5C; } }
-  .dash-card-label { color: #0B2D5C; }
-  .dash-card-arrow { color: #0B2D5C; }
+  .dash-card-icon { background: #DCE6F0; ion-icon { color: #0C3646; } }
+  .dash-card-label { color: #0C3646; }
+  .dash-card-arrow { color: #0C3646; }
 }
 .card-password {
   background: #E8EEF6; border-color: #C5D3E8;
-  .dash-card-icon { background: #D0DCED; ion-icon { color: #0B2D5C; } }
-  .dash-card-label { color: #0B2D5C; }
-  .dash-card-arrow { color: #0B2D5C; }
+  .dash-card-icon { background: #DCE6F0; ion-icon { color: #0C3646; } }
+  .dash-card-label { color: #0C3646; }
+  .dash-card-arrow { color: #0C3646; }
 }
 .card-agent {
   background: #E8EEF6; border-color: #C5D3E8;
-  .dash-card-icon { background: #D0DCED; ion-icon { color: #0B2D5C; } }
-  .dash-card-label { color: #0B2D5C; }
-  .dash-card-arrow { color: #0B2D5C; }
+  .dash-card-icon { background: #DCE6F0; ion-icon { color: #0C3646; } }
+  .dash-card-label { color: #0C3646; }
+  .dash-card-arrow { color: #0C3646; }
 }
 
 // Teal family
 .card-pa {
   background: #E6FAF8; border-color: #99E6DE;
-  .dash-card-icon { background: #C2F0EB; ion-icon { color: #0E7C72; } }
-  .dash-card-label { color: #0E7C72; }
-  .dash-card-arrow { color: #0E7C72; }
+  .dash-card-icon { background: #D2EFEE; ion-icon { color: #0E8583; } }
+  .dash-card-label { color: #0E8583; }
+  .dash-card-arrow { color: #0E8583; }
 }
 .card-assignments {
   background: #E6FAF8; border-color: #99E6DE;
-  .dash-card-icon { background: #C2F0EB; ion-icon { color: #0E7C72; } }
-  .dash-card-label { color: #0E7C72; }
-  .dash-card-arrow { color: #0E7C72; }
+  .dash-card-icon { background: #D2EFEE; ion-icon { color: #0E8583; } }
+  .dash-card-label { color: #0E8583; }
+  .dash-card-arrow { color: #0E8583; }
 }
 .card-vacation {
   background: #E6FAF8; border-color: #99E6DE;
-  .dash-card-icon { background: #C2F0EB; ion-icon { color: #0E7C72; } }
-  .dash-card-label { color: #0E7C72; }
-  .dash-card-arrow { color: #0E7C72; }
+  .dash-card-icon { background: #D2EFEE; ion-icon { color: #0E8583; } }
+  .dash-card-label { color: #0E8583; }
+  .dash-card-arrow { color: #0E8583; }
 }
 
 // Green family
 .card-stock {
   background: #E8F5E9; border-color: #C8E6C9;
-  .dash-card-icon { background: #C3E6C4; ion-icon { color: #2E7D32; } }
-  .dash-card-label { color: #2E7D32; }
-  .dash-card-arrow { color: #2E7D32; }
+  .dash-card-icon { background: #C3E6C4; ion-icon { color: #2E9463; } }
+  .dash-card-label { color: #2E9463; }
+  .dash-card-arrow { color: #2E9463; }
 }
 
 // Orange/Red family
@@ -171,9 +173,9 @@
 }
 .card-unapproved {
   background: #FEECEC; border-color: #FFCDD2;
-  .dash-card-icon { background: #FFCDD2; ion-icon { color: #C62828; } }
-  .dash-card-label { color: #C62828; }
-  .dash-card-arrow { color: #C62828; }
+  .dash-card-icon { background: #FFCDD2; ion-icon { color: #C43D3D; } }
+  .dash-card-label { color: #C43D3D; }
+  .dash-card-arrow { color: #C43D3D; }
 }
 
 // Purple family

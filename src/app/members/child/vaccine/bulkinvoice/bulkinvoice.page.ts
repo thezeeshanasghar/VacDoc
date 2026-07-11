@@ -208,7 +208,8 @@ export class BulkInvoicePage implements OnInit {
     await this.bulkService.getBulk(data).subscribe(
       res => {
         if (res.IsSuccess) {
-          this.bulkData = res.ResponseData.filter(x => x.IsDone == true);
+          // Spec §3.3: only given, non-skipped doses are billable.
+          this.bulkData = res.ResponseData.filter(x => x.IsDone == true && !x.IsSkip);
           // console.log(this.bulkData);
           // console.log(res.ResponseData);
           this.bulkDatadiff = this.bulkData.map(item => {

@@ -178,13 +178,13 @@ ion-card ion-card-content ion-icon {
 
 // ── Utility ───────────────────────────────────────────────────────────────────
 .error-message {
-  color: #C62828;
+  color: var(--vac-red);
   font-size: 13px;
   margin: 4px 10px;
 }
 
 .required-asterisk {
-  color: #C62828;
+  color: var(--vac-red);
   margin-left: 2px;
 }
 

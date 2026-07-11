@@ -1,22 +1,37 @@
-// ── Toolbar ──────────────────────────────────────────────────────────────────
-.vax-label {
-  font-size: 15px;
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: 0.2px;
-  margin-left: 4px;
+// ── Toolbar (BUG 1 FIX: single stacked title, petrol-dark page bar) ──────────
+.vax-toolbar {
+  --background: var(--vac-petrol-dark);
+  --color: #fff;
+  --padding-start: 8px;
+  --padding-end: 8px;
 }
 
+// eyebrow + title stack — ONE ion-title, no absolute positioning
 ion-title {
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  text-align: center !important;
-  color: #ffffff !important;
-  pointer-events: none;
+  padding: 0 4px;
+  text-align: left;
+  --color: #fff;
+}
+.vax-eyebrow {
+  display: block;
+  font-family: var(--vac-font-head);
+  font-weight: 600;
+  font-size: 9px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--vac-gold);
+  line-height: 1.1;
+}
+.vax-name {
+  display: block;
+  font-family: var(--vac-font-head);
+  font-weight: 700;
+  font-size: 16px;
+  color: #fff;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .vax-toolbar-btn {
@@ -29,11 +44,6 @@ ion-title {
   color: #ffffff;
 }
 
-ion-toolbar {
-  --padding-start: 0;
-  --padding-end: 0;
-}
-
 ion-buttons {
   display: flex;
   align-items: center;
@@ -41,35 +51,82 @@ ion-buttons {
 
 // ── Date group card ───────────────────────────────────────────────────────────
 .date-group-card {
-  margin-bottom: 10px;
-  border-radius: 14px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 12px;
+  border-radius: 16px;
+  border: 1px solid var(--vac-border);
+  box-shadow: var(--vac-shadow);
 }
 
-// ── Date group header row ────────────────────────────────────────────────────
+// ── Date group header row (gold hairline underline per spec §3.1) ────────────
 .date-group-header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 6px 0 10px;
-  border-bottom: 1px solid #eef0f4;
+  gap: 8px;
+  padding: 9px 0;
+  border-bottom: 2px solid var(--vac-gold-hairline);
   margin-bottom: 4px;
 }
 
+.date-group-heading { flex: 1; min-width: 0; }
+
 .date-group-label {
-  font-size: 14px;
+  display: block;
+  font-family: var(--vac-font-head);
+  font-size: 12.5px;
   font-weight: 700;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   white-space: nowrap;
 }
 
+.date-group-sub {
+  display: block;
+  font-family: var(--vac-font-body);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--vac-ink-4);
+  margin-top: 1px;
+}
+
+// Group header controls (spec §3.1)
+.date-group-actions { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+
+.grp-icobtn {
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  border: 1.4px solid var(--vac-border-strong);
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  ion-icon { font-size: 18px; color: var(--vac-blue); }
+  &--invoice { border-color: var(--vac-blue); background: var(--vac-blue-tint); }
+}
+
+.stage-btn {
+  font-family: var(--vac-font-head);
+  font-weight: 700;
+  letter-spacing: .05em;
+  border: 0;
+  border-radius: 9px;
+  padding: 9px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  color: #fff;
+  ion-icon { font-size: 14px; }
+  .stage-btn-img { height: 15px; width: auto; filter: brightness(0) invert(1); }
+  &--give    { background: var(--vac-green); box-shadow: var(--vac-shadow-give); font-size: 12px; }
+  &--invoice { background: var(--vac-blue);  box-shadow: var(--vac-shadow-blue); font-size: 11px; }
+  &--payment { background: var(--vac-green); box-shadow: var(--vac-shadow-give); font-size: 11px; }
+}
+
 // Date colour states
-.date-label--given           { color: #2e7d32; }   // green  — all vaccines done
-.date-label--payment-pending { color: #f57c00; }   // orange — all given, payment not yet collected
-.date-label--missed          { color: #c62828; }   // red    — past date, not done
-.date-label--due-soon        { color: #e65100; }   // amber  — due within 7 days
-.date-label--upcoming        { color: #5c6b7a; }   // grey   — future, no urgency
+.date-label--given           { color: var(--vac-green); }   // given
+.date-label--payment-pending { color: var(--vac-warn); }    // given, unpaid
+.date-label--missed          { color: var(--vac-red); }     // overdue
+.date-label--due-soon        { color: var(--vac-warn); }    // due soon
+.date-label--upcoming        { color: var(--vac-ink-3); }   // upcoming
 
 .date-group-actions {
   display: flex;
@@ -93,10 +150,10 @@ ion-buttons {
   flex-shrink: 0;
 }
 
-.hdr-icon--calendar { color: #0277bd; }
-.hdr-icon--invoice  { color: #6a1b9a; }
-.hdr-icon--assign   { color: #00695c; }
-.hdr-icon--payment  { color: #2e7d32; }
+.hdr-icon--calendar { color: var(--vac-blue); }
+.hdr-icon--invoice  { color: var(--vac-blue); }
+.hdr-icon--assign   { color: var(--vac-blue); }
+.hdr-icon--payment  { color: var(--vac-green); }
 
 // Per-row calendar icon
 .row-icon {
@@ -105,51 +162,59 @@ ion-buttons {
   flex-shrink: 0;
 }
 
-.row-icon--calendar { color: #0277bd; }
+.row-icon--calendar { color: var(--vac-blue); }
 
 // ── Shared action button base ─────────────────────────────────────────────────
 // Every action is an ion-button fill="clear" so Ionic handles ripple + focus ring.
 // We set a fixed 44×44 touch target (per Apple/Google HIG) and colour the icon.
+// Icon buttons: 34×34, radius 9, 1.4px border, white bg (spec §3.2). 44px hit area via margin.
 .action-btn {
   --padding-start: 0;
   --padding-end: 0;
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
+  --background: #fff;
+  --border-radius: 9px;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: 9px;
+  border: 1.4px solid var(--vac-border-strong);
+  background: #fff;
 
   &::part(native) {
     padding: 0;
-    border-radius: 10px;
+    border-radius: 9px;
+    background: #fff;
   }
 }
 
 .action-img {
-  height: 22px;
+  height: 20px;
   width: auto;
   display: block;
 }
 
 .action-icon {
-  font-size: 22px;
+  font-size: 18px;
 }
 
-// Colour palette per action type
-.action-btn--give        { --color: #2e7d32; }   // green  — give / inject
-.action-btn--ungive      { --color: #e65100; }   // deep orange — undo give
-.action-btn--reschedule  { --color: #0277bd; }   // blue   — calendar / reschedule
-.action-btn--invoice     { --color: #6a1b9a; }   // purple — invoice / document
-.action-btn--assign      { --color: #00695c; }   // teal   — assign PA
-.action-btn--params      { --color: #f57f17; }   // amber  — add parameters
-.action-btn--approve-icon { --color: #388e3c; }  // green  — approve checkmark
+// Colour palette per action type (Porcelain & Petrol)
+.action-btn--give        { --color: var(--vac-green); }
+.action-btn--ungive      { --color: var(--vac-red); border-color: var(--vac-red); }
+.action-btn--reschedule  { --color: var(--vac-blue); }
+.action-btn--invoice     { --color: var(--vac-blue); }
+.action-btn--assign      { --color: var(--vac-blue); }
+.action-btn--params      { --color: var(--vac-warn); }
+.action-btn--approve-icon { --color: var(--vac-green); }
+.action-btn--skipicon    { ion-icon { color: var(--vac-ink-3); font-size: 16px; } }
+.action-btn--reschedule  ion-icon { color: var(--vac-blue); }
 
-.action-icon--calendar { color: #0277bd; }
-.action-icon--invoice  { color: #6a1b9a; }
-.action-icon--assign   { color: #00695c; }
-.action-icon--approve  { color: #388e3c; font-size: 24px; }
+.action-icon--calendar { color: var(--vac-blue); }
+.action-icon--invoice  { color: var(--vac-blue); }
+.action-icon--assign   { color: var(--vac-blue); }
+.action-icon--approve  { color: var(--vac-green); font-size: 20px; }
 
 // ── Vaccine row ───────────────────────────────────────────────────────────────
 .vaccine-row {
@@ -164,27 +229,74 @@ ion-buttons {
 
   // Green left accent — given and approved
   &--done {
-    border-left: 3px solid #43a047;
+    border-left: 3px solid var(--vac-green);
     padding-left: 8px;
     margin-left: -8px;
-    background: linear-gradient(90deg, rgba(67,160,71,0.05) 0%, transparent 60%);
+    background: linear-gradient(90deg, rgba(46,148,99,0.05) 0%, transparent 60%);
     border-radius: 6px;
   }
 
   // Amber left accent — given by PA, awaiting doctor approval
   &--pending-approval {
-    border-left: 3px solid #ff8f00 !important;
-    background: linear-gradient(90deg, rgba(255,143,0,0.07) 0%, transparent 60%) !important;
+    border-left: 3px solid var(--vac-warn) !important;
+    background: linear-gradient(90deg, rgba(217,122,22,0.07) 0%, transparent 60%) !important;
+  }
+
+  // Skipped row leaves the pipeline (spec §3.3): muted, name struck through.
+  &--skipped {
+    opacity: .62;
+    .vaccine-name { text-decoration: line-through; }
   }
 }
 
+// Row text column (name + status subtitle stacked) — spec §3.2
+.vaccine-rowtext { flex: 1 1 0; min-width: 0; }
+
+// BUG 2 FIX: name column can shrink to 0 AND truncates — never wraps letter-per-line.
 .vaccine-name {
-  flex: 1 1 0;
-  font-size: 14px;
+  font-family: var(--vac-font-body);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--vac-ink);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status-brand   { color: var(--vac-ink-4); }
+.status-overdue { color: var(--vac-red); font-weight: 700; }
+.status-skipped { color: var(--vac-ink-4); font-weight: 600; }
+.status-inv     { color: var(--vac-ink-3); font-weight: 600; }
+
+// Restore (unskip) + Ungive controls
+.action-btn--restore {
+  width: 34px; height: 34px; border-radius: 9px;
+  border: 1.4px solid var(--vac-border-strong); background: #fff;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  ion-icon { font-size: 16px; color: var(--vac-blue); }
+}
+
+.ungive-btn {
+  font-family: var(--vac-font-head);
+  font-weight: 700;
+  font-size: 10.5px;
+  letter-spacing: .05em;
+  color: var(--vac-red);
+  background: #fff;
+  border: 1.4px solid var(--vac-red);
+  border-radius: 9px;
+  padding: 8px 12px;
+  flex-shrink: 0;
+}
+
+.group-skip-note {
+  font-family: var(--vac-font-body);
+  font-size: 9.5px;
   font-weight: 500;
-  color: #1a1a2e;
-  line-height: 1.3;
-  min-width: 0;
+  color: var(--vac-ink-4);
+  text-align: center;
+  padding: 2px 0 4px;
 }
 
 .warn-badge {
@@ -208,61 +320,66 @@ ion-buttons {
 }
 
 .vaccine-status {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 13px;
-  flex-shrink: 0;
+  font-family: var(--vac-font-body);
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--vac-ink-4);
+  line-height: 1.25;
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .status-epi {
-  color: #2e7d32;
+  color: var(--vac-green);
   font-weight: 700;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .status-img {
-  height: 22px;
+  height: 20px;
   width: auto;
 }
 
 .status-given {
-  color: #2e7d32;
-  font-size: 12px;
-  font-weight: 500;
+  color: var(--vac-green);
+  font-size: 10.5px;
+  font-weight: 700;
 }
 
 .status-date {
-  color: #43a047;
-  font-size: 12px;
-  &--clickable { cursor: pointer; text-decoration: underline dotted; }
+  color: var(--vac-ink-4);
+  font-size: 10.5px;
+  &--clickable { cursor: pointer; color: var(--vac-blue); text-decoration: underline dotted; }
 }
 
 .vaccine-actions {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 7px;
   flex-shrink: 0;
 }
 
 // ── Skip / Unskip chips ───────────────────────────────────────────────────────
 .action-chip {
-  height: 30px;
-  font-size: 12px;
-  font-weight: 600;
-  --border-radius: 20px;
+  height: 32px;
+  font-family: var(--vac-font-head);
+  font-size: 10.5px;
+  font-weight: 700;
+  --border-radius: 9px;
   --padding-start: 12px;
   --padding-end: 12px;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.05em;
 
-  &--skip    { --background: #ff8f00; --color: #fff; }
-  &--unskip  { --background: #d32f2f; --color: #fff; }
+  &--skip    { --background: #fff; --color: var(--vac-ink-3); --border-color: var(--vac-border-strong); border: 1.4px solid var(--vac-border-strong); border-radius: 9px; }
+  &--unskip  { --background: #fff; --color: var(--vac-blue); border: 1.4px solid var(--vac-blue); border-radius: 9px; }
 }
 
 // ── Approve button ────────────────────────────────────────────────────────────
 // Desktop: text button; Mobile: icon-only (handled via display toggling below)
 .approve-button {
-  background-color: #43a047;
+  background-color: var(--vac-green);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -306,12 +423,12 @@ ion-buttons {
   align-items: center;
   justify-content: space-between;
   padding: 14px 16px;
-  background: linear-gradient(135deg, #0B2D5C 0%, #0D6EAD 100%);
+  background: var(--vac-petrol);
 }
 
 .payment-header-text  { display: flex; flex-direction: column; gap: 2px; }
-.assign-popup-title   { font-size: 15px; font-weight: 700; color: #fff; }
-.payment-header-amount { font-size: 18px; font-weight: 800; color: #ffe082; letter-spacing: 0.3px; }
+.assign-popup-title   { font-family: var(--vac-font-head); font-size: 14px; font-weight: 700; color: #fff; }
+.payment-header-amount { font-size: 18px; font-weight: 800; color: var(--vac-gold-soft); letter-spacing: 0.3px; }
 .assign-popup-close   { font-size: 20px; color: rgba(255, 255, 255, 0.8); cursor: pointer; }
 .assign-popup-list    { padding: 8px 0; }
 
@@ -328,16 +445,16 @@ ion-buttons {
   &:active     { background: #F1F5F9; }
 }
 
-.assign-pa-icon { font-size: 28px; color: #0D6EAD; }
+.assign-pa-icon { font-size: 28px; color: var(--vac-blue); }
 .assign-pa-name { flex: 1; font-size: 15px; font-weight: 500; color: #1A1A2E; }
 .assign-pa-arrow { font-size: 16px; color: #90A4AE; }
 
 .assign-pa-row--selected {
-  background: #EBF4FF;
-  border-left: 3px solid #1a73e8;
+  background: var(--vac-blue-tint);
+  border-left: 3px solid var(--vac-blue);
 }
 
-.assign-pa-arrow--checked { color: #1a73e8; font-size: 18px; }
+.assign-pa-arrow--checked { color: var(--vac-blue); font-size: 18px; }
 
 .assign-guidelines-box {
   border-top: 1px solid #e8edf2;
@@ -348,7 +465,7 @@ ion-buttons {
 .assign-guidelines-label {
   font-size: 12px;
   font-weight: 700;
-  color: #1a73e8;
+  color: var(--vac-blue);
   text-transform: uppercase;
   letter-spacing: 0.4px;
   margin-bottom: 6px;
@@ -377,7 +494,7 @@ ion-buttons {
   line-height: 1.5;
   margin-bottom: 10px;
 
-  &:focus { border-color: #1a73e8; }
+  &:focus { border-color: var(--vac-blue); }
   &::placeholder { color: #b0bec5; }
 }
 
@@ -391,28 +508,47 @@ ion-buttons {
 .active-assignment-card {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  background: #ffffff;
-  border-radius: 14px;
-  border-left: 4px solid #14B8A6;
-  box-shadow: 0 2px 10px rgba(13, 110, 173, 0.10);
+  gap: 9px;
+  padding: 8px 11px;
+  background: var(--vac-card);
+  border-radius: 12px;
+  border: 1px solid var(--vac-border);
+  box-shadow: var(--vac-shadow-sm);
   margin-bottom: 12px;
 }
-.active-assign-icon { font-size: 18px; color: #14B8A6; flex-shrink: 0; }
-.active-assign-label { flex: 1; font-size: 13px; color: #0b6098; }
-.active-assign-actions { display: flex; gap: 6px; }
+.active-assign-icon { font-size: 18px; color: var(--vac-blue); flex-shrink: 0; }
+// PA avatar with gold ring (spec §4.1)
+.assign-avatar {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--vac-blue), var(--vac-green));
+  border: 1.6px solid var(--vac-gold);
+  color: #fff;
+  font-family: var(--vac-font-head);
+  font-weight: 700;
+  font-size: 9px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.active-assign-label {
+  flex: 1; min-width: 0;
+  font-size: 12px; color: var(--vac-ink-2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  strong { color: var(--vac-petrol); font-weight: 700; }
+}
+.active-assign-actions { display: flex; gap: 6px; flex-shrink: 0; }
 .assign-action-btn {
-  padding: 4px 10px;
-  border-radius: 6px;
+  font-family: var(--vac-font-head);
+  padding: 8px 13px;
+  border-radius: 9px;
   border: none;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .05em;
   cursor: pointer;
 }
-.reassign-btn { background: #0D6EAD; color: #fff; }
-.cancel-btn   { background: #fff; color: #C62828; border: 1px solid #C62828; }
-.done-btn     { background: #2E7D32; color: #fff; }
+.reassign-btn { background: var(--vac-blue); color: #fff; box-shadow: var(--vac-shadow-blue); }
+.cancel-btn   { background: #fff; color: var(--vac-red); border: 1.4px solid var(--vac-red); }
+.done-btn     { background: var(--vac-green); color: #fff; box-shadow: var(--vac-shadow-give); }
 
 // ── Payment mode popup ────────────────────────────────────────────────────────
 .payment-due-banner {
@@ -425,7 +561,7 @@ ion-buttons {
 }
 
 .payment-due-label { font-size: 13px; color: #558b2f; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-.payment-due-amount { font-size: 20px; font-weight: 700; color: #2e7d32; }
+.payment-due-amount { font-size: 20px; font-weight: 700; color: var(--vac-green); }
 
 .payment-mode-list { padding: 8px 0; }
 
@@ -444,7 +580,7 @@ ion-buttons {
 .payment-mode-icon {
   font-size: 24px;
   margin-right: 14px;
-  &--cash   { color: #2e7d32; }
+  &--cash   { color: var(--vac-green); }
   &--online { color: #1565c0; }
 }
 

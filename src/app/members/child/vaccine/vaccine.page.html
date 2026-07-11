@@ -1,10 +1,13 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="vax-toolbar">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/members/child"></ion-back-button>
-      <span class="vax-label">Vaccinations</span>
     </ion-buttons>
-    <ion-title>{{ChildName}}</ion-title>
+    <!-- BUG 1 FIX: exactly ONE title element — eyebrow + name stacked, name ellipsizes -->
+    <ion-title>
+      <span class="vax-eyebrow">Vaccinations</span>
+      <span class="vax-name">{{ChildName}}</span>
+    </ion-title>
     <ion-buttons slot="end">
       <ion-button *ngIf="canPrint" (click)="printdata($event)" fill="clear" class="vax-toolbar-btn">
         <ion-icon slot="icon-only" name="print-outline" class="vax-print-icon"></ion-icon>
@@ -15,10 +18,10 @@
 
 <ion-content class="ion-padding">
 
-  <!-- Active assignment card (Doctor view) — scrolls with content -->
+  <!-- Active assignment card (Doctor view) — scrolls with content (spec §4.1) -->
   <div *ngIf="usertype === 'DOCTOR' && activeAssignment" class="active-assignment-card">
-    <ion-icon name="person-outline" class="active-assign-icon"></ion-icon>
-    <span class="active-assign-label">Assigned: <strong>{{ activeAssignment.PaName }}</strong></span>
+    <span class="assign-avatar">{{ paInitials(activeAssignment.PaName) }}</span>
+    <span class="active-assign-label">Assigned to <strong>{{ activeAssignment.PaName }}</strong></span>
     <div class="active-assign-actions">
       <button class="assign-action-btn reassign-btn" (click)="openReassignPopup()">Reassign</button>
       <button class="assign-action-btn cancel-btn" (click)="confirmCancelAssignment()">Cancel</button>
@@ -44,193 +47,188 @@
     <ion-card class="date-group-card">
       <ion-card-content>
 
-        <!-- ── Date Group Header ─────────────────────────────────────────── -->
+        <!-- ── Date Group Header (SEQUENTIAL ACTION MODEL — spec §3.1) ────── -->
         <div class="date-group-header">
-          <span class="date-group-label" [ngClass]="getGroupDateClass(item.key, item.value)">{{ item.key | date }}</span>
+          <div class="date-group-heading">
+            <span class="date-group-label" [ngClass]="getGroupDateClass(item.key, item.value)">{{ item.key | date }}</span>
+            <span class="date-group-sub">{{ groupStageSubline(item.value, item.key) }}</span>
+          </div>
           <ion-badge *ngIf="getPaAssignmentTag(item.value) === 'assigned'" color="primary" class="pa-assign-badge">Assigned to you</ion-badge>
           <ion-badge *ngIf="getPaAssignmentTag(item.value) === 'given-by-doctor'" class="pa-assign-badge pa-assign-badge--muted">Given by Doctor</ion-badge>
 
           <div class="date-group-actions">
 
-            <!-- Bulk Give -->
-            <img
-              *ngIf="!checkVaccineIsDon(item.value) && canBulkGive"
-              src="../../assets/injectionEmpty.png"
-              class="hdr-img hdr-img--give"
-              routerLink="/members/child/vaccine/{{childId}}/bulk/{{item.key}}"
-              title="Give all vaccines on this date"
-            />
-
-            <!-- Bulk Ungive -->
-            <img
-              *ngIf="checkVaccineIsDon(item.value) && (usertype === 'DOCTOR' || canBulkUngive)"
-              src="../../assets/injectionFilled.png"
-              class="hdr-img hdr-img--ungive"
-              (click)="unfillbulk(item)"
-              title="Undo all vaccines on this date"
-            />
-
-            <!-- Bulk Reschedule — input nested inside ion-icon so it stays hidden (original pattern) -->
-            <ion-icon
-              *ngIf="!allVaccinesGiven(item.value) && canBulkReschedule"
-              name="calendar-outline"
-              class="hdr-icon hdr-icon--calendar"
-              (click)="bulkPicker.open()"
-              title="Reschedule all vaccines on this date">
-              <input [matDatepicker]="bulkPicker" value="{{ item.key }}" (dateChange)="updateBulkDate($event, item.value[0].Id)" />
-              <mat-datepicker #bulkPicker></mat-datepicker>
-            </ion-icon>
-
-            <!-- Bulk Invoice -->
-            <ion-icon
-              *ngIf="canInvoice && anyVaccineGiven(item.value)"
-              name="document-text-outline"
-              class="hdr-icon hdr-icon--invoice"
-              routerLink="/members/child/vaccine/{{childId}}/bulkinvoice/{{item.key}}"
-              title="Create invoice for this date">
-            </ion-icon>
-
-            <!-- Record Payment — only shown after invoice has been downloaded for this date -->
-            <ion-icon
-              *ngIf="hasUnpaidDoneVaccine(item.value, item.key) && canCollectPayment"
-              name="cash-outline"
-              class="hdr-icon hdr-icon--payment"
-              (click)="openPaymentPopup(getDoneScheduleId(item.value), item.value)"
-              title="Record payment">
-            </ion-icon>
-
-            <!-- Assign to PA (Doctor only) — per date-group, hidden when assignment is active -->
-            <ion-icon
+            <!-- Assign to PA (any stage, Doctor only) — hidden when assignment is active -->
+            <button
               *ngIf="usertype === 'DOCTOR' && clinicPAs.length > 0 && !activeAssignment"
-              name="person-add-outline"
-              class="hdr-icon hdr-icon--assign"
+              class="grp-icobtn"
               (click)="openAssignPopup(item.value)"
               title="Assign patient to PA for this visit">
-            </ion-icon>
+              <ion-icon name="person-add-outline"></ion-icon>
+            </button>
+
+            <!-- ── STAGE 1: DUE — bulk reschedule + GIVE n ─────────────────── -->
+            <ng-container *ngIf="isStage(item.value, item.key, 1)">
+              <button
+                *ngIf="canBulkReschedule"
+                class="grp-icobtn"
+                (click)="bulkPicker.open()"
+                title="Reschedule all due doses on this date">
+                <ion-icon name="calendar-outline"></ion-icon>
+                <input [matDatepicker]="bulkPicker" value="{{ item.key }}" (dateChange)="updateBulkDate($event, item.value[0].Id)" />
+                <mat-datepicker #bulkPicker></mat-datepicker>
+              </button>
+              <button
+                *ngIf="canBulkGive && giveCount(item.value) > 0"
+                class="stage-btn stage-btn--give"
+                routerLink="/members/child/vaccine/{{childId}}/bulk/{{item.key}}"
+                title="Give due doses on this date">
+                <img src="../../assets/injectionEmpty.png" class="stage-btn-img" />
+                GIVE {{ giveCount(item.value) }}
+              </button>
+            </ng-container>
+
+            <!-- ── STAGE 2: GIVEN (not invoiced) — INVOICE ─────────────────── -->
+            <ng-container *ngIf="isStage(item.value, item.key, 2)">
+              <button
+                *ngIf="canInvoice"
+                class="stage-btn stage-btn--invoice"
+                routerLink="/members/child/vaccine/{{childId}}/bulkinvoice/{{item.key}}"
+                title="Create invoice for this date">
+                <ion-icon name="document-text-outline"></ion-icon>
+                INVOICE
+              </button>
+            </ng-container>
+
+            <!-- ── STAGE 3: INVOICED (unpaid) — invoice menu + PAYMENT ─────── -->
+            <ng-container *ngIf="isStage(item.value, item.key, 3)">
+              <button
+                *ngIf="canInvoice"
+                class="grp-icobtn grp-icobtn--invoice"
+                (click)="openInvoiceMenu($event, item.value, item.key)"
+                title="Invoice options">
+                <ion-icon name="receipt-outline"></ion-icon>
+              </button>
+              <button
+                *ngIf="canCollectPayment"
+                class="stage-btn stage-btn--payment"
+                (click)="openPaymentPopup(getDoneScheduleId(item.value), item.value)"
+                title="Record payment">
+                <ion-icon name="card-outline"></ion-icon>
+                PAYMENT
+              </button>
+            </ng-container>
+
+            <!-- STAGE 4: PAID — no actions (card reads as history) -->
 
           </div>
         </div>
         <!-- ─────────────────────────────────────────────────────────────── -->
 
-        <!-- ── Vaccine Rows ────────────────────────────────────────────── -->
+        <!-- ── Vaccine Rows (SEQUENTIAL ACTION MODEL — spec §3.2) ────────── -->
         <div *ngFor="let v of item.value"
           class="vaccine-row"
           [class.vaccine-row--done]="v.IsDone && !v.Due2EPI"
+          [class.vaccine-row--skipped]="isSkippedDose(v)"
           [class.vaccine-row--pending-approval]="v.IsDone && !v.Due2EPI && !v.IsPAApprove && usertype === 'DOCTOR'">
 
-          <!-- Vaccine Name + Warning Badge -->
-          <div class="vaccine-name">
-            {{ v.Dose.Name }}
-            <!-- Audit badge — tappable, shows popover with counts -->
-            <ion-badge
-              *ngIf="usertype === 'DOCTOR' && (v.GiveCount == 2 || v.UngiveCount == 2 || v.SkipCount == 2 || v.UnskipCount == 2)"
-              color="warning" class="warn-badge"
-              (click)="showAuditPopover($event, v)">!</ion-badge>
+          <!-- Name + status subtitle (status lives in the subtitle, not chips — §3.2) -->
+          <div class="vaccine-rowtext">
+            <div class="vaccine-name">
+              {{ v.Dose.Name }}
+              <ion-badge
+                *ngIf="usertype === 'DOCTOR' && (v.GiveCount == 2 || v.UngiveCount == 2 || v.SkipCount == 2 || v.UnskipCount == 2)"
+                color="warning" class="warn-badge"
+                (click)="showAuditPopover($event, v)">!</ion-badge>
+            </div>
+            <div class="vaccine-status">
+              <ng-container *ngIf="v.Due2EPI">
+                <span class="status-epi">EPI</span>
+              </ng-container>
+              <ng-container *ngIf="isSkippedDose(v)">
+                <span class="status-skipped">skipped</span>
+              </ng-container>
+              <ng-container *ngIf="!v.Due2EPI && !v.IsSkip && !v.IsDone">
+                <span class="status-brand">{{ v.Brand?.Name || v.Dose.Name }}</span>
+                <span class="status-overdue" *ngIf="isOverdue(v)"> · {{ overdueLabel(v) }}</span>
+                <span *ngIf="!isOverdue(v)"> · due {{ v.Date | date:'MMM d' }}</span>
+              </ng-container>
+              <ng-container *ngIf="!v.Due2EPI && v.IsDone">
+                <span class="status-given">✓ given</span>
+                <span class="status-date" *ngIf="!v.IsDisease || v.IsDisease == null"> · {{ v.GivenDate | date:'MMM d' }}</span>
+                <span
+                  class="status-inv"
+                  *ngIf="invoiceExistsMap[item.key]"
+                  (click)="v.BrandId ? correctBatch(v) : null"> · 🧾 invoiced</span>
+                <span
+                  *ngIf="v.IsDisease"
+                  class="status-date status-date--clickable"
+                  routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}">
+                  · Disease Year: {{ v.DiseaseYear }}
+                </span>
+              </ng-container>
+            </div>
           </div>
 
-          <!-- Brand / EPI / Given Date -->
-          <div class="vaccine-status">
-            <ng-container *ngIf="v.Due2EPI">
-              <span class="status-epi">EPI</span>
-              <img src="../../assets/injectionFilled.png" class="status-img" />
-            </ng-container>
-
-            <ng-container *ngIf="!v.Due2EPI && v.IsDone">
-              <span class="status-given">
-                {{ v.BrandId ? '(' + v.Brand.Name + ')' : '(OHF)' }}
-              </span>
-              <span *ngIf="!v.IsDisease || v.IsDisease == null" class="status-date">
-                {{ v.GivenDate | date }}
-              </span>
-              <span
-                *ngIf="v.IsDisease"
-                class="status-date status-date--clickable"
-                routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}">
-                Disease Year: {{ v.DiseaseYear }}
-              </span>
-            </ng-container>
-          </div>
-
-          <!-- Action Buttons -->
+          <!-- Row actions — only what's valid at this stage. Max 2 controls. -->
           <div class="vaccine-actions">
 
-            <!-- Reschedule (individual) — input nested inside ion-icon (original pattern) -->
-            <ion-icon
-              *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip && canReschedule"
-              name="calendar-outline"
-              class="row-icon row-icon--calendar"
-              (click)="rowPicker.open()"
-              title="Reschedule">
-              <input [matDatepicker]="rowPicker" value="{{ v.Date }}" (dateChange)="updateDate($event, v.Id)" />
-              <mat-datepicker #rowPicker></mat-datepicker>
-            </ion-icon>
-
-            <!-- Give Vaccine -->
-            <ion-button
-              *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip && canGiveVaccine"
-              fill="clear"
-              class="action-btn action-btn--give"
-              routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}"
-              title="Give Vaccine">
-              <img slot="icon-only" src="../../assets/injectionEmpty.png" class="action-img" />
-            </ion-button>
-
-            <!-- Ungive Vaccine -->
-            <ion-button
-              *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && (usertype === 'DOCTOR' || canUngiveVaccine)"
-              fill="clear"
-              class="action-btn action-btn--ungive vaccine-action-icon"
-              (click)="UnfillVaccine(v.Id)"
-              title="Ungive Vaccine">
-              <img slot="icon-only" src="../../assets/injectionFilled.png" class="action-img" />
-            </ion-button>
-
-            <!-- Add Parameters -->
-            <ion-button
-              *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && canAddParams"
-              fill="clear"
-              class="action-btn action-btn--params"
-              routerLink="/members/child/vaccine/{{childId}}/afterfill/{{v.Id}}"
-              title="Add Parameters">
-              <img slot="icon-only" src="../../assets/add-parameter.png" class="action-img" />
-            </ion-button>
-
-            <!-- Correct Batch (§6.3a) — label-only, no stock movement. Doctor + PA. -->
-            <ion-button
-              *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && v.BrandId && (usertype === 'DOCTOR' || canAddParams)"
-              fill="clear"
-              class="action-btn action-btn--correct-batch"
-              (click)="correctBatch(v)"
-              title="Correct Batch Details">
-              <ion-icon slot="icon-only" name="create-outline" class="action-icon"></ion-icon>
-            </ion-button>
-
-            <!-- Approve — icon on mobile, text button on desktop -->
-            <ng-container *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip && usertype === 'DOCTOR' && !v.IsPAApprove">
-              <ion-button fill="clear" class="action-btn action-btn--approve action-btn--approve-icon" (click)="updateScheduleApproval(v.Id)" title="Approve">
-                <ion-icon slot="icon-only" name="checkmark-circle-outline" class="action-icon action-icon--approve"></ion-icon>
-              </ion-button>
-              <button class="approve-button approve-button--desktop" (click)="updateScheduleApproval(v.Id)">Approve</button>
+            <!-- STAGE 1 · due (not skipped): reschedule + skip only.
+                 Giving is done via the group header "GIVE n" → bulk sheet (spec §3.1). -->
+            <ng-container *ngIf="!v.IsDone && !v.Due2EPI && !v.IsSkip">
+              <button
+                *ngIf="canReschedule"
+                class="action-btn action-btn--reschedule"
+                (click)="rowPicker.open()"
+                title="Reschedule">
+                <ion-icon name="calendar-outline" class="action-icon action-icon--calendar"></ion-icon>
+                <input [matDatepicker]="rowPicker" value="{{ v.Date }}" (dateChange)="updateDate($event, v.Id)" />
+                <mat-datepicker #rowPicker></mat-datepicker>
+              </button>
+              <button
+                *ngIf="canSkip"
+                class="action-btn action-btn--skipicon"
+                (click)="handleSkipClick($event, v.Id, v.Dose.Name)"
+                title="Skip this dose">
+                <ion-icon name="ban-outline" class="action-icon"></ion-icon>
+              </button>
             </ng-container>
 
-            <!-- Skip -->
-            <ion-button
-              *ngIf="!v.IsDone && !v.Due2EPI && (v.IsSkip == null || !v.IsSkip) && canSkip"
-              (click)="handleSkipClick($event, v.Id, v.Dose.Name)"
-              class="action-chip action-chip--skip">
-              Skip
-            </ion-button>
+            <!-- STAGE 1 · skipped: restore -->
+            <ng-container *ngIf="!v.IsDone && v.IsSkip && !v.Due2EPI">
+              <button
+                *ngIf="canUnskip"
+                class="action-btn action-btn--restore"
+                (click)="handleUnSkipClick($event, v.Id, v.Dose.Name)"
+                title="Restore (unskip)">
+                <ion-icon name="arrow-undo-outline" class="action-icon"></ion-icon>
+              </button>
+            </ng-container>
 
-            <!-- Unskip -->
-            <ion-button
-              color="danger"
-              *ngIf="!v.IsDone && v.IsSkip && !v.Due2EPI && canUnskip"
-              (click)="handleUnSkipClick($event, v.Id, v.Dose.Name)"
-              class="action-chip action-chip--unskip">
-              Unskip
-            </ion-button>
+            <!-- STAGE 2 / 3 · given: approve (if pending) + UNGIVE (guarded at stage 3) -->
+            <ng-container *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip">
+              <button
+                *ngIf="usertype === 'DOCTOR' && !v.IsPAApprove"
+                class="action-btn action-btn--approve-icon"
+                (click)="updateScheduleApproval(v.Id)"
+                title="Approve">
+                <ion-icon name="checkmark-circle-outline" class="action-icon action-icon--approve"></ion-icon>
+              </button>
+              <button
+                *ngIf="usertype === 'DOCTOR' || canUngiveVaccine"
+                class="ungive-btn"
+                (click)="requestUngive(v, item.key)"
+                title="Ungive Vaccine">
+                UNGIVE
+              </button>
+            </ng-container>
 
           </div>
+        </div>
+
+        <!-- Skip footer caption (§3.3) -->
+        <div class="group-skip-note" *ngIf="hasSkipped(item.value)">
+          Skipped doses won't load in bulk give, invoice or PDF
         </div>
         <!-- ─────────────────────────────────────────────────────────────── -->
 

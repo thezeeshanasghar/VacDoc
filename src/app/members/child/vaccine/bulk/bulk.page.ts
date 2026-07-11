@@ -222,7 +222,8 @@ export class BulkPage implements OnInit {
     this.bulkService.getBulk(data).subscribe(
       res => {
         if (res.IsSuccess) {
-          this.bulkData = res.ResponseData;
+          // Spec §3.3: skipped doses leave the pipeline — never load them into bulk give.
+          this.bulkData = (res.ResponseData || []).filter((d: any) => !d.IsSkip);
           this.initializeBrandSearch();
         } else {
           this.toastService.create(res.Message, "danger");

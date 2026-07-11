@@ -10,25 +10,39 @@
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
 
-// ── App-wide palette tokens ─────────────────────────────────────────────────
+// ── Palette tokens live in theme/variables.scss (single source of truth). ────
+// These are back-compat ALIASES only: legacy component styles below reference
+// old names (--vac-navy, --vac-blue-dp, --vac-teal, --vac-lava, …). Map each
+// onto a Porcelain & Petrol token so the whole app re-skins without touching
+// every rule. Do NOT add new palette values here.
 :root {
-  --vac-blue:       #0D6EAD;
-  --vac-blue-dp:    #0b6098;
-  --vac-blue-lt:    #257eb5;
-  --vac-navy:       #0B2D5C;
-  --vac-teal:       #14B8A6;
-  --vac-green:      #2E7D32;
-  --vac-green-lt:   #43A047;
-  --vac-lava:       #FF4500;
-  --vac-lava-lt:    #FF6B35;
-  --vac-red:        #C62828;
-  --vac-red-dark:   #8B0000;
-  --vac-near-black: #0B2D5C;
-  --vac-card-bg:    #FFFFFF;
-  --vac-surface:    #F1F5F9;
-  --vac-border:     #CBD5E1;
-  --vac-shadow:     0 4px 24px rgba(11, 45, 92, 0.13);
-  --vac-shadow-lg:  0 8px 32px rgba(11, 45, 92, 0.22);
+  --vac-navy:       var(--vac-petrol);
+  --vac-blue-dp:    var(--ion-color-primary-shade);
+  --vac-blue-lt:    var(--ion-color-primary-tint);
+  --vac-teal:       var(--vac-teal-icon);
+  --vac-green-lt:   var(--ion-color-success-tint);
+  --vac-green-dp:   var(--ion-color-success-shade);
+  --vac-lava:       var(--vac-warn);
+  --vac-lava-lt:    var(--vac-warn-tint);
+  --vac-red-dark:   var(--ion-color-danger-shade);
+  --vac-near-black: var(--vac-ink);
+  --vac-card-bg:    var(--vac-card);
+  --vac-shadow-lg:  var(--vac-shadow-modal);
+}
+
+// ── Global type: Saira for headings, Manrope for body ────────────────────────
+body,
+ion-content,
+ion-label,
+ion-input,
+ion-button {
+  font-family: var(--vac-font-body);
+}
+ion-title,
+ion-card-title,
+h1, h2, h3, h4,
+.saira {
+  font-family: var(--vac-font-head);
 }
 
 // ── Toolbar ──────────────────────────────────────────────────────────────────
