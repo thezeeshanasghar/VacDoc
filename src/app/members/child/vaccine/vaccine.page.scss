@@ -92,15 +92,37 @@ ion-buttons {
 .date-group-actions { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
 
 .grp-icobtn {
+  position: relative;
   width: 36px; height: 36px;
   border-radius: 9px;
   border: 1.4px solid var(--vac-border-strong);
   background: #fff;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
   ion-icon { font-size: 18px; color: var(--vac-blue); }
   &--invoice { border-color: var(--vac-blue); background: var(--vac-blue-tint); }
 }
+
+// The mat-datepicker trigger input must stay invisible — it only anchors the
+// CDK overlay. Nested inside our icon buttons it would otherwise render its
+// text (e.g. "08/08/2014"). Collapse it to a zero-size, transparent hit area.
+.grp-icobtn input,
+.action-btn input,
+.action-btn--reschedule input {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  opacity: 0;
+  border: 0;
+  padding: 0;
+  font-size: 0;
+  color: transparent;
+  background: transparent;
+  cursor: pointer;
+}
+.grp-icobtn mat-datepicker,
+.action-btn mat-datepicker { display: none; }
 
 .stage-btn {
   font-family: var(--vac-font-head);
@@ -173,6 +195,8 @@ ion-buttons {
   --padding-end: 0;
   --background: #fff;
   --border-radius: 9px;
+  position: relative;
+  overflow: hidden;
   width: 34px;
   height: 34px;
   min-width: 34px;
@@ -221,25 +245,21 @@ ion-buttons {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 48px;
-  padding: 6px 0;
-  border-bottom: 1px solid #f4f5f7;
+  min-height: 50px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--vac-hairline);
 
   &:last-child { border-bottom: none; }
 
-  // Green left accent — given and approved
-  &--done {
-    border-left: 3px solid var(--vac-green);
+  // Given rows are flat in the mock — status lives in the subtitle (✓ given),
+  // not a left-accent stripe. Keep --done as a hook but no visual stripe.
+  &--done { }
+
+  // Given by PA, awaiting doctor approval — subtle amber left accent only.
+  &--pending-approval {
+    border-left: 2px solid var(--vac-warn);
     padding-left: 8px;
     margin-left: -8px;
-    background: linear-gradient(90deg, rgba(46,148,99,0.05) 0%, transparent 60%);
-    border-radius: 6px;
-  }
-
-  // Amber left accent — given by PA, awaiting doctor approval
-  &--pending-approval {
-    border-left: 3px solid var(--vac-warn) !important;
-    background: linear-gradient(90deg, rgba(217,122,22,0.07) 0%, transparent 60%) !important;
   }
 
   // Skipped row leaves the pipeline (spec §3.3): muted, name struck through.
@@ -268,6 +288,7 @@ ion-buttons {
 .status-overdue { color: var(--vac-red); font-weight: 700; }
 .status-skipped { color: var(--vac-ink-4); font-weight: 600; }
 .status-inv     { color: var(--vac-ink-3); font-weight: 600; }
+.status-paid    { color: var(--vac-green); font-weight: 700; }
 
 // Restore (unskip) + Ungive controls
 .action-btn--restore {

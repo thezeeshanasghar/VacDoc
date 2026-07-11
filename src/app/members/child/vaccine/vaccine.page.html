@@ -58,17 +58,19 @@
 
           <div class="date-group-actions">
 
-            <!-- Assign to PA (any stage, Doctor only) — hidden when assignment is active -->
+            <!-- Assign to PA (Doctor only) — only on actionable groups (doses still
+                 due, or given-but-unpaid); hidden on skipped-only / paid history. -->
             <button
-              *ngIf="usertype === 'DOCTOR' && clinicPAs.length > 0 && !activeAssignment"
+              *ngIf="usertype === 'DOCTOR' && clinicPAs.length > 0 && !activeAssignment
+                     && (giveCount(item.value) > 0 || (isStage(item.value, item.key, 2) || isStage(item.value, item.key, 3)))"
               class="grp-icobtn"
               (click)="openAssignPopup(item.value)"
               title="Assign patient to PA for this visit">
               <ion-icon name="person-add-outline"></ion-icon>
             </button>
 
-            <!-- ── STAGE 1: DUE — bulk reschedule + GIVE n ─────────────────── -->
-            <ng-container *ngIf="isStage(item.value, item.key, 1)">
+            <!-- ── STAGE 1: DUE — bulk reschedule + GIVE n (only when doses are due) ── -->
+            <ng-container *ngIf="isStage(item.value, item.key, 1) && giveCount(item.value) > 0">
               <button
                 *ngIf="canBulkReschedule"
                 class="grp-icobtn"
@@ -79,7 +81,7 @@
                 <mat-datepicker #bulkPicker></mat-datepicker>
               </button>
               <button
-                *ngIf="canBulkGive && giveCount(item.value) > 0"
+                *ngIf="canBulkGive"
                 class="stage-btn stage-btn--give"
                 routerLink="/members/child/vaccine/{{childId}}/bulk/{{item.key}}"
                 title="Give due doses on this date">
@@ -160,6 +162,7 @@
                   class="status-inv"
                   *ngIf="invoiceExistsMap[item.key]"
                   (click)="v.BrandId ? correctBatch(v) : null"> · 🧾 invoiced</span>
+                <span class="status-paid" *ngIf="invoiceExistsMap[item.key] && v.IsPaymentCollected"> · paid</span>
                 <span
                   *ngIf="v.IsDisease"
                   class="status-date status-date--clickable"

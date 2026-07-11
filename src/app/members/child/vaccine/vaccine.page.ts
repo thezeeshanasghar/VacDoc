@@ -73,6 +73,7 @@ export class VaccinePage {
   paymentDueAmount: number = 0;
   canCollectPayment = true;
   invoiceExistsMap: { [date: string]: boolean } = {};
+  invoiceAmountMap: { [date: string]: number } = {};
 
   isFilledToday(doneAt: any): boolean {
     if (!doneAt) return false;
@@ -294,8 +295,13 @@ export class VaccinePage {
       const n = this.givenActiveDoses(data).length;
       return `${n} dose${n === 1 ? '' : 's'} · not invoiced yet`;
     }
-    if (stage === 3) { return 'invoiced · unpaid'; }
-    return 'paid';
+    if (stage === 3) {
+      const amt = this.invoiceAmountMap[date];
+      return amt > 0 ? `invoiced · Rs ${amt.toLocaleString()} unpaid` : 'invoiced · unpaid';
+    }
+    // stage 4 — paid
+    const amtPaid = this.invoiceAmountMap[date];
+    return amtPaid > 0 ? `paid · Rs ${amtPaid.toLocaleString()}` : 'paid';
   }
 
   // Two-letter initials for the PA avatar (spec §4.1).
@@ -1386,6 +1392,7 @@ removal(type: string){
 
   private loadInvoiceExistence() {
     this.invoiceExistsMap = {};
+    this.invoiceAmountMap = {};
     const childId = Number(this.childId);
     const grouped: any = this.dataGrouping;
     // Check all dates that have at least one given vaccine — EPI included, invoice existence is the only gate
@@ -1401,6 +1408,7 @@ removal(type: string){
       this.invoiceService.getInvoiceTotal(childId, givenDateStr).toPromise().then(res => {
         if (res && res.IsSuccess) {
           this.invoiceExistsMap[date] = true;
+          if (typeof res.ResponseData === 'number') { this.invoiceAmountMap[date] = res.ResponseData; }
           this.cdr.detectChanges();
         } else {
           // PKT/UTC midnight boundary fallback
@@ -1410,6 +1418,7 @@ removal(type: string){
           this.invoiceService.getInvoiceTotal(childId, prevStr).toPromise().then(res2 => {
             if (res2 && res2.IsSuccess) {
               this.invoiceExistsMap[date] = true;
+              if (typeof res2.ResponseData === 'number') { this.invoiceAmountMap[date] = res2.ResponseData; }
               this.cdr.detectChanges();
             }
           }).catch(function() {});
