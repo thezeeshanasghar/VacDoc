@@ -5,13 +5,13 @@
 }
 
 .boy {
-  border-left: 4px solid #0D6EAD !important;
-  box-shadow: 0 2px 12px rgba(13, 110, 173, 0.12) !important;
+  border-left: 4px solid #1178A9 !important;
+  box-shadow: 0 2px 12px rgba(17, 120, 169, 0.12) !important;
 }
 
 // ── Compact card header bar ───────────────────────────────────────────────────
 .icons {
-  background: linear-gradient(135deg, #0B2D5C 0%, #0D6EAD 100%);
+  background: linear-gradient(135deg, #0C3646 0%, #1178A9 100%);
   border-radius: 12px 12px 0 0;
   padding: 6px 12px;
   display: flex;
@@ -109,7 +109,7 @@
 
 // ── Bulk vaccine group highlight ─────────────────────────────────────────────
 .bulk-group {
-  border: 3px solid #FF4500 !important;
+  border: 3px solid #D97A16 !important;
   box-shadow: 0 0 0 2px rgba(255, 69, 0, 0.20), 0 2px 16px rgba(255, 69, 0, 0.18) !important;
 }
 
@@ -167,7 +167,7 @@
   margin-top: 10px;
   background: #fffbea;
   border: 1px solid #ffe082;
-  border-left: 4px solid #f9a825;
+  border-left: 4px solid #D97A16;
   border-radius: 8px;
   padding: 9px 12px;
 }
@@ -181,7 +181,7 @@
 
 .assignment-guidelines-icon {
   font-size: 15px;
-  color: #f9a825;
+  color: #D97A16;
 }
 
 .assignment-guidelines-title {

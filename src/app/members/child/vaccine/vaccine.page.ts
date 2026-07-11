@@ -304,6 +304,23 @@ export class VaccinePage {
     return amtPaid > 0 ? `paid · Rs ${amtPaid.toLocaleString()}` : 'paid';
   }
 
+  // PA picker subline + shift state (spec §4.1). Uses ONLY real fields the
+  // backend sends — no fabricated "on shift". If the API doesn't provide shift
+  // or schedule-count data, the subline is simply omitted.
+  paSubline(pa: any): string {
+    if (!pa) { return ''; }
+    const parts: string[] = [];
+    const count = (pa.SchedulesToday != null) ? pa.SchedulesToday
+                : (pa.ScheduleCount != null) ? pa.ScheduleCount : null;
+    if (count != null) { parts.push(`${count} schedule${count === 1 ? '' : 's'} today`); }
+    if (pa.IsOnShift === true) { parts.push('on shift'); }
+    else if (pa.IsOnShift === false) { parts.push('off shift'); }
+    return parts.join(' · ');
+  }
+  isPaOffShift(pa: any): boolean {
+    return !!pa && pa.IsOnShift === false;   // only when the flag is explicitly false
+  }
+
   // Two-letter initials for the PA avatar (spec §4.1).
   paInitials(name: string): string {
     if (!name) { return '?'; }
@@ -339,12 +356,14 @@ export class VaccinePage {
     // Stage 3 — guarded confirm.
     const batch = v.BatchNo || v.LotNo || v.Batch || 'this batch';
     const doseName = (v.Dose && v.Dose.Name) ? v.Dose.Name : 'this dose';
+    const amt = this.invoiceAmountMap[date];
+    const amtStr = amt > 0 ? ' The invoice total will be recalculated (currently Rs ' + amt.toLocaleString() + ').' : '';
     const alert = await this.alertController.create({
       header: 'Ungive ' + doseName + '?',
       cssClass: 'vac-confirm',
       message:
-        'This dose is on the invoice for this visit. Ungiving will remove it and the ' +
-        'invoice will be regenerated. Stock for ' + batch + ' will be restored.',
+        'This dose is on the invoice for this visit. Ungiving removes it and the invoice ' +
+        'is regenerated.' + amtStr + ' Stock for ' + batch + ' will be restored.',
       buttons: [
         { text: 'Keep', role: 'cancel', cssClass: 'alert-btn-neutral' },
         {
@@ -1360,6 +1379,15 @@ removal(type: string){
       .filter(function(v) { return !v.IsDone; })
       .map(function(v) { return v.Id; });
     this.assignPopupOpen = true;
+  }
+
+  // Whole-schedule assign from the top assign bar (spec §4.1): pins every
+  // undone schedule across all date-groups to the new assignment.
+  openAssignPopupAll() {
+    const all: any[] = [];
+    const grouped: any = this.dataGrouping || {};
+    Object.keys(grouped).forEach(k => (grouped[k] || []).forEach((v: any) => all.push(v)));
+    this.openAssignPopup(all);
   }
 
   selectPendingAssign(pa: any) {

@@ -1,11 +1,11 @@
 .exp-content {
-  --background: #F1F5F9;
+  --background: #F6F7F5;
 }
 
 .exp-card {
   margin: 16px 16px 0;
   border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(11, 45, 92, 0.10);
+  box-shadow: 0 2px 12px rgba(12, 54, 70, 0.10);
 
   ion-card-content {
     padding: 16px;
@@ -59,7 +59,7 @@
   width: 100%;
   box-sizing: border-box;
 
-  &:focus { border-color: #0D6EAD; }
+  &:focus { border-color: #1178A9; }
 }
 
 .field-select {
@@ -73,7 +73,7 @@
   width: 100%;
   box-sizing: border-box;
 
-  &:focus { border-color: #0D6EAD; }
+  &:focus { border-color: #1178A9; }
 }
 
 .field-textarea {
@@ -89,7 +89,7 @@
   resize: none;
   font-family: inherit;
 
-  &:focus { border-color: #0D6EAD; }
+  &:focus { border-color: #1178A9; }
 }
 
 // ── Category chips grid ────────────────────────────────────────────────────
@@ -117,16 +117,16 @@
 }
 
 .cat-chip-active {
-  border-color: #0D6EAD;
+  border-color: #1178A9;
   background: #E3F2FD;
-  color: #0D6EAD;
+  color: #1178A9;
 
-  .cat-icon { color: #0D6EAD; }
+  .cat-icon { color: #1178A9; }
 }
 
 .cat-icon {
   font-size: 18px;
-  color: #78909C;
+  color: #5D7286;
   flex-shrink: 0;
 }
 
@@ -155,18 +155,18 @@
 
   ion-icon {
     font-size: 22px;
-    color: #78909C;
+    color: #5D7286;
   }
 
   &:active { transform: scale(0.97); }
 }
 
 .scope-btn-active {
-  border-color: #0D6EAD;
+  border-color: #1178A9;
   background: #E3F2FD;
-  color: #0D6EAD;
+  color: #1178A9;
 
-  ion-icon { color: #0D6EAD; }
+  ion-icon { color: #1178A9; }
 }
 
 .single-clinic-note {
@@ -176,9 +176,9 @@
   margin-top: 10px;
   font-size: 14px;
   font-weight: 600;
-  color: #2E7D32;
+  color: #2E9463;
 
-  ion-icon { font-size: 18px; color: #2E7D32; }
+  ion-icon { font-size: 18px; color: #2E9463; }
 }
 
 // ── Payment mode chips ─────────────────────────────────────────────────────
@@ -203,8 +203,8 @@
 }
 
 .pay-chip-active {
-  border-color: #0D6EAD;
-  background: #0D6EAD;
+  border-color: #1178A9;
+  background: #1178A9;
   color: #fff;
 }
 
@@ -237,7 +237,7 @@
   background: #FAFAFA;
   transition: border-color 0.15s ease;
 
-  &:active { border-color: #0D6EAD; }
+  &:active { border-color: #1178A9; }
 }
 
 .img-preview {

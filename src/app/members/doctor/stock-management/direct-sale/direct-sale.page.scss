@@ -1,5 +1,5 @@
 .sale-content {
-  --background: #F1F5F9;
+  --background: #F6F7F5;
 }
 
 .sale-wrap {
@@ -28,7 +28,7 @@
 
 // Item block
 .item-block {
-  border: 1px solid #F1F5F9;
+  border: 1px solid #F6F7F5;
   border-radius: 8px;
   padding: 10px 12px;
   margin-bottom: 12px;
@@ -45,7 +45,7 @@
 .item-num {
   font-size: 12px;
   font-weight: 700;
-  color: #0D6EAD;
+  color: #1178A9;
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
@@ -83,7 +83,7 @@
 
 .hint {
   font-size: 11px;
-  color: #78909C;
+  color: #5D7286;
   font-weight: 400;
 }
 
@@ -116,7 +116,7 @@
   outline: none;
   box-sizing: border-box;
 
-  &:focus { border-color: #0D6EAD; }
+  &:focus { border-color: #1178A9; }
 
   &[readonly] {
     background: #F5F7FA;
@@ -142,7 +142,7 @@
   background-position: right 12px center;
   box-sizing: border-box;
 
-  &:focus { border-color: #0D6EAD; }
+  &:focus { border-color: #1178A9; }
 }
 
 // Brand autocomplete
@@ -187,7 +187,7 @@
   cursor: pointer;
 
   &:last-child { border-bottom: none; }
-  &:active { background: #F1F5F9; }
+  &:active { background: #F6F7F5; }
 }
 
 .ac-opt-brand {
@@ -198,7 +198,7 @@
 
 .ac-opt-vaccine {
   font-size: 12px;
-  color: #78909C;
+  color: #5D7286;
 }
 
 // Two col
@@ -250,7 +250,7 @@
   padding: 7px 10px;
   background: #F5F7FA;
   border-radius: 7px;
-  border: 1px solid #F1F5F9;
+  border: 1px solid #F6F7F5;
 }
 
 .avail-icon { font-size: 15px; color: #546E7A; }
@@ -259,7 +259,7 @@
 .avail-count {
   font-size: 14px;
   font-weight: 700;
-  color: #0D6EAD;
+  color: #1178A9;
 
   &.avail-zero { color: #E53935; }
 }
@@ -277,14 +277,14 @@
 
 .line-total-label {
   font-size: 12px;
-  color: #2E7D32;
+  color: #2E9463;
   font-weight: 500;
 }
 
 .line-total-value {
   font-size: 14px;
   font-weight: 700;
-  color: #2E7D32;
+  color: #2E9463;
 }
 
 // Totals
@@ -389,7 +389,7 @@ input[type=number] { -moz-appearance: textfield; }
   padding: 12px 14px;
   margin-bottom: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  border-left: 4px solid #0D6EAD;
+  border-left: 4px solid #1178A9;
 }
 
 .history-top {
@@ -408,7 +408,7 @@ input[type=number] { -moz-appearance: textfield; }
 .history-bill-no {
   font-size: 14px;
   font-weight: 700;
-  color: #0D6EAD;
+  color: #1178A9;
 }
 
 .history-client {
@@ -425,7 +425,7 @@ input[type=number] { -moz-appearance: textfield; }
 .sale-total-badge {
   font-size: 15px;
   font-weight: 700;
-  color: #2E7D32;
+  color: #2E9463;
   background: #E8F5E9;
   padding: 4px 10px;
   border-radius: 14px;
@@ -461,7 +461,7 @@ input[type=number] { -moz-appearance: textfield; }
 
 .hir-vaccine {
   font-size: 12px;
-  color: #78909C;
+  color: #5D7286;
 }
 
 .hir-meta {
@@ -516,7 +516,7 @@ input[type=number] { -moz-appearance: textfield; }
 
 .history-date {
   font-size: 12px;
-  color: #78909C;
+  color: #5D7286;
 }
 
 .footer-btns {
@@ -554,7 +554,7 @@ input[type=number] { -moz-appearance: textfield; }
   align-items: center;
   justify-content: space-between;
   padding: 13px 16px 10px;
-  border-bottom: 1px solid #F1F5F9;
+  border-bottom: 1px solid #F6F7F5;
 
   .batch-modal-title {
     font-size: 15px;
@@ -574,7 +574,7 @@ input[type=number] { -moz-appearance: textfield; }
   grid-template-columns: 1.2fr 1.4fr 60px;
   gap: 4px;
   padding: 7px 16px;
-  background: #F1F5F9;
+  background: #F6F7F5;
 
   span {
     font-size: 11px;
@@ -637,7 +637,7 @@ input[type=number] { -moz-appearance: textfield; }
 .bmr-qty {
   font-size: 13px;
   font-weight: 700;
-  color: #0D6EAD;
+  color: #1178A9;
   text-align: right;
 
   &.bmr-qty-zero { color: #E53935; }
@@ -652,10 +652,10 @@ input[type=number] { -moz-appearance: textfield; }
 
 .expired-tag {
   background: #FFEBEE;
-  color: #C62828;
+  color: #C43D3D;
 }
 
 .soon-tag {
-  background: #FFF9C4;
-  color: #F57F17;
+  background: #FBEFDD;
+  color: #D97A16;
 }

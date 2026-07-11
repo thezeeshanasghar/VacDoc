@@ -310,6 +310,12 @@ ion-buttons {
   padding: 8px 12px;
   flex-shrink: 0;
 }
+.ungive-locked {
+  flex-shrink: 0;
+  width: 34px; height: 34px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  ion-icon { font-size: 15px; color: var(--vac-ink-4); }
+}
 
 .group-skip-note {
   font-family: var(--vac-font-body);
@@ -414,10 +420,21 @@ ion-buttons {
   &:focus  { outline: none; box-shadow: 0 0 0 3px rgba(67,160,71,0.35); }
 }
 
-// ── FAB ───────────────────────────────────────────────────────────────────────
+// ── FAB (spec §2.3): 48px #1178A9, 74px scroll padding so it never overlaps ──
 .vax-fab {
-  margin-right: 10px;
+  margin-right: 6px;
+  margin-bottom: 6px;
+  ion-fab-button {
+    --background: var(--vac-blue);
+    --background-activated: var(--ion-color-primary-shade);
+    --box-shadow: var(--vac-shadow-fab);
+    --color: #fff;
+    width: 48px;
+    height: 48px;
+  }
 }
+// Reserve space below the last group so the FAB never covers row actions.
+ion-content.ion-padding { --padding-bottom: 74px; }
 
 // ── PA Assign popup ───────────────────────────────────────────────────────────
 .assign-backdrop {
@@ -463,7 +480,7 @@ ion-buttons {
   min-height: 52px;
 
   &:last-child { border-bottom: none; }
-  &:active     { background: #F1F5F9; }
+  &:active     { background: #F6F7F5; }
 }
 
 .assign-pa-icon { font-size: 28px; color: var(--vac-blue); }
@@ -696,3 +713,107 @@ ion-buttons {
     .action-btn   { width: 40px; min-width: 40px; }
   }
 }
+
+// ═══ Bottom-sheet overlays (spec §7.2, §4.1) ════════════════════════════════
+.sheet-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(12, 54, 70, .45);
+  z-index: 1000;
+  animation: sheet-fade .18s ease;
+}
+.sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 1001;
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  box-shadow: var(--vac-shadow-sheet);
+  padding: 10px 16px calc(18px + env(safe-area-inset-bottom));
+  animation: sheet-up .22s cubic-bezier(.2,.7,.3,1);
+  max-height: 88vh;
+  overflow-y: auto;
+}
+@keyframes sheet-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes sheet-up   { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+.sheet-grab { width: 36px; height: 4px; background: var(--vac-border); border-radius: 999px; margin: 2px auto 12px; }
+.sheet-title-row { display: flex; align-items: flex-start; justify-content: space-between; }
+.sheet-title {
+  font-family: var(--vac-font-head);
+  font-weight: 700; font-size: 14px; color: var(--vac-petrol); margin-bottom: 12px;
+}
+.sheet-amount { font-family: var(--vac-font-head); font-weight: 800; font-size: 18px; color: var(--vac-green); }
+.sheet-close { font-size: 22px; color: var(--vac-ink-4); }
+
+// Payment mode rows
+.pay-mode-list { display: flex; flex-direction: column; gap: 8px; }
+.pay-mode-row {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%;
+  background: #fff; border: 1px solid var(--vac-border); border-radius: 12px;
+  padding: 14px 14px; text-align: left;
+}
+.pay-mode-icon { font-size: 22px; }
+.pay-mode-icon--cash { color: var(--vac-green); }
+.pay-mode-icon--online { color: var(--vac-blue); }
+.pay-mode-label { flex: 1; font-family: var(--vac-font-body); font-weight: 600; font-size: 14px; color: var(--vac-ink); }
+.pay-mode-chev { color: var(--vac-ink-4); font-size: 16px; }
+
+// PA picker rows (spec §4.1)
+.pa-list { display: flex; flex-direction: column; gap: 8px; }
+.pa-row {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  background: #fff; border: 1px solid var(--vac-border); border-radius: 12px;
+  padding: 10px 12px; text-align: left;
+  &.sel { background: var(--vac-blue-tint); border-color: var(--vac-blue); }
+}
+.pa-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--vac-blue), var(--vac-green));
+  border: 1.6px solid var(--vac-gold);
+  color: #fff; font-family: var(--vac-font-head); font-weight: 700; font-size: 10px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.pa-rowtext { flex: 1; min-width: 0; }
+.pa-name { font-family: var(--vac-font-body); font-weight: 700; font-size: 12.5px; color: var(--vac-petrol); }
+.pa-sub { font-family: var(--vac-font-body); font-weight: 500; font-size: 10.5px; color: var(--vac-ink-3); margin-top: 1px; }
+.pa-tick { color: var(--vac-blue); font-size: 18px; flex-shrink: 0; }
+
+.pa-guidelines { margin-top: 12px; }
+.pa-guidelines-label {
+  font-family: var(--vac-font-head); font-weight: 700; font-size: 10px;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--vac-ink-4); margin-bottom: 6px;
+}
+.pa-guidelines-opt { font-weight: 500; letter-spacing: 0; text-transform: none; }
+.pa-guidelines-input {
+  width: 100%; box-sizing: border-box;
+  border: 1px solid var(--vac-border); border-radius: 10px;
+  padding: 9px 10px; font-family: var(--vac-font-body); font-size: 12.5px; color: var(--vac-ink);
+  resize: none; outline: none;
+  &:focus { border-color: var(--vac-blue); }
+}
+
+.sheet-confirm {
+  width: 100%; margin-top: 14px;
+  background: var(--vac-blue); color: #fff;
+  font-family: var(--vac-font-head); font-weight: 700; font-size: 13px; letter-spacing: .05em;
+  border: 0; border-radius: 10px; padding: 13px; box-shadow: var(--vac-shadow-blue);
+}
+
+// Unassigned assign bar (spec §4.1)
+.active-assignment-card--unassigned {
+  border: 1.4px dashed var(--vac-border-strong);
+  box-shadow: none;
+}
+.assign-noavatar {
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 1.4px dashed var(--vac-border-strong);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  ion-icon { font-size: 15px; color: var(--vac-ink-4); }
+}
+.active-assign-label--muted { color: var(--vac-ink-4); font-weight: 500; }
+.assign-pa-btn {
+  background: var(--vac-blue); color: #fff; box-shadow: var(--vac-shadow-blue);
+}
+.pa-row.offshift { opacity: .55; }

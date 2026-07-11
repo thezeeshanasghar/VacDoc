@@ -21,7 +21,7 @@ ion-card {
 
 .pa-avatar {
   font-size: 42px;
-  color: #0D6EAD;
+  color: #1178A9;
   flex-shrink: 0;
 }
 
@@ -62,7 +62,7 @@ ion-card {
   gap: 6px;
   padding: 4px 14px 8px;
   font-size: 12px;
-  color: #0D6EAD;
+  color: #1178A9;
   font-weight: 600;
 
   ion-icon { font-size: 14px; flex-shrink: 0; }
@@ -118,8 +118,8 @@ ion-card {
 
 // ── Lava FAB ──────────────────────────────────────────────────────────────────
 .lava-fab {
-  --background:           linear-gradient(135deg, #8B0000 0%, #C62828 40%, #FF4500 100%);
-  --background-activated: #8B0000;
+  --background:           linear-gradient(135deg, #AC3636 0%, #C43D3D 40%, #D97A16 100%);
+  --background-activated: #AC3636;
   --box-shadow:           0 6px 20px rgba(198,40,40,0.45);
 }
 

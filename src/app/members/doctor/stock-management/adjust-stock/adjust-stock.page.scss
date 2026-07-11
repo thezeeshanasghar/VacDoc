@@ -54,15 +54,15 @@
 }
 
 .type-btn-increase {
-  border-color: #0D6EAD;
+  border-color: #1178A9;
   background: #E3F2FD;
-  color: #0D6EAD;
+  color: #1178A9;
 }
 
 .type-btn-loss {
   border-color: #E53935;
   background: #FFEBEE;
-  color: #C62828;
+  color: #C43D3D;
 }
 
 .type-btn-inactive {
@@ -88,7 +88,7 @@
 
 .hint {
   font-size: 11px;
-  color: #78909C;
+  color: #5D7286;
   font-weight: 400;
 }
 
@@ -104,7 +104,7 @@
   outline: none;
   box-sizing: border-box;
 
-  &:focus { border-color: #0D6EAD; }
+  &:focus { border-color: #1178A9; }
 
   &[readonly] {
     background: #F5F7FA;
@@ -130,7 +130,7 @@
   background-position: right 12px center;
   box-sizing: border-box;
 
-  &:focus { border-color: #0D6EAD; }
+  &:focus { border-color: #1178A9; }
 }
 
 // Brand picker row (tap to open modal)
@@ -319,7 +319,7 @@
   padding: 7px 10px;
   background: #F5F7FA;
   border-radius: 7px;
-  border: 1px solid #F1F5F9;
+  border: 1px solid #F6F7F5;
 }
 
 .avail-icon {
@@ -335,7 +335,7 @@
 .avail-count {
   font-size: 14px;
   font-weight: 700;
-  color: #0D6EAD;
+  color: #1178A9;
 
   &.avail-zero {
     color: #E53935;
@@ -446,7 +446,7 @@ input[type=number] { -moz-appearance: textfield; }
 }
 
 .history-card-increase {
-  border-left-color: #0D6EAD;
+  border-left-color: #1178A9;
 }
 
 .history-card-loss {
@@ -479,7 +479,7 @@ input[type=number] { -moz-appearance: textfield; }
 
 .history-vaccine {
   font-size: 12px;
-  color: #78909C;
+  color: #5D7286;
 }
 
 .adj-badge {
@@ -499,12 +499,12 @@ input[type=number] { -moz-appearance: textfield; }
 
 .adj-badge-increase {
   background: #E3F2FD;
-  color: #0D6EAD;
+  color: #1178A9;
 }
 
 .adj-badge-loss {
   background: #FFEBEE;
-  color: #C62828;
+  color: #C43D3D;
 }
 
 .history-meta-row {
@@ -548,13 +548,13 @@ input[type=number] { -moz-appearance: textfield; }
 
 .history-date {
   font-size: 12px;
-  color: #78909C;
+  color: #5D7286;
 }
 
 .history-price {
   font-size: 12px;
   font-weight: 600;
-  color: #2E7D32;
+  color: #2E9463;
 }
 
 // Batch modal
@@ -587,7 +587,7 @@ input[type=number] { -moz-appearance: textfield; }
   align-items: center;
   justify-content: space-between;
   padding: 13px 16px 10px;
-  border-bottom: 1px solid #F1F5F9;
+  border-bottom: 1px solid #F6F7F5;
 
   .batch-modal-title {
     font-size: 15px;
@@ -607,7 +607,7 @@ input[type=number] { -moz-appearance: textfield; }
   grid-template-columns: 1.2fr 1.4fr 60px;
   gap: 4px;
   padding: 7px 16px;
-  background: #F1F5F9;
+  background: #F6F7F5;
 
   span {
     font-size: 11px;
@@ -666,7 +666,7 @@ input[type=number] { -moz-appearance: textfield; }
 
 .bmr-check {
   font-size: 15px;
-  color: #0D6EAD;
+  color: #1178A9;
 }
 
 .bmr-expiry {
@@ -681,7 +681,7 @@ input[type=number] { -moz-appearance: textfield; }
 .bmr-qty {
   font-size: 13px;
   font-weight: 700;
-  color: #0D6EAD;
+  color: #1178A9;
   text-align: right;
 
   &.bmr-qty-zero { color: #E53935; }
@@ -697,10 +697,10 @@ input[type=number] { -moz-appearance: textfield; }
 
 .expired-tag {
   background: #FFEBEE;
-  color: #C62828;
+  color: #C43D3D;
 }
 
 .soon-tag {
-  background: #FFF9C4;
-  color: #F57F17;
+  background: #FBEFDD;
+  color: #D97A16;
 }

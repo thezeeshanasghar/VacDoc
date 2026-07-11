@@ -11,13 +11,13 @@
   width: 104px;
   height: 104px;
   border-radius: 50%;
-  background: linear-gradient(145deg, #0b6098 0%, #43A047 100%);
+  background: linear-gradient(145deg, #0F6893 0%, #43A177 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(13, 110, 173, 0.4);
+  box-shadow: 0 6px 18px rgba(17, 120, 169, 0.4);
 
   img { width: 100%; height: 100%; object-fit: cover; }
   ion-icon { font-size: 46px; color: #fff; }
@@ -31,12 +31,12 @@
   height: 32px;
   border-radius: 50%;
   background: #fff;
-  border: 2px solid #0D6EAD;
+  border: 2px solid #1178A9;
   display: flex;
   align-items: center;
   justify-content: center;
 
-  ion-icon { font-size: 16px; color: #0D6EAD; }
+  ion-icon { font-size: 16px; color: #1178A9; }
 }
 
 .ava-hint {
@@ -48,7 +48,7 @@
 // ── Validation ────────────────────────────────────────────────────────────
 .validation-errors { padding: 2px 8px 0; }
 .error-message {
-  color: #C62828;
+  color: #C43D3D;
   font-size: 12px;
   display: flex;
   align-items: center;
@@ -84,7 +84,7 @@
 // ── Save ──────────────────────────────────────────────────────────────────
 .save-btn {
   margin-top: 26px;
-  --background: linear-gradient(135deg, #0D6EAD 0%, #0b6098 100%);
+  --background: linear-gradient(135deg, #1178A9 0%, #0F6893 100%);
   --border-radius: 12px;
   height: 50px;
   font-weight: 700;

@@ -1,5 +1,5 @@
 .stock-content {
-  --background: #F1F5F9;
+  --background: #F6F7F5;
 }
 
 .stock-wrap {
@@ -23,13 +23,13 @@
   cursor: pointer;
   overflow: hidden;
   background: #ffffff;
-  box-shadow: 0 2px 12px rgba(11, 45, 92, 0.08);
+  box-shadow: 0 2px 12px rgba(12, 54, 70, 0.08);
   border: 1.5px solid transparent;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 
   &:active {
     transform: scale(0.97);
-    box-shadow: 0 1px 6px rgba(11, 45, 92, 0.06);
+    box-shadow: 0 1px 6px rgba(12, 54, 70, 0.06);
   }
 }
 
@@ -56,7 +56,7 @@
 
 .stock-card-sub {
   font-size: 11px;
-  color: #78909C;
+  color: #5D7286;
 }
 
 .stock-card-arrow {
@@ -82,33 +82,33 @@
 // Green
 .card-suppliers {
   background: #E8F5E9; border-color: #C8E6C9;
-  .stock-card-icon { background: #C3E6C4; ion-icon { color: #2E7D32; } }
-  .stock-card-label { color: #2E7D32; }
-  .stock-card-arrow { color: #2E7D32; }
+  .stock-card-icon { background: #C3E6C4; ion-icon { color: #2E9463; } }
+  .stock-card-label { color: #2E9463; }
+  .stock-card-arrow { color: #2E9463; }
 }
 
 // Blue
 .card-bills {
   background: #E3F0FF; border-color: #BBDEFB;
-  .stock-card-icon { background: #C9E2FB; ion-icon { color: #0D6EAD; } }
-  .stock-card-label { color: #0D6EAD; }
-  .stock-card-arrow { color: #0D6EAD; }
+  .stock-card-icon { background: #C9E2FB; ion-icon { color: #1178A9; } }
+  .stock-card-label { color: #1178A9; }
+  .stock-card-arrow { color: #1178A9; }
 }
 
 // Purple
 .card-overview {
-  background: #F3E5F5; border-color: #E1BEE7;
-  .stock-card-icon { background: #E1BEE7; ion-icon { color: #7B1FA2; } }
-  .stock-card-label { color: #7B1FA2; }
-  .stock-card-arrow { color: #7B1FA2; }
+  background: #F3E5F5; border-color: #DCE6F0;
+  .stock-card-icon { background: #DCE6F0; ion-icon { color: #0C3646; } }
+  .stock-card-label { color: #0C3646; }
+  .stock-card-arrow { color: #0C3646; }
 }
 
 // Orange
 .card-adjust {
   background: #FFF3E0; border-color: #FFCC80;
-  .stock-card-icon { background: #FFE0B2; ion-icon { color: #E65100; } }
-  .stock-card-label { color: #E65100; }
-  .stock-card-arrow { color: #E65100; }
+  .stock-card-icon { background: #FBEFDD; ion-icon { color: #D97A16; } }
+  .stock-card-label { color: #D97A16; }
+  .stock-card-arrow { color: #D97A16; }
 }
 
 // Teal
@@ -122,9 +122,9 @@
 // Red
 .card-sale {
   background: #FEECEC; border-color: #FFCDD2;
-  .stock-card-icon { background: #FFCDD2; ion-icon { color: #C62828; } }
-  .stock-card-label { color: #C62828; }
-  .stock-card-arrow { color: #C62828; }
+  .stock-card-icon { background: #FFCDD2; ion-icon { color: #C43D3D; } }
+  .stock-card-label { color: #C43D3D; }
+  .stock-card-arrow { color: #C43D3D; }
 }
 
 // Indigo
@@ -139,7 +139,7 @@
 .card-soon {
   background: #F4F6F8; border-color: #D0D9E2;
   cursor: default;
-  .stock-card-icon { background: #E0E6EC; ion-icon { color: #78909C; } }
-  .stock-card-label { color: #78909C; }
-  .stock-card-arrow { color: #78909C; }
+  .stock-card-icon { background: #E0E6EC; ion-icon { color: #5D7286; } }
+  .stock-card-label { color: #5D7286; }
+  .stock-card-arrow { color: #5D7286; }
 }

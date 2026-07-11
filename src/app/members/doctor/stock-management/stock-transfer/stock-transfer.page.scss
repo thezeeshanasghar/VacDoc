@@ -1,5 +1,5 @@
 .transfer-content {
-  --background: #F1F5F9;
+  --background: #F6F7F5;
 }
 
 .transfer-wrap {
@@ -22,7 +22,7 @@
   border: 1px solid #FFE082;
   border-radius: 8px;
   font-size: 13px;
-  color: #F57F17;
+  color: #D97A16;
   margin-bottom: 12px;
 
   ion-icon { font-size: 18px; flex-shrink: 0; }
@@ -65,7 +65,7 @@
 
 .hint {
   font-size: 11px;
-  color: #78909C;
+  color: #5D7286;
   font-weight: 400;
 }
 
@@ -81,7 +81,7 @@
   outline: none;
   box-sizing: border-box;
 
-  &:focus { border-color: #0D6EAD; }
+  &:focus { border-color: #1178A9; }
 
   &[readonly] {
     background: #F5F7FA;
@@ -107,7 +107,7 @@
   background-position: right 12px center;
   box-sizing: border-box;
 
-  &:focus { border-color: #0D6EAD; }
+  &:focus { border-color: #1178A9; }
 }
 
 // Brand autocomplete
@@ -153,7 +153,7 @@
   cursor: pointer;
 
   &:last-child { border-bottom: none; }
-  &:active { background: #F1F5F9; }
+  &:active { background: #F6F7F5; }
 }
 
 .ac-opt-brand {
@@ -164,7 +164,7 @@
 
 .ac-opt-vaccine {
   font-size: 12px;
-  color: #78909C;
+  color: #5D7286;
 }
 
 // Batch picker
@@ -215,7 +215,7 @@
   padding: 7px 10px;
   background: #F5F7FA;
   border-radius: 7px;
-  border: 1px solid #F1F5F9;
+  border: 1px solid #F6F7F5;
 }
 
 .avail-icon { font-size: 15px; color: #546E7A; }
@@ -224,7 +224,7 @@
 .avail-count {
   font-size: 14px;
   font-weight: 700;
-  color: #0D6EAD;
+  color: #1178A9;
 
   &.avail-zero { color: #E53935; }
 }
@@ -400,7 +400,7 @@ input[type=number] { -moz-appearance: textfield; }
   align-items: center;
   justify-content: flex-end;
   padding-top: 6px;
-  border-top: 1px solid #F1F5F9;
+  border-top: 1px solid #F6F7F5;
 }
 
 // Batch modal
@@ -433,7 +433,7 @@ input[type=number] { -moz-appearance: textfield; }
   align-items: center;
   justify-content: space-between;
   padding: 13px 16px 10px;
-  border-bottom: 1px solid #F1F5F9;
+  border-bottom: 1px solid #F6F7F5;
 
   .batch-modal-title {
     font-size: 15px;
@@ -453,7 +453,7 @@ input[type=number] { -moz-appearance: textfield; }
   grid-template-columns: 1.2fr 1.4fr 60px;
   gap: 4px;
   padding: 7px 16px;
-  background: #F1F5F9;
+  background: #F6F7F5;
 
   span {
     font-size: 11px;
@@ -516,7 +516,7 @@ input[type=number] { -moz-appearance: textfield; }
 .bmr-qty {
   font-size: 13px;
   font-weight: 700;
-  color: #0D6EAD;
+  color: #1178A9;
   text-align: right;
 
   &.bmr-qty-zero { color: #E53935; }
@@ -531,10 +531,10 @@ input[type=number] { -moz-appearance: textfield; }
 
 .expired-tag {
   background: #FFEBEE;
-  color: #C62828;
+  color: #C43D3D;
 }
 
 .soon-tag {
-  background: #FFF9C4;
-  color: #F57F17;
+  background: #FBEFDD;
+  color: #D97A16;
 }

@@ -1,0 +1,32 @@
+<div class="bp-sheet">
+  <div class="bp-grab"></div>
+  <div class="bp-eyebrow">Batch / Lot</div>
+  <div class="bp-title">{{ title() }}</div>
+  <div class="bp-note">Earliest expiry is pre-selected (FEFO)</div>
+
+  <div class="bp-list">
+    <button type="button" class="bp-row"
+            *ngFor="let r of rows"
+            [class.sel]="chosen === r.batchLot"
+            [class.expired]="r.expired"
+            [disabled]="r.expired"
+            (click)="select(r)">
+      <div class="bp-rowtext">
+        <div class="bp-batch">{{ r.batchLot }}</div>
+        <div class="bp-sub" *ngIf="!r.expired">exp {{ r.expiry }} · {{ r.qty }} in stock</div>
+        <div class="bp-sub bp-sub--red" *ngIf="r.expired">exp {{ r.expiry }} · expired — blocked</div>
+      </div>
+      <span class="bp-fefo" *ngIf="r.isFefo">FEFO</span>
+      <ion-icon name="checkmark-outline" class="bp-tick" *ngIf="chosen === r.batchLot && !r.expired"></ion-icon>
+      <ion-icon name="ban-outline" class="bp-slash" *ngIf="r.expired"></ion-icon>
+    </button>
+  </div>
+
+  <button type="button" class="bp-use" [disabled]="!chosen" (click)="confirm()">
+    USE {{ chosen || 'BATCH' }}
+  </button>
+
+  <div class="bp-override-note">
+    Choosing a non-FEFO batch asks a one-tap reason (Vial open / Parent request / Damaged / Other) → audited
+  </div>
+</div>

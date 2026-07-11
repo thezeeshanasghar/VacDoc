@@ -1,5 +1,5 @@
 .fa-content {
-  --background: #F1F5F9;
+  --background: #F6F7F5;
 }
 
 .fa-wrap {
@@ -23,7 +23,7 @@
   background: #fff;
   outline: none;
 
-  &:focus { border-color: #0D6EAD; }
+  &:focus { border-color: #1178A9; }
 }
 
 // ── Summary strip ──────────────────────────────────────────────────────────
@@ -43,7 +43,7 @@
   flex-direction: column;
   align-items: center;
   padding: 12px 8px;
-  border-right: 1px solid #F1F5F9;
+  border-right: 1px solid #F6F7F5;
 
   &:last-child { border-right: none; }
 }
@@ -51,12 +51,12 @@
 .summary-val {
   font-size: 14px;
   font-weight: 700;
-  color: #0B2D5C;
+  color: #0C3646;
 }
 
 .summary-lbl {
   font-size: 11px;
-  color: #78909C;
+  color: #5D7286;
   margin-top: 2px;
 }
 
@@ -96,14 +96,14 @@
 .ac-name {
   font-size: 16px;
   font-weight: 700;
-  color: #0B2D5C;
+  color: #0C3646;
 }
 
 .ac-category {
   font-size: 11px;
   font-weight: 600;
   color: #fff;
-  background: #6A1B9A;
+  background: #0C3646;
   padding: 2px 8px;
   border-radius: 10px;
   align-self: flex-start;
@@ -112,7 +112,7 @@
 .ac-amount {
   font-size: 15px;
   font-weight: 700;
-  color: #0D6EAD;
+  color: #1178A9;
 }
 
 // ── Meta row ──────────────────────────────────────────────────────────────
@@ -154,12 +154,12 @@
 .ac-depr-value {
   font-size: 12px;
   font-weight: 700;
-  color: #2E7D32;
+  color: #2E9463;
 }
 
 .ac-depr-bar-wrap {
   height: 6px;
-  background: #F1F5F9;
+  background: #F6F7F5;
   border-radius: 3px;
   overflow: hidden;
   margin-bottom: 4px;
@@ -167,7 +167,7 @@
 
 .ac-depr-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #2E7D32, #43A047);
+  background: linear-gradient(90deg, #2E9463, #43A177);
   border-radius: 3px;
   transition: width 0.3s ease;
   min-width: 2px;
@@ -185,14 +185,14 @@
   gap: 5px;
   font-size: 12px;
   font-weight: 600;
-  color: #2E7D32;
+  color: #2E9463;
   margin-bottom: 10px;
 
   ion-icon { font-size: 15px; }
 }
 
 .ac-warranty-expired {
-  color: #C62828;
+  color: #C43D3D;
 }
 
 // ── Images ────────────────────────────────────────────────────────────────
@@ -224,12 +224,12 @@
   padding: 3px 9px;
   border-radius: 10px;
   background: #E3F2FD;
-  color: #0D6EAD;
+  color: #1178A9;
 }
 
 .ac-notes {
   font-size: 12px;
-  color: #78909C;
+  color: #5D7286;
   font-style: italic;
 }
 

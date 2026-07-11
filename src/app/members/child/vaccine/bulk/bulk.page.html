@@ -1,197 +1,149 @@
+<!-- ── Bulk give sheet (spec §5) ──────────────────────────────────────────── -->
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar class="give-toolbar">
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>Bulk</ion-title>
+    <ion-title>
+      <span class="give-eyebrow">Bulk Give</span>
+      <span class="give-title">{{ (childData?.Name) || 'Patient' }} · {{ bulkData?.length || 0 }} dose{{ (bulkData?.length === 1) ? '' : 's' }}</span>
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="give-content">
 
-  <form [formGroup]="fg" (ngSubmit)="onSubmit()">
+  <form [formGroup]="fg" (ngSubmit)="onSubmit()" class="give-form">
 
-    <!-- Weight / Height / OFC: hidden for travel type (same as single given) -->
-    <div *ngIf="!isTravelType">
-      <ion-item>
-        <ion-label color="primary" position="floating">Weight</ion-label>
-        <ion-input type="text" placeholder="Weight" formControlName="Weight"></ion-input>
-        <ion-text color="danger"
-          *ngIf="fg.get('Weight').invalid && (fg.get('Weight').dirty || fg.get('Weight').touched)"
-          style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-          <ng-container *ngIf="fg.get('Weight').errors.pattern">
-            Only numbers are allowed for Weight
-          </ng-container>
-        </ion-text>
-        <ion-text color="success"
-          *ngIf="fg.get('Weight').valid && fg.get('Weight').value && (fg.get('Weight').dirty || fg.get('Weight').touched)"
-          style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-          <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon>
-        </ion-text>
-      </ion-item>
-
-      <ion-item>
-        <ion-label color="primary" position="floating">Height</ion-label>
-        <ion-input type="text" placeholder="Height" formControlName="Height"></ion-input>
-        <ion-text color="danger"
-          *ngIf="fg.get('Height').invalid && (fg.get('Height').dirty || fg.get('Height').touched)"
-          style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-          <ng-container *ngIf="fg.get('Height').errors.pattern">
-            Only numbers are allowed for Height
-          </ng-container>
-        </ion-text>
-        <ion-text color="success"
-          *ngIf="fg.get('Height').valid && fg.get('Height').value && (fg.get('Height').dirty || fg.get('Height').touched)"
-          style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-          <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon>
-        </ion-text>
-      </ion-item>
-
-      <ion-item>
-        <ion-label color="primary" position="floating">OFC</ion-label>
-        <ion-input type="text" placeholder="OFC" formControlName="Circle"></ion-input>
-        <ion-text color="danger"
-          *ngIf="fg.get('Circle').invalid && (fg.get('Circle').dirty || fg.get('Circle').touched)"
-          style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-          <ng-container *ngIf="fg.get('Circle').errors.pattern">
-            Only numbers are allowed for OFC
-          </ng-container>
-        </ion-text>
-        <ion-text color="success"
-          *ngIf="fg.get('Circle').valid && fg.get('Circle').value && (fg.get('Circle').dirty || fg.get('Circle').touched)"
-          style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-          <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon>
-        </ion-text>
-      </ion-item>
+    <!-- 5.1 Skip notice (only if the group had skips) -->
+    <div class="skip-notice" *ngIf="skippedDoseNames?.length">
+      <span class="skip-notice-text">
+        <s>{{ skippedDoseNames.join(', ') }}</s> skipped — excluded from give, invoice &amp; PDF
+      </span>
+      <span class="skip-notice-pill">&#8856; {{ skippedDoseNames.length }}</span>
     </div>
 
-    <!-- Per-vaccine rows: brand, manufacturer, batch/lot, expiry -->
-    <div *ngFor="let user of bulkData; let i = index;" class="bulk-brand-row">
-      <div class="bulk-dose-hint">{{ getBrandFieldHint(user, i) }}</div>
-
-      <mat-form-field appearance="outline" class="example-full-width custom-input-item">
-        <mat-label class="brand-label">Brands ({{ user?.Dose?.Name }})</mat-label>
-        <input
-          type="text"
-          matInput
-          placeholder="Brands"
-          [matAutocomplete]="brandAuto"
-          [(ngModel)]="brandSearchTerms[i]"
-          [ngModelOptions]="{ standalone: true }"
-          (ngModelChange)="onBrandSearchChange(i, $event)"
-          (keydown.enter)="onBrandEnterKey(i, $event)"
-          style="font-size: 15px;"
-        >
-        <mat-autocomplete #brandAuto="matAutocomplete" class="no-indent"
-          (optionSelected)="onBrandOptionSelected(i, $event.option.value)">
-          <mat-option [value]="'OHF'">OHF</mat-option>
-          <mat-option *ngFor="let brand of filteredBrandOptions[i]" [value]="brand.Name">
-            {{ brand.Name }}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-
-      <ion-item lines="none" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
-        <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Manufacturer</ion-label>
-        <ion-input
-          type="text"
-          readonly
-          [(ngModel)]="manufacturerValues[i]"
-          [ngModelOptions]="{ standalone: true }"
-          style="font-size: 12px; color: #444;"
-        ></ion-input>
-      </ion-item>
-
-      <!-- Route: fixed by brand, read-only -->
-      <ion-item *ngIf="routeValues[i]" lines="none" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
-        <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Route</ion-label>
-        <ion-input type="text" readonly [(ngModel)]="routeValues[i]" [ngModelOptions]="{ standalone: true }" style="font-size: 12px; color: #444;"></ion-input>
-      </ion-item>
-
-      <!-- Site: constrained by Route, chip-row, auto-distributed, editable (single-site auto-locks) -->
-      <div *ngIf="availableSitesPerRow[i] && availableSitesPerRow[i].length" class="site-chip-block">
-        <div class="site-chip-label">Site<span *ngIf="siteLockedPerRow[i]" class="site-locked-tag"> &middot; fixed</span></div>
-        <div class="site-chip-row">
-          <button type="button" class="site-chip"
-                  *ngFor="let s of availableSitesPerRow[i]"
-                  [class.on]="siteValues[i] === s"
-                  [class.locked]="siteLockedPerRow[i]"
-                  [disabled]="siteLockedPerRow[i]"
-                  (click)="selectBulkSite(i, s)">{{ s }}</button>
+    <!-- 5.2 Growth params — compact 3-col grid (hidden for travel type) -->
+    <div class="growth-grid" *ngIf="!isTravelType">
+      <div class="growth-cell">
+        <div class="growth-label">Weight</div>
+        <div class="growth-value">
+          <ion-input type="text" placeholder="—" formControlName="Weight"></ion-input>
+          <ion-icon name="checkmark-outline" class="growth-ok"
+            *ngIf="fg.get('Weight').valid && fg.get('Weight').value"></ion-icon>
         </div>
       </div>
-
-      <ion-item *ngIf="allowInventory" lines="none" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
-        <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Batch/Lot</ion-label>
-        <ion-select
-          [value]="selectedLotsPerRow[i]"
-          placeholder="—"
-          style="font-size: 12px;"
-          (ionChange)="onLotChange(i, $event)"
-        >
-          <ion-select-option *ngFor="let lot of availableLotsPerRow[i]" [value]="lot">
-            {{ lot }}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
-
-      <ion-item *ngIf="allowInventory" lines="full" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
-        <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Expiry</ion-label>
-        <ion-select
-          [value]="selectedExpiriesPerRow[i]"
-          placeholder="—"
-          [disabled]="!availableExpiriesPerRow[i] || !availableExpiriesPerRow[i].length"
-          style="font-size: 12px;"
-          (ionChange)="onExpiryChange(i, $event)"
-        >
-          <ion-select-option *ngFor="let expiry of availableExpiriesPerRow[i]" [value]="expiry">
-            {{ expiry }}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
-
-      <!-- Validity: travel type only -->
-      <ion-item *ngIf="isTravelType" lines="full" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
-        <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Validity</ion-label>
-        <ion-select
-          [value]="selectedValidityPerRow[i]"
-          placeholder="—"
-          style="font-size: 12px;"
-          (ionChange)="onValidityChange(i, $event)"
-        >
-          <ion-select-option value="365">1 Year</ion-select-option>
-          <ion-select-option value="730">2 Years</ion-select-option>
-          <ion-select-option value="1095">3 Years</ion-select-option>
-          <ion-select-option value="1460">4 Years</ion-select-option>
-          <ion-select-option value="1825">5 Years</ion-select-option>
-          <ion-select-option value="2190">6 Years</ion-select-option>
-          <ion-select-option value="2555">7 Years</ion-select-option>
-          <ion-select-option value="2920">8 Years</ion-select-option>
-          <ion-select-option value="3285">9 Years</ion-select-option>
-          <ion-select-option value="3650">10 Years</ion-select-option>
-          <ion-select-option value="4015">11 Years</ion-select-option>
-          <ion-select-option value="4380">12 Years</ion-select-option>
-          <ion-select-option value="4745">13 Years</ion-select-option>
-          <ion-select-option value="5110">14 Years</ion-select-option>
-          <ion-select-option value="5475">15 Years</ion-select-option>
-          <ion-select-option value="5840">16 Years</ion-select-option>
-          <ion-select-option value="6205">17 Years</ion-select-option>
-          <ion-select-option value="6570">18 Years</ion-select-option>
-          <ion-select-option value="30000">Life Time</ion-select-option>
-        </ion-select>
-      </ion-item>
+      <div class="growth-cell">
+        <div class="growth-label">Height</div>
+        <div class="growth-value">
+          <ion-input type="text" placeholder="—" formControlName="Height"></ion-input>
+          <ion-icon name="checkmark-outline" class="growth-ok"
+            *ngIf="fg.get('Height').valid && fg.get('Height').value"></ion-icon>
+        </div>
+      </div>
+      <div class="growth-cell">
+        <div class="growth-label">OFC</div>
+        <div class="growth-value">
+          <ion-input type="text" placeholder="—" formControlName="Circle"></ion-input>
+          <ion-icon name="checkmark-outline" class="growth-ok"
+            *ngIf="fg.get('Circle').valid && fg.get('Circle').value"></ion-icon>
+        </div>
+      </div>
     </div>
 
-    <ion-item (click)="picker.open()" class="date-field-item">
-      <ion-label color="primary">Given Date</ion-label>
-      <div class="date-end" slot="end">
-        <input formControlName="GivenDate" matInput [matDatepicker]="picker" value="{{currentDate1}}" max="{{todaydate}}" class="date-input">
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <!-- 5.3 Per-dose cards -->
+    <div *ngFor="let user of bulkData; let i = index;" class="dose-card">
+      <div class="dose-card-head">{{ getBrandFieldHint(user, i) }}</div>
+      <div class="dose-card-body">
+
+        <!-- Brand — outlined Material autocomplete -->
+        <mat-form-field appearance="outline" class="give-field">
+          <mat-label>Brand</mat-label>
+          <input
+            type="text"
+            matInput
+            placeholder="Brand"
+            [matAutocomplete]="brandAuto"
+            [(ngModel)]="brandSearchTerms[i]"
+            [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="onBrandSearchChange(i, $event)"
+            (keydown.enter)="onBrandEnterKey(i, $event)">
+          <mat-autocomplete #brandAuto="matAutocomplete" class="no-indent"
+            (optionSelected)="onBrandOptionSelected(i, $event.option.value)">
+            <mat-option [value]="'OHF'">OHF</mat-option>
+            <mat-option *ngFor="let brand of filteredBrandOptions[i]" [value]="brand.Name">
+              {{ brand.Name }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <!-- Facts caption — one line: Manufacturer · Route · batch NNN · exp MM-YYYY -->
+        <div class="dose-facts" *ngIf="manufacturerValues[i] || routeValues[i] || selectedLotsPerRow[i]">
+          <span *ngIf="manufacturerValues[i]">{{ manufacturerValues[i] }}</span>
+          <span *ngIf="routeValues[i]"> · {{ routeValues[i] }}</span>
+          <span class="dose-facts-batch" *ngIf="allowInventory && selectedLotsPerRow[i]"
+                (click)="openBatchSheet(i)"> · batch <b>{{ selectedLotsPerRow[i] }}</b></span>
+          <span class="dose-facts-fefo" *ngIf="allowInventory && isFefoLot(i)">FEFO</span>
+          <span *ngIf="allowInventory && selectedExpiriesPerRow[i]"> · exp {{ selectedExpiriesPerRow[i] }}</span>
+        </div>
+
+        <!-- Site chips -->
+        <div *ngIf="availableSitesPerRow[i] && availableSitesPerRow[i].length" class="site-block">
+          <div class="site-label">Site<span *ngIf="siteLockedPerRow[i]" class="site-fixed"> · fixed</span></div>
+          <div class="site-chips">
+            <button type="button" class="site-chip"
+                    *ngFor="let s of availableSitesPerRow[i]"
+                    [class.on]="siteValues[i] === s"
+                    [disabled]="siteLockedPerRow[i]"
+                    (click)="selectBulkSite(i, s)">{{ s }}</button>
+          </div>
+        </div>
+
+        <!-- Validity (travel type only) — kept as outlined select -->
+        <mat-form-field appearance="outline" class="give-field" *ngIf="isTravelType">
+          <mat-label>Validity</mat-label>
+          <mat-select [value]="selectedValidityPerRow[i]" (selectionChange)="onValidityChange(i, $event)">
+            <mat-option value="365">1 Year</mat-option>
+            <mat-option value="730">2 Years</mat-option>
+            <mat-option value="1095">3 Years</mat-option>
+            <mat-option value="1460">4 Years</mat-option>
+            <mat-option value="1825">5 Years</mat-option>
+            <mat-option value="2190">6 Years</mat-option>
+            <mat-option value="2555">7 Years</mat-option>
+            <mat-option value="2920">8 Years</mat-option>
+            <mat-option value="3285">9 Years</mat-option>
+            <mat-option value="3650">10 Years</mat-option>
+            <mat-option value="4015">11 Years</mat-option>
+            <mat-option value="4380">12 Years</mat-option>
+            <mat-option value="4745">13 Years</mat-option>
+            <mat-option value="5110">14 Years</mat-option>
+            <mat-option value="5475">15 Years</mat-option>
+            <mat-option value="5840">16 Years</mat-option>
+            <mat-option value="6205">17 Years</mat-option>
+            <mat-option value="6570">18 Years</mat-option>
+            <mat-option value="30000">Life Time</mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
+    </div>
+
+    <!-- 5.4 Given Date — outlined, one for the whole sheet -->
+    <div class="give-date-field" (click)="picker.open()">
+      <span class="give-date-label">Given Date</span>
+      <span class="give-date-value">
+        <input formControlName="GivenDate" matInput [matDatepicker]="picker" value="{{currentDate1}}" max="{{todaydate}}" class="give-date-input" readonly>
+        {{ fg.get('GivenDate').value ? (fg.get('GivenDate').value | date:'dd-MM-yyyy') : currentDate1 }}
+      </span>
+      <ion-icon name="calendar-outline" class="give-date-icon"></ion-icon>
       <mat-datepicker #picker disabled="false"></mat-datepicker>
-    </ion-item>
+    </div>
 
-
-    <ion-button [disabled]="isScheduleDateValid()" type="submit">Submit</ion-button>
   </form>
+
+  <!-- 5.5 Sticky submit -->
+  <div class="give-submit-bar">
+    <button type="button" class="give-submit" [disabled]="isScheduleDateValid()" (click)="onSubmit()">
+      GIVE {{ bulkData?.length || 0 }} DOSE{{ (bulkData?.length === 1) ? '' : 'S' }}
+    </button>
+  </div>
 </ion-content>

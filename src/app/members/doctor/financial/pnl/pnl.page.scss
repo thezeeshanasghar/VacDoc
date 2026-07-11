@@ -1,5 +1,5 @@
 .pnl-content {
-  --background: #F1F5F9;
+  --background: #F6F7F5;
 }
 
 .pnl-wrap {
@@ -24,7 +24,7 @@
   background: #fff;
   outline: none;
 
-  &:focus { border-color: #0D6EAD; }
+  &:focus { border-color: #1178A9; }
 }
 
 .expense-mode-segment {
@@ -48,7 +48,7 @@
   flex-direction: column;
   align-items: center;
   padding: 12px 8px;
-  border-right: 1px solid #F1F5F9;
+  border-right: 1px solid #F6F7F5;
 
   &:last-child { border-right: none; }
 }
@@ -56,23 +56,23 @@
 .summary-val {
   font-size: 14px;
   font-weight: 700;
-  color: #0B2D5C;
+  color: #0C3646;
 }
 
 .summary-lbl {
   font-size: 11px;
-  color: #78909C;
+  color: #5D7286;
   margin-top: 2px;
 }
 
-.pnl-positive { color: #2E7D32 !important; }
-.pnl-negative { color: #C62828 !important; }
+.pnl-positive { color: #2E9463 !important; }
+.pnl-negative { color: #C43D3D !important; }
 
 // ── Section label ─────────────────────────────────────────────────────────
 .pnl-section-label {
   font-size: 12px;
   font-weight: 700;
-  color: #78909C;
+  color: #5D7286;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin: 16px 4px 8px;
@@ -90,7 +90,7 @@
 .pnl-card-title {
   font-size: 14px;
   font-weight: 700;
-  color: #0B2D5C;
+  color: #0C3646;
   margin-bottom: 10px;
 }
 
@@ -121,18 +121,18 @@
 }
 
 .pnl-row-total {
-  border-top: 1px solid #F1F5F9;
+  border-top: 1px solid #F6F7F5;
   margin-top: 4px;
   padding-top: 10px;
 
   .pnl-row-label, .pnl-row-value {
     font-weight: 700;
-    color: #0B2D5C;
+    color: #0C3646;
   }
 }
 
 .pnl-row-net {
-  border-top: 1px solid #F1F5F9;
+  border-top: 1px solid #F6F7F5;
   margin-top: 4px;
   padding-top: 10px;
 
@@ -151,7 +151,7 @@
 .pnl-net-label {
   font-size: 14px;
   font-weight: 700;
-  color: #0B2D5C;
+  color: #0C3646;
 }
 
 .pnl-net-value {
@@ -159,8 +159,8 @@
   font-weight: 800;
 }
 
-.pnl-net-positive .pnl-net-value { color: #2E7D32; }
-.pnl-net-negative .pnl-net-value { color: #C62828; }
+.pnl-net-positive .pnl-net-value { color: #2E9463; }
+.pnl-net-negative .pnl-net-value { color: #C43D3D; }
 
 // ── Category pill ────────────────────────────────────────────────────────
 .cat-pill {
@@ -175,13 +175,13 @@
   ion-icon { font-size: 13px; }
 }
 
-.cat-blue   { background: #E3F2FD; color: #0D6EAD; }
+.cat-blue   { background: #E3F2FD; color: #1178A9; }
 .cat-grey   { background: #ECEFF1; color: #546E7A; }
 .cat-pink   { background: #FCE4EC; color: #AD1457; }
 .cat-orange { background: #FFF3E0; color: #EF6C00; }
-.cat-green  { background: #E8F5E9; color: #2E7D32; }
+.cat-green  { background: #E8F5E9; color: #2E9463; }
 .cat-teal   { background: #E0F2F1; color: #00796B; }
-.cat-purple { background: #F3E5F5; color: #6A1B9A; }
+.cat-purple { background: #F3E5F5; color: #0C3646; }
 
 // ── Empty state ───────────────────────────────────────────────────────────
 .empty-state {

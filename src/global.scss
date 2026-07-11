@@ -72,9 +72,9 @@ ion-toolbar ion-title {
 // ── Cards ────────────────────────────────────────────────────────────────────
 ion-card {
   border-radius: 16px !important;
-  box-shadow: 0 2px 12px rgba(13, 110, 173, 0.10),
+  box-shadow: 0 2px 12px rgba(17, 120, 169, 0.10),
               0 1px 4px  rgba(0, 0, 0, 0.06) !important;
-  border: 1px solid rgba(13, 110, 173, 0.08);
+  border: 1px solid rgba(17, 120, 169, 0.08);
   background: var(--vac-card-bg);
 }
 
@@ -109,7 +109,7 @@ ion-button[expand="full"][color="primary"] {
   --background: var(--vac-blue);
   --background-activated: var(--vac-blue-dp);
   --border-radius: 12px;
-  --box-shadow: 0 4px 16px rgba(13, 110, 173, 0.30);
+  --box-shadow: 0 4px 16px rgba(17, 120, 169, 0.30);
   font-weight: 800;
   letter-spacing: 0.5px;
 }
@@ -140,7 +140,7 @@ ion-button[fill="outline"][color="primary"] {
 
 // ── Inputs / Items ───────────────────────────────────────────────────────────
 ion-item {
-  --border-color:      rgba(13, 110, 173, 0.15);
+  --border-color:      rgba(17, 120, 169, 0.15);
   --highlight-color-focused: var(--vac-blue);
 }
 
@@ -153,7 +153,7 @@ ion-input, ion-textarea, ion-select {
 ion-badge[color="primary"]  { background: var(--vac-blue); }
 ion-badge[color="success"]  { background: var(--vac-green); }
 ion-badge[color="danger"]   { background: var(--vac-red); }
-ion-badge[color="warning"]  { background: #F57C00; }
+ion-badge[color="warning"]  { background: #D97A16; }
 
 // ── Menu sidebar ─────────────────────────────────────────────────────────────
 ion-menu ion-toolbar[color="primary"] {
@@ -170,7 +170,7 @@ ion-menu ion-list.menu {
 
 ion-menu ion-item {
   --background:           transparent;
-  --background-activated: rgba(20, 184, 166, 0.18);
+  --background-activated: rgba(111,177,165, 0.18);
   --color:                rgba(255, 255, 255, 0.85);
   --border-color:         rgba(255, 255, 255, 0.06);
   font-size: 15px;
@@ -207,16 +207,16 @@ table th {
 }
 
 table td {
-  border-bottom: 1px solid rgba(13, 110, 173, 0.08) !important;
+  border-bottom: 1px solid rgba(17, 120, 169, 0.08) !important;
 }
 
 table tr:hover td {
-  background-color: rgba(13, 110, 173, 0.04);
+  background-color: rgba(17, 120, 169, 0.04);
 }
 
 // ── Segment controls ────────────────────────────────────────────────────────
 ion-segment {
-  --background: rgba(13, 110, 173, 0.08);
+  --background: rgba(17, 120, 169, 0.08);
 }
 
 ion-segment-button {
@@ -229,7 +229,7 @@ ion-segment-button {
 ion-searchbar {
   --background:      var(--vac-surface);
   --border-radius:   12px;
-  --box-shadow:      0 2px 8px rgba(13, 110, 173, 0.08);
+  --box-shadow:      0 2px 8px rgba(17, 120, 169, 0.08);
   --color:           #111827;
   --placeholder-color: #9CA3AF;
   --icon-color:      var(--vac-blue);
@@ -257,7 +257,7 @@ ion-content {
 ion-fab-button {
   --background: var(--vac-blue);
   --background-activated: var(--vac-blue-dp);
-  --box-shadow: 0 4px 16px rgba(13, 110, 173, 0.40);
+  --box-shadow: 0 4px 16px rgba(17, 120, 169, 0.40);
   --color: #ffffff;
 }
 
@@ -348,7 +348,7 @@ ion-content.ion-padding > ion-card {
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(13, 110, 173, 0.35);
+  background: rgba(17, 120, 169, 0.35);
   border-radius: 3px;
 }
 
@@ -359,8 +359,8 @@ ion-content.ion-padding > ion-card {
   border-radius: 18px !important;
   overflow: hidden !important;
   box-shadow:
-    0 0 0 2px rgba(13, 110, 173, 0.18),
-    0 12px 40px rgba(11, 45, 92, 0.22),
+    0 0 0 2px rgba(17, 120, 169, 0.18),
+    0 12px 40px rgba(12, 54, 70, 0.22),
     0 2px 10px rgba(0, 0, 0, 0.14) !important;
   min-width: 290px !important;
 }
@@ -461,7 +461,7 @@ ion-content.ion-padding > ion-card {
   padding: 8px 20px !important;
   min-width: 84px !important;
   color: var(--vac-blue) !important;
-  border: 1.5px solid rgba(13, 110, 173, 0.35) !important;
+  border: 1.5px solid rgba(17, 120, 169, 0.35) !important;
   background: transparent !important;
   margin: 0 2px !important;
 }
@@ -472,7 +472,7 @@ ion-content.ion-padding > ion-card {
   background: var(--vac-blue) !important;
   color: #ffffff !important;
   border: none !important;
-  box-shadow: 0 3px 12px rgba(13, 110, 173, 0.35) !important;
+  box-shadow: 0 3px 12px rgba(17, 120, 169, 0.35) !important;
 }
 
 // Destructive action — red (overrides the :last-child blue default above)
@@ -540,7 +540,7 @@ ion-content.ion-padding > ion-card {
 .action-sheet-cancel.sc-ion-action-sheet-ios {
   color: var(--vac-teal) !important;
   font-weight: 700 !important;
-  border-top: 1px solid rgba(20, 184, 166, 0.20) !important;
+  border-top: 1px solid rgba(111,177,165, 0.20) !important;
 }
 
 // PDF "Download Immunization Record" menu — an ion-popover. On desktop it's
@@ -549,7 +549,7 @@ ion-content.ion-padding > ion-card {
 // so it doesn't hug the top-right edge on a narrow screen.
 .pdf-options-popover .popover-content {
   border-radius: 14px !important;
-  box-shadow: 0 20px 60px rgba(11, 45, 92, 0.35) !important;
+  box-shadow: 0 20px 60px rgba(12, 54, 70, 0.35) !important;
   overflow: hidden !important;
 }
 
@@ -562,8 +562,8 @@ ion-content.ion-padding > ion-card {
 .popover-content {
   border-radius: 14px !important;
   box-shadow:
-    0 0 0 2px rgba(13, 110, 173, 0.14),
-    0 8px 28px rgba(11, 45, 92, 0.18),
+    0 0 0 2px rgba(17, 120, 169, 0.14),
+    0 8px 28px rgba(12, 54, 70, 0.18),
     0 2px 8px rgba(0, 0, 0, 0.10) !important;
   overflow: hidden !important;
 }
@@ -616,4 +616,20 @@ ion-popover ion-item[aria-checked="true"] {
   border-radius: 12px !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25) !important;
   overflow: hidden;
+}
+
+// ── Batch picker / bottom-sheet modals (spec §6, §7.2) ──────────────────────
+// Ionic 5 has no breakpoints API; anchor the modal to the bottom and let the
+// component's own rounded top provide the sheet look.
+.batch-picker-modal {
+  --background: transparent;
+  --box-shadow: none;
+  align-items: flex-end;
+  &::part(content) {
+    position: absolute;
+    bottom: 0;
+    border-radius: 16px 16px 0 0;
+    box-shadow: var(--vac-shadow-sheet);
+    max-height: 88%;
+  }
 }

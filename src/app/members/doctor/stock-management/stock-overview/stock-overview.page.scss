@@ -1,5 +1,5 @@
 .overview-content {
-  --background: #F1F5F9;
+  --background: #F6F7F5;
 }
 
 .clinic-wrap {
@@ -42,14 +42,14 @@
   box-sizing: border-box;
 
   &:focus {
-    border-color: #0D6EAD;
+    border-color: #1178A9;
   }
 }
 
 .empty-state {
   text-align: center;
   margin-top: 60px;
-  color: #78909C;
+  color: #5D7286;
 
   ion-icon {
     font-size: 56px;
@@ -101,7 +101,7 @@
 
 .brand-name {
   font-size: 12px;
-  color: #78909C;
+  color: #5D7286;
   margin-top: 2px;
 }
 
@@ -115,7 +115,7 @@
   font-size: 13px;
   font-weight: 700;
   color: #fff;
-  background: #0D6EAD;
+  background: #1178A9;
   padding: 3px 10px;
   border-radius: 12px;
 
@@ -138,18 +138,18 @@
 
 .sale-price-label {
   font-size: 12px;
-  color: #78909C;
+  color: #5D7286;
 }
 
 .sale-price-val {
   font-size: 13px;
   font-weight: 600;
-  color: #2E7D32;
+  color: #2E9463;
 }
 
 // Batch table
 .batch-table {
-  border-top: 1px solid #F1F5F9;
+  border-top: 1px solid #F6F7F5;
 }
 
 .no-batches {
@@ -163,7 +163,7 @@
   display: grid;
   grid-template-columns: 1.2fr 1.4fr 60px;
   padding: 6px 16px;
-  background: #F1F5F9;
+  background: #F6F7F5;
   border-bottom: 1px solid #CFD8DC;
 
   span {
@@ -225,12 +225,12 @@
 
 .expired-tag {
   background: #FFEBEE;
-  color: #C62828;
+  color: #C43D3D;
 }
 
 .soon-tag {
-  background: #FFF9C4;
-  color: #F57F17;
+  background: #FBEFDD;
+  color: #D97A16;
 }
 
 .integrity-wrap {

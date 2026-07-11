@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 14px 10px;
-  border-bottom: 1px solid #F1F5F9;
+  border-bottom: 1px solid #F6F7F5;
 }
 
 .audit-pop-title {
@@ -50,9 +50,9 @@
   flex-shrink: 0;
 }
 
-.audit-icon--give    { color: #2E7D32; }
-.audit-icon--ungive  { color: #C62828; }
-.audit-icon--skip    { color: #E65100; }
+.audit-icon--give    { color: #2E9463; }
+.audit-icon--ungive  { color: #C43D3D; }
+.audit-icon--skip    { color: #D97A16; }
 .audit-icon--unskip  { color: #0277BD; }
 
 .audit-label {
@@ -75,8 +75,8 @@
   gap: 6px;
   padding: 8px 14px 12px;
   font-size: 11px;
-  color: #78909C;
-  border-top: 1px solid #F1F5F9;
+  color: #5D7286;
+  border-top: 1px solid #F6F7F5;
   line-height: 1.4;
 
   ion-icon { font-size: 14px; color: #FFA000; flex-shrink: 0; margin-top: 1px; }

@@ -1,205 +1,185 @@
+<!-- ── Single give sheet (spec §5) ─────────────────────────────────────────── -->
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar class="give-toolbar">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
-    <ion-title>Fill Child vaccine</ion-title>
+    <ion-title>
+      <span class="give-eyebrow">Give Dose</span>
+      <span class="give-title">{{ vaccineName || 'Vaccine' }}<span *ngIf="vaccineData?.Dose?.Name"> · {{ vaccineData.Dose.Name }}</span></span>
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class=ion-padding>
+<ion-content class="give-content">
 
-  <form [formGroup]="fg">
-    <div *ngIf="!fg.value.IsDisease">
-      <mat-form-field appearance="outline" class="example-full-width custom-input-item">
-        <mat-label class="brand-label">Brands</mat-label>
-        <input
-          type="text"
-          matInput
-          placeholder="Brands"
-          [matAutocomplete]="brandAuto"
-          [(ngModel)]="brandSearchTerm"
-          [ngModelOptions]="{ standalone: true }"
-          (ngModelChange)="onBrandSearchChange($event)"
-          (keydown.enter)="onBrandEnterKey($event)"
-          style="font-size: 15px;"
-        >
-        <mat-autocomplete #brandAuto="matAutocomplete" class="no-indent" (optionSelected)="onBrandOptionSelected($event.option.value)">
-          <mat-option [value]="'OHF'">OHF</mat-option>
-          <mat-option *ngFor="let user of filteredBrandName" [value]="user.Name">
-            {{ user.Name }}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
+  <form [formGroup]="fg" class="give-form">
+
+    <!-- Child chip + MR/PID -->
+    <div class="give-child-chip" *ngIf="childData?.Name">
+      <ion-icon name="person-circle-outline" class="give-child-icon"></ion-icon>
+      <span class="give-child-name">{{ childData.Name }}</span>
+      <span class="give-child-mr" *ngIf="childData?.Id">MR {{ childData.Id }}</span>
     </div>
 
-    <div *ngIf="Type!=='travel'">
-    <ion-item>
-      <ion-label color="primary" position="floating">Weight</ion-label>
-      <ion-input type="text" placeholder="Weight" formControlName="Weight"></ion-input>
-      <ion-text color="danger" *ngIf="fg.get('Weight').invalid && (fg.get('Weight').dirty || fg.get('Weight').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-        <ng-container *ngIf="fg.get('Weight').errors.required">
-          Weight is required
-        </ng-container>
-        <ng-container *ngIf="fg.get('Weight').errors.pattern">
-          Only numbers are allowed for Weight
-        </ng-container>
-      </ion-text>
-      <ion-text color="success" *ngIf="fg.get('Weight').valid && (fg.get('Weight').dirty || fg.get('Weight').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-        <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon> <!-- Use the name of the desired icon -->
-      </ion-text>
-      
-    </ion-item>
-    <ion-item>
-      <ion-label color="primary" position="floating">Height</ion-label>
-      <ion-input type="text" placeholder="Height" formControlName="Height"></ion-input>
-      <ion-text color="danger" *ngIf="fg.get('Height').invalid && (fg.get('Height').dirty || fg.get('Height').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-        <ng-container *ngIf="fg.get('Height').errors.required">
-          Height is required
-        </ng-container>
-        <ng-container *ngIf="fg.get('Height').errors.pattern">
-          Only numbers are allowed for Height
-        </ng-container>
-      </ion-text>
-      <ion-text color="success" *ngIf="fg.get('Height').valid && (fg.get('Height').dirty || fg.get('Height').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-        <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon> <!-- Use the name of the desired icon -->
-      </ion-text>
-    </ion-item>
-    <ion-item>
-      <ion-label color="primary" position="floating">OFC</ion-label>
-      <ion-input type="text" placeholder="OFC" formControlName="Circle"></ion-input>
-      <ion-text color="danger" *ngIf="fg.get('Circle').invalid && (fg.get('Circle').dirty || fg.get('Circle').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-        <ng-container *ngIf="fg.get('Circle').errors.required">
-          OFC is required
-        </ng-container>
-        <ng-container *ngIf="fg.get('Circle').errors.pattern">
-          Only numbers are allowed for OFC
-        </ng-container>
-      </ion-text>
-      <ion-text color="success" *ngIf="fg.get('Circle').valid && (fg.get('Circle').dirty || fg.get('Circle').touched)" style="font-size: 13px; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-        <ion-icon name="checkmark-circle-outline" style="margin-right: 12px; font-size: 25px;"></ion-icon> <!-- Use the name of the desired icon -->
-      </ion-text>
-    </ion-item>
-  </div>
-  <div>
-    <ion-item *ngIf="allowInventory" lines="none" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
-      <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Manufacturer</ion-label>
-      <ion-input type="text" readonly formControlName="Manufacturer" style="font-size: 12px; color: #444;"></ion-input>
-    </ion-item>
-
-    <!-- Route of administration: fixed by brand, read-only. No override at any role. -->
-    <ion-item *ngIf="fg.get('Route').value" lines="none" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
-      <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Route</ion-label>
-      <ion-input type="text" readonly formControlName="Route" style="font-size: 12px; color: #444;"></ion-input>
-    </ion-item>
-
-    <!-- Site of administration: constrained by Route. Chip-row (big touch targets, no dropdown).
-         Single-site routes (Oral/Intranasal) auto-lock; multi-site are editable. -->
-    <div *ngIf="availableSites && availableSites.length" class="site-chip-block">
-      <div class="site-chip-label">Site<span *ngIf="siteLocked" class="site-locked-tag"> &middot; fixed</span></div>
-      <div class="site-chip-row">
-        <button type="button" class="site-chip"
-                *ngFor="let s of availableSites"
-                [class.on]="fg.get('Site').value === s"
-                [class.locked]="siteLocked"
-                [disabled]="siteLocked"
-                (click)="selectSite(s)">{{ s }}</button>
+    <!-- 5.2 Growth params — compact 3-col grid (hidden for travel type) -->
+    <div class="growth-grid" *ngIf="Type !== 'travel'">
+      <div class="growth-cell">
+        <div class="growth-label">Weight</div>
+        <div class="growth-value">
+          <ion-input type="text" placeholder="—" formControlName="Weight"></ion-input>
+          <ion-icon name="checkmark-outline" class="growth-ok"
+            *ngIf="fg.get('Weight').valid && fg.get('Weight').value"></ion-icon>
+        </div>
+      </div>
+      <div class="growth-cell">
+        <div class="growth-label">Height</div>
+        <div class="growth-value">
+          <ion-input type="text" placeholder="—" formControlName="Height"></ion-input>
+          <ion-icon name="checkmark-outline" class="growth-ok"
+            *ngIf="fg.get('Height').valid && fg.get('Height').value"></ion-icon>
+        </div>
+      </div>
+      <div class="growth-cell">
+        <div class="growth-label">OFC</div>
+        <div class="growth-value">
+          <ion-input type="text" placeholder="—" formControlName="Circle"></ion-input>
+          <ion-icon name="checkmark-outline" class="growth-ok"
+            *ngIf="fg.get('Circle').valid && fg.get('Circle').value"></ion-icon>
+        </div>
       </div>
     </div>
 
-    <ion-item *ngIf="allowInventory" lines="none" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
-      <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Batch/Lot</ion-label>
-      <ion-select
-        [value]="fg.get('Lot').value"
-        placeholder="—"
-        style="font-size: 12px;"
-        (ionChange)="onLotChange($event)"
-      >
-        <ion-select-option *ngFor="let lot of availableLots" [value]="lot">{{ lot }}</ion-select-option>
-      </ion-select>
-    </ion-item>
+    <!-- 5.3 Single dose card -->
+    <div class="dose-card">
+      <div class="dose-card-head">{{ vaccineName || 'Vaccine' }}<span *ngIf="vaccineData?.Dose?.Name"> · {{ vaccineData.Dose.Name }}</span></div>
+      <div class="dose-card-body">
 
-    <ion-item *ngIf="allowInventory" lines="full" style="--min-height: 34px; --padding-top: 0; --padding-bottom: 0; --inner-padding-top: 0; --inner-padding-bottom: 0;">
-      <ion-label color="medium" style="font-size: 12px; min-width: 110px; max-width: 110px; flex-shrink: 0;">Expiry</ion-label>
-      <ion-select
-        [value]="fg.get('Expiry').value"
-        placeholder="—"
-        [disabled]="!availableExpiries || !availableExpiries.length"
-        style="font-size: 12px;"
-        (ionChange)="onExpiryChange($event)"
-      >
-        <ion-select-option *ngFor="let expiry of availableExpiries" [value]="expiry">{{ expiry }}</ion-select-option>
-      </ion-select>
-    </ion-item>
+        <!-- Brand — outlined Material autocomplete (hidden when recording past disease) -->
+        <mat-form-field appearance="outline" class="give-field" *ngIf="!fg.value.IsDisease">
+          <mat-label>Brand</mat-label>
+          <input
+            type="text"
+            matInput
+            placeholder="Brand"
+            [matAutocomplete]="brandAuto"
+            [(ngModel)]="brandSearchTerm"
+            [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="onBrandSearchChange($event)"
+            (keydown.enter)="onBrandEnterKey($event)">
+          <mat-autocomplete #brandAuto="matAutocomplete" class="no-indent"
+            (optionSelected)="onBrandOptionSelected($event.option.value)">
+            <mat-option [value]="'OHF'">OHF</mat-option>
+            <mat-option *ngFor="let user of filteredBrandName" [value]="user.Name">
+              {{ user.Name }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
 
-    <ion-item *ngIf="Type === 'travel'">
-      <ion-label color="primary" position="floating">Validity</ion-label>
-      <ion-select formControlName="Validity">
-        <ion-select-option value="365">1 Year</ion-select-option>
-        <ion-select-option value="730">2 Years</ion-select-option>
-        <ion-select-option value="1095">3 Years</ion-select-option>
-        <ion-select-option value="1460">4 Years</ion-select-option>
-        <ion-select-option value="1825">5 Years</ion-select-option>
-        <ion-select-option value="2190">6 Years</ion-select-option>
-        <ion-select-option value="2555">7 Years</ion-select-option>
-        <ion-select-option value="2920">8 Years</ion-select-option>
-        <ion-select-option value="3285">9 Years</ion-select-option>
-        <ion-select-option value="3650">10 Years</ion-select-option>
-        <ion-select-option value="4015">11 Years</ion-select-option>
-        <ion-select-option value="4380">12 Years</ion-select-option>
-        <ion-select-option value="4745">13 Years</ion-select-option>
-        <ion-select-option value="5110">14 Years</ion-select-option>
-        <ion-select-option value="5475">15 Years</ion-select-option>
-        <ion-select-option value="5840">16 Years</ion-select-option>
-        <ion-select-option value="6205">17 Years</ion-select-option>
-        <ion-select-option value="6570">18 Years</ion-select-option>
-        <ion-select-option value="30000">Life Time</ion-select-option>
-      </ion-select>
-    </ion-item> 
+        <!-- Facts caption — one line: Manufacturer · Route -->
+        <div class="dose-facts" *ngIf="fg.get('Manufacturer').value || fg.get('Route').value">
+          <span *ngIf="fg.get('Manufacturer').value">{{ fg.get('Manufacturer').value }}</span>
+          <span *ngIf="fg.get('Route').value"> · {{ fg.get('Route').value }}</span>
+        </div>
+
+        <!-- Batch / Expiry — kept as ion-select (batch-picker modal is a separate task) -->
+        <div class="give-inv-row" *ngIf="allowInventory">
+          <div class="give-inv-cell">
+            <div class="give-inv-label">Batch / Lot</div>
+            <ion-select
+              [value]="fg.get('Lot').value"
+              placeholder="—"
+              class="give-inv-select"
+              (ionChange)="onLotChange($event)">
+              <ion-select-option *ngFor="let lot of availableLots" [value]="lot">{{ lot }}</ion-select-option>
+            </ion-select>
+          </div>
+          <div class="give-inv-cell">
+            <div class="give-inv-label">Expiry</div>
+            <ion-select
+              [value]="fg.get('Expiry').value"
+              placeholder="—"
+              [disabled]="!availableExpiries || !availableExpiries.length"
+              class="give-inv-select"
+              (ionChange)="onExpiryChange($event)">
+              <ion-select-option *ngFor="let expiry of availableExpiries" [value]="expiry">{{ expiry }}</ion-select-option>
+            </ion-select>
+          </div>
+        </div>
+
+        <!-- Site chips -->
+        <div *ngIf="availableSites && availableSites.length" class="site-block">
+          <div class="site-label">Site<span *ngIf="siteLocked" class="site-fixed"> · fixed</span></div>
+          <div class="site-chips">
+            <button type="button" class="site-chip"
+                    *ngFor="let s of availableSites"
+                    [class.on]="fg.get('Site').value === s"
+                    [disabled]="siteLocked"
+                    (click)="selectSite(s)">{{ s }}</button>
+          </div>
+        </div>
+
+        <!-- Validity (travel type only) — outlined select -->
+        <mat-form-field appearance="outline" class="give-field give-field-select" *ngIf="Type === 'travel'">
+          <mat-label>Validity</mat-label>
+          <mat-select formControlName="Validity">
+            <mat-option value="365">1 Year</mat-option>
+            <mat-option value="730">2 Years</mat-option>
+            <mat-option value="1095">3 Years</mat-option>
+            <mat-option value="1460">4 Years</mat-option>
+            <mat-option value="1825">5 Years</mat-option>
+            <mat-option value="2190">6 Years</mat-option>
+            <mat-option value="2555">7 Years</mat-option>
+            <mat-option value="2920">8 Years</mat-option>
+            <mat-option value="3285">9 Years</mat-option>
+            <mat-option value="3650">10 Years</mat-option>
+            <mat-option value="4015">11 Years</mat-option>
+            <mat-option value="4380">12 Years</mat-option>
+            <mat-option value="4745">13 Years</mat-option>
+            <mat-option value="5110">14 Years</mat-option>
+            <mat-option value="5475">15 Years</mat-option>
+            <mat-option value="5840">16 Years</mat-option>
+            <mat-option value="6205">17 Years</mat-option>
+            <mat-option value="6570">18 Years</mat-option>
+            <mat-option value="30000">Life Time</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Disease toggle (Hepatitis A / Chicken Pox) + disease year -->
+        <div class="give-disease-row" *ngIf="vaccineName === 'Hepatitis A' || vaccineName === 'Chicken Pox'">
+          <ion-item lines="none" class="give-disease-item">
+            <ion-label color="primary">Disease</ion-label>
+            <ion-checkbox formControlName="IsDisease" slot="end"></ion-checkbox>
+          </ion-item>
+          <ion-item lines="none" class="give-disease-item" *ngIf="fg.value.IsDisease">
+            <ion-label color="primary">Disease Year</ion-label>
+            <ion-datetime picker-format="YYYY" displayFormat="YYYY" value="{{Date}}" formControlName="DiseaseYear"
+              min="{{birthYear}}" max="{{todaydate}}"></ion-datetime>
+          </ion-item>
+        </div>
+      </div>
     </div>
 
-    <!-- <ion-item>
-      <ion-label color="primary" position="floating">Disease</ion-label>
-      <ion-input type="text" placeholder="Disease" ></ion-input>
-    </ion-item> -->
-    <!--  -->
+    <!-- Schedule date (read-only reference) -->
+    <div class="give-schedule-note" *ngIf="Date">Scheduled for {{ Date | date:'dd-MM-yyyy' }}</div>
 
-    <ion-item *ngIf="vaccineName === 'Hepatitis A' || vaccineName === 'Chicken Pox'">
-      <ion-label color="primary">Disease</ion-label>
-      <ion-checkbox formControlName="IsDisease"></ion-checkbox>
-    </ion-item>
-
-    <ion-item *ngIf="fg.value.IsDisease">
-      <ion-label color="primary">Disease Year</ion-label>
-      <ion-datetime picker-format="YYYY" displayFormat="YYYY" value="{{Date}}" formControlName="DiseaseYear"
-        min="{{birthYear}}" max="{{todaydate}}"></ion-datetime>
-    </ion-item>
-
-    <!-- <ion-item *ngIf="!fg.value.IsDisease">
-      <ion-label color="primary">Brands</ion-label>
-      <ion-select formControlName="BrandId">
-        <ion-select-option *ngFor="let user of brandName" [value]="user.Id">{{user.Name}}</ion-select-option>
-      </ion-select>
-    </ion-item> -->
-
-    <ion-item>
-      <ion-label>Schedule Date</ion-label>
-      <ion-datetime disabled displayFormat="DD-MM-YYYY" value="{{Date}}"></ion-datetime>
-    </ion-item>
-    <ion-item *ngIf="!fg.value.IsDisease" (click)="picker.open()" class="date-field-item">
-      <!-- <ion-datetime  picker-format="DD-MM-YYYY" value="{{Date}}" formControlName="GivenDate" max = "{{todaydate}}"></ion-datetime> -->
-      <!-- <mat-form-field appearance="fill"> -->
-      <!-- <mat-label>Choose a date</mat-label> -->
-      <ion-label color="primary">Given Date</ion-label>
-      <div class="date-end" slot="end">
-        <input formControlName="GivenDate" matInput [matDatepicker]="picker" value="{{Date}}" max="{{todaydate}}" class="date-input">
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      </div>
+    <!-- 5.4 Given Date — outlined (hidden when recording past disease) -->
+    <div class="give-date-field" *ngIf="!fg.value.IsDisease" (click)="picker.open()">
+      <span class="give-date-label">Given Date</span>
+      <span class="give-date-value">
+        <input formControlName="GivenDate" matInput [matDatepicker]="picker" value="{{Date}}" max="{{todaydate}}" class="give-date-input" readonly>
+        {{ fg.get('GivenDate').value ? (fg.get('GivenDate').value | date:'dd-MM-yyyy') : (Date | date:'dd-MM-yyyy') }}
+      </span>
+      <ion-icon name="calendar-outline" class="give-date-icon"></ion-icon>
       <mat-datepicker #picker disabled="false"></mat-datepicker>
-      <!-- </mat-form-field> -->
-    </ion-item>
-    <!-- <ion-button (click)="fillVaccine()">Submit</ion-button> -->
-    <ion-button [disabled]="!isBrandFilled() || isScheduleDateValid()" (click)="fillVaccine()">Submit</ion-button>
-  </form>
-</ion-content>
+    </div>
 
+  </form>
+
+  <!-- 5.5 Sticky submit -->
+  <div class="give-submit-bar">
+    <button type="button" class="give-submit" [disabled]="!isBrandFilled() || isScheduleDateValid()" (click)="fillVaccine()">
+      SUBMIT — GIVE DOSE
+    </button>
+  </div>
+</ion-content>

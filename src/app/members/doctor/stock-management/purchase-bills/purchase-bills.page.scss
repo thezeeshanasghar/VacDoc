@@ -8,7 +8,7 @@
   flex: 1;
   width: 100%;
   padding: 9px 12px;
-  border: 1.5px solid #0D6EAD;
+  border: 1.5px solid #1178A9;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
@@ -29,7 +29,7 @@
 .empty-state {
   text-align: center;
   margin-top: 60px;
-  color: #78909C;
+  color: #5D7286;
 
   ion-icon {
     font-size: 56px;
@@ -81,13 +81,13 @@
 
 .bill-supplier {
   font-size: 13px;
-  color: #0D6EAD;
+  color: #1178A9;
   font-weight: 600;
 }
 
 .bill-date {
   font-size: 12px;
-  color: #78909C;
+  color: #5D7286;
 }
 
 .bill-lines-count {
@@ -97,7 +97,7 @@
 }
 
 .bill-amounts {
-  border-top: 1px solid #F1F5F9;
+  border-top: 1px solid #F6F7F5;
   padding-top: 8px;
   margin-bottom: 10px;
 }
@@ -122,11 +122,11 @@
 .total-row .amt-val {
   font-weight: 700;
   font-size: 15px;
-  color: #0b6098;
+  color: #0F6893;
 }
 
 .paid-val {
-  color: #2E7D32;
+  color: #2E9463;
   font-weight: 600;
 }
 

@@ -1,5 +1,5 @@
 .doc-content {
-  --background: #F1F5F9;
+  --background: #F6F7F5;
 }
 
 .doc-grid {
@@ -19,12 +19,12 @@
   align-items: flex-start;
   cursor: pointer;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(11, 45, 92, 0.14);
+  box-shadow: 0 4px 20px rgba(12, 54, 70, 0.14);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 
   &:active {
     transform: scale(0.97);
-    box-shadow: 0 2px 10px rgba(11, 45, 92, 0.10);
+    box-shadow: 0 2px 10px rgba(12, 54, 70, 0.10);
   }
 }
 
@@ -65,7 +65,7 @@
   font-size: 18px;
 }
 
-.card-clinics  { background: linear-gradient(145deg, #0B2D5C 0%, #0D6EAD 100%); }
-.card-profile  { background: linear-gradient(145deg, #FF4500 0%, #FF6B35 100%); }
-.card-pa       { background: linear-gradient(145deg, #2E7D32 0%, #43A047 100%); }
+.card-clinics  { background: linear-gradient(145deg, #0C3646 0%, #1178A9 100%); }
+.card-profile  { background: linear-gradient(145deg, #D97A16 0%, #DD872D 100%); }
+.card-pa       { background: linear-gradient(145deg, #2E9463 0%, #43A177 100%); }
 .card-password { background: linear-gradient(145deg, #1A1A2E 0%, #2E2E4E 100%); }

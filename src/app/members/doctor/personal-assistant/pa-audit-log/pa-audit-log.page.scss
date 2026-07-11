@@ -1,4 +1,4 @@
-.audit-content { --background: #F1F5F9; }
+.audit-content { --background: #F6F7F5; }
 
 .audit-wrap { padding: 16px 16px 24px; }
 
@@ -11,7 +11,7 @@
   background: #ffffff;
   border-radius: 12px;
   padding: 14px 16px;
-  box-shadow: 0 2px 10px rgba(11, 45, 92, 0.08);
+  box-shadow: 0 2px 10px rgba(12, 54, 70, 0.08);
   margin-bottom: 16px;
 }
 
@@ -25,7 +25,7 @@
   label {
     font-size: 10px;
     font-weight: 700;
-    color: #78909C;
+    color: #5D7286;
     letter-spacing: 0.5px;
   }
 }
@@ -35,8 +35,8 @@
   font-size: 13px;
   font-weight: 500;
   color: #1A1A2E;
-  background: #F1F5F9;
-  border: 1.5px solid #CBD5E1;
+  background: #F6F7F5;
+  border: 1.5px solid #DDE4E3;
   border-radius: 8px;
   outline: none;
   appearance: none;
@@ -47,16 +47,16 @@
   padding-right: 30px;
   cursor: pointer;
 
-  &:focus { border-color: #0D6EAD; background-color: #ffffff; }
+  &:focus { border-color: #1178A9; background-color: #ffffff; }
 }
 
 .filter-summary {
   font-size: 12px;
-  color: #78909C;
+  color: #5D7286;
   white-space: nowrap;
   margin-left: auto;
 
-  .summary-num { font-weight: 700; color: #0B2D5C; }
+  .summary-num { font-weight: 700; color: #0C3646; }
 }
 
 // ── Log cards ─────────────────────────────────────────────────────────────────
@@ -65,14 +65,14 @@
   border-radius: 12px;
   padding: 14px 16px;
   margin-bottom: 10px;
-  box-shadow: 0 2px 8px rgba(11, 45, 92, 0.07);
-  border-left: 4px solid #CBD5E1;
+  box-shadow: 0 2px 8px rgba(12, 54, 70, 0.07);
+  border-left: 4px solid #DDE4E3;
 
-  &--success { border-left-color: #2E7D32; }
-  &--danger  { border-left-color: #C62828; }
-  &--primary { border-left-color: #0D6EAD; }
-  &--warning { border-left-color: #E65100; }
-  &--medium  { border-left-color: #78909C; }
+  &--success { border-left-color: #2E9463; }
+  &--danger  { border-left-color: #C43D3D; }
+  &--primary { border-left-color: #1178A9; }
+  &--warning { border-left-color: #D97A16; }
+  &--medium  { border-left-color: #5D7286; }
 }
 
 // Row 1 — PA name + date
@@ -91,14 +91,14 @@
 
 .log-pa-icon {
   font-size: 18px;
-  color: #0D6EAD;
+  color: #1178A9;
   flex-shrink: 0;
 }
 
 .log-pa-name {
   font-size: 15px;
   font-weight: 700;
-  color: #0B2D5C;
+  color: #0C3646;
 }
 
 .log-date {
@@ -122,11 +122,11 @@
   border-radius: 20px;
   letter-spacing: 0.2px;
 
-  &--success { background: #E8F5E9; color: #2E7D32; }
-  &--danger  { background: #FEECEC; color: #C62828; }
-  &--primary { background: #E3F0FF; color: #0D6EAD; }
-  &--warning { background: #FFF3E0; color: #E65100; }
-  &--medium  { background: #F1F5F9; color: #546E7A; }
+  &--success { background: #E8F5E9; color: #2E9463; }
+  &--danger  { background: #FEECEC; color: #C43D3D; }
+  &--primary { background: #E3F0FF; color: #1178A9; }
+  &--warning { background: #FFF3E0; color: #D97A16; }
+  &--medium  { background: #F6F7F5; color: #546E7A; }
 }
 
 .reversal-chip {
@@ -135,7 +135,7 @@
   padding: 2px 8px;
   border-radius: 20px;
   background: #FFF3E0;
-  color: #E65100;
+  color: #D97A16;
   letter-spacing: 0.3px;
 }
 
@@ -150,7 +150,7 @@
 // Notes
 .log-notes {
   font-size: 12px;
-  color: #78909C;
+  color: #5D7286;
   font-style: italic;
   display: flex;
   align-items: center;
@@ -163,7 +163,7 @@
 // Reversal ref
 .log-reversal-ref {
   font-size: 11px;
-  color: #E65100;
+  color: #D97A16;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -178,7 +178,7 @@
   padding: 60px 20px;
   color: #90A4AE;
 
-  ion-icon { font-size: 52px; display: block; margin: 0 auto 12px; color: #CBD5E1; }
+  ion-icon { font-size: 52px; display: block; margin: 0 auto 12px; color: #DDE4E3; }
   p { font-size: 14px; margin: 0; }
 }
 
@@ -195,9 +195,9 @@
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  border: 1.5px solid #CBD5E1;
+  border: 1.5px solid #DDE4E3;
   background: #ffffff;
-  color: #0D6EAD;
+  color: #1178A9;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -205,7 +205,7 @@
   font-size: 16px;
   transition: background 0.15s, border-color 0.15s;
 
-  &:hover:not([disabled]) { background: #E3F0FF; border-color: #0D6EAD; }
+  &:hover:not([disabled]) { background: #E3F0FF; border-color: #1178A9; }
   &[disabled] { opacity: 0.35; cursor: default; }
 
   ion-icon { font-size: 16px; }
@@ -214,7 +214,7 @@
 .page-label {
   font-size: 13px;
   font-weight: 600;
-  color: #0B2D5C;
+  color: #0C3646;
   min-width: 60px;
   text-align: center;
 }

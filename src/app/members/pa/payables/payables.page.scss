@@ -38,15 +38,15 @@
   ion-icon { font-size: 24px; }
 }
 
-.kpi-icon-blue { background: #E8F0FC; ion-icon { color: #0D6EAD; } }
-.kpi-icon-green { background: #E8F5E9; ion-icon { color: #2E7D32; } }
+.kpi-icon-blue { background: #E8F0FC; ion-icon { color: #1178A9; } }
+.kpi-icon-green { background: #E8F5E9; ion-icon { color: #2E9463; } }
 
 .kpi-body { flex: 1; min-width: 0; }
 
 .kpi-label {
   font-size: 11px;
   font-weight: 700;
-  color: #78909C;
+  color: #5D7286;
   letter-spacing: 0.3px;
   margin: 0 0 2px;
   text-transform: uppercase;
@@ -55,12 +55,12 @@
 .kpi-value {
   font-size: 22px;
   font-weight: 800;
-  color: #0D6EAD;
+  color: #1178A9;
   margin: 0 0 2px;
   line-height: 1.1;
 }
 
-.kpi-value-green { color: #2E7D32; }
+.kpi-value-green { color: #2E9463; }
 
 .kpi-sub {
   font-size: 10px;
@@ -83,9 +83,9 @@
   gap: 6px;
   padding: 11px 8px;
   border-radius: 50px;
-  border: 2px solid #0D6EAD;
+  border: 2px solid #1178A9;
   background: transparent;
-  color: #0D6EAD;
+  color: #1178A9;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -94,7 +94,7 @@
   ion-icon { font-size: 17px; }
 
   &.tab-active {
-    background: #0D6EAD;
+    background: #1178A9;
     color: #fff;
   }
 }
@@ -136,7 +136,7 @@
   height: 26px;
   border-radius: 50%;
   background: #E8F0FC;
-  color: #0D6EAD;
+  color: #1178A9;
   font-size: 12px;
   font-weight: 700;
   display: flex;
@@ -223,12 +223,12 @@
 
 .action-done {
   background: #E8F5E9;
-  color: #2E7D32;
+  color: #2E9463;
 }
 
 .action-cancel {
   background: #FFEBEE;
-  color: #C62828;
+  color: #C43D3D;
 }
 
 // Completed tab status icons
@@ -236,8 +236,8 @@
   ion-icon { font-size: 26px; }
 }
 
-.icon-confirmed { color: #2E7D32; }
-.icon-pending   { color: #E65100; }
+.icon-confirmed { color: #2E9463; }
+.icon-pending   { color: #D97A16; }
 
 // ── Badges ───────────────────────────────────────────────────────────────────
 .badge {
@@ -260,14 +260,14 @@
 
 .badge-pending {
   background: #FFF3E0;
-  color: #E65100;
-  &::before { background: #E65100; }
+  color: #D97A16;
+  &::before { background: #D97A16; }
 }
 
 .badge-done {
   background: #E8F5E9;
-  color: #2E7D32;
-  &::before { background: #2E7D32; }
+  color: #2E9463;
+  &::before { background: #2E9463; }
 }
 
 .badge-handover {
@@ -281,7 +281,7 @@
   margin: 0 14px 12px;
   background: #fffbea;
   border: 1px solid #ffe082;
-  border-left: 4px solid #f9a825;
+  border-left: 4px solid #D97A16;
   border-radius: 8px;
   padding: 9px 12px;
 }
@@ -295,7 +295,7 @@
 
 .assignment-guidelines-icon {
   font-size: 15px;
-  color: #f9a825;
+  color: #D97A16;
 }
 
 .assignment-guidelines-title {

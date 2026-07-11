@@ -1,198 +1,221 @@
-input
-{
-    border:0
+// ── Bulk / single give sheet (spec §5) ──────────────────────────────────────
+.give-toolbar {
+  --background: var(--vac-petrol-dark);
+  --color: #fff;
+}
+ion-title {
+  padding: 0 4px;
+  text-align: left;
+}
+.give-eyebrow {
+  display: block;
+  font-family: var(--vac-font-head);
+  font-weight: 600;
+  font-size: 9px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--vac-gold);
+  line-height: 1.1;
+}
+.give-title {
+  display: block;
+  font-family: var(--vac-font-head);
+  font-weight: 700;
+  font-size: 16px;
+  color: #fff;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.payment-row {
+.give-content { --background: var(--vac-surface); }
+.give-form { padding: 12px 12px 20px; }
+
+// 5.1 Skip notice
+.skip-notice {
   display: flex;
   align-items: center;
+  gap: 10px;
+  background: var(--vac-hairline);
+  border: 1px dashed var(--vac-border-strong);
+  border-radius: 10px;
+  padding: 9px 12px;
+  margin-bottom: 12px;
+}
+.skip-notice-text { font-size: 11.5px; color: var(--vac-ink-2); line-height: 1.35; }
+.skip-notice-text s { color: var(--vac-ink-4); }
+.skip-notice-pill {
+  margin-left: auto;
+  flex-shrink: 0;
+  background: var(--vac-warn-tint);
+  color: var(--vac-warn);
+  font-weight: 700;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+// 5.2 Growth grid
+.growth-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
-  padding: 8px 16px;
+  margin-bottom: 12px;
 }
-
-.payment-label {
-  font-size: 14px;
-  min-width: 70px;
-}
-
-.mode-select {
-  width: 110px;
-  padding: 7px 8px;
-  border: 1px solid #aaa;
-  border-radius: 6px;
-  font-size: 13px;
+.growth-cell {
   background: #fff;
-  color: #000;
-  outline: none;
-  cursor: pointer;
+  border: 1px solid var(--vac-border);
+  border-radius: 10px;
+  padding: 8px 10px;
 }
+.growth-label {
+  font-family: var(--vac-font-body);
+  font-weight: 700;
+  font-size: 10px;
+  color: var(--vac-blue);
+}
+.growth-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  ion-input {
+    --padding-start: 0; --padding-top: 2px; --padding-bottom: 0;
+    font-family: var(--vac-font-body);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--vac-ink);
+    min-height: 22px;
+  }
+}
+.growth-ok { color: var(--vac-green); font-size: 15px; flex-shrink: 0; }
 
-.service-input {
-  flex: 1;
-  padding: 7px 10px;
-  border: 1px solid #aaa;
-  border-radius: 6px;
-  font-size: 14px;
+// 5.3 Per-dose card
+.dose-card {
   background: #fff;
-  color: #000;
-  outline: none;
+  border: 1px solid var(--vac-border);
+  border-radius: 14px;
+  box-shadow: var(--vac-shadow-sm);
+  margin-bottom: 11px;
+  overflow: hidden;
 }
-
-.date-input {
-    width: 110px;
-    min-width: 110px;
-    color: var(--ion-text-color, #000000) !important;
-    background: transparent;
-    border: 0 !important;
-    text-align: right;
-}
-
-.date-field-item {
-    --inner-padding-end: 8px;
-    --min-height: 56px;
-}
-
-.date-end {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-:host ::ng-deep .date-end .mat-datepicker-toggle {
-    display: flex;
-    align-items: center;
-    margin: 0;
-}
-
-:host ::ng-deep .date-end .mat-datepicker-toggle button,
-:host ::ng-deep .date-end .mat-mdc-icon-button {
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-:host ::ng-deep .date-end .mat-datepicker-toggle-default-icon {
-    width: 20px;
-    height: 20px;
-}
-
-.bulk-brand-row {
-    margin-top: 8px;
-    padding: 0 8px;
-    box-sizing: border-box;
-}
-
-.bulk-dose-hint {
-    font-size: 12px;
-    color: var(--ion-color-medium);
-    margin: 0 0 4px;
-}
-
-.example-full-width,
-.custom-input-item {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-:host ::ng-deep .example-full-width .mat-form-field-wrapper,
-:host ::ng-deep .custom-input-item .mat-form-field-wrapper {
-    padding-bottom: 0 !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-}
-
-.brand-label {
-    color: var(--ion-text-color, #000000) !important;
-}
-
-/* Theme-aware Angular Material controls on this page */
-:host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline,
-:host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-thick {
-    color: var(--ion-color-primary, #3880ff) !important;
-}
-
-:host ::ng-deep .mat-form-field-label,
-:host ::ng-deep .mat-mdc-form-field .mdc-floating-label,
-:host ::ng-deep .mat-mdc-form-field .mdc-floating-label.mdc-floating-label--float-above,
-:host ::ng-deep .mat-mdc-form-field.mat-focused .mdc-floating-label,
-:host ::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-label,
-:host ::ng-deep .brand-label {
-    color: var(--ion-text-color, #000000) !important;
-}
-
-:host ::ng-deep .mat-input-element,
-:host ::ng-deep .mat-mdc-input-element,
-:host ::ng-deep input[matinput],
-:host ::ng-deep input[matInput] {
-    color: var(--ion-text-color, #000000) !important;
-    -webkit-text-fill-color: var(--ion-text-color, #000000) !important;
-    caret-color: var(--ion-text-color, #000000) !important;
-}
-
-:host ::ng-deep .mat-input-element::placeholder,
-:host ::ng-deep .mat-mdc-input-element::placeholder,
-:host ::ng-deep input[matInput]::placeholder {
-    color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.6) !important;
-}
-
-:host ::ng-deep .mat-autocomplete-panel,
-:host ::ng-deep .mat-mdc-autocomplete-panel {
-    background: var(--ion-item-background, var(--ion-background-color, #ffffff)) !important;
-}
-
-:host ::ng-deep .mat-option,
-:host ::ng-deep .mat-option-text,
-:host ::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
-    color: var(--ion-text-color, #000000) !important;
-}
-/* Site of administration — per-dose chip-row picker (constrained by Route). */
-.site-chip-block {
-  padding: 6px 12px 10px;
-}
-.site-chip-label {
+.dose-card-head {
+  font-family: var(--vac-font-head);
+  font-weight: 700;
   font-size: 12px;
-  color: var(--ion-color-medium, #92949c);
+  color: var(--vac-petrol);
+  background: var(--vac-surface);
+  padding: 8px 12px;
+}
+.dose-card-body { padding: 11px 12px 12px; }
+
+// Outlined Material field, brand-blue
+.give-field {
+  width: 100%;
+  ::ng-deep .mat-form-field-outline { color: var(--vac-blue) !important; }
+  ::ng-deep .mat-form-field-outline-thick { color: var(--vac-blue) !important; }
+  ::ng-deep .mat-form-field-label { color: var(--vac-blue) !important; font-family: var(--vac-font-body); font-weight: 700; }
+  ::ng-deep .mat-input-element,
+  ::ng-deep .mat-select-value-text { font-family: var(--vac-font-body); font-weight: 500; font-size: 13.5px; color: var(--vac-ink); }
+}
+
+// Facts caption
+.dose-facts {
+  font-family: var(--vac-font-body);
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--vac-ink-4);
+  line-height: 1.4;
+  margin: -2px 0 9px;
+}
+.dose-facts-batch { color: var(--vac-blue); font-weight: 500; cursor: pointer; b { font-weight: 700; } }
+.dose-facts-fefo {
+  display: inline-block;
+  background: var(--vac-green-tint);
+  color: var(--vac-green);
+  font-weight: 700;
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+// Site chips
+.site-block { margin-top: 2px; }
+.site-label {
+  font-family: var(--vac-font-head);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--vac-ink-4);
   margin-bottom: 6px;
 }
-.site-locked-tag {
-  color: #9aa7b2;
-  font-size: 11px;
-}
-.site-chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
+.site-fixed { color: var(--vac-warn); font-weight: 600; letter-spacing: 0; text-transform: none; }
+.site-chips { display: flex; gap: 6px; flex-wrap: wrap; }
 .site-chip {
-  border: 1.5px solid #c3ccd4;
-  background: #f4f6f8;
-  color: #3a4652;
-  border-radius: 20px;
-  padding: 9px 15px;
-  font-size: 14px;
-  line-height: 1;
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
+  font-family: var(--vac-font-body);
+  font-weight: 600;
+  font-size: 11px;
+  border: 1.4px solid var(--vac-border);
+  background: #F8FAFC;
+  color: var(--vac-ink-2);
+  border-radius: 999px;
+  padding: 6px 12px;
+  &.on { background: var(--vac-blue); border-color: var(--vac-blue); color: #fff; }
+  &:disabled { opacity: 1; }
 }
-.site-chip.on {
-  background: var(--ion-color-primary, #3880ff);
-  border-color: var(--ion-color-primary, #3880ff);
-  color: #fff;
+
+// 5.4 Given date — outlined
+.give-date-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1.5px solid var(--vac-blue);
+  border-radius: 10px;
+  padding: 11px 12px;
+  margin-top: 2px;
+}
+.give-date-label {
+  position: absolute;
+  top: -8px; left: 10px;
+  background: var(--vac-surface);
+  padding: 0 5px;
+  font-family: var(--vac-font-body);
   font-weight: 700;
+  font-size: 10.5px;
+  color: var(--vac-blue);
 }
-.site-chip.locked {
-  border-style: dashed;
-  color: #9aa7b2;
-  cursor: default;
-  opacity: 0.9;
+.give-date-value {
+  flex: 1;
+  font-family: var(--vac-font-body);
+  font-weight: 500;
+  font-size: 13.5px;
+  color: var(--vac-ink);
 }
-@media (max-width: 767px) {
-  .site-chip {
-    padding: 11px 16px;
-    font-size: 15px;
-  }
+.give-date-input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.give-date-icon { color: var(--vac-ink-4); font-size: 18px; }
+
+// 5.5 Sticky submit
+.give-submit-bar {
+  position: sticky;
+  bottom: 0;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(246,247,245,0) 0%, var(--vac-surface) 40%);
+}
+.give-submit {
+  width: 100%;
+  background: var(--vac-green);
+  color: #fff;
+  font-family: var(--vac-font-head);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: .08em;
+  border: 0;
+  border-radius: 10px;
+  padding: 13px;
+  box-shadow: var(--vac-shadow-give-lg);
+  &:disabled { background: var(--vac-border-strong); color: #eef; box-shadow: none; }
 }

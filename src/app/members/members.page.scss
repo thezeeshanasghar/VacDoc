@@ -71,7 +71,7 @@ ion-menu ion-header ion-title {
 }
 
 ion-menu ion-content {
-  --background: #0B2D5C;
+  --background: #0C3646;
 }
 
 ion-menu ion-list.menu {
@@ -82,7 +82,7 @@ ion-menu ion-list.menu {
 // ── Menu items ────────────────────────────────────────────────────────────────
 ion-menu ion-item {
   --background:           transparent;
-  --background-activated: rgba(20, 184, 166, 0.20);
+  --background-activated: rgba(111,177,165, 0.20);
   --color:                rgba(255, 255, 255, 0.85);
   --border-color:         transparent;
   --inner-border-width:   0;
@@ -127,4 +127,64 @@ ion-menu ion-avatar ion-icon {
 
 .sub-sub-item {
   font-size: 0.88em;
+}
+
+// ═══ Desktop ≥1024px — persistent sidebar + single-row header (spec §2.2) ════
+@media (min-width: 1024px) {
+  ion-split-pane {
+    --side-width: 224px;
+    --side-min-width: 224px;
+    --side-max-width: 224px;
+  }
+
+  ion-menu {
+    --width: 224px;
+    --background: linear-gradient(180deg, #092833 0%, #0C3646 100%);
+  }
+  ion-menu ion-content {
+    --background: transparent;
+  }
+
+  // Menu header becomes the logo block
+  ion-menu ion-header ion-toolbar {
+    --background: transparent;
+    --border-width: 0;
+  }
+  ion-menu ion-header ion-title {
+    font-family: var(--vac-font-head);
+    font-weight: 800;
+    font-size: 17px;
+  }
+
+  // Nav items
+  ion-menu ion-item {
+    --background: transparent;
+    --color: #B9CDD9;
+    font-family: var(--vac-font-body);
+    font-weight: 600;
+    font-size: 13px;
+    --padding-start: 12px;
+    --min-height: 40px;
+    margin: 2px 10px;
+    border-radius: 9px;
+  }
+  ion-menu ion-item ion-icon { color: #6FB1A5 !important; font-size: 17px; }
+  ion-menu ion-item.selected,
+  ion-menu ion-item[color="primary"] {
+    --background: rgba(255,255,255,.12);
+    --color: #fff;
+    border-left: 2px solid var(--vac-gold);
+  }
+
+  // The two-row petrol header collapses to ONE white bar on desktop.
+  .shell-header .toolbar-blue {
+    --background: #fff;
+    --color: var(--vac-petrol);
+    --border-width: 0 0 1px 0;
+    --border-color: var(--vac-border);
+    &::after { display: none; }        // hide the mobile gold hairline
+    ion-title { color: var(--vac-petrol); font-family: var(--vac-font-head); font-weight: 700; font-size: 19px; }
+  }
+  // Hide the second (navy icon) row — actions move into page headers on desktop.
+  .shell-header .toolbar-green { display: none; }
 }

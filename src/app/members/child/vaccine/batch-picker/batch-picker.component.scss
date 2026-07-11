@@ -1,0 +1,63 @@
+// Batch/Lot picker bottom sheet (spec §6)
+.bp-sheet {
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  box-shadow: var(--vac-shadow-sheet);
+  padding: 10px 14px calc(16px + env(safe-area-inset-bottom));
+}
+.bp-grab { width: 36px; height: 4px; background: var(--vac-border); border-radius: 999px; margin: 2px auto 12px; }
+.bp-eyebrow {
+  font-family: var(--vac-font-head);
+  font-weight: 600; font-size: 9px; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--vac-gold-text); text-align: center;
+}
+.bp-title {
+  font-family: var(--vac-font-head);
+  font-weight: 700; font-size: 14px; color: var(--vac-petrol);
+  text-align: center; margin: 2px 0 4px;
+}
+.bp-note {
+  font-family: var(--vac-font-body);
+  font-size: 11px; color: var(--vac-ink-4); text-align: center; margin-bottom: 12px;
+}
+
+.bp-list { display: flex; flex-direction: column; gap: 8px; }
+.bp-row {
+  display: flex; align-items: center; gap: 9px;
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--vac-border);
+  border-radius: 11px;
+  padding: 11px 12px;
+  text-align: left;
+  &.sel { background: var(--vac-blue-tint); border-color: var(--vac-blue); }
+  &.expired { opacity: .9; }
+}
+.bp-rowtext { flex: 1; min-width: 0; }
+.bp-batch { font-family: var(--vac-font-body); font-weight: 700; font-size: 12.5px; color: var(--vac-ink); }
+.bp-sub { font-family: var(--vac-font-body); font-weight: 500; font-size: 10.5px; color: var(--vac-ink-3); margin-top: 1px; }
+.bp-sub--red { color: var(--vac-red); }
+.bp-fefo {
+  flex-shrink: 0;
+  background: var(--vac-green-tint); color: var(--vac-green);
+  font-weight: 700; font-size: 9px; padding: 2px 7px; border-radius: 999px;
+}
+.bp-tick { color: var(--vac-blue); font-size: 18px; flex-shrink: 0; }
+.bp-slash { color: var(--vac-red); font-size: 17px; flex-shrink: 0; }
+
+.bp-use {
+  width: 100%;
+  margin-top: 14px;
+  background: var(--vac-blue);
+  color: #fff;
+  font-family: var(--vac-font-head);
+  font-weight: 700; font-size: 13px; letter-spacing: .06em;
+  border: 0; border-radius: 10px; padding: 13px;
+  box-shadow: var(--vac-shadow-blue);
+  &:disabled { background: var(--vac-border-strong); color: #eef; box-shadow: none; }
+}
+.bp-override-note {
+  font-family: var(--vac-font-body);
+  font-size: 10px; color: var(--vac-ink-4); text-align: center;
+  margin-top: 12px; line-height: 1.4;
+}

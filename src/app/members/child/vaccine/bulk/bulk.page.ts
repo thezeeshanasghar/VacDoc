@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { LoadingController } from "@ionic/angular";
+import { LoadingController, ModalController } from "@ionic/angular";
+import { BatchPickerComponent } from "../batch-picker/batch-picker.component";
 import { BulkService } from "src/app/services/bulk.service";
 import { ToastService } from "src/app/shared/toast.service";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
@@ -26,6 +27,7 @@ export class BulkPage implements OnInit {
   currentDate: any;
   currentDate1: any;
   bulkData: any;
+  skippedDoseNames: string[] = [];
   fg: FormGroup;
   todaydate: any;
   BrandIds: any[] = [];
@@ -118,6 +120,7 @@ export class BulkPage implements OnInit {
 
   constructor(
     private loadingController: LoadingController,
+    private modalController: ModalController,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private formBuilder: FormBuilder,
@@ -223,6 +226,10 @@ export class BulkPage implements OnInit {
       res => {
         if (res.IsSuccess) {
           // Spec §3.3: skipped doses leave the pipeline — never load them into bulk give.
+          // Keep their names for the skip-notice banner (spec §5.1).
+          this.skippedDoseNames = (res.ResponseData || [])
+            .filter((d: any) => d.IsSkip)
+            .map((d: any) => (d.Dose && d.Dose.Name) ? d.Dose.Name : 'Dose');
           this.bulkData = (res.ResponseData || []).filter((d: any) => !d.IsSkip);
           this.initializeBrandSearch();
         } else {
@@ -517,8 +524,47 @@ export class BulkPage implements OnInit {
   }
 
   onValidityChange(index: number, event: any): void {
-    const validityValue = event && event.detail ? event.detail.value : event;
+    // Robust for ion-select (event.detail.value) and mat-select (event.value).
+    const validityValue = (event && event.detail) ? event.detail.value
+                        : (event && event.value !== undefined) ? event.value
+                        : event;
     this.selectedValidityPerRow[index] = validityValue || "";
+  }
+
+  // ── Batch picker hooks (spec §6) — implemented with the shared BatchPicker ──
+  isFefoLot(index: number): boolean {
+    // The lot list is FEFO-sorted (earliest expiry first); the first is the FEFO pick.
+    const lots = this.availableLotsPerRow[index] || [];
+    return !!this.selectedLotsPerRow[index] && lots.length > 0
+      && lots[0] === this.selectedLotsPerRow[index];
+  }
+
+  batchOverrideReasons: string[] = [];
+
+  async openBatchSheet(index: number) {
+    if (!this.allowInventory) { return; }
+    const brandName = this.brandSearchTerms[index] || '';
+    const lots = this.availableBatchLotsPerRow[index] || [];
+    if (!lots.length) { return; }
+    const modal = await this.modalController.create({
+      component: BatchPickerComponent,
+      cssClass: 'batch-picker-modal',
+      componentProps: {
+        brandName,
+        lots,
+        selectedLot: this.selectedLotsPerRow[index],
+        mode: 'give',
+      },
+    });
+    await modal.present();
+    const { data, role } = await modal.onWillDismiss();
+    if (role === 'use' && data && data.batchLot) {
+      this.selectedLotsPerRow[index] = data.batchLot;
+      this.refreshExpiriesForRow(index, data.batchLot);
+      if (data.expiry) { this.selectedExpiriesPerRow[index] = data.expiry; }
+      // Log the FEFO override reason so it can be sent with the give (audit trail).
+      this.batchOverrideReasons[index] = data.overrideReason || '';
+    }
   }
 
   private refreshExpiriesForRow(index: number, lotValue: string): void {

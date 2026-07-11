@@ -20,7 +20,7 @@
 
 .dash-tagline {
   font-size: 14px;
-  color: #546E7A;
+  color: #5D7286;
   margin: 0;
 }
 
@@ -42,14 +42,14 @@
   cursor: pointer;
   overflow: hidden;
   background: #ffffff;
-  box-shadow: 0 2px 12px rgba(11, 45, 92, 0.08);
+  box-shadow: 0 2px 12px rgba(12, 54, 70, 0.08);
   border: 1.5px solid transparent;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   text-decoration: none;
 
   &:active {
     transform: scale(0.97);
-    box-shadow: 0 1px 6px rgba(11, 45, 92, 0.06);
+    box-shadow: 0 1px 6px rgba(12, 54, 70, 0.06);
   }
 }
 
@@ -77,7 +77,7 @@
 
 .dash-card-sub {
   font-size: 11px;
-  color: #78909C;
+  color: #5D7286;
 }
 
 .dash-card-arrow {
@@ -167,9 +167,9 @@
 // Orange/Red family
 .card-alerts {
   background: #FFF3E0; border-color: #FFCC80;
-  .dash-card-icon { background: #FFE0B2; ion-icon { color: #E65100; } }
-  .dash-card-label { color: #E65100; }
-  .dash-card-arrow { color: #E65100; }
+  .dash-card-icon { background: #FBEFDD; ion-icon { color: #D97A16; } }
+  .dash-card-label { color: #D97A16; }
+  .dash-card-arrow { color: #D97A16; }
 }
 .card-unapproved {
   background: #FEECEC; border-color: #FFCDD2;
@@ -180,32 +180,32 @@
 
 // Purple family
 .card-brand-prices {
-  background: #F3E5F5; border-color: #E1BEE7;
-  .dash-card-icon { background: #E1BEE7; ion-icon { color: #7B1FA2; } }
-  .dash-card-label { color: #7B1FA2; }
-  .dash-card-arrow { color: #7B1FA2; }
+  background: #F3E5F5; border-color: #DCE6F0;
+  .dash-card-icon { background: #DCE6F0; ion-icon { color: #0C3646; } }
+  .dash-card-label { color: #0C3646; }
+  .dash-card-arrow { color: #0C3646; }
 }
 .card-financial {
-  background: #F3E5F5; border-color: #E1BEE7;
-  .dash-card-icon { background: #E1BEE7; ion-icon { color: #7B1FA2; } }
-  .dash-card-label { color: #7B1FA2; }
-  .dash-card-arrow { color: #7B1FA2; }
+  background: #F3E5F5; border-color: #DCE6F0;
+  .dash-card-icon { background: #DCE6F0; ion-icon { color: #0C3646; } }
+  .dash-card-label { color: #0C3646; }
+  .dash-card-arrow { color: #0C3646; }
 }
 
 // Green family (collections / money in)
 .card-collections {
   background: #E7F6EC; border-color: #B6E2C4;
-  .dash-card-icon { background: #C6ECD2; ion-icon { color: #1F9D55; } }
-  .dash-card-label { color: #1B8049; }
-  .dash-card-arrow { color: #1F9D55; }
+  .dash-card-icon { background: #C6ECD2; ion-icon { color: #2E9463; } }
+  .dash-card-label { color: #288257; }
+  .dash-card-arrow { color: #2E9463; }
 }
 
 // Amber family
 .card-analytics {
   background: #FFF8E1; border-color: #FFE082;
-  .dash-card-icon { background: #FFE082; ion-icon { color: #F9A825; } }
-  .dash-card-label { color: #F57F17; }
-  .dash-card-arrow { color: #F57F17; }
+  .dash-card-icon { background: #FFE082; ion-icon { color: #D97A16; } }
+  .dash-card-label { color: #D97A16; }
+  .dash-card-arrow { color: #D97A16; }
 }
 
 // Assignment count badge

@@ -6,9 +6,11 @@ import { Routes, RouterModule } from "@angular/router";
 import { IonicModule } from "@ionic/angular";
 
 import { BulkPage } from "./bulk.page";
+import { BatchPickerComponent } from "../batch-picker/batch-picker.component";
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatFormFieldModule , MatInputModule } from '@angular/material';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSelectModule } from '@angular/material/select';
 
 const routes: Routes = [
   {
@@ -27,8 +29,10 @@ const routes: Routes = [
     MatDatepickerModule,
     MatFormFieldModule,
     MatInputModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatSelectModule
   ],
-  declarations: [BulkPage]
+  declarations: [BulkPage, BatchPickerComponent],
+  entryComponents: [BatchPickerComponent]
 })
 export class BulkPageModule {}

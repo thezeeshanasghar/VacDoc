@@ -38,7 +38,7 @@
   box-sizing: border-box;
 
   &:focus {
-    border-color: #0D6EAD;
+    border-color: #1178A9;
   }
 }
 
@@ -60,7 +60,7 @@
   box-sizing: border-box;
 
   &:focus {
-    border-color: #0D6EAD;
+    border-color: #1178A9;
   }
 }
 
@@ -241,7 +241,7 @@
   box-sizing: border-box;
 
   &:focus {
-    border-color: #0D6EAD;
+    border-color: #1178A9;
   }
 }
 
@@ -286,7 +286,7 @@
   }
 
   &:active {
-    background: #F1F5F9;
+    background: #F6F7F5;
   }
 }
 
@@ -322,7 +322,7 @@
 
 .hint {
   font-size: 11px;
-  color: #78909C;
+  color: #5D7286;
   font-weight: 400;
 }
 
@@ -355,7 +355,7 @@
 }
 
 .lines-table-header {
-  background: #F1F5F9;
+  background: #F6F7F5;
   padding: 6px 8px;
   border-bottom: 1px solid #CFD8DC;
 
@@ -389,7 +389,7 @@
   cursor: pointer;
 
   &:focus {
-    background: #F1F5F9;
+    background: #F6F7F5;
     border-radius: 4px;
   }
 }
@@ -421,7 +421,7 @@ ion-input[type=number]::part(native)::-webkit-outer-spin-button {
   box-sizing: border-box;
 
   &:focus {
-    border-color: #0D6EAD;
+    border-color: #1178A9;
   }
 }
 
@@ -441,8 +441,8 @@ ion-input[type=number]::part(native)::-webkit-outer-spin-button {
 .amt-box-bold {
   font-weight: 700;
   font-size: 16px;
-  color: #0b6098;
-  background: #F1F5F9;
+  color: #0F6893;
+  background: #F6F7F5;
   border-color: #90CAF9;
 }
 
@@ -459,8 +459,8 @@ ion-input[type=number]::part(native)::-webkit-outer-spin-button {
   box-sizing: border-box;
 
   &:focus {
-    border-bottom-color: #0D6EAD;
-    background: #F1F5F9;
+    border-bottom-color: #1178A9;
+    background: #F6F7F5;
   }
 }
 
@@ -500,7 +500,7 @@ ion-input[type=number]::part(native)::-webkit-outer-spin-button {
 }
 
 .summary-row-border {
-  border-top: 1px solid #F1F5F9;
+  border-top: 1px solid #F6F7F5;
   padding-top: 9px;
   margin-top: 2px;
 }
@@ -510,7 +510,7 @@ ion-input[type=number]::part(native)::-webkit-outer-spin-button {
 }
 
 .summary-row-pending {
-  border-top: 1px solid #F1F5F9;
+  border-top: 1px solid #F6F7F5;
   padding-top: 9px;
   margin-top: 2px;
 }
@@ -553,7 +553,7 @@ ion-input[type=number]::part(native)::-webkit-outer-spin-button {
   background: #fff;
   padding: 2px 4px;
 
-  &:focus { border-color: #0D6EAD; }
+  &:focus { border-color: #1178A9; }
 }
 
 // Amount paid input — matches amt-box width and style
@@ -570,7 +570,7 @@ ion-input[type=number]::part(native)::-webkit-outer-spin-button {
   outline: none;
   box-sizing: border-box;
 
-  &:focus { border-color: #0D6EAD; }
+  &:focus { border-color: #1178A9; }
 }
 
 // Payment method select — right-aligned, same width
@@ -590,7 +590,7 @@ ion-input[type=number]::part(native)::-webkit-outer-spin-button {
 .amt-box-pending {
   font-weight: 700;
   font-size: 15px;
-  color: #C62828;
+  color: #C43D3D;
   background: #FFF8F8;
   border-color: #FFCDD2;
 }

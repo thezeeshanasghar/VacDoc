@@ -43,6 +43,16 @@
     <span class="active-assign-label">Marked done — pending cash handover</span>
   </div>
 
+  <!-- Unassigned state (spec §4.1) — Doctor, no active assignment, clinic has PAs -->
+  <div *ngIf="usertype === 'DOCTOR' && !activeAssignment && clinicPAs.length > 0"
+       class="active-assignment-card active-assignment-card--unassigned">
+    <span class="assign-noavatar"><ion-icon name="person-outline"></ion-icon></span>
+    <span class="active-assign-label active-assign-label--muted">Not assigned to a PA</span>
+    <div class="active-assign-actions">
+      <button class="assign-action-btn assign-pa-btn" (click)="openAssignPopupAll()">ASSIGN PA</button>
+    </div>
+  </div>
+
   <div *ngFor="let item of dataGrouping | keyvalue; let i = index">
     <ion-card class="date-group-card">
       <ion-card-content>
@@ -217,13 +227,20 @@
                 title="Approve">
                 <ion-icon name="checkmark-circle-outline" class="action-icon action-icon--approve"></ion-icon>
               </button>
+              <!-- Stage 4 (paid) locks ungive — must reverse payment first (spec §3.4). -->
               <button
-                *ngIf="usertype === 'DOCTOR' || canUngiveVaccine"
+                *ngIf="(usertype === 'DOCTOR' || canUngiveVaccine) && !v.IsPaymentCollected"
                 class="ungive-btn"
                 (click)="requestUngive(v, item.key)"
                 title="Ungive Vaccine">
                 UNGIVE
               </button>
+              <span
+                *ngIf="v.IsPaymentCollected"
+                class="ungive-locked"
+                title="Paid — reverse the payment to ungive">
+                <ion-icon name="lock-closed-outline"></ion-icon>
+              </span>
             </ng-container>
 
           </div>
@@ -246,97 +263,91 @@
   </ion-fab>
 </ion-content>
 
-<!-- Payment popup -->
-<div class="assign-backdrop" *ngIf="paymentPopupOpen" (click)="closePaymentPopup()"></div>
-<div class="assign-popup" *ngIf="paymentPopupOpen">
-  <div class="assign-popup-header">
-    <div class="payment-header-text">
-      <span class="assign-popup-title">Record Payment</span>
-      <span class="payment-header-amount" *ngIf="paymentDueAmount > 0">PKR {{ paymentDueAmount | number }}</span>
+<!-- ═══ Bottom-sheet overlays (spec §7.2, §4.1) ══════════════════════════════ -->
+
+<!-- Record Payment sheet -->
+<div class="sheet-backdrop" *ngIf="paymentPopupOpen" (click)="closePaymentPopup()"></div>
+<div class="sheet" *ngIf="paymentPopupOpen">
+  <div class="sheet-grab"></div>
+  <div class="sheet-title-row">
+    <div>
+      <div class="sheet-title">Record Payment</div>
+      <div class="sheet-amount" *ngIf="paymentDueAmount > 0">PKR {{ paymentDueAmount | number }}</div>
     </div>
-    <ion-icon name="close-outline" class="assign-popup-close" (click)="closePaymentPopup()"></ion-icon>
+    <ion-icon name="close-outline" class="sheet-close" (click)="closePaymentPopup()"></ion-icon>
   </div>
-  <div class="payment-mode-list">
-    <div class="payment-mode-row" (click)="submitPayment('Cash')">
-      <ion-icon name="cash-outline" class="payment-mode-icon payment-mode-icon--cash"></ion-icon>
-      <span class="payment-mode-label">Cash</span>
-    </div>
-    <div class="payment-mode-row" (click)="submitPayment('Online')">
-      <ion-icon name="phone-portrait-outline" class="payment-mode-icon payment-mode-icon--online"></ion-icon>
-      <span class="payment-mode-label">Online</span>
-    </div>
+  <div class="pay-mode-list">
+    <button type="button" class="pay-mode-row" (click)="submitPayment('Cash')">
+      <ion-icon name="cash-outline" class="pay-mode-icon pay-mode-icon--cash"></ion-icon>
+      <span class="pay-mode-label">Cash</span>
+      <ion-icon name="chevron-forward-outline" class="pay-mode-chev"></ion-icon>
+    </button>
+    <button type="button" class="pay-mode-row" (click)="submitPayment('Online')">
+      <ion-icon name="phone-portrait-outline" class="pay-mode-icon pay-mode-icon--online"></ion-icon>
+      <span class="pay-mode-label">Online</span>
+      <ion-icon name="chevron-forward-outline" class="pay-mode-chev"></ion-icon>
+    </button>
   </div>
 </div>
 
-
-<!-- PA Assign popup -->
-<div class="assign-backdrop" *ngIf="assignPopupOpen" (click)="closeAssignPopup()"></div>
-<div class="assign-popup" *ngIf="assignPopupOpen">
-  <div class="assign-popup-header">
-    <span class="assign-popup-title">Assign to PA</span>
-    <ion-icon name="close-outline" class="assign-popup-close" (click)="closeAssignPopup()"></ion-icon>
-  </div>
-  <div class="assign-popup-list">
-    <div *ngFor="let pa of clinicPAs"
-      class="assign-pa-row"
-      [class.assign-pa-row--selected]="pendingAssignPA && pendingAssignPA.Id === pa.Id"
+<!-- PA Assign sheet (spec §4.1 PA picker) -->
+<div class="sheet-backdrop" *ngIf="assignPopupOpen" (click)="closeAssignPopup()"></div>
+<div class="sheet" *ngIf="assignPopupOpen">
+  <div class="sheet-grab"></div>
+  <div class="sheet-title">Assign schedule to</div>
+  <div class="pa-list">
+    <button type="button" *ngFor="let pa of clinicPAs"
+      class="pa-row"
+      [class.sel]="pendingAssignPA && pendingAssignPA.Id === pa.Id"
+      [class.offshift]="isPaOffShift(pa)"
+      [disabled]="isPaOffShift(pa)"
       (click)="selectPendingAssign(pa)">
-      <ion-icon name="person-circle-outline" class="assign-pa-icon"></ion-icon>
-      <span class="assign-pa-name">{{ pa.Name }}</span>
-      <ion-icon
-        [name]="pendingAssignPA && pendingAssignPA.Id === pa.Id ? 'checkmark-circle-outline' : 'chevron-forward-outline'"
-        class="assign-pa-arrow"
-        [class.assign-pa-arrow--checked]="pendingAssignPA && pendingAssignPA.Id === pa.Id">
-      </ion-icon>
-    </div>
+      <span class="pa-avatar">{{ paInitials(pa.Name) }}</span>
+      <div class="pa-rowtext">
+        <div class="pa-name">{{ pa.Name }}</div>
+        <div class="pa-sub" *ngIf="paSubline(pa)">{{ paSubline(pa) }}</div>
+      </div>
+      <ion-icon name="checkmark-outline" class="pa-tick"
+        *ngIf="pendingAssignPA && pendingAssignPA.Id === pa.Id"></ion-icon>
+    </button>
   </div>
-  <div class="assign-guidelines-box" *ngIf="pendingAssignPA">
-    <div class="assign-guidelines-label">Guidelines for PA <span class="assign-guidelines-optional">(optional)</span></div>
-    <textarea
-      class="assign-guidelines-textarea"
-      [(ngModel)]="paGuidelines"
-      placeholder="Describe the task, special instructions, or notes for the PA..."
-      rows="3">
-    </textarea>
-    <ion-button expand="block" size="small" color="primary" class="assign-confirm-btn" (click)="confirmAssign()">
-      <ion-icon slot="start" name="person-add-outline"></ion-icon>
-      Confirm Assignment
-    </ion-button>
+  <div class="pa-guidelines" *ngIf="pendingAssignPA">
+    <div class="pa-guidelines-label">Guidelines for PA <span class="pa-guidelines-opt">(optional)</span></div>
+    <textarea class="pa-guidelines-input" [(ngModel)]="paGuidelines"
+      placeholder="Special instructions or notes for the PA..." rows="2"></textarea>
   </div>
+  <button type="button" class="sheet-confirm" *ngIf="pendingAssignPA" (click)="confirmAssign()">
+    ASSIGN TO {{ (pendingAssignPA.Name || '').toUpperCase() }}
+  </button>
 </div>
 
-<!-- Reassign popup -->
-<div class="assign-backdrop" *ngIf="reassignPopupOpen" (click)="closeReassignPopup()"></div>
-<div class="assign-popup" *ngIf="reassignPopupOpen">
-  <div class="assign-popup-header">
-    <span class="assign-popup-title">Reassign to PA</span>
-    <ion-icon name="close-outline" class="assign-popup-close" (click)="closeReassignPopup()"></ion-icon>
-  </div>
-  <div class="assign-popup-list">
-    <div *ngFor="let pa of clinicPAs"
-      class="assign-pa-row"
-      [class.assign-pa-row--selected]="pendingReassignPA && pendingReassignPA.Id === pa.Id"
+<!-- PA Reassign sheet -->
+<div class="sheet-backdrop" *ngIf="reassignPopupOpen" (click)="closeReassignPopup()"></div>
+<div class="sheet" *ngIf="reassignPopupOpen">
+  <div class="sheet-grab"></div>
+  <div class="sheet-title">Reassign schedule to</div>
+  <div class="pa-list">
+    <button type="button" *ngFor="let pa of clinicPAs"
+      class="pa-row"
+      [class.sel]="pendingReassignPA && pendingReassignPA.Id === pa.Id"
+      [class.offshift]="isPaOffShift(pa)"
+      [disabled]="isPaOffShift(pa)"
       (click)="selectPendingReassign(pa)">
-      <ion-icon name="person-circle-outline" class="assign-pa-icon"></ion-icon>
-      <span class="assign-pa-name">{{ pa.Name }}</span>
-      <ion-icon
-        [name]="pendingReassignPA && pendingReassignPA.Id === pa.Id ? 'checkmark-circle-outline' : 'chevron-forward-outline'"
-        class="assign-pa-arrow"
-        [class.assign-pa-arrow--checked]="pendingReassignPA && pendingReassignPA.Id === pa.Id">
-      </ion-icon>
-    </div>
+      <span class="pa-avatar">{{ paInitials(pa.Name) }}</span>
+      <div class="pa-rowtext">
+        <div class="pa-name">{{ pa.Name }}</div>
+        <div class="pa-sub" *ngIf="paSubline(pa)">{{ paSubline(pa) }}</div>
+      </div>
+      <ion-icon name="checkmark-outline" class="pa-tick"
+        *ngIf="pendingReassignPA && pendingReassignPA.Id === pa.Id"></ion-icon>
+    </button>
   </div>
-  <div class="assign-guidelines-box" *ngIf="pendingReassignPA">
-    <div class="assign-guidelines-label">Guidelines for PA <span class="assign-guidelines-optional">(optional)</span></div>
-    <textarea
-      class="assign-guidelines-textarea"
-      [(ngModel)]="paGuidelines"
-      placeholder="Describe the task, special instructions, or notes for the PA..."
-      rows="3">
-    </textarea>
-    <ion-button expand="block" size="small" color="primary" class="assign-confirm-btn" (click)="confirmReassign()">
-      <ion-icon slot="start" name="swap-horizontal-outline"></ion-icon>
-      Confirm Reassignment
-    </ion-button>
+  <div class="pa-guidelines" *ngIf="pendingReassignPA">
+    <div class="pa-guidelines-label">Guidelines for PA <span class="pa-guidelines-opt">(optional)</span></div>
+    <textarea class="pa-guidelines-input" [(ngModel)]="paGuidelines"
+      placeholder="Special instructions or notes for the PA..." rows="2"></textarea>
   </div>
+  <button type="button" class="sheet-confirm" *ngIf="pendingReassignPA" (click)="confirmReassign()">
+    ASSIGN TO {{ (pendingReassignPA.Name || '').toUpperCase() }}
+  </button>
 </div>

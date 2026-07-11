@@ -1,5 +1,5 @@
 .fin-content {
-  --background: #F1F5F9;
+  --background: #F6F7F5;
 }
 
 .fin-wrap {
@@ -22,7 +22,7 @@
   align-items: flex-start;
   overflow: hidden;
   background: #ffffff;
-  box-shadow: 0 2px 12px rgba(11, 45, 92, 0.08);
+  box-shadow: 0 2px 12px rgba(12, 54, 70, 0.08);
   border: 1.5px solid transparent;
   cursor: default;
   opacity: 0.88;
@@ -33,7 +33,7 @@
     opacity: 1;
     &:active {
       transform: scale(0.97);
-      box-shadow: 0 1px 6px rgba(11, 45, 92, 0.06);
+      box-shadow: 0 1px 6px rgba(12, 54, 70, 0.06);
     }
   }
 }
@@ -61,7 +61,7 @@
 
 .fin-card-sub {
   font-size: 11px;
-  color: #78909C;
+  color: #5D7286;
 }
 
 .fin-card-arrow {
@@ -81,7 +81,7 @@
   padding: 3px 7px;
   border-radius: 6px;
   background: rgba(120, 144, 156, 0.15);
-  color: #78909C;
+  color: #5D7286;
   letter-spacing: 0.3px;
 }
 
@@ -90,33 +90,33 @@
 // Blue
 .card-expenses {
   background: #E3F0FF; border-color: #BBDEFB;
-  .fin-card-icon { background: #C9E2FB; ion-icon { color: #0D6EAD; } }
-  .fin-card-label { color: #0D6EAD; }
-  .fin-card-arrow { color: #0D6EAD; }
+  .fin-card-icon { background: #C9E2FB; ion-icon { color: #1178A9; } }
+  .fin-card-label { color: #1178A9; }
+  .fin-card-arrow { color: #1178A9; }
 }
 
 // Green
 .card-pnl {
   background: #E8F5E9; border-color: #C8E6C9;
-  .fin-card-icon { background: #C3E6C4; ion-icon { color: #2E7D32; } }
-  .fin-card-label { color: #2E7D32; }
-  .fin-card-arrow { color: #2E7D32; }
+  .fin-card-icon { background: #C3E6C4; ion-icon { color: #2E9463; } }
+  .fin-card-label { color: #2E9463; }
+  .fin-card-arrow { color: #2E9463; }
 }
 
 // Purple
 .card-assets {
-  background: #F3E5F5; border-color: #E1BEE7;
-  .fin-card-icon { background: #E1BEE7; ion-icon { color: #7B1FA2; } }
-  .fin-card-label { color: #7B1FA2; }
-  .fin-card-arrow { color: #7B1FA2; }
+  background: #F3E5F5; border-color: #DCE6F0;
+  .fin-card-icon { background: #DCE6F0; ion-icon { color: #0C3646; } }
+  .fin-card-label { color: #0C3646; }
+  .fin-card-arrow { color: #0C3646; }
 }
 
 // Orange
 .card-income {
   background: #FFF3E0; border-color: #FFCC80;
-  .fin-card-icon { background: #FFE0B2; ion-icon { color: #E65100; } }
-  .fin-card-label { color: #E65100; }
-  .fin-card-arrow { color: #E65100; }
+  .fin-card-icon { background: #FBEFDD; ion-icon { color: #D97A16; } }
+  .fin-card-label { color: #D97A16; }
+  .fin-card-arrow { color: #D97A16; }
 }
 
 // Teal
