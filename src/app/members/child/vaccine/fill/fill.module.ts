@@ -9,6 +9,7 @@ import { FillPage } from './fill.page';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatFormFieldModule , MatInputModule } from '@angular/material';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatSelectModule} from '@angular/material/select';
 const routes: Routes = [
   {
     path: '',
@@ -26,7 +27,8 @@ const routes: Routes = [
     MatDatepickerModule,
     MatFormFieldModule,
     MatInputModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatSelectModule
   ],
   declarations: [FillPage]
 })
