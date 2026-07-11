@@ -177,14 +177,62 @@ ion-menu ion-avatar ion-icon {
   }
 
   // The two-row petrol header collapses to ONE white bar on desktop.
+  // Header becomes a positioning context so the quick-action icons from row 2
+  // can float onto the right of the white bar (spec §2.2 "actions right").
+  .shell-header { position: relative; }
+
   .shell-header .toolbar-blue {
     --background: #fff;
     --color: var(--vac-petrol);
+    --min-height: 56px;
     --border-width: 0 0 1px 0;
     --border-color: var(--vac-border);
     &::after { display: none; }        // hide the mobile gold hairline
-    ion-title { color: var(--vac-petrol); font-family: var(--vac-font-head); font-weight: 700; font-size: 19px; }
+    // Title left-aligns on desktop to leave room for the actions on the right.
+    ion-title {
+      color: var(--vac-petrol);
+      font-family: var(--vac-font-head);
+      font-weight: 700;
+      font-size: 19px;
+      text-align: left;
+      padding-inline: 22px;
+    }
   }
-  // Hide the second (navy icon) row — actions move into page headers on desktop.
-  .shell-header .toolbar-green { display: none; }
+
+  // Row 2 (navy quick-actions): lift it out of the flow and pin it to the
+  // top-right of the white bar. The three fixed shortcuts + PA bell stay
+  // reachable on desktop instead of vanishing. Menu button is hidden
+  // (sidebar is always visible), matching the approved choice.
+  .shell-header .toolbar-green {
+    --background: transparent;
+    --min-height: 0;
+    position: absolute;
+    top: 0; right: 12px;
+    height: 56px;
+    width: auto;
+    z-index: 5;
+
+    ion-buttons {
+      width: auto !important;
+      height: 56px;
+      justify-content: flex-end !important;
+    }
+
+    // Repaint the white-on-navy icons to petrol ghost buttons.
+    ion-icon {
+      color: var(--vac-petrol) !important;
+      margin: 0 4px !important;
+      font-size: 22px !important;
+      padding: 8px;
+      border-radius: 10px;
+      transition: background .15s ease;
+    }
+    ion-icon:hover { background: #EEF3F1; }
+
+    // The PA-notification wrapper keeps its red count badge; recolor its icon.
+    div[routerLink] ion-icon { color: var(--vac-petrol) !important; }
+
+    // Menu button is redundant when the sidebar is persistent.
+    ion-menu-button { display: none; }
+  }
 }
