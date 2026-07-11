@@ -43,6 +43,10 @@ const routes: Routes = [
       {
         path: 'pa/payables',
         loadChildren: () => import('./pa/payables/payables.module').then(m => m.PayablesPageModule)
+      },
+      {
+        path: 'pa/profile',
+        loadChildren: () => import('./pa/profile/profile.module').then(m => m.PaProfilePageModule)
       }
     ]
   },

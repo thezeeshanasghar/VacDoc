@@ -622,6 +622,17 @@ export class MembersPage implements OnInit {
               }
             });
 
+            // Top menu slot: the PA's own editable profile (name/photo/email),
+            // shown with their avatar just like the doctor's profile entry.
+            this.profile = [
+              {
+                title: this.user.Name || "My Profile",
+                url: "/members/pa/profile",
+                icon: "create",
+                imageUrl: this.user.ProfileImage ? environment.RESOURCE_URL + this.user.ProfileImage : this.defaultImageUrl
+              }
+            ];
+
             this.appPages = [
               {
                 title: "Dashboard",

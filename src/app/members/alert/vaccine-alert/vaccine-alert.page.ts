@@ -518,10 +518,20 @@ export class VaccineAlertPage implements OnInit {
         const clinicName = response.ResponseData[0] && response.ResponseData[0].Clinic ? response.ResponseData[0].Clinic.Name : 'Unknown Clinic';
         const clinicPhoneNumber = response.ResponseData[0] && response.ResponseData[0].Clinic ? response.ResponseData[0].Clinic.PhoneNumber : 'Unknown Phone Number';
         const password = child.Child.User.Password ? child.Child.User.Password : '******';
+
+        // Direct auto-login deep link into this child's vaccine page in the
+        // parent app. The signed token (minted by the API) logs the parent in
+        // and lands on the schedule, so no manual login is needed. Falls back to
+        // a plain deep link if the API didn't return a token.
+        const childId = response.ResponseData[0].ChildId || child.Child.Id;
+        const linkToken = response.ResponseData[0].LinkToken || '';
+        const recordLink = 'https://client.vaccinationcentre.com/child/vaccine/' + childId +
+          (linkToken ? '?t=' + encodeURIComponent(linkToken) : '');
+
         const message = encodeURIComponent(
           `Reminder: Vaccination ${doseNames} for ${childName} is due. Please confirm your appointment.\n` +
           `Clinic: ${clinicName}\nPhone: ${clinicPhoneNumber}\n` +
-          `You can view your complete vaccination record at https://vaccinationcentre.com\nMobile: ${mobileNumber || ''}\nPassword: ${password}\n` +
+          `View your child's vaccination record: ${recordLink}\nMobile: ${mobileNumber || ''}\nPassword: ${password}\n` +
           `Thanks, ${this.displayName}`
         );
         let whatsappUrl: string;

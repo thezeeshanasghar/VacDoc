@@ -1,0 +1,70 @@
+<ion-content class="ion-padding">
+  <form [formGroup]="fg" *ngIf="fg">
+
+    <!-- Photo -->
+    <div class="ava-wrap">
+      <label class="ava" for="paProfilePhoto">
+        <img *ngIf="displayImage" [src]="displayImage" />
+        <ion-icon *ngIf="!displayImage" name="person-outline"></ion-icon>
+        <span class="cam"><ion-icon name="camera-outline"></ion-icon></span>
+      </label>
+      <input
+        id="paProfilePhoto"
+        type="file"
+        accept="image/*"
+        hidden
+        (change)="selectProfileImage($event.target.files)" />
+      <div class="ava-hint">Tap to change photo</div>
+    </div>
+
+    <!-- Name -->
+    <ion-item>
+      <ion-label color="primary" position="floating">Name</ion-label>
+      <ion-input type="text" formControlName="Name" required></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.Name">
+        <div class="error-message"
+          *ngIf="fg.get('Name').hasError(validation.type) && (fg.get('Name').dirty || fg.get('Name').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- Email -->
+    <ion-item>
+      <ion-label color="primary" position="floating">Email</ion-label>
+      <ion-input type="email" formControlName="Email"></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.Email">
+        <div class="error-message"
+          *ngIf="fg.get('Email').hasError(validation.type) && (fg.get('Email').dirty || fg.get('Email').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- Locked WhatsApp / mobile -->
+    <ion-item class="locked-item" lines="none">
+      <ion-icon name="logo-whatsapp" slot="start" color="medium"></ion-icon>
+      <ion-label>
+        <p class="locked-label">WhatsApp / Mobile</p>
+        <h3 class="locked-value">
+          {{ countryCode ? '+' + countryCode + ' ' : '' }}{{ mobileNumber || '—' }}
+        </h3>
+      </ion-label>
+      <ion-icon name="lock-closed" slot="end" color="medium"></ion-icon>
+    </ion-item>
+    <p class="locked-note">
+      This is the number your patients see and message on WhatsApp. It can't be changed here —
+      ask your doctor if it needs updating.
+    </p>
+
+    <ion-button expand="block" class="save-btn" (click)="updateProfile()">
+      <ion-icon name="save-outline" slot="start"></ion-icon>
+      Save Profile
+    </ion-button>
+
+  </form>
+</ion-content>
