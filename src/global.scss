@@ -48,14 +48,29 @@ h1, h2, h3, h4,
 // ── Toolbar ──────────────────────────────────────────────────────────────────
 // Page/drawer headers are PETROL (theme shell colour), NOT the blue accent.
 // Blue (--vac-blue) is reserved for buttons / links / accents only.
+//
+// ROOT CAUSE (why --background alone did NOT work): color="primary" makes Ionic
+// add .ion-color + .ion-color-primary to the toolbar host. .ion-color-primary
+// sets `--ion-color-base: var(--ion-color-primary) !important` (= blue), and the
+// toolbar's OWN shadow DOM paints its background from that var, not --background:
+//   :host(.ion-color) .toolbar-background { background: var(--ion-color-base) }
+// So we MUST override --ion-color-base (with !important to beat Ionic's), which
+// the shadow DOM actually reads. This single rule flips EVERY color="primary"
+// toolbar/header/menu across the whole app (doctor, PA, child, public) to petrol
+// while ion-button[color="primary"] etc. stay blue (they read --ion-color-primary,
+// which we leave unchanged).
+ion-toolbar.ion-color-primary,
 ion-toolbar[color="primary"] {
-  --background: var(--vac-petrol);
-  --color:      #ffffff;
+  --ion-color-base:     var(--vac-petrol) !important;
+  --ion-color-contrast: #ffffff !important;
+  --background:         var(--vac-petrol);   // harmless fallback for non-.ion-color paths
+  --color:              #ffffff;
 }
 
 // Second toolbar (icon bar) — same petrol so a two-row page header stays one colour
 ion-header ion-toolbar[color="primary"] + ion-toolbar[color="primary"] {
-  --background: var(--vac-petrol);
+  --ion-color-base: var(--vac-petrol) !important;
+  --background:     var(--vac-petrol);
 }
 
 // ── Toolbar 3 — Petrol (page-owned toolbars inside the router outlet) ─────────
@@ -158,9 +173,11 @@ ion-badge[color="danger"]   { background: var(--vac-red); }
 ion-badge[color="warning"]  { background: #D97A16; }
 
 // ── Menu sidebar ─────────────────────────────────────────────────────────────
-// "Menu" drawer header: solid petrol (was a navy->blue gradient that read blue).
+// "Menu" drawer header: solid petrol. Must override --ion-color-base (see the
+// toolbar root-cause note above) — --background alone was read past & stayed blue.
 ion-menu ion-toolbar[color="primary"] {
-  --background: var(--vac-petrol);
+  --ion-color-base: var(--vac-petrol) !important;
+  --background:     var(--vac-petrol);
 }
 
 ion-menu ion-content {

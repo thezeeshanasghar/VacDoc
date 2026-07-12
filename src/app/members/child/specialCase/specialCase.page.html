@@ -1,8 +1,7 @@
 
 <ion-content class="ion-padding" *ngIf="doses">
-  <ion-card style="background-color: rgba(83, 83, 83, 0.411);">
-    <ion-toolbar color = "rgba(81, 81, 81, 0.289);" style="margin-top: 10px;">
-    
+  <ion-card>
+    <ion-toolbar color="primary" style="margin-top: 10px;">
       <ion-title style="text-align: center; color: white;" >Doses</ion-title>
     </ion-toolbar>
     <form [formGroup]="fg" (ngSubmit)="onSubmit()"> 
