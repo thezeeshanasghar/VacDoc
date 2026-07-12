@@ -64,6 +64,9 @@ ion-menu {
 
 ion-menu ion-header ion-toolbar {
   --background: linear-gradient(180deg, var(--vac-petrol-dark) 0%, var(--vac-petrol) 100%);
+  // Match the combined height of the two shell toolbars (44px + 44px) so the
+  // "Menu" block lines up with the bottom of the content header on every page.
+  --min-height: 88px;
 }
 
 ion-menu ion-header ion-title {
@@ -151,6 +154,8 @@ ion-menu ion-avatar ion-icon {
   ion-menu ion-header ion-toolbar {
     --background: transparent;
     --border-width: 0;
+    // Desktop shell toolbars are 40px each; match their combined height (80px).
+    --min-height: 80px;
   }
   ion-menu ion-header ion-title {
     font-family: var(--vac-font-head);
