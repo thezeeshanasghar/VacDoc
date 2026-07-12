@@ -67,7 +67,17 @@ ion-buttons {
   margin-bottom: 4px;
 }
 
-.date-group-heading { flex: 1; min-width: 0; }
+// Centreline model (spec §3.1): the heading occupies the LEFT half and is
+// right-aligned so date + subtitle end AT the row's centre; the actions occupy
+// the RIGHT half and start AT the centre. The centreline itself is invisible.
+.date-group-heading {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;   // push date/sub to the right edge of the left half
+  text-align: right;
+}
 
 .date-group-label {
   display: block;
@@ -88,8 +98,8 @@ ion-buttons {
   margin-top: 1px;
 }
 
-// Group header controls (spec §3.1)
-.date-group-actions { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+// Group header controls (spec §3.1) — see the consolidated centreline rule below.
+.date-group-actions { display: flex; align-items: center; }
 
 .grp-icobtn {
   position: relative;
@@ -150,10 +160,16 @@ ion-buttons {
 .date-label--due-soon        { color: var(--vac-warn); }    // due soon
 .date-label--upcoming        { color: var(--vac-ink-3); }   // upcoming
 
+// RIGHT half of the centreline: takes the other half of the row and left-aligns
+// its buttons so they start AT the centre. (Consolidated — the earlier
+// .date-group-actions block is intentionally minimal; this one is authoritative.)
 .date-group-actions {
+  flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: flex-start;
+  gap: 8px;
 }
 
 // Header-row images (bulk give / ungive injection)
@@ -339,6 +355,8 @@ ion-buttons {
   font-weight: 600;
   text-transform: none;
   vertical-align: middle;
+  flex-shrink: 0;       // part of the right (post-centre) cluster
+  margin-right: 8px;
 
   &--muted {
     --background: #eceff1;
