@@ -23,9 +23,9 @@
 }
 
 .filter-chip-active {
-  background: #0C3646;
+  background: var(--vac-petrol);
   color: #fff;
-  border-color: #0C3646;
+  border-color: var(--vac-petrol);
 }
 
 .summary-bar {
@@ -43,7 +43,7 @@
 .summary-total {
   font-size: 15px;
   font-weight: 700;
-  color: #0C3646;
+  color: var(--vac-petrol);
 }
 
 .exp-list {
@@ -75,13 +75,13 @@
   ion-icon { font-size: 20px; }
 }
 
-.cat-blue   { background: #E3F2FD; color: #1178A9; }
+.cat-blue   { background: var(--vac-blue-tint); color: var(--vac-blue); }
 .cat-grey   { background: #ECEFF1; color: #546E7A; }
-.cat-pink   { background: #FCE4EC; color: #AD1457; }
-.cat-orange { background: #FFF3E0; color: #D97A16; }
-.cat-green  { background: #E8F5E9; color: #2E9463; }
-.cat-teal   { background: #E0F2F1; color: #00695C; }
-.cat-purple { background: #EDE7F6; color: #4527A0; }
+.cat-pink   { background: var(--vac-red-tint); color: var(--vac-red); }
+.cat-orange { background: var(--vac-warn-tint); color: var(--vac-warn); }
+.cat-green  { background: var(--vac-green-tint); color: var(--vac-green); }
+.cat-teal   { background: var(--vac-blue-tint); color: var(--vac-petrol); }
+.cat-purple { background: var(--vac-red-tint); color: var(--vac-red); }
 
 .exp-mid {
   flex: 1;
@@ -116,7 +116,7 @@
 .exp-amount {
   font-size: 14px;
   font-weight: 700;
-  color: #C43D3D;
+  color: var(--vac-red);
 }
 
 .exp-mode {

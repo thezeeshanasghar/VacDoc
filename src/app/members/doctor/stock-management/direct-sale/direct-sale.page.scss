@@ -1,5 +1,5 @@
 .sale-content {
-  --background: #F6F7F5;
+  --background: var(--vac-surface);
 }
 
 .sale-wrap {
@@ -28,7 +28,7 @@
 
 // Item block
 .item-block {
-  border: 1px solid #F6F7F5;
+  border: 1px solid var(--vac-surface);
   border-radius: 8px;
   padding: 10px 12px;
   margin-bottom: 12px;
@@ -45,7 +45,7 @@
 .item-num {
   font-size: 12px;
   font-weight: 700;
-  color: #1178A9;
+  color: var(--vac-blue);
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
@@ -83,7 +83,7 @@
 
 .hint {
   font-size: 11px;
-  color: #5D7286;
+  color: var(--vac-ink-3);
   font-weight: 400;
 }
 
@@ -93,7 +93,7 @@
   gap: 6px;
   font-size: 12px;
   color: #B26A00;
-  background: #FFF8E1;
+  background: var(--vac-warn-tint);
   border: 1px solid #FFE0A3;
   border-radius: 8px;
   padding: 8px 10px;
@@ -111,12 +111,12 @@
   font-size: 14px;
   color: #1A1A2E;
   background: #fff;
-  border: 1.5px solid #B0BEC5;
+  border: 1.5px solid var(--vac-border);
   border-radius: 8px;
   outline: none;
   box-sizing: border-box;
 
-  &:focus { border-color: #1178A9; }
+  &:focus { border-color: var(--vac-blue); }
 
   &[readonly] {
     background: #F5F7FA;
@@ -132,7 +132,7 @@
   font-size: 14px;
   color: #1A1A2E;
   background: #fff;
-  border: 1.5px solid #B0BEC5;
+  border: 1.5px solid var(--vac-border);
   border-radius: 8px;
   outline: none;
   appearance: none;
@@ -142,7 +142,7 @@
   background-position: right 12px center;
   box-sizing: border-box;
 
-  &:focus { border-color: #1178A9; }
+  &:focus { border-color: var(--vac-blue); }
 }
 
 // Brand autocomplete
@@ -171,7 +171,7 @@
 
 .inline-brand-drop {
   background: #fff;
-  border: 1px solid #B0BEC5;
+  border: 1px solid var(--vac-border);
   border-radius: 0 0 8px 8px;
   max-height: 180px;
   overflow-y: auto;
@@ -187,7 +187,7 @@
   cursor: pointer;
 
   &:last-child { border-bottom: none; }
-  &:active { background: #F6F7F5; }
+  &:active { background: var(--vac-surface); }
 }
 
 .ac-opt-brand {
@@ -198,7 +198,7 @@
 
 .ac-opt-vaccine {
   font-size: 12px;
-  color: #5D7286;
+  color: var(--vac-ink-3);
 }
 
 // Two col
@@ -215,7 +215,7 @@
   justify-content: space-between;
   padding: 8px 10px;
   background: #fff;
-  border: 1.5px solid #B0BEC5;
+  border: 1.5px solid var(--vac-border);
   border-radius: 8px;
   cursor: pointer;
   box-sizing: border-box;
@@ -250,7 +250,7 @@
   padding: 7px 10px;
   background: #F5F7FA;
   border-radius: 7px;
-  border: 1px solid #F6F7F5;
+  border: 1px solid var(--vac-surface);
 }
 
 .avail-icon { font-size: 15px; color: #546E7A; }
@@ -259,7 +259,7 @@
 .avail-count {
   font-size: 14px;
   font-weight: 700;
-  color: #1178A9;
+  color: var(--vac-blue);
 
   &.avail-zero { color: #E53935; }
 }
@@ -270,21 +270,21 @@
   align-items: center;
   justify-content: space-between;
   padding: 6px 10px;
-  background: #E8F5E9;
+  background: var(--vac-green-tint);
   border-radius: 6px;
   margin-bottom: 8px;
 }
 
 .line-total-label {
   font-size: 12px;
-  color: #2E9463;
+  color: var(--vac-green);
   font-weight: 500;
 }
 
 .line-total-value {
   font-size: 14px;
   font-weight: 700;
-  color: #2E9463;
+  color: var(--vac-green);
 }
 
 // Totals
@@ -342,7 +342,7 @@ input[type=number] { -moz-appearance: textfield; }
   gap: 8px;
   padding: 7px 10px;
   background: #fff;
-  border: 1.5px solid #B0BEC5;
+  border: 1.5px solid var(--vac-border);
   border-radius: 8px;
   margin-bottom: 12px;
 
@@ -389,7 +389,7 @@ input[type=number] { -moz-appearance: textfield; }
   padding: 12px 14px;
   margin-bottom: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  border-left: 4px solid #1178A9;
+  border-left: 4px solid var(--vac-blue);
 }
 
 .history-top {
@@ -408,7 +408,7 @@ input[type=number] { -moz-appearance: textfield; }
 .history-bill-no {
   font-size: 14px;
   font-weight: 700;
-  color: #1178A9;
+  color: var(--vac-blue);
 }
 
 .history-client {
@@ -425,8 +425,8 @@ input[type=number] { -moz-appearance: textfield; }
 .sale-total-badge {
   font-size: 15px;
   font-weight: 700;
-  color: #2E9463;
-  background: #E8F5E9;
+  color: var(--vac-green);
+  background: var(--vac-green-tint);
   padding: 4px 10px;
   border-radius: 14px;
   white-space: nowrap;
@@ -461,7 +461,7 @@ input[type=number] { -moz-appearance: textfield; }
 
 .hir-vaccine {
   font-size: 12px;
-  color: #5D7286;
+  color: var(--vac-ink-3);
 }
 
 .hir-meta {
@@ -516,7 +516,7 @@ input[type=number] { -moz-appearance: textfield; }
 
 .history-date {
   font-size: 12px;
-  color: #5D7286;
+  color: var(--vac-ink-3);
 }
 
 .footer-btns {
@@ -554,7 +554,7 @@ input[type=number] { -moz-appearance: textfield; }
   align-items: center;
   justify-content: space-between;
   padding: 13px 16px 10px;
-  border-bottom: 1px solid #F6F7F5;
+  border-bottom: 1px solid var(--vac-surface);
 
   .batch-modal-title {
     font-size: 15px;
@@ -574,7 +574,7 @@ input[type=number] { -moz-appearance: textfield; }
   grid-template-columns: 1.2fr 1.4fr 60px;
   gap: 4px;
   padding: 7px 16px;
-  background: #F6F7F5;
+  background: var(--vac-surface);
 
   span {
     font-size: 11px;
@@ -623,7 +623,7 @@ input[type=number] { -moz-appearance: textfield; }
   gap: 4px;
 }
 
-.bmr-check { font-size: 15px; color: #00897B; }
+.bmr-check { font-size: 15px; color: var(--vac-teal-icon); }
 
 .bmr-expiry {
   font-size: 12px;
@@ -637,7 +637,7 @@ input[type=number] { -moz-appearance: textfield; }
 .bmr-qty {
   font-size: 13px;
   font-weight: 700;
-  color: #1178A9;
+  color: var(--vac-blue);
   text-align: right;
 
   &.bmr-qty-zero { color: #E53935; }
@@ -652,10 +652,10 @@ input[type=number] { -moz-appearance: textfield; }
 
 .expired-tag {
   background: #FFEBEE;
-  color: #C43D3D;
+  color: var(--vac-red);
 }
 
 .soon-tag {
-  background: #FBEFDD;
-  color: #D97A16;
+  background: var(--vac-warn-tint);
+  color: var(--vac-warn);
 }

@@ -13,7 +13,7 @@
     <div class="stock-grid">
 
       <!-- Suppliers -->
-      <div *ngIf="showSuppliers" routerLink="/members/doctor/stock-management/suppliers" class="stock-card card-suppliers">
+      <div *ngIf="showSuppliers" routerLink="/members/doctor/stock-management/suppliers" class="stock-card fam-green">
         <div class="stock-card-icon">
           <ion-icon name="business-outline"></ion-icon>
         </div>
@@ -23,7 +23,7 @@
       </div>
 
       <!-- Purchase Bills -->
-      <div *ngIf="showPurchaseBills" routerLink="/members/doctor/stock-management/purchase-bills" class="stock-card card-bills">
+      <div *ngIf="showPurchaseBills" routerLink="/members/doctor/stock-management/purchase-bills" class="stock-card fam-blue">
         <div class="stock-card-icon">
           <ion-icon name="receipt-outline"></ion-icon>
         </div>
@@ -33,7 +33,7 @@
       </div>
 
       <!-- Stock Overview -->
-      <div *ngIf="showOverview" routerLink="/members/doctor/stock-management/stock-overview" class="stock-card card-overview">
+      <div *ngIf="showOverview" routerLink="/members/doctor/stock-management/stock-overview" class="stock-card fam-petrol">
         <div class="stock-card-icon">
           <ion-icon name="cube-outline"></ion-icon>
         </div>
@@ -43,7 +43,7 @@
       </div>
 
       <!-- Adjust Stock -->
-      <div *ngIf="showAdjust" routerLink="/members/doctor/stock-management/adjust-stock" class="stock-card card-adjust">
+      <div *ngIf="showAdjust" routerLink="/members/doctor/stock-management/adjust-stock" class="stock-card fam-warn">
         <div class="stock-card-icon">
           <ion-icon name="options-outline"></ion-icon>
         </div>
@@ -53,7 +53,7 @@
       </div>
 
       <!-- Opening Stock (doctor only) — record physical on-hand at a reset -->
-      <div *ngIf="showOpeningBalance" routerLink="/members/doctor/stock-management/opening-balance" class="stock-card card-adjust">
+      <div *ngIf="showOpeningBalance" routerLink="/members/doctor/stock-management/opening-balance" class="stock-card fam-warn">
         <div class="stock-card-icon">
           <ion-icon name="albums-outline"></ion-icon>
         </div>
@@ -63,7 +63,7 @@
       </div>
 
       <!-- Stock Transfer -->
-      <div *ngIf="showTransfer" routerLink="/members/doctor/stock-management/stock-transfer" class="stock-card card-transfer">
+      <div *ngIf="showTransfer" routerLink="/members/doctor/stock-management/stock-transfer" class="stock-card fam-teal">
         <div class="stock-card-icon">
           <ion-icon name="swap-horizontal-outline"></ion-icon>
         </div>
@@ -73,7 +73,7 @@
       </div>
 
       <!-- Direct Sale -->
-      <div *ngIf="showDirectSale" routerLink="/members/doctor/stock-management/direct-sale" class="stock-card card-sale">
+      <div *ngIf="showDirectSale" routerLink="/members/doctor/stock-management/direct-sale" class="stock-card fam-red">
         <div class="stock-card-icon">
           <ion-icon name="cart-outline"></ion-icon>
         </div>
@@ -83,7 +83,7 @@
       </div>
 
       <!-- Reports -->
-      <div *ngIf="showReports" routerLink="/members/doctor/stock-management/reports" class="stock-card card-reports">
+      <div *ngIf="showReports" routerLink="/members/doctor/stock-management/reports" class="stock-card fam-petrol">
         <div class="stock-card-icon">
           <ion-icon name="bar-chart-outline"></ion-icon>
         </div>

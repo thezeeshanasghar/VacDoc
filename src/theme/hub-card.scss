@@ -1,0 +1,43 @@
+// ════════════════════════════════════════════════════════════════════════════
+// Shared hub-card recipe — one source for every tile-grid hub (dashboard,
+// stock-management, financial, doctor, vaccine-education). Colour carries
+// MEANING via six semantic families; icon-chip, label and chevron always share
+// the family. No purple / indigo / amber / pink — those hues are not in brand.
+// All values reference --vac-* tokens (theme/variables.scss). See VacDoc theme-fix plan §4.
+// ════════════════════════════════════════════════════════════════════════════
+
+@mixin hub-family($wash, $accent, $text: $accent) {
+  background: $wash;
+  .hub-icon,
+  .dash-card-icon,
+  .stock-card-icon,
+  .fin-card-icon   { background: rgba(255, 255, 255, 0.72); color: $accent; }
+  .hub-label,
+  .dash-card-label,
+  .stock-card-label,
+  .fin-card-label  { color: $text; font-family: var(--vac-font-head); }
+  .hub-sub,
+  .dash-card-sub,
+  .stock-card-sub,
+  .fin-card-sub    { color: var(--vac-ink-3); }
+  .hub-chevron,
+  .dash-card-arrow,
+  .stock-card-arrow,
+  .fin-card-arrow  { color: $accent; }
+}
+
+// Family classes — apply one to a .hub-card / .dash-card / .stock-card / .fin-card.
+%fam-blue   { @include hub-family(var(--vac-blue-tint),  var(--vac-blue)); }
+%fam-petrol { @include hub-family(var(--vac-blue-tint),  var(--vac-petrol)); }
+%fam-green  { @include hub-family(var(--vac-green-tint), var(--vac-green)); }
+%fam-warn   { @include hub-family(var(--vac-warn-tint),  var(--vac-warn)); }
+%fam-red    { @include hub-family(var(--vac-red-tint),   var(--vac-red)); }
+// Teal: icon is brand teal, label text stays petrol for contrast.
+%fam-teal   { @include hub-family(var(--vac-blue-tint),  var(--vac-teal-icon), var(--vac-petrol)); }
+
+.fam-blue   { @extend %fam-blue; }
+.fam-petrol { @extend %fam-petrol; }
+.fam-green  { @extend %fam-green; }
+.fam-warn   { @extend %fam-warn; }
+.fam-red    { @extend %fam-red; }
+.fam-teal   { @extend %fam-teal; }

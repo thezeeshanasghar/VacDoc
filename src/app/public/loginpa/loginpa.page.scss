@@ -1,13 +1,15 @@
-// ── Palette (same as doctor login) ───────────────────────────────────────────
-$lava-red:     #C62828;
-$lava-dark:    #8B0000;
-$lava-orange:  #FF4500;
-$logo-blue:    #0D6EAD;
-$logo-blue-dp: #0b6098;
-$logo-green:   #2E7D32;
-$logo-green-lt:#43A047;
+// ── Palette (Porcelain & Petrol brand — same tokens as doctor login) ──────────
+$petrol:       #0C3646;
+$petrol-dark:  #092833;
+$lava-red:     #C43D3D;   // → brand red (garnish/error)
+$lava-dark:    #0C3646;   // → petrol
+$lava-orange:  #C2A14D;   // → brand gold accent
+$logo-blue:    #1178A9;   // brand blue
+$logo-blue-dp: #0F6893;
+$logo-green:   #2E9463;   // brand green
+$logo-green-lt:#43A177;
 $white:        #FFFFFF;
-$near-black:   #0D0D12;
+$near-black:   #0C3646;   // petrol shell base
 $input-bg:     #F5F7FF;
 $input-border: #DDE3F4;
 $text-dark:    #111827;
@@ -19,10 +21,7 @@ ion-content { --background: transparent; }
 .login-bg {
   position: relative;
   min-height: 100vh;
-  background:
-    radial-gradient(ellipse 70% 55% at 10% 5%,   rgba(13,71,161,0.55) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 50% at 90% 95%,  rgba(139,0,0,0.50) 0%,   transparent 68%),
-    radial-gradient(ellipse 80% 60% at 50% 50%,  rgba(13,13,18,0.96) 0%,  $near-black 100%);
+  background: linear-gradient(180deg, var(--vac-petrol), var(--vac-petrol-dark));
   background-color: $near-black;
   display: flex;
   flex-direction: column;
@@ -121,7 +120,7 @@ ion-content { --background: transparent; }
 .bar-segment     { flex: 1; }
 .bar-blue        { background: $logo-blue; }
 .bar-green       { background: $logo-green-lt; }
-.bar-orange      { background: linear-gradient(90deg, $lava-orange, $lava-red); }
+.bar-orange      { background: var(--vac-gold); }
 
 .login-title    { font-size: 23px; font-weight: 800; color: $text-dark; margin: 0 0 4px; text-align: center; }
 .login-subtitle { font-size: 13px; color: $text-mid; text-align: center; margin: 0 0 24px; }
@@ -133,12 +132,12 @@ ion-content { --background: transparent; }
   border-radius: 14px; margin: 0 24px 14px; overflow: hidden;
   transition: border-color 0.22s, box-shadow 0.22s;
   &:focus-within {
-    border-color: $lava-orange;
-    box-shadow: 0 0 0 3px rgba($lava-orange, 0.14);
-    background: #FFF8F5;
+    border-color: $logo-blue;
+    box-shadow: 0 0 0 3px rgba($logo-blue, 0.14);
+    background: #F0F4FF;
   }
 }
-.input-icon    { padding: 0 14px; display: flex; align-items: center; color: $lava-red; font-size: 20px; flex-shrink: 0; }
+.input-icon    { padding: 0 14px; display: flex; align-items: center; color: $logo-blue; font-size: 20px; flex-shrink: 0; }
 .input-body    { display: flex; align-items: center; flex: 1; min-width: 0; }
 .country-select { color: $text-dark; font-size: 14px; font-weight: 600; --padding-start: 0; --padding-end: 4px; width: 72px; flex-shrink: 0; }
 .divider-v     { width: 1px; height: 22px; background: $input-border; margin: 0 8px 0 0; flex-shrink: 0; }
@@ -153,11 +152,11 @@ ion-content { --background: transparent; }
 
 // Button — orange-first gradient for PA (reversed from doctor)
 .login-btn {
-  --background: linear-gradient(135deg, #{$lava-orange} 0%, #{$lava-red} 60%, #{$lava-dark} 100%);
-  --background-activated: #{$lava-dark};
+  --background: var(--vac-blue);
+  --background-activated: var(--vac-petrol);
   --color: #{$white};
   --border-radius: 14px;
-  --box-shadow: 0 6px 22px rgba(255,69,0,0.40), 0 2px 6px rgba(198,40,40,0.30);
+  --box-shadow: 0 6px 22px rgba(17,120,169,0.40), 0 2px 6px rgba(12,54,70,0.30);
   height: 52px; font-size: 16px; font-weight: 800;
   margin: 6px 24px 0; letter-spacing: 1px; text-transform: uppercase;
 }

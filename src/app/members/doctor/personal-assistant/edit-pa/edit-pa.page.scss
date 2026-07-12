@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  background: linear-gradient(135deg, #092833, #0C3646);
+  background: linear-gradient(135deg, var(--vac-petrol-dark), var(--vac-petrol));
   border-radius: 16px;
   padding: 16px 18px;
   margin-bottom: 24px;
@@ -17,17 +17,17 @@
 .field-wrap {
   display: flex;
   align-items: center;
-  background: #F4F6FC;
+  background: var(--vac-blue-tint);
   border: 1.5px solid #DDE3F4;
   border-radius: 12px;
   overflow: hidden;
   transition: border-color 0.2s;
-  &:focus-within { border-color: #1178A9; background: #F0F4FF; }
+  &:focus-within { border-color: var(--vac-blue); background: var(--vac-blue-tint); }
 }
-.field-icon   { font-size: 18px; color: #1178A9; padding: 0 12px; flex-shrink: 0; }
+.field-icon   { font-size: 18px; color: var(--vac-blue); padding: 0 12px; flex-shrink: 0; }
 .field-input  { --padding-start: 0; --padding-end: 12px; --color: #111827; --placeholder-color: #9CA3AF; font-size: 15px; flex: 1; }
 
-.error-text   { color: #C43D3D; font-size: 12px; margin-top: 4px; }
+.error-text   { color: var(--vac-red); font-size: 12px; margin-top: 4px; }
 
 .bottom-bar {
   position: fixed;
@@ -42,8 +42,8 @@
 }
 .btn-save {
   flex: 1;
-  --background: #1178A9;
-  --background-activated: #0F6893;
+  --background: var(--vac-blue);
+  --background-activated: var(--vac-petrol);
   --color: #fff; --border-radius: 0; margin: 0; height: 54px; font-weight: 800;
 }
 ion-content { --padding-bottom: 80px; }
@@ -55,12 +55,12 @@ ion-content { --padding-bottom: 80px; }
   gap: 8px;
   font-size: 12px;
   font-weight: 700;
-  color: #0C3646;
+  color: var(--vac-petrol);
   text-transform: uppercase;
   letter-spacing: 0.6px;
   margin: 24px 0 12px;
 
-  ion-icon { font-size: 16px; color: #1178A9; }
+  ion-icon { font-size: 16px; color: var(--vac-blue); }
 
   &::after {
     content: '';
@@ -89,8 +89,8 @@ ion-content { --padding-bottom: 80px; }
   transition: border-color 0.15s, background 0.15s;
 
   &--active {
-    background: #E6FAF8;
-    border-color: #99E6DE;
+    background: var(--vac-green-tint);
+    border-color: #A5D6A7;
   }
 }
 
@@ -104,7 +104,7 @@ ion-content { --padding-bottom: 80px; }
   font-size: 18px;
   color: #90A4AE;
 
-  &--active { color: #0E7C72; }
+  &--active { color: var(--vac-green); }
 }
 
 .clinic-name {
@@ -121,7 +121,7 @@ ion-content { --padding-bottom: 80px; }
 .clinic-spinner {
   width: 20px;
   height: 20px;
-  color: #1178A9;
+  color: var(--vac-blue);
 }
 
 .clinic-toggle {
@@ -130,7 +130,7 @@ ion-content { --padding-bottom: 80px; }
     color: #DDE4E3;
   }
 
-  &--on ion-icon { color: #6FB1A5; }
+  &--on ion-icon { color: var(--vac-green); }
 }
 
 .clinic-empty {

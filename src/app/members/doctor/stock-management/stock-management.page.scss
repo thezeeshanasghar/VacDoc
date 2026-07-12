@@ -77,63 +77,9 @@
   opacity: 0.85;
 }
 
-// ── Individual card colours ────────────────────────────────────────────────────
-
-// Green
-.card-suppliers {
-  background: #E8F5E9; border-color: #C8E6C9;
-  .stock-card-icon { background: #C3E6C4; ion-icon { color: #2E9463; } }
-  .stock-card-label { color: #2E9463; }
-  .stock-card-arrow { color: #2E9463; }
-}
-
-// Blue
-.card-bills {
-  background: #E3F0FF; border-color: #BBDEFB;
-  .stock-card-icon { background: #C9E2FB; ion-icon { color: #1178A9; } }
-  .stock-card-label { color: #1178A9; }
-  .stock-card-arrow { color: #1178A9; }
-}
-
-// Purple
-.card-overview {
-  background: #F3E5F5; border-color: #DCE6F0;
-  .stock-card-icon { background: #DCE6F0; ion-icon { color: #0C3646; } }
-  .stock-card-label { color: #0C3646; }
-  .stock-card-arrow { color: #0C3646; }
-}
-
-// Orange
-.card-adjust {
-  background: #FFF3E0; border-color: #FFCC80;
-  .stock-card-icon { background: #FBEFDD; ion-icon { color: #D97A16; } }
-  .stock-card-label { color: #D97A16; }
-  .stock-card-arrow { color: #D97A16; }
-}
-
-// Teal
-.card-transfer {
-  background: #E6FAF8; border-color: #99E6DE;
-  .stock-card-icon { background: #C2F0EB; ion-icon { color: #0E7C72; } }
-  .stock-card-label { color: #0E7C72; }
-  .stock-card-arrow { color: #0E7C72; }
-}
-
-// Red
-.card-sale {
-  background: #FEECEC; border-color: #FFCDD2;
-  .stock-card-icon { background: #FFCDD2; ion-icon { color: #C43D3D; } }
-  .stock-card-label { color: #C43D3D; }
-  .stock-card-arrow { color: #C43D3D; }
-}
-
-// Indigo
-.card-reports {
-  background: #E8EAF6; border-color: #C5CAE9;
-  .stock-card-icon { background: #C5CAE9; ion-icon { color: #3949AB; } }
-  .stock-card-label { color: #3949AB; }
-  .stock-card-arrow { color: #3949AB; }
-}
+// ── Individual card colours now come from the shared family classes
+//    (.fam-blue / .fam-petrol / .fam-green / .fam-warn / .fam-red / .fam-teal)
+//    applied in the template. See theme/hub-card.scss. ─────────────────────────
 
 // Gray (coming soon)
 .card-soon {

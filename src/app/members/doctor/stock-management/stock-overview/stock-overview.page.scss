@@ -1,5 +1,5 @@
 .overview-content {
-  --background: #F6F7F5;
+  --background: var(--vac-surface);
 }
 
 .clinic-wrap {
@@ -12,7 +12,7 @@
     font-size: 15px;
     color: #1A1A2E;
     background: #fff;
-    border: 1.5px solid #B0BEC5;
+    border: 1.5px solid var(--vac-border);
     border-radius: 10px;
     outline: none;
     box-sizing: border-box;
@@ -36,20 +36,20 @@
   font-size: 15px;
   color: #1A1A2E;
   background: #fff;
-  border: 1.5px solid #B0BEC5;
+  border: 1.5px solid var(--vac-border);
   border-radius: 10px;
   outline: none;
   box-sizing: border-box;
 
   &:focus {
-    border-color: #1178A9;
+    border-color: var(--vac-blue);
   }
 }
 
 .empty-state {
   text-align: center;
   margin-top: 60px;
-  color: #5D7286;
+  color: var(--vac-ink-3);
 
   ion-icon {
     font-size: 56px;
@@ -101,7 +101,7 @@
 
 .brand-name {
   font-size: 12px;
-  color: #5D7286;
+  color: var(--vac-ink-3);
   margin-top: 2px;
 }
 
@@ -115,7 +115,7 @@
   font-size: 13px;
   font-weight: 700;
   color: #fff;
-  background: #1178A9;
+  background: var(--vac-blue);
   padding: 3px 10px;
   border-radius: 12px;
 
@@ -138,18 +138,18 @@
 
 .sale-price-label {
   font-size: 12px;
-  color: #5D7286;
+  color: var(--vac-ink-3);
 }
 
 .sale-price-val {
   font-size: 13px;
   font-weight: 600;
-  color: #2E9463;
+  color: var(--vac-green);
 }
 
 // Batch table
 .batch-table {
-  border-top: 1px solid #F6F7F5;
+  border-top: 1px solid var(--vac-surface);
 }
 
 .no-batches {
@@ -163,8 +163,8 @@
   display: grid;
   grid-template-columns: 1.2fr 1.4fr 60px;
   padding: 6px 16px;
-  background: #F6F7F5;
-  border-bottom: 1px solid #CFD8DC;
+  background: var(--vac-surface);
+  border-bottom: 1px solid var(--vac-border);
 
   span {
     font-size: 11px;
@@ -225,17 +225,17 @@
 
 .expired-tag {
   background: #FFEBEE;
-  color: #C43D3D;
+  color: var(--vac-red);
 }
 
 .soon-tag {
-  background: #FBEFDD;
-  color: #D97A16;
+  background: var(--vac-warn-tint);
+  color: var(--vac-warn);
 }
 
 .integrity-wrap {
   display: flex;
   justify-content: flex-end;
   padding: 0 12px 4px;
-  --color: #1565C0;
+  --color: var(--vac-blue);
 }

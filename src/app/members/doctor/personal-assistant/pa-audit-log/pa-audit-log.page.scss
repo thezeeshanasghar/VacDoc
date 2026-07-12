@@ -47,7 +47,7 @@
   padding-right: 30px;
   cursor: pointer;
 
-  &:focus { border-color: #1178A9; background-color: #ffffff; }
+  &:focus { border-color: var(--vac-blue); background-color: #ffffff; }
 }
 
 .filter-summary {
@@ -56,7 +56,7 @@
   white-space: nowrap;
   margin-left: auto;
 
-  .summary-num { font-weight: 700; color: #0C3646; }
+  .summary-num { font-weight: 700; color: var(--vac-petrol); }
 }
 
 // ── Log cards ─────────────────────────────────────────────────────────────────
@@ -68,10 +68,10 @@
   box-shadow: 0 2px 8px rgba(12, 54, 70, 0.07);
   border-left: 4px solid #DDE4E3;
 
-  &--success { border-left-color: #2E9463; }
-  &--danger  { border-left-color: #C43D3D; }
-  &--primary { border-left-color: #1178A9; }
-  &--warning { border-left-color: #D97A16; }
+  &--success { border-left-color: var(--vac-green); }
+  &--danger  { border-left-color: var(--vac-red); }
+  &--primary { border-left-color: var(--vac-blue); }
+  &--warning { border-left-color: var(--vac-warn); }
   &--medium  { border-left-color: #5D7286; }
 }
 
@@ -91,14 +91,14 @@
 
 .log-pa-icon {
   font-size: 18px;
-  color: #1178A9;
+  color: var(--vac-teal-icon);
   flex-shrink: 0;
 }
 
 .log-pa-name {
   font-size: 15px;
   font-weight: 700;
-  color: #0C3646;
+  color: var(--vac-petrol);
 }
 
 .log-date {
@@ -122,10 +122,10 @@
   border-radius: 20px;
   letter-spacing: 0.2px;
 
-  &--success { background: #E8F5E9; color: #2E9463; }
-  &--danger  { background: #FEECEC; color: #C43D3D; }
-  &--primary { background: #E3F0FF; color: #1178A9; }
-  &--warning { background: #FFF3E0; color: #D97A16; }
+  &--success { background: var(--vac-green-tint); color: var(--vac-green); }
+  &--danger  { background: var(--vac-red-tint); color: var(--vac-red); }
+  &--primary { background: var(--vac-blue-tint); color: var(--vac-blue); }
+  &--warning { background: var(--vac-warn-tint); color: var(--vac-warn); }
   &--medium  { background: #F6F7F5; color: #546E7A; }
 }
 
@@ -134,8 +134,8 @@
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 20px;
-  background: #FFF3E0;
-  color: #D97A16;
+  background: var(--vac-warn-tint);
+  color: var(--vac-warn);
   letter-spacing: 0.3px;
 }
 
@@ -163,7 +163,7 @@
 // Reversal ref
 .log-reversal-ref {
   font-size: 11px;
-  color: #D97A16;
+  color: var(--vac-warn);
   display: flex;
   align-items: center;
   gap: 4px;
@@ -197,7 +197,7 @@
   border-radius: 8px;
   border: 1.5px solid #DDE4E3;
   background: #ffffff;
-  color: #1178A9;
+  color: var(--vac-blue);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -205,7 +205,7 @@
   font-size: 16px;
   transition: background 0.15s, border-color 0.15s;
 
-  &:hover:not([disabled]) { background: #E3F0FF; border-color: #1178A9; }
+  &:hover:not([disabled]) { background: var(--vac-blue-tint); border-color: var(--vac-blue); }
   &[disabled] { opacity: 0.35; cursor: default; }
 
   ion-icon { font-size: 16px; }
@@ -214,7 +214,7 @@
 .page-label {
   font-size: 13px;
   font-weight: 600;
-  color: #0C3646;
+  color: var(--vac-petrol);
   min-width: 60px;
   text-align: center;
 }

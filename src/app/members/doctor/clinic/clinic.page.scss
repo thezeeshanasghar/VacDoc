@@ -1,6 +1,6 @@
 // ── Page background (matches Stock Management dashboard) ───────────────────────
 .clinic-content {
-  --background: #F6F7F5;
+  --background: var(--vac-surface);
 }
 
 .clinic-wrap {
@@ -65,8 +65,8 @@
   letter-spacing: 0.2px;
 }
 
-.inv-on  { background: rgba(46, 125, 50, 0.14); color: #2E9463; }
-.inv-off { background: rgba(120, 144, 156, 0.18); color: #607d8b; }
+.inv-on  { background: rgba(46, 125, 50, 0.14); color: var(--vac-green); }
+.inv-off { background: rgba(120, 144, 156, 0.18); color: var(--vac-ink-3); }
 
 .actions {
   display: flex;
@@ -119,63 +119,55 @@
 }
 
 .pill.online {
-  background: #2E9463;
-  border-color: #2E9463;
+  background: var(--vac-green);
+  border-color: var(--vac-green);
   color: #fff;
 
   ion-icon { font-size: 15px; }
 }
 
 .pill.setonline {
-  color: #607d8b;
-  border-color: #cfd8dc;
+  color: var(--vac-ink-3);
+  border-color: var(--vac-border);
 }
 
 // ── Colour themes (cycled per clinic, from Stock dashboard palette) ────────────
 .c-blue {
-  background: #E3F0FF;
-  border-color: #BBDEFB;
-  .clinic-icon { background: #C9E2FB; ion-icon { color: #1178A9; } }
-  .clinic-name { color: #1178A9; }
-  .pill:not(.online):not(.setonline) { color: #1178A9; border-color: #1178A9; .count { background: #1178A9; } }
+  background: var(--vac-blue-tint);
+  border-color: var(--vac-border);
+  .clinic-icon { background: var(--vac-blue-tint); ion-icon { color: var(--vac-blue); } }
+  .clinic-name { color: var(--vac-blue); }
+  .pill:not(.online):not(.setonline) { color: var(--vac-blue); border-color: var(--vac-blue); .count { background: var(--vac-blue); } }
 }
 
 .c-green {
-  background: #E8F5E9;
-  border-color: #C8E6C9;
-  .clinic-icon { background: #C3E6C4; ion-icon { color: #2E9463; } }
-  .clinic-name { color: #2E9463; }
-  .pill:not(.online):not(.setonline) { color: #2E9463; border-color: #2E9463; .count { background: #2E9463; } }
+  background: var(--vac-green-tint);
+  border-color: var(--vac-border);
+  .clinic-icon { background: var(--vac-green-tint); ion-icon { color: var(--vac-green); } }
+  .clinic-name { color: var(--vac-green); }
+  .pill:not(.online):not(.setonline) { color: var(--vac-green); border-color: var(--vac-green); .count { background: var(--vac-green); } }
 }
 
-.c-purple {
-  background: #F3E5F5;
-  border-color: #DCE6F0;
-  .clinic-icon { background: #DCE6F0; ion-icon { color: #0C3646; } }
-  .clinic-name { color: #0C3646; }
-  .pill:not(.online):not(.setonline) { color: #0C3646; border-color: #0C3646; .count { background: #0C3646; } }
+.c-petrol {
+  background: var(--vac-blue-tint);
+  border-color: var(--vac-border);
+  .clinic-icon { background: var(--vac-blue-tint); ion-icon { color: var(--vac-petrol); } }
+  .clinic-name { color: var(--vac-petrol); }
+  .pill:not(.online):not(.setonline) { color: var(--vac-petrol); border-color: var(--vac-petrol); .count { background: var(--vac-petrol); } }
 }
 
-.c-orange {
-  background: #FFF3E0;
-  border-color: #FFCC80;
-  .clinic-icon { background: #FBEFDD; ion-icon { color: #D97A16; } }
-  .clinic-name { color: #D97A16; }
-  .pill:not(.online):not(.setonline) { color: #D97A16; border-color: #D97A16; .count { background: #D97A16; } }
+.c-warn {
+  background: var(--vac-warn-tint);
+  border-color: var(--vac-border);
+  .clinic-icon { background: var(--vac-warn-tint); ion-icon { color: var(--vac-warn); } }
+  .clinic-name { color: var(--vac-warn); }
+  .pill:not(.online):not(.setonline) { color: var(--vac-warn); border-color: var(--vac-warn); .count { background: var(--vac-warn); } }
 }
 
 .c-teal {
-  background: #E6FAF8;
-  border-color: #99E6DE;
-  .clinic-icon { background: #C2F0EB; ion-icon { color: #0E7C72; } }
-  .clinic-name { color: #0E7C72; }
-  .pill:not(.online):not(.setonline) { color: #0E7C72; border-color: #0E7C72; .count { background: #0E7C72; } }
-}
-
-.c-indigo {
-  background: #E8EAF6;
-  border-color: #C5CAE9;
-  .clinic-icon { background: #C5CAE9; ion-icon { color: #3949AB; } }
-  .clinic-name { color: #3949AB; }
-  .pill:not(.online):not(.setonline) { color: #3949AB; border-color: #3949AB; .count { background: #3949AB; } }
+  background: var(--vac-blue-tint);
+  border-color: var(--vac-border);
+  .clinic-icon { background: var(--vac-blue-tint); ion-icon { color: var(--vac-teal-icon); } }
+  .clinic-name { color: var(--vac-teal-icon); }
+  .pill:not(.online):not(.setonline) { color: var(--vac-teal-icon); border-color: var(--vac-teal-icon); .count { background: var(--vac-teal-icon); } }
 }

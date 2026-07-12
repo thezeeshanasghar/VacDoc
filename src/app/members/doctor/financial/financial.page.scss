@@ -85,55 +85,9 @@
   letter-spacing: 0.3px;
 }
 
-// ── Individual card colours ────────────────────────────────────────────────────
-
-// Blue
-.card-expenses {
-  background: #E3F0FF; border-color: #BBDEFB;
-  .fin-card-icon { background: #C9E2FB; ion-icon { color: #1178A9; } }
-  .fin-card-label { color: #1178A9; }
-  .fin-card-arrow { color: #1178A9; }
-}
-
-// Green
-.card-pnl {
-  background: #E8F5E9; border-color: #C8E6C9;
-  .fin-card-icon { background: #C3E6C4; ion-icon { color: #2E9463; } }
-  .fin-card-label { color: #2E9463; }
-  .fin-card-arrow { color: #2E9463; }
-}
-
-// Purple
-.card-assets {
-  background: #F3E5F5; border-color: #DCE6F0;
-  .fin-card-icon { background: #DCE6F0; ion-icon { color: #0C3646; } }
-  .fin-card-label { color: #0C3646; }
-  .fin-card-arrow { color: #0C3646; }
-}
-
-// Orange
-.card-income {
-  background: #FFF3E0; border-color: #FFCC80;
-  .fin-card-icon { background: #FBEFDD; ion-icon { color: #D97A16; } }
-  .fin-card-label { color: #D97A16; }
-  .fin-card-arrow { color: #D97A16; }
-}
-
-// Teal
-.card-sales {
-  background: #E6FAF8; border-color: #99E6DE;
-  .fin-card-icon { background: #C2F0EB; ion-icon { color: #0E7C72; } }
-  .fin-card-label { color: #0E7C72; }
-  .fin-card-arrow { color: #0E7C72; }
-}
-
-// Indigo
-.card-reports {
-  background: #E8EAF6; border-color: #C5CAE9;
-  .fin-card-icon { background: #C5CAE9; ion-icon { color: #3949AB; } }
-  .fin-card-label { color: #3949AB; }
-  .fin-card-arrow { color: #3949AB; }
-}
+// ── Individual card colours now come from the shared family classes
+//    (.fam-blue / .fam-petrol / .fam-green / .fam-warn / .fam-red / .fam-teal)
+//    applied in the template. See theme/hub-card.scss. ─────────────────────────
 
 .fin-section-label {
   font-size: 11px;

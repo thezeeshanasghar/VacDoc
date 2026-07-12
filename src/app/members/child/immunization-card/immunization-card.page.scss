@@ -17,9 +17,9 @@
   height: 5px;
   width: 100%;
 }
-.stripe-blue   { background: linear-gradient(90deg, #0F6893, #2A86B2); }
-.stripe-green  { background: linear-gradient(90deg, #288257, #43A177); }
-.stripe-orange { background: linear-gradient(90deg, #AC3636, #D97A16); }
+.stripe-blue   { background: linear-gradient(90deg, var(--vac-petrol), #2A86B2); }
+.stripe-green  { background: linear-gradient(90deg, var(--vac-green), #43A177); }
+.stripe-orange { background: linear-gradient(90deg, var(--vac-warn), #E0952F); }
 
 .card-row {
   display: flex;
@@ -43,9 +43,9 @@
   }
 }
 
-.blue-bg   { background: linear-gradient(135deg, #0F6893, #1178A9); }
-.green-bg  { background: linear-gradient(135deg, #288257, #2E9463); }
-.orange-bg { background: linear-gradient(135deg, #AC3636, #C43D3D); }
+.blue-bg   { background: linear-gradient(135deg, var(--vac-petrol), var(--vac-blue)); }
+.green-bg  { background: linear-gradient(135deg, var(--vac-green), #43A177); }
+.orange-bg { background: linear-gradient(135deg, var(--vac-warn), #E0952F); }
 
 .card-text {
   flex: 1;

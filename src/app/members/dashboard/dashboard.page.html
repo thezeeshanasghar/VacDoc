@@ -11,7 +11,7 @@
     <div class="dash-grid">
 
       <!-- ── PA ONLY: Assignments & Payments ───────────────────── -->
-      <div *ngIf="isPa" routerLink="/members/pa/payables" class="dash-card card-payables">
+      <div *ngIf="isPa" routerLink="/members/pa/payables" class="dash-card fam-blue">
         <div class="dash-card-icon">
           <ion-icon name="wallet-outline"></ion-icon>
         </div>
@@ -21,7 +21,7 @@
       </div>
 
       <!-- ── Unapproved (Doctor only, requires at least one PA) ── -->
-      <div *ngIf="!isPa && hasPA" routerLink="/members/child/unapprove" class="dash-card card-unapproved">
+      <div *ngIf="!isPa && hasPA" routerLink="/members/child/unapprove" class="dash-card fam-red">
         <div class="dash-card-icon" style="position:relative">
           <ion-icon name="alert-circle-outline"></ion-icon>
           <span *ngIf="pendingApprovalsCount > 0" class="assignment-badge">{{ pendingApprovalsCount }}</span>
@@ -32,7 +32,7 @@
       </div>
 
       <!-- ── Brand Prices (Doctor only) ──────────────────────── -->
-      <div *ngIf="!isPa" routerLink="/members/doctor/brand-prices" class="dash-card card-brand-prices">
+      <div *ngIf="!isPa" routerLink="/members/doctor/brand-prices" class="dash-card fam-petrol">
         <div class="dash-card-icon">
           <ion-icon name="pricetag-outline"></ion-icon>
         </div>
@@ -42,7 +42,7 @@
       </div>
 
       <!-- ── Stock Management ─────────────────────────────────── -->
-      <div *ngIf="showStock" routerLink="/members/doctor/stock-management" class="dash-card card-stock">
+      <div *ngIf="showStock" routerLink="/members/doctor/stock-management" class="dash-card fam-green">
         <div class="dash-card-icon">
           <ion-icon name="cube-outline"></ion-icon>
         </div>
@@ -52,7 +52,7 @@
       </div>
 
       <!-- ── Financial ────────────────────────────────────────── -->
-      <div *ngIf="showFinancial" routerLink="/members/doctor/financial" class="dash-card card-financial">
+      <div *ngIf="showFinancial" routerLink="/members/doctor/financial" class="dash-card fam-green">
         <div class="dash-card-icon">
           <ion-icon name="cash-outline"></ion-icon>
         </div>
@@ -62,7 +62,7 @@
       </div>
 
       <!-- ── Patient Collections (Sales Report) ───────────────── -->
-      <div *ngIf="showSalesReport" routerLink="/members/doctor/financial/sales-collection" class="dash-card card-collections">
+      <div *ngIf="showSalesReport" routerLink="/members/doctor/financial/sales-collection" class="dash-card fam-green">
         <div class="dash-card-icon">
           <ion-icon name="receipt-outline"></ion-icon>
         </div>
@@ -72,7 +72,7 @@
       </div>
 
       <!-- ── Analytics ────────────────────────────────────────── -->
-      <div *ngIf="showAnalytics" routerLink="/members/doctor/analytics" class="dash-card card-analytics">
+      <div *ngIf="showAnalytics" routerLink="/members/doctor/analytics" class="dash-card fam-petrol">
         <div class="dash-card-icon">
           <ion-icon name="stats-chart-outline"></ion-icon>
         </div>
@@ -82,7 +82,7 @@
       </div>
 
       <!-- ── Agent Module (Doctor only, if allowed) ───────────── -->
-      <div *ngIf="showAgent" routerLink="/members/doctor/agent-module" class="dash-card card-agent">
+      <div *ngIf="showAgent" routerLink="/members/doctor/agent-module" class="dash-card fam-petrol">
         <div class="dash-card-icon">
           <ion-icon name="people-outline"></ion-icon>
         </div>
@@ -92,7 +92,7 @@
       </div>
 
       <!-- ── Personal Assistant (Doctor only, DoctorId===1) ────── -->
-      <div *ngIf="showPersonalAssistant" routerLink="/members/doctor/personal-assistant" class="dash-card card-pa">
+      <div *ngIf="showPersonalAssistant" routerLink="/members/doctor/personal-assistant" class="dash-card fam-teal">
         <div class="dash-card-icon">
           <ion-icon name="person-outline"></ion-icon>
         </div>
@@ -102,7 +102,7 @@
       </div>
 
       <!-- ── Vaccine Education (read-only, all roles) ─────────── -->
-      <div routerLink="/members/doctor/vaccine-education" class="dash-card card-vaccine-education">
+      <div routerLink="/members/doctor/vaccine-education" class="dash-card fam-petrol">
         <div class="dash-card-icon">
           <ion-icon name="medkit-outline"></ion-icon>
         </div>
@@ -112,7 +112,7 @@
       </div>
 
       <!-- ── Change Password ─────────────────────────────────── -->
-      <div routerLink="/members/doctor/password" class="dash-card card-password">
+      <div routerLink="/members/doctor/password" class="dash-card fam-petrol">
         <div class="dash-card-icon">
           <ion-icon name="key-outline"></ion-icon>
         </div>

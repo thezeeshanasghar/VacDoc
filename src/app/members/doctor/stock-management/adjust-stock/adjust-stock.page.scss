@@ -41,7 +41,7 @@
   gap: 6px;
   padding: 9px 10px;
   border-radius: 8px;
-  border: 2px solid #B0BEC5;
+  border: 2px solid var(--vac-border);
   background: #fff;
   font-size: 14px;
   font-weight: 600;
@@ -54,21 +54,21 @@
 }
 
 .type-btn-increase {
-  border-color: #1178A9;
-  background: #E3F2FD;
-  color: #1178A9;
+  border-color: var(--vac-blue);
+  background: var(--vac-blue-tint);
+  color: var(--vac-blue);
 }
 
 .type-btn-loss {
   border-color: #E53935;
   background: #FFEBEE;
-  color: #C43D3D;
+  color: var(--vac-red);
 }
 
 .type-btn-inactive {
   color: #90A4AE;
   background: #F5F7FA;
-  border-color: #CFD8DC;
+  border-color: var(--vac-border);
 }
 
 // Field wrapper
@@ -88,7 +88,7 @@
 
 .hint {
   font-size: 11px;
-  color: #5D7286;
+  color: var(--vac-ink-3);
   font-weight: 400;
 }
 
@@ -99,12 +99,12 @@
   font-size: 14px;
   color: #1A1A2E;
   background: #fff;
-  border: 1.5px solid #B0BEC5;
+  border: 1.5px solid var(--vac-border);
   border-radius: 8px;
   outline: none;
   box-sizing: border-box;
 
-  &:focus { border-color: #1178A9; }
+  &:focus { border-color: var(--vac-blue); }
 
   &[readonly] {
     background: #F5F7FA;
@@ -120,7 +120,7 @@
   font-size: 14px;
   color: #1A1A2E;
   background: #fff;
-  border: 1.5px solid #B0BEC5;
+  border: 1.5px solid var(--vac-border);
   border-radius: 8px;
   outline: none;
   appearance: none;
@@ -130,7 +130,7 @@
   background-position: right 12px center;
   box-sizing: border-box;
 
-  &:focus { border-color: #1178A9; }
+  &:focus { border-color: var(--vac-blue); }
 }
 
 // Brand picker row (tap to open modal)
@@ -141,7 +141,7 @@
   width: 100%;
   padding: 9px 12px;
   background: #fff;
-  border: 1.5px solid #B0BEC5;
+  border: 1.5px solid var(--vac-border);
   border-radius: 8px;
   cursor: pointer;
   box-sizing: border-box;
@@ -166,7 +166,7 @@
   font-size: 18px;
 }
 
-.supplier-clear-icon { color: #B0BEC5; cursor: pointer; }
+.supplier-clear-icon { color: var(--vac-border); cursor: pointer; }
 .supplier-chevron { font-size: 16px; }
 
 // Brand picker modal
@@ -214,7 +214,7 @@
   padding: 7px 10px;
   background: #F5F7FA;
   border-radius: 8px;
-  border: 1px solid #CFD8DC;
+  border: 1px solid var(--vac-border);
 
   .bms-icon { font-size: 16px; color: #90A4AE; flex-shrink: 0; }
 
@@ -268,7 +268,7 @@
     font-weight: 500;
   }
 
-  .bmi-check { font-size: 18px; color: #2dd36f; }
+  .bmi-check { font-size: 18px; color: var(--vac-green); }
 }
 
 // Batch picker row
@@ -284,7 +284,7 @@
   justify-content: space-between;
   padding: 8px 10px;
   background: #fff;
-  border: 1.5px solid #B0BEC5;
+  border: 1.5px solid var(--vac-border);
   border-radius: 8px;
   cursor: pointer;
   box-sizing: border-box;
@@ -319,7 +319,7 @@
   padding: 7px 10px;
   background: #F5F7FA;
   border-radius: 7px;
-  border: 1px solid #F6F7F5;
+  border: 1px solid var(--vac-surface);
 }
 
 .avail-icon {
@@ -335,7 +335,7 @@
 .avail-count {
   font-size: 14px;
   font-weight: 700;
-  color: #1178A9;
+  color: var(--vac-blue);
 
   &.avail-zero {
     color: #E53935;
@@ -391,7 +391,7 @@ input[type=number] { -moz-appearance: textfield; }
   gap: 8px;
   padding: 7px 10px;
   background: #fff;
-  border: 1.5px solid #B0BEC5;
+  border: 1.5px solid var(--vac-border);
   border-radius: 8px;
   margin-bottom: 12px;
 
@@ -442,11 +442,11 @@ input[type=number] { -moz-appearance: textfield; }
   padding: 12px 14px;
   margin-bottom: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  border-left: 4px solid #B0BEC5;
+  border-left: 4px solid var(--vac-border);
 }
 
 .history-card-increase {
-  border-left-color: #1178A9;
+  border-left-color: var(--vac-blue);
 }
 
 .history-card-loss {
@@ -479,7 +479,7 @@ input[type=number] { -moz-appearance: textfield; }
 
 .history-vaccine {
   font-size: 12px;
-  color: #5D7286;
+  color: var(--vac-ink-3);
 }
 
 .adj-badge {
@@ -498,13 +498,13 @@ input[type=number] { -moz-appearance: textfield; }
 }
 
 .adj-badge-increase {
-  background: #E3F2FD;
-  color: #1178A9;
+  background: var(--vac-blue-tint);
+  color: var(--vac-blue);
 }
 
 .adj-badge-loss {
   background: #FFEBEE;
-  color: #C43D3D;
+  color: var(--vac-red);
 }
 
 .history-meta-row {
@@ -548,13 +548,13 @@ input[type=number] { -moz-appearance: textfield; }
 
 .history-date {
   font-size: 12px;
-  color: #5D7286;
+  color: var(--vac-ink-3);
 }
 
 .history-price {
   font-size: 12px;
   font-weight: 600;
-  color: #2E9463;
+  color: var(--vac-green);
 }
 
 // Batch modal
@@ -587,7 +587,7 @@ input[type=number] { -moz-appearance: textfield; }
   align-items: center;
   justify-content: space-between;
   padding: 13px 16px 10px;
-  border-bottom: 1px solid #F6F7F5;
+  border-bottom: 1px solid var(--vac-surface);
 
   .batch-modal-title {
     font-size: 15px;
@@ -607,7 +607,7 @@ input[type=number] { -moz-appearance: textfield; }
   grid-template-columns: 1.2fr 1.4fr 60px;
   gap: 4px;
   padding: 7px 16px;
-  background: #F6F7F5;
+  background: var(--vac-surface);
 
   span {
     font-size: 11px;
@@ -644,7 +644,7 @@ input[type=number] { -moz-appearance: textfield; }
 }
 
 .batch-row-selected {
-  background: #E3F2FD;
+  background: var(--vac-blue-tint);
 }
 
 .batch-row-expired {
@@ -666,7 +666,7 @@ input[type=number] { -moz-appearance: textfield; }
 
 .bmr-check {
   font-size: 15px;
-  color: #1178A9;
+  color: var(--vac-blue);
 }
 
 .bmr-expiry {
@@ -681,7 +681,7 @@ input[type=number] { -moz-appearance: textfield; }
 .bmr-qty {
   font-size: 13px;
   font-weight: 700;
-  color: #1178A9;
+  color: var(--vac-blue);
   text-align: right;
 
   &.bmr-qty-zero { color: #E53935; }
@@ -697,10 +697,10 @@ input[type=number] { -moz-appearance: textfield; }
 
 .expired-tag {
   background: #FFEBEE;
-  color: #C43D3D;
+  color: var(--vac-red);
 }
 
 .soon-tag {
-  background: #FBEFDD;
-  color: #D97A16;
+  background: var(--vac-warn-tint);
+  color: var(--vac-warn);
 }

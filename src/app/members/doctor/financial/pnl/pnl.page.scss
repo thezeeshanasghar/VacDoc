@@ -1,5 +1,5 @@
 .pnl-content {
-  --background: #F6F7F5;
+  --background: var(--vac-surface);
 }
 
 .pnl-wrap {
@@ -24,7 +24,7 @@
   background: #fff;
   outline: none;
 
-  &:focus { border-color: #1178A9; }
+  &:focus { border-color: var(--vac-blue); }
 }
 
 .expense-mode-segment {
@@ -48,7 +48,7 @@
   flex-direction: column;
   align-items: center;
   padding: 12px 8px;
-  border-right: 1px solid #F6F7F5;
+  border-right: 1px solid var(--vac-surface);
 
   &:last-child { border-right: none; }
 }
@@ -56,23 +56,23 @@
 .summary-val {
   font-size: 14px;
   font-weight: 700;
-  color: #0C3646;
+  color: var(--vac-petrol);
 }
 
 .summary-lbl {
   font-size: 11px;
-  color: #5D7286;
+  color: var(--vac-ink-3);
   margin-top: 2px;
 }
 
-.pnl-positive { color: #2E9463 !important; }
-.pnl-negative { color: #C43D3D !important; }
+.pnl-positive { color: var(--vac-green) !important; }
+.pnl-negative { color: var(--vac-red) !important; }
 
 // ── Section label ─────────────────────────────────────────────────────────
 .pnl-section-label {
   font-size: 12px;
   font-weight: 700;
-  color: #5D7286;
+  color: var(--vac-ink-3);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin: 16px 4px 8px;
@@ -90,7 +90,7 @@
 .pnl-card-title {
   font-size: 14px;
   font-weight: 700;
-  color: #0C3646;
+  color: var(--vac-petrol);
   margin-bottom: 10px;
 }
 
@@ -121,18 +121,18 @@
 }
 
 .pnl-row-total {
-  border-top: 1px solid #F6F7F5;
+  border-top: 1px solid var(--vac-surface);
   margin-top: 4px;
   padding-top: 10px;
 
   .pnl-row-label, .pnl-row-value {
     font-weight: 700;
-    color: #0C3646;
+    color: var(--vac-ink);
   }
 }
 
 .pnl-row-net {
-  border-top: 1px solid #F6F7F5;
+  border-top: 1px solid var(--vac-surface);
   margin-top: 4px;
   padding-top: 10px;
 
@@ -151,7 +151,7 @@
 .pnl-net-label {
   font-size: 14px;
   font-weight: 700;
-  color: #0C3646;
+  color: var(--vac-ink);
 }
 
 .pnl-net-value {
@@ -159,8 +159,8 @@
   font-weight: 800;
 }
 
-.pnl-net-positive .pnl-net-value { color: #2E9463; }
-.pnl-net-negative .pnl-net-value { color: #C43D3D; }
+.pnl-net-positive .pnl-net-value { color: var(--vac-green); }
+.pnl-net-negative .pnl-net-value { color: var(--vac-red); }
 
 // ── Category pill ────────────────────────────────────────────────────────
 .cat-pill {
@@ -175,13 +175,13 @@
   ion-icon { font-size: 13px; }
 }
 
-.cat-blue   { background: #E3F2FD; color: #1178A9; }
+.cat-blue   { background: var(--vac-blue-tint); color: var(--vac-blue); }
 .cat-grey   { background: #ECEFF1; color: #546E7A; }
-.cat-pink   { background: #FCE4EC; color: #AD1457; }
-.cat-orange { background: #FFF3E0; color: #EF6C00; }
-.cat-green  { background: #E8F5E9; color: #2E9463; }
-.cat-teal   { background: #E0F2F1; color: #00796B; }
-.cat-purple { background: #F3E5F5; color: #0C3646; }
+.cat-pink   { background: var(--vac-red-tint); color: var(--vac-red); }
+.cat-orange { background: var(--vac-warn-tint); color: var(--vac-warn); }
+.cat-green  { background: var(--vac-green-tint); color: var(--vac-green); }
+.cat-teal   { background: var(--vac-blue-tint); color: var(--vac-petrol); }
+.cat-purple { background: var(--vac-blue-tint); color: var(--vac-petrol); }
 
 // ── Empty state ───────────────────────────────────────────────────────────
 .empty-state {

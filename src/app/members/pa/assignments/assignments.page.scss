@@ -5,13 +5,13 @@
 }
 
 .boy {
-  border-left: 4px solid #1178A9 !important;
+  border-left: 4px solid var(--vac-blue) !important;
   box-shadow: 0 2px 12px rgba(17, 120, 169, 0.12) !important;
 }
 
 // ── Compact card header bar ───────────────────────────────────────────────────
 .icons {
-  background: linear-gradient(135deg, #092833 0%, #0C3646 100%);
+  background: linear-gradient(135deg, var(--vac-petrol-dark) 0%, var(--vac-petrol) 100%);
   border-radius: 12px 12px 0 0;
   padding: 6px 12px;
   display: flex;
@@ -109,7 +109,7 @@
 
 // ── Bulk vaccine group highlight ─────────────────────────────────────────────
 .bulk-group {
-  border: 3px solid #D97A16 !important;
+  border: 3px solid var(--vac-warn) !important;
   box-shadow: 0 0 0 2px rgba(255, 69, 0, 0.20), 0 2px 16px rgba(255, 69, 0, 0.18) !important;
 }
 
@@ -128,7 +128,7 @@
 
 // ── Direct sale cards (PA payment-mode collection) ──────────────────────────
 .direct-sale-card {
-  border-left: 4px solid #FFB300 !important;
+  border-left: 4px solid var(--vac-warn) !important;
   box-shadow: 0 2px 12px rgba(255, 179, 0, 0.12) !important;
 }
 
@@ -158,16 +158,16 @@
 .ds-status {
   margin-top: 4px;
   font-size: 11px;
-  color: #B26A00;
+  color: var(--vac-warn);
   font-style: italic;
 }
 
 // ── Doctor's Guidelines box ───────────────────────────────────────────────────
 .assignment-guidelines {
   margin-top: 10px;
-  background: #fffbea;
-  border: 1px solid #ffe082;
-  border-left: 4px solid #D97A16;
+  background: var(--vac-warn-tint);
+  border: 1px solid var(--vac-warn-tint);
+  border-left: 4px solid var(--vac-warn);
   border-radius: 8px;
   padding: 9px 12px;
 }
@@ -181,20 +181,20 @@
 
 .assignment-guidelines-icon {
   font-size: 15px;
-  color: #D97A16;
+  color: var(--vac-warn);
 }
 
 .assignment-guidelines-title {
   font-size: 11px;
   font-weight: 700;
-  color: #a07800;
+  color: var(--vac-warn);
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
 
 .assignment-guidelines-text {
   font-size: 13px;
-  color: #4a3800;
+  color: var(--vac-ink-2);
   line-height: 1.6;
   margin: 0;
   font-style: italic;

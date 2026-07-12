@@ -51,17 +51,17 @@
   transition: border-color 0.15s, background 0.15s;
 
   &--active {
-    border-color: #1178A9;
-    background: #E3F0FF;
+    border-color: var(--vac-blue);
+    background: var(--vac-blue-tint);
   }
 }
 
-.pa-chip-icon  { font-size: 16px; color: #1178A9; }
+.pa-chip-icon  { font-size: 16px; color: var(--vac-blue); }
 .pa-chip-name  { font-size: 13px; font-weight: 600; color: #1A1A2E; }
 .pa-chip-count {
   font-size: 11px;
   font-weight: 700;
-  background: #1178A9;
+  background: var(--vac-blue);
   color: #fff;
   border-radius: 10px;
   padding: 1px 6px;
@@ -74,7 +74,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #E8F5E9;
+  background: var(--vac-green-tint);
   border: 1px solid #A5D6A7;
   border-radius: 12px;
   margin: 0 16px 10px;
@@ -83,7 +83,7 @@
 
 .bulk-bar-text {
   font-size: 13px;
-  color: #2E9463;
+  color: var(--vac-green);
 }
 
 // ── Empty state ───────────────────────────────────────────────────────────────
@@ -107,9 +107,9 @@
   margin: 0 12px 14px;
   box-shadow: 0 3px 14px rgba(12, 54, 70, 0.09);
   overflow: hidden;
-  border-left: 4px solid #1178A9;
+  border-left: 4px solid var(--vac-blue);
 
-  &--girl { border-left-color: #AD1457; }
+  &--girl { border-left-color: var(--vac-red); }
 }
 
 .unap-card-header {
@@ -124,14 +124,14 @@
   width: 52px;
   height: 52px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #0C3646, #2A86B2);
+  background: linear-gradient(135deg, var(--vac-petrol), #2A86B2);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   overflow: hidden;
 
-  &--girl { background: linear-gradient(135deg, #AD1457, #F06292); }
+  &--girl { background: linear-gradient(135deg, var(--vac-red), #F06292); }
 
   img { width: 36px; height: 36px; object-fit: contain; }
 }
@@ -169,8 +169,8 @@
   gap: 4px;
   font-size: 11px;
   font-weight: 600;
-  color: #1178A9;
-  background: #E3F0FF;
+  color: var(--vac-blue);
+  background: var(--vac-blue-tint);
   border-radius: 8px;
   padding: 2px 8px;
   margin-top: 3px;
@@ -179,8 +179,8 @@
   ion-icon { font-size: 12px; }
 
   &--vax {
-    color: #D97A16;
-    background: #FFF3E0;
+    color: var(--vac-warn);
+    background: var(--vac-warn-tint);
   }
 }
 
@@ -200,7 +200,7 @@
 
   ion-icon { font-size: 20px; color: #546E7A; }
 
-  &--danger ion-icon { color: #C43D3D; }
+  &--danger ion-icon { color: var(--vac-red); }
 }
 
 // ── Approve all pending vaccines ──────────────────────────────────────────────
@@ -210,7 +210,7 @@
   justify-content: space-between;
   gap: 10px;
   padding: 8px 14px;
-  background: #FFF8E1;
+  background: var(--vac-warn-tint);
   border-bottom: 1px solid #F6F7F5;
 
   ion-button {
@@ -225,7 +225,7 @@
 .unap-vax-approve-all-text {
   font-size: 12px;
   font-weight: 600;
-  color: #D97A16;
+  color: var(--vac-warn);
 }
 
 // ── Pending vaccine rows ────────────────────────────────────────────────────────
@@ -235,7 +235,7 @@
   justify-content: space-between;
   gap: 10px;
   padding: 8px 14px;
-  background: #FFF3E0;
+  background: var(--vac-warn-tint);
   border-bottom: 1px solid #F6F7F5;
 
   ion-button {
@@ -253,7 +253,7 @@
   gap: 6px;
   font-size: 12px;
   font-weight: 600;
-  color: #D97A16;
+  color: var(--vac-warn);
   min-width: 0;
 
   ion-icon { font-size: 14px; flex-shrink: 0; }

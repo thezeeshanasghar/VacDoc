@@ -1,13 +1,16 @@
-// ── Palette ──────────────────────────────────────────────────────────────────
-$lava-red:     #C62828;
-$lava-dark:    #8B0000;
-$lava-orange:  #FF4500;
-$logo-blue:    #0D6EAD;
-$logo-blue-dp: #0b6098;
-$logo-green:   #2E7D32;
-$logo-green-lt:#43A047;
+// ── Palette (Porcelain & Petrol brand) ───────────────────────────────────────
+// Auth shell stays dark, but tinted petrol; CTA + accents use brand tokens.
+$petrol:       #0C3646;
+$petrol-dark:  #092833;
+$lava-red:     #C43D3D;   // → brand red (garnish/error)
+$lava-dark:    #0C3646;   // → petrol
+$lava-orange:  #C2A14D;   // → brand gold accent
+$logo-blue:    #1178A9;   // brand blue
+$logo-blue-dp: #0F6893;
+$logo-green:   #2E9463;   // brand green
+$logo-green-lt:#43A177;
 $white:        #FFFFFF;
-$near-black:   #0D0D12;
+$near-black:   #0C3646;   // petrol shell base
 $input-bg:     #F5F7FF;
 $input-border: #DDE3F4;
 $text-dark:    #111827;
@@ -20,10 +23,7 @@ ion-content { --background: transparent; }
 .login-bg {
   position: relative;
   min-height: 100vh;
-  background:
-    radial-gradient(ellipse 70% 55% at 10% 5%,   rgba(13,71,161,0.55) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 50% at 90% 95%,  rgba(139,0,0,0.50) 0%,   transparent 68%),
-    radial-gradient(ellipse 80% 60% at 50% 50%,  rgba(13,13,18,0.96) 0%,  $near-black 100%);
+  background: linear-gradient(180deg, var(--vac-petrol), var(--vac-petrol-dark));
   background-color: $near-black;
   display: flex;
   flex-direction: column;
@@ -131,7 +131,7 @@ ion-content { --background: transparent; }
 .bar-segment     { flex: 1; }
 .bar-blue        { background: $logo-blue; }
 .bar-green       { background: $logo-green-lt; }
-.bar-orange      { background: linear-gradient(90deg, $lava-orange, $lava-red); }
+.bar-orange      { background: var(--vac-gold); }
 
 .login-title    { font-size: 23px; font-weight: 800; color: $text-dark; margin: 0 0 4px; text-align: center; }
 .login-subtitle { font-size: 13px; color: $text-mid; text-align: center; margin: 0 0 24px; }
@@ -210,11 +210,11 @@ ion-content { --background: transparent; }
 
 // ── Button ────────────────────────────────────────────────────────────────────
 .login-btn {
-  --background: linear-gradient(135deg, #{$lava-dark} 0%, #{$lava-red} 40%, #{$lava-orange} 100%);
-  --background-activated: #{$lava-dark};
+  --background: var(--vac-blue);
+  --background-activated: var(--vac-petrol);
   --color: #{$white};
   --border-radius: 14px;
-  --box-shadow: 0 6px 22px rgba(198,40,40,0.48), 0 2px 6px rgba(255,69,0,0.30);
+  --box-shadow: 0 6px 22px rgba(17,120,169,0.40), 0 2px 6px rgba(12,54,70,0.30);
   height: 52px;
   font-size: 16px;
   font-weight: 800;
@@ -242,7 +242,7 @@ ion-content { --background: transparent; }
   display: flex;
   align-items: center;
   gap: 3px;
-  &:hover { color: $lava-orange; text-decoration: underline; }
+  &:hover { color: $logo-blue; text-decoration: underline; }
 }
 .auth-sep { color: #CBD5E1; font-size: 12px; }
 

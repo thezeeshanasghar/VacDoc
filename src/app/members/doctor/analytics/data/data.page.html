@@ -102,7 +102,7 @@
 
         <!-- Patients -->
         <ion-col size="6">
-          <div class="kpi-card" style="border-left:4px solid #1565C0;">
+          <div class="kpi-card" style="border-left:4px solid var(--vac-blue);">
             <div class="kpi-label">New Patients</div>
             <div class="kpi-val">{{ current?.Patients | number }}</div>
             <div class="kpi-prev">prev: {{ previous?.Patients | number }}</div>
@@ -114,7 +114,7 @@
 
         <!-- Doses -->
         <ion-col size="6">
-          <div class="kpi-card" style="border-left:4px solid #2E7D32;">
+          <div class="kpi-card" style="border-left:4px solid var(--vac-green);">
             <div class="kpi-label">Doses Given</div>
             <div class="kpi-val">{{ current?.Doses | number }}</div>
             <div class="kpi-prev">prev: {{ previous?.Doses | number }}</div>
@@ -138,7 +138,7 @@
 
         <!-- Expense -->
         <ion-col size="6">
-          <div class="kpi-card" style="border-left:4px solid #C62828;">
+          <div class="kpi-card" style="border-left:4px solid var(--vac-red);">
             <div class="kpi-label">Total Expense</div>
             <div class="kpi-val">{{ fmtMoney(current?.Expense) }}</div>
             <div class="kpi-prev">prev: {{ fmtMoney(previous?.Expense) }}</div>
@@ -150,9 +150,9 @@
 
         <!-- Net Profit -->
         <ion-col size="12">
-          <div class="kpi-card net-card" [style.borderLeftColor]="current?.NetProfit >= 0 ? '#1565C0' : '#C62828'">
+          <div class="kpi-card net-card" [style.borderLeftColor]="current?.NetProfit >= 0 ? 'var(--vac-blue)' : 'var(--vac-red)'">
             <div class="kpi-label">Net Profit / Loss</div>
-            <div class="kpi-val" [style.color]="current?.NetProfit >= 0 ? '#1B5E20' : '#C62828'">
+            <div class="kpi-val" [style.color]="current?.NetProfit >= 0 ? 'var(--vac-green)' : 'var(--vac-red)'">
               {{ fmtMoney(current?.NetProfit) }}
               <span style="font-size:14px; font-weight:400;"> PKR</span>
             </div>
@@ -180,7 +180,7 @@
         <div class="clinic-stats">
           <span>{{ c.Doses }} doses</span>
           <span>{{ c.Patients }} patients</span>
-          <span [style.color]="c.Net >= 0 ? '#1B5E20' : '#C62828'" style="font-weight:700;">
+          <span [style.color]="c.Net >= 0 ? 'var(--vac-green)' : 'var(--vac-red)'" style="font-weight:700;">
             Net: {{ fmtMoney(c.Net) }}
           </span>
         </div>

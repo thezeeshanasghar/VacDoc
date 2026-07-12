@@ -1,5 +1,5 @@
 .exp-content {
-  --background: #F6F7F5;
+  --background: var(--vac-surface);
 }
 
 .exp-card {
@@ -59,7 +59,7 @@
   width: 100%;
   box-sizing: border-box;
 
-  &:focus { border-color: #1178A9; }
+  &:focus { border-color: var(--vac-blue); }
 }
 
 .field-select {
@@ -73,7 +73,7 @@
   width: 100%;
   box-sizing: border-box;
 
-  &:focus { border-color: #1178A9; }
+  &:focus { border-color: var(--vac-blue); }
 }
 
 .field-textarea {
@@ -89,7 +89,7 @@
   resize: none;
   font-family: inherit;
 
-  &:focus { border-color: #1178A9; }
+  &:focus { border-color: var(--vac-blue); }
 }
 
 // ── Category chips grid ────────────────────────────────────────────────────
@@ -117,16 +117,16 @@
 }
 
 .cat-chip-active {
-  border-color: #1178A9;
-  background: #E3F2FD;
-  color: #1178A9;
+  border-color: var(--vac-blue);
+  background: var(--vac-blue-tint);
+  color: var(--vac-blue);
 
-  .cat-icon { color: #1178A9; }
+  .cat-icon { color: var(--vac-blue); }
 }
 
 .cat-icon {
   font-size: 18px;
-  color: #5D7286;
+  color: var(--vac-ink-3);
   flex-shrink: 0;
 }
 
@@ -155,18 +155,18 @@
 
   ion-icon {
     font-size: 22px;
-    color: #5D7286;
+    color: var(--vac-ink-3);
   }
 
   &:active { transform: scale(0.97); }
 }
 
 .scope-btn-active {
-  border-color: #1178A9;
-  background: #E3F2FD;
-  color: #1178A9;
+  border-color: var(--vac-blue);
+  background: var(--vac-blue-tint);
+  color: var(--vac-blue);
 
-  ion-icon { color: #1178A9; }
+  ion-icon { color: var(--vac-blue); }
 }
 
 .single-clinic-note {
@@ -176,9 +176,9 @@
   margin-top: 10px;
   font-size: 14px;
   font-weight: 600;
-  color: #2E9463;
+  color: var(--vac-green);
 
-  ion-icon { font-size: 18px; color: #2E9463; }
+  ion-icon { font-size: 18px; color: var(--vac-green); }
 }
 
 // ── Payment mode chips ─────────────────────────────────────────────────────
@@ -203,14 +203,14 @@
 }
 
 .pay-chip-active {
-  border-color: #1178A9;
-  background: #1178A9;
+  border-color: var(--vac-blue);
+  background: var(--vac-blue);
   color: #fff;
 }
 
 // ── Fixed asset card ───────────────────────────────────────────────────────
 .asset-card {
-  border: 1.5px solid #E8EAF6;
+  border: 1.5px solid var(--vac-blue-tint);
 }
 
 .asset-card-header {
@@ -219,9 +219,9 @@
   gap: 8px;
   font-size: 14px;
   font-weight: 700;
-  color: #4527A0;
+  color: var(--vac-petrol);
 
-  ion-icon { font-size: 20px; color: #4527A0; }
+  ion-icon { font-size: 20px; color: var(--vac-petrol); }
 }
 
 // ── Image upload box ───────────────────────────────────────────────────────
@@ -237,7 +237,7 @@
   background: #FAFAFA;
   transition: border-color 0.15s ease;
 
-  &:active { border-color: #1178A9; }
+  &:active { border-color: var(--vac-blue); }
 }
 
 .img-preview {

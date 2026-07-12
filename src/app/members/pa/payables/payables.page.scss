@@ -38,8 +38,8 @@
   ion-icon { font-size: 24px; }
 }
 
-.kpi-icon-blue { background: #E8F0FC; ion-icon { color: #1178A9; } }
-.kpi-icon-green { background: #E8F5E9; ion-icon { color: #2E9463; } }
+.kpi-icon-blue { background: var(--vac-blue-tint); ion-icon { color: var(--vac-blue); } }
+.kpi-icon-green { background: var(--vac-green-tint); ion-icon { color: var(--vac-green); } }
 
 .kpi-body { flex: 1; min-width: 0; }
 
@@ -55,12 +55,12 @@
 .kpi-value {
   font-size: 22px;
   font-weight: 800;
-  color: #1178A9;
+  color: var(--vac-blue);
   margin: 0 0 2px;
   line-height: 1.1;
 }
 
-.kpi-value-green { color: #2E9463; }
+.kpi-value-green { color: var(--vac-green); }
 
 .kpi-sub {
   font-size: 10px;
@@ -83,9 +83,9 @@
   gap: 6px;
   padding: 11px 8px;
   border-radius: 50px;
-  border: 2px solid #1178A9;
+  border: 2px solid var(--vac-blue);
   background: transparent;
-  color: #1178A9;
+  color: var(--vac-blue);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -94,7 +94,7 @@
   ion-icon { font-size: 17px; }
 
   &.tab-active {
-    background: #1178A9;
+    background: var(--vac-blue);
     color: #fff;
   }
 }
@@ -118,7 +118,7 @@
 }
 
 .direct-sale-card {
-  border-left: 4px solid #FFB300;
+  border-left: 4px solid var(--vac-warn);
   box-shadow: 0 2px 12px rgba(255, 179, 0, 0.12);
 }
 
@@ -135,8 +135,8 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: #E8F0FC;
-  color: #1178A9;
+  background: var(--vac-blue-tint);
+  color: var(--vac-blue);
   font-size: 12px;
   font-weight: 700;
   display: flex;
@@ -222,13 +222,13 @@
 }
 
 .action-done {
-  background: #E8F5E9;
-  color: #2E9463;
+  background: var(--vac-green-tint);
+  color: var(--vac-green);
 }
 
 .action-cancel {
-  background: #FFEBEE;
-  color: #C43D3D;
+  background: var(--vac-red-tint);
+  color: var(--vac-red);
 }
 
 // Completed tab status icons
@@ -236,8 +236,8 @@
   ion-icon { font-size: 26px; }
 }
 
-.icon-confirmed { color: #2E9463; }
-.icon-pending   { color: #D97A16; }
+.icon-confirmed { color: var(--vac-green); }
+.icon-pending   { color: var(--vac-warn); }
 
 // ── Badges ───────────────────────────────────────────────────────────────────
 .badge {
@@ -259,29 +259,29 @@
 }
 
 .badge-pending {
-  background: #FFF3E0;
-  color: #D97A16;
-  &::before { background: #D97A16; }
+  background: var(--vac-warn-tint);
+  color: var(--vac-warn);
+  &::before { background: var(--vac-warn); }
 }
 
 .badge-done {
-  background: #E8F5E9;
-  color: #2E9463;
-  &::before { background: #2E9463; }
+  background: var(--vac-green-tint);
+  color: var(--vac-green);
+  &::before { background: var(--vac-green); }
 }
 
 .badge-handover {
-  background: #E8EAF6;
-  color: #283593;
-  &::before { background: #283593; }
+  background: var(--vac-blue-tint);
+  color: var(--vac-blue);
+  &::before { background: var(--vac-blue); }
 }
 
 // ── Doctor's Guidelines box ───────────────────────────────────────────────────
 .assignment-guidelines {
   margin: 0 14px 12px;
-  background: #fffbea;
-  border: 1px solid #ffe082;
-  border-left: 4px solid #D97A16;
+  background: var(--vac-warn-tint);
+  border: 1px solid var(--vac-warn-tint);
+  border-left: 4px solid var(--vac-warn);
   border-radius: 8px;
   padding: 9px 12px;
 }
@@ -295,20 +295,20 @@
 
 .assignment-guidelines-icon {
   font-size: 15px;
-  color: #D97A16;
+  color: var(--vac-warn);
 }
 
 .assignment-guidelines-title {
   font-size: 11px;
   font-weight: 700;
-  color: #a07800;
+  color: var(--vac-warn);
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
 
 .assignment-guidelines-text {
   font-size: 13px;
-  color: #4a3800;
+  color: var(--vac-ink-2);
   line-height: 1.6;
   margin: 0;
   font-style: italic;

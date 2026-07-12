@@ -1,0 +1,21 @@
+// Alert tab bar — petrol shell with a gold indicator on the active tab
+// (theme-fix plan §5.9). Red is reserved for count badges only.
+.alert-tab-bar {
+  border-top: 2px solid var(--vac-gold);
+
+  ion-tab-button {
+    position: relative;
+  }
+
+  // Gold underline under the selected tab (matches the header gold hairline motif)
+  ion-tab-button.tab-selected::after {
+    content: "";
+    position: absolute;
+    left: 22%;
+    right: 22%;
+    bottom: 3px;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--vac-gold), var(--vac-gold-soft), var(--vac-gold));
+  }
+}

@@ -31,7 +31,7 @@ export class ClinicPage {
   canSetOnline = true;
   allowInventory = false;
   // Rotating colour themes for clinic cards (matches Stock Management dashboard palette)
-  cardColors = ["blue", "green", "purple", "orange", "teal", "indigo"];
+  cardColors = ["blue", "green", "petrol", "warn", "teal"];
   constructor(public loadingController: LoadingController, 
     public clinicService: ClinicService,
     private toastService: ToastService, 
