@@ -46,21 +46,23 @@ h1, h2, h3, h4,
 }
 
 // ── Toolbar ──────────────────────────────────────────────────────────────────
+// Page/drawer headers are PETROL (theme shell colour), NOT the blue accent.
+// Blue (--vac-blue) is reserved for buttons / links / accents only.
 ion-toolbar[color="primary"] {
-  --background: var(--vac-blue);
+  --background: var(--vac-petrol);
   --color:      #ffffff;
 }
 
-// Second toolbar (icon bar) — slightly darker
+// Second toolbar (icon bar) — same petrol so a two-row page header stays one colour
 ion-header ion-toolbar[color="primary"] + ion-toolbar[color="primary"] {
-  --background: var(--vac-blue-dp);
+  --background: var(--vac-petrol);
 }
 
-// ── Toolbar 3 — Medical Blue (page-owned toolbars inside the router outlet) ───
+// ── Toolbar 3 — Petrol (page-owned toolbars inside the router outlet) ─────────
 // Targets every page's own ion-header toolbar automatically.
 // Shell toolbars use .toolbar-blue / .toolbar-green so they are unaffected.
 .shell-outlet ion-header ion-toolbar {
-  --background: var(--vac-blue);
+  --background: var(--vac-petrol);
   --color: #ffffff;
 }
 
@@ -156,8 +158,9 @@ ion-badge[color="danger"]   { background: var(--vac-red); }
 ion-badge[color="warning"]  { background: #D97A16; }
 
 // ── Menu sidebar ─────────────────────────────────────────────────────────────
+// "Menu" drawer header: solid petrol (was a navy->blue gradient that read blue).
 ion-menu ion-toolbar[color="primary"] {
-  --background: linear-gradient(135deg, var(--vac-navy) 0%, var(--vac-blue) 100%);
+  --background: var(--vac-petrol);
 }
 
 ion-menu ion-content {
