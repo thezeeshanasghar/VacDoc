@@ -399,6 +399,28 @@ ion-buttons {
   &--clickable { cursor: pointer; color: var(--vac-blue); text-decoration: underline dotted; }
 }
 
+// Given-date in palette green — this coloured date replaces the old "✓ given".
+.status-gdate {
+  color: var(--vac-green);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+// Administered brand name, centred in the row's free space (spec §3.2).
+.row-brand {
+  flex: 0 1 auto;
+  min-width: 0;
+  text-align: center;
+  font-family: var(--vac-font-body);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: .02em;
+  color: var(--vac-green);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .vaccine-actions {
   display: flex;
   align-items: center;

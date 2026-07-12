@@ -166,8 +166,10 @@
                 <span *ngIf="!isOverdue(v)"> · due {{ v.Date | date:'MMM d' }}</span>
               </ng-container>
               <ng-container *ngIf="!v.Due2EPI && v.IsDone">
-                <span class="status-given">✓ given</span>
-                <span class="status-date" *ngIf="!v.IsDisease || v.IsDisease == null"> · {{ v.GivenDate | date:'MMM d' }}</span>
+                <!-- The green given-date IS the "given" indicator (no ✓/label). -->
+                <span class="status-gdate" *ngIf="!v.IsDisease || v.IsDisease == null">{{ v.GivenDate | date:'MMM d, y' }}</span>
+                <!-- Disease rows have no give-date; keep a green "given" marker so the row still reads as done. -->
+                <span class="status-gdate" *ngIf="v.IsDisease">given</span>
                 <span
                   class="status-inv"
                   *ngIf="invoiceExistsMap[item.key]"
@@ -182,6 +184,9 @@
               </ng-container>
             </div>
           </div>
+
+          <!-- Administered brand, centred in the row's free space (given rows only). -->
+          <div class="row-brand" *ngIf="!v.Due2EPI && v.IsDone && v.Brand?.Name">{{ v.Brand.Name }}</div>
 
           <!-- Row actions — only what's valid at this stage. Max 2 controls. -->
           <div class="vaccine-actions">
