@@ -57,6 +57,22 @@ export class PaPermissionsPage implements OnInit {
       ]
     },
     {
+      key: 'manager',
+      label: 'Manager-Level Permissions',
+      icon: 'people-circle-outline',
+      isNew: true,
+      exclusionNote: 'Manager-level permissions never grant access to Financial, cash handover, or invoice reconciliation — those stay governed solely by the Financial section, independent of this tier.',
+      scopeNote: 'All permissions below are automatically scoped to only the clinics already assigned to this PA under Clinic Access.',
+      fields: [
+        { key: 'ViewPaAssignmentStatus',      label: 'View PA assignment status', desc: 'See which feedback/vaccination tasks are marked done vs. pending, per PA' },
+        { key: 'ReassignPaTask',               label: 'Reassign task to another PA', desc: 'Move a pending task from one PA to another within assigned clinics' },
+        { key: 'ViewFeedbackResponseTracker',  label: 'View feedback response tracker', desc: 'See how many clients were sent a feedback link and how many filled the form' },
+        { key: 'SendFeedbackEmail',            label: 'Send feedback email', desc: 'Trigger the feedback-request email (magic link), individually or in bulk' },
+        { key: 'SendFeedbackWhatsApp',         label: 'Send feedback WhatsApp message', desc: 'Open the prewritten WhatsApp message (magic link only), individually or in bulk' },
+        { key: 'ManagePaClinicAssignments',    label: "Manage other PAs' clinic assignments", desc: "Add/remove which clinics a regular PA can access — bounded to this manager PA's own clinics" },
+      ]
+    },
+    {
       key: 'followup',
       label: 'Follow-Up',
       icon: 'calendar-outline',

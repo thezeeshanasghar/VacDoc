@@ -1,72 +1,161 @@
 .section-wrap {
-  margin: 8px 10px;
-  border-radius: 10px;
+  margin: 10px 10px;
+  border-radius: 12px;
   overflow: hidden;
-  border: 1px solid #2a2a3e;
+  border: 1px solid #2a3a46;
+  background: #16232e;
+}
+
+.section-wrap.manager-section {
+  border-color: rgba(201, 127, 209, 0.35);
+  box-shadow: 0 0 0 1px rgba(201, 127, 209, 0.08);
 }
 
 .section-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: #1a1a2e;
-  padding: 12px 14px;
+  gap: 13px;
+  padding: 14px 16px;
   cursor: pointer;
   user-select: none;
 }
 
-.section-icon {
-  color: #D97A16;
-  font-size: 20px;
+.section-icon-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: #21332c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+}
+
+.manager-section .section-icon-badge {
+  background: #33253a;
+}
+
+.section-icon {
+  color: #4fb88a;
+  font-size: 18px;
+}
+
+.manager-section .section-icon {
+  color: #c97fd1;
 }
 
 .section-meta {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .section-title {
   color: #fff;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 15.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.new-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: #33253a;
+  color: #c97fd1;
+  padding: 2px 7px;
+  border-radius: 5px;
 }
 
 .section-count {
-  color: #888;
+  color: #8fa3b0;
   font-size: 12px;
   margin-top: 2px;
+  font-variant-numeric: tabular-nums;
 }
 
 .chevron {
-  color: #888;
+  color: #8fa3b0;
   font-size: 18px;
   flex-shrink: 0;
 }
 
 .section-body {
-  background: #111;
-  padding: 0 8px 8px;
+  background: #0f1b24;
+  padding: 0 0 8px;
+  border-top: 1px solid #2a3a46;
 }
 
 .section-bulk-actions {
   display: flex;
   gap: 8px;
-  padding: 8px 4px 4px;
+  padding: 12px 14px 6px;
+}
+
+.exclusion-note, .scope-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 0 14px 10px;
+  padding: 11px 13px;
+  border-radius: 9px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #8fa3b0;
+}
+
+.exclusion-note {
+  background: rgba(224, 168, 79, 0.08);
+  border: 1px solid rgba(224, 168, 79, 0.25);
+}
+
+.exclusion-note ion-icon {
+  color: #e0a84f;
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.scope-note {
+  background: #1c2b37;
+  border: 1px solid #2a3a46;
+}
+
+.scope-note ion-icon {
+  color: #c97fd1;
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-top: 1px;
 }
 
 .perm-row {
-  --background: #1c1c2e;
+  --background: #1c2b37;
   --color: #e0e0e0;
-  border-radius: 6px;
-  margin: 3px 0;
+  --padding-start: 10px;
+  --inner-padding-end: 10px;
+  border-radius: 8px;
+  margin: 4px 8px;
 }
 
 .perm-label-text {
-  font-size: 13px;
-  color: #ddd;
   white-space: normal;
+}
+
+.perm-name {
+  font-size: 13.5px;
+  color: #edf2f5;
+  font-weight: 500;
+}
+
+.perm-desc {
+  font-size: 11.5px;
+  color: #8fa3b0;
+  margin-top: 2px;
+  line-height: 1.4;
 }
 
 .lava-btn {
