@@ -641,6 +641,13 @@ ion-popover ion-item[aria-checked="true"] {
   overflow: hidden;
 }
 
+// Material's month view has a fixed 354px height; combined with the
+// `overflow: hidden` above (there only for rounded corners) it clipped the
+// last week row. Let the calendar grow to fit all six rows so nothing overflows.
+.mat-datepicker-content .mat-calendar {
+  height: auto !important;
+}
+
 // ── Batch picker / bottom-sheet modals (spec §6, §7.2) ──────────────────────
 // Ionic 5 has no breakpoints API; anchor the modal to the bottom and let the
 // component's own rounded top provide the sheet look.
