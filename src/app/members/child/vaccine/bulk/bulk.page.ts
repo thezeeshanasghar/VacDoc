@@ -321,6 +321,7 @@ export class BulkPage implements OnInit {
     // rotation order for multi-site muscle routes (IM/SC)
     const rotation = ['R ' + base, 'L ' + base, 'R ' + other, 'L ' + other];
     let rot = 0;
+    const takenSites = new Set<string>();
 
     const rows = (this.bulkData || []);
     rows.forEach((_row: any, i: number) => {
@@ -338,22 +339,29 @@ export class BulkPage implements OnInit {
         this.siteValues[i] = sites[0];
         return;
       }
-      // Multi-site: prefer valid brand default, else next slot in the R+L rotation.
+      // Multi-site: prefer valid brand default if that site isn't already claimed
+      // by an earlier row in this bulk-give, else next free slot in the R+L rotation.
       this.siteLockedPerRow[i] = false;
       const brand = this.brandById(i, this.BrandIds[i]);
       const bDefault = brand ? (brand.SiteDefault || brand.siteDefault || '') : '';
-      if (bDefault && sites.indexOf(bDefault) !== -1) {
+      if (bDefault && sites.indexOf(bDefault) !== -1 && !takenSites.has(bDefault)) {
         this.siteValues[i] = bDefault;
+        takenSites.add(bDefault);
       } else {
+        while (takenSites.has(rotation[rot % rotation.length]) && takenSites.size < rotation.length) {
+          rot++;
+        }
         let pick = rotation[rot % rotation.length];
         if (sites.indexOf(pick) === -1) { pick = sites[0]; }
         this.siteValues[i] = pick;
+        takenSites.add(pick);
         rot++;
       }
     });
   }
 
-  // Recompute just one row's options + default after its brand changes (does not re-flow others).
+  // Recompute just one row's options + default after its brand changes (does not re-flow others,
+  // but avoids picking a site already claimed by a sibling row so two doses don't double up).
   private computeRowSite(index: number): void {
     const route = this.routeValues[index] || '';
     const sites = BulkPage.ROUTE_SITES[route] || [];
@@ -361,13 +369,24 @@ export class BulkPage implements OnInit {
     if (sites.length === 0) { this.siteLockedPerRow[index] = false; this.siteValues[index] = ''; return; }
     if (sites.length === 1) { this.siteLockedPerRow[index] = true; this.siteValues[index] = sites[0]; return; }
     this.siteLockedPerRow[index] = false;
+
+    const takenSites = new Set<string>();
+    (this.siteValues || []).forEach((v: string, i: number) => {
+      if (i !== index && v) { takenSites.add(v); }
+    });
+
     const brand = this.brandById(index, this.BrandIds[index]);
     const bDefault = brand ? (brand.SiteDefault || brand.siteDefault || '') : '';
-    if (bDefault && sites.indexOf(bDefault) !== -1) { this.siteValues[index] = bDefault; return; }
+    if (bDefault && sites.indexOf(bDefault) !== -1 && !takenSites.has(bDefault)) {
+      this.siteValues[index] = bDefault;
+      return;
+    }
     const age = this.childAgeYears();
     const muscle = (age !== null && age >= 5) ? 'Deltoid' : 'Thigh';
-    let def = 'R ' + muscle;
-    if (sites.indexOf(def) === -1) { def = sites[0]; }
+    const other = muscle === 'Deltoid' ? 'Thigh' : 'Deltoid';
+    const rotation = ['R ' + muscle, 'L ' + muscle, 'R ' + other, 'L ' + other];
+    let def = rotation.find(s => sites.indexOf(s) !== -1 && !takenSites.has(s));
+    if (!def) { def = sites.find(s => !takenSites.has(s)) || sites[0]; }
     this.siteValues[index] = def;
   }
 
