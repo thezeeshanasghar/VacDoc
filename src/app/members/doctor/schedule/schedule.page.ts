@@ -118,7 +118,8 @@ export class SchedulePage implements OnInit {
         toAdd.push({
           DoseId: dose.doseId,
           DoctorId: this.doctorId,
-          GapInDays: gapValue
+          GapInDays: gapValue,
+          IsActive: true
         });
       }
     });
