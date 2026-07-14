@@ -62,7 +62,6 @@ export class AddPage implements OnInit {
   agents: string[] = [];
   isButtonEnabled: boolean;
   isTravel: boolean;
-  isAdult: boolean = false;
   usertype: any;
   selectedClinicId: any;
   clinicid: Promise<any>;
@@ -272,7 +271,6 @@ filterCountryCodes(value: string) {
     });
     this.storage.get(environment.DOCTOR).then((doc) => {
       this.Doctor = doc;
-      this.isAdult = !!(doc && doc.AllowAdult);
     });
     this.storage.get(environment.MESSAGES).then((messages) => {
       messages == null ? "" : (this.Messages = messages);
