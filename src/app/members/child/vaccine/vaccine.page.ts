@@ -1480,29 +1480,41 @@ removal(type: string){
     );
     doneDates.forEach(date => {
       const group: any[] = grouped[date];
-      const doneVaccine = group.find(function(v: any) { return v.IsDone && v.GivenDate; });
-      if (!doneVaccine) { return; }
-      const givenDateStr = this.toInvoiceDateStr(doneVaccine.GivenDate);
-      if (!givenDateStr) { return; }
-      this.invoiceService.getInvoiceTotal(childId, givenDateStr).toPromise().then(res => {
-        if (res && res.IsSuccess) {
-          this.invoiceExistsMap[date] = true;
-          if (typeof res.ResponseData === 'number') { this.invoiceAmountMap[date] = res.ResponseData; }
-          this.cdr.detectChanges();
-        } else {
-          // PKT/UTC midnight boundary fallback
-          const prev = new Date(givenDateStr);
-          prev.setDate(prev.getDate() - 1);
-          const prevStr = prev.toISOString().split('T')[0];
-          this.invoiceService.getInvoiceTotal(childId, prevStr).toPromise().then(res2 => {
-            if (res2 && res2.IsSuccess) {
-              this.invoiceExistsMap[date] = true;
-              if (typeof res2.ResponseData === 'number') { this.invoiceAmountMap[date] = res2.ResponseData; }
-              this.cdr.detectChanges();
-            }
-          }).catch(function() {});
-        }
-      }).catch(function() {});
+      // A due-date bucket can hold doses actually given on different days (e.g. a
+      // late visit) — checking only the first done dose missed invoices tied to the
+      // others. Check every distinct GivenDate in the bucket and mark the bucket
+      // invoiced if ANY of them resolves to an invoice.
+      const givenDateStrs = Array.from(new Set(
+        group
+          .filter((v: any) => v.IsDone && v.GivenDate)
+          .map((v: any) => this.toInvoiceDateStr(v.GivenDate))
+          .filter((d: string | null) => !!d)
+      ));
+      if (givenDateStrs.length === 0) { return; }
+
+      const checkDate = (givenDateStr: string) => {
+        this.invoiceService.getInvoiceTotal(childId, givenDateStr).toPromise().then(res => {
+          if (res && res.IsSuccess) {
+            this.invoiceExistsMap[date] = true;
+            if (typeof res.ResponseData === 'number') { this.invoiceAmountMap[date] = res.ResponseData; }
+            this.cdr.detectChanges();
+          } else {
+            // PKT/UTC midnight boundary fallback
+            const prev = new Date(givenDateStr);
+            prev.setDate(prev.getDate() - 1);
+            const prevStr = prev.toISOString().split('T')[0];
+            this.invoiceService.getInvoiceTotal(childId, prevStr).toPromise().then(res2 => {
+              if (res2 && res2.IsSuccess) {
+                this.invoiceExistsMap[date] = true;
+                if (typeof res2.ResponseData === 'number') { this.invoiceAmountMap[date] = res2.ResponseData; }
+                this.cdr.detectChanges();
+              }
+            }).catch(function() {});
+          }
+        }).catch(function() {});
+      };
+
+      givenDateStrs.forEach(checkDate);
     });
   }
 
