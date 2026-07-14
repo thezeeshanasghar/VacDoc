@@ -74,6 +74,10 @@ export class VaccinePage {
   canCollectPayment = true;
   invoiceExistsMap: { [date: string]: boolean } = {};
   invoiceAmountMap: { [date: string]: number } = {};
+  // Stage-4 (paid) override support (spec §3.4a): per-date invoice ownership/edit
+  // window, from the existing GET schedule/invoice-status endpoint (already used
+  // by bulkinvoice.page.ts) — no new backend endpoint needed.
+  invoiceStatusMap: { [date: string]: { isSubmitted: boolean; editCount: number; canEdit: boolean; submittedByPaId: number | null } } = {};
 
   isFilledToday(doneAt: any): boolean {
     if (!doneAt) return false;
@@ -148,6 +152,16 @@ export class VaccinePage {
       this.usertype = user.UserType;
       if (user.UserType === 'PA') {
         this.paId = Number(user.PAId) || null;
+        // invoice-status is keyed by DoctorId, not PaId — bulkinvoice.page.ts reads
+        // this same storage key unconditionally for both user types.
+        this.storage.get(environment.DOCTOR_Id).then(val => {
+          this.doctorId = val ? Number(val) : null;
+          // getVaccination() may have already run and skipped loadInvoiceStatuses()
+          // because doctorId wasn't loaded yet — retry now that it is.
+          if (this.doctorId && Object.keys(this.dataGrouping).length > 0) {
+            this.loadInvoiceStatuses();
+          }
+        });
         this.paService.getPaPermissions(Number(user.PAId)).subscribe(perm => {
           this.canGiveVaccine    = (perm && perm.GiveVaccine)        || false;
           this.canUngiveVaccine  = (perm && perm.UngiveVaccine)      || false;
@@ -346,7 +360,13 @@ export class VaccinePage {
   // ── Guarded ungive (spec §3.4, §7.3) ──────────────────────────────────────
   // Stage 2 (given, not invoiced): instant. Stage 3 (invoiced): confirm dialog
   // that spells out the invoice + stock-restore consequence before proceeding.
+  // Stage 4 (paid): only reachable via canOverridePaidUngive() — a stronger
+  // confirm naming the paid amount, since this also voids a paid invoice.
   async requestUngive(v: any, date: string) {
+    if (v.IsPaymentCollected) {
+      await this.confirmUngivePaid(v, date);
+      return;
+    }
     const invoiced = !!this.invoiceExistsMap[date];
     if (!invoiced) {
       // Stage 2 — instant ungive, stock restored by the backend.
@@ -376,35 +396,65 @@ export class VaccinePage {
     await alert.present();
   }
 
-  // ── Invoice options menu (spec §3.4) — stage 3 receipt icon ───────────────
+  async confirmUngivePaid(v: any, date: string) {
+    const doseName = (v.Dose && v.Dose.Name) ? v.Dose.Name : 'this dose';
+    const amt = this.invoiceAmountMap[date];
+    const amtStr = amt > 0 ? ' (Rs ' + amt.toLocaleString() + ')' : '';
+    const remaining = this.usertype === 'PA' ? (' You have ' + (2 - (v.UngiveCount || 0)) + ' same-day ungive(s) left.') : '';
+    const alert = await this.alertController.create({
+      header: 'Ungive paid dose?',
+      cssClass: 'vac-confirm',
+      message:
+        doseName + ' was invoiced and marked paid' + amtStr + '. Ungiving will void the invoice ' +
+        'and mark this dose due again. This cannot be undone from here.' + remaining,
+      buttons: [
+        { text: 'Cancel', role: 'cancel', cssClass: 'alert-btn-neutral' },
+        {
+          text: 'Ungive & void invoice',
+          cssClass: 'alert-btn-danger',
+          handler: () => { this.UnfillVaccine(v.Id); }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  // ── Invoice options menu (spec §3.4, §3.4a) — stage 3 receipt icon, and the
+  // stage-4 (paid) override icon for doctor / same-day-own-invoice PA. ───────
   // Presented via a proper Ionic ActionSheet (re-download / edit & regenerate / void).
+  // "Void invoice" stays doctor-only even in the stage-4 override — a PA can
+  // fix/re-download a same-day mistake but can't kill a paid invoice outright.
   async openInvoiceMenu(ev: Event, groupVaccines: any[], date: string) {
+    const buttons: any[] = [
+      {
+        text: 'Re-download PDF',
+        icon: 'download-outline',
+        handler: () => {
+          this.router.navigate([`/members/child/vaccine/${this.childId}/bulkinvoice/${date}`]);
+        }
+      },
+      {
+        text: 'Edit & regenerate',
+        icon: 'create-outline',
+        handler: () => {
+          this.router.navigate([`/members/child/vaccine/${this.childId}/bulkinvoice/${date}`]);
+        }
+      }
+    ];
+    if (this.usertype === 'DOCTOR') {
+      buttons.push({
+        text: 'Void invoice',
+        icon: 'close-circle-outline',
+        role: 'destructive',
+        handler: () => { this.confirmVoidInvoice(groupVaccines, date); }
+      });
+    }
+    buttons.push({ text: 'Cancel', role: 'cancel' });
+
     const sheet = await this.actionSheetController.create({
       header: 'Invoice',
       cssClass: 'invoice-action-sheet',
-      buttons: [
-        {
-          text: 'Re-download PDF',
-          icon: 'download-outline',
-          handler: () => {
-            this.router.navigate([`/members/child/vaccine/${this.childId}/bulkinvoice/${date}`]);
-          }
-        },
-        {
-          text: 'Edit & regenerate',
-          icon: 'create-outline',
-          handler: () => {
-            this.router.navigate([`/members/child/vaccine/${this.childId}/bulkinvoice/${date}`]);
-          }
-        },
-        {
-          text: 'Void invoice',
-          icon: 'close-circle-outline',
-          role: 'destructive',
-          handler: () => { this.confirmVoidInvoice(groupVaccines, date); }
-        },
-        { text: 'Cancel', role: 'cancel' }
-      ]
+      buttons
     });
     await sheet.present();
   }
@@ -465,6 +515,7 @@ export class VaccinePage {
         this.storage.set("vaccinesData", this.vaccinesData);
         this.dataGrouping = this.groupBy(this.vaccine, "Date");
         this.loadInvoiceExistence();
+        this.loadInvoiceStatuses();
         loading.dismiss();
 
       } else if (res.IsSuccess === false) {
@@ -1453,6 +1504,57 @@ removal(type: string){
         }
       }).catch(function() {});
     });
+  }
+
+  // Stage-4 override support: same date-resolution as loadInvoiceExistence(), but
+  // pulls ownership/edit-window data (isSubmitted/editCount/canEdit/submittedByPaId)
+  // from the endpoint bulkinvoice.page.ts already uses for its own same-day guard.
+  private loadInvoiceStatuses() {
+    if (!this.doctorId) { return; }
+    this.invoiceStatusMap = {};
+    const grouped: any = this.dataGrouping;
+    const doneDates = Object.keys(grouped).filter(date =>
+      grouped[date].some((v: any) => v.IsDone)
+    );
+    doneDates.forEach(date => {
+      const group: any[] = grouped[date];
+      const doneVaccine = group.find(function(v: any) { return v.IsDone && v.GivenDate; });
+      if (!doneVaccine) { return; }
+      const givenDateStr = this.toInvoiceDateStr(doneVaccine.GivenDate);
+      if (!givenDateStr) { return; }
+      this.bulkService.getInvoiceStatus(Number(this.childId), this.doctorId, givenDateStr).toPromise().then(res => {
+        if (res) {
+          this.invoiceStatusMap[date] = res;
+          this.cdr.detectChanges();
+        }
+      }).catch(() => {});
+    });
+  }
+
+  // ── Stage-4 (paid) override gating (spec §3.4a) ───────────────────────────
+  // Doctor: always allowed — full invoice menu + ungive, both guarded by confirm
+  // dialogs. PA: only within the same window the backend already enforces
+  // (own action, same PKT calendar day, under the existing count caps) — this
+  // mirrors ScheduleController.cs Update()/updateInvoice() server-side checks,
+  // it does not relax them; a stale client guess still gets rejected server-side.
+  canOverridePaidInvoice(date: string): boolean {
+    if (!this.canInvoice) { return false; }
+    if (this.usertype === 'DOCTOR') { return true; }
+    if (this.usertype !== 'PA' || !this.paId) { return false; }
+    const status = this.invoiceStatusMap[date];
+    return !!status && status.isSubmitted && status.canEdit && status.submittedByPaId === this.paId;
+  }
+
+  canOverridePaidUngive(v: any): boolean {
+    if (!v || !v.IsPaymentCollected) { return false; }
+    if (this.usertype === 'DOCTOR') { return true; }
+    if (this.usertype !== 'PA' || !this.paId || !this.canUngiveVaccine) { return false; }
+    if (v.GivenByPaId !== this.paId) { return false; }
+    if (!v.DoneAt) { return false; }
+    const doneDay = moment(v.DoneAt).utcOffset(5 * 60).format('YYYY-MM-DD');
+    const today = moment().utcOffset(5 * 60).format('YYYY-MM-DD');
+    if (doneDay !== today) { return false; }
+    return (v.UngiveCount || 0) < 2;
   }
 
   hasUnpaidDoneVaccine(data: any[], date: string): boolean {

@@ -131,7 +131,17 @@
               </button>
             </ng-container>
 
-            <!-- STAGE 4: PAID — no actions (card reads as history) -->
+            <!-- STAGE 4: PAID — read-only history, except a quiet override for the
+                 doctor (always) or the PA who submitted the invoice, same day,
+                 unedited (spec §3.4a). No GIVE/PAYMENT controls either way. -->
+            <ng-container *ngIf="isStage(item.value, item.key, 4) && canOverridePaidInvoice(item.key)">
+              <button
+                class="grp-icobtn grp-icobtn--invoice"
+                (click)="openInvoiceMenu($event, item.value, item.key)"
+                title="Invoice options">
+                <ion-icon name="receipt-outline"></ion-icon>
+              </button>
+            </ng-container>
 
           </div>
         </div>
@@ -232,7 +242,10 @@
                 title="Approve">
                 <ion-icon name="checkmark-circle-outline" class="action-icon action-icon--approve"></ion-icon>
               </button>
-              <!-- Stage 4 (paid) locks ungive — must reverse payment first (spec §3.4). -->
+              <!-- Stage 4 (paid): locked by default (spec §3.4). Reopened for the doctor
+                   (always) or the PA who gave this dose, same day, under the ungive cap
+                   (spec §3.4a) — canOverridePaidUngive() mirrors the same checks
+                   ScheduleController.cs already enforces server-side. -->
               <button
                 *ngIf="(usertype === 'DOCTOR' || canUngiveVaccine) && !v.IsPaymentCollected"
                 class="ungive-btn"
@@ -240,8 +253,15 @@
                 title="Ungive Vaccine">
                 UNGIVE
               </button>
+              <button
+                *ngIf="v.IsPaymentCollected && canOverridePaidUngive(v)"
+                class="ungive-btn"
+                (click)="requestUngive(v, item.key)"
+                title="Ungive Vaccine (paid — will void invoice)">
+                UNGIVE
+              </button>
               <span
-                *ngIf="v.IsPaymentCollected"
+                *ngIf="v.IsPaymentCollected && !canOverridePaidUngive(v)"
                 class="ungive-locked"
                 title="Paid — reverse the payment to ungive">
                 <ion-icon name="lock-closed-outline"></ion-icon>
