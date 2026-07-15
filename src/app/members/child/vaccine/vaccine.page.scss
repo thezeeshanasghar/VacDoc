@@ -246,7 +246,7 @@ ion-buttons {
 .action-btn--reschedule  { --color: var(--vac-blue); }
 .action-btn--invoice     { --color: var(--vac-blue); }
 .action-btn--assign      { --color: var(--vac-blue); }
-.action-btn--params      { --color: var(--vac-warn); }
+.action-btn--params      { --color: var(--vac-warn); border-color: var(--vac-warn); }
 .action-btn--approve-icon { --color: var(--vac-green); }
 .action-btn--skipicon    { ion-icon { color: var(--vac-ink-3); font-size: 16px; } }
 .action-btn--reschedule  ion-icon { color: var(--vac-blue); }
@@ -255,6 +255,7 @@ ion-buttons {
 .action-icon--invoice  { color: var(--vac-blue); }
 .action-icon--assign   { color: var(--vac-blue); }
 .action-icon--approve  { color: var(--vac-green); font-size: 20px; }
+.action-icon--params   { color: var(--vac-warn); display: block; }
 
 // ── Vaccine row ───────────────────────────────────────────────────────────────
 .vaccine-row {

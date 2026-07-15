@@ -198,7 +198,7 @@
           <!-- Administered brand, centred in the row's free space (given rows only). -->
           <div class="row-brand" *ngIf="!v.Due2EPI && v.IsDone && v.Brand?.Name">{{ v.Brand.Name }}</div>
 
-          <!-- Row actions — only what's valid at this stage. Max 2 controls. -->
+          <!-- Row actions — only what's valid at this stage. -->
           <div class="vaccine-actions">
 
             <!-- STAGE 1 · due (not skipped): reschedule + skip only.
@@ -241,6 +241,20 @@
                 (click)="updateScheduleApproval(v.Id)"
                 title="Approve">
                 <ion-icon name="checkmark-circle-outline" class="action-icon action-icon--approve"></ion-icon>
+              </button>
+              <!-- Add Parameters — records height/weight/head-circumference against an
+                   already-given dose. Needed for home visits: the PA marks the vaccine
+                   given (and downloads the invoice/schedule) before ever measuring the
+                   child, then records anthropometrics here once at the patient's home. -->
+              <button
+                *ngIf="canAddParams"
+                class="action-btn action-btn--params"
+                routerLink="/members/child/vaccine/{{childId}}/afterfill/{{v.Id}}"
+                title="Add Parameters">
+                <svg class="action-icon action-icon--params" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3.5" y="8" width="17" height="8" rx="1.6"/>
+                  <path d="M6.5 8v3M9.5 8v2M12.5 8v3M15.5 8v2M18.5 8v3"/>
+                </svg>
               </button>
               <!-- Stage 4 (paid): locked by default (spec §3.4). Reopened for the doctor
                    (always) or the PA who gave this dose, same day, under the ungive cap
