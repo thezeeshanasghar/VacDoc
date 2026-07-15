@@ -52,6 +52,12 @@ getInvoiceTotal(childId: number, scheduleDate: string): Observable<any> {
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
+  // Primary-key lookup via Schedule.InvoiceSubmissionId — no date matching.
+  getInvoiceTotalById(invoiceSubmissionId: number): Observable<any> {
+    const url = `${this.API_INVOICE}Child/invoice-total-by-id?invoiceSubmissionId=${invoiceSubmissionId}`;
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
 getFee(Id: string): Observable<any> {
     const url = `${this.API_INVOICE}Child/consultation-fee/${Id}`;
     return this.http.get(url, this.httpOptions).pipe(

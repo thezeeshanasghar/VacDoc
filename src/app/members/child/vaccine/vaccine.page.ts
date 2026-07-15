@@ -1480,13 +1480,37 @@ removal(type: string){
     );
     doneDates.forEach(date => {
       const group: any[] = grouped[date];
-      // A due-date bucket can hold doses actually given on different days (e.g. a
-      // late visit) — checking only the first done dose missed invoices tied to the
-      // others. Check every distinct GivenDate in the bucket and mark the bucket
-      // invoiced if ANY of them resolves to an invoice.
+      const doneDoses = group.filter((v: any) => v.IsDone);
+      if (doneDoses.length === 0) { return; }
+
+      // Source of truth: Schedule.InvoiceSubmissionId, stamped directly on the dose when
+      // its invoice is created (update-bulk-invoice). A primary-key link, not a date match —
+      // immune to due-date-vs-given-date bucket splits and timezone/format drift, both of
+      // which broke the old date-matching lookup repeatedly and in different ways.
+      const invoiceIds = Array.from(new Set(
+        doneDoses
+          .map((v: any) => v.InvoiceSubmissionId)
+          .filter((id: any) => !!id)
+      ));
+
+      if (invoiceIds.length > 0) {
+        invoiceIds.forEach((invoiceId: number) => {
+          this.invoiceService.getInvoiceTotalById(invoiceId).toPromise().then(res => {
+            if (res && res.IsSuccess) {
+              this.invoiceExistsMap[date] = true;
+              if (typeof res.ResponseData === 'number') { this.invoiceAmountMap[date] = res.ResponseData; }
+              this.cdr.detectChanges();
+            }
+          }).catch(function() {});
+        });
+        return;
+      }
+
+      // Fallback for doses invoiced before InvoiceSubmissionId existed (pre-backfill /
+      // any row the backfill missed) — same date-matching lookup as before.
       const givenDateStrs = Array.from(new Set(
-        group
-          .filter((v: any) => v.IsDone && v.GivenDate)
+        doneDoses
+          .filter((v: any) => v.GivenDate)
           .map((v: any) => this.toInvoiceDateStr(v.GivenDate))
           .filter((d: string | null) => !!d)
       ));
