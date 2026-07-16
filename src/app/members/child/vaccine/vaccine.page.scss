@@ -149,8 +149,8 @@ ion-buttons {
   ion-icon { font-size: 14px; }
   .stage-btn-img { height: 15px; width: auto; filter: brightness(0) invert(1); }
   &--give    { background: var(--vac-green); box-shadow: var(--vac-shadow-give); font-size: 12px; }
-  &--invoice { background: var(--vac-blue);  box-shadow: var(--vac-shadow-blue); font-size: 11px; }
-  &--payment { background: var(--vac-green); box-shadow: var(--vac-shadow-give); font-size: 11px; }
+  &--invoice { background: var(--vac-petrol); box-shadow: 0 3px 10px rgba(12, 54, 70, .35); font-size: 11px; }
+  &--payment { background: linear-gradient(135deg, var(--vac-gold-text), var(--vac-gold)); box-shadow: 0 3px 10px rgba(176, 143, 62, .35); font-size: 11px; }
 }
 
 // Date colour states
