@@ -6,7 +6,8 @@ import {
   Validators,
 } from "@angular/forms";
 import * as moment from "moment";
-import { LoadingController } from "@ionic/angular";
+import { LoadingController, PopoverController } from "@ionic/angular";
+import { ScheduleTypePopoverComponent } from "./schedule-type-popover/schedule-type-popover.component";
 import { VaccineService } from "src/app/services/vaccine.service";
 import { ToastService } from "src/app/shared/toast1.service";
 import { ChildService } from "src/app/services/child.service";
@@ -87,7 +88,8 @@ export class AddPage implements OnInit {
     public alertCtrl: AlertController,
     private http: HttpClient,
     private paService: PaService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private popoverController: PopoverController
   ) {}
 
   async ngOnInit() {
@@ -1083,6 +1085,9 @@ filterCountryCodes(value: string) {
   onTravelChange(event: any) {
     const selectedValue = event.detail.value;
     console.log("Selected Type:", selectedValue);
+    if (selectedValue === "special" && this.Doctor && this.Doctor.AllowAdult === true) {
+      this.presentScheduleTypePopover();
+    }
     this.fg1.get("CNIC").clearValidators();
     this.fg1.get("agent").clearValidators();
     this.fg1.get("Agent2").clearValidators();
@@ -1108,6 +1113,23 @@ filterCountryCodes(value: string) {
     this.fg1.get("Nationality").updateValueAndValidity();
     this.isRadioDisabled = this.isCnicRequired && !this.epiDone;
     this.checkEpi();
+  }
+
+  async presentScheduleTypePopover() {
+    const popover = await this.popoverController.create({
+      component: ScheduleTypePopoverComponent,
+      translucent: true,
+      cssClass: "pdf-options-popover pdf-options-popover--centered",
+    });
+    await popover.present();
+
+    const { data } = await popover.onDidDismiss();
+    if (data && data.type === "adult") {
+      this.toastService.create("Coming soon");
+    } else if (data && data.type === "pregnancy") {
+      this.toastService.create("Coming soon");
+    }
+    // "blank" (Simple Blank) requires no action: Customize proceeds as before.
   }
 
   onCityChange() {

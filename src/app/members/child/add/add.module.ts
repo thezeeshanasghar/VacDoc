@@ -6,6 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { AddPage } from './add.page';
+import { ScheduleTypePopoverComponent } from './schedule-type-popover/schedule-type-popover.component';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatFormFieldModule , MatInputModule } from '@angular/material';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
@@ -29,6 +30,7 @@ const routes: Routes = [
     MatInputModule,
     MatAutocompleteModule
   ],
-  declarations: [AddPage]
+  declarations: [AddPage, ScheduleTypePopoverComponent],
+  entryComponents: [ScheduleTypePopoverComponent]
 })
 export class AddPageModule {}
