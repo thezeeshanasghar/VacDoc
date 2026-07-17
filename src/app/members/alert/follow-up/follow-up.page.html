@@ -12,6 +12,15 @@
       </ion-item>
     </ion-buttons>
   </ion-toolbar>
+
+  <!-- Clinic filter: default 'All Clinics' = merged-across-clinics behaviour -->
+  <div class="clinic-filter-row" *ngIf="clinics && clinics.length > 1">
+    <div class="clinic-pick-row" (click)="openClinicPicker()">
+      <span class="clinic-pick-value">{{ selectedClinicName }}</span>
+      <ion-icon name="chevron-down-outline" class="clinic-pick-chevron"></ion-icon>
+    </div>
+  </div>
+
   <h1 *ngIf="!followUpChild || followUpChild.length === 0" style="color: red">No follow up for today.</h1>
   <ion-grid>
     <ion-row>
@@ -29,4 +38,25 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+
+  <!-- Searchable clinic picker modal (same pattern as vaccine-alert.page.html) -->
+  <div class="clinic-modal-backdrop" *ngIf="clinicPickerOpen" (click)="closeClinicPicker()"></div>
+  <div class="clinic-modal" *ngIf="clinicPickerOpen">
+    <div class="clinic-modal-header">
+      <span class="clinic-modal-title">Select Clinic</span>
+      <ion-icon name="close-outline" class="clinic-modal-close" (click)="closeClinicPicker()"></ion-icon>
+    </div>
+    <div class="clinic-modal-search">
+      <ion-icon name="search-outline" class="cms-icon"></ion-icon>
+      <input type="text" [(ngModel)]="clinicPickerSearch" placeholder="Search clinic..." class="cms-input" autocomplete="off">
+      <button *ngIf="clinicPickerSearch" class="cms-clear" (click)="clinicPickerSearch = ''">&times;</button>
+    </div>
+    <div class="clinic-modal-list">
+      <div *ngIf="filteredPickerClinics.length === 0" class="clinic-modal-empty">No clinics found</div>
+      <div class="clinic-modal-item" *ngFor="let c of filteredPickerClinics" (click)="selectClinic(c.Id)">
+        <span class="cmi-name" [class.all]="c.Id === 'all'">{{ c.Name }}</span>
+        <ion-icon *ngIf="c.Id === selectedClinicId" name="checkmark-circle" class="cmi-check"></ion-icon>
+      </div>
+    </div>
+  </div>
 </ion-content>

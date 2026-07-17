@@ -23,6 +23,18 @@ export class BirthdayService extends BaseService {
     );
   }
 
+  // Single-clinic-scoped fetch for the clinic filter (one call per accessible clinic,
+  // merged client-side) — distinct from getBirthdayAlert's doctor-wide endpoint.
+  getBirthdayAlertForClinic(clinicId: number, date: string, paId?: number, doctorId?: number): Observable<any> {
+    let url = `${this.API_ALERT}Birthday/clinic-alert/${clinicId}?inputDate=${date}`;
+    if (paId) url += `&paId=${paId}`;
+    if (doctorId) url += `&doctorId=${doctorId}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
   sendEmailToAll(Id: number): Observable<any> {
     const url = `${this.API_ALERT
       }Birthday/birthdaymail/bulk/${Id}`;

@@ -6,6 +6,7 @@ import { Storage } from "@ionic/storage";
 import { BirthdayService } from "src/app/services/birthday.service";
 import { Platform } from '@ionic/angular';
 import { ClinicService } from "src/app/services/clinic.service";
+import { PaService } from "src/app/services/pa.service";
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 
 @Component({
@@ -18,10 +19,19 @@ export class BirthdayAlertPage implements OnInit {
   formattedDate: string;
   doctorId: any;
   docname: string = '';
-  clinic: string = ''; 
-  clinics: string = ''; 
-  firstClinic: string = ''; 
+  clinic: string = '';
+  clinics: any;
+  firstClinic: string = '';
   birthdayChild: any[] = [];
+  usertype: any;
+  allClinicIds: number[] = [];
+
+  // Clinic filter: default 'all' = merged across every accessible clinic.
+  allChilds: any[] = [];
+  selectedClinicId: number | 'all' = 'all';
+  clinicPickerOpen = false;
+  clinicPickerSearch = '';
+
   private readonly API_VACCINE = `${environment.BASE_URL}`;
   constructor(
     public loadingController: LoadingController,
@@ -31,42 +41,129 @@ export class BirthdayAlertPage implements OnInit {
     public platform: Platform,
     private downloader: Downloader,
     public clinicService: ClinicService,
+    private paService: PaService,
   ) { }
 
-  ngOnInit() {
-    this.storage.get(environment.DOCTOR_Id).then(val => {
-      this.doctorId = val;
-      if (this.doctorId) {
-        console.log("Load Doctor");
-        this.loadDoctorDetails(this.doctorId);
-      }
-    });
+  async ngOnInit() {
+    this.usertype = await this.storage.get(environment.USER);
+    this.doctorId = await this.storage.get(environment.DOCTOR_Id);
 
-    this.getBirthdayChild(this.selectedDate);
+    // Doctor display name/clinic list for the WhatsApp message body — doctor-only lookup.
+    // PA sessions skip this and fall back to each child's own ClinicName (see openWhatsApp).
+    if (this.doctorId && !(this.usertype && this.usertype.UserType === 'PA')) {
+      this.loadDoctorDetails(this.doctorId);
+    }
+
+    this.formattedDate = this.formatDateToString(this.selectedDate);
+    await this.loadClinics();
   }
 
-  async getBirthdayChild(formattedDate: string): Promise<void> {
-    this.formattedDate = formattedDate;
+  async loadClinics() {
+    const loading = await this.loadingController.create({ message: 'Loading clinics...' });
+    await loading.present();
+
+    const isPA = this.usertype && this.usertype.UserType === 'PA';
+    const clinics$ = isPA
+      ? this.paService.getPaClinics(Number(this.usertype.PAId))
+      : this.clinicService.getClinics(Number(this.doctorId));
+
+    clinics$.subscribe({
+      next: (response) => {
+        loading.dismiss();
+        if (response.IsSuccess) {
+          this.clinics = response.ResponseData;
+          this.allClinicIds = this.clinics.map(c => c.Id);
+          if (this.allClinicIds.length > 0) {
+            this.getAllClinicsBirthdays();
+          }
+        } else {
+          this.toastService.create(response.Message, 'danger');
+        }
+      },
+      error: () => {
+        loading.dismiss();
+        this.toastService.create('Failed to load clinics', 'danger');
+      },
+    });
+  }
+
+  async getAllClinicsBirthdays(): Promise<void> {
+    if (!this.allClinicIds || this.allClinicIds.length === 0) return;
+
     const loading = await this.loadingController.create({
       message: "Loading...",
       spinner: "circles",
     });
     await loading.present();
-    this.birthdayService.getBirthdayAlert(this.formattedDate, this.doctorId).subscribe(
-      async (res) => {
-        if (res) {
-          this.birthdayChild = res.ResponseData || [];
-          console.log("Birthday Child List:", this.birthdayChild);
-          await loading.dismiss();
-        } else {
-          this.toastService.create(res.Message || "An error occurred.", "danger");
+
+    const isPA = this.usertype && this.usertype.UserType === 'PA';
+    const paId = isPA ? Number(this.usertype.PAId) : undefined;
+    const doctorId = isPA ? undefined : Number(this.doctorId);
+
+    try {
+      const requests = this.allClinicIds.map(clinicId =>
+        this.birthdayService.getBirthdayAlertForClinic(clinicId, this.formattedDate, paId, doctorId)
+      );
+      const { forkJoin } = await import('rxjs');
+
+      forkJoin(requests).subscribe(
+        (responses: any[]) => {
+          let allChildren = [];
+          responses.forEach((res, i) => {
+            if (res.IsSuccess && res.ResponseData) {
+              const clinicId = this.allClinicIds[i];
+              res.ResponseData.forEach((item: any) => item._sourceClinicId = clinicId);
+              allChildren = allChildren.concat(res.ResponseData);
+            }
+          });
+          this.allChilds = allChildren;
+          this.applyClinicFilter();
+          loading.dismiss();
+        },
+        () => {
+          loading.dismiss();
+          this.toastService.create('Error loading birthday alerts', 'danger');
         }
-      },
-      async (err) => {
-        await loading.dismiss();
-        this.toastService.create(err.message || "Failed to fetch data.", "danger");
-      }
-    );
+      );
+    } catch (error) {
+      loading.dismiss();
+      this.toastService.create('Error loading birthday alerts', 'danger');
+    }
+  }
+
+  // ---------- clinic filter ----------
+  applyClinicFilter() {
+    this.birthdayChild = this.selectedClinicId === 'all'
+      ? this.allChilds
+      : this.allChilds.filter(c => c._sourceClinicId === this.selectedClinicId);
+  }
+
+  get filteredPickerClinics() {
+    const search = (this.clinicPickerSearch || '').trim().toLowerCase();
+    const all = [{ Id: 'all', Name: 'All Clinics' }, ...(this.clinics || [])];
+    if (!search) return all;
+    return all.filter(c => c.Name.toLowerCase().includes(search));
+  }
+
+  get selectedClinicName(): string {
+    if (this.selectedClinicId === 'all') return 'All Clinics';
+    const match = (this.clinics || []).find(c => c.Id === this.selectedClinicId);
+    return match ? match.Name : 'All Clinics';
+  }
+
+  openClinicPicker() {
+    this.clinicPickerSearch = '';
+    this.clinicPickerOpen = true;
+  }
+
+  closeClinicPicker() {
+    this.clinicPickerOpen = false;
+  }
+
+  selectClinic(id: number | 'all') {
+    this.selectedClinicId = id;
+    this.applyClinicFilter();
+    this.closeClinicPicker();
   }
 
   formatDateToString(date: string | Date): string {
@@ -78,35 +175,26 @@ export class BirthdayAlertPage implements OnInit {
 
   onDateChange(event: any) {
     this.selectedDate = event.value;
-    this.getBirthdayChild(this.formatDateToString(this.selectedDate));
+    this.formattedDate = this.formatDateToString(this.selectedDate);
+    this.getAllClinicsBirthdays();
   }
 
+  // Note: intentionally does NOT touch this.clinics — that's owned by loadClinics() and
+  // feeds the clinic filter picker. This only sets docname/clinic (message-body fallback text).
   loadDoctorDetails(doctorId: number) {
-    console.log("Doctor ID:", doctorId);
     this.birthdayService.loadDoctorDetails(doctorId).subscribe(
       (res) => {
-        console.log("Full API Response:", res);
         if (res.IsSuccess) {
           const DoctorDetails = res.ResponseData;
-          console.log("DoctorDetails Object:", DoctorDetails);
           this.docname = DoctorDetails.DisplayName;
-          this.clinics = Array.isArray(DoctorDetails.Clinics) ? DoctorDetails.Clinics : [];
-          console.log("Clinic List:", this.clinics);
-          if (this.clinics.length > 0) {
-            const firstClinic = this.clinics[0];
-            if (Array.isArray(this.clinics) && this.clinics.length > 0) {
-              const firstClinic = this.clinics[0];
-              if (typeof firstClinic === 'object' && firstClinic !== null) {
-                this.clinic = firstClinic.Name || firstClinic.ClinicName || "Unknown Clinic";
-              } else {
-                console.error("firstClinic is not an object:", firstClinic);
-                this.clinic = "Unknown Clinic";
-              }
-            } else {
-              this.clinic = "Unknown Clinic";
-            }
+          const doctorClinics = Array.isArray(DoctorDetails.Clinics) ? DoctorDetails.Clinics : [];
+          if (doctorClinics.length > 0) {
+            const firstClinic = doctorClinics[0];
+            this.clinic = (typeof firstClinic === 'object' && firstClinic !== null)
+              ? (firstClinic.Name || firstClinic.ClinicName || "Unknown Clinic")
+              : "Unknown Clinic";
           } else {
-            this.clinic = "Unknown Clinic"
+            this.clinic = "Unknown Clinic";
           }
         } else {
           console.error("Error fetching doctor details:", res.Message);
@@ -215,11 +303,12 @@ export class BirthdayAlertPage implements OnInit {
       return;
     }
 
+    const clinicName = child.ClinicName || this.clinic || 'Unknown Clinic';
     const message = encodeURIComponent(
       `🎉 *Happy Birthday, ${childName}!* 🎂\n\n` +
       `Wishing you a day filled with joy, laughter, and happiness! May your year ahead be full of success and good health. 🎈\n\n` +
       `🎁 *Date of Birth:* ${birthDate}\n` +
-      `🏥 *Clinic:* ${this.clinic}\n\n` +
+      `🏥 *Clinic:* ${clinicName}\n\n` +
       `Best wishes,\n` +
       `👨‍⚕️ ${this.docname}`
     );

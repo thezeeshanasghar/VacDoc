@@ -7,6 +7,7 @@ import { FollowupService } from "src/app/services/followup.service";
 import { AndroidPermissions } from "@ionic-native/android-permissions/ngx";
 import { Platform } from '@ionic/angular';
 import { ClinicService } from "src/app/services/clinic.service";
+import { PaService } from "src/app/services/pa.service";
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 @Component({
   selector: "app-follow-up",
@@ -22,6 +23,16 @@ export class FollowUpPage implements OnInit {
   selectedDate: string = new Date().toISOString();
   formattedDate: string;
   Childs: any;
+  usertype: any;
+  clinics: any;
+  allClinicIds: number[] = [];
+
+  // Clinic filter: default 'all' = merged across every accessible clinic.
+  allChilds: any[] = [];
+  selectedClinicId: number | 'all' = 'all';
+  clinicPickerOpen = false;
+  clinicPickerSearch = '';
+
   private readonly API_VACCINE = `${environment.BASE_URL}`;
   constructor(
     public loadingController: LoadingController,
@@ -31,46 +42,122 @@ export class FollowUpPage implements OnInit {
     public platform: Platform,
     private downloader: Downloader,
     public clinicService: ClinicService,
+    private paService: PaService,
   ) { }
-  
-  ngOnInit() {
+
+  async ngOnInit() {
     this.storage.get(environment.CLINIC_Id).then(clinicId => {
       this.clinicId = clinicId;
     });
-    this.storage.get(environment.DOCTOR_Id).then(val => {
-      this.doctorId = val;
-      this.getFollowupChild(this.selectedDate);
-    });
-    // this.storage.get(environment.USER).then(user => {
-    //   if (user) {
-    //     this.Childs = user.Children;
-    //   }
-    // });
-    console.log(this.clinicService.OnlineClinic);
+    this.usertype = await this.storage.get(environment.USER);
+    this.doctorId = await this.storage.get(environment.DOCTOR_Id);
+    this.formattedDate = this.formatDateToString(this.selectedDate);
+    await this.loadClinics();
   }
-  
-  async getFollowupChild( formattedDate: string) {
-    const loading = await this.loadingController.create({
-      message: "Loading"
-    });
+
+  async loadClinics() {
+    const loading = await this.loadingController.create({ message: 'Loading clinics...' });
     await loading.present();
-    await this.followupService
-    .getFollowupChild1( this.doctorId, formattedDate)
-      .subscribe(
-        res => {
-          if (res.IsSuccess) {
-            this.followUpChild = res.ResponseData;
-            loading.dismiss();
-          } else {
-            loading.dismiss();
-            this.toastService.create(res.Message, "danger");
+
+    const isPA = this.usertype && this.usertype.UserType === 'PA';
+    const clinics$ = isPA
+      ? this.paService.getPaClinics(Number(this.usertype.PAId))
+      : this.clinicService.getClinics(Number(this.doctorId));
+
+    clinics$.subscribe({
+      next: (response) => {
+        loading.dismiss();
+        if (response.IsSuccess) {
+          this.clinics = response.ResponseData;
+          this.allClinicIds = this.clinics.map(c => c.Id);
+          if (this.allClinicIds.length > 0) {
+            this.getAllClinicsFollowups();
           }
-        },
-        err => {
+        } else {
+          this.toastService.create(response.Message, 'danger');
+        }
+      },
+      error: () => {
+        loading.dismiss();
+        this.toastService.create('Failed to load clinics', 'danger');
+      },
+    });
+  }
+
+  async getAllClinicsFollowups() {
+    if (!this.allClinicIds || this.allClinicIds.length === 0) return;
+
+    const loading = await this.loadingController.create({ message: 'Loading follow-ups...' });
+    await loading.present();
+
+    const isPA = this.usertype && this.usertype.UserType === 'PA';
+    const paId = isPA ? Number(this.usertype.PAId) : undefined;
+    const doctorId = isPA ? undefined : Number(this.doctorId);
+
+    try {
+      const requests = this.allClinicIds.map(clinicId =>
+        this.followupService.getFollowupsForClinic(clinicId, this.numOfDays, this.formattedDate, paId, doctorId)
+      );
+      const { forkJoin } = await import('rxjs');
+
+      forkJoin(requests).subscribe(
+        (responses: any[]) => {
+          let allChildren = [];
+          responses.forEach((res, i) => {
+            if (res.IsSuccess && res.ResponseData) {
+              const clinicId = this.allClinicIds[i];
+              res.ResponseData.forEach((item: any) => item._sourceClinicId = clinicId);
+              allChildren = allChildren.concat(res.ResponseData);
+            }
+          });
+          this.allChilds = allChildren;
+          this.applyClinicFilter();
           loading.dismiss();
-          this.toastService.create(err, "danger");
+        },
+        () => {
+          loading.dismiss();
+          this.toastService.create('Error loading follow-up alerts', 'danger');
         }
       );
+    } catch (error) {
+      loading.dismiss();
+      this.toastService.create('Error loading follow-up alerts', 'danger');
+    }
+  }
+
+  // ---------- clinic filter ----------
+  applyClinicFilter() {
+    this.followUpChild = this.selectedClinicId === 'all'
+      ? this.allChilds
+      : this.allChilds.filter(c => c._sourceClinicId === this.selectedClinicId);
+  }
+
+  get filteredPickerClinics() {
+    const search = (this.clinicPickerSearch || '').trim().toLowerCase();
+    const all = [{ Id: 'all', Name: 'All Clinics' }, ...(this.clinics || [])];
+    if (!search) return all;
+    return all.filter(c => c.Name.toLowerCase().includes(search));
+  }
+
+  get selectedClinicName(): string {
+    if (this.selectedClinicId === 'all') return 'All Clinics';
+    const match = (this.clinics || []).find(c => c.Id === this.selectedClinicId);
+    return match ? match.Name : 'All Clinics';
+  }
+
+  openClinicPicker() {
+    this.clinicPickerSearch = '';
+    this.clinicPickerOpen = true;
+  }
+
+  closeClinicPicker() {
+    this.clinicPickerOpen = false;
+  }
+
+  selectClinic(id: number | 'all') {
+    this.selectedClinicId = id;
+    this.applyClinicFilter();
+    this.closeClinicPicker();
   }
 
   async sendemails() {
@@ -177,34 +264,9 @@ export class FollowUpPage implements OnInit {
   }
 
   getFollowups(date: string) {
-    const formattedDate = this.formatDateToString(date);
-
-    this.getFollowupChild(formattedDate);
+    this.formattedDate = this.formatDateToString(date);
+    this.getAllClinicsFollowups();
   }
-
-  // openWhatsApp(mobileNumber: string, childName: string, nextVisitDate: string, child: any) {
-  //   console.log('Child Name:', childName);
-  //   console.log('Next Visit Date:', nextVisitDate);
-  //   if (mobileNumber.trim() === '') {
-  //     alert('Invalid mobile number. Please provide a valid number.');
-  //     return;
-  //   }
-  //   const message = encodeURIComponent(
-  //     `Reminder: Follow-up visit for ${childName} is scheduled on ${nextVisitDate}.\n` +
-  //     `Please confirm your appointment. Thanks!\nBaby Medics\n` +
-  //     `Login and check your record at https://client.vaccinationcentre.com`
-  //   );
-  //   const formattedPatientNumber = mobileNumber.startsWith('+92')
-  //     ? mobileNumber
-  //     : `+92${mobileNumber.replace(/^0/, '')}`;
-  //   let whatsappUrl: string;
-  //   if (this.platform.is('android') || this.platform.is('ios')) {
-  //     whatsappUrl = `whatsapp://send?phone=${formattedPatientNumber}&text=${message}`;
-  //   } else {
-  //     whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPatientNumber}&text=${message}`;
-  //   }
-  //   window.open(whatsappUrl, '_system');
-  // }
 
   openWhatsApp(mobileNumber: string, childName: string, nextVisitDate: string, child: any) {
   console.log('Child Name:', childName);

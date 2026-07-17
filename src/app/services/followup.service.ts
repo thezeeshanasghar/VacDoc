@@ -62,6 +62,18 @@ export class FollowupService extends BaseService {
     );
   }
 
+  // Correctly single-clinic-scoped fetch for the clinic filter (one call per accessible
+  // clinic, merged client-side) — distinct from getFollowupChild1's doctor-wide endpoint.
+  getFollowupsForClinic(clinicId: number, numOfDays: number, date: string, paId?: number, doctorId?: number): Observable<any> {
+    let url = `${this.API_ALERT}FollowUp/clinic-alert/${numOfDays}/${clinicId}?inputDate=${date}`;
+    if (paId) url += `&paId=${paId}`;
+    if (doctorId) url += `&doctorId=${doctorId}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
   sendAlertMsgToAll(numOfDays: number, doctorId: number): Observable<any> {
     const url = `${
       this.API_ALERT
