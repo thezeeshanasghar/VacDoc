@@ -41,6 +41,12 @@ export class VaccineAlertPage implements OnInit {
   canDownloadCsv = true;
   canWhatsApp = true;
 
+  // Clinic filter: default 'all' = today's existing merged-across-clinics behaviour.
+  allChilds: any[] = [];
+  selectedClinicId: number | 'all' = 'all';
+  clinicPickerOpen = false;
+  clinicPickerSearch = '';
+
   constructor(
     public loadingController: LoadingController,
     private alertService: AlertService,
@@ -238,25 +244,34 @@ export class VaccineAlertPage implements OnInit {
     await loading.present();
 
     try {
+      const isPA = this.usertype && this.usertype.UserType === 'PA';
+      const paId = isPA ? Number(this.usertype.PAId) : undefined;
+      const doctorId = isPA ? undefined : Number(this.doctorId);
+
       // Create an array of observables for all clinic requests
       const requests = this.allClinicIds.map(clinicId =>
-        this.alertService.getChild(this.formattedDate, this.numOfDays, clinicId.toString())
+        this.alertService.getChild(this.formattedDate, this.numOfDays, clinicId.toString(), paId, doctorId)
       );
 
       // Use forkJoin to wait for all requests to complete
       const { forkJoin } = await import('rxjs');
-      
+
       forkJoin(requests).subscribe(
         (responses: any[]) => {
-          // Combine all successful responses
+          // Combine all successful responses, tagging each alert with the clinic ID
+          // its request was scoped to (needed for the client-side clinic filter, since
+          // forkJoin merges everything into one flat array).
           let allChildren = [];
-          responses.forEach(res => {
+          responses.forEach((res, i) => {
             if (res.IsSuccess && res.ResponseData) {
+              const clinicId = this.allClinicIds[i];
+              res.ResponseData.forEach((item: any) => item._sourceClinicId = clinicId);
               allChildren = allChildren.concat(res.ResponseData);
             }
           });
 
-          this.Childs = allChildren;
+          this.allChilds = allChildren;
+          this.applyClinicFilter();
           loading.dismiss();
           console.log(`Loaded ${allChildren.length} alerts from ${this.allClinicIds.length} clinics`);
         },
@@ -271,6 +286,41 @@ export class VaccineAlertPage implements OnInit {
       this.toastService.create("Error loading alerts", "danger");
       console.error("Error in getAllClinicsAlerts:", error);
     }
+  }
+
+  // ---------- clinic filter ----------
+  applyClinicFilter() {
+    this.Childs = this.selectedClinicId === 'all'
+      ? this.allChilds
+      : this.allChilds.filter(c => c._sourceClinicId === this.selectedClinicId);
+  }
+
+  get filteredPickerClinics() {
+    const search = (this.clinicPickerSearch || '').trim().toLowerCase();
+    const all = [{ Id: 'all', Name: 'All Clinics' }, ...(this.clinics || [])];
+    if (!search) return all;
+    return all.filter(c => c.Name.toLowerCase().includes(search));
+  }
+
+  get selectedClinicName(): string {
+    if (this.selectedClinicId === 'all') return 'All Clinics';
+    const match = (this.clinics || []).find(c => c.Id === this.selectedClinicId);
+    return match ? match.Name : 'All Clinics';
+  }
+
+  openClinicPicker() {
+    this.clinicPickerSearch = '';
+    this.clinicPickerOpen = true;
+  }
+
+  closeClinicPicker() {
+    this.clinicPickerOpen = false;
+  }
+
+  selectClinic(id: number | 'all') {
+    this.selectedClinicId = id;
+    this.applyClinicFilter();
+    this.closeClinicPicker();
   }
 
   async sendemails() {
@@ -505,11 +555,10 @@ export class VaccineAlertPage implements OnInit {
   }
 
  openWhatsApp(mobileNumber: string, childName: string, doseName: string, child: any) {
-  if (child.isMessageSent) {
-    alert('You have already sent the alert for this child.');
-    return;
-  }
-  this.vaccineService.getDosesForChild(child.Child.Id, this.formatDateToString(this.selectedDate), this.clinicId).subscribe(
+  const isPA = this.usertype && this.usertype.UserType === 'PA';
+  const paId = isPA ? Number(this.usertype.PAId) : undefined;
+  const doctorId = isPA ? undefined : Number(this.doctorId);
+  this.vaccineService.getDosesForChild(child.Child.Id, this.formatDateToString(this.selectedDate), this.clinicId, paId, doctorId).subscribe(
     (response) => {
       if (response.IsSuccess && response.ResponseData) {
         const doseNames = response.ResponseData.map((dose: any) => dose.Name).join(', ');
@@ -541,6 +590,13 @@ export class VaccineAlertPage implements OnInit {
           whatsappUrl = `https://web.whatsapp.com/send?phone=+${mobile}&text=${message}`;
         }
         window.open(whatsappUrl, '_system');
+
+        // Fire-and-forget: persist "sent" so the tick survives reload/logout-login.
+        // Only called here, inside the success branch, so a failed fetch never marks sent.
+        this.vaccineService.markAlertSent(child.Id).subscribe(
+          () => { child.AlertSentAt = new Date(); },
+          (err) => console.error('Error marking alert sent:', err)
+        );
       } else {
         console.error('API Response Error: No doses available or ResponseData is undefined.', response);
       }
@@ -549,7 +605,6 @@ export class VaccineAlertPage implements OnInit {
       console.error('Error fetching doses:', error);
     }
   );
-  child.isMessageSent = true;
 }
 
   formatDateToString(date: string | Date): string {

@@ -235,6 +235,11 @@ export class FollowUpPage implements OnInit {
     whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPatientNumber}&text=${message}`;
   }
   window.open(whatsappUrl, '_system');
-  child.isMessageSent = true;
+
+  // Fire-and-forget: persist "sent" so the tick survives reload/logout-login.
+  this.followupService.markFollowupAlertSent(child.Id).subscribe(
+    () => { child.AlertSentAt = new Date(); },
+    (err) => console.error('Error marking follow-up alert sent:', err)
+  );
 }
 }

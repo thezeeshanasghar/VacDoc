@@ -19,14 +19,12 @@
         <ion-item *ngFor="let child of followUpChild">
           <ion-label>{{child.Child.Name}}</ion-label>
           <ion-icon slot="end" color="primary" name="mail" (click)="sendemail([child])" style="cursor: pointer;"></ion-icon>
-          <ion-icon
-            slot="end"
-            [color]="child.isMessageSent ? 'primary' : 'success'"
-            name="logo-whatsapp"
-            (click)="openWhatsApp(child.Child.User.MobileNumber, child.Child.Name, child.NextVisitDate,child)"
-            style="cursor: pointer"
-          >
-          </ion-icon>
+          <span slot="end" class="wa-icon-wrap" style="cursor: pointer;" (click)="openWhatsApp(child.Child.User.MobileNumber, child.Child.Name, child.NextVisitDate,child)">
+            <ion-icon color="success" name="logo-whatsapp"></ion-icon>
+            <span class="wa-sent-badge" *ngIf="child.AlertSentAt">
+              <ion-icon name="checkmark"></ion-icon>
+            </span>
+          </span>
         </ion-item>
       </ion-col>
     </ion-row>

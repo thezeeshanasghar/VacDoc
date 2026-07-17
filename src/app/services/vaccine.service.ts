@@ -135,11 +135,22 @@ export class VaccineService extends BaseService {
   //   );
   // }
 
-   getDosesForChild(childId: number, date: string, onlineClinicId: number): Observable<any> {
-    debugger
-    const url = `${this.API_VACCINE}schedule/doses-for-child/${childId}/${onlineClinicId}?date=${date}`;
-    console.log('API URL:', url); 
+   getDosesForChild(childId: number, date: string, onlineClinicId: number, paId?: number, doctorId?: number): Observable<any> {
+    let url = `${this.API_VACCINE}schedule/doses-for-child/${childId}/${onlineClinicId}?date=${date}`;
+    if (paId) url += `&paId=${paId}`;
+    if (doctorId) url += `&doctorId=${doctorId}`;
     return this.http.get(url).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
+  // Persists "alert sent" status (Schedule.AlertSentAt) so the WhatsApp tick on the alert
+  // pages survives reload/logout-login. Fire-and-forget from openWhatsApp() after the deep
+  // link opens successfully.
+  markAlertSent(scheduleId: number): Observable<any> {
+    const url = `${this.API_VACCINE}schedule/${scheduleId}/mark-alert-sent`;
+    return this.http.post(url, {}).pipe(
       map(this.extractData),
       catchError(this.handleError)
     );

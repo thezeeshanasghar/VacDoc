@@ -47,5 +47,15 @@ export class BirthdayService extends BaseService {
       catchError(this.handleError)
     );
   }
-  
+
+  // Persists "birthday alert sent" (Child.LastBirthdayAlertSentAt) so the tick badge
+  // survives reload/logout-login. Fire-and-forget after the WhatsApp deep link opens.
+  markBirthdayAlertSent(childId: number): Observable<any> {
+    const url = `${this.API_ALERT}Birthday/${childId}/mark-alert-sent`;
+    return this.http.post(url, {}).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
 }

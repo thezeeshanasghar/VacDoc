@@ -12,6 +12,15 @@
       </ion-item>
     </ion-buttons>
   </ion-toolbar>
+
+  <!-- Clinic filter: default 'All Clinics' = today's merged-across-clinics behaviour -->
+  <div class="clinic-filter-row" *ngIf="clinics && clinics.length > 1">
+    <div class="clinic-pick-row" (click)="openClinicPicker()">
+      <span class="clinic-pick-value">{{ selectedClinicName }}</span>
+      <ion-icon name="chevron-down-outline" class="clinic-pick-chevron"></ion-icon>
+    </div>
+  </div>
+
   <h1 *ngIf="Childs == 0" style="color: red;">No alert found</h1>
   <ion-grid>
     <ion-row>
@@ -19,16 +28,35 @@
         <ion-item *ngFor="let child of Childs">
           <ion-label style="cursor: pointer;" [routerLink]="['/members/child/vaccine', child.Child.Id]">{{child.Child.Name}}</ion-label>
           <ion-icon *ngIf="canSendEmail" slot="end" color="primary" name="mail" (click)="sendemail([child])" style="cursor: pointer;"></ion-icon>
-          <ion-icon
-            *ngIf="canWhatsApp"
-            slot="end"
-            [color]="child.isMessageSent ? 'primary' : 'success'"
-            name="logo-whatsapp"
-            (click)="openWhatsApp(child.Child.User.MobileNumber, child.Child.Name, child.Dose.Name, child)"
-            style="cursor: pointer;">
-          </ion-icon>
-        </ion-item>        
+          <span *ngIf="canWhatsApp" slot="end" class="wa-icon-wrap" style="cursor: pointer;" (click)="openWhatsApp(child.Child.User.MobileNumber, child.Child.Name, child.Dose.Name, child)">
+            <ion-icon color="success" name="logo-whatsapp"></ion-icon>
+            <span class="wa-sent-badge" *ngIf="child.AlertSentAt">
+              <ion-icon name="checkmark"></ion-icon>
+            </span>
+          </span>
+        </ion-item>
       </ion-col>
     </ion-row>
   </ion-grid>
+
+  <!-- Searchable clinic picker modal (ported from reporting.page.html's supplier picker) -->
+  <div class="clinic-modal-backdrop" *ngIf="clinicPickerOpen" (click)="closeClinicPicker()"></div>
+  <div class="clinic-modal" *ngIf="clinicPickerOpen">
+    <div class="clinic-modal-header">
+      <span class="clinic-modal-title">Select Clinic</span>
+      <ion-icon name="close-outline" class="clinic-modal-close" (click)="closeClinicPicker()"></ion-icon>
+    </div>
+    <div class="clinic-modal-search">
+      <ion-icon name="search-outline" class="cms-icon"></ion-icon>
+      <input type="text" [(ngModel)]="clinicPickerSearch" placeholder="Search clinic..." class="cms-input" autocomplete="off">
+      <button *ngIf="clinicPickerSearch" class="cms-clear" (click)="clinicPickerSearch = ''">&times;</button>
+    </div>
+    <div class="clinic-modal-list">
+      <div *ngIf="filteredPickerClinics.length === 0" class="clinic-modal-empty">No clinics found</div>
+      <div class="clinic-modal-item" *ngFor="let c of filteredPickerClinics" (click)="selectClinic(c.Id)">
+        <span class="cmi-name" [class.all]="c.Id === 'all'">{{ c.Name }}</span>
+        <ion-icon *ngIf="c.Id === selectedClinicId" name="checkmark-circle" class="cmi-check"></ion-icon>
+      </div>
+    </div>
+  </div>
 </ion-content>

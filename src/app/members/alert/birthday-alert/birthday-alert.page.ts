@@ -202,6 +202,13 @@ export class BirthdayAlertPage implements OnInit {
       }
     }
 
+  // AlertSentAt is only shown as a tick if it falls within the current calendar year —
+  // an annual birthday wish naturally "resets" every year with no cleanup job needed.
+  isBirthdayAlertSentThisYear(child: any): boolean {
+    if (!child.LastBirthdayAlertSentAt) return false;
+    return new Date(child.LastBirthdayAlertSentAt).getFullYear() === new Date().getFullYear();
+  }
+
   openWhatsApp(mobileNumber: string, childName: string, birthDate: string, child: any) {
     if (mobileNumber.trim() === '') {
       alert('Invalid mobile number. Please provide a valid number.');
@@ -224,6 +231,11 @@ export class BirthdayAlertPage implements OnInit {
       whatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPatientNumber}&text=${message}`;
     }
     window.open(whatsappUrl, '_system');
-    child.isMessageSent = true;
+
+    // Fire-and-forget: persist "sent" so the tick survives reload/logout-login.
+    this.birthdayService.markBirthdayAlertSent(child.Id).subscribe(
+      () => { child.LastBirthdayAlertSentAt = new Date(); },
+      (err) => console.error('Error marking birthday alert sent:', err)
+    );
   }
 }

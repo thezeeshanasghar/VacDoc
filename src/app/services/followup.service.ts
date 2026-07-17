@@ -90,6 +90,16 @@ export class FollowupService extends BaseService {
       .delete(url, this.httpOptions)
       .pipe(catchError(this.handleError));
   }  
+  // Persists "alert sent" (FollowUp.AlertSentAt) so the tick badge survives
+  // reload/logout-login. Fire-and-forget after the WhatsApp deep link opens.
+  markFollowupAlertSent(followUpId: number): Observable<any> {
+    const url = `${this.API_ALERT}FollowUp/${followUpId}/mark-alert-sent`;
+    return this.http.post(url, {}).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
   downloadFollowUpPdf(childId: number): Observable<Blob> {
     debugger
     const url = `${this.API_ALERT}FollowUp/Follow-Up-PDF?childId=${childId}`;

@@ -26,3 +26,28 @@
     transform: scale(0.8); /* make the calendar icon smaller */
   }
 }
+
+// ---------- WhatsApp icon: always green, persisted tick badge overlay ----------
+.wa-icon-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.wa-sent-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #1565c0;
+  border: 1.5px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    font-size: 8px;
+    color: #fff;
+  }
+}
