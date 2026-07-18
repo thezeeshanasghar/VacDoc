@@ -173,9 +173,12 @@
 }
 
 // ---------- WhatsApp icon: always green, persisted tick badge overlay ----------
+// font-size pinned to Ionic's default ion-icon size (24px) so wrapping the icon in this
+// span for the badge cannot shrink it from what it rendered as before this change.
 .wa-icon-wrap {
   position: relative;
   display: inline-flex;
+  font-size: 24px;
 }
 
 .wa-sent-badge {
