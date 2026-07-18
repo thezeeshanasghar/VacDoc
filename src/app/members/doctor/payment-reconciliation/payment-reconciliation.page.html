@@ -23,6 +23,16 @@
       </div>
     </div>
 
+    <!-- Page switcher — jumps to the sibling PA Assignment Tracking page, carrying the
+         current clinic/PA scope so filters stay aligned (see PaAssignmentTrackingPage). -->
+    <div class="page-switcher">
+      <button class="switcher-btn" [routerLink]="['/members/doctor/pa-assignment-tracking']"
+        [queryParams]="{ clinicId: selectedClinicId, paId: selectedPaId }">
+        <ion-icon name="clipboard-outline"></ion-icon> Assignments
+      </button>
+      <button class="switcher-btn active"><ion-icon name="cash-outline"></ion-icon> Payments</button>
+    </div>
+
     <!-- Pending Reversal Approvals -->
     <div *ngIf="pendingReversals.length > 0" class="reversal-section">
       <div class="reversal-header">

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { ClinicService } from 'src/app/services/clinic.service';
@@ -68,6 +69,7 @@ export class PaymentReconciliationPage {
     private toastService: ToastService,
     private alertController: AlertController,
     private loadingController: LoadingController,
+    private route: ActivatedRoute,
   ) {}
 
   async ionViewWillEnter() {
@@ -80,6 +82,24 @@ export class PaymentReconciliationPage {
       this.doctorId = Number(user.DoctorId);
     }
     await this.loadClinics();
+
+    // Optional deep-link from PA Assignment Tracking's "View in Payments" — pre-selects
+    // clinic/PA scope so the doctor lands on the right filter instead of "All Clinics".
+    const params = this.route.snapshot.queryParamMap;
+    const qClinicId = params.get('clinicId');
+    const qPaId = params.get('paId');
+    if (qClinicId) {
+      this.selectedClinicId = Number(qClinicId);
+      await new Promise<void>(resolve => {
+        this.loadPasForClinic();
+        // loadPasForClinic() is async (subscribe-based); give it a tick before applying paId
+        setTimeout(resolve, 300);
+      });
+    }
+    if (qPaId) {
+      this.selectedPaId = Number(qPaId);
+    }
+
     this.load();
     this.loadPendingReversals();
     this.loadPendingHandovers();

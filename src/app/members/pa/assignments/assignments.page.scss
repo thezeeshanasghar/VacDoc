@@ -95,6 +95,22 @@
   }
 }
 
+// ── Target date urgency pill ─────────────────────────────────────────────────
+.due-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 700;
+  margin: 4px 0 6px;
+
+  &.due-overdue  { background: var(--vac-red-tint); color: var(--vac-red); }
+  &.due-today    { background: var(--vac-warn-tint); color: var(--vac-warn); }
+  &.due-upcoming { background: var(--vac-blue-tint); color: var(--vac-blue); }
+}
+
 // ── Payment pending badge ─────────────────────────────────────────────────────
 .payment-pending-badge {
   font-size: 11px;

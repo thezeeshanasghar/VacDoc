@@ -63,6 +63,10 @@ const routes: Routes = [
     loadChildren: () => import('./payment-reconciliation/payment-reconciliation.module').then(m => m.PaymentReconciliationPageModule)
   },
   {
+    path: "pa-assignment-tracking",
+    loadChildren: () => import('./pa-assignment-tracking/pa-assignment-tracking.module').then(m => m.PaAssignmentTrackingPageModule)
+  },
+  {
     path: "vaccine-education",
     loadChildren: () => import('./vaccine-education/vaccine-education.module').then(m => m.VaccineEducationPageModule)
   }

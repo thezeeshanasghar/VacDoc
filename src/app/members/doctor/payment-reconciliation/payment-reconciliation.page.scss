@@ -21,6 +21,38 @@
   margin: 0;
 }
 
+// ─── Page Switcher (Assignments / Payments) ───────────────────────────────────
+.page-switcher {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.switcher-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 9px;
+  border: 1.5px solid var(--vac-border);
+  background: #fff;
+  color: var(--vac-ink-3);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+
+  ion-icon { font-size: 15px; }
+
+  &:hover { border-color: var(--vac-blue); color: var(--vac-blue); }
+
+  &.active {
+    background: var(--vac-petrol);
+    border-color: var(--vac-petrol);
+    color: #fff;
+  }
+}
+
 // ─── Filter Bar ───────────────────────────────────────────────────────────────
 .filter-bar {
   display: flex;

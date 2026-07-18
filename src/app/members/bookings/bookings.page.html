@@ -156,6 +156,28 @@
                   <ion-select-option *ngFor="let pa of paList" [value]="pa.Id">{{pa.Name}}</ion-select-option>
                 </ion-select>
               </div>
+
+              <div class="target-date-wrap">
+                <div class="pa-guidelines-label">Target Date <span class="pa-guidelines-optional">(optional)</span></div>
+                <input type="date" class="target-date-input" [(ngModel)]="paTargetDate">
+              </div>
+
+              <!-- Reference: parent's + doctor's own booking comments, shown here so nothing
+                   said earlier is lost when handing the task to a PA — "Copy" drops either
+                   into the Guidelines box below instead of retyping. -->
+              <div class="comments-ref" *ngIf="b.Comments || b.DoctorComment">
+                <div class="comment-row" *ngIf="b.Comments">
+                  <span class="comment-tag comment-tag-parent">Parent</span>
+                  <span class="comment-text">{{b.Comments}}</span>
+                  <button type="button" class="comment-copy-btn" (click)="copyIntoGuidelines(b.Comments)">Copy</button>
+                </div>
+                <div class="comment-row" *ngIf="b.DoctorComment">
+                  <span class="comment-tag comment-tag-doctor">Doctor</span>
+                  <span class="comment-text">{{b.DoctorComment}}</span>
+                  <button type="button" class="comment-copy-btn" (click)="copyIntoGuidelines(b.DoctorComment)">Copy</button>
+                </div>
+              </div>
+
               <div class="pa-guidelines-wrap">
                 <div class="pa-guidelines-label">Guidelines <span class="pa-guidelines-optional">(optional)</span></div>
                 <textarea

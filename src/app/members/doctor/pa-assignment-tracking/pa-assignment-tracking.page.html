@@ -1,0 +1,179 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor"></ion-back-button>
+    </ion-buttons>
+    <ion-title>PA Assignment Tracking</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="load()" fill="clear">
+        <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="tracking-page">
+
+    <div class="page-header">
+      <h1 class="page-title">PA Assignment Tracking</h1>
+      <p class="page-subtitle">See what's been assigned and given, and track payments — filtered by clinic and staff</p>
+    </div>
+
+    <!-- Shared Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label>Clinic</label>
+        <select class="filter-select" [(ngModel)]="selectedClinicId" (change)="onClinicChange()">
+          <option [ngValue]="null">All Clinics</option>
+          <option *ngFor="let c of clinics" [ngValue]="c.Id">{{ c.Name }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Staff / PA</label>
+        <select class="filter-select" [(ngModel)]="selectedPaId" (change)="onFilterChange()">
+          <option [ngValue]="null">All Staff</option>
+          <option *ngFor="let p of pas" [ngValue]="p.PaId || p.Id">{{ p.Name || p.PaName }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Status</label>
+        <select class="filter-select" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
+          <option value="Active">Active</option>
+          <option value="PendingHandover">Pending Handover</option>
+          <option value="Completed">Completed</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="All">All</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>From Date</label>
+        <input type="date" class="filter-input" [(ngModel)]="fromDate" (change)="onFilterChange()">
+      </div>
+
+      <div class="filter-group">
+        <label>To Date</label>
+        <input type="date" class="filter-input" [(ngModel)]="toDate" (change)="onFilterChange()">
+      </div>
+
+      <div class="filter-group filter-search">
+        <label>Search Patient</label>
+        <div class="search-wrap">
+          <ion-icon name="search-outline" class="search-icon"></ion-icon>
+          <input type="text" class="filter-input search-input" [(ngModel)]="searchQuery"
+            (input)="onSearch()" placeholder="Search by patient name...">
+        </div>
+      </div>
+
+      <button class="btn-clear-filters" (click)="clearFilters()">Clear Filters</button>
+    </div>
+
+    <!-- Page switcher — Payment Reconciliation owns its own header/content and can't be
+         nested here, so this jumps there as a real navigation, carrying the current
+         clinic/PA scope along as query params (see goToPayments()). -->
+    <div class="page-switcher">
+      <button class="switcher-btn active"><ion-icon name="clipboard-outline"></ion-icon> Assignments</button>
+      <button class="switcher-btn" (click)="goToPayments()"><ion-icon name="cash-outline"></ion-icon> Payments</button>
+    </div>
+
+    <ng-container>
+
+      <div class="summary-strip">
+        <div class="stat-card">
+          <div class="stat-icon blue"><ion-icon name="clipboard-outline"></ion-icon></div>
+          <div><div class="stat-label">Active Assignments</div><div class="stat-value">{{ activeCount }}</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon warn"><ion-icon name="sync-outline"></ion-icon></div>
+          <div><div class="stat-label">Pending Handover</div><div class="stat-value">{{ pendingHandoverCount }}</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><ion-icon name="checkmark-done-outline"></ion-icon></div>
+          <div><div class="stat-label">Completed (Range)</div><div class="stat-value">{{ completedCount }}</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon petrol"><ion-icon name="people-outline"></ion-icon></div>
+          <div><div class="stat-label">PAs With Activity</div><div class="stat-value">{{ activePACount }}</div></div>
+        </div>
+      </div>
+
+      <div class="result-count">Showing <b>{{ filteredRows.length }}</b> assignments</div>
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="list-loading">
+        <ion-spinner name="crescent"></ion-spinner>
+        <span>Loading assignments...</span>
+      </div>
+
+      <!-- Empty -->
+      <div *ngIf="!loading && filteredRows.length === 0" class="list-empty">
+        <ion-icon name="clipboard-outline"></ion-icon>
+        <p>No assignments found</p>
+        <span>Try adjusting your filters or date range</span>
+      </div>
+
+      <!-- Cards -->
+      <div class="assignment-list" *ngIf="!loading && filteredRows.length > 0">
+        <div class="assign-card" *ngFor="let row of filteredRows"
+             [ngClass]="'status-' + statusClass(row)">
+
+          <div class="assign-head" (click)="toggleExpand(row)">
+            <div class="assign-head-left">
+              <div class="child-avatar">{{ (row.ChildName || '?').slice(0,2).toUpperCase() }}</div>
+              <div>
+                <div class="child-name">{{ row.ChildName }}</div>
+                <div class="child-meta">
+                  Assigned {{ formatDateTime(row.AssignedAt) }}
+                  <span *ngIf="row.IsAutoCreated" class="badge badge-auto">Auto-created</span>
+                </div>
+              </div>
+            </div>
+            <div class="assign-head-right">
+              <span class="due-pill" [ngClass]="'due-' + urgency(row)" *ngIf="statusClass(row) === 'active' || statusClass(row) === 'handover'">
+                <ng-container [ngSwitch]="urgency(row)">
+                  <span *ngSwitchCase="'overdue'">⚠ Overdue · {{ formatDate(row.TargetDate) }}</span>
+                  <span *ngSwitchCase="'today'">📅 Today</span>
+                  <span *ngSwitchCase="'upcoming'">📅 {{ formatDate(row.TargetDate) }}</span>
+                  <span *ngSwitchDefault>No date set</span>
+                </ng-container>
+              </span>
+              <span class="clinic-chip" *ngIf="row.ClinicName">{{ row.ClinicName }}</span>
+              <span class="pa-chip"><span class="pa-dot">{{ (row.PaName || '?').slice(0,2).toUpperCase() }}</span>{{ row.PaName }}</span>
+              <span class="badge" [ngClass]="'badge-' + statusClass(row)">{{ statusLabel(row) }}</span>
+              <ion-icon name="chevron-down-outline" class="chevron" [class.flipped]="row.expanded"></ion-icon>
+            </div>
+          </div>
+
+          <div class="assign-progress" *ngIf="row.DosesTotal > 0">
+            <div class="progress-track"><div class="progress-fill" [style.width.%]="(row.DosesGiven / row.DosesTotal) * 100"></div></div>
+            <div class="progress-label">{{ row.DosesGiven }} / {{ row.DosesTotal }} doses given</div>
+          </div>
+
+          <div class="assign-body" *ngIf="row.expanded">
+            <div class="dose-row" *ngFor="let d of row.Doses">
+              <div>
+                <div class="dose-name">{{ d.DoseName }}</div>
+                <div class="dose-given-by" [ngClass]="d.GivenByPaId ? 'by-pa' : (d.IsDone ? 'by-doctor' : '')">
+                  {{ d.IsDone ? (d.GivenByPaId ? ('Given by ' + (d.GivenByPaId === row.PaId ? row.PaName : 'another PA')) : 'Given by Doctor') : 'Not yet given' }}
+                </div>
+              </div>
+              <div class="dose-status">
+                <ion-icon [name]="d.IsDone ? 'checkmark-circle' : 'ellipse-outline'" [ngClass]="d.IsDone ? 'dose-icon-done' : 'dose-icon-pending'"></ion-icon>
+              </div>
+            </div>
+            <div class="assign-footer-meta">
+              <span>Assignment #{{ row.AssignmentId }}</span>
+              <span *ngIf="row.Notes">Notes: "{{ row.Notes }}"</span>
+              <span *ngIf="row.CancelReason">Reason: "{{ row.CancelReason }}"</span>
+              <button class="link-to-payments" (click)="viewInPayments(row); $event.stopPropagation()">View in Payments →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+  </div>
+</ion-content>

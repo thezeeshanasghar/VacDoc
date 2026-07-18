@@ -70,6 +70,14 @@
     </div>
 
     <ion-card-content>
+      <span class="due-pill" [ngClass]="'due-' + urgency(a)" *ngIf="urgency(a) !== 'none'">
+        <ng-container [ngSwitch]="urgency(a)">
+          <span *ngSwitchCase="'overdue'">⚠ Overdue · {{ formatTargetDate(a.TargetDate) }}</span>
+          <span *ngSwitchCase="'today'">📅 Due Today</span>
+          <span *ngSwitchCase="'upcoming'">📅 Due {{ formatTargetDate(a.TargetDate) }}</span>
+        </ng-container>
+      </span>
+      <br *ngIf="urgency(a) !== 'none'">
       <ion-icon name="person"></ion-icon> {{ a.FatherName }}
       &nbsp;&nbsp;
       <ion-icon name="calendar"></ion-icon> {{ a.DOB | date:'dd MMM yyyy' }}

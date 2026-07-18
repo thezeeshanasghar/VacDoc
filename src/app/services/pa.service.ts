@@ -211,13 +211,27 @@ export class PaService extends BaseService {
     return this.http.patch(url, { CallerType: callerType, CallerId: callerId, Reason: reason }, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  reassignAssignment(assignmentId: number, newPaId: number): Observable<any> {
+  reassignAssignment(assignmentId: number, newPaId: number, targetDate?: string | null): Observable<any> {
     const url = `${this.API_PA}PAAssignment/${assignmentId}/reassign`;
-    return this.http.patch(url, { NewPaId: newPaId }, this.httpOptions).pipe(catchError(this.handleError));
+    const body: any = { NewPaId: newPaId };
+    if (targetDate) { body.TargetDate = targetDate; }
+    return this.http.patch(url, body, this.httpOptions).pipe(catchError(this.handleError));
   }
 
   getActiveAssignmentsForDoctor(doctorId: number): Observable<any> {
     const url = `${this.API_PA}PAAssignment/active/${doctorId}`;
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  getAssignmentsForDoctor(doctorId: number, clinicId?: number, paId?: number, status?: string, fromDate?: string, toDate?: string): Observable<any> {
+    let url = `${this.API_PA}PAAssignment/doctor/${doctorId}`;
+    const params: string[] = [];
+    if (clinicId) { params.push(`clinicId=${clinicId}`); }
+    if (paId) { params.push(`paId=${paId}`); }
+    if (status) { params.push(`status=${status}`); }
+    if (fromDate) { params.push(`fromDate=${fromDate}`); }
+    if (toDate) { params.push(`toDate=${toDate}`); }
+    if (params.length) { url += '?' + params.join('&'); }
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 

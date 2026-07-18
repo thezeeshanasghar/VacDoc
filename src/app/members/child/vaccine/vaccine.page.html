@@ -350,6 +350,10 @@
         *ngIf="pendingAssignPA && pendingAssignPA.Id === pa.Id"></ion-icon>
     </button>
   </div>
+  <div class="target-date-block" *ngIf="pendingAssignPA">
+    <div class="target-date-label">Target Date <span class="pa-guidelines-opt">(optional)</span></div>
+    <input type="date" class="target-date-input" [(ngModel)]="paTargetDate">
+  </div>
   <div class="pa-guidelines" *ngIf="pendingAssignPA">
     <div class="pa-guidelines-label">Guidelines for PA <span class="pa-guidelines-opt">(optional)</span></div>
     <textarea class="pa-guidelines-input" [(ngModel)]="paGuidelines"
@@ -380,6 +384,10 @@
       <ion-icon name="checkmark-outline" class="pa-tick"
         *ngIf="pendingReassignPA && pendingReassignPA.Id === pa.Id"></ion-icon>
     </button>
+  </div>
+  <div class="target-date-block" *ngIf="pendingReassignPA">
+    <div class="target-date-label">Target Date <span class="pa-guidelines-opt">(optional)</span></div>
+    <input type="date" class="target-date-input" [(ngModel)]="paTargetDate">
   </div>
   <div class="pa-guidelines" *ngIf="pendingReassignPA">
     <div class="pa-guidelines-label">Guidelines for PA <span class="pa-guidelines-opt">(optional)</span></div>

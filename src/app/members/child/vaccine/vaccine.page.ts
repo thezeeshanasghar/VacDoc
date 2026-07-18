@@ -64,6 +64,7 @@ export class VaccinePage {
   activeAssignmentLoading: boolean = false;
   reassignPopupOpen: boolean = false;
   paGuidelines: string = '';
+  paTargetDate: string = '';
   pendingAssignPA: any = null;
   pendingAssignScheduleIds: number[] = [];
   pendingReassignPA: any = null;
@@ -1423,6 +1424,7 @@ removal(type: string){
       return;
     }
     this.paGuidelines = '';
+    this.paTargetDate = '';
     this.pendingAssignPA = null;
     // Undone schedule IDs in this date-group only — pinned to the new assignment
     // via PAAssignmentSchedule at creation time, no later re-inference.
@@ -1455,6 +1457,7 @@ removal(type: string){
     this.assignPopupOpen = false;
     this.pendingAssignPA = null;
     this.paGuidelines = '';
+    this.paTargetDate = '';
     this.pendingAssignScheduleIds = [];
   }
 
@@ -1696,9 +1699,11 @@ removal(type: string){
       PersonalAssistantId: pa.Id,
       ChildId: Number(this.childId),
       Notes: this.paGuidelines || '',
-      ScheduleIds: this.pendingAssignScheduleIds || []
+      ScheduleIds: this.pendingAssignScheduleIds || [],
+      TargetDate: this.paTargetDate || null
     };
     this.paGuidelines = '';
+    this.paTargetDate = '';
     this.pendingAssignScheduleIds = [];
     this.paService.createAssignment(payload).subscribe(res => {
       if (res && res.IsSuccess) {
@@ -1838,6 +1843,9 @@ removal(type: string){
       return;
     }
     this.paGuidelines = '';
+    this.paTargetDate = this.activeAssignment.TargetDate
+      ? String(this.activeAssignment.TargetDate).slice(0, 10)
+      : '';
     this.pendingReassignPA = null;
     this.reassignPopupOpen = true;
   }
@@ -1856,6 +1864,7 @@ removal(type: string){
     this.reassignPopupOpen = false;
     this.pendingReassignPA = null;
     this.paGuidelines = '';
+    this.paTargetDate = '';
   }
 
   async doReassign(pa: any) {
@@ -1863,7 +1872,9 @@ removal(type: string){
     if (!this.activeAssignment) return;
     const loading = await this.loadingController.create({ message: 'Reassigning...' });
     await loading.present();
-    this.paService.reassignAssignment(this.activeAssignment.AssignmentId, pa.Id).subscribe(
+    const targetDate = this.paTargetDate || null;
+    this.paTargetDate = '';
+    this.paService.reassignAssignment(this.activeAssignment.AssignmentId, pa.Id, targetDate).subscribe(
       res => {
         loading.dismiss();
         if (res && res.IsSuccess) {

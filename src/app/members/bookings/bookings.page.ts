@@ -30,6 +30,7 @@ export class BookingsPage {
   paList: any[] = [];
   selectedPAId: number = 0;
   paGuidelines: string = '';
+  paTargetDate: string = '';
 
   constructor(
     public loadingController: LoadingController,
@@ -107,7 +108,7 @@ export class BookingsPage {
       this.toastService.create('Select a PA first.', 'danger');
       return;
     }
-    var notes = (this.paGuidelines || '').trim() || ('BookingId:' + booking.Id + ' | ' + booking.Vaccines);
+    var notes = (this.paGuidelines || '').trim() || booking.Vaccines || '';
     this.bookingService.confirm(booking.Id, this.doctorComment).subscribe(
       (res) => {
         if (res && res.IsSuccess) {
@@ -118,13 +119,16 @@ export class BookingsPage {
             ClinicId: booking.ClinicId,
             PersonalAssistantId: this.selectedPAId,
             ChildId: booking.ChildId,
-            Notes: notes
+            Notes: notes,
+            TargetDate: this.paTargetDate || null,
+            BookingId: booking.Id
           }).subscribe(
             (r) => {
               if (r && r.IsSuccess) {
                 this.expandedId = 0;
                 this.selectedPAId = 0;
                 this.paGuidelines = '';
+                this.paTargetDate = '';
                 this.toastService.create('PA assigned and booking confirmed.');
               } else {
                 this.toastService.create('Booking confirmed but PA assignment failed.', 'warning');
@@ -138,6 +142,12 @@ export class BookingsPage {
       },
       (err) => { this.toastService.create('Failed to confirm booking.', 'danger'); }
     );
+  }
+
+  // Puts the doctor's Guidelines textarea one tap away from either comment already on the
+  // booking, instead of retyping — see toggleExpand() for where these two are shown.
+  copyIntoGuidelines(text: string) {
+    this.paGuidelines = text || '';
   }
 
   addCity() {
@@ -255,6 +265,11 @@ export class BookingsPage {
     } else {
       this.expandedId = booking.Id;
       this.doctorComment = booking.DoctorComment || '';
+      this.selectedPAId = 0;
+      this.paGuidelines = '';
+      // Auto-fill Target Date from what the parent actually requested — the doctor can
+      // still change it before assigning.
+      this.paTargetDate = booking.PreferredDate ? String(booking.PreferredDate).slice(0, 10) : '';
     }
   }
 

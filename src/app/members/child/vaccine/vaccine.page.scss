@@ -821,6 +821,19 @@ ion-content.ion-padding { --padding-bottom: 74px; }
 .pa-sub { font-family: var(--vac-font-body); font-weight: 500; font-size: 10.5px; color: var(--vac-ink-3); margin-top: 1px; }
 .pa-tick { color: var(--vac-blue); font-size: 18px; flex-shrink: 0; }
 
+.target-date-block { margin-top: 12px; }
+.target-date-label {
+  font-family: var(--vac-font-head); font-weight: 700; font-size: 10px;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--vac-ink-4); margin-bottom: 6px;
+}
+.target-date-input {
+  width: 100%; box-sizing: border-box;
+  border: 1px solid var(--vac-border); border-radius: 10px;
+  padding: 9px 10px; font-family: var(--vac-font-body); font-size: 12.5px; color: var(--vac-ink);
+  outline: none;
+  &:focus { border-color: var(--vac-blue); }
+}
+
 .pa-guidelines { margin-top: 12px; }
 .pa-guidelines-label {
   font-family: var(--vac-font-head); font-weight: 700; font-size: 10px;
