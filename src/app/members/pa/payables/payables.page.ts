@@ -112,6 +112,29 @@ export class PayablesPage {
     return 'MR-' + String(childId).padStart(6, '0');
   }
 
+  // Matches PaAssignmentTrackingPage's/assignments.page.ts's urgency() so overdue/today/
+  // upcoming read the same way everywhere this shows up.
+  urgency(a: any): 'overdue' | 'today' | 'upcoming' | 'none' {
+    if (!a.TargetDate) { return 'none'; }
+    const target = new Date(a.TargetDate);
+    const today = new Date();
+    const targetDay = new Date(target.getFullYear(), target.getMonth(), target.getDate()).getTime();
+    const todayDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+    if (targetDay < todayDay) { return 'overdue'; }
+    if (targetDay === todayDay) { return 'today'; }
+    return 'upcoming';
+  }
+
+  formatTargetDate(dateStr: string): string {
+    if (!dateStr) { return ''; }
+    try {
+      const d = new Date(dateStr);
+      const dd = d.getDate().toString().padStart(2, '0');
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return `${dd} ${months[d.getMonth()]}`;
+    } catch { return dateStr; }
+  }
+
   async promptDone(a: any, event: Event) {
     event.stopPropagation();
     const user = await this.storage.get(environment.USER);

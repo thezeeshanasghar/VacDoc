@@ -80,6 +80,17 @@
             </div>
           </div>
 
+          <!-- Assigned/Due date -->
+          <div class="card-due-row" *ngIf="!a.IsDirectSale && urgency(a) !== 'none'">
+            <span class="due-pill" [ngClass]="'due-' + urgency(a)">
+              <ng-container [ngSwitch]="urgency(a)">
+                <span *ngSwitchCase="'overdue'">⚠ Overdue · {{ formatTargetDate(a.TargetDate) }}</span>
+                <span *ngSwitchCase="'today'">📅 Due Today</span>
+                <span *ngSwitchCase="'upcoming'">📅 Due {{ formatTargetDate(a.TargetDate) }}</span>
+              </ng-container>
+            </span>
+          </div>
+
           <!-- Amount + Actions Row -->
           <div class="card-footer-row">
             <div class="card-amount" *ngIf="!a.IsDirectSale">
