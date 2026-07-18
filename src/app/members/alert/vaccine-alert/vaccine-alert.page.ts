@@ -512,8 +512,11 @@ export class VaccineAlertPage implements OnInit {
     // Send messages for all clinics
     try {
       const { forkJoin } = await import('rxjs');
+      const isPA = this.usertype && this.usertype.UserType === 'PA';
+      const paId = isPA ? Number(this.usertype.PAId) : undefined;
+      const doctorId = isPA ? undefined : Number(this.doctorId);
       const messageRequests = this.allClinicIds.map(clinicId =>
-        this.alertService.sendMsgsThroughDictionary(0, clinicId.toString())
+        this.alertService.sendMsgsThroughDictionary(0, clinicId.toString(), paId, doctorId)
       );
       
       forkJoin(messageRequests).subscribe(

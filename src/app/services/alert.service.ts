@@ -60,8 +60,10 @@ export class AlertService extends BaseService {
     );
   }
 
-  sendMsgsThroughDictionary(numOfDays: number, Id: String): Observable<any> {
-    const url = `${this.API_ALERT}alert/send-msg/${numOfDays}/${Id}`;
+  sendMsgsThroughDictionary(numOfDays: number, Id: String, paId?: number, doctorId?: number): Observable<any> {
+    let url = `${this.API_ALERT}alert/send-msg/${numOfDays}/${Id}`;
+    if (paId) url += `?paId=${paId}`;
+    else if (doctorId) url += `?doctorId=${doctorId}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
