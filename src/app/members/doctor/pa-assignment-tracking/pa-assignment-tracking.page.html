@@ -102,6 +102,24 @@
 
       <div class="result-count">Showing <b>{{ filteredRows.length }}</b> assignments</div>
 
+      <!-- Bulk cleanup bar — Active status never auto-expires, so old assignments a PA
+           never marked done/cancelled otherwise pile up here forever. -->
+      <div class="bulk-bar" *ngIf="!loading && filteredRows.length > 0">
+        <div class="bulk-left">
+          <label class="checkbox-label">
+            <input type="checkbox" class="row-checkbox" [checked]="allSelected"
+              (change)="toggleSelectAll($any($event.target).checked)">
+            Select all ({{ filteredRows.length }})
+          </label>
+          <button class="btn-select-stale" *ngIf="staleCount > 0" (click)="selectStaleOnly()">
+            ⚠ Select Stale Only ({{ STALE_DAYS }}+ days, {{ staleCount }})
+          </button>
+        </div>
+        <button class="btn-bulk-remove" [disabled]="selectedCount === 0" (click)="confirmBulkRemove()">
+          <ion-icon name="trash-outline"></ion-icon> Remove Selected ({{ selectedCount }})
+        </button>
+      </div>
+
       <!-- Loading -->
       <div *ngIf="loading" class="list-loading">
         <ion-spinner name="crescent"></ion-spinner>
@@ -118,10 +136,12 @@
       <!-- Cards -->
       <div class="assignment-list" *ngIf="!loading && filteredRows.length > 0">
         <div class="assign-card" *ngFor="let row of filteredRows"
-             [ngClass]="'status-' + statusClass(row)">
+             [ngClass]="[('status-' + statusClass(row)), isStale(row) ? 'is-stale' : '']">
 
           <div class="assign-head" (click)="toggleExpand(row)">
             <div class="assign-head-left">
+              <input type="checkbox" class="row-checkbox assign-row-checkbox" [checked]="isSelected(row)"
+                (click)="$event.stopPropagation()" (change)="toggleSelect(row, $any($event.target).checked)">
               <div class="child-avatar">{{ (row.ChildName || '?').slice(0,2).toUpperCase() }}</div>
               <div>
                 <div class="child-name child-name-link"
@@ -130,6 +150,7 @@
                 <div class="child-meta">
                   Assigned {{ formatDateTime(row.AssignedAt) }}
                   <span *ngIf="row.IsAutoCreated" class="badge badge-auto">Auto-created</span>
+                  <span *ngIf="isStale(row)" class="badge badge-stale">Stale · {{ daysAgo(row.AssignedAt) }} days old</span>
                 </div>
               </div>
             </div>

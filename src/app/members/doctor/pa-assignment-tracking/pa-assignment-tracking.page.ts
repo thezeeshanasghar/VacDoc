@@ -64,6 +64,11 @@ export class PaAssignmentTrackingPage {
   // Which row's "No date set" pill is currently showing its inline date picker
   editingDateForAssignmentId: number | null = null;
 
+  // Bulk-select for cleanup — Active status never auto-expires (no date closes it out),
+  // so old assignments a PA never marked done/cancelled otherwise pile up here forever.
+  selectedIds: Set<number> = new Set();
+  readonly STALE_DAYS = 14;
+
   constructor(
     private paService: PaService,
     private clinicService: ClinicService,
@@ -165,6 +170,7 @@ export class PaAssignmentTrackingPage {
       res => {
         this.loading = false;
         this.allRows = (res && res.IsSuccess) ? (res.ResponseData || []) : [];
+        this.selectedIds = new Set();
         this.applySearch();
       },
       () => {
@@ -263,6 +269,103 @@ export class PaAssignmentTrackingPage {
       },
       () => { loading.dismiss(); this.toastService.create('Failed to remove', 'danger'); }
     );
+  }
+
+  // "Stale" = still Active/PendingHandover but assigned STALE_DAYS+ ago. Computed
+  // client-side from AssignedAt — Active status has no expiry of its own, so this is
+  // the only way to surface "this has been sitting untouched for weeks."
+  isStale(row: AssignmentRow): boolean {
+    if (row.IsCompleted || row.IsCancelled) { return false; }
+    const assignedAt = new Date(row.AssignedAt).getTime();
+    const ageMs = Date.now() - assignedAt;
+    return ageMs >= this.STALE_DAYS * 24 * 60 * 60 * 1000;
+  }
+
+  daysAgo(dateStr: string): number {
+    const then = new Date(dateStr).getTime();
+    return Math.floor((Date.now() - then) / (24 * 60 * 60 * 1000));
+  }
+
+  isSelected(row: AssignmentRow): boolean {
+    return this.selectedIds.has(row.AssignmentId);
+  }
+
+  toggleSelect(row: AssignmentRow, checked: boolean) {
+    if (checked) { this.selectedIds.add(row.AssignmentId); }
+    else { this.selectedIds.delete(row.AssignmentId); }
+    this.selectedIds = new Set(this.selectedIds);
+  }
+
+  get allSelected(): boolean {
+    return this.filteredRows.length > 0 && this.filteredRows.every(r => this.selectedIds.has(r.AssignmentId));
+  }
+
+  toggleSelectAll(checked: boolean) {
+    this.selectedIds = checked ? new Set(this.filteredRows.map(r => r.AssignmentId)) : new Set();
+  }
+
+  get staleCount(): number {
+    return this.filteredRows.filter(r => this.isStale(r)).length;
+  }
+
+  selectStaleOnly() {
+    this.selectedIds = new Set(this.filteredRows.filter(r => this.isStale(r)).map(r => r.AssignmentId));
+  }
+
+  get selectedCount(): number {
+    return this.selectedIds.size;
+  }
+
+  async confirmBulkRemove() {
+    const count = this.selectedCount;
+    if (count === 0) { return; }
+    const alert = await this.alertController.create({
+      header: `Remove ${count} Assignment${count > 1 ? 's' : ''}`,
+      message: `Remove ${count} selected assignment${count > 1 ? 's' : ''} from this list? The patients' vaccine and payment records are not affected.`,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Remove All',
+          cssClass: 'alert-btn-danger',
+          handler: () => this.bulkRemove()
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  private async bulkRemove() {
+    if (!this.doctorId) { return; }
+    const ids = Array.from(this.selectedIds);
+    const loading = await this.loadingController.create({ message: `Removing ${ids.length} assignments...` });
+    await loading.present();
+
+    let done = 0;
+    let failed = 0;
+    const removedIds = new Set<number>();
+    const removeNext = (index: number) => {
+      if (index >= ids.length) {
+        loading.dismiss();
+        this.allRows = this.allRows.filter(r => !removedIds.has(r.AssignmentId));
+        this.selectedIds = new Set();
+        this.applySearch();
+        if (failed === 0) {
+          this.toastService.create(`${done} assignment${done > 1 ? 's' : ''} removed`, 'success');
+        } else {
+          this.toastService.create(`${done} removed, ${failed} failed`, 'warning');
+        }
+        return;
+      }
+      const id = ids[index];
+      this.paService.deleteAssignment(id, this.doctorId!, 'UnassignOnly').subscribe(
+        res => {
+          if (res && res.IsSuccess) { done++; removedIds.add(id); } else { failed++; }
+          removeNext(index + 1);
+        },
+        () => { failed++; removeNext(index + 1); }
+      );
+    };
+    removeNext(0);
   }
 
   urgency(row: AssignmentRow): 'overdue' | 'today' | 'upcoming' | 'none' {

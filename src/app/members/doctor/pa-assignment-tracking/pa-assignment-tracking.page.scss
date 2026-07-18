@@ -182,6 +182,83 @@
   span { font-size: 12px; }
 }
 
+// ─── Bulk cleanup bar ─────────────────────────────────────────────────────────
+.bulk-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 12px rgba(12, 54, 70, 0.08);
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.bulk-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+.checkbox-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--vac-ink-2);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+}
+
+.row-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--vac-red);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.assign-row-checkbox { margin-right: 2px; }
+
+.btn-select-stale {
+  padding: 7px 12px;
+  background: transparent;
+  color: var(--vac-warn);
+  border: 1.5px solid var(--vac-warn);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+  &:hover { background: var(--vac-warn-tint); }
+}
+
+.btn-bulk-remove {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--vac-red);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, opacity 0.15s;
+
+  ion-icon { font-size: 14px; }
+
+  &:hover:not([disabled]) { background: #a5312f; }
+  &[disabled] { background: var(--vac-border-strong); cursor: not-allowed; opacity: 0.7; }
+}
+
+.badge-stale {
+  background: var(--vac-warn);
+  color: #fff;
+  font-weight: 800;
+}
+
 // ─── Assignment cards ────────────────────────────────────────────────────────
 .assignment-list { display: flex; flex-direction: column; gap: 12px; }
 
@@ -196,6 +273,7 @@
   &.status-completed { border-left-color: var(--vac-green); }
   &.status-handover  { border-left-color: var(--vac-warn); }
   &.status-cancelled { border-left-color: var(--vac-red); opacity: 0.75; }
+  &.is-stale         { border-left-color: var(--vac-warn); background: var(--vac-warn-tint); }
 }
 
 .assign-head {
