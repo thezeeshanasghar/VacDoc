@@ -225,6 +225,11 @@
 }
 
 .child-name { font-weight: 700; color: var(--vac-ink); font-size: 14px; }
+.child-name-link {
+  cursor: pointer;
+  display: inline-block;
+  &:hover { color: var(--vac-blue); text-decoration: underline; }
+}
 .child-meta { font-size: 11px; color: var(--vac-ink-4); margin-top: 2px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 
 .assign-head-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -289,11 +294,57 @@
   padding: 5px 10px;
   border-radius: 20px;
   white-space: nowrap;
+  cursor: pointer;
+  border: 1.5px dashed transparent;
+  transition: border-color 0.15s;
+
+  &:hover { border-color: currentColor; }
 
   &.due-overdue  { background: var(--vac-red-tint); color: var(--vac-red); }
   &.due-today    { background: var(--vac-warn-tint); color: var(--vac-warn); }
   &.due-upcoming { background: var(--vac-blue-tint); color: var(--vac-blue); }
   &.due-none     { background: var(--vac-hairline); color: var(--vac-ink-3); font-weight: 600; }
+}
+
+.due-pill-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.due-date-input {
+  padding: 5px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--vac-ink);
+  background: var(--vac-blue-tint);
+  border: 1.5px solid var(--vac-blue);
+  border-radius: 8px;
+  outline: none;
+}
+
+.due-date-cancel {
+  background: none;
+  border: none;
+  color: var(--vac-ink-4);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 2px 4px;
+  &:hover { color: var(--vac-red); }
+}
+
+.btn-remove-assignment {
+  background: none;
+  border: none;
+  color: var(--vac-red);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  transition: background 0.15s;
+  &:hover { background: var(--vac-red-tint); }
 }
 
 .chevron {

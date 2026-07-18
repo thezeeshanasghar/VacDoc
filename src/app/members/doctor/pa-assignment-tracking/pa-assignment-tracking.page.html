@@ -124,7 +124,9 @@
             <div class="assign-head-left">
               <div class="child-avatar">{{ (row.ChildName || '?').slice(0,2).toUpperCase() }}</div>
               <div>
-                <div class="child-name">{{ row.ChildName }}</div>
+                <div class="child-name child-name-link"
+                  [routerLink]="['/members/child/vaccine', row.ChildId]"
+                  (click)="$event.stopPropagation()">{{ row.ChildName }}</div>
                 <div class="child-meta">
                   Assigned {{ formatDateTime(row.AssignedAt) }}
                   <span *ngIf="row.IsAutoCreated" class="badge badge-auto">Auto-created</span>
@@ -132,17 +134,30 @@
               </div>
             </div>
             <div class="assign-head-right">
-              <span class="due-pill" [ngClass]="'due-' + urgency(row)" *ngIf="statusClass(row) === 'active' || statusClass(row) === 'handover'">
-                <ng-container [ngSwitch]="urgency(row)">
-                  <span *ngSwitchCase="'overdue'">⚠ Overdue · {{ formatDate(row.TargetDate) }}</span>
-                  <span *ngSwitchCase="'today'">📅 Today</span>
-                  <span *ngSwitchCase="'upcoming'">📅 {{ formatDate(row.TargetDate) }}</span>
-                  <span *ngSwitchDefault>No date set</span>
-                </ng-container>
-              </span>
+              <ng-container *ngIf="statusClass(row) === 'active' || statusClass(row) === 'handover'">
+                <!-- Inline date picker: click "No date set" (or any due-pill) to set/change it -->
+                <span class="due-pill-edit" *ngIf="editingDateForAssignmentId === row.AssignmentId" (click)="$event.stopPropagation()">
+                  <input type="date" class="due-date-input" [value]="row.TargetDate ? (row.TargetDate | slice:0:10) : ''"
+                    #dateInput (change)="saveTargetDate(row, dateInput.value)">
+                  <button class="due-date-cancel" (click)="closeDatePicker()">✕</button>
+                </span>
+                <span class="due-pill" [ngClass]="'due-' + urgency(row)" *ngIf="editingDateForAssignmentId !== row.AssignmentId"
+                  (click)="openDatePicker(row); $event.stopPropagation()" title="Click to set/change the target date">
+                  <ng-container [ngSwitch]="urgency(row)">
+                    <span *ngSwitchCase="'overdue'">⚠ Overdue · {{ formatDate(row.TargetDate) }}</span>
+                    <span *ngSwitchCase="'today'">📅 Today</span>
+                    <span *ngSwitchCase="'upcoming'">📅 {{ formatDate(row.TargetDate) }}</span>
+                    <span *ngSwitchDefault>No date set</span>
+                  </ng-container>
+                </span>
+              </ng-container>
               <span class="clinic-chip" *ngIf="row.ClinicName">{{ row.ClinicName }}</span>
               <span class="pa-chip"><span class="pa-dot">{{ (row.PaName || '?').slice(0,2).toUpperCase() }}</span>{{ row.PaName }}</span>
               <span class="badge" [ngClass]="'badge-' + statusClass(row)">{{ statusLabel(row) }}</span>
+              <button class="btn-remove-assignment" *ngIf="statusClass(row) === 'completed' || statusClass(row) === 'cancelled'"
+                (click)="confirmRemove(row); $event.stopPropagation()" title="Remove from list">
+                <ion-icon name="trash-outline"></ion-icon>
+              </button>
               <ion-icon name="chevron-down-outline" class="chevron" [class.flipped]="row.expanded"></ion-icon>
             </div>
           </div>

@@ -223,6 +223,11 @@ export class PaService extends BaseService {
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
+  setAssignmentTargetDate(assignmentId: number, doctorId: number, targetDate: string | null): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/target-date`;
+    return this.http.patch(url, { DoctorId: doctorId, TargetDate: targetDate }, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
   getAssignmentsForDoctor(doctorId: number, clinicId?: number, paId?: number, status?: string, fromDate?: string, toDate?: string): Observable<any> {
     let url = `${this.API_PA}PAAssignment/doctor/${doctorId}`;
     const params: string[] = [];

@@ -61,6 +61,9 @@ export class PaAssignmentTrackingPage {
   filteredRows: AssignmentRow[] = [];
   loading = false;
 
+  // Which row's "No date set" pill is currently showing its inline date picker
+  editingDateForAssignmentId: number | null = null;
+
   constructor(
     private paService: PaService,
     private clinicService: ClinicService,
@@ -193,6 +196,73 @@ export class PaAssignmentTrackingPage {
     if (row.ClinicId) { queryParams.clinicId = row.ClinicId; }
     if (row.PaId) { queryParams.paId = row.PaId; }
     this.router.navigate(['/members/doctor/payment-reconciliation'], { queryParams });
+  }
+
+  // Opens/closes the inline date picker on the "No date set" pill — click elsewhere on
+  // the card header still toggles dose expansion via toggleExpand(), so this stops
+  // propagation from the template.
+  openDatePicker(row: AssignmentRow) {
+    this.editingDateForAssignmentId = row.AssignmentId;
+  }
+
+  closeDatePicker() {
+    this.editingDateForAssignmentId = null;
+  }
+
+  saveTargetDate(row: AssignmentRow, value: string) {
+    if (!this.doctorId) { return; }
+    const targetDate = value || null;
+    this.paService.setAssignmentTargetDate(row.AssignmentId, this.doctorId, targetDate).subscribe(
+      res => {
+        if (res && res.IsSuccess) {
+          row.TargetDate = targetDate;
+          this.editingDateForAssignmentId = null;
+          this.toastService.create('Target date updated', 'success');
+        } else {
+          this.toastService.create((res && res.Message) || 'Failed to update date', 'danger');
+        }
+      },
+      () => { this.toastService.create('Failed to update date', 'danger'); }
+    );
+  }
+
+  // Lets the doctor clear a completed (or cancelled) assignment off this list once it's
+  // no longer useful to see — UnassignOnly only removes the PAAssignment row itself, the
+  // patient's vaccine/payment records and any invoice are left untouched (mirrors
+  // Payment Reconciliation's confirmDeleteAssignment()).
+  async confirmRemove(row: AssignmentRow) {
+    const alert = await this.alertController.create({
+      header: 'Remove Assignment',
+      message: `Remove this completed assignment for ${row.ChildName} from the list? The patient's vaccine and payment records are not affected.`,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Remove',
+          cssClass: 'alert-btn-danger',
+          handler: () => this.removeAssignment(row)
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  private async removeAssignment(row: AssignmentRow) {
+    if (!this.doctorId) { return; }
+    const loading = await this.loadingController.create({ message: 'Removing...' });
+    await loading.present();
+    this.paService.deleteAssignment(row.AssignmentId, this.doctorId, 'UnassignOnly').subscribe(
+      res => {
+        loading.dismiss();
+        if (res && res.IsSuccess) {
+          this.allRows = this.allRows.filter(r => r.AssignmentId !== row.AssignmentId);
+          this.applySearch();
+          this.toastService.create('Assignment removed', 'success');
+        } else {
+          this.toastService.create((res && res.Message) || 'Failed to remove', 'danger');
+        }
+      },
+      () => { loading.dismiss(); this.toastService.create('Failed to remove', 'danger'); }
+    );
   }
 
   urgency(row: AssignmentRow): 'overdue' | 'today' | 'upcoming' | 'none' {
