@@ -53,12 +53,18 @@
     </div>
   </div>
 
-  <div *ngFor="let item of dataGrouping | keyvalue; let i = index">
-    <ion-card class="date-group-card">
+  <ng-container *ngFor="let item of dataGrouping | keyvalue; let i = index; let groups = ngForOf">
+    <!-- "Upcoming" divider (spec: separate past/given history from future/due
+         groups) — inserted once, right before the first still-due group. -->
+    <div class="upcoming-divider" *ngIf="isFirstUpcomingGroup(groups, i)">
+      <span>Upcoming</span>
+    </div>
+
+    <ion-card class="date-group-card" [class.date-group-card--resolved]="isStage(item.value, item.key, 4)">
       <ion-card-content>
 
         <!-- ── Date Group Header (SEQUENTIAL ACTION MODEL — spec §3.1) ────── -->
-        <div class="date-group-header">
+        <div class="date-group-header" [class.date-group-header--stacked]="isStage(item.value, item.key, 3)">
           <div class="date-group-heading">
             <span class="date-group-label" [ngClass]="getGroupDateClass(item.key, item.value)">{{ item.key | date }}</span>
             <span class="date-group-sub">{{ groupStageSubline(item.value, item.key) }}</span>
@@ -293,7 +299,7 @@
 
       </ion-card-content>
     </ion-card>
-  </div>
+  </ng-container>
 
   <ion-fab *ngIf="canEditSchedule" horizontal="end" vertical="bottom" slot="fixed" class="vax-fab">
     <ion-fab-button routerLink="edit">

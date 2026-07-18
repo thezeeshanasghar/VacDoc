@@ -517,6 +517,13 @@ export class MembersPage implements OnInit {
   ) {}
 
   async ngOnInit() {
+    // Shell persists for the whole session (only its nested outlet's children
+    // swap), so this keeps the sidebar badge in sync whenever a notification
+    // is read from any page, without needing ionViewWillEnter to refire.
+    this.notificationService.unreadCountChanged$.subscribe(() => {
+      this.loadUnreadNotificationCount();
+    });
+
     try {
       // Retrieve DoctorId and User from storage
       this.DoctorId = await this.storage.get(environment.DOCTOR_Id);
@@ -616,11 +623,7 @@ export class MembersPage implements OnInit {
 
           if (data === "PA") {
             this.isPaUser = true;
-            this.paService.getAssignments(Number(this.user.PAId)).subscribe(res => {
-              if (res && res.IsSuccess) {
-                this.paAssignmentCount = (res.ResponseData || []).length;
-              }
-            });
+            this.refreshPaAssignmentCount();
 
             // Top menu slot: the PA's own editable profile (name/photo/email),
             // shown with their avatar just like the doctor's profile entry.
@@ -896,6 +899,29 @@ export class MembersPage implements OnInit {
       },
       (err) => {}
     );
+  }
+
+  // Bell badge count (spec: reflect assignments still needing PA attention,
+  // not a lifetime total) — mirrors the active/actionable filter already used
+  // by payables.page.ts and pa-assignment-tracking.page.ts.
+  refreshPaAssignmentCount() {
+    this.paService.getAssignments(Number(this.user.PAId)).subscribe(res => {
+      if (res && res.IsSuccess) {
+        this.paAssignmentCount = (res.ResponseData || []).filter((a: any) =>
+          !a.IsCompleted && !a.IsCancelled &&
+          a.AssignmentStatus !== 'Completed' && a.AssignmentStatus !== 'PendingHandover'
+        ).length;
+      }
+    });
+  }
+
+  ionViewWillEnter() {
+    if (this.isPaUser) {
+      this.refreshPaAssignmentCount();
+    }
+    if (this.DoctorId) {
+      this.loadUnreadNotificationCount();
+    }
   }
 
   clearStorage() {

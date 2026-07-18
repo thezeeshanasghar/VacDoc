@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { BaseService } from './base.service';
 import { environment } from 'src/environments/environment';
@@ -11,6 +11,10 @@ import { environment } from 'src/environments/environment';
 export class NotificationService extends BaseService {
 
   private readonly API = `${environment.BASE_URL}notification`;
+
+  // Emits whenever read-state changes (mark one / mark all) so the shell's
+  // sidebar badge — fetched once at load — can re-sync without a page reload.
+  readonly unreadCountChanged$ = new Subject<void>();
 
   constructor(protected http: HttpClient) { super(http); }
 

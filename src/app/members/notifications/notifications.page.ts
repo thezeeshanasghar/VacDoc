@@ -55,7 +55,10 @@ export class NotificationsPage {
   tapNotification(n: any) {
     if (!n.IsRead) {
       this.notificationService.markRead(n.Id).subscribe(
-        (res) => { n.IsRead = true; },
+        (res) => {
+          n.IsRead = true;
+          this.notificationService.unreadCountChanged$.next();
+        },
         (err) => {}
       );
     }
@@ -73,6 +76,7 @@ export class NotificationsPage {
             this.notifications[i].IsRead = true;
           }
           this.toastService.create('All marked as read.');
+          this.notificationService.unreadCountChanged$.next();
         }
       },
       (err) => { this.toastService.create('Failed to mark all read', 'danger'); }

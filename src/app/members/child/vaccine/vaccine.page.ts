@@ -1099,6 +1099,18 @@ removal(type: string){
     return 'date-label--upcoming';
   }
 
+  // True for the first still-due (stage 1) group in the chronologically-sorted
+  // list, so the template can drop a one-time "Upcoming" divider right before
+  // it — separating past/given history from future/due groups.
+  isFirstUpcomingGroup(groups: { key: string, value: any[] }[], index: number): boolean {
+    const entry = groups[index];
+    if (!entry || this.groupStage(entry.value, entry.key) !== 1) return false;
+    for (let j = 0; j < index; j++) {
+      if (this.groupStage(groups[j].value, groups[j].key) === 1) return false;
+    }
+    return true;
+  }
+
   // Tag shown to a PA on each date-group: tells them whether this group is
   // theirs to act on, or was already handled by the doctor.
   getPaAssignmentTag(vaccines: any[]): 'assigned' | 'given-by-doctor' | null {
