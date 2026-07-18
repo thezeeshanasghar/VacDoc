@@ -558,7 +558,7 @@ export class VaccineAlertPage implements OnInit {
   const isPA = this.usertype && this.usertype.UserType === 'PA';
   const paId = isPA ? Number(this.usertype.PAId) : undefined;
   const doctorId = isPA ? undefined : Number(this.doctorId);
-  this.vaccineService.getDosesForChild(child.Child.Id, this.formatDateToString(this.selectedDate), this.clinicId, paId, doctorId).subscribe(
+  this.vaccineService.getDosesForChild(child.Child.Id, this.formatDateToString(this.selectedDate), child._sourceClinicId, paId, doctorId).subscribe(
     (response) => {
       if (response.IsSuccess && response.ResponseData) {
         const doseNames = response.ResponseData.map((dose: any) => dose.Name).join(', ');
