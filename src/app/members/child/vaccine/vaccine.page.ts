@@ -272,6 +272,11 @@ export class VaccinePage {
   givenActiveDoses(data: any[]): any[] {
     return (data || []).filter(v => this.isActiveDose(v) && v.IsDone);
   }
+  // Given date for the group — bulk-give means every active dose shares one GivenDate.
+  groupGivenDate(data: any[]): string {
+    const given = this.givenActiveDoses(data);
+    return given.length > 0 ? given[0].GivenDate : null;
+  }
 
   /**
    * Derive the group's pipeline stage from existing dose state + invoice map.
@@ -298,6 +303,9 @@ export class VaccinePage {
   }
 
   // Header sub-line copy under the group date (spec §3.1).
+  // Stages 3/4 (invoiced/paid) show the given date instead of amount/paid text —
+  // the due date above already anchors the group, so the subline is free to
+  // carry the one thing not shown elsewhere: when it was actually given.
   groupStageSubline(data: any[], date: string): string {
     const stage = this.groupStage(data, date);
     const skips = this.skippedCount(data);
@@ -310,13 +318,8 @@ export class VaccinePage {
       const n = this.givenActiveDoses(data).length;
       return `${n} dose${n === 1 ? '' : 's'} · not invoiced yet`;
     }
-    if (stage === 3) {
-      const amt = this.invoiceAmountMap[date];
-      return amt > 0 ? `invoiced · Rs ${amt.toLocaleString()} unpaid` : 'invoiced · unpaid';
-    }
-    // stage 4 — paid
-    const amtPaid = this.invoiceAmountMap[date];
-    return amtPaid > 0 ? `paid · Rs ${amtPaid.toLocaleString()}` : 'paid';
+    // stage 3 (invoiced/unpaid) and stage 4 (paid) both show the given date.
+    return null;
   }
 
   // PA picker subline + shift state (spec §4.1). Uses ONLY real fields the

@@ -67,7 +67,8 @@
         <div class="date-group-header" [class.date-group-header--stacked]="isStage(item.value, item.key, 3)">
           <div class="date-group-heading">
             <span class="date-group-label" [ngClass]="getGroupDateClass(item.key, item.value)">{{ item.key | date }}</span>
-            <span class="date-group-sub">{{ groupStageSubline(item.value, item.key) }}</span>
+            <span class="date-group-sub" *ngIf="!isStage(item.value, item.key, 3) && !isStage(item.value, item.key, 4)">{{ groupStageSubline(item.value, item.key) }}</span>
+            <span class="date-group-sub date-group-sub--given" *ngIf="isStage(item.value, item.key, 3) || isStage(item.value, item.key, 4)">{{ groupGivenDate(item.value) | date:'MMM d, y' }}</span>
           </div>
           <ion-badge *ngIf="getPaAssignmentTag(item.value) === 'assigned'" color="primary" class="pa-assign-badge">Assigned to you</ion-badge>
           <ion-badge *ngIf="getPaAssignmentTag(item.value) === 'given-by-doctor'" class="pa-assign-badge pa-assign-badge--muted">Given by Doctor</ion-badge>
@@ -182,15 +183,12 @@
                 <span *ngIf="!isOverdue(v)"> · due {{ v.Date | date:'MMM d' }}</span>
               </ng-container>
               <ng-container *ngIf="!v.Due2EPI && v.IsDone">
-                <!-- The green given-date IS the "given" indicator (no ✓/label). -->
+                <!-- The green given-date IS the "given" indicator (no ✓/label). Per-row
+                     invoiced/paid text removed — that status now lives once on the
+                     group header, since bulk-give means one date-group = one given date. -->
                 <span class="status-gdate" *ngIf="!v.IsDisease || v.IsDisease == null">{{ v.GivenDate | date:'MMM d, y' }}</span>
                 <!-- Disease rows have no give-date; keep a green "given" marker so the row still reads as done. -->
                 <span class="status-gdate" *ngIf="v.IsDisease">given</span>
-                <span
-                  class="status-inv"
-                  *ngIf="invoiceExistsMap[item.key]"
-                  (click)="v.BrandId ? correctBatch(v) : null"> · 🧾 invoiced</span>
-                <span class="status-paid" *ngIf="invoiceExistsMap[item.key] && v.IsPaymentCollected"> · paid</span>
                 <span
                   *ngIf="v.IsDisease"
                   class="status-date status-date--clickable"
@@ -201,8 +199,14 @@
             </div>
           </div>
 
-          <!-- Administered brand, centred in the row's free space (given rows only). -->
-          <div class="row-brand" *ngIf="!v.Due2EPI && v.IsDone && v.Brand?.Name">{{ v.Brand.Name }}</div>
+          <!-- Administered brand, centred in the row's free space (given rows only).
+               Doubles as the batch-correction entry point (moved off the removed
+               per-row "invoiced" text). -->
+          <div
+            class="row-brand"
+            *ngIf="!v.Due2EPI && v.IsDone && v.Brand?.Name"
+            [class.row-brand--clickable]="v.BrandId"
+            (click)="v.BrandId ? correctBatch(v) : null">{{ v.Brand.Name }}</div>
 
           <!-- Row actions — only what's valid at this stage. -->
           <div class="vaccine-actions">

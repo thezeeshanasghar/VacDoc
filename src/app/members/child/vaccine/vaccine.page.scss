@@ -125,6 +125,11 @@ ion-buttons {
   margin-top: 1px;
 }
 
+.date-group-sub--given {
+  color: var(--vac-green);
+  font-weight: 700;
+}
+
 // Group header controls (spec §3.1) — see the consolidated centreline rule below.
 .date-group-actions { display: flex; align-items: center; }
 
@@ -331,8 +336,6 @@ ion-buttons {
 .status-brand   { color: var(--vac-ink-4); }
 .status-overdue { color: var(--vac-red); font-weight: 700; }
 .status-skipped { color: var(--vac-ink-4); font-weight: 600; }
-.status-inv     { color: var(--vac-ink-3); font-weight: 600; }
-.status-paid    { color: var(--vac-green); font-weight: 700; }
 
 // Restore (unskip) + Ungive controls
 .action-btn--restore {
@@ -447,6 +450,10 @@ ion-buttons {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.row-brand--clickable {
+  cursor: pointer;
 }
 
 .vaccine-actions {
