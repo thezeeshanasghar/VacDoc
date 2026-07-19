@@ -175,4 +175,12 @@ export class StockOverviewPage {
     if (!expiryStr) return false;
     return new Date(expiryStr) < new Date();
   }
+
+  trackByBrandId(_index: number, brand: any): any {
+    return brand.BrandId;
+  }
+
+  trackByBatchLot(index: number, batch: any): any {
+    return batch.BatchLot || index;
+  }
 }

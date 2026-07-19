@@ -31,13 +31,28 @@
     </ion-item>
   </form>
 
-  <ion-card *ngFor="let child of childs" [ngClass]="child.Gender=='Girl' ? 'girl' : 'boy'">
+  <div *ngIf="initialLoading && childs.length === 0" class="skeleton-list">
+    <div class="skeleton-card" *ngFor="let s of [1,2,3,4]">
+      <div class="skeleton-row">
+        <div class="skeleton-thumb"></div>
+        <div class="skeleton-line skeleton-line-name"></div>
+      </div>
+      <div class="skeleton-line skeleton-line-sub"></div>
+    </div>
+  </div>
+
+  <div *ngIf="!initialLoading && childs.length === 0 && page > 0" class="empty-state">
+    <ion-icon name="search-outline"></ion-icon>
+    <p>No patients match your search.</p>
+  </div>
+
+  <ion-card *ngFor="let child of childs; trackBy: trackByChildId" [ngClass]="child.Gender=='Girl' ? 'girl' : 'boy'">
 
     <!-- Compact single-row header: avatar + name on left, action icons on right -->
     <div class="icons">
       <div class="icons-left">
         <ion-thumbnail class="icons-thumb">
-          <ion-img [src]="getAvatarImage(child)"></ion-img>
+          <ion-img [src]="child._avatarSrc || getAvatarImage(child)"></ion-img>
         </ion-thumbnail>
         <span class="icons-name">{{child.Name}}</span>
       </div>

@@ -44,6 +44,10 @@ export class ChildPage {
   canDownloadCard = true;
   canViewVaccine = true;
   canViewFollowup = true;
+  // True only until the first page of results (or its failure) arrives — gates the
+  // skeleton placeholder so it never reappears on later pagination/refresh, where the
+  // existing LoadingController spinner already covers the wait.
+  initialLoading = true;
   constructor(
     public router: Router,
     public loadingController: LoadingController,
@@ -145,6 +149,18 @@ export class ChildPage {
     return `../../assets/avatars/${fileName}.png`;
   }
 
+  // Computed once per child when a page of results arrives, instead of being called
+  // from the template binding — avoids re-running the moment.js DOB parse for every
+  // visible row on every change-detection cycle.
+  private withAvatars(children: any[]): any[] {
+    children.forEach(child => { child._avatarSrc = this.getAvatarImage(child); });
+    return children;
+  }
+
+  trackByChildId(_index: number, child: any): any {
+    return child.Id;
+  }
+
   loadData() {
     if (this.search)
       this.getChlidbyUser(false);
@@ -234,18 +250,21 @@ export class ChildPage {
         if (res.IsSuccess) {
           if (res.ResponseData.length < 15)
             this.infiniteScroll.disabled = true;
-          this.childs = (this.childs.concat(res.ResponseData));
+          this.childs = (this.childs.concat(this.withAvatars(res.ResponseData)));
           this.page += 1;
           this.infiniteScroll.complete();
           this.isSearchDisabled = false;
+          this.initialLoading = false;
           loading.dismiss();
         }
         else {
+          this.initialLoading = false;
           loading.dismiss();
           this.toastService.create(res.Message, 'danger');
         }
       },
       err => {
+        this.initialLoading = false;
         loading.dismiss();
         this.toastService.create(err, 'danger');
       }
@@ -276,12 +295,14 @@ console.log('Current Clinic:', this.clinic);
     // For DOCTOR, use clinic from storage (doctor's online clinic)
     clinicIdToUse = this.clinic.Id;
   } else {
+    this.initialLoading = false;
     loading.dismiss();
     this.toastService.create('No clinic selected or available.', 'danger');
     return;
   }
 
   if (!clinicIdToUse) {
+    this.initialLoading = false;
     loading.dismiss();
     this.toastService.create('No clinic selected or available.', 'danger');
     return;
@@ -293,17 +314,20 @@ console.log('Current Clinic:', this.clinic);
         if (res.ResponseData.length < 10)
           this.infiniteScroll.disabled = true;
 
-        this.childs = this.childs.concat(res.ResponseData);
+        this.childs = this.childs.concat(this.withAvatars(res.ResponseData));
         this.page += 1;
         this.isSearchDisabled = false;
+        this.initialLoading = false;
         loading.dismiss();
         this.infiniteScroll.complete();
       } else {
+        this.initialLoading = false;
         loading.dismiss();
         this.toastService.create(res.Message, 'danger');
       }
     },
     error: (err) => {
+      this.initialLoading = false;
       loading.dismiss();
       this.toastService.create(err, 'danger');
     },

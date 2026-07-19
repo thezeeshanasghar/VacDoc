@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
-import { LoadingController } from '@ionic/angular';
+import { IonInfiniteScroll, LoadingController } from '@ionic/angular';
+import { ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment.prod';
 import { ToastService } from 'src/app/shared/toast.service';
 import { NotificationService } from 'src/app/services/notification.service';
+
+const PAGE_SIZE = 20;
 
 @Component({
   selector: 'app-notifications',
@@ -12,9 +15,16 @@ import { NotificationService } from 'src/app/services/notification.service';
   styleUrls: ['./notifications.page.scss'],
 })
 export class NotificationsPage {
+  @ViewChild(IonInfiniteScroll, { static: false }) infiniteScroll: IonInfiniteScroll;
 
   notifications: any[] = [];
+  // The backend endpoint returns the full doctor history in one call (no server-side
+  // paging support today) — visibleNotifications renders only a growing slice of it,
+  // so the DOM/change-detection cost scales with what's actually on screen, not with
+  // total notification history. Backend-side paging is a follow-up, not done here.
+  visibleNotifications: any[] = [];
   doctorId: number = 0;
+  initialLoading = true;
 
   constructor(
     public loadingController: LoadingController,
@@ -38,18 +48,35 @@ export class NotificationsPage {
       this.notificationService.getByDoctor(this.doctorId).subscribe(
         (res) => {
           loading.dismiss();
+          this.initialLoading = false;
           if (res && res.IsSuccess) {
             this.notifications = res.ResponseData || [];
+            this.visibleNotifications = this.notifications.slice(0, PAGE_SIZE);
+            if (this.infiniteScroll) { this.infiniteScroll.disabled = this.visibleNotifications.length >= this.notifications.length; }
           } else {
             this.toastService.create('Failed to load notifications', 'danger');
           }
         },
         (err) => {
           loading.dismiss();
+          this.initialLoading = false;
           this.toastService.create('Failed to load notifications', 'danger');
         }
       );
     });
+  }
+
+  loadMore(event: any) {
+    const next = this.notifications.slice(this.visibleNotifications.length, this.visibleNotifications.length + PAGE_SIZE);
+    this.visibleNotifications = this.visibleNotifications.concat(next);
+    event.target.complete();
+    if (this.visibleNotifications.length >= this.notifications.length) {
+      event.target.disabled = true;
+    }
+  }
+
+  trackByNotificationId(_index: number, n: any): any {
+    return n.Id;
   }
 
   tapNotification(n: any) {

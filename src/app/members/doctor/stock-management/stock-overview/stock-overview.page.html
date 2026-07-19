@@ -48,7 +48,7 @@
   </div>
 
   <!-- Brand cards -->
-  <div *ngFor="let brand of filteredBrands" class="brand-card">
+  <div *ngFor="let brand of filteredBrands; trackBy: trackByBrandId" class="brand-card">
 
     <!-- Brand header row — tap to expand/collapse batches -->
     <div class="brand-header" (click)="toggleBrand(brand.BrandId)">
@@ -80,7 +80,7 @@
       </div>
 
       <div
-        *ngFor="let batch of brand.Batches"
+        *ngFor="let batch of brand.Batches; trackBy: trackByBatchLot"
         class="batch-row"
         [class.expired]="isExpired(batch.Expiry)"
         [class.expiring-soon]="!isExpired(batch.Expiry) && isExpiringSoon(batch.Expiry)"

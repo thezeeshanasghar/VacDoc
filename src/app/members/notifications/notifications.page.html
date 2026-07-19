@@ -20,8 +20,18 @@
 
 <ion-content class="ion-padding">
 
+  <ion-list *ngIf="initialLoading && (!notifications || notifications.length === 0)" class="skeleton-list">
+    <ion-item *ngFor="let s of [1,2,3,4,5]">
+      <ion-icon slot="start" class="skeleton-icon"></ion-icon>
+      <ion-label>
+        <h2 class="skeleton-line skeleton-line-title"></h2>
+        <p class="skeleton-line skeleton-line-msg"></p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
   <ion-list *ngIf="notifications && notifications.length > 0">
-    <ion-item *ngFor="let n of notifications" [class.unread-item]="!n.IsRead" (click)="tapNotification(n)" detail="false" button>
+    <ion-item *ngFor="let n of visibleNotifications; trackBy: trackByNotificationId" [class.unread-item]="!n.IsRead" (click)="tapNotification(n)" detail="false" button>
       <ion-icon slot="start" [name]="n.IsRead ? 'notifications-outline' : 'notifications'" [color]="n.IsRead ? 'medium' : 'primary'"></ion-icon>
       <ion-label>
         <h2 [style.font-weight]="n.IsRead ? '400' : '700'">{{n.Title}}</h2>
@@ -32,7 +42,11 @@
     </ion-item>
   </ion-list>
 
-  <div *ngIf="!notifications || notifications.length === 0" class="empty-state">
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more..."></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+  <div *ngIf="!initialLoading && (!notifications || notifications.length === 0)" class="empty-state">
     <ion-icon name="notifications-outline" size="large" color="medium"></ion-icon>
     <p>No notifications yet.</p>
   </div>

@@ -28,7 +28,7 @@
   <ion-grid *ngIf="birthdayChild.length > 0">
     <ion-row>
       <ion-col>
-        <ion-item *ngFor="let child of birthdayChild">
+        <ion-item *ngFor="let child of birthdayChild; trackBy: trackByChildId">
           <ion-label>{{ child.Name }}</ion-label>
           <ion-icon
             slot="end"

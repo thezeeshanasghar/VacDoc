@@ -1477,7 +1477,7 @@ removal(type: string){
     return parsed.isValid() && parsed.year() > 2020 ? parsed.format("YYYY-MM-DD") : null;
   }
 
-  private loadInvoiceExistence() {
+  private async loadInvoiceExistence() {
     this.invoiceExistsMap = {};
     this.invoiceAmountMap = {};
     const childId = Number(this.childId);
@@ -1486,6 +1486,14 @@ removal(type: string){
     const doneDates = Object.keys(grouped).filter(date =>
       grouped[date].some((v: any) => v.IsDone)
     );
+
+    // Two lookup strategies below fan out per-date; both are collected up front and
+    // run concurrently (Promise.all), same batching approach as submitPayment(), so a
+    // long dose history fires one round trip per unique lookup instead of a growing
+    // sequential chain — and the map/detectChanges only update once, at the end.
+    const byInvoiceId: Array<{ date: string; invoiceId: number }> = [];
+    const byDateFallback: Array<{ date: string; givenDateStr: string }> = [];
+
     doneDates.forEach(date => {
       const group: any[] = grouped[date];
       const doneDoses = group.filter((v: any) => v.IsDone);
@@ -1502,15 +1510,7 @@ removal(type: string){
       ));
 
       if (invoiceIds.length > 0) {
-        invoiceIds.forEach((invoiceId: number) => {
-          this.invoiceService.getInvoiceTotalById(invoiceId).toPromise().then(res => {
-            if (res && res.IsSuccess) {
-              this.invoiceExistsMap[date] = true;
-              if (typeof res.ResponseData === 'number') { this.invoiceAmountMap[date] = res.ResponseData; }
-              this.cdr.detectChanges();
-            }
-          }).catch(function() {});
-        });
+        invoiceIds.forEach((invoiceId: number) => byInvoiceId.push({ date, invoiceId }));
         return;
       }
 
@@ -1522,57 +1522,79 @@ removal(type: string){
           .map((v: any) => this.toInvoiceDateStr(v.GivenDate))
           .filter((d: string | null) => !!d)
       ));
-      if (givenDateStrs.length === 0) { return; }
-
-      const checkDate = (givenDateStr: string) => {
-        this.invoiceService.getInvoiceTotal(childId, givenDateStr).toPromise().then(res => {
-          if (res && res.IsSuccess) {
-            this.invoiceExistsMap[date] = true;
-            if (typeof res.ResponseData === 'number') { this.invoiceAmountMap[date] = res.ResponseData; }
-            this.cdr.detectChanges();
-          } else {
-            // PKT/UTC midnight boundary fallback
-            const prev = new Date(givenDateStr);
-            prev.setDate(prev.getDate() - 1);
-            const prevStr = prev.toISOString().split('T')[0];
-            this.invoiceService.getInvoiceTotal(childId, prevStr).toPromise().then(res2 => {
-              if (res2 && res2.IsSuccess) {
-                this.invoiceExistsMap[date] = true;
-                if (typeof res2.ResponseData === 'number') { this.invoiceAmountMap[date] = res2.ResponseData; }
-                this.cdr.detectChanges();
-              }
-            }).catch(function() {});
-          }
-        }).catch(function() {});
-      };
-
-      givenDateStrs.forEach(checkDate);
+      givenDateStrs.forEach(givenDateStr => byDateFallback.push({ date, givenDateStr }));
     });
+
+    // Dedupe repeated invoice-ID lookups (the same invoice can back multiple dose dates)
+    // so each unique invoice is fetched once regardless of how many dates reference it.
+    const uniqueInvoiceIds = Array.from(new Set(byInvoiceId.map(x => x.invoiceId)));
+    const invoiceTotalsById = new Map<number, any>();
+    await Promise.all(uniqueInvoiceIds.map(invoiceId =>
+      this.invoiceService.getInvoiceTotalById(invoiceId).toPromise()
+        .then(res => { invoiceTotalsById.set(invoiceId, res); })
+        .catch(() => { invoiceTotalsById.set(invoiceId, null); })
+    ));
+    byInvoiceId.forEach(({ date, invoiceId }) => {
+      const res = invoiceTotalsById.get(invoiceId);
+      if (res && res.IsSuccess) {
+        this.invoiceExistsMap[date] = true;
+        if (typeof res.ResponseData === 'number') { this.invoiceAmountMap[date] = res.ResponseData; }
+      }
+    });
+
+    await Promise.all(byDateFallback.map(async ({ date, givenDateStr }) => {
+      try {
+        const res = await this.invoiceService.getInvoiceTotal(childId, givenDateStr).toPromise();
+        if (res && res.IsSuccess) {
+          this.invoiceExistsMap[date] = true;
+          if (typeof res.ResponseData === 'number') { this.invoiceAmountMap[date] = res.ResponseData; }
+          return;
+        }
+        // PKT/UTC midnight boundary fallback
+        const prev = new Date(givenDateStr);
+        prev.setDate(prev.getDate() - 1);
+        const prevStr = prev.toISOString().split('T')[0];
+        const res2 = await this.invoiceService.getInvoiceTotal(childId, prevStr).toPromise();
+        if (res2 && res2.IsSuccess) {
+          this.invoiceExistsMap[date] = true;
+          if (typeof res2.ResponseData === 'number') { this.invoiceAmountMap[date] = res2.ResponseData; }
+        }
+      } catch { /* leave date unset — treated as no invoice, same as before */ }
+    }));
+
+    this.cdr.detectChanges();
   }
 
   // Stage-4 override support: same date-resolution as loadInvoiceExistence(), but
   // pulls ownership/edit-window data (isSubmitted/editCount/canEdit/submittedByPaId)
   // from the endpoint bulkinvoice.page.ts already uses for its own same-day guard.
-  private loadInvoiceStatuses() {
+  private async loadInvoiceStatuses() {
     if (!this.doctorId) { return; }
     this.invoiceStatusMap = {};
     const grouped: any = this.dataGrouping;
     const doneDates = Object.keys(grouped).filter(date =>
       grouped[date].some((v: any) => v.IsDone)
     );
+
+    const lookups: Array<{ date: string; givenDateStr: string }> = [];
     doneDates.forEach(date => {
       const group: any[] = grouped[date];
       const doneVaccine = group.find(function(v: any) { return v.IsDone && v.GivenDate; });
       if (!doneVaccine) { return; }
       const givenDateStr = this.toInvoiceDateStr(doneVaccine.GivenDate);
       if (!givenDateStr) { return; }
-      this.bulkService.getInvoiceStatus(Number(this.childId), this.doctorId, givenDateStr).toPromise().then(res => {
-        if (res) {
-          this.invoiceStatusMap[date] = res;
-          this.cdr.detectChanges();
-        }
-      }).catch(() => {});
+      lookups.push({ date, givenDateStr });
     });
+
+    // Fired concurrently (Promise.all) instead of one-at-a-time, same batching
+    // approach as loadInvoiceExistence()/submitPayment() — one detectChanges at the end.
+    await Promise.all(lookups.map(({ date, givenDateStr }) =>
+      this.bulkService.getInvoiceStatus(Number(this.childId), this.doctorId, givenDateStr).toPromise()
+        .then(res => { if (res) { this.invoiceStatusMap[date] = res; } })
+        .catch(() => {})
+    ));
+
+    this.cdr.detectChanges();
   }
 
   // ── Stage-4 (paid) override gating (spec §3.4a) ───────────────────────────

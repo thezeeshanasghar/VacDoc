@@ -8,6 +8,40 @@
   margin-top: 2px;
 }
 
+.skeleton-icon,
+.skeleton-line {
+  border-radius: 8px;
+  background: linear-gradient(90deg, #E3E7EA 25%, #EFF2F4 37%, #E3E7EA 63%);
+  background-size: 400% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.skeleton-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+}
+
+.skeleton-line {
+  height: 11px;
+  margin: 0;
+}
+
+.skeleton-line-title { width: 55%; margin-bottom: 6px; }
+.skeleton-line-msg { width: 80%; }
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-icon,
+  .skeleton-line {
+    animation-duration: .001s;
+  }
+}
+
 .empty-state {
   text-align: center;
   padding: 60px 20px;

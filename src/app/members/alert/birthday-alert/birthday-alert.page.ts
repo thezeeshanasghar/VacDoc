@@ -297,6 +297,10 @@ export class BirthdayAlertPage implements OnInit {
     return new Date(child.LastBirthdayAlertSentAt).getFullYear() === new Date().getFullYear();
   }
 
+  trackByChildId(_index: number, child: any): any {
+    return child.Id;
+  }
+
   openWhatsApp(mobileNumber: string, childName: string, birthDate: string, child: any) {
     if (mobileNumber.trim() === '') {
       alert('Invalid mobile number. Please provide a valid number.');
