@@ -67,8 +67,8 @@
         <div class="date-group-header" [class.date-group-header--stacked]="isStage(item.value, item.key, 3)">
           <div class="date-group-heading">
             <span class="date-group-label" [ngClass]="getGroupDateClass(item.key, item.value)">{{ item.key | date }}</span>
-            <span class="date-group-sub" *ngIf="!isStage(item.value, item.key, 3) && !isStage(item.value, item.key, 4)">{{ groupStageSubline(item.value, item.key) }}</span>
-            <span class="date-group-sub date-group-sub--given" *ngIf="isStage(item.value, item.key, 3) || isStage(item.value, item.key, 4)">{{ groupGivenDate(item.value) | date:'MMM d, y' }}</span>
+            <span class="date-group-sub" *ngIf="isStage(item.value, item.key, 1)">{{ groupStageSubline(item.value, item.key) }}</span>
+            <span class="date-group-sub date-group-sub--given" *ngIf="!isStage(item.value, item.key, 1)">{{ groupGivenDate(item.value) | date:'MMM d, y' }}</span>
           </div>
           <ion-badge *ngIf="getPaAssignmentTag(item.value) === 'assigned'" color="primary" class="pa-assign-badge">Assigned to you</ion-badge>
           <ion-badge *ngIf="getPaAssignmentTag(item.value) === 'given-by-doctor'" class="pa-assign-badge pa-assign-badge--muted">Given by Doctor</ion-badge>
@@ -183,11 +183,10 @@
                 <span *ngIf="!isOverdue(v)"> · due {{ v.Date | date:'MMM d' }}</span>
               </ng-container>
               <ng-container *ngIf="!v.Due2EPI && v.IsDone">
-                <!-- The green given-date IS the "given" indicator (no ✓/label). Per-row
-                     invoiced/paid text removed — that status now lives once on the
-                     group header, since bulk-give means one date-group = one given date. -->
-                <span class="status-gdate" *ngIf="!v.IsDisease || v.IsDisease == null">{{ v.GivenDate | date:'MMM d, y' }}</span>
-                <!-- Disease rows have no give-date; keep a green "given" marker so the row still reads as done. -->
+                <!-- Given date now lives once on the group header (groupGivenDate) —
+                     bulk-give means one date-group = one given date, so repeating it
+                     per row is redundant. Disease rows have no give-date; keep a
+                     green "given" marker so the row still reads as done. -->
                 <span class="status-gdate" *ngIf="v.IsDisease">given</span>
                 <span
                   *ngIf="v.IsDisease"

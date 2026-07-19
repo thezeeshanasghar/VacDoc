@@ -302,24 +302,14 @@ export class VaccinePage {
     return this.groupStage(data, date) === stage;
   }
 
-  // Header sub-line copy under the group date (spec §3.1).
-  // Stages 3/4 (invoiced/paid) show the given date instead of amount/paid text —
-  // the due date above already anchors the group, so the subline is free to
-  // carry the one thing not shown elsewhere: when it was actually given.
+  // Header sub-line copy under the group date (spec §3.1) — stage 1 (due) only.
+  // Once any dose in the group is given, the header shows the given date
+  // instead (see groupGivenDate) — the due date above already anchors the group.
   groupStageSubline(data: any[], date: string): string {
-    const stage = this.groupStage(data, date);
     const skips = this.skippedCount(data);
     const skipStr = skips > 0 ? ` · ${skips} skipped` : '';
-    if (stage === 1) {
-      const n = this.giveCount(data);
-      return `${n} to give${skipStr}`;
-    }
-    if (stage === 2) {
-      const n = this.givenActiveDoses(data).length;
-      return `${n} dose${n === 1 ? '' : 's'} · not invoiced yet`;
-    }
-    // stage 3 (invoiced/unpaid) and stage 4 (paid) both show the given date.
-    return null;
+    const n = this.giveCount(data);
+    return `${n} to give${skipStr}`;
   }
 
   // PA picker subline + shift state (spec §4.1). Uses ONLY real fields the
