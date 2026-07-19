@@ -79,6 +79,22 @@
       <button class="switcher-btn" (click)="goToPayments()"><ion-icon name="cash-outline"></ion-icon> Payments</button>
     </div>
 
+    <!-- Active/Cash Confirmed toggle — Cash Confirmed means the doctor has confirmed
+         receiving the cash handover for this assignment; it then leaves Active
+         immediately regardless of age. The Status dropdown above still covers finer
+         filtering (Pending Handover / Completed / Cancelled / All). -->
+    <div class="status-tab-row">
+      <div class="status-tabs">
+        <button class="status-tab" [class.selected]="selectedStatus === 'Active'" (click)="setStatusTab('Active')">
+          Active <span class="tab-count">{{ activeCount }}</span>
+        </button>
+        <button class="status-tab status-tab-cash" [class.selected]="selectedStatus === 'CashConfirmed'" (click)="setStatusTab('CashConfirmed')">
+          <ion-icon name="checkmark-circle-outline"></ion-icon> Cash Confirmed <span class="tab-count">{{ cashConfirmedCount }}</span>
+        </button>
+      </div>
+      <p class="status-tab-hint">Cash Confirmed = doctor has confirmed the cash handover for this assignment. Once confirmed, it's no longer Active, no matter how old it is.</p>
+    </div>
+
     <ng-container>
 
       <div class="summary-strip">
@@ -186,6 +202,12 @@
           <div class="assign-progress" *ngIf="row.DosesTotal > 0">
             <div class="progress-track"><div class="progress-fill" [style.width.%]="(row.DosesGiven / row.DosesTotal) * 100"></div></div>
             <div class="progress-label">{{ row.DosesGiven }} / {{ row.DosesTotal }} doses given</div>
+          </div>
+
+          <div class="handover-strip" *ngIf="row.IsCashConfirmedByDoctor">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            Cash handover confirmed · {{ formatDateTime(row.CashConfirmedAt) }}
+            <span class="handover-amount" *ngIf="row.CashAmount !== null">Rs {{ row.CashAmount | number:'1.0-0' }}</span>
           </div>
 
           <div class="assign-body" *ngIf="row.expanded">

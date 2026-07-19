@@ -27,6 +27,8 @@ interface AssignmentRow {
   CompletedAt: string | null;
   CancelledAt: string | null;
   CancelReason: string | null;
+  IsCashConfirmedByDoctor: boolean;
+  CashConfirmedAt: string | null;
   ChildId: number;
   ChildName: string;
   DOB: string | null;
@@ -37,6 +39,7 @@ interface AssignmentRow {
   DosesTotal: number;
   DosesGiven: number;
   Doses: DoseRow[];
+  CashAmount: number | null;
   expanded?: boolean;
 }
 
@@ -125,6 +128,16 @@ export class PaAssignmentTrackingPage {
   }
 
   onFilterChange() {
+    this.load();
+  }
+
+  // Top-level Active/Cash Confirmed toggle — separate from the Status dropdown (which
+  // still covers PendingHandover/Completed/Cancelled/All for finer filtering). Cash
+  // Confirmed means the doctor has confirmed receiving the cash for this assignment's
+  // invoice (ScheduleController.ConfirmInvoice) — once that happens the row leaves
+  // Active immediately, regardless of age or the PA's own IsCompleted flag.
+  setStatusTab(tab: 'Active' | 'CashConfirmed') {
+    this.selectedStatus = tab;
     this.load();
   }
 
@@ -381,6 +394,7 @@ export class PaAssignmentTrackingPage {
 
   statusClass(row: AssignmentRow): string {
     if (row.IsCancelled) { return 'cancelled'; }
+    if (row.IsCashConfirmedByDoctor) { return 'cash-confirmed'; }
     if (row.IsCompleted) { return 'completed'; }
     if (row.AssignmentStatus === 'PendingHandover') { return 'handover'; }
     return 'active';
@@ -388,17 +402,24 @@ export class PaAssignmentTrackingPage {
 
   statusLabel(row: AssignmentRow): string {
     if (row.IsCancelled) { return 'Cancelled'; }
+    if (row.IsCashConfirmedByDoctor) { return 'Cash Confirmed'; }
     if (row.IsCompleted) { return 'Completed'; }
     if (row.AssignmentStatus === 'PendingHandover') { return 'Pending Handover'; }
     return 'Active';
   }
 
   get activeCount(): number {
-    return this.allRows.filter(r => !r.IsCompleted && !r.IsCancelled && r.AssignmentStatus !== 'PendingHandover').length;
+    return this.allRows.filter(r => !r.IsCancelled && !r.IsCashConfirmedByDoctor
+      && !r.IsCompleted && r.AssignmentStatus !== 'PendingHandover').length;
   }
 
   get pendingHandoverCount(): number {
-    return this.allRows.filter(r => !r.IsCompleted && !r.IsCancelled && r.AssignmentStatus === 'PendingHandover').length;
+    return this.allRows.filter(r => !r.IsCancelled && !r.IsCashConfirmedByDoctor
+      && !r.IsCompleted && r.AssignmentStatus === 'PendingHandover').length;
+  }
+
+  get cashConfirmedCount(): number {
+    return this.allRows.filter(r => r.IsCashConfirmedByDoctor).length;
   }
 
   get completedCount(): number {
