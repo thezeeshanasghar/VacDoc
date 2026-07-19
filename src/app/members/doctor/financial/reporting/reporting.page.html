@@ -75,7 +75,77 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- 3. Purchase Report (Item-Wise / Supplier-Wise) -->
+  <!-- 3. Stock Position Report -->
+  <ion-card style="margin-top: 12px;">
+    <ion-card-header style="--background: linear-gradient(135deg, var(--vac-petrol), var(--vac-petrol-dark));">
+      <ion-card-title style="color:#fff; display:flex; align-items:center; gap:8px;">
+        <ion-icon name="clipboard-outline"></ion-icon> Stock Position Report
+      </ion-card-title>
+      <ion-card-subtitle style="color:rgba(255,255,255,0.75);">Every item's opening &amp; closing balance for the period, in one table</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content style="padding-top: 12px;">
+      <ion-item lines="none" style="--padding-start:0; --background: var(--vac-blue-tint); border-radius:10px; margin-bottom:12px;">
+        <ion-label>
+          Hide zero-activity items
+          <p>Only items with opening or closing stock &gt; 0</p>
+        </ion-label>
+        <ion-toggle slot="end" [(ngModel)]="hideZeroActivity"></ion-toggle>
+      </ion-item>
+
+      <div style="text-align:right; margin-bottom:10px;">
+        <ion-button size="small" fill="outline" color="primary" (click)="loadStockPositionReport()">
+          <ion-icon name="eye-outline" slot="start"></ion-icon>View
+        </ion-button>
+        <ion-button color="primary" fill="solid" (click)="downloadStockPositionReport()">
+          <ion-icon name="download-outline" slot="start"></ion-icon>Download PDF
+        </ion-button>
+      </div>
+
+      <div *ngIf="stockPositionLoaded" class="stock-position-table-wrap">
+        <div *ngIf="visibleStockPositionRows.length === 0" class="supplier-modal-empty">No stock movement in this period</div>
+        <table *ngIf="visibleStockPositionRows.length > 0" class="stock-position-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Item</th>
+              <th>Opening</th>
+              <th>Purchase</th>
+              <th>Direct Sale</th>
+              <th>Given</th>
+              <th>Adjusted</th>
+              <th>Transfer</th>
+              <th>Closing</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of visibleStockPositionRows">
+              <td style="text-align:left; font-weight:600;">{{ r.BrandName }}</td>
+              <td>{{ r.Opening }}</td>
+              <td>{{ r.Purchased }}</td>
+              <td>{{ r.DirectSale }}</td>
+              <td>{{ r.Given }}</td>
+              <td>{{ r.Adjusted }}</td>
+              <td>{{ r.Transfer }}</td>
+              <td style="font-weight:700;">{{ r.Closing }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td style="text-align:left;">Total</td>
+              <td>{{ stockPositionTotals.Opening }}</td>
+              <td>{{ stockPositionTotals.Purchased }}</td>
+              <td>{{ stockPositionTotals.DirectSale }}</td>
+              <td>{{ stockPositionTotals.Given }}</td>
+              <td>{{ stockPositionTotals.Adjusted }}</td>
+              <td>{{ stockPositionTotals.Transfer }}</td>
+              <td>{{ stockPositionTotals.Closing }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- 4. Purchase Report (Item-Wise / Supplier-Wise) -->
   <ion-card style="margin-top: 12px;">
     <ion-card-header style="--background: linear-gradient(135deg, var(--vac-petrol), var(--vac-petrol-dark));">
       <ion-card-title style="color:#fff; display:flex; align-items:center; gap:8px;">

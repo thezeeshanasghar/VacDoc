@@ -25,6 +25,10 @@ export class ReportingPage implements OnInit {
   purchaseReportType: 'item' | 'supplier' = 'item';
   form: FormGroup;
 
+  stockPositionRows: any[] = [];
+  stockPositionLoaded: boolean = false;
+  hideZeroActivity: boolean = true;
+
   pickerOpen: boolean = false;
   pickerType: 'itemBrand' | 'purchaseBrand' | 'agent' | null = null;
   pickerSearch: string = '';
@@ -185,6 +189,59 @@ export class ReportingPage implements OnInit {
     await loader.present();
     this.stockService.getItemsSupplierReportFile(this.selectedClinicId, Number(this.doctorId), this.selectedAgent, this.fromDate, this.toDate)
       .subscribe({ next: (res) => { loader.dismiss(); this.downloadBlob(res, `SupplierReport_${this.fromDate}.pdf`); }, error: () => { loader.dismiss(); this.toastService.create('Failed', 'danger'); } });
+  }
+
+  get visibleStockPositionRows(): any[] {
+    if (!this.hideZeroActivity) return this.stockPositionRows;
+    return this.stockPositionRows.filter(r => r.Opening > 0 || r.Closing > 0);
+  }
+
+  get stockPositionTotals(): any {
+    return this.visibleStockPositionRows.reduce((t, r) => ({
+      Opening: t.Opening + r.Opening,
+      Purchased: t.Purchased + r.Purchased,
+      DirectSale: t.DirectSale + r.DirectSale,
+      Given: t.Given + r.Given,
+      Adjusted: t.Adjusted + r.Adjusted,
+      Transfer: t.Transfer + r.Transfer,
+      Closing: t.Closing + r.Closing
+    }), { Opening: 0, Purchased: 0, DirectSale: 0, Given: 0, Adjusted: 0, Transfer: 0, Closing: 0 });
+  }
+
+  async loadStockPositionReport() {
+    if (!this.selectedClinicId) { this.toastService.create('Please select a clinic', 'danger'); return; }
+    const loader = await this.loadingCtrl.create({ message: 'Loading stock position...' });
+    await loader.present();
+    this.stockService.getStockPositionReport(this.selectedClinicId, Number(this.doctorId), this.fromDate, this.toDate)
+      .subscribe({
+        next: (res: any) => {
+          loader.dismiss();
+          this.stockPositionRows = (res && res.Rows) || [];
+          this.stockPositionLoaded = true;
+        },
+        error: (err: any) => {
+          loader.dismiss();
+          this.stockPositionRows = [];
+          this.stockPositionLoaded = true;
+          if (err.status === 404) this.toastService.create('No stock movement in period', 'warning');
+          else this.toastService.create('Failed to load stock position', 'danger');
+        }
+      });
+  }
+
+  async downloadStockPositionReport() {
+    if (!this.selectedClinicId) { this.toastService.create('Please select a clinic', 'danger'); return; }
+    const loader = await this.loadingCtrl.create({ message: 'Generating stock position report...' });
+    await loader.present();
+    this.stockService.getStockPositionReportFile(this.selectedClinicId, Number(this.doctorId), this.fromDate, this.toDate)
+      .subscribe({
+        next: (res) => { loader.dismiss(); this.downloadBlob(res, `StockPositionReport_${this.fromDate}.pdf`); },
+        error: (err: any) => {
+          loader.dismiss();
+          if (err.status === 404) this.toastService.create('No stock movement in period', 'warning');
+          else this.toastService.create('Failed', 'danger');
+        }
+      });
   }
 
   // Prefers the filename the server actually sent via Content-Disposition (already includes

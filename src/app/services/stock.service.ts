@@ -56,6 +56,14 @@ export class StockService {
     return this.http.get<any>(`${this.apiUrl}stock/items-supplier-report?clinicId=${clinicId}&doctorId=${doctorId}&supplier=${encodeURIComponent(supplier)}&from=${fromDate}&to=${toDate}`, { observe: 'response', responseType: 'blob' as 'json' });
   }
 
+  getStockPositionReport(clinicId: number, doctorId: number, fromDate: any, toDate: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}stock/stock-position-report?clinicId=${clinicId}&doctorId=${doctorId}&from=${fromDate}&to=${toDate}`);
+  }
+
+  getStockPositionReportFile(clinicId: number, doctorId: number, fromDate: any, toDate: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}stock/stock-position-report/pdf?clinicId=${clinicId}&doctorId=${doctorId}&from=${fromDate}&to=${toDate}`, { observe: 'response', responseType: 'blob' as 'json' });
+  }
+
   // v2 — record physical on-hand at the reset. dto = { DoctorId, ClinicId, Lines: [...] }.
   postOpeningBalance(dto: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}stock/opening-balance`, dto);

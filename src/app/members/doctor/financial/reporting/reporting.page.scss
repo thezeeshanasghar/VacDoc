@@ -184,3 +184,49 @@ ion-card-header[color="primary"] ion-card-title { color: white; font-size: 15px;
 
   .smi-check { font-size: 18px; color: #2dd36f; }
 }
+
+// Stock Position Report — on-screen table
+.stock-position-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--vac-border, #DDE4E3);
+  border-radius: 10px;
+}
+
+.stock-position-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 560px;
+  font-variant-numeric: tabular-nums;
+
+  th, td {
+    padding: 8px 10px;
+    font-size: 12.5px;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  thead th {
+    background: var(--vac-blue-tint, #EDF4F8);
+    color: var(--vac-petrol, #0C3646);
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-bottom: 1.5px solid var(--vac-border, #DDE4E3);
+  }
+
+  tbody td {
+    color: #3A5468;
+    border-bottom: 1px solid #EEF1EF;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:nth-child(even) { background: #FAFBFA; }
+
+  tfoot td {
+    font-weight: 700;
+    color: #10222F;
+    border-top: 1.5px solid var(--vac-border, #DDE4E3);
+    background: #F5F8F7;
+  }
+}
