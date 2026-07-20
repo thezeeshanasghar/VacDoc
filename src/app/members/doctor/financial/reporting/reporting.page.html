@@ -117,20 +117,26 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let r of visibleStockPositionRows">
+            <tr *ngFor="let r of visibleStockPositionRows" [class.no-record-row]="r.HasNoRecord">
               <td style="text-align:left; font-weight:600;">{{ r.BrandName }}</td>
-              <td>{{ r.Opening }}</td>
-              <td>{{ r.Purchased }}</td>
-              <td>{{ r.DirectSale }}</td>
-              <td>{{ r.Given }}</td>
-              <td>{{ r.Adjusted }}</td>
-              <td>{{ r.Transfer }}</td>
-              <td style="font-weight:700;">{{ r.Closing }}</td>
+              <ng-container *ngIf="!r.HasNoRecord; else noRecordCells">
+                <td>{{ r.Opening }}</td>
+                <td>{{ r.Purchased }}</td>
+                <td>{{ r.DirectSale }}</td>
+                <td>{{ r.Given }}</td>
+                <td>{{ r.Adjusted }}</td>
+                <td>{{ r.Transfer }}</td>
+                <td style="font-weight:700;">{{ r.Closing }}</td>
+              </ng-container>
+              <ng-template #noRecordCells>
+                <td colspan="6" class="no-record-note">No record — stock not yet added at this clinic</td>
+                <td>&mdash;</td>
+              </ng-template>
             </tr>
           </tbody>
           <tfoot>
             <tr>
-              <td style="text-align:left;">Total</td>
+              <td style="text-align:left;">Total <span class="no-record-note" style="font-size:10px;">(excludes no-record rows)</span></td>
               <td>{{ stockPositionTotals.Opening }}</td>
               <td>{{ stockPositionTotals.Purchased }}</td>
               <td>{{ stockPositionTotals.DirectSale }}</td>

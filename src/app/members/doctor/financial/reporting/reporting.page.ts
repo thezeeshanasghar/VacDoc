@@ -193,11 +193,13 @@ export class ReportingPage implements OnInit {
 
   get visibleStockPositionRows(): any[] {
     if (!this.hideZeroActivity) return this.stockPositionRows;
-    return this.stockPositionRows.filter(r => r.Opening > 0 || r.Closing > 0);
+    // No-record rows (stock never added at this clinic) always show, regardless of the toggle —
+    // they carry no Opening/Closing numbers to filter on in the first place.
+    return this.stockPositionRows.filter(r => r.HasNoRecord || r.Opening > 0 || r.Closing > 0);
   }
 
   get stockPositionTotals(): any {
-    return this.visibleStockPositionRows.reduce((t, r) => ({
+    return this.visibleStockPositionRows.filter(r => !r.HasNoRecord).reduce((t, r) => ({
       Opening: t.Opening + r.Opening,
       Purchased: t.Purchased + r.Purchased,
       DirectSale: t.DirectSale + r.DirectSale,

@@ -229,4 +229,15 @@ ion-card-header[color="primary"] ion-card-title { color: white; font-size: 15px;
     border-top: 1.5px solid var(--vac-border, #DDE4E3);
     background: #F5F8F7;
   }
+
+  tr.no-record-row td {
+    background: #FBFAF6 !important;
+  }
+
+  .no-record-note {
+    text-align: left;
+    font-style: italic;
+    color: #90A4AE;
+    white-space: normal;
+  }
 }
