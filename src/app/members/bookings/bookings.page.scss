@@ -95,6 +95,15 @@
   letter-spacing: -0.1px;
 }
 
+.child-name-link {
+  cursor: pointer;
+
+  &:hover {
+    color: #1a73e8;
+    text-decoration: underline;
+  }
+}
+
 .row-vaccines {
   font-size: 12px;
   color: #4a6178;

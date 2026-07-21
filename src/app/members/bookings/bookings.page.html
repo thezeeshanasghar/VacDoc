@@ -77,7 +77,7 @@
         <div class="row-main" (click)="toggleExpand(b)">
           <div class="row-left">
             <div class="row-top">
-              <span class="child-name">{{b.ChildName}}</span>
+              <span class="child-name child-name-link" [routerLink]="['/members/child/vaccine', b.ChildId]" (click)="$event.stopPropagation()">{{b.ChildName}}</span>
               <span class="chip chip-type" [ngClass]="b.Type === 'HomeBooked' ? 'chip-home' : 'chip-clinic'">
                 {{b.Type === 'HomeBooked' ? 'HOME' : 'CLINIC'}}
               </span>
