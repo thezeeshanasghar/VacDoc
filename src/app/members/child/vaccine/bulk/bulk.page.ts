@@ -754,6 +754,59 @@ export class BulkPage implements OnInit {
     });
   }
 
+  // v2 (§unbatched bulk give): the backend rejects a bulk give where one or more doses have no
+  // stock batch, unless ConfirmUnbatchedGive has been answered. Matches on the message containing
+  // "have no stock batch" since N/total/list are dynamic. One aggregate dialog for the whole
+  // submission — never a bare "No/Cancel" (a real given dose must always be recordable): the two
+  // options are "cancel and go add stock first" (no resubmit) or "record all as unbatched" (resubmit
+  // the exact same request with the flag added). Mirrors the askReRecordChoice/ReRecordHistorical
+  // pattern above.
+  private isUnbatchedBulkGiveRejection(message: string): boolean {
+    return !!message && message.indexOf('have no stock batch') !== -1;
+  }
+
+  private async confirmUnbatchedBulkGive(message: string): Promise<boolean> {
+    return new Promise(async resolve => {
+      const alert = await this.alertController.create({
+        header: 'No Stock Batch Found',
+        message: message,
+        backdropDismiss: false,
+        buttons: [
+          { text: 'Cancel — add stock first', role: 'cancel', handler: () => resolve(false) },
+          { text: 'Record all as unbatched', handler: () => resolve(true) }
+        ]
+      });
+      await alert.present();
+    });
+  }
+
+  private async handleUnbatchedBulkGiveRejection(data: any, message: string): Promise<void> {
+    const proceed = await this.confirmUnbatchedBulkGive(message);
+    if (!proceed) { return; }
+
+    data.ConfirmUnbatchedGive = true;
+    const loading = await this.loadingController.create({ message: "Filling Vaccine" });
+    await loading.present();
+    this.bulkService.updateVaccine(data).subscribe(
+      async res => {
+        loading.dismiss();
+        if (res.IsSuccess) {
+          this.toastService.create("Successfully Update");
+          if (res.GraceApplied) { await this.showCdcGraceNote(res.GraceMessage); }
+          this.autoCreateFollowUpForBulk(() => {
+            this.validationOfInfiniteVaccine();
+          });
+        } else {
+          this.toastService.create(this.getApiErrorMessage(res, "Error: failed to fill vaccine"), "danger");
+        }
+      },
+      err => {
+        loading.dismiss();
+        this.toastService.create(this.getApiErrorMessage(err, "Error: server failure"), "danger");
+      }
+    );
+  }
+
   async fillVaccine(data: any) {
     if (!(await this.confirmTwinBrands(data))) {
       return;
@@ -791,6 +844,7 @@ export class BulkPage implements OnInit {
     } else {
       data.ReRecordHistorical = null;
     }
+    data.ConfirmUnbatchedGive = null;
 
     this.bulkService.updateVaccine(data).subscribe(
       async res => {
@@ -801,6 +855,9 @@ export class BulkPage implements OnInit {
             this.validationOfInfiniteVaccine();
             loading.dismiss();
           });
+        } else if (this.isUnbatchedBulkGiveRejection(res.Message)) {
+          loading.dismiss();
+          await this.handleUnbatchedBulkGiveRejection(data, res.Message);
         } else if (res.IsWarning) {
           loading.dismiss();
           const alert = await this.alertController.create({
@@ -822,6 +879,8 @@ export class BulkPage implements OnInit {
                         this.autoCreateFollowUpForBulk(() => {
                           this.validationOfInfiniteVaccine();
                         });
+                      } else if (this.isUnbatchedBulkGiveRejection(res2.Message)) {
+                        await this.handleUnbatchedBulkGiveRejection(data, res2.Message);
                       } else {
                         this.toastService.create(this.getApiErrorMessage(res2, "Error: failed to fill vaccine"), "danger");
                       }

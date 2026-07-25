@@ -298,7 +298,7 @@ export class AdjustStockPage {
       }
     }
 
-    const loading = await this.loadingController.create({ message: 'Saving...' });
+    let loading = await this.loadingController.create({ message: 'Saving...' });
     await loading.present();
 
     let successCount = 0;
@@ -306,7 +306,7 @@ export class AdjustStockPage {
 
     for (let i = 0; i < this.rows.length; i++) {
       const row = this.rows[i];
-      const payload = {
+      const payload: any = {
         DoctorId: this.doctorId,
         ClinicId: this.clinicId,
         BrandId: row.brandId,
@@ -316,13 +316,31 @@ export class AdjustStockPage {
         Price: row.adjustType === 'Increase' ? (row.price || 0) : 0,
         BatchLot: row.batchLot,
         ExpiryDate: row.expiryDate ? row.expiryDate : null,
-        Date: this.adjustDate
+        Date: this.adjustDate,
+        ClearUnbatchedBacklog: row.adjustType === 'Increase' ? null : undefined
       };
 
       try {
         const res: any = await this.stockService.createAdjustment(payload).toPromise();
         if (res.IsSuccess) {
           successCount++;
+        } else if (row.adjustType === 'Increase' && this.isUnbatchedBacklogRejection(res.Message)) {
+          // v2 (§unbatched backlog): the backend asks whether to clear the brand's outstanding
+          // unbatched-give backlog with this purchase. Dismiss the shared loading indicator while
+          // the operator answers, then resubmit this exact row with the flag explicitly set
+          // (true/false — never left null, since null means "not answered yet" and would just
+          // re-trigger the same prompt).
+          loading.dismiss();
+          const clearBacklog = await this.confirmClearUnbatchedBacklog(res.Message);
+          loading = await this.loadingController.create({ message: 'Saving...' });
+          await loading.present();
+          payload.ClearUnbatchedBacklog = clearBacklog;
+          const retryRes: any = await this.stockService.createAdjustment(payload).toPromise();
+          if (retryRes.IsSuccess) {
+            successCount++;
+          } else {
+            failedRows.push(row.brandSearch || ('Row ' + (i + 1)));
+          }
         } else {
           failedRows.push(row.brandSearch || ('Row ' + (i + 1)));
         }
@@ -343,6 +361,28 @@ export class AdjustStockPage {
     }
 
     this.loadHistory();
+  }
+
+  // v2 (§unbatched backlog): Increase-only — the backend rejects a purchase when the brand has an
+  // outstanding unbatched-give backlog and ClearUnbatchedBacklog hasn't been answered yet. Match on
+  // the message containing "recorded as given with no batch" since N is dynamic.
+  private isUnbatchedBacklogRejection(message: string): boolean {
+    return !!message && message.indexOf('recorded as given with no batch') !== -1;
+  }
+
+  private async confirmClearUnbatchedBacklog(message: string): Promise<boolean> {
+    return new Promise(async resolve => {
+      const alert = await this.alertController.create({
+        header: 'Unbatched Backlog Found',
+        message: message,
+        backdropDismiss: false,
+        buttons: [
+          { text: 'Skip — just add the stock', handler: () => resolve(false) },
+          { text: 'Clear backlog with this purchase', handler: () => resolve(true) }
+        ]
+      });
+      await alert.present();
+    });
   }
 
   async confirmDelete(id: number) {

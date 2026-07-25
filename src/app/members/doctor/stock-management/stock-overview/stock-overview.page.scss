@@ -105,6 +105,20 @@
   margin-top: 2px;
 }
 
+// v2 §Stock Overview — IsOutOfSync flag: counters have drifted from the ledger for this brand
+// and need a recount. Reuses the same warn treatment as the expiry "Soon" tag for consistency.
+.out-of-sync-badge {
+  align-self: flex-start;
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--vac-warn);
+  background: var(--vac-warn-tint);
+  padding: 2px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
 .brand-summary {
   display: flex;
   align-items: center;

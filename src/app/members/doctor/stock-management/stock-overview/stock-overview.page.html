@@ -54,6 +54,7 @@
     <div class="brand-header" (click)="toggleBrand(brand.BrandId)">
       <div class="brand-info">
         <span class="vaccine-name">{{ brand.BrandName }}</span>
+        <span class="out-of-sync-badge" *ngIf="brand.IsOutOfSync">⚠ needs recount</span>
       </div>
       <div class="brand-summary">
         <span class="count-badge" [class.low-stock]="brand.TotalCount <= 5">

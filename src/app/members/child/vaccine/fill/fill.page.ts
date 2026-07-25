@@ -390,6 +390,65 @@ export class FillPage implements OnInit {
     });
   }
 
+  // v2 (§unbatched give): the backend rejects a give with no stock batch found for the brand
+  // unless ConfirmUnbatchedGive has been answered. Never offer a bare "No/Cancel" here — a real
+  // given dose must always be recordable, so the two options are "go add stock, then retry" or
+  // "record it as unbatched now". Mirrors the askReRecordChoice/ReRecordHistorical pattern above.
+  private isUnbatchedGiveRejection(message: string): boolean {
+    return !!message && message.indexOf('No stock batch found for this vaccine') !== -1;
+  }
+
+  private async promptUnbatchedGive(): Promise<'add-stock' | 'record-unbatched'> {
+    return new Promise(async resolve => {
+      const alert = await this.alertController.create({
+        header: 'No Stock Batch Found',
+        message: 'No stock batch found for this vaccine. Choose whether to record it as unbatched.',
+        backdropDismiss: false,
+        buttons: [
+          { text: 'Add stock now, then proceed', handler: () => resolve('add-stock') },
+          { text: 'Record as unbatched — add stock later', handler: () => resolve('record-unbatched') }
+        ]
+      });
+      await alert.present();
+    });
+  }
+
+  // Caller must dismiss any active loading indicator before invoking this.
+  private async handleUnbatchedGiveRejection(): Promise<void> {
+    const choice = await this.promptUnbatchedGive();
+    if (choice === 'add-stock') {
+      // Navigate to the adjust-stock/add-stock flow for this brand. The original give is not
+      // resubmitted here — the operator retries it themselves once stock exists.
+      this.router.navigate(['/members/doctor/stock-management/adjust-stock']);
+      return;
+    }
+    // 'record-unbatched' — resubmit the exact same give request with the flag added.
+    this.fg.value.ConfirmUnbatchedGive = true;
+    const retryLoading = await this.loadingController.create({ message: 'Updating' });
+    await retryLoading.present();
+    this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
+      async res => {
+        retryLoading.dismiss();
+        if (res.IsSuccess) {
+          if (res.GraceApplied) { await this.showCdcGraceNote(res.GraceMessage); }
+          this.autoCreateFollowUp(() => {
+            if (this.vaccine) {
+              this.addNewVaccineInScheduleTable(this.scheduleDatecheck);
+            } else {
+              this.router.navigate(['/members/child/vaccine/' + this.childId]);
+            }
+          });
+        } else {
+          this.toastService.create(res.Message || 'Error: Failed to update injection', 'danger');
+        }
+      },
+      () => {
+        retryLoading.dismiss();
+        this.toastService.create('Error: Server Failure', 'danger');
+      }
+    );
+  }
+
   // §10 twin echo: if the chosen brand has a case-only look-alike (HEXAXIM vs Hexaxim),
   // make the operator confirm they picked the right one. Returns false to abort the give.
   async confirmTwinBrand(): Promise<boolean> {
@@ -488,6 +547,7 @@ export class FillPage implements OnInit {
     } else {
       this.fg.value.ReRecordHistorical = null;
     }
+    this.fg.value.ConfirmUnbatchedGive = null;
 
     await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
       async res => {
@@ -501,6 +561,9 @@ export class FillPage implements OnInit {
               this.router.navigate(['/members/child/vaccine/' + this.childId]);
             }
           });
+        } else if (this.isUnbatchedGiveRejection(res.Message)) {
+          loading.dismiss();
+          await this.handleUnbatchedGiveRejection();
         } else if (res.IsWarning) {
           loading.dismiss();
           const alert = await this.alertController.create({
@@ -525,6 +588,8 @@ export class FillPage implements OnInit {
                             this.router.navigate(['/members/child/vaccine/' + this.childId]);
                           }
                         });
+                      } else if (this.isUnbatchedGiveRejection(res2.Message)) {
+                        await this.handleUnbatchedGiveRejection();
                       } else {
                         this.toastService.create(res2.Message || "Error: Failed to update injection", 'danger');
                       }
