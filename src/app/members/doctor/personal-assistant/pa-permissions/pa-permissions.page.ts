@@ -44,7 +44,6 @@ export class PaPermissionsPage implements OnInit {
         { key: 'UngiveVaccine',      label: 'Ungive vaccine (own actions only)' },
         { key: 'SkipVaccine',        label: 'Skip vaccine' },
         { key: 'UnskipVaccine',      label: 'Unskip vaccine (own actions only)' },
-        { key: 'RescheduleVaccine',  label: 'Reschedule individual vaccine date' },
         { key: 'BulkGiveVaccines',   label: 'Bulk give vaccines for a date' },
         { key: 'BulkUngiveVaccines', label: 'Bulk ungive vaccines (own actions only)' },
         { key: 'BulkReschedule',     label: 'Bulk reschedule vaccines' },

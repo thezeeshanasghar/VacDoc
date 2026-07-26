@@ -166,7 +166,7 @@ export class VaccinePage {
         this.paService.getPaPermissions(Number(user.PAId)).subscribe(perm => {
           this.canGiveVaccine    = (perm && perm.GiveVaccine)        || false;
           this.canUngiveVaccine  = (perm && perm.UngiveVaccine)      || false;
-          this.canReschedule     = (perm && perm.RescheduleVaccine)  || false;
+          this.canReschedule     = true; // single-dose reschedule is available to all PAs, not gated by permission
           this.canBulkGive       = (perm && perm.BulkGiveVaccines)   || false;
           this.canBulkUngive     = (perm && perm.BulkUngiveVaccines) || false;
           this.canBulkReschedule = (perm && perm.BulkReschedule)     || false;
