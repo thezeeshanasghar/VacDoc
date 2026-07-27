@@ -189,7 +189,24 @@ export class VaccineService extends BaseService {
       map(response => response.body)
     );
   }
-  
+
+  // Landscape (Travel-styled) variant of the Custom schedule PDF.
+  // includeFuture=false hides not-yet-given (future/due) doses.
+  generateSpecialLandscapePdf(childId: number, includeFuture: boolean = true): Observable<Blob> {
+    return this.http.get(`${this.API_VACCINE}Child/${childId}/CustomLandscapeVerify?includeFuture=${includeFuture}`, {
+      responseType: 'blob',
+      observe: 'response'
+    }).pipe(
+      tap((response: HttpResponse<Blob>) => {
+        const contentDisposition = response.headers.get('Content-Disposition');
+        if (contentDisposition) {
+          this.lastContentDisposition = contentDisposition;
+        }
+      }),
+      map(response => response.body)
+    );
+  }
+
   // Method to retrieve the last Content-Disposition header
   getLastContentDisposition(): string {
     return this.lastContentDisposition;

@@ -9,8 +9,11 @@
       <span class="vax-name">{{ChildName}}</span>
     </ion-title>
     <ion-buttons slot="end">
-      <ion-button *ngIf="canPrint" (click)="printdata($event)" fill="clear" class="vax-toolbar-btn">
-        <ion-icon slot="icon-only" name="print-outline" class="vax-print-icon"></ion-icon>
+      <ion-button *ngIf="canPrint" (click)="printdata($event)" fill="clear" class="vax-toolbar-btn" title="Portrait PDF">
+        <ion-icon slot="icon-only" name="document-outline" class="vax-print-icon"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf="canPrint && type === 'special'" (click)="printLandscapeData($event)" fill="clear" class="vax-toolbar-btn" title="Landscape PDF">
+        <ion-icon slot="icon-only" name="document-outline" class="vax-print-icon vax-print-icon--landscape"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

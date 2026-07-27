@@ -799,12 +799,20 @@ removal(type: string){
     }
   }
 
+  // Second toolbar icon shown only for Custom ('special') schedules — downloads
+  // the landscape, Travel-styled variant instead of the default portrait PDF.
+  printLandscapeData(event?: Event) {
+    if (this.type === 'special') {
+      this.presentPdfOptions('special-landscape', event);
+    }
+  }
+
   // Travel & custom (special) schedules offer two variants: all vaccines, or
   // given-only (hide not-yet-administered / future doses). On desktop the menu
   // is anchored to the print icon (passing `event`) so it opens at the cursor;
   // on mobile we omit the event so the popover centres on screen instead of
   // hugging the top-right edge.
-  async presentPdfOptions(kind: 'travel' | 'special', event?: Event) {
+  async presentPdfOptions(kind: 'travel' | 'special' | 'special-landscape', event?: Event) {
     const anchorToIcon = this.platform.is('desktop') || this.platform.is('mobileweb');
     const popover = await this.popoverController.create({
       component: PdfOptionsPopoverComponent,
@@ -817,6 +825,7 @@ removal(type: string){
     const { data } = await popover.onDidDismiss();
     if (data && typeof data.includeFuture === 'boolean') {
       if (kind === 'travel') { this.downloadTravelPdf(data.includeFuture); }
+      else if (kind === 'special-landscape') { this.downloadSpecialLandscapePdf(data.includeFuture); }
       else { this.downloadSpecialPdf(data.includeFuture); }
     }
   }
@@ -1399,6 +1408,32 @@ removal(type: string){
 
   downloadSpecialPdf(includeFuture: boolean = true) {
     this.vaccineService.generateSpecialPdf(this.childId, includeFuture).subscribe((response: Blob) => {
+      const blob = new Blob([response], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const contentDisposition = this.vaccineService.getLastContentDisposition();
+      let filename = 'Immunization-Record.pdf';
+
+      if (contentDisposition) {
+        const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+        const matches = filenameRegex.exec(contentDisposition);
+        if (matches != null && matches[1]) {
+          filename = matches[1].replace(/['"]/g, '');
+        }
+      }
+
+      a.download = filename;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }, error => {
+      console.error('Error downloading PDF:', error);
+    });
+  }
+
+  // Landscape (Travel-styled) variant of the Custom schedule PDF.
+  downloadSpecialLandscapePdf(includeFuture: boolean = true) {
+    this.vaccineService.generateSpecialLandscapePdf(this.childId, includeFuture).subscribe((response: Blob) => {
       const blob = new Blob([response], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');

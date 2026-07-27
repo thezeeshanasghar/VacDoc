@@ -36,12 +36,18 @@ ion-title {
 
 .vax-toolbar-btn {
   --padding-start: 4px;
-  --padding-end: 8px;
+  --padding-end: 4px;
 }
 
 .vax-print-icon {
   font-size: 22px;
   color: #ffffff;
+}
+
+// Landscape variant reuses the portrait document icon, rotated 90° — there is
+// no distinct "landscape document" glyph in Ionicons.
+.vax-print-icon--landscape {
+  transform: rotate(90deg);
 }
 
 ion-buttons {
