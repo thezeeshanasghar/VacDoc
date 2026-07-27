@@ -754,12 +754,30 @@ ion-content.ion-padding { --padding-bottom: 74px; }
 
   .date-group-label { font-size: 12px; }
 
-  // Fix: on narrow phones the invoiced/unpaid row (subline + "Given by Doctor"
-  // badge + PAYMENT button) was clipped off-screen because .date-group-header's
-  // three flex children never wrapped. Let the row wrap and give the badge +
-  // actions their own full-width line under the date.
+  // Fix: on narrow phones, any header row whose actions group holds more than
+  // one control (icon buttons + a text "GIVE n" / "INVOICE" / "PAYMENT" button)
+  // can outgrow the half-width it's allotted next to the date heading — the
+  // overflow got clipped by the card edge instead of wrapping. Give both
+  // .date-group-heading and .date-group-actions a real min-width so the browser
+  // wraps them onto their own full-width lines whenever content demands it,
+  // instead of only in the one stage this was first noticed in.
   .date-group-header {
     flex-wrap: wrap;
+  }
+
+  .date-group-heading {
+    flex: 1 1 auto;
+    min-width: 120px;
+  }
+
+  // No min-width: 0 override here — .date-group-actions must keep its default
+  // (auto) min-width so its own content size becomes the row's wrap trigger.
+  // With min-width: 0 the actions group shrinks past its buttons' combined
+  // width instead of forcing .date-group-header to wrap, and the buttons
+  // overflow the card edge instead.
+  .date-group-actions {
+    flex: 1 1 auto;
+    justify-content: flex-end;
   }
 
   .date-group-header--stacked {
