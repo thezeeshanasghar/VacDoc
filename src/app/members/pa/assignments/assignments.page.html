@@ -82,6 +82,12 @@
       &nbsp;&nbsp;
       <ion-icon name="calendar"></ion-icon> {{ a.DOB | date:'dd MMM yyyy' }}
       <br>
+      <div class="contact-row" *ngIf="a.ParentWhatsApp">
+        <span class="contact-label">Parent Mobile</span>
+        <span class="contact-wa" (click)="openParentWhatsApp(a.ParentWhatsApp)">
+          <ion-icon name="logo-whatsapp"></ion-icon> {{ a.ParentMobile }}
+        </span>
+      </div>
       <ion-badge color="warning" *ngIf="hasInvoiceForAssignment(a) && hasUnpaidSchedules(a)" class="payment-pending-badge">
         <ion-icon name="cash-outline"></ion-icon> Payment Pending
       </ion-badge>

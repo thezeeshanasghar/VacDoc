@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController, Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { PaService } from 'src/app/services/pa.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
@@ -26,6 +26,7 @@ export class AssignmentsPage {
     private toastService: ToastService,
     private alertController: AlertController,
     private loadingController: LoadingController,
+    private platform: Platform,
   ) {}
 
   async ionViewWillEnter() {
@@ -187,6 +188,16 @@ export class AssignmentsPage {
 
   hasInvoiceForAssignment(a: any): boolean {
     return !!a.HasInvoice;
+  }
+
+  // whatsAppNumber is already normalized server-side (ToWhatsAppNumber: digits only, no
+  // leading 0, country code prefixed once) — opens a blank chat, no prefilled message.
+  openParentWhatsApp(whatsAppNumber: string) {
+    if (!whatsAppNumber) { return; }
+    const url = (this.platform.is('android') || this.platform.is('ios'))
+      ? `whatsapp://send?phone=${whatsAppNumber}`
+      : `https://web.whatsapp.com/send?phone=${whatsAppNumber}`;
+    window.open(url, '_system');
   }
 
   hasGivenOrPaidSchedules(a: any): boolean {
