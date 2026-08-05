@@ -430,27 +430,34 @@ export class PaAssignmentTrackingPage {
     return new Set(this.allRows.map(r => r.PaId)).size;
   }
 
+  // Pakistan Standard Time is fixed (no DST), but the device/browser rendering this may
+  // not be — so parts are pulled via Intl with an explicit Asia/Karachi timeZone instead
+  // of trusting d.getDate()/getHours() (which read the LOCAL device timezone).
+  private pktParts(dateStr: string): { [key: string]: string } {
+    const d = new Date(dateStr);
+    const fmt = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Karachi',
+      year: 'numeric', month: 'short', day: '2-digit',
+      hour: 'numeric', minute: '2-digit', hour12: true,
+    });
+    const parts: { [key: string]: string } = {};
+    fmt.formatToParts(d).forEach(p => { parts[p.type] = p.value; });
+    return parts;
+  }
+
   formatDate(dateStr: string | null): string {
     if (!dateStr) { return ''; }
     try {
-      const d = new Date(dateStr);
-      const dd = d.getDate().toString().padStart(2, '0');
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      return `${dd} ${months[d.getMonth()]} ${d.getFullYear()}`;
+      const p = this.pktParts(dateStr);
+      return `${p.day} ${p.month} ${p.year}`;
     } catch { return dateStr; }
   }
 
   formatDateTime(dateStr: string | null): string {
     if (!dateStr) { return ''; }
     try {
-      const d = new Date(dateStr);
-      const dd = d.getDate().toString().padStart(2, '0');
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      let h = d.getHours();
-      const m = d.getMinutes().toString().padStart(2, '0');
-      const ampm = h >= 12 ? 'PM' : 'AM';
-      h = h % 12 || 12;
-      return `${dd} ${months[d.getMonth()]} ${d.getFullYear()}, ${h}:${m} ${ampm}`;
+      const p = this.pktParts(dateStr);
+      return `${p.day} ${p.month} ${p.year}, ${p.hour}:${p.minute} ${p.dayPeriod} PKT`;
     } catch { return dateStr; }
   }
 }
