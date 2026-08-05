@@ -489,6 +489,13 @@
   margin-top: 3px;
 }
 
+.assigned-ts {
+  font-size: 10px;
+  color: var(--vac-ink-3);
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
 .pending-sub {
   font-size: 10px;
   color: var(--vac-warn);

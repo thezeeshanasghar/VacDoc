@@ -230,7 +230,10 @@
                   <button *ngIf="row.AssignmentId" class="btn-delete-assignment" (click)="confirmDeleteAssignment(row)" title="Delete assignment">🗑️</button>
                   <button *ngIf="row.RowType === 'DirectSale'" class="btn-delete-assignment" (click)="confirmDeleteDirectSale(row)" title="Reverse sale">🗑️</button>
                 </td>
-                <td class="col-date">{{ formatDate(row.Date) }}</td>
+                <td class="col-date">
+                  <div class="date-val">{{ formatDate(row.Date) }}</div>
+                  <div class="assigned-ts" *ngIf="row.AssignedAt">Assigned {{ formatDateTime(row.AssignedAt) }}</div>
+                </td>
                 <td class="col-patient">
                   <div class="patient-name">{{ row.PatientName }}</div>
                   <div class="patient-pa" *ngIf="row.PaName">{{ row.PaName }}</div>

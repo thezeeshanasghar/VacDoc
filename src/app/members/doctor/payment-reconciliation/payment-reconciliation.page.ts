@@ -16,6 +16,7 @@ interface PaymentRow {
   DirectSaleBillNo?: string; // set when RowType is DirectSale
   RowType: 'Invoice' | 'UngiveReversal' | 'EditReversal' | 'AwaitingInvoice' | 'DirectSale';
   Date: string;
+  AssignedAt?: string;
   PatientName: string;
   Vaccines: string;
   Amount: number;
