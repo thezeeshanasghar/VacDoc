@@ -1091,6 +1091,16 @@ filterCountryCodes(value: string) {
     this.fg1.get("CNIC").clearValidators();
     this.fg1.get("agent").clearValidators();
     this.fg1.get("Agent2").clearValidators();
+
+    // EPI Plus radio sends "epiplus" as the Type value, but the backend only knows
+    // Type="regular" + IsEPIDone=true — the radio's own value must never reach the API.
+    if (selectedValue === "epiplus") {
+      this.fg1.get("Type").setValue("regular");
+      this.fg1.get("IsEPIDone").setValue(true);
+    } else {
+      this.fg1.get("IsEPIDone").setValue(false);
+    }
+
     if (selectedValue === "travel") {
       this.isCnicRequired = true;
       this.fg1.get("CNIC").setValidators([Validators.required]);
