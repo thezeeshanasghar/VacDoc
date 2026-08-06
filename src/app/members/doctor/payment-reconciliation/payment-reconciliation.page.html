@@ -264,7 +264,10 @@
                     </ng-container>
                     <ng-container *ngIf="!row.IsConfirmed">
                       <span class="badge badge-pending" *ngIf="!row.PendingHandover">Pending With PA</span>
-                      <span class="badge badge-handover" *ngIf="row.PendingHandover">Pending Handover</span>
+                      <ng-container *ngIf="row.PendingHandover">
+                        <span class="badge badge-handover">Pending Handover</span>
+                        <div class="confirm-ts" *ngIf="row.HandoverDoneAt">{{ formatDateTime(row.HandoverDoneAt) }}</div>
+                      </ng-container>
                     </ng-container>
                   </ng-container>
                   <!-- Amendment rows -->
