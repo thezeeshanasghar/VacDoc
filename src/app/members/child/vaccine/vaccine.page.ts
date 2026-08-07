@@ -246,6 +246,24 @@ export class VaccinePage {
     return data.some(v => v.IsDone && !v.Due2EPI);
   }
 
+  // ── EPI-historical detection (govt EPI programme doses, not clinic-given) ──
+  // Due2EPI exists on the DTO but the backend's InsertEpiHistoryDoses (the ONLY
+  // writer of these rows, at EPI Plus registration time) never sets it — it's
+  // always false on these rows, so it can't be used alone here. Instead: a dose
+  // is EPI-historical when the child was registered EPI Plus (Child.IsEPIDone),
+  // the dose is already done, and it carries no real clinic give trail (no brand
+  // recorded, not given by a PA) — the two things InsertEpiHistoryDoses never
+  // stamps but every real clinic/OHF give does attribute to an actor.
+  isEpiHistoricalDose(v: any): boolean {
+    return !!(v && v.IsDone && v.Child && v.Child.IsEPIDone && !v.BrandId && !v.GivenByPaId);
+  }
+  // A date-group is EPI-historical only when EVERY dose in it is — a group that
+  // mixes an EPI-historical dose with a real clinic dose given on the same date
+  // (edge case) must still be invoiceable for the clinic-given part.
+  isEpiHistoricalGroup(data: any[]): boolean {
+    return !!(data && data.length > 0) && data.every(v => this.isEpiHistoricalDose(v));
+  }
+
   // ── Sequential action pipeline (spec §3) ──────────────────────────────────
   // A skipped dose leaves the pipeline entirely (§3.3): never counted, given,
   // invoiced or printed. isActiveDose() = a dose still "in" the pipeline.
@@ -285,6 +303,15 @@ export class VaccinePage {
    *   3 INVOICED  — invoice exists, at least one done dose unpaid
    *   4 PAID      — invoice exists, all done doses paid
    * EPI-only / empty groups fall through to stage 1 (nothing to do here).
+   *
+   * NOTE: a stage-2 group that is EPI-historical (isEpiHistoricalGroup()) is
+   * still reported as stage 2 here — it genuinely has given, uninvoiced doses.
+   * The template is responsible for not offering INVOICE for it (see
+   * isEpiHistoricalGroup() guard in vaccine.page.html) since the government
+   * EPI programme gave these doses for free; the clinic never billed for them
+   * and can't invoice them retroactively. Keeping the numeric stage unchanged
+   * avoids disturbing every other isStage() consumer (assign-to-PA, resolved
+   * card styling, stage-4 override, etc.) for a case that only affects one button.
    */
   groupStage(data: any[], date: string): 1 | 2 | 3 | 4 {
     const given = this.givenActiveDoses(data);

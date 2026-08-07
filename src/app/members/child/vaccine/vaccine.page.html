@@ -110,8 +110,11 @@
               </button>
             </ng-container>
 
-            <!-- ── STAGE 2: GIVEN (not invoiced) — INVOICE ─────────────────── -->
-            <ng-container *ngIf="isStage(item.value, item.key, 2)">
+            <!-- ── STAGE 2: GIVEN (not invoiced) — INVOICE, unless this whole
+                 date-group is EPI-historical (govt EPI programme gave these doses
+                 for free — the clinic never billed for them and cannot invoice
+                 them now). That case shows a plain "EPI-Given" label instead. ── -->
+            <ng-container *ngIf="isStage(item.value, item.key, 2) && !isEpiHistoricalGroup(item.value)">
               <button
                 *ngIf="canInvoice"
                 class="stage-btn stage-btn--invoice"
@@ -120,6 +123,9 @@
                 <ion-icon name="document-text-outline"></ion-icon>
                 INVOICE
               </button>
+            </ng-container>
+            <ng-container *ngIf="isStage(item.value, item.key, 2) && isEpiHistoricalGroup(item.value)">
+              <span class="epi-given-badge" title="Given by the government EPI programme — not billable by this clinic">EPI-Given</span>
             </ng-container>
 
             <!-- ── STAGE 3: INVOICED (unpaid) — invoice menu + PAYMENT ─────── -->

@@ -192,6 +192,24 @@ ion-buttons {
   &--payment { background: linear-gradient(135deg, var(--vac-gold-text), var(--vac-gold)); box-shadow: 0 3px 10px rgba(176, 143, 62, .35); font-size: 11px; }
 }
 
+// Plain label (not a button — no click handler) shown on a date-group header
+// in place of INVOICE when every dose in the group is EPI-historical (govt
+// EPI programme gave these doses for free; the clinic never billed for them
+// and cannot invoice them retroactively). Deliberately inert-looking: no
+// shadow, no pointer cursor, so it doesn't read as an actionable control.
+.epi-given-badge {
+  font-family: var(--vac-font-head);
+  font-weight: 700;
+  letter-spacing: .05em;
+  font-size: 11px;
+  color: var(--vac-green);
+  background: rgba(46, 148, 99, .12); // --vac-green (#2E9463) at low opacity
+  border-radius: 9px;
+  padding: 9px 14px;
+  flex-shrink: 0;
+  cursor: default;
+}
+
 // Date colour states
 .date-label--given           { color: var(--vac-green); }   // given
 .date-label--payment-pending { color: var(--vac-warn); }    // given, unpaid
