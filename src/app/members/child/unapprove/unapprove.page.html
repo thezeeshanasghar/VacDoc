@@ -112,7 +112,7 @@
       <span class="unap-vax-label">
         <ion-icon name="medical-outline"></ion-icon>
         {{ getVaccineLabel(s) }}
-        <span class="unap-vax-by">— given by {{ s.GivenByPaId ? (s.GivenByPaName || ('PA #' + s.GivenByPaId)) : 'Doctor' }}</span>
+        <span class="unap-vax-by">— {{ child.IsEPIDone ? 'Registered by' : 'given by' }} {{ s.GivenByPaId ? (s.GivenByPaName || ('PA #' + s.GivenByPaId)) : 'Doctor' }}</span>
       </span>
       <ion-button
         *ngIf="usertype?.UserType !== 'PA'"
