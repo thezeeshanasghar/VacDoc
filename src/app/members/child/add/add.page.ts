@@ -36,6 +36,10 @@ export class AddPage implements OnInit {
     "LAST_SELECTED_NATIONALITY";
   private readonly LAST_SELECTED_AGENT_KEY = "LAST_SELECTED_AGENT";
   isRadioDisabled: boolean = true;
+  // Guards against the synthetic second (ionChange) that Ionic's radio-group
+  // fires when onTravelChange programmatically rewrites Type "epiplus"->"regular".
+  // See onTravelChange for the full mechanism.
+  private suppressNextTravelChange = false;
   fg1: FormGroup;
   fg2: FormGroup;
   formcontroll: boolean = false;
@@ -1085,6 +1089,22 @@ filterCountryCodes(value: string) {
   onTravelChange(event: any) {
     const selectedValue = event.detail.value;
     console.log("Selected Type:", selectedValue);
+
+    // Ionic's ion-radio-group fires a native (ionChange) event straight off its
+    // own DOM value whenever that value changes - including when WE set it
+    // programmatically below (Type.setValue("regular")) - not just on user
+    // clicks, and not just on Angular's formControl.valueChanges (so
+    // { emitEvent: false } on setValue has no effect on it). Without this
+    // guard, selecting "epiplus" triggers a synthetic second onTravelChange
+    // call with selectedValue "regular" a moment later, which re-enters the
+    // else branch below and immediately wipes IsEPIDone back to false -
+    // visibly snapping the radio from EPI Plus back to Regular right after
+    // it was chosen.
+    if (this.suppressNextTravelChange) {
+      this.suppressNextTravelChange = false;
+      return;
+    }
+
     if (selectedValue === "special" && this.Doctor && this.Doctor.AllowAdult === true) {
       this.presentScheduleTypePopover();
     }
@@ -1095,6 +1115,7 @@ filterCountryCodes(value: string) {
     // EPI Plus radio sends "epiplus" as the Type value, but the backend only knows
     // Type="regular" + IsEPIDone=true — the radio's own value must never reach the API.
     if (selectedValue === "epiplus") {
+      this.suppressNextTravelChange = true;
       this.fg1.get("Type").setValue("regular");
       this.fg1.get("IsEPIDone").setValue(true);
     } else {
