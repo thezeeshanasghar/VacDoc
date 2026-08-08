@@ -53,6 +53,15 @@ export class PaAssignmentTrackingPage {
   clinics: any[] = [];
   pas: any[] = [];
 
+  // Set when a manager-tier PA (not the doctor) is viewing this shared page. Backend fences
+  // GetForDoctor/Reassign to this PA's own PaAccess clinics whenever requestingPaId is sent —
+  // see PAAssignmentController.GetForDoctor/Reassign. canReassign further hides the Reassign
+  // action client-side for a manager PA who only has ViewPaAssignmentStatus, not ReassignPaTask
+  // (the backend also enforces this — this is just so the button isn't shown only to 403 on click).
+  isManagerPa = false;
+  requestingPaId: number | null = null;
+  canReassign = true;
+
   selectedClinicId: number | null = null;
   selectedPaId: number | null = null;
   selectedStatus: string = 'Active';
@@ -88,9 +97,18 @@ export class PaAssignmentTrackingPage {
     this.toDate = today;
 
     const user = await this.storage.get(environment.USER);
-    if (user && user.DoctorId) {
-      this.doctorId = Number(user.DoctorId);
+    const storedDoctorId = await this.storage.get(environment.DOCTOR_Id);
+    if (storedDoctorId) {
+      this.doctorId = Number(storedDoctorId);
     }
+
+    if (user && user.UserType === 'PA') {
+      this.isManagerPa = true;
+      this.requestingPaId = Number(user.PAId);
+      const perm = await this.paService.getPaPermissions(this.requestingPaId).toPromise();
+      this.canReassign = (perm && perm.ReassignPaTask) || false;
+    }
+
     await this.loadClinics();
     this.load();
   }
@@ -103,6 +121,17 @@ export class PaAssignmentTrackingPage {
 
   async loadClinics() {
     if (!this.doctorId) { return; }
+
+    // Manager PA: only offer clinics they themselves have PaAccess to — matches the backend
+    // fence on GetForDoctor, and stops the filter dropdown from ever suggesting a clinic the
+    // read call would silently exclude anyway.
+    if (this.isManagerPa && this.requestingPaId) {
+      this.paService.getPaClinics(this.requestingPaId).subscribe(res => {
+        this.clinics = (res && res.IsSuccess) ? (res.ResponseData || []) : [];
+      });
+      return;
+    }
+
     this.clinicService.getClinics(this.doctorId).subscribe(res => {
       if (res && res.IsSuccess) {
         this.clinics = res.ResponseData || [];
@@ -178,7 +207,8 @@ export class PaAssignmentTrackingPage {
       this.selectedPaId || undefined,
       this.selectedStatus || undefined,
       this.fromDate || undefined,
-      this.toDate || undefined
+      this.toDate || undefined,
+      this.requestingPaId || undefined
     ).subscribe(
       res => {
         this.loading = false;

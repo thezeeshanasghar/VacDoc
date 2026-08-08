@@ -50,6 +50,7 @@ export class DashboardPage implements OnInit {
   showVacation: boolean = true;
   showAgent: boolean = false;
   showPersonalAssistant: boolean = false;
+  showPaAssignmentTracking: boolean = false;
   assignmentCount: number = 0;
   pendingApprovalsCount: number = 0;
   hasPA: boolean = false;
@@ -122,6 +123,7 @@ export class DashboardPage implements OnInit {
         this.showSalesReport = false;
         this.showAgent     = false;
         this.showPersonalAssistant = false;
+        this.showPaAssignmentTracking = (perm && perm.ViewPaAssignmentStatus) || false;
         this.paService.getAssignments(Number(this.user.PAId)).subscribe(res => {
           if (res && res.IsSuccess) {
             this.assignmentCount = (res.ResponseData || []).length;
@@ -142,6 +144,7 @@ export class DashboardPage implements OnInit {
       this.showAnalytics = this.user && this.user.AllowAnalytics === true;
       this.showAgent     = this.user && this.user.AllowAgent === true;
       this.showPersonalAssistant = this.doctorId === 1;
+      this.showPaAssignmentTracking = true;
       this.showVacation  = true;
       this.showClinics   = true;
       this.showPatients  = true;

@@ -73,8 +73,11 @@
 
     <!-- Page switcher — Payment Reconciliation owns its own header/content and can't be
          nested here, so this jumps there as a real navigation, carrying the current
-         clinic/PA scope along as query params (see goToPayments()). -->
-    <div class="page-switcher">
+         clinic/PA scope along as query params (see goToPayments()).
+         Hidden entirely for manager PAs: cash/Financial access is explicitly excluded from
+         the manager permission tier (see PaPermission's Manager-Level Permissions section) —
+         Payment Reconciliation must never be reachable from here in a PA session. -->
+    <div class="page-switcher" *ngIf="!isManagerPa">
       <button class="switcher-btn active"><ion-icon name="clipboard-outline"></ion-icon> Assignments</button>
       <button class="switcher-btn" (click)="goToPayments()"><ion-icon name="cash-outline"></ion-icon> Payments</button>
     </div>
@@ -204,10 +207,12 @@
             <div class="progress-label">{{ row.DosesGiven }} / {{ row.DosesTotal }} doses given</div>
           </div>
 
+          <!-- Cash amount hidden entirely from manager PAs — the manager permission tier
+               explicitly excludes any cash/Financial figure, not just the Payments screens. -->
           <div class="handover-strip" *ngIf="row.IsCashConfirmedByDoctor">
             <ion-icon name="checkmark-circle-outline"></ion-icon>
             Cash handover confirmed · {{ formatDateTime(row.CashConfirmedAt) }}
-            <span class="handover-amount" *ngIf="row.CashAmount !== null">Rs {{ row.CashAmount | number:'1.0-0' }}</span>
+            <span class="handover-amount" *ngIf="row.CashAmount !== null && !isManagerPa">Rs {{ row.CashAmount | number:'1.0-0' }}</span>
           </div>
 
           <div class="assign-body" *ngIf="row.expanded">
@@ -226,7 +231,7 @@
               <span>Assignment #{{ row.AssignmentId }}</span>
               <span *ngIf="row.Notes">Notes: "{{ row.Notes }}"</span>
               <span *ngIf="row.CancelReason">Reason: "{{ row.CancelReason }}"</span>
-              <button class="link-to-payments" (click)="viewInPayments(row); $event.stopPropagation()">View in Payments →</button>
+              <button *ngIf="!isManagerPa" class="link-to-payments" (click)="viewInPayments(row); $event.stopPropagation()">View in Payments →</button>
             </div>
           </div>
         </div>

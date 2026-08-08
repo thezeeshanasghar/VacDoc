@@ -211,10 +211,11 @@ export class PaService extends BaseService {
     return this.http.patch(url, { CallerType: callerType, CallerId: callerId, Reason: reason }, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  reassignAssignment(assignmentId: number, newPaId: number, targetDate?: string | null): Observable<any> {
+  reassignAssignment(assignmentId: number, newPaId: number, targetDate?: string | null, requestingPaId?: number | null): Observable<any> {
     const url = `${this.API_PA}PAAssignment/${assignmentId}/reassign`;
     const body: any = { NewPaId: newPaId };
     if (targetDate) { body.TargetDate = targetDate; }
+    if (requestingPaId) { body.RequestingPaId = requestingPaId; }
     return this.http.patch(url, body, this.httpOptions).pipe(catchError(this.handleError));
   }
 
@@ -228,7 +229,7 @@ export class PaService extends BaseService {
     return this.http.patch(url, { DoctorId: doctorId, TargetDate: targetDate }, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  getAssignmentsForDoctor(doctorId: number, clinicId?: number, paId?: number, status?: string, fromDate?: string, toDate?: string): Observable<any> {
+  getAssignmentsForDoctor(doctorId: number, clinicId?: number, paId?: number, status?: string, fromDate?: string, toDate?: string, requestingPaId?: number): Observable<any> {
     let url = `${this.API_PA}PAAssignment/doctor/${doctorId}`;
     const params: string[] = [];
     if (clinicId) { params.push(`clinicId=${clinicId}`); }
@@ -236,6 +237,7 @@ export class PaService extends BaseService {
     if (status) { params.push(`status=${status}`); }
     if (fromDate) { params.push(`fromDate=${fromDate}`); }
     if (toDate) { params.push(`toDate=${toDate}`); }
+    if (requestingPaId) { params.push(`requestingPaId=${requestingPaId}`); }
     if (params.length) { url += '?' + params.join('&'); }
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
