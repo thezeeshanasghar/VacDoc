@@ -176,6 +176,13 @@ filterCountryCodes(value: string) {
               this.clinics = response.ResponseData;
               this.selectedClinicId =
                 this.clinics.length > 0 ? this.clinics[0].Id : null;
+              // Pre-select on the reactive form control too (ngModel above only
+              // drives the select's displayed value) - required for the
+              // single-clinic case, where the field renders locked with no
+              // select to ever fire (ionChange) and set ClinicId itself.
+              if (this.fg1) {
+                this.fg1.get("ClinicId").setValue(this.selectedClinicId);
+              }
               console.log("PA Clinics:", this.clinics);
             } else {
               this.toastService.create(response.Message, "danger");
@@ -238,6 +245,9 @@ filterCountryCodes(value: string) {
       travel: [false],
       CNIC: [""],
       IsEPIDone: [false],
+      // EPI Plus sub-choice: false (default) = "Mark as Given", true = "Schedule Only".
+      // Only meaningful when IsEPIDone is true; ignored by the backend otherwise.
+      IsEpiScheduleOnly: [false],
       IsSkip: [true],
       IsVerified: [false],
       Password: [null],
@@ -247,6 +257,11 @@ filterCountryCodes(value: string) {
         Validators.compose([Validators.pattern(/^[a-zA-Z\s]+$/)]),
       ],
     });
+    // Covers the case where loadClinics()'s response already landed (and set
+    // selectedClinicId) before this rebuild of fg1 on a later ionViewWillEnter.
+    if (this.selectedClinicId != null) {
+      this.fg1.get("ClinicId").setValue(this.selectedClinicId);
+    }
     this.storage.get(environment.DOCTOR_Id).then((val) => {
       this.doctorId = val;
       this.logDoctorId();
@@ -1117,6 +1132,12 @@ filterCountryCodes(value: string) {
     // the epiplus -> regular translation for the backend now happens once,
     // at submit time, in moveNextStep().
     this.fg1.get("IsEPIDone").setValue(selectedValue === "epiplus");
+    // Reset the EPI Plus sub-choice back to its default ("Mark as Given") whenever
+    // EPI Plus isn't the current selection, so switching away and back later never
+    // carries over a stale "Schedule Only" pick from an earlier visit to this radio.
+    if (selectedValue !== "epiplus") {
+      this.fg1.get("IsEpiScheduleOnly").setValue(false);
+    }
 
     if (selectedValue === "travel") {
       this.isCnicRequired = true;
@@ -1144,6 +1165,12 @@ filterCountryCodes(value: string) {
     // (dateChange)="checkEpi()" binding already re-evaluates eligibility
     // whenever DOB actually changes; a Type-radio click never needs to.
     this.isRadioDisabled = this.isCnicRequired && !this.epiDone;
+  }
+
+  // EPI Plus sub-choice, shown inline once "epiplus" is selected on the Type radio-group.
+  // scheduleOnly=false -> "Mark as Given" (default), scheduleOnly=true -> "Schedule Only".
+  selectEpiSubOption(scheduleOnly: boolean) {
+    this.fg1.get("IsEpiScheduleOnly").setValue(scheduleOnly);
   }
 
   async presentScheduleTypePopover() {

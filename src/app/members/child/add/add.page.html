@@ -112,18 +112,58 @@
         </ion-grid>
       </ion-radio-group>
 
-      <ion-item *ngIf="type === 'PA'" class="custom-input-item" lines="none">
-        <div class="country-code-container">
-          <!-- <ion-label class="label-gray" position="stacked" class="country-label">
-            Clinics <span class="required-asterisk">*</span>
-          </ion-label> -->
-          <ion-select formControlName="ClinicId" [(ngModel)]="selectedClinicId" class="custom-input" placeholder="Clinics *" required class="no-indent">
+      <!-- EPI Plus sub-choice: shown inline once "epiplus" is selected. Mark as Given (default)
+           keeps today's behaviour; Schedule Only inserts the same EPI dose set as not-yet-given. -->
+      <div class="epi-subchoice" *ngIf="fg1.get('IsEPIDone').value === true">
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6">
+              <ion-item button lines="none" class="epi-subchoice-item"
+                [class.epi-subchoice-item--selected]="!fg1.get('IsEpiScheduleOnly').value"
+                (click)="selectEpiSubOption(false)">
+                <div class="epi-subchoice-dot" slot="start"
+                  [class.epi-subchoice-dot--checked]="!fg1.get('IsEpiScheduleOnly').value"></div>
+                <ion-label class="ion-text-wrap">
+                  <div class="epi-subchoice-title">Mark as Given</div>
+                  <div class="epi-subchoice-hint">Doses already completed under EPI — logged as history.</div>
+                </ion-label>
+              </ion-item>
+            </ion-col>
+            <ion-col size="6">
+              <ion-item button lines="none" class="epi-subchoice-item"
+                [class.epi-subchoice-item--selected]="fg1.get('IsEpiScheduleOnly').value"
+                (click)="selectEpiSubOption(true)">
+                <div class="epi-subchoice-dot" slot="start"
+                  [class.epi-subchoice-dot--checked]="fg1.get('IsEpiScheduleOnly').value"></div>
+                <ion-label class="ion-text-wrap">
+                  <div class="epi-subchoice-title">Schedule Only</div>
+                  <div class="epi-subchoice-hint">Same EPI doses, but not given yet — due dates only.</div>
+                </ion-label>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+
+      <div class="clinic-field" *ngIf="type === 'PA'">
+        <div class="clinic-field-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1m4 0h1m-6 4h1m4 0h1m-6 4h1m4 0h1"/></svg>
+          Adding Patient To Clinic <span class="required-asterisk" *ngIf="clinics && clinics.length > 1">*</span>
+        </div>
+        <ion-item *ngIf="clinics && clinics.length > 1; else lockedClinic" class="clinic-select-item" lines="none">
+          <ion-select formControlName="ClinicId" [(ngModel)]="selectedClinicId" class="clinic-select" interface="popover" required>
             <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
               {{ clinic.Name }}
             </ion-select-option>
           </ion-select>
-        </div>
-      </ion-item>
+        </ion-item>
+        <ng-template #lockedClinic>
+          <div class="clinic-select-row locked">
+            <span>{{ clinics && clinics.length ? clinics[0].Name : '' }}</span>
+            <svg class="lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          </div>
+        </ng-template>
+      </div>
       <ion-item lines="none" class="custom-input-item">
         <!-- <ion-label class="label-gray" position="floating">Email</ion-label> -->
         <ion-input type="email" formControlName="Email" placeholder="Email" class="custom-input"

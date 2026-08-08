@@ -202,10 +202,74 @@ ion-label {
   vertical-align: middle !important;
   margin-right: 0.5em;
 }
+// Clinic selector (PA add-patient): reuses the epi-subchoice blue panel
+// language so the field reads as important rather than blending in with
+// the generic gray text inputs around it.
+.clinic-field {
+  margin: 4px 0 10px;
+  padding: 10px 12px;
+  border: 1px solid #3880ff;
+  border-radius: 8px;
+  background: #eaf2ff;
+}
+.clinic-field-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #3880ff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+}
+.clinic-select-item {
+  --background: #fff;
+  --border-radius: 8px;
+  --border-color: #b7d3ff;
+  --border-width: 1px;
+  --highlight-height: 0;
+  --min-height: 44px;
+  border: 1px solid #b7d3ff;
+  border-radius: 8px;
+  margin: 0;
+}
 .clinic-select {
-  text-align: center;
-  justify-content: center;
-  // width: 100%;
+  width: 100%;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1b4fb8 !important;
+  --padding-start: 10px;
+}
+.clinic-select-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+  background: #fff;
+  border: 1px solid #b7d3ff;
+  border-radius: 8px;
+  padding: 0 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1b4fb8;
+
+  &.locked {
+    cursor: default;
+  }
+
+  .lock {
+    width: 14px;
+    height: 14px;
+    color: #3880ff;
+    flex-shrink: 0;
+  }
 }
 
 // City Label Styling
@@ -228,5 +292,65 @@ ion-label {
 :host ::ng-deep .custom-input-item.mat-form-field-appearance-outline .mat-form-field-flex {
   padding: 0 12px !important;
   align-items: center !important;
+}
+
+// EPI Plus sub-choice (Mark as Given / Schedule Only)
+.epi-subchoice {
+  margin: 4px 0 10px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f7fbff;
+}
+.epi-subchoice-item {
+  --border-radius: 8px;
+  --border-color: #ddd;
+  --border-width: 1px;
+  --background: #fff;
+  --padding-start: 8px;
+  --inner-padding-end: 8px;
+  --min-height: 56px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+.epi-subchoice-item--selected {
+  --border-color: #3880ff;
+  --background: #eaf2ff;
+  border-color: #3880ff;
+}
+.epi-subchoice-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+.epi-subchoice-item--selected .epi-subchoice-title {
+  color: #3880ff;
+}
+.epi-subchoice-hint {
+  font-size: 11px;
+  color: gray;
+  line-height: 1.35;
+  margin-top: 2px;
+  white-space: normal;
+}
+.epi-subchoice-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #c7c7c7;
+  margin-right: 4px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  position: relative;
+}
+.epi-subchoice-dot--checked {
+  border-color: #3880ff;
+}
+.epi-subchoice-dot--checked::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: #3880ff;
 }
 
