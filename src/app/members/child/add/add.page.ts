@@ -1121,8 +1121,12 @@ filterCountryCodes(value: string) {
     this.fg1.get("agent").updateValueAndValidity();
     this.fg1.get("Agent2").updateValueAndValidity();
     this.fg1.get("Nationality").updateValueAndValidity();
+    // Do NOT call checkEpi() here: it re-derives IsEPIDone/isRadioDisabled
+    // from the current DOB snapshot and would immediately undo the explicit
+    // "epiplus" selection just made above (lines ~1097-1099). DOB's own
+    // (dateChange)="checkEpi()" binding already re-evaluates eligibility
+    // whenever DOB actually changes; a Type-radio click never needs to.
     this.isRadioDisabled = this.isCnicRequired && !this.epiDone;
-    this.checkEpi();
   }
 
   async presentScheduleTypePopover() {
