@@ -971,6 +971,16 @@ filterCountryCodes(value: string) {
         this.setCity(data.city);
         if (res.IsSuccess) {
           console.log("res", res.ResponseData);
+          // TEMP DIAGNOSTIC: surface the registration-email debug message so it's
+          // visible without server log access. Remove once the root cause is found.
+          if (res.Message) {
+            const debugAlert = await this.alertCtrl.create({
+              header: "Email Debug Info",
+              message: res.Message,
+              buttons: ["OK"],
+            });
+            await debugAlert.present();
+          }
           var sms1 = "";
           if (res.ResponseData.Gender == "Boy")
             sms1 +=
