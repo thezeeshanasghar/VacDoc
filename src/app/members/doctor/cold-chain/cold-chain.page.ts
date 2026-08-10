@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { PaService } from 'src/app/services/pa.service';
 import { environment } from 'src/environments/environment';
@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
   templateUrl: './cold-chain.page.html',
   styleUrls: ['./cold-chain.page.scss'],
 })
-export class ColdChainPage {
+export class ColdChainPage implements OnInit {
   showPaEntry           = false;
   showTemperatureLog     = false;
   showDoctorApproval     = false;
@@ -20,7 +20,7 @@ export class ColdChainPage {
     private paService: PaService,
   ) {}
 
-  async ionViewWillEnter() {
+  async ngOnInit() {
     const user = await this.storage.get(environment.USER);
     // AllowColdChain lives on the DOCTOR record (VacAdmin-controlled) and is
     // cached at login under environment.DOCTOR regardless of who is logged in

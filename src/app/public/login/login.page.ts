@@ -348,15 +348,18 @@ export class LoginPage implements OnInit {
     });
     await loading.present();
     await this.loginservice.checkAuth(this.fg.value)
-      .subscribe(res => {
+      .subscribe(async res => {
         if (res.IsSuccess) {
-          this.storage.set(environment.USER, res.ResponseData);
-          this.storage.set(environment.DOCTOR_Id, res.ResponseData.DoctorId);
-          this.storage.set(environment.USER_Id, res.ResponseData.Id);
-          this.storage.set(environment.SECURITY_STAMP, res.ResponseData.SecurityStamp);
+          await this.storage.set(environment.USER, res.ResponseData);
+          await this.storage.set(environment.DOCTOR_Id, res.ResponseData.DoctorId);
+          await this.storage.set(environment.USER_Id, res.ResponseData.Id);
+          await this.storage.set(environment.SECURITY_STAMP, res.ResponseData.SecurityStamp);
           let state = true;
           this.loginservice.changeState(state);
-          this.getdoctorprofile(res.ResponseData.Id);
+          // Must finish writing environment.DOCTOR before the reload below, or the
+          // in-flight HTTP call gets killed by window.location.reload() and every
+          // doctor.Allow* flag (including AllowColdChain) is missing until next login.
+          await this.getdoctorprofile(res.ResponseData.Id);
           this.router.navigate(['/members']).then(() => {
             window.location.reload();
           });
@@ -374,12 +377,10 @@ export class LoginPage implements OnInit {
       });
   }
   async getdoctorprofile(id) {
-    await this.loginservice.getDoctorProfile(id).subscribe(res => {
-      if (res.IsSuccess) {
-        this.storage.set(environment.DOCTOR, res.ResponseData);
-      }
-    });
-
+    const res: any = await this.loginservice.getDoctorProfile(id).toPromise();
+    if (res && res.IsSuccess) {
+      await this.storage.set(environment.DOCTOR, res.ResponseData);
+    }
   }
 
   async forgotPasswordAlert() {
