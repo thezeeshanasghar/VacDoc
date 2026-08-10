@@ -1,0 +1,120 @@
+.tlog-content {
+  --background: var(--vac-surface);
+}
+
+.tlog-wrap {
+  padding: 16px 14px 40px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+// ── Form primitives (shared recipe, see adjust-stock.page.scss) ────
+.field-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.field-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--vac-ink-3);
+}
+.header-input, .header-select {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 14px;
+  color: var(--vac-ink);
+  background: var(--vac-card);
+  border: 1.5px solid var(--vac-border);
+  border-radius: 8px;
+  outline: none;
+  box-sizing: border-box;
+
+  &:focus { border-color: var(--vac-blue); }
+}
+.header-select {
+  padding: 8px 32px 8px 10px;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%2390A4AE' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+.form-card {
+  margin: 0 0 14px 0;
+  border-radius: 14px;
+  box-shadow: var(--vac-shadow-sm);
+}
+.form-card-content {
+  padding: 14px 16px !important;
+}
+
+// ── Reading list ─────────────────────────────────────────────
+.reading {
+  background: var(--vac-card);
+  border-radius: 14px;
+  padding: 12px 13px;
+  box-shadow: var(--vac-shadow-sm);
+  margin-bottom: 9px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-left: 4px solid var(--vac-green);
+
+  &.out { border-left-color: var(--vac-red); }
+}
+.r-temp {
+  font-size: 20px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--vac-ink);
+  min-width: 58px;
+}
+.reading.out .r-temp { color: var(--vac-red); }
+.r-body { flex: 1; min-width: 0; }
+.r-fridge { font-size: 12.5px; font-weight: 700; color: var(--vac-ink); }
+.r-meta { font-size: 11px; color: var(--vac-ink-3); margin-top: 1px; }
+.r-notes { font-size: 10.5px; color: var(--vac-ink-4); margin-top: 3px; font-style: italic; }
+
+.pill {
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+  align-self: flex-start;
+
+  &.ok { background: var(--vac-green-tint); color: var(--vac-green); }
+  &.bad { background: var(--vac-red-tint); color: var(--vac-red); }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--vac-ink-3);
+
+  ion-icon {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 10px;
+    color: var(--vac-ink-4);
+  }
+  p { margin: 0; font-size: 12.5px; }
+}
+
+.loading-state {
+  text-align: center;
+  padding: 24px 16px;
+  color: var(--vac-ink-3);
+  font-size: 13px;
+}

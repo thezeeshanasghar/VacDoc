@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/cold-chain"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Temperature Log</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="tlog-content">
+  <div class="tlog-wrap">
+
+    <ion-card class="form-card">
+      <ion-card-content class="form-card-content">
+        <div class="field-row">
+          <div class="field-wrap">
+            <label class="field-label">From</label>
+            <input type="date" [(ngModel)]="fromDate" class="header-input" (change)="onFilterChange()">
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">To</label>
+            <input type="date" [(ngModel)]="toDate" class="header-input" (change)="onFilterChange()">
+          </div>
+        </div>
+        <div class="field-wrap" style="margin-bottom:0;">
+          <label class="field-label">Refrigerator</label>
+          <select [(ngModel)]="filterRefrigeratorId" class="header-select" (change)="onFilterChange()">
+            <option [ngValue]="null">All refrigerators</option>
+            <option *ngFor="let f of refrigerators" [ngValue]="f.Id">{{ f.Name }}</option>
+          </select>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <div *ngIf="isLoading" class="loading-state">Loading…</div>
+    <div *ngIf="!isLoading && readings.length === 0" class="empty-state">
+      <ion-icon name="list-outline"></ion-icon>
+      <p>No readings in this date range.</p>
+    </div>
+
+    <div class="reading" *ngFor="let r of readings" [class.out]="!r.IsInRange">
+      <div class="r-temp">{{ r.Temperature }}°</div>
+      <div class="r-body">
+        <div class="r-fridge">{{ fridgeName(r.RefrigeratorId) }}</div>
+        <div class="r-meta">{{ r.RecordedDate | date:'mediumDate' }} · {{ r.RecordedTime }} · {{ r.RecordedByName }}</div>
+        <div class="r-notes" *ngIf="r.Notes">{{ r.Notes }}</div>
+      </div>
+      <span class="pill" [class.ok]="r.IsInRange" [class.bad]="!r.IsInRange">{{ r.IsInRange ? 'In range' : 'Out of range' }}</span>
+    </div>
+
+  </div>
+</ion-content>

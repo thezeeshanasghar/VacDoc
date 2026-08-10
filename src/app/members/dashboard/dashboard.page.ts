@@ -51,6 +51,7 @@ export class DashboardPage implements OnInit {
   showAgent: boolean = false;
   showPersonalAssistant: boolean = false;
   showPaAssignmentTracking: boolean = false;
+  showColdChain: boolean = false;
   assignmentCount: number = 0;
   pendingApprovalsCount: number = 0;
   hasPA: boolean = false;
@@ -124,6 +125,11 @@ export class DashboardPage implements OnInit {
         this.showAgent     = false;
         this.showPersonalAssistant = false;
         this.showPaAssignmentTracking = (perm && perm.ViewPaAssignmentStatus) || false;
+        // Doctor must have Cold Chain enabled (VacAdmin-controlled, cached under
+        // environment.DOCTOR at login) AND this PA must hold ColdChainEntry.
+        const doctorProfile = await this.storage.get(environment.DOCTOR);
+        const doctorAllowsColdChain = !!(doctorProfile && doctorProfile.AllowColdChain);
+        this.showColdChain = doctorAllowsColdChain && !!(perm && perm.ColdChainEntry);
         this.paService.getAssignments(Number(this.user.PAId)).subscribe(res => {
           if (res && res.IsSuccess) {
             this.assignmentCount = (res.ResponseData || []).length;
@@ -135,6 +141,7 @@ export class DashboardPage implements OnInit {
           this.showVacation = false;
         this.showFinancial = false;
         this.showSalesReport = false;
+        this.showColdChain = false;
       }
     } else {
       // Doctor permissions from user/doctor profile flags
@@ -145,6 +152,9 @@ export class DashboardPage implements OnInit {
       this.showAgent     = this.user && this.user.AllowAgent === true;
       this.showPersonalAssistant = this.doctorId === 1;
       this.showPaAssignmentTracking = true;
+      // Doctor always has full access to their own Cold Chain module once
+      // the platform admin has enabled it — no PA-style flag needed here.
+      this.showColdChain = this.user && this.user.AllowColdChain === true;
       this.showVacation  = true;
       this.showClinics   = true;
       this.showPatients  = true;

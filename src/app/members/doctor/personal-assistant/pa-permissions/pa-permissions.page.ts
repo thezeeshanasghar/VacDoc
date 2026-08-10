@@ -163,6 +163,15 @@ export class PaPermissionsPage implements OnInit {
         { key: 'ViewAnalytics', label: 'View all analytics reports' },
       ]
     },
+    {
+      key: 'coldchain',
+      label: 'Cold Chain',
+      icon: 'thermometer-outline',
+      scopeNote: 'Only visible if the doctor has Cold Chain Management enabled (set in VacAdmin). A PA without this permission cannot log temperature readings even if the doctor has the module enabled.',
+      fields: [
+        { key: 'ColdChainEntry', label: 'Log fridge temperature readings', desc: 'Submit temperature readings for the assigned clinic. Minimum 2 readings/day required per fridge; unlimited extra readings allowed.' },
+      ]
+    },
   ];
 
   constructor(

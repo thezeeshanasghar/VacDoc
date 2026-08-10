@@ -1,0 +1,166 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/cold-chain"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Weekly Approval</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="capr-content">
+  <div class="capr-wrap">
+
+    <!-- ============ ALL-CLINICS ROLLUP ============ -->
+    <div *ngIf="viewMode === 'all'">
+      <div class="week-label">Week of {{ weekLabel(weekStart) }}</div>
+
+      <div *ngIf="isLoadingRollup" class="loading-state">Loading…</div>
+
+      <ng-container *ngIf="!isLoadingRollup">
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <div class="kpi-ic warn"><ion-icon name="hourglass-outline"></ion-icon></div>
+            <div>
+              <p class="kpi-label">Pending review</p>
+              <p class="kpi-value warn">{{ totalPending() }}</p>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-ic red"><ion-icon name="warning-outline"></ion-icon></div>
+            <div>
+              <p class="kpi-label">Excursions</p>
+              <p class="kpi-value red">{{ totalExcursions() }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <div class="kpi-ic red"><ion-icon name="time-outline"></ion-icon></div>
+            <div>
+              <p class="kpi-label">Missed checks</p>
+              <p class="kpi-value red">{{ totalMissedChecks() }}</p>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-ic blue"><ion-icon name="snow-outline"></ion-icon></div>
+            <div>
+              <p class="kpi-label">Fridges tracked</p>
+              <p class="kpi-value">{{ totalFridges() }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec-h">By Clinic</div>
+
+        <div class="empty-state" *ngIf="clinicRollup.length === 0">
+          <ion-icon name="business-outline"></ion-icon>
+          <p>No clinics found for this account.</p>
+        </div>
+
+        <div class="clinic-card" *ngFor="let c of clinicRollup" (click)="showClinic(c.ClinicId, c.ClinicName)">
+          <div class="cc-top">
+            <span class="cc-name">{{ c.ClinicName }}</span>
+            <span class="pill" [ngClass]="c.Status === 'approved' ? 'ok' : (c.Status === 'flagged' ? 'warn' : (c.Status === 'rejected' ? 'bad' : 'warn'))">{{ c.Status }}</span>
+          </div>
+          <div class="cc-stats">
+            <div class="mini-ring" [style.background]="'conic-gradient(var(--vac-green) 0% ' + c.CompliancePercent + '%, var(--vac-red-tint) ' + c.CompliancePercent + '% 100%)'">
+              <div class="mini-ring-inner">{{ c.CompliancePercent }}%</div>
+            </div>
+            <span class="cc-fridges">
+              <b>{{ c.FridgeCount }}</b> fridge{{ c.FridgeCount === 1 ? '' : 's' }} ·
+              <b style="color:var(--vac-red);">{{ c.MissedChecks }}</b> missed
+            </span>
+            <span class="cc-chev">›</span>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- ============ SINGLE-CLINIC DRILL-DOWN ============ -->
+    <div *ngIf="viewMode === 'single'">
+      <div class="back-to-all" (click)="showAllClinics()">‹ All Clinics</div>
+
+      <div class="clinic-name-header">{{ selectedClinicName }}</div>
+
+      <div *ngIf="isLoadingClinic" class="loading-state">Loading…</div>
+
+      <ng-container *ngIf="!isLoadingClinic && currentLog">
+        <div class="compliance-ring-card">
+          <div class="ring" [style.background]="'conic-gradient(var(--vac-green) 0% ' + compliancePercent() + '%, rgba(255,255,255,.18) ' + compliancePercent() + '% 100%)'">
+            <div class="ring-inner">{{ compliancePercent() }}%</div>
+          </div>
+          <div class="compliance-body">
+            <p class="week">{{ weekLabel(weekStart) }}</p>
+            <p class="stat"><b>{{ currentLog.InRangeCount }}</b> of <b>{{ currentLog.TotalReadings }}</b> readings in range</p>
+            <p class="stat status-line">Status: <b>{{ currentLog.Status }}</b></p>
+          </div>
+        </div>
+
+        <div class="sec-h">By Refrigerator — readings vs. 2/day requirement</div>
+        <div class="fridge-breakdown-card" *ngIf="currentLog.FridgeBreakdown?.length">
+          <div class="fb-row" *ngFor="let f of currentLog.FridgeBreakdown" [class.out-of-range]="f.MissedChecks > 0 || f.CompliancePercent < 100">
+            <div class="fb-ic"><ion-icon name="snow-outline"></ion-icon></div>
+            <div class="fb-body">
+              <div class="fb-name">{{ f.RefrigeratorName }}
+                <span class="fb-req-badge" [class.met]="f.MissedChecks === 0" [class.short]="f.MissedChecks > 0">{{ f.RequiredChecks - f.MissedChecks }}/{{ f.RequiredChecks }} checks</span>
+              </div>
+              <div class="fb-count">
+                <ng-container *ngIf="f.TotalReadings > 0">{{ f.InRangeCount }} of {{ f.TotalReadings }} readings in range<span *ngIf="f.MissedChecks > 0"> · {{ f.MissedChecks }} missed checks</span></ng-container>
+                <ng-container *ngIf="f.TotalReadings === 0">No readings this week · {{ f.MissedChecks }} missed checks</ng-container>
+              </div>
+            </div>
+            <div class="fb-pct" [style.color]="f.TotalReadings === 0 ? 'var(--vac-ink-4)' : (f.CompliancePercent === 100 ? 'var(--vac-green)' : 'var(--vac-red)')">
+              {{ f.TotalReadings === 0 ? '—' : (f.CompliancePercent + '%') }}
+            </div>
+          </div>
+        </div>
+
+        <div class="excursion-card" *ngIf="currentLog.ExcursionReadings?.length || currentLog.FridgesWithNoReadings?.length">
+          <p class="ex-h">⚠ {{ currentLog.ExcursionReadings?.length || 0 }} out-of-range reading{{ (currentLog.ExcursionReadings?.length || 0) === 1 ? '' : 's' }} · {{ currentLog.MissedChecks }} missed checks</p>
+          <div class="excursion-row" *ngFor="let e of currentLog.ExcursionReadings">
+            <span>{{ e.RefrigeratorName }} · {{ e.RecordedDate | date:'EEE' }} {{ e.RecordedTime }} · {{ e.RecordedByName }}</span>
+            <span class="ex-temp">{{ e.Temperature }}°C</span>
+          </div>
+          <div class="excursion-row" *ngFor="let f of currentLog.FridgesWithNoReadings">
+            <span>{{ f.Name }} · no readings logged this week</span>
+            <span class="ex-temp muted">—</span>
+          </div>
+        </div>
+
+        <div class="sec-h">Your Decision</div>
+        <ion-card class="form-card">
+          <ion-card-content class="form-card-content">
+            <div class="field-wrap">
+              <label class="field-label">Status</label>
+              <div class="status-row">
+                <div class="status-opt" [class.sel-green]="approvalForm.status === 'approved'" (click)="approvalForm.status = 'approved'">✓ Approve</div>
+                <div class="status-opt" [class.sel-warn]="approvalForm.status === 'flagged'" (click)="approvalForm.status = 'flagged'">⚠ Flag</div>
+                <div class="status-opt" [class.sel-red]="approvalForm.status === 'rejected'" (click)="approvalForm.status = 'rejected'">✕ Reject</div>
+              </div>
+            </div>
+            <div class="field-wrap">
+              <label class="field-label">Comments *</label>
+              <textarea [(ngModel)]="approvalForm.comments" class="header-input" rows="3" placeholder="e.g. Brief excursion during stock delivery, vaccines unaffected."></textarea>
+            </div>
+            <ion-button expand="block" [disabled]="isSubmitting" (click)="submitApproval()">
+              <span *ngIf="!isSubmitting">Save Decision</span>
+              <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+
+        <div class="sec-h">Recent Weeks</div>
+        <ion-card class="form-card" *ngIf="approvalHistory.length">
+          <ion-card-content class="form-card-content history-list">
+            <div class="history-item" *ngFor="let h of approvalHistory">
+              <span class="h-week">{{ weekLabel(h.WeekStartDate) }}</span>
+              <span class="h-pct">{{ h.TotalReadings ? (h.InRangeCount / h.TotalReadings * 100 | number:'1.0-0') : 0 }}%</span>
+              <span class="pill" [ngClass]="h.Status === 'approved' ? 'ok' : (h.Status === 'flagged' ? 'warn' : (h.Status === 'rejected' ? 'bad' : 'warn'))">{{ h.Status }}</span>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ng-container>
+    </div>
+
+  </div>
+</ion-content>

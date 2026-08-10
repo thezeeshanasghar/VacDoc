@@ -69,6 +69,10 @@ const routes: Routes = [
   {
     path: "vaccine-education",
     loadChildren: () => import('./vaccine-education/vaccine-education.module').then(m => m.VaccineEducationPageModule)
+  },
+  {
+    path: "cold-chain",
+    loadChildren: () => import('./cold-chain/cold-chain.module').then(m => m.ColdChainPageModule)
   }
 ];
 

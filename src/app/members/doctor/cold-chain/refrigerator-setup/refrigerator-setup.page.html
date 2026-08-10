@@ -1,0 +1,93 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/cold-chain"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Refrigerators</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="rfset-content">
+  <div class="rfset-wrap">
+
+    <!-- Clinic selector -->
+    <div class="clinic-row" *ngIf="clinics.length > 1">
+      <label class="field-label">Clinic</label>
+      <select [(ngModel)]="clinicId" class="header-select" (change)="onClinicChange()">
+        <option *ngFor="let c of clinics" [ngValue]="c.Id">{{ c.Name }}</option>
+      </select>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-ic blue"><ion-icon name="snow-outline"></ion-icon></div>
+        <div>
+          <p class="kpi-label">Registered</p>
+          <p class="kpi-value">{{ refrigerators.length }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-h">Fridges at this clinic</div>
+
+    <div *ngIf="isLoading" class="loading-state">Loading…</div>
+
+    <div *ngIf="!isLoading && refrigerators.length === 0" class="empty-state">
+      <ion-icon name="snow-outline"></ion-icon>
+      <p>No refrigerators registered yet at this clinic.</p>
+    </div>
+
+    <div class="fridge-card" *ngFor="let f of refrigerators">
+      <div class="fridge-ic"><ion-icon name="snow-outline"></ion-icon></div>
+      <div class="fridge-body">
+        <div class="fridge-name">{{ f.Name }}</div>
+        <div class="fridge-meta">{{ f.Type }} · {{ f.MinTemp }}–{{ f.MaxTemp }}°C<span *ngIf="f.Location"> · {{ f.Location }}</span></div>
+        <div class="fridge-serial">{{ f.SerialNumber }}</div>
+      </div>
+      <ion-icon name="trash-outline" class="fridge-delete" (click)="deleteRefrigerator(f.Id)"></ion-icon>
+    </div>
+
+    <div class="sec-h">Register New</div>
+    <ion-card class="form-card">
+      <ion-card-content class="form-card-content">
+        <div class="field-wrap">
+          <label class="field-label">Name *</label>
+          <input type="text" [(ngModel)]="formData.name" class="header-input" placeholder="e.g. Main Fridge (OPD)">
+        </div>
+        <div class="field-row">
+          <div class="field-wrap">
+            <label class="field-label">Type</label>
+            <select [(ngModel)]="formData.type" class="header-select">
+              <option value="Refrigerator">Refrigerator</option>
+              <option value="Freezer">Freezer</option>
+              <option value="CoolBox">Cool Box</option>
+            </select>
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">Serial No. *</label>
+            <input type="text" [(ngModel)]="formData.serialNumber" class="header-input" placeholder="RF-CC-004">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-wrap">
+            <label class="field-label">Min Temp (°C)</label>
+            <input type="number" step="0.1" [(ngModel)]="formData.minTemp" class="header-input">
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">Max Temp (°C)</label>
+            <input type="number" step="0.1" [(ngModel)]="formData.maxTemp" class="header-input">
+          </div>
+        </div>
+        <div class="field-wrap">
+          <label class="field-label">Location</label>
+          <input type="text" [(ngModel)]="formData.location" class="header-input" placeholder="e.g. OPD room, shelf 2">
+        </div>
+        <ion-button expand="block" [disabled]="isSubmitting" (click)="submitRefrigerator()">
+          <span *ngIf="!isSubmitting">+ Add Refrigerator</span>
+          <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+  </div>
+</ion-content>

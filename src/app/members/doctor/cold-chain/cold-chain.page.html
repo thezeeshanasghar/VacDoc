@@ -1,0 +1,68 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Cold Chain</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="cc-content">
+  <div class="cc-wrap">
+
+    <div *ngIf="moduleDisabled" class="empty-state">
+      <ion-icon name="lock-closed-outline"></ion-icon>
+      <p>Cold Chain Management isn't enabled for this account.<br>Contact your platform admin to turn it on.</p>
+    </div>
+
+    <div *ngIf="!moduleDisabled" class="cc-grid">
+
+      <!-- PA Entry -->
+      <div *ngIf="showPaEntry" routerLink="/members/doctor/cold-chain/pa-entry" class="cc-card fam-blue">
+        <div class="cc-card-icon">
+          <ion-icon name="thermometer-outline"></ion-icon>
+        </div>
+        <span class="cc-card-label">Log Reading</span>
+        <span class="cc-card-sub">Submit today's temperature</span>
+        <ion-icon name="chevron-forward-outline" class="cc-card-arrow"></ion-icon>
+      </div>
+
+      <!-- Temperature Log -->
+      <div *ngIf="showTemperatureLog" routerLink="/members/doctor/cold-chain/temperature-log" class="cc-card fam-teal">
+        <div class="cc-card-icon">
+          <ion-icon name="list-outline"></ion-icon>
+        </div>
+        <span class="cc-card-label">Temperature Log</span>
+        <span class="cc-card-sub">History &amp; filters</span>
+        <ion-icon name="chevron-forward-outline" class="cc-card-arrow"></ion-icon>
+      </div>
+
+      <!-- Doctor Approval -->
+      <div *ngIf="showDoctorApproval" routerLink="/members/doctor/cold-chain/doctor-approval" class="cc-card fam-petrol">
+        <div class="cc-card-icon">
+          <ion-icon name="checkmark-done-outline"></ion-icon>
+        </div>
+        <span class="cc-card-label">Weekly Approval</span>
+        <span class="cc-card-sub">Review &amp; sign off</span>
+        <ion-icon name="chevron-forward-outline" class="cc-card-arrow"></ion-icon>
+      </div>
+
+      <!-- Refrigerator Setup -->
+      <div *ngIf="showRefrigeratorSetup" routerLink="/members/doctor/cold-chain/refrigerator-setup" class="cc-card fam-green">
+        <div class="cc-card-icon">
+          <ion-icon name="snow-outline"></ion-icon>
+        </div>
+        <span class="cc-card-label">Refrigerators</span>
+        <span class="cc-card-sub">Register &amp; manage fridges</span>
+        <ion-icon name="chevron-forward-outline" class="cc-card-arrow"></ion-icon>
+      </div>
+
+      <div *ngIf="!showPaEntry && !showTemperatureLog && !showDoctorApproval && !showRefrigeratorSetup" class="empty-state">
+        <ion-icon name="thermometer-outline"></ion-icon>
+        <p>You don't have permission to log or view cold chain data.<br>Ask your doctor to grant Cold Chain access.</p>
+      </div>
+
+    </div>
+
+  </div>
+</ion-content>

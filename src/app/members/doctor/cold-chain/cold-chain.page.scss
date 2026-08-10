@@ -1,0 +1,82 @@
+.cc-content {
+  --background: var(--vac-surface);
+}
+
+.cc-wrap {
+  padding: 24px 16px 32px;
+}
+
+.cc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+// ── Cards — same recipe as .stock-card / .dash-card, family colour via
+//    theme/hub-card.scss (.fam-blue / .fam-teal / .fam-petrol / .fam-green) ──
+.cc-card {
+  position: relative;
+  border-radius: 16px;
+  padding: 18px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  cursor: pointer;
+  overflow: hidden;
+  background: var(--vac-card);
+  box-shadow: var(--vac-shadow-sm);
+  border: 1.5px solid transparent;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:active {
+    transform: scale(0.97);
+    box-shadow: 0 1px 6px rgba(12, 54, 70, 0.06);
+  }
+}
+
+.cc-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+
+  ion-icon { font-size: 24px; }
+}
+
+.cc-card-label {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 3px;
+  letter-spacing: 0.1px;
+}
+
+.cc-card-sub {
+  font-size: 11px;
+  color: var(--vac-ink-3);
+}
+
+.cc-card-arrow {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  font-size: 16px;
+  opacity: 0.35;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--vac-ink-3);
+
+  ion-icon {
+    font-size: 52px;
+    display: block;
+    margin-bottom: 10px;
+    color: var(--vac-ink-4);
+  }
+
+  p { margin: 0; font-size: 13px; line-height: 1.5; }
+}

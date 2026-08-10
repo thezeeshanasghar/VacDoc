@@ -51,6 +51,16 @@
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
+      <!-- ── Cold Chain ────────────────────────────────────────── -->
+      <div *ngIf="showColdChain" routerLink="/members/doctor/cold-chain" class="dash-card fam-teal">
+        <div class="dash-card-icon">
+          <ion-icon name="thermometer-outline"></ion-icon>
+        </div>
+        <span class="dash-card-label">Cold Chain</span>
+        <span class="dash-card-sub">Fridge temperature logs</span>
+        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
+      </div>
+
       <!-- ── Financial ────────────────────────────────────────── -->
       <div *ngIf="showFinancial" routerLink="/members/doctor/financial" class="dash-card fam-green">
         <div class="dash-card-icon">
