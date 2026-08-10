@@ -553,7 +553,12 @@ export class MembersPage implements OnInit {
     AllowAnalytics: boolean;
     AllowClinic: boolean;
     AllowChild: boolean;
+    AllowColdChain: boolean;
   }> {
+    // Cold Chain also requires the doctor's own AllowColdChain flag — a PA
+    // can never see a feature the doctor hasn't enabled, regardless of their
+    // own permission flag. Same combined gate as dashboard.page.ts.
+    const doctorAllowsColdChain = !!(this.doctorData && this.doctorData.AllowColdChain);
     try {
       if (this.user.UserType === "PA") {
         const perm = await this.paService.getPaPermissions(Number(id)).toPromise();
@@ -566,6 +571,7 @@ export class MembersPage implements OnInit {
             AllowAnalytics: perm.ViewAnalytics || false,
             AllowClinic: perm.SetClinicOnline || false,
             AllowChild: perm.SearchPatient || false,
+            AllowColdChain: doctorAllowsColdChain && (perm.ColdChainEntry || false),
           };
         }
       }
@@ -577,6 +583,7 @@ export class MembersPage implements OnInit {
         AllowAnalytics: false,
         AllowClinic: false,
         AllowChild: false,
+        AllowColdChain: false,
       };
     } catch (error) {
       console.error('Error checking permissions:', error);
@@ -588,6 +595,7 @@ export class MembersPage implements OnInit {
         AllowAnalytics: false,
         AllowClinic: false,
         AllowChild: false,
+        AllowColdChain: false,
       };
     }
   }
@@ -607,6 +615,7 @@ export class MembersPage implements OnInit {
           const agentAllowed       = this.doctorData.AllowAgent       === true;
           const analyticsAllowed   = this.doctorData.AllowAnalytics   === true;
           const assistantAllowed   = this.doctorData.AllowAssistant   === true;
+          const coldChainAllowed   = this.doctorData.AllowColdChain   === true;
           this.profileImagePath = this.doctorData.ProfileImage;
           this.Name = this.doctorData.DisplayName;
           const clinics = this.doctorData.Clinics;
@@ -619,7 +628,7 @@ export class MembersPage implements OnInit {
           }
           const permissions = await this.checkPermissions(this.user.PAId);
           if (permissions) {
-            const { AllowClinic, AllowAnalytics, AllowVacation, AllowSchedule, AllowChild } = permissions;
+            const { AllowClinic, AllowAnalytics, AllowVacation, AllowSchedule, AllowChild, AllowColdChain: PaAllowColdChain } = permissions;
 
           if (data === "PA") {
             this.isPaUser = true;
@@ -678,6 +687,14 @@ export class MembersPage implements OnInit {
 
             if (AllowChild) {
               this.childPages = [];
+            }
+
+            if (PaAllowColdChain) {
+              this.appPages.push({
+                title: "Cold Chain",
+                url: "/members/doctor/cold-chain",
+                icon: "thermometer-outline"
+              });
             }
 
             this.appPages.push({
@@ -792,6 +809,14 @@ export class MembersPage implements OnInit {
               });
             }
 
+            if (coldChainAllowed) {
+              this.appPages.push({
+                title: "Cold Chain",
+                icon: "thermometer-outline",
+                url: "/members/doctor/cold-chain",
+              });
+            }
+
             if (financialAllowed) {
               this.appPages.push({
                 title: "Financial",
@@ -839,6 +864,14 @@ export class MembersPage implements OnInit {
                 title: "Stock Management",
                 icon: "cube-outline",
                 url: "/members/doctor/stock-management",
+              });
+            }
+
+            if (coldChainAllowed) {
+              this.appPages.push({
+                title: "Cold Chain",
+                icon: "thermometer-outline",
+                url: "/members/doctor/cold-chain",
               });
             }
 
