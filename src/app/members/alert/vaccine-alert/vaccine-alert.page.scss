@@ -1,31 +1,64 @@
-@media (max-width: 400px) {
-  ion-toolbar {
-    --min-height: 40px; /* reduce toolbar height */
-    padding: 0 0px;
-  }
+// ---------- action bar: Email / Sheet / date, centered as one group ----------
+.action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+  padding: 10px 8px;
+}
 
-  ion-button {
-    font-size: 12px; /* smaller button text */
-    --padding-start: 2px;
-    --padding-end: 2px;
-    --padding-top: 2px;
-    --padding-bottom: 2px;
-  }
+.action-btn {
+  flex: 0 0 auto;
+  font-size: 12px;
+  --padding-start: 10px;
+  --padding-end: 10px;
+}
 
-  ion-item {
-    --min-height: 36px; /* shrink ion-item */
-    font-size: 12px;
-  }
+.date-pick {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  border: 1.5px solid #B0BEC5;
+  border-radius: 8px;
+  padding: 2px 6px;
+  cursor: pointer;
 
   input[matInput] {
     font-size: 12px;
-    padding: 0px 0px;
+    width: 84px;
+    border: none;
+    outline: none;
+    background: transparent;
   }
 
   mat-datepicker-toggle {
-    transform: scale(0.8); /* make the calendar icon smaller */
+    transform: scale(0.8);
   }
 }
+
+@media (min-width: 768px) {
+  .action-bar {
+    gap: 14px;
+    padding: 14px 24px;
+  }
+
+  .action-btn {
+    font-size: 13px;
+    --padding-start: 18px;
+    --padding-end: 18px;
+  }
+
+  .date-pick {
+    padding: 4px 10px;
+
+    input[matInput] {
+      font-size: 13px;
+      width: 100px;
+    }
+  }
+}
+
 .clinic-select {
   text-align: center;        /* center text */
   justify-content: center;   /* center flex container */
@@ -39,18 +72,21 @@
 }
 
 // ---------- clinic filter (ported from reporting.page.scss's supplier-pick-row pattern) ----------
+// centered + matched to the action-bar's compact width, per mock feedback
 .clinic-filter-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
+  justify-content: center;
+  padding: 4px 12px 8px;
 }
 
 .clinic-pick-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex: 1;
+  gap: 24px;
+  width: fit-content;
+  min-width: 220px;
   padding: 9px 12px;
   background: #fff;
   border: 1.5px solid #B0BEC5;
@@ -60,6 +96,12 @@
   min-height: 40px;
 
   &:active { background: #F5F7FA; }
+}
+
+@media (min-width: 768px) {
+  .clinic-pick-row {
+    min-width: 260px;
+  }
 }
 
 .clinic-pick-value {
@@ -183,21 +225,65 @@
   .cmi-check { font-size: 18px; color: #2dd36f; }
 }
 
+// ---------- list rows: name + action icons, responsive at every width ----------
+ion-item {
+  --min-height: 44px;
+}
+
+.child-name {
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex: 1;
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.ic-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 22px;
+  }
+
+  &.mail { background: #E3F2FD; }
+  &.wa { background: #E8F8EE; }
+}
+
+@media (max-width: 400px) {
+  .ic-btn {
+    width: 36px;
+    height: 36px;
+
+    ion-icon { font-size: 20px; }
+  }
+}
+
 // ---------- WhatsApp icon: always green, persisted tick badge overlay ----------
-// font-size pinned to Ionic's default ion-icon size (24px) so wrapping the icon in this
-// span for the badge cannot shrink it from what it rendered as before this change.
 .wa-icon-wrap {
   position: relative;
-  display: inline-flex;
-  font-size: 24px;
 }
 
 .wa-sent-badge {
   position: absolute;
-  top: -3px;
-  right: -3px;
-  width: 12px;
-  height: 12px;
+  top: -2px;
+  right: -2px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: #1565c0;
   border: 1.5px solid #fff;
@@ -206,8 +292,7 @@
   justify-content: center;
 
   ion-icon {
-    font-size: 8px;
+    font-size: 9px;
     color: #fff;
   }
 }
-

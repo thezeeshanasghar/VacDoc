@@ -1,17 +1,13 @@
 <ion-content class="ion-padding">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button *ngIf="canSendEmail" color="primary" fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button>
-      <ion-button *ngIf="canDownloadCsv" color="primary" fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-item (click)="picker.open()">
-        <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChange($event)">
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </ion-item>
-    </ion-buttons>
-  </ion-toolbar>
+  <div class="action-bar">
+    <ion-button *ngIf="canSendEmail" class="action-btn" color="primary" fill="outline" [disabled]="Childs == 0" (click)="sendemails()">Email</ion-button>
+    <ion-button *ngIf="canDownloadCsv" class="action-btn" color="primary" fill="outline" [disabled]="Childs == 0" (click)="downloadcsv()">Sheet</ion-button>
+    <div class="date-pick" (click)="picker.open()">
+      <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChange($event)">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </div>
+  </div>
 
   <!-- Clinic filter: default 'All Clinics' = today's merged-across-clinics behaviour -->
   <div class="clinic-filter-row" *ngIf="clinics && clinics.length > 1">
@@ -26,14 +22,18 @@
     <ion-row>
       <ion-col>
         <ion-item *ngFor="let child of Childs">
-          <ion-label style="cursor: pointer;" [routerLink]="['/members/child/vaccine', child.Child.Id]">{{child.Child.Name}}</ion-label>
-          <ion-icon *ngIf="canSendEmail" slot="end" color="primary" name="mail" (click)="sendemail([child])" style="cursor: pointer;"></ion-icon>
-          <span *ngIf="canWhatsApp" slot="end" class="wa-icon-wrap" style="cursor: pointer;" (click)="openWhatsApp(child.Child.User.MobileNumber, child.Child.Name, child.Dose.Name, child)">
-            <ion-icon color="success" name="logo-whatsapp"></ion-icon>
-            <span class="wa-sent-badge" *ngIf="child.AlertSentAt">
-              <ion-icon name="checkmark"></ion-icon>
+          <ion-label class="child-name" style="cursor: pointer;" [routerLink]="['/members/child/vaccine', child.Child.Id]">{{child.Child.Name}}</ion-label>
+          <div slot="end" class="row-actions">
+            <span *ngIf="canSendEmail" class="ic-btn mail" (click)="sendemail([child])">
+              <ion-icon color="primary" name="mail"></ion-icon>
             </span>
-          </span>
+            <span *ngIf="canWhatsApp" class="ic-btn wa wa-icon-wrap" (click)="openWhatsApp(child.Child.User.MobileNumber, child.Child.Name, child.Dose.Name, child)">
+              <ion-icon color="success" name="logo-whatsapp"></ion-icon>
+              <span class="wa-sent-badge" *ngIf="child.AlertSentAt">
+                <ion-icon name="checkmark"></ion-icon>
+              </span>
+            </span>
+          </div>
         </ion-item>
       </ion-col>
     </ion-row>
