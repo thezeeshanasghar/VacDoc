@@ -122,6 +122,17 @@ export class ChildPage {
       });
 }
 
+  // Strips invisible Unicode formatting/control characters (bidi marks like LRM/RLM/LRE/PDF,
+  // zero-width spaces, etc.) that mobile keyboards and paste sources (e.g. Contacts, WhatsApp)
+  // commonly inject around phone numbers. Left uncleaned, these are literal characters to the
+  // backend's substring match, so a visually-correct phone number silently matches nothing.
+  private sanitizeSearchValue(value: string): string {
+    if (!value) {
+      return value;
+    }
+    return value.replace(/[\u200B-\u200F\u202A-\u202E\u2066-\u2069\uFEFF]/g, '').trim();
+  }
+
   getStringValue(value: any): string {
     if (typeof value === 'object') {
       return JSON.stringify(value);
@@ -244,8 +255,9 @@ export class ChildPage {
       this.childs = [];
       this.infiniteScroll.disabled = false;
     }
-    this.storage.set('searchInput', this.fg.value.Name);
-    await this.childService.getChildByUserSearch(this.doctorId, this.page, this.fg.value.Name).subscribe(
+    const searchValue = this.sanitizeSearchValue(this.fg.value.Name);
+    this.storage.set('searchInput', searchValue);
+    await this.childService.getChildByUserSearch(this.doctorId, this.page, searchValue).subscribe(
       res => {
         if (res.IsSuccess) {
           if (res.ResponseData.length < 15)

@@ -70,7 +70,7 @@ export class ChildService extends BaseService {
   }
 
   getChildByUserSearch(docId , page, value): Observable<any> {
-    const url = `${this.API_CHILD}doctor/${docId}/${page}/childs?searchKeyword=${value}`;
+    const url = `${this.API_CHILD}doctor/${docId}/${page}/childs?searchKeyword=${encodeURIComponent(value)}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
