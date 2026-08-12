@@ -22,18 +22,27 @@
             <input type="date" [(ngModel)]="toDate" class="header-input" (change)="onFilterChange()">
           </div>
         </div>
-        <div class="field-wrap" style="margin-bottom:0;">
-          <label class="field-label">Refrigerator</label>
-          <select [(ngModel)]="filterRefrigeratorId" class="header-select" (change)="onFilterChange()">
-            <option [ngValue]="null">All refrigerators</option>
-            <option *ngFor="let f of refrigerators" [ngValue]="f.Id">{{ f.Name }}</option>
-          </select>
+        <div class="field-row">
+          <div class="field-wrap">
+            <label class="field-label">Clinic</label>
+            <select [(ngModel)]="filterClinicId" class="header-select" (change)="onClinicChange()">
+              <option [ngValue]="null">All clinics</option>
+              <option *ngFor="let c of clinics" [ngValue]="c.Id">{{ c.Name }}</option>
+            </select>
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">Refrigerator</label>
+            <select [(ngModel)]="filterRefrigeratorId" class="header-select" (change)="onFilterChange()">
+              <option [ngValue]="null">All refrigerators</option>
+              <option *ngFor="let f of refrigerators" [ngValue]="f.Id">{{ f.Name }}</option>
+            </select>
+          </div>
         </div>
       </ion-card-content>
     </ion-card>
 
-    <div *ngIf="isLoading" class="loading-state">Loading…</div>
-    <div *ngIf="!isLoading && readings.length === 0" class="empty-state">
+    <div *ngIf="isLoadingClinics || isLoading" class="loading-state">Loading…</div>
+    <div *ngIf="!isLoadingClinics && !isLoading && readings.length === 0" class="empty-state">
       <ion-icon name="list-outline"></ion-icon>
       <p>No readings in this date range.</p>
     </div>
@@ -42,6 +51,7 @@
       <div class="r-temp">{{ r.Temperature }}°</div>
       <div class="r-body">
         <div class="r-fridge">{{ fridgeName(r.RefrigeratorId) }}</div>
+        <div class="r-clinic" *ngIf="!filterClinicId">{{ clinicName(r._clinicId) }}</div>
         <div class="r-meta">{{ r.RecordedDate | date:'mediumDate' }} · {{ r.RecordedTime }} · {{ r.RecordedByName }}</div>
         <div class="r-notes" *ngIf="r.Notes">{{ r.Notes }}</div>
       </div>
