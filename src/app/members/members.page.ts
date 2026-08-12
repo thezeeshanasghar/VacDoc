@@ -957,6 +957,10 @@ export class MembersPage implements OnInit {
   ionViewWillEnter() {
     if (this.isPaUser) {
       this.refreshPaAssignmentCount();
+      // Permission toggles a doctor makes for this PA (e.g. Cold Chain) are only
+      // picked up here, not automatically pushed to an already-open PA session —
+      // this.appPages was otherwise only ever built once, at login.
+      this.getProfile(this.user.UserType);
     }
     if (this.DoctorId) {
       this.loadUnreadNotificationCount();
