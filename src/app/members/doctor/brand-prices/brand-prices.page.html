@@ -9,7 +9,7 @@
 
 <ion-content class="ion-padding">
 
-  <p class="prices-hint">Set the sale price charged to patients per vaccine brand. Used in invoices.</p>
+  <p class="prices-hint">{{ isPa ? 'Sale price charged to patients per vaccine brand. Used in invoices.' : 'Set the sale price charged to patients per vaccine brand. Used in invoices.' }}</p>
 
   <ion-list *ngIf="brandAmounts.length > 0">
     <ion-item *ngFor="let item of brandAmounts">
@@ -20,6 +20,7 @@
         <input
           type="number"
           [(ngModel)]="item.Amount"
+          [disabled]="isPa"
           min="0"
           step="0.01"
           class="price-box"
@@ -34,7 +35,7 @@
     <p>No brands found for this clinic.</p>
   </div>
 
-  <div style="margin-top: 24px;" *ngIf="brandAmounts.length > 0">
+  <div style="margin-top: 24px;" *ngIf="brandAmounts.length > 0 && !isPa">
     <ion-button expand="block" color="primary" (click)="savePrices()">
       <ion-icon name="save-outline" slot="start"></ion-icon>
       Save Prices

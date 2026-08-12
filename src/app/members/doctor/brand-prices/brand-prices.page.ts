@@ -15,6 +15,7 @@ export class BrandPricesPage implements OnInit {
   brandAmounts: any[] = [];
   doctorId: number = 0;
   clinicId: number = 0;
+  isPa: boolean = false;
 
   constructor(
     private brandService: BrandService,
@@ -25,9 +26,17 @@ export class BrandPricesPage implements OnInit {
   ) {}
 
   async ngOnInit() {
+    const user = await this.storage.get(environment.USER);
+    this.isPa = !!(user && user.UserType === 'PA');
+
     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
     const clinic = await this.storage.get(environment.ON_CLINIC);
-    this.clinicId = clinic ? clinic.Id : 0;
+    this.clinicId = clinic && clinic.Id ? clinic.Id : await this.storage.get(environment.CLINIC_Id);
+
+    if (!this.doctorId || !this.clinicId) {
+      this.toastService.create('Unable to determine your clinic. Please reopen the app and try again.', 'danger');
+      return;
+    }
     this.loadPrices();
   }
 
@@ -54,6 +63,9 @@ export class BrandPricesPage implements OnInit {
   }
 
   async savePrices() {
+    if (this.isPa) {
+      return;
+    }
     const loading = await this.loadingController.create({ message: 'Saving...' });
     await loading.present();
     this.brandService.putBrandAmount(this.brandAmounts).subscribe(

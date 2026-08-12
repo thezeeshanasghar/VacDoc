@@ -31,8 +31,8 @@
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
-      <!-- ── Brand Prices (Doctor only) ──────────────────────── -->
-      <div *ngIf="!isPa" routerLink="/members/doctor/brand-prices" class="dash-card fam-petrol">
+      <!-- ── Brand Prices (Doctor: editable, PA: view-only) ──── -->
+      <div routerLink="/members/doctor/brand-prices" class="dash-card fam-petrol">
         <div class="dash-card-icon">
           <ion-icon name="pricetag-outline"></ion-icon>
         </div>

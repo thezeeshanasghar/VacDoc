@@ -698,6 +698,12 @@ export class MembersPage implements OnInit {
             }
 
             this.appPages.push({
+              title: "Brand Prices",
+              icon: "pricetag-outline",
+              url: "/members/doctor/brand-prices",
+            });
+
+            this.appPages.push({
               title: "Assignments & Payments",
               url: "/members/pa/payables",
               icon: "wallet-outline"
