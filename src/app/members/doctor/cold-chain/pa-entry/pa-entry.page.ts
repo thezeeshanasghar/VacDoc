@@ -55,7 +55,12 @@ export class PaEntryPage implements OnInit {
 
   loadRefrigerators() {
     this.coldChainService.getRefrigerators(this.clinicId).subscribe({
-      next: (res: any) => { this.refrigerators = (res && res.ResponseData) || []; },
+      next: (res: any) => {
+        this.refrigerators = (res && res.ResponseData) || [];
+        if (this.refrigerators.length === 1 && !this.formData.refrigeratorId) {
+          this.formData.refrigeratorId = this.refrigerators[0].Id;
+        }
+      },
       error: () => this.toastService.create('Error loading refrigerators', 'danger')
     });
   }
@@ -141,7 +146,7 @@ export class PaEntryPage implements OnInit {
 
   resetForm() {
     this.formData = {
-      refrigeratorId: null,
+      refrigeratorId: this.refrigerators.length === 1 ? this.refrigerators[0].Id : null,
       temperature: null,
       recordedDate: this.todayString(),
       recordedTime: this.nowString(),
