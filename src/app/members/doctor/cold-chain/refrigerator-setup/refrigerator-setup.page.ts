@@ -19,6 +19,7 @@ export class RefrigeratorSetupPage implements OnInit {
   isLoading = false;
   isSubmitting = false;
   showForm = false;
+  editingId: number | null = null;
 
   formData = {
     name: '',
@@ -68,6 +69,23 @@ export class RefrigeratorSetupPage implements OnInit {
 
   toggleForm() {
     this.showForm = !this.showForm;
+    if (!this.showForm) {
+      this.editingId = null;
+      this.resetForm();
+    }
+  }
+
+  editRefrigerator(f: any) {
+    this.editingId = f.Id;
+    this.formData = {
+      name: f.Name || '',
+      serialNumber: f.SerialNumber || '',
+      type: f.Type || 'Refrigerator',
+      minTemp: f.MinTemp,
+      maxTemp: f.MaxTemp,
+      location: f.Location || ''
+    };
+    this.showForm = true;
   }
 
   submitRefrigerator() {
@@ -92,21 +110,29 @@ export class RefrigeratorSetupPage implements OnInit {
       Location: this.formData.location.trim()
     };
 
-    this.coldChainService.addRefrigerator(dto).subscribe({
+    const request = this.editingId
+      ? this.coldChainService.updateRefrigerator(this.editingId, dto)
+      : this.coldChainService.addRefrigerator(dto);
+    const successMessage = this.editingId ? 'Refrigerator updated' : 'Refrigerator registered';
+    const failureMessage = this.editingId ? 'Failed to update refrigerator' : 'Failed to register refrigerator';
+    const errorMessage = this.editingId ? 'Error updating refrigerator' : 'Error registering refrigerator';
+
+    request.subscribe({
       next: (res: any) => {
         this.isSubmitting = false;
         if (res && res.IsSuccess !== false) {
-          this.toastService.create('Refrigerator registered');
+          this.toastService.create(successMessage);
+          this.editingId = null;
           this.resetForm();
           this.showForm = false;
           this.loadRefrigerators();
         } else {
-          this.toastService.create((res && res.Message) || 'Failed to register refrigerator', 'danger');
+          this.toastService.create((res && res.Message) || failureMessage, 'danger');
         }
       },
       error: () => {
         this.isSubmitting = false;
-        this.toastService.create('Error registering refrigerator', 'danger');
+        this.toastService.create(errorMessage, 'danger');
       }
     });
   }

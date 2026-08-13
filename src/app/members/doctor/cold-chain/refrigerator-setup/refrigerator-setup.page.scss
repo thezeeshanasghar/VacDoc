@@ -142,6 +142,13 @@
   font-size: 10px; font-family: 'SFMono-Regular', Consolas, monospace;
   color: var(--vac-ink-4); letter-spacing: .3px; margin-top: 2px;
 }
+.fridge-edit {
+  color: var(--vac-ink-4);
+  font-size: 18px;
+  padding: 6px;
+  cursor: pointer;
+  &:hover { color: var(--vac-blue); }
+}
 .fridge-delete {
   color: var(--vac-ink-4);
   font-size: 18px;

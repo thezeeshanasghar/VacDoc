@@ -44,10 +44,11 @@
         <div class="fridge-meta">{{ f.Type }} · {{ f.MinTemp }}–{{ f.MaxTemp }}°C<span *ngIf="f.Location"> · {{ f.Location }}</span></div>
         <div class="fridge-serial">{{ f.SerialNumber }}</div>
       </div>
+      <ion-icon name="create-outline" class="fridge-edit" (click)="editRefrigerator(f)"></ion-icon>
       <ion-icon name="trash-outline" class="fridge-delete" (click)="deleteRefrigerator(f.Id)"></ion-icon>
     </div>
 
-    <div class="sec-h">Register New</div>
+    <div class="sec-h">{{ editingId ? 'Edit Refrigerator' : 'Register New' }}</div>
     <ion-card class="form-card">
       <ion-card-content class="form-card-content">
         <div class="field-wrap">
@@ -83,8 +84,11 @@
           <input type="text" [(ngModel)]="formData.location" class="header-input" placeholder="e.g. OPD room, shelf 2">
         </div>
         <ion-button expand="block" [disabled]="isSubmitting" (click)="submitRefrigerator()">
-          <span *ngIf="!isSubmitting">+ Add Refrigerator</span>
+          <span *ngIf="!isSubmitting">{{ editingId ? '✓ Update Refrigerator' : '+ Add Refrigerator' }}</span>
           <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+        </ion-button>
+        <ion-button expand="block" fill="clear" *ngIf="editingId" [disabled]="isSubmitting" (click)="toggleForm()">
+          Cancel Edit
         </ion-button>
       </ion-card-content>
     </ion-card>
