@@ -80,6 +80,7 @@ export class FollowupPage implements OnInit {
       .subscribe(res => {
         if (res.IsSuccess) {
           this.childData = res.ResponseData;
+          this.computeGrowthVelocities();
           loading.dismiss();
         }
         else {
@@ -90,6 +91,50 @@ export class FollowupPage implements OnInit {
         loading.dismiss();
         this.toastService.create(err)
       });
+  }
+
+  // childData is newest-first (Visit #{{ childData.length - i }}), so each item's
+  // chronological predecessor is the NEXT entry in the array (higher index), not the previous one.
+  computeGrowthVelocities() {
+    if (!this.childData || this.childData.length < 2) { return; }
+    for (let i = 0; i < this.childData.length; i++) {
+      const current = this.childData[i];
+      current.WeightVelocity = null;
+      current.HeightVelocity = null;
+
+      let prior = null;
+      for (let j = i + 1; j < this.childData.length; j++) {
+        const candidate = this.childData[j];
+        if (current.Weight && candidate.Weight) {
+          prior = candidate;
+          break;
+        }
+      }
+      const years = prior ? this.yearsBetween(prior.CurrentVisitDate, current.CurrentVisitDate) : 0;
+      if (prior && current.Weight && prior.Weight && years > 0) {
+        current.WeightVelocity = (current.Weight - prior.Weight) / years;
+      }
+
+      let priorHeight = null;
+      for (let j = i + 1; j < this.childData.length; j++) {
+        const candidate = this.childData[j];
+        if (current.Height && candidate.Height) {
+          priorHeight = candidate;
+          break;
+        }
+      }
+      const heightYears = priorHeight ? this.yearsBetween(priorHeight.CurrentVisitDate, current.CurrentVisitDate) : 0;
+      if (priorHeight && current.Height && priorHeight.Height && heightYears > 0) {
+        current.HeightVelocity = (current.Height - priorHeight.Height) / heightYears;
+      }
+    }
+  }
+
+  private yearsBetween(fromDateStr: string, toDateStr: string): number {
+    const from = moment(fromDateStr, 'DD-MM-YYYY');
+    const to = moment(toDateStr, 'DD-MM-YYYY');
+    if (!from.isValid() || !to.isValid()) { return 0; }
+    return to.diff(from, 'days') / 365.25;
   }
   // async Deletechild(id) {
   //   const loading = await this.loadingController.create({
@@ -158,7 +203,8 @@ export class FollowupPage implements OnInit {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'Follow-Up.pdf';
+      const namePart = (this.childName || 'Follow-Up').replace(/\s+/g, '_');
+      a.download = `${namePart}_Follow-Up.pdf`;
       a.click();
       window.URL.revokeObjectURL(url);
     }, error => {

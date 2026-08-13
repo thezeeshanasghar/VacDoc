@@ -113,7 +113,6 @@ export class FollowupService extends BaseService {
   }
 
   downloadFollowUpPdf(childId: number): Observable<Blob> {
-    debugger
     const url = `${this.API_ALERT}FollowUp/Follow-Up-PDF?childId=${childId}`;
     return this.http.get(url, { responseType: 'blob' }).pipe(
         catchError(this.handleError)

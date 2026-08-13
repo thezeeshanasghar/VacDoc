@@ -191,3 +191,37 @@
   font-size: 10px;
   color: #5c6b7a;
 }
+
+// ── Growth velocity ──────────────────────────────────────────────────────────
+.velocity-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.velocity-chip {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  background: #e9f9ef;
+  border-radius: 8px;
+  padding: 6px 4px;
+}
+
+.velocity-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a8f4c;
+
+  &.negative {
+    color: var(--vac-red);
+  }
+}
+
+.velocity-label {
+  font-size: 10px;
+  color: #5c6b7a;
+}

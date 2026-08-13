@@ -64,6 +64,17 @@
         </div>
       </div>
 
+      <div class="velocity-row" *ngIf="item.WeightVelocity || item.HeightVelocity">
+        <div class="velocity-chip" *ngIf="item.WeightVelocity">
+          <span class="velocity-value" [class.negative]="item.WeightVelocity < 0">{{item.WeightVelocity > 0 ? '+' : ''}}{{item.WeightVelocity | number:'1.2-2'}} kg/yr</span>
+          <span class="velocity-label">Weight Velocity</span>
+        </div>
+        <div class="velocity-chip" *ngIf="item.HeightVelocity">
+          <span class="velocity-value" [class.negative]="item.HeightVelocity < 0">{{item.HeightVelocity > 0 ? '+' : ''}}{{item.HeightVelocity | number:'1.2-2'}} cm/yr</span>
+          <span class="velocity-label">Height Velocity</span>
+        </div>
+      </div>
+
     </ion-card-content>
   </ion-card>
 
