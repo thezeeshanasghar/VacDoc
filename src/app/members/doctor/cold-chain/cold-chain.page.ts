@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { PaService } from 'src/app/services/pa.service';
+import { DoctorService } from 'src/app/services/doctor.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -18,15 +19,22 @@ export class ColdChainPage implements OnInit {
   constructor(
     private storage: Storage,
     private paService: PaService,
+    private doctorService: DoctorService,
   ) {}
 
   async ngOnInit() {
     const user = await this.storage.get(environment.USER);
-    // AllowColdChain lives on the DOCTOR record (VacAdmin-controlled) and is
-    // cached at login under environment.DOCTOR regardless of who is logged in
-    // (doctor or PA) — see members.page.ts getProfile() for the same pattern.
-    const doctorProfile = await this.storage.get(environment.DOCTOR);
-    const doctorAllowsColdChain = !!(doctorProfile && doctorProfile.AllowColdChain);
+    // AllowColdChain lives on the DOCTOR record (VacAdmin-controlled). Fetched
+    // fresh here rather than from the environment.DOCTOR storage cache, which
+    // is only written at login and can be stale for an already-logged-in PA.
+    const doctorId = await this.storage.get(environment.DOCTOR_Id);
+    let doctorAllowsColdChain = false;
+    try {
+      const res: any = await this.doctorService.getDoctorProfile(doctorId).toPromise();
+      doctorAllowsColdChain = !!(res && res.IsSuccess && res.ResponseData && res.ResponseData.AllowColdChain);
+    } catch {
+      doctorAllowsColdChain = false;
+    }
 
     if (!doctorAllowsColdChain) {
       this.moduleDisabled = true;
