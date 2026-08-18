@@ -304,4 +304,14 @@ export class FollowUpPage implements OnInit {
     (err) => console.error('Error marking follow-up alert sent:', err)
   );
 }
+
+  // Tick only shows for today's send (PKT calendar day) — reappears as unsent once
+  // the date rolls over, even though AlertSentAt itself is never cleared server-side.
+  isAlertSentToday(child: any): boolean {
+    if (!child.AlertSentAt) return false;
+    const pktDay = (d: Date) => new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Karachi', year: 'numeric', month: '2-digit', day: '2-digit',
+    }).format(d);
+    return pktDay(new Date(child.AlertSentAt)) === pktDay(new Date());
+  }
 }

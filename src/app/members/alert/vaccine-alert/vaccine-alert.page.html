@@ -29,7 +29,7 @@
             </span>
             <span *ngIf="canWhatsApp" class="ic-btn wa wa-icon-wrap" (click)="openWhatsApp(child.Child.User.MobileNumber, child.Child.Name, child.Dose.Name, child)">
               <ion-icon color="success" name="logo-whatsapp"></ion-icon>
-              <span class="wa-sent-badge" *ngIf="child.AlertSentAt">
+              <span class="wa-sent-badge" *ngIf="isAlertSentToday(child)">
                 <ion-icon name="checkmark"></ion-icon>
               </span>
             </span>

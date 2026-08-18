@@ -290,11 +290,14 @@ export class BirthdayAlertPage implements OnInit {
       }
     }
 
-  // AlertSentAt is only shown as a tick if it falls within the current calendar year —
-  // an annual birthday wish naturally "resets" every year with no cleanup job needed.
+  // Tick only shows for today's send (PKT calendar day) — reappears as unsent once
+  // the date rolls over, even though LastBirthdayAlertSentAt itself is never cleared server-side.
   isBirthdayAlertSentThisYear(child: any): boolean {
     if (!child.LastBirthdayAlertSentAt) return false;
-    return new Date(child.LastBirthdayAlertSentAt).getFullYear() === new Date().getFullYear();
+    const pktDay = (d: Date) => new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Karachi', year: 'numeric', month: '2-digit', day: '2-digit',
+    }).format(d);
+    return pktDay(new Date(child.LastBirthdayAlertSentAt)) === pktDay(new Date());
   }
 
   trackByChildId(_index: number, child: any): any {

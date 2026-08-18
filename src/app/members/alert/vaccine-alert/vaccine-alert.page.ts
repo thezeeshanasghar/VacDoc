@@ -600,6 +600,7 @@ export class VaccineAlertPage implements OnInit {
           () => { child.AlertSentAt = new Date(); },
           (err) => console.error('Error marking alert sent:', err)
         );
+
       } else {
         console.error('API Response Error: No doses available or ResponseData is undefined.', response);
       }
@@ -628,5 +629,15 @@ export class VaccineAlertPage implements OnInit {
     const formattedDate = this.formatDateToString(date);
     // Always fetch from all clinics
     this.getAllClinicsAlerts(0, formattedDate);
+  }
+
+  // Tick only shows for today's send (PKT calendar day) — reappears as unsent once
+  // the date rolls over, even though AlertSentAt itself is never cleared server-side.
+  isAlertSentToday(child: any): boolean {
+    if (!child.AlertSentAt) return false;
+    const pktDay = (d: Date) => new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Karachi', year: 'numeric', month: '2-digit', day: '2-digit',
+    }).format(d);
+    return pktDay(new Date(child.AlertSentAt)) === pktDay(new Date());
   }
 }
