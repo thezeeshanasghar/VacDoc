@@ -174,8 +174,12 @@ filterCountryCodes(value: string) {
             loading.dismiss();
             if (response.IsSuccess) {
               this.clinics = response.ResponseData;
-              this.selectedClinicId =
-                this.clinics.length > 0 ? this.clinics[0].Id : null;
+              const onlineClinic = this.clinics.find((c) => c.IsOnline);
+              this.selectedClinicId = onlineClinic
+                ? onlineClinic.Id
+                : this.clinics.length > 0
+                ? this.clinics[0].Id
+                : null;
               // Pre-select on the reactive form control too (ngModel above only
               // drives the select's displayed value) - required for the
               // single-clinic case, where the field renders locked with no
