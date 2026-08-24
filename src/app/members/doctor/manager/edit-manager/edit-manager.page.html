@@ -1,0 +1,92 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/manager"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Edit Manager Profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <div class="pa-header-card">
+    <ion-icon name="person-circle-outline" class="pa-avatar"></ion-icon>
+    <div>
+      <div class="pa-label">Editing profile for</div>
+      <div class="pa-name-display">{{ managerName || 'Manager' }}</div>
+    </div>
+  </div>
+
+  <form [formGroup]="fg">
+
+    <div class="field-group">
+      <ion-label class="field-label">Full Name <span style="color:var(--vac-red)">*</span></ion-label>
+      <div class="field-wrap">
+        <ion-icon name="person-outline" class="field-icon"></ion-icon>
+        <ion-input formControlName="Name" type="text" placeholder="Full name" class="field-input"></ion-input>
+      </div>
+      <div class="error-text" *ngIf="fg.get('Name').invalid && fg.get('Name').touched">
+        Name is required.
+      </div>
+    </div>
+
+    <div class="field-group">
+      <ion-label class="field-label">Email Address <span style="color:var(--vac-red)">*</span></ion-label>
+      <div class="field-wrap">
+        <ion-icon name="mail-outline" class="field-icon"></ion-icon>
+        <ion-input formControlName="Email" type="email" placeholder="email@example.com" class="field-input"></ion-input>
+      </div>
+      <div class="error-text" *ngIf="fg.get('Email').invalid && fg.get('Email').touched">
+        Valid email is required.
+      </div>
+    </div>
+
+  </form>
+
+  <!-- ── Clinic Access ────────────────────────────────────────────────────── -->
+  <div class="section-divider">
+    <ion-icon name="business-outline"></ion-icon>
+    <span>Clinic Access</span>
+  </div>
+
+  <div class="clinic-list">
+    <div *ngFor="let clinic of allClinics"
+         class="clinic-row"
+         [class.clinic-row--active]="isClinicAssigned(clinic.Id)"
+         (click)="toggleClinic(clinic)">
+
+      <div class="clinic-row-left">
+        <ion-icon name="business-outline" class="clinic-icon"
+          [class.clinic-icon--active]="isClinicAssigned(clinic.Id)">
+        </ion-icon>
+        <span class="clinic-name">{{ clinic.Name }}</span>
+      </div>
+
+      <div class="clinic-row-right">
+        <ion-spinner *ngIf="togglingClinicId === clinic.Id" name="crescent" class="clinic-spinner"></ion-spinner>
+        <div *ngIf="togglingClinicId !== clinic.Id"
+             class="clinic-toggle"
+             [class.clinic-toggle--on]="isClinicAssigned(clinic.Id)">
+          <ion-icon [name]="isClinicAssigned(clinic.Id) ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="allClinics.length === 0" class="clinic-empty">
+      <ion-icon name="business-outline"></ion-icon>
+      <span>No clinics found</span>
+    </div>
+  </div>
+
+</ion-content>
+
+<div class="bottom-bar">
+  <ion-button expand="block" class="btn-cancel" fill="outline"
+    routerLink="/members/doctor/manager">
+    Cancel
+  </ion-button>
+  <ion-button expand="block" class="btn-save" (click)="save()" [disabled]="fg.invalid">
+    <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+    Save Changes
+  </ion-button>
+</div>

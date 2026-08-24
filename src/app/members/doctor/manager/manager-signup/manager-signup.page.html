@@ -1,0 +1,85 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/manager"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Add Manager</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <form [formGroup]="fg">
+
+    <ion-item>
+      <div class="country-code-container">
+        <ion-select formControlName="CountryCode" class="country-code-select">
+          <ion-select-option *ngFor="let country of countryCodes" [value]="country.code">
+            (+{{ country.code }}) {{ country.name }}
+          </ion-select-option>
+        </ion-select>
+      </div>
+    </ion-item>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Mobile Number <span class="required-asterisk">*</span></ion-label>
+      <ion-input type="text" formControlName="MobileNumber" class="number-input"></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.MobileNumber">
+        <div class="error-message"
+          *ngIf="fg.get('MobileNumber').hasError(validation.type) && (fg.get('MobileNumber').dirty || fg.get('MobileNumber').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">
+        Manager Name <span class="required-asterisk">*</span>
+      </ion-label>
+      <ion-input type="text" formControlName="Name" class="ion-text-capitalize"></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.Name">
+        <div class="error-message"
+          *ngIf="fg.get('Name').hasError(validation.type) && (fg.get('Name').dirty || fg.get('Name').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Email <span class="required-asterisk">*</span></ion-label>
+      <ion-input type="email" formControlName="Email" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.Email">
+        <div class="error-message"
+          *ngIf="fg.get('Email').hasError(validation.type) && (fg.get('Email').dirty || fg.get('Email').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Assign to Clinics <span class="required-asterisk">*</span></ion-label>
+      <ion-select formControlName="ClinicId" multiple="true">
+        <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+          {{ clinic.Name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <div class="validation-errors" *ngIf="fg.get('ClinicId').hasError('required') && (fg.get('ClinicId').dirty || fg.get('ClinicId').touched)">
+      <div class="error-message">
+        <ion-icon name="information-circle-outline"></ion-icon> A Manager needs at least one clinic to do anything — please assign at least one.
+      </div>
+    </div>
+
+    <ion-button expand="block" (click)="submit()" [disabled]="!fg.valid" style="margin-top: 20px;">
+      Add Manager
+    </ion-button>
+
+  </form>
+
+</ion-content>

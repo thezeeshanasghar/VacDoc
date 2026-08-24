@@ -9,6 +9,7 @@ import { IonRouterOutlet, Platform } from '@ionic/angular';
 import { Plugins } from '@capacitor/core';
 import { DashboardService } from "src/app/services/dashboard.service";
 import { PaService } from "src/app/services/pa.service";
+import { ManagerService } from "src/app/services/manager.service";
 import { ChildService } from "src/app/services/child.service";
 
 const { App } = Plugins;
@@ -38,6 +39,7 @@ export class DashboardPage implements OnInit {
   user: any;
   userName: string = '';
   isPa: boolean = false;
+  isManager: boolean = false;
 
   showPatients: boolean = true;
   showAlerts: boolean = true;
@@ -66,6 +68,7 @@ export class DashboardPage implements OnInit {
     public platform: Platform,
     private routerOutlet: IonRouterOutlet,
     private paService: PaService,
+    private managerService: ManagerService,
     private childService: ChildService
   ) {}
 
@@ -78,6 +81,14 @@ export class DashboardPage implements OnInit {
         this.userName = this.user.Name;
       } else if (this.user.PAId) {
         this.paService.getPa(String(this.user.PAId)).subscribe(res => {
+          if (res && res.IsSuccess && res.ResponseData) this.userName = res.ResponseData.Name || '';
+        });
+      }
+    } else if (this.user && this.user.UserType === 'MANAGER') {
+      if (this.user.Name) {
+        this.userName = this.user.Name;
+      } else if (this.user.ManagerId) {
+        this.managerService.getManager(String(this.user.ManagerId)).subscribe(res => {
           if (res && res.IsSuccess && res.ResponseData) this.userName = res.ResponseData.Name || '';
         });
       }
@@ -143,6 +154,29 @@ export class DashboardPage implements OnInit {
         this.showSalesReport = false;
         this.showColdChain = false;
       }
+    } else if (this.user && this.user.UserType === 'MANAGER') {
+      this.isManager = true;
+      // Manager is pure oversight + patient registration - no clinical, stock, or
+      // financial visibility at all, regardless of any permission flag.
+      this.showAlerts = false;
+      this.showAnalytics = false;
+      this.showSchedule = false;
+      this.showClinics = false;
+      this.showStock = false;
+      this.showVacation = false;
+      this.showFinancial = false;
+      this.showSalesReport = false;
+      this.showAgent = false;
+      this.showPersonalAssistant = false;
+      this.showColdChain = false;
+      // Patient registration is always on for a Manager with clinic access.
+      this.showPatients = true;
+      try {
+        const perm = await this.managerService.getManagerPermissions(Number(this.user.ManagerId)).toPromise();
+        this.showPaAssignmentTracking = (perm && perm.ViewPaAssignmentStatus) || false;
+      } catch (e) {
+        this.showPaAssignmentTracking = false;
+      }
     } else {
       // Doctor permissions from user/doctor profile flags
       this.showStock     = this.user && this.user.AllowInventory !== false;
@@ -198,6 +232,9 @@ export class DashboardPage implements OnInit {
     if (this.user && this.user.UserType === 'PA') {
       return this.getPaClinics();
     }
+    if (this.user && this.user.UserType === 'MANAGER') {
+      return this.getManagerClinics();
+    }
     return new Promise<void>((resolve, reject) => {
       this.clinicService.getClinics(this.doctorId).subscribe(
         res => {
@@ -248,6 +285,31 @@ export class DashboardPage implements OnInit {
                 this.clinicService.updateClinic(this.Clinics[i]);
               }
             }
+            resolve();
+          } else {
+            this.clinicsExist = false;
+            reject(res.Message);
+          }
+        },
+        err => {
+          this.clinicsExist = false;
+          reject(err);
+        }
+      );
+    });
+  }
+
+  private getManagerClinics() {
+    return new Promise<void>((resolve, reject) => {
+      this.managerService.getManagerClinics(Number(this.user.ManagerId)).subscribe(
+        res => {
+          if (res.IsSuccess) {
+            this.Clinics = res.ResponseData;
+            this.clinicCount = this.Clinics.length;
+            this.clinicsExist = this.clinicCount > 0;
+            this.storage.set(environment.CLINICS, this.Clinics);
+            // No IsOnline write here - ManagerAccess has no "currently online clinic"
+            // concept, unlike PaAccess.
             resolve();
           } else {
             this.clinicsExist = false;

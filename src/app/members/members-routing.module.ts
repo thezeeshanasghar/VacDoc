@@ -47,6 +47,10 @@ const routes: Routes = [
       {
         path: 'pa/profile',
         loadChildren: () => import('./pa/profile/profile.module').then(m => m.PaProfilePageModule)
+      },
+      {
+        path: 'manager/profile',
+        loadChildren: () => import('./manager/profile/profile.module').then(m => m.ManagerProfilePageModule)
       }
     ]
   },

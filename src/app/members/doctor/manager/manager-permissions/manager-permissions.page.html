@@ -1,0 +1,73 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/manager"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ managerName }} — Permissions</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="save()" fill="solid" color="warning" style="font-weight:600;">
+        <ion-icon name="save-outline" slot="start"></ion-icon>
+        Save
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div class="section-wrap">
+
+    <div class="section-header">
+      <div class="section-icon-badge">
+        <ion-icon name="people-circle-outline" class="section-icon"></ion-icon>
+      </div>
+      <div class="section-meta">
+        <span class="section-title">Manager Permissions</span>
+        <span class="section-count">{{ countGranted }} / {{ fields.length }} permitted</span>
+      </div>
+    </div>
+
+    <div class="section-body">
+      <div class="section-bulk-actions">
+        <ion-button fill="outline" size="small" color="success" (click)="selectAll()">
+          <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
+          All
+        </ion-button>
+        <ion-button fill="outline" size="small" color="medium" (click)="clearAll()">
+          <ion-icon name="close-outline" slot="start"></ion-icon>
+          None
+        </ion-button>
+      </div>
+
+      <div class="exclusion-note">
+        <ion-icon name="warning-outline"></ion-icon>
+        <span>Manager never gets access to Financial, cash handover, or invoice reconciliation — regardless of any toggle below.</span>
+      </div>
+      <div class="scope-note">
+        <ion-icon name="business-outline"></ion-icon>
+        <span>All permissions below are automatically scoped to only the clinics already assigned to this Manager.</span>
+      </div>
+
+      <ion-item *ngFor="let field of fields" lines="none" class="perm-row">
+        <ion-toggle [(ngModel)]="perm[field.key]" slot="start" color="success"></ion-toggle>
+        <ion-label class="perm-label-text">
+          <div class="perm-name">{{ field.label }}</div>
+          <div *ngIf="field.desc" class="perm-desc">{{ field.desc }}</div>
+        </ion-label>
+      </ion-item>
+    </div>
+
+  </div>
+
+  <div style="height: 80px;"></div>
+
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-button expand="block" class="lava-btn" (click)="save()">
+      <ion-icon name="save-outline" slot="start"></ion-icon>
+      Save Permissions
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

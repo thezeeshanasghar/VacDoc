@@ -1,0 +1,33 @@
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.input-group {
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+.country-code-container {
+  width: 100%;
+}
+
+@media (max-width: 375px) {
+  .country-code-container {
+    width: 200%;
+  }
+
+  .country-label, .mobile-label {
+    font-size: 14px;
+  }
+
+  .country-code-select, .number-input {
+    font-size: 14px;
+  }
+}
+
+.required-asterisk {
+  color: red;
+  margin-left: 2px;
+}

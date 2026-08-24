@@ -4,6 +4,7 @@ import { AlertController, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { PaService } from 'src/app/services/pa.service';
+import { ManagerService } from 'src/app/services/manager.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 
@@ -53,14 +54,21 @@ export class PaAssignmentTrackingPage {
   clinics: any[] = [];
   pas: any[] = [];
 
-  // Set when a manager-tier PA (not the doctor) is viewing this shared page. Backend fences
-  // GetForDoctor/Reassign to this PA's own PaAccess clinics whenever requestingPaId is sent —
-  // see PAAssignmentController.GetForDoctor/Reassign. canReassign further hides the Reassign
-  // action client-side for a manager PA who only has ViewPaAssignmentStatus, not ReassignPaTask
-  // (the backend also enforces this — this is just so the button isn't shown only to 403 on click).
-  isManagerPa = false;
-  requestingPaId: number | null = null;
+  // Set when a Manager (not the doctor) is viewing this shared page. Backend fences
+  // GetForDoctor/Reassign to this Manager's own ManagerAccess clinics whenever
+  // requestingManagerId is sent — see PAAssignmentController.GetForDoctor/Reassign.
+  // canReassign further hides the Reassign action client-side for a Manager who only has
+  // ViewPaAssignmentStatus, not ReassignPaTask (the backend also enforces this — this is
+  // just so the button isn't shown only to 403 on click).
+  isManager = false;
+  requestingManagerId: number | null = null;
   canReassign = true;
+
+  // Reassign flow state — which row is currently picking a new PA, and the clinic-scoped
+  // PA list to choose from (loaded once the row's clinic is known).
+  reassigningRowId: number | null = null;
+  reassignPaOptions: any[] = [];
+  reassignTargetPaId: number | null = null;
 
   selectedClinicId: number | null = null;
   selectedPaId: number | null = null;
@@ -84,6 +92,7 @@ export class PaAssignmentTrackingPage {
   constructor(
     private paService: PaService,
     private clinicService: ClinicService,
+    private managerService: ManagerService,
     private storage: Storage,
     private toastService: ToastService,
     private alertController: AlertController,
@@ -102,10 +111,10 @@ export class PaAssignmentTrackingPage {
       this.doctorId = Number(storedDoctorId);
     }
 
-    if (user && user.UserType === 'PA') {
-      this.isManagerPa = true;
-      this.requestingPaId = Number(user.PAId);
-      const perm = await this.paService.getPaPermissions(this.requestingPaId).toPromise();
+    if (user && user.UserType === 'MANAGER') {
+      this.isManager = true;
+      this.requestingManagerId = Number(user.ManagerId);
+      const perm = await this.managerService.getManagerPermissions(this.requestingManagerId).toPromise();
       this.canReassign = (perm && perm.ReassignPaTask) || false;
     }
 
@@ -122,11 +131,11 @@ export class PaAssignmentTrackingPage {
   async loadClinics() {
     if (!this.doctorId) { return; }
 
-    // Manager PA: only offer clinics they themselves have PaAccess to — matches the backend
-    // fence on GetForDoctor, and stops the filter dropdown from ever suggesting a clinic the
-    // read call would silently exclude anyway.
-    if (this.isManagerPa && this.requestingPaId) {
-      this.paService.getPaClinics(this.requestingPaId).subscribe(res => {
+    // Manager: only offer clinics they themselves have ManagerAccess to — matches the
+    // backend fence on GetForDoctor, and stops the filter dropdown from ever suggesting a
+    // clinic the read call would silently exclude anyway.
+    if (this.isManager && this.requestingManagerId) {
+      this.managerService.getManagerClinics(this.requestingManagerId).subscribe(res => {
         this.clinics = (res && res.IsSuccess) ? (res.ResponseData || []) : [];
       });
       return;
@@ -208,7 +217,7 @@ export class PaAssignmentTrackingPage {
       this.selectedStatus || undefined,
       this.fromDate || undefined,
       this.toDate || undefined,
-      this.requestingPaId || undefined
+      this.requestingManagerId || undefined
     ).subscribe(
       res => {
         this.loading = false;
@@ -234,6 +243,49 @@ export class PaAssignmentTrackingPage {
 
   toggleExpand(row: AssignmentRow) {
     row.expanded = !row.expanded;
+  }
+
+  // Opens the inline "reassign to" PA picker for this row — loads the PA list scoped to
+  // the row's own clinic (same source pa-assignment's own "assign" flow already uses),
+  // excluding whoever currently holds the assignment.
+  openReassign(row: AssignmentRow) {
+    if (!row.ClinicId) {
+      this.toastService.create('This assignment has no clinic set — cannot reassign.', 'danger');
+      return;
+    }
+    this.reassigningRowId = row.AssignmentId;
+    this.reassignTargetPaId = null;
+    this.paService.getPAsForClinic(row.ClinicId).subscribe(res => {
+      const all = (res && res.IsSuccess) ? (res.ResponseData || []) : [];
+      this.reassignPaOptions = all.filter((p: any) => p.Id !== row.PaId);
+    });
+  }
+
+  closeReassign() {
+    this.reassigningRowId = null;
+    this.reassignPaOptions = [];
+    this.reassignTargetPaId = null;
+  }
+
+  confirmReassign(row: AssignmentRow) {
+    if (!this.reassignTargetPaId) { return; }
+    this.paService.reassignAssignment(
+      row.AssignmentId,
+      this.reassignTargetPaId,
+      row.TargetDate || undefined,
+      this.isManager ? (this.requestingManagerId || undefined) : undefined
+    ).subscribe(
+      res => {
+        if (res && res.IsSuccess) {
+          this.toastService.create('Assignment reassigned', 'success');
+          this.closeReassign();
+          this.load();
+        } else {
+          this.toastService.create((res && res.Message) || 'Failed to reassign', 'danger');
+        }
+      },
+      () => { this.toastService.create('Failed to reassign', 'danger'); }
+    );
   }
 
   // Jump to Payment Reconciliation pre-scoped to this row's clinic/PA — the closest the

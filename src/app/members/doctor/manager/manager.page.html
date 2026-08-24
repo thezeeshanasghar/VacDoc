@@ -1,0 +1,80 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Managers</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-card *ngFor="let manager of managers" [class.card-inactive]="!manager.IsActive">
+
+    <!-- ── Top: name, status, mobile ──────────────────────────── -->
+    <div class="pa-card-header">
+      <ion-icon name="person-circle-outline" class="pa-avatar"></ion-icon>
+      <div class="pa-meta">
+        <span class="pa-name">{{ manager.Name }}</span>
+        <span class="pa-email" *ngIf="manager.Email">
+          <ion-icon name="mail-outline"></ion-icon> {{ manager.Email }}
+        </span>
+      </div>
+      <ion-badge [color]="manager.IsActive ? 'success' : 'medium'" class="status-badge">
+        {{ manager.IsActive ? 'Active' : 'Inactive' }}
+      </ion-badge>
+    </div>
+
+    <!-- ── Clinics assigned ───────────────────────────────────── -->
+    <div class="pa-clinics" *ngIf="getClinicsForManager(manager.Id).length">
+      <ion-icon name="business-outline"></ion-icon>
+      <span>{{ getClinicsForManager(manager.Id).join(' · ') }}</span>
+    </div>
+    <div class="pa-clinics no-clinics" *ngIf="!getClinicsForManager(manager.Id).length">
+      <ion-icon name="business-outline"></ion-icon>
+      <span>No clinic assigned</span>
+    </div>
+
+    <!-- ── Actions ───────────────────────────────────────────── -->
+    <div class="pa-actions">
+      <ion-button fill="outline" size="small"
+        [color]="manager.IsVerified ? 'success' : 'warning'"
+        (click)="toggleVerify(manager)">
+        <ion-icon [name]="manager.IsVerified ? 'shield-checkmark-outline' : 'shield-outline'" slot="start"></ion-icon>
+        {{ manager.IsVerified ? 'Approved' : 'Not Approved' }}
+      </ion-button>
+
+      <ion-button fill="solid" size="small" color="tertiary" (click)="navigateToPermissions(manager)">
+        <ion-icon name="key-outline" slot="start"></ion-icon>
+        Permissions
+      </ion-button>
+
+      <ion-button fill="outline" size="small"
+        [color]="manager.IsActive ? 'success' : 'medium'"
+        (click)="toggleActive(manager)">
+        <ion-icon [name]="manager.IsActive ? 'checkmark-circle-outline' : 'ban-outline'" slot="start"></ion-icon>
+        {{ manager.IsActive ? 'Active' : 'Inactive' }}
+      </ion-button>
+
+      <ion-button fill="outline" size="small" color="primary" (click)="navigateToEdit(manager)">
+        <ion-icon name="create-outline" slot="start"></ion-icon>
+        Edit
+      </ion-button>
+
+      <ion-button fill="clear" size="small" color="danger" (click)="deleteManager(manager.Id)">
+        <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+
+  </ion-card>
+
+  <div *ngIf="!managers || !managers.length"
+       style="text-align:center; padding:40px; color:#9CA3AF;">
+    <ion-icon name="people-circle-outline" style="font-size:48px; display:block; margin:0 auto 12px;"></ion-icon>
+    <p>No Managers found. Tap + to add one.</p>
+  </div>
+
+</ion-content>
+
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button routerLink="signup" class="lava-fab">
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

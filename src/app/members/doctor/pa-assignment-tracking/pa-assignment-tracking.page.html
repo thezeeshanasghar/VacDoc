@@ -77,7 +77,7 @@
          Hidden entirely for manager PAs: cash/Financial access is explicitly excluded from
          the manager permission tier (see PaPermission's Manager-Level Permissions section) —
          Payment Reconciliation must never be reachable from here in a PA session. -->
-    <div class="page-switcher" *ngIf="!isManagerPa">
+    <div class="page-switcher" *ngIf="!isManager">
       <button class="switcher-btn active"><ion-icon name="clipboard-outline"></ion-icon> Assignments</button>
       <button class="switcher-btn" (click)="goToPayments()"><ion-icon name="cash-outline"></ion-icon> Payments</button>
     </div>
@@ -207,12 +207,12 @@
             <div class="progress-label">{{ row.DosesGiven }} / {{ row.DosesTotal }} doses given</div>
           </div>
 
-          <!-- Cash amount hidden entirely from manager PAs — the manager permission tier
-               explicitly excludes any cash/Financial figure, not just the Payments screens. -->
+          <!-- Cash amount hidden entirely from Managers — Manager never gets any
+               cash/Financial figure, not just the Payments screens. -->
           <div class="handover-strip" *ngIf="row.IsCashConfirmedByDoctor">
             <ion-icon name="checkmark-circle-outline"></ion-icon>
             Cash handover confirmed · {{ formatDateTime(row.CashConfirmedAt) }}
-            <span class="handover-amount" *ngIf="row.CashAmount !== null && !isManagerPa">Rs {{ row.CashAmount | number:'1.0-0' }}</span>
+            <span class="handover-amount" *ngIf="row.CashAmount !== null && !isManager">Rs {{ row.CashAmount | number:'1.0-0' }}</span>
           </div>
 
           <div class="assign-body" *ngIf="row.expanded">
@@ -231,7 +231,20 @@
               <span>Assignment #{{ row.AssignmentId }}</span>
               <span *ngIf="row.Notes">Notes: "{{ row.Notes }}"</span>
               <span *ngIf="row.CancelReason">Reason: "{{ row.CancelReason }}"</span>
-              <button *ngIf="!isManagerPa" class="link-to-payments" (click)="viewInPayments(row); $event.stopPropagation()">View in Payments →</button>
+              <button *ngIf="!isManager" class="link-to-payments" (click)="viewInPayments(row); $event.stopPropagation()">View in Payments →</button>
+              <button *ngIf="isManager && canReassign && statusClass(row) === 'active'"
+                class="link-to-payments" (click)="openReassign(row); $event.stopPropagation()">
+                <ion-icon name="swap-horizontal-outline"></ion-icon> Reassign
+              </button>
+            </div>
+
+            <!-- Inline "reassign to" picker — Manager only, active assignments only. -->
+            <div class="reassign-picker" *ngIf="reassigningRowId === row.AssignmentId" (click)="$event.stopPropagation()">
+              <ion-select placeholder="Choose new PA" [(ngModel)]="reassignTargetPaId" interface="popover">
+                <ion-select-option *ngFor="let pa of reassignPaOptions" [value]="pa.Id">{{ pa.Name }}</ion-select-option>
+              </ion-select>
+              <button class="btn-reassign-confirm" [disabled]="!reassignTargetPaId" (click)="confirmReassign(row)">Confirm</button>
+              <button class="btn-reassign-cancel" (click)="closeReassign()">Cancel</button>
             </div>
           </div>
         </div>

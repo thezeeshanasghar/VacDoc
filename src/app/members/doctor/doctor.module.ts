@@ -43,6 +43,10 @@ const routes: Routes = [
     loadChildren: () => import('./personal-assistant/personal-assistant.module').then(m => m.PersonalAssistantPageModule)
   },
   {
+    path: "manager",
+    loadChildren: () => import('./manager/manager.module').then(m => m.ManagerPageModule)
+  },
+  {
     path: "financial",
     loadChildren: () => import('./financial/financial.module').then(m => m.FinancialPageModule)
   },

@@ -476,6 +476,7 @@ import { ClinicService } from "../services/clinic.service";
 import { ToastService } from "../shared/toast.service";
 import { DoctorService } from "src/app/services/doctor.service";
 import { PaService } from "src/app/services/pa.service";
+import { ManagerService } from "src/app/services/manager.service";
 import { ChildService } from "src/app/services/child.service";
 import { BookingService } from "src/app/services/booking.service";
 import { NotificationService } from "src/app/services/notification.service";
@@ -503,6 +504,7 @@ export class MembersPage implements OnInit {
   public unreadNotificationCount: number = 0;
   public paAssignmentCount: number = 0;
   public isPaUser: boolean = false;
+  public isManagerUser: boolean = false;
 
   constructor(
     public loadingController: LoadingController,
@@ -511,6 +513,7 @@ export class MembersPage implements OnInit {
     private toastService: ToastService,
     private doctorService: DoctorService,
     private paService: PaService,
+    private managerService: ManagerService,
     private childService: ChildService,
     private bookingService: BookingService,
     private notificationService: NotificationService,
@@ -709,6 +712,45 @@ export class MembersPage implements OnInit {
               icon: "wallet-outline"
             });
 
+          } else if (data === "MANAGER") {
+            this.isManagerUser = true;
+            const managerPerm = await this.managerService.getManagerPermissions(Number(this.user.ManagerId)).toPromise();
+            const canViewAssignments = (managerPerm && managerPerm.ViewPaAssignmentStatus) || false;
+
+            this.profile = [
+              {
+                title: this.user.Name || "My Profile",
+                url: "/members/manager/profile",
+                icon: "create",
+                imageUrl: this.user.ProfileImage ? environment.RESOURCE_URL + this.user.ProfileImage : this.defaultImageUrl
+              }
+            ];
+
+            // Manager is pure oversight + patient registration — no Clinic/Stock/Financial/
+            // Alerts/Schedule/Vacation menu items, since Manager has zero permission fields
+            // for any of those.
+            this.appPages = [
+              {
+                title: "Dashboard",
+                url: "/members/dashboard",
+                icon: "home-outline",
+              },
+              {
+                title: "Patients",
+                url: "/members/child",
+                icon: "people-outline",
+              }
+            ];
+
+            if (canViewAssignments) {
+              this.appPages.push({
+                title: "PA Assignments",
+                url: "/members/doctor/pa-assignment-tracking",
+                icon: "clipboard-outline"
+              });
+              this.refreshPaAssignmentCount();
+            }
+
           } else if (this.hasClinics) {
             this.profile = [
               {
@@ -792,6 +834,15 @@ export class MembersPage implements OnInit {
                 icon: "wallet-outline"
               });
             }
+
+            // Managers nav always shown to doctors, same pattern as AllowAssistant
+            // (a nav-visibility-only flag with no server-side enforcement of its own) —
+            // no separate flag needed for this.
+            this.appPages.push({
+              title: "Managers",
+              url: "/members/doctor/manager",
+              icon: "people-circle-outline"
+            });
 
             if (agentAllowed) {
               this.appPages.push({
@@ -944,6 +995,20 @@ export class MembersPage implements OnInit {
   // not a lifetime total) — mirrors the active/actionable filter already used
   // by payables.page.ts and pa-assignment-tracking.page.ts.
   refreshPaAssignmentCount() {
+    if (this.isManagerUser) {
+      // Manager has no assignments "of their own" — count active assignments across
+      // the clinics they're fenced to, same scoping GetForDoctor already applies when
+      // requestingManagerId is sent.
+      this.paService.getAssignmentsForDoctor(
+        Number(this.DoctorId), undefined, undefined, 'Active', undefined, undefined,
+        Number(this.user.ManagerId)
+      ).subscribe(res => {
+        if (res && res.IsSuccess) {
+          this.paAssignmentCount = (res.ResponseData || []).length;
+        }
+      });
+      return;
+    }
     this.paService.getAssignments(Number(this.user.PAId)).subscribe(res => {
       if (res && res.IsSuccess) {
         this.paAssignmentCount = (res.ResponseData || []).filter((a: any) =>
@@ -955,11 +1020,11 @@ export class MembersPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    if (this.isPaUser) {
+    if (this.isPaUser || this.isManagerUser) {
       this.refreshPaAssignmentCount();
-      // Permission toggles a doctor makes for this PA (e.g. Cold Chain) are only
-      // picked up here, not automatically pushed to an already-open PA session —
-      // this.appPages was otherwise only ever built once, at login.
+      // Permission toggles a doctor makes for this PA/Manager are only picked up here,
+      // not automatically pushed to an already-open session — this.appPages was
+      // otherwise only ever built once, at login.
       this.getProfile(this.user.UserType);
     }
     if (this.DoctorId) {

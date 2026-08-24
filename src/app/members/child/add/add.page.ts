@@ -25,6 +25,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { CityService } from "src/app/services/city.service";
 import { AgentService } from "src/app/services/agent.service";
 import { PaService } from "src/app/services/pa.service";
+import { ManagerService } from "src/app/services/manager.service";
 
 @Component({
   selector: "app-add",
@@ -88,6 +89,7 @@ export class AddPage implements OnInit {
     public alertCtrl: AlertController,
     private http: HttpClient,
     private paService: PaService,
+    private managerService: ManagerService,
     private cd: ChangeDetectorRef,
     private popoverController: PopoverController
   ) {}
@@ -112,6 +114,11 @@ export class AddPage implements OnInit {
             this.router.navigate(['/members/child']);
           }
         });
+      } else if (this.usertype.UserType === "MANAGER") {
+        // Patient registration is always available to a Manager with clinic access — no
+        // separate ManagerPermission flag for it, same as how PA's AddPatient already
+        // defaults true for any PA without an explicit permission row.
+        await this.loadClinics();
       }
     } else {
       console.error("No user data found in storage.");
@@ -198,6 +205,29 @@ filterCountryCodes(value: string) {
             this.toastService.create("Failed to load clinics", "danger");
           },
         });
+      } else if (this.usertype.UserType === "MANAGER") {
+        this.managerService.getManagerClinics(Number(this.usertype.ManagerId)).subscribe({
+          next: (response) => {
+            loading.dismiss();
+            if (response.IsSuccess) {
+              this.clinics = response.ResponseData;
+              // Manager has no "online clinic" concept (ManagerAccess carries no IsOnline) -
+              // always default to the first granted clinic, same fallback PA uses when
+              // nothing is online.
+              this.selectedClinicId = this.clinics.length > 0 ? this.clinics[0].Id : null;
+              if (this.fg1) {
+                this.fg1.get("ClinicId").setValue(this.selectedClinicId);
+              }
+            } else {
+              this.toastService.create(response.Message, "danger");
+            }
+          },
+          error: (error) => {
+            loading.dismiss();
+            console.error("Error fetching Manager clinics:", error);
+            this.toastService.create("Failed to load clinics", "danger");
+          },
+        });
       }
     } catch (error) {
       loading.dismiss();
@@ -211,7 +241,7 @@ filterCountryCodes(value: string) {
     // a PA can switch online clinic on another page, then come back here without this
     // component ever being destroyed/recreated. Without this, selectedClinicId below
     // stays pinned to whatever was online the first time this page was ever opened.
-    if (this.usertype && this.usertype.UserType === "PA") {
+    if (this.usertype && (this.usertype.UserType === "PA" || this.usertype.UserType === "MANAGER")) {
       this.loadClinics();
     }
     this.storage.set(environment.MESSAGES, this.Messages);
@@ -967,6 +997,11 @@ filterCountryCodes(value: string) {
     if (this.usertype.UserType === "DOCTOR") {
       data.IsPAApprove = true;
       data.AddedByPaId = null;
+    } else if (this.usertype.UserType === "MANAGER") {
+      // AddedByPaId is a plain untyped long? column - reused for a Manager's ManagerId too,
+      // not FK-typed to PersonalAssistant. No new column needed.
+      data.IsPAApprove = false;
+      data.AddedByPaId = this.usertype.ManagerId || null;
     } else {
       data.IsPAApprove = false;
       data.AddedByPaId = this.usertype.PAId || null;

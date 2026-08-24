@@ -145,7 +145,7 @@
         </ion-grid>
       </div>
 
-      <div class="clinic-field" *ngIf="type === 'PA'">
+      <div class="clinic-field" *ngIf="type === 'PA' || type === 'MANAGER'">
         <div class="clinic-field-title">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1m4 0h1m-6 4h1m4 0h1m-6 4h1m4 0h1"/></svg>
           Adding Patient To Clinic <span class="required-asterisk" *ngIf="clinics && clinics.length > 1">*</span>

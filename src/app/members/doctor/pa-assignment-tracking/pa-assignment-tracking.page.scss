@@ -568,6 +568,50 @@
   cursor: pointer;
   padding: 0;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 
   &:hover { text-decoration: underline; }
+}
+
+.reassign-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 4px 2px;
+  padding: 8px 10px;
+  background: var(--vac-blue-tint);
+  border: 1px solid var(--vac-border);
+  border-radius: 10px;
+
+  ion-select {
+    flex: 1;
+    min-width: 0;
+    font-size: 12.5px;
+    --padding-start: 6px;
+  }
+}
+
+.btn-reassign-confirm,
+.btn-reassign-cancel {
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 6px 10px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-reassign-confirm {
+  background: var(--vac-blue);
+  color: #fff;
+
+  &:disabled { opacity: .5; cursor: default; }
+}
+
+.btn-reassign-cancel {
+  background: transparent;
+  color: var(--vac-ink-3);
 }

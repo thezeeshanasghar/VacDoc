@@ -2,10 +2,11 @@
   <div class="dash-wrap">
 
     <div class="dash-greeting">
-      <p class="dash-hello">{{ isPa ? 'Welcome, ' + (userName || 'Assistant') : 'Welcome back, ' + (userName || 'Doctor') }}</p>
-      <p class="dash-tagline">
+      <p class="dash-hello">{{ isManager ? 'Welcome, ' + (userName || 'Manager') : (isPa ? 'Welcome, ' + (userName || 'Assistant') : 'Welcome back, ' + (userName || 'Doctor')) }}</p>
+      <p class="dash-tagline" *ngIf="!isManager">
         {{ clinicService.OnlineClinic ? clinicService.OnlineClinic.Name : 'Baby Medics / Vaccine.pk' }}
       </p>
+      <p class="dash-tagline" *ngIf="isManager">{{ Clinics.length }} clinic{{ Clinics.length === 1 ? '' : 's' }} assigned</p>
     </div>
 
     <div class="dash-grid">
