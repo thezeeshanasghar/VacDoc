@@ -207,6 +207,13 @@ filterCountryCodes(value: string) {
   }
 
   ionViewWillEnter() {
+    // Re-fetch on every visit, not just once at component construction (ngOnInit) -
+    // a PA can switch online clinic on another page, then come back here without this
+    // component ever being destroyed/recreated. Without this, selectedClinicId below
+    // stays pinned to whatever was online the first time this page was ever opened.
+    if (this.usertype && this.usertype.UserType === "PA") {
+      this.loadClinics();
+    }
     this.storage.set(environment.MESSAGES, this.Messages);
     this.todaydate = new Date();
     this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format("YYYY-MM-DD");
