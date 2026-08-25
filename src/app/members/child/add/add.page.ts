@@ -55,11 +55,11 @@ export class AddPage implements OnInit {
   epiDone = false;
   Messages: any = [];
   Nationality: any;
-  originalCities: string[];
+  originalCities: string[] = [];
   filteredOptions: Observable<string[]>;
   travel: [false];
   isCnicRequired: boolean = false;
-  originalAgents: any[];
+  originalAgents: any[] = [];
   cities: string[] = [];
   agents: string[] = [];
   isButtonEnabled: boolean;
