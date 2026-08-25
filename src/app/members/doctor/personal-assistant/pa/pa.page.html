@@ -51,7 +51,7 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">Email <span class="required-asterisk">*</span></ion-label>
-      <ion-input type="email" formControlName="Email" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"></ion-input>
+      <ion-input type="email" formControlName="Email" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"></ion-input>
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.Email">
