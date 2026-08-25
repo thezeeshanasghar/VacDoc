@@ -53,7 +53,14 @@ export class Step1Page implements OnInit {
         ])
       ),
       Speciality: [],
-      Password: [],
+      Password: new FormControl(
+        "",
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(6),
+        ])
+      ),
+      ConfirmPassword: new FormControl("", Validators.required),
       CountryCode: ["92"],
       MobileNumber: new FormControl(
         "",
@@ -81,7 +88,22 @@ export class Step1Page implements OnInit {
           Validators.pattern("^[0-9-\\+]*-[a-zA-Z]$"),
         ])
       ),
-    });
+    }, { validators: this.passwordsMatchValidator });
+  }
+  passwordsMatchValidator(group: AbstractControl): { [key: string]: any } | null {
+    const password = group.get('Password');
+    const confirmPassword = group.get('ConfirmPassword');
+    if (!password || !confirmPassword) {
+      return null;
+    }
+    if (confirmPassword.value && password.value !== confirmPassword.value) {
+      confirmPassword.setErrors({ passwordMismatch: true });
+      return { passwordMismatch: true };
+    }
+    if (confirmPassword.hasError('passwordMismatch')) {
+      confirmPassword.setErrors(null);
+    }
+    return null;
   }
   mobileNumberLengthValidator(countryCodeControlName: string): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
@@ -472,14 +494,16 @@ export class Step1Page implements OnInit {
   }
 
   async nextpage() {
-    this.fg.value.Password = this.PasswordGenerator();
-    this.signupService.personalData = this.fg.value;
-    console.log(this.fg.value);
-
-    if (this.fg.valid && !this.isSubmitted) {
-      this.isSubmitted = true;
+    if (!this.fg.valid || this.isSubmitted) {
+      this.fg.markAllAsTouched();
+      return;
     }
-    
+    this.isSubmitted = true;
+
+    const { ConfirmPassword, ...payload } = this.fg.value;
+    this.signupService.personalData = payload;
+    console.log(payload);
+
     // Make the API call to add the doctor
     this.signupService.addDoctor().subscribe(
       res => {
@@ -487,28 +511,32 @@ export class Step1Page implements OnInit {
         // Handle specific error cases first
         if (res.Message === 'Both email and phone number are already in use. Please use different email and phone number.') {
           // If both email and phone are in use
+          this.isSubmitted = false;
           this.toastService.create('Both email and phone number are already in use. Please use different email and phone number.', 'danger');
           this.markFieldsAsInvalid(['Email', 'MobileNumber']);
         } else if (res.Message === 'Email already exists. Please try another email.') {
           // If only the email is in use
+          this.isSubmitted = false;
           this.toastService.create('Email is already in use. Please use a different email.', 'danger');
           this.markFieldAsInvalid('Email');
         } else if (res.Message === 'Phone number is already in use. Please try a different phone number.') {
-          console.log("atta");
           // If only the phone is in use
+          this.isSubmitted = false;
           this.toastService.create('Phone number is already in use. Please use a different phone number.', 'danger');
           this.markFieldAsInvalid('MobileNumber');
         } else if (res.IsSuccess) {
           // If signup is successful
+          this.toastService.create("Account created. Log in with your mobile number and the password you just set — we've also emailed a copy to " + payload.Email + ".", "success");
           this.router.navigate(["/login"]);
-          this.toastService.create("Successfully Signed Up");
         } else {
           // Handle any other generic errors
+          this.isSubmitted = false;
           this.toastService.create(res.Message, "danger");
         }
       },
       err => {
         // Handle errors from the API call itself
+        this.isSubmitted = false;
         this.toastService.create(err, "danger");
       }
     );
@@ -564,6 +592,14 @@ export class Step1Page implements OnInit {
     // ],
     displayName: [{ type: "required", message: "DisplayName is required." },
     { type: 'pattern', message: 'You can Enter Only Charecters in Display Name.' }
+    ],
+    password: [
+      { type: "required", message: "Password is required." },
+      { type: "minlength", message: "Password must be at least 6 characters." },
+    ],
+    confirmPassword: [
+      { type: "required", message: "Please confirm your password." },
+      { type: "passwordMismatch", message: "Passwords do not match." },
     ],
     email: [
       { type: "required", message: "Email is required." },

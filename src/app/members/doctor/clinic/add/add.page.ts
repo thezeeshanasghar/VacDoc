@@ -585,6 +585,15 @@ export class AddPage implements OnInit {
     this.fg1.value.ClinicTimings = ct;
     this.addNewClinic(this.fg1.value);
   }
+
+  skipTimings() {
+    this.fg1.value.DoctorId = this.DoctorId;
+    this.fg1.value.Lat = 33.63207;
+    this.fg1.value.Long = 72.935488;
+    this.fg1.value.regNo = this.fg1.get('RegNo').value;
+    this.fg1.value.ClinicTimings = [];
+    this.addNewClinic(this.fg1.value);
+  }
   async addNewClinic(data) {
     console.log(data);
     {

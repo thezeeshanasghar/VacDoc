@@ -6,6 +6,7 @@ import { environment } from "src/environments/environment";
 import { ToastService } from "src/app/shared/toast.service";
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { IonRouterOutlet, Platform } from '@ionic/angular';
+import { Router } from '@angular/router';
 import { Plugins } from '@capacitor/core';
 import { DashboardService } from "src/app/services/dashboard.service";
 import { PaService } from "src/app/services/pa.service";
@@ -67,6 +68,7 @@ export class DashboardPage implements OnInit {
     private androidPermissions: AndroidPermissions,
     public platform: Platform,
     private routerOutlet: IonRouterOutlet,
+    private router: Router,
     private paService: PaService,
     private managerService: ManagerService,
     private childService: ChildService
@@ -243,7 +245,9 @@ export class DashboardPage implements OnInit {
             this.clinicCount = this.Clinics.length;
             this.clinicsExist = this.clinicCount > 0;
             if (!this.clinicsExist) {
-                this.routerOutlet.nativeEl.ownerDocument.defaultView.location.href = 'members/doctor/clinic/add';
+                this.router.navigateByUrl('/members/doctor/clinic/add');
+                resolve();
+                return;
             }
             this.storage.set(environment.CLINICS, this.Clinics);
             for (let i = 0; i < this.Clinics.length; i++) {

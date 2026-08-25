@@ -96,6 +96,32 @@
         </ng-container>
       </div>
 
+      <ion-item class="custom-item-background">
+        <ion-label color="primary" position="floating">Password</ion-label>
+        <ion-input type="password" formControlName="Password" required></ion-input>
+      </ion-item>
+      <div class="validation-errors">
+        <ng-container *ngFor="let validation of validation_messages.password">
+          <div class="error-message"
+            *ngIf="fg.get('Password').hasError(validation.type) && (fg.get('Password').dirty || fg.get('Password').touched)">
+            <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+          </div>
+        </ng-container>
+      </div>
+
+      <ion-item class="custom-item-background">
+        <ion-label color="primary" position="floating">Confirm Password</ion-label>
+        <ion-input type="password" formControlName="ConfirmPassword" required></ion-input>
+      </ion-item>
+      <div class="validation-errors">
+        <ng-container *ngFor="let validation of validation_messages.confirmPassword">
+          <div class="error-message"
+            *ngIf="fg.get('ConfirmPassword').hasError(validation.type) && (fg.get('ConfirmPassword').dirty || fg.get('ConfirmPassword').touched)">
+            <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+          </div>
+        </ng-container>
+      </div>
+
       <ion-grid>
         <ion-row class="form-row">
           <ion-col size="4">
