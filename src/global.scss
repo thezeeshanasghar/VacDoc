@@ -648,6 +648,25 @@ ion-popover ion-item[aria-checked="true"] {
   height: auto !important;
 }
 
+// ── ion-picker (ion-datetime wheel picker) ───────────────────────────────────
+// Ionic 5's picker is always a single bottom-anchored overlay shared app-wide —
+// it is never anchored to the field that opened it. On pages with many
+// identical-looking datetime fields (e.g. Add Clinic's 28 day/session time
+// pickers) a faint backdrop made the picker look like it was just overlapping
+// nearby page content instead of reading as a distinct modal on top of it.
+// Strengthen the backdrop + give the sheet a visible top edge so it's always
+// unambiguous that a modal picker — not the page itself — is being edited.
+// (Per-field disambiguation is handled by giving each ion-datetime its own
+// "<Day> · Session N · Start/End Time" label — see add.page.html.)
+ion-picker {
+  --backdrop-opacity: 0.55 !important;
+}
+
+.picker-wrapper {
+  border-radius: 16px 16px 0 0 !important;
+  box-shadow: 0 -8px 32px rgba(12, 54, 70, 0.35) !important;
+}
+
 // ── Batch picker / bottom-sheet modals (spec §6, §7.2) ──────────────────────
 // Ionic 5 has no breakpoints API; anchor the modal to the bottom and let the
 // component's own rounded top provide the sheet look.

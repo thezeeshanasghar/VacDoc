@@ -114,15 +114,17 @@
                   <ion-item *ngIf="MondayS1.checked==true" lines="none" class="ion-no-padding">
 
                       <ion-item lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">Start Time</ion-label>
+                          <ion-label color="primary" position="floating">Monday · Session 1 · Start Time</ion-label>
                           <ion-datetime formControlName="Mstart" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Monday-S1-start' }"
                               (ionChange)="setTimeValidatorsMonday()">
                           </ion-datetime>
                       </ion-item>
 
                       <ion-item slot="end" lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">End Time</ion-label>
+                          <ion-label color="primary" position="floating">Monday · Session 1 · End Time</ion-label>
                           <ion-datetime formControlName="Mend" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Monday-S1-end' }"
                               (ionChange)="setTimeValidatorsMonday()">
                           </ion-datetime>
                       </ion-item>
@@ -134,15 +136,17 @@
                   <ion-item *ngIf="MondayS2.checked==true" lines="none" class="ion-no-padding">
 
                       <ion-item lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">Start Time</ion-label>
+                          <ion-label color="primary" position="floating">Monday · Session 2 · Start Time</ion-label>
                           <ion-datetime formControlName="Mstart2" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Monday-S2-start' }"
                               (ionChange)="setTimeValidatorsMonday()">
                           </ion-datetime>
                       </ion-item>
 
                       <ion-item slot="end" lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">End Time</ion-label>
+                          <ion-label color="primary" position="floating">Monday · Session 2 · End Time</ion-label>
                           <ion-datetime formControlName="Mend2" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Monday-S2-end' }"
                               (ionChange)="setTimeValidatorsMonday()">
                           </ion-datetime>
                       </ion-item>
@@ -183,15 +187,17 @@
                   <ion-item *ngIf="TuesdayS1.checked==true" lines="none" class="ion-no-padding">
 
                       <ion-item lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">Start Time</ion-label>
+                          <ion-label color="primary" position="floating">Tuesday · Session 1 · Start Time</ion-label>
                           <ion-datetime formControlName="Tustart" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Tuesday-S1-start' }"
                               (ionChange)="setTimeValidatorsTuesday()">
                           </ion-datetime>
                       </ion-item>
 
                       <ion-item slot="end" lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">End Time</ion-label>
+                          <ion-label color="primary" position="floating">Tuesday · Session 1 · End Time</ion-label>
                           <ion-datetime formControlName="Tuend" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Tuesday-S1-end' }"
                               (ionChange)="setTimeValidatorsTuesday()">
                           </ion-datetime>
                       </ion-item>
@@ -203,15 +209,17 @@
                   <ion-item *ngIf="TuesdayS2.checked==true" lines="none" class="ion-no-padding">
 
                       <ion-item lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">Start Time</ion-label>
+                          <ion-label color="primary" position="floating">Tuesday · Session 2 · Start Time</ion-label>
                           <ion-datetime formControlName="Tustart2" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Tuesday-S2-start' }"
                               (ionChange)="setTimeValidatorsTuesday()">
                           </ion-datetime>
                       </ion-item>
 
                       <ion-item slot="end" lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">End Time</ion-label>
+                          <ion-label color="primary" position="floating">Tuesday · Session 2 · End Time</ion-label>
                           <ion-datetime formControlName="Tuend2" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Tuesday-S2-end' }"
                               (ionChange)="setTimeValidatorsTuesday()">
                           </ion-datetime>
                       </ion-item>
@@ -251,15 +259,17 @@
                   <ion-item *ngIf="WednesdayS1.checked==true" lines="none" class="ion-no-padding">
 
                       <ion-item lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">Start Time</ion-label>
+                          <ion-label color="primary" position="floating">Wednesday · Session 1 · Start Time</ion-label>
                           <ion-datetime formControlName="Wstart" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Wednesday-S1-start' }"
                               (ionChange)="setTimeValidatorsWed()">
                           </ion-datetime>
                       </ion-item>
 
                       <ion-item slot="end" lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">End Time</ion-label>
+                          <ion-label color="primary" position="floating">Wednesday · Session 1 · End Time</ion-label>
                           <ion-datetime formControlName="Wend" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Wednesday-S1-end' }"
                               (ionChange)="setTimeValidatorsWed()">
                           </ion-datetime>
                       </ion-item>
@@ -271,15 +281,17 @@
                   <ion-item *ngIf="WednesdayS2.checked==true" lines="none" no-padding>
 
                       <ion-item lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">Start Time</ion-label>
+                          <ion-label color="primary" position="floating">Wednesday · Session 2 · Start Time</ion-label>
                           <ion-datetime formControlName="Wstart2" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Wednesday-S2-start' }"
                               (ionChange)="setTimeValidatorsWed()">
                           </ion-datetime>
                       </ion-item>
 
                       <ion-item slot="end" lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">End Time</ion-label>
+                          <ion-label color="primary" position="floating">Wednesday · Session 2 · End Time</ion-label>
                           <ion-datetime formControlName="Wend2" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Wednesday-S2-end' }"
                               (ionChange)="setTimeValidatorsWed()">
                           </ion-datetime>
                       </ion-item>
@@ -319,15 +331,17 @@
                   <ion-item *ngIf="ThursdayS1.checked==true" lines="none" class="ion-no-padding">
 
                       <ion-item lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">Start Time</ion-label>
+                          <ion-label color="primary" position="floating">Thursday · Session 1 · Start Time</ion-label>
                           <ion-datetime formControlName="Thstart" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Thursday-S1-start' }"
                               (ionChange)="setTimeValidatorsThu()">
                           </ion-datetime>
                       </ion-item>
 
                       <ion-item slot="end" lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">End Time</ion-label>
+                          <ion-label color="primary" position="floating">Thursday · Session 1 · End Time</ion-label>
                           <ion-datetime formControlName="Thend" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Thursday-S1-end' }"
                               (ionChange)="setTimeValidatorsThu()">
                           </ion-datetime>
                       </ion-item>
@@ -339,15 +353,17 @@
                   <ion-item *ngIf="ThursdayS2.checked==true" lines="none" class="ion-no-padding">
 
                       <ion-item lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">Start Time</ion-label>
+                          <ion-label color="primary" position="floating">Thursday · Session 2 · Start Time</ion-label>
                           <ion-datetime formControlName="Thstart2" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Thursday-S2-start' }"
                               (ionChange)="setTimeValidatorsThu()">
                           </ion-datetime>
                       </ion-item>
 
                       <ion-item slot="end" lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">End Time</ion-label>
+                          <ion-label color="primary" position="floating">Thursday · Session 2 · End Time</ion-label>
                           <ion-datetime formControlName="Thend2" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Thursday-S2-end' }"
                               (ionChange)="setTimeValidatorsThu()">
                           </ion-datetime>
                       </ion-item>
@@ -386,15 +402,17 @@
                   <ion-item *ngIf="FridayS1.checked==true" lines="none" class="ion-no-padding">
 
                       <ion-item lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">Start Time</ion-label>
+                          <ion-label color="primary" position="floating">Friday · Session 1 · Start Time</ion-label>
                           <ion-datetime formControlName="Fstart" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Friday-S1-start' }"
                               (ionChange)="setTimeValidatorsFri()">
                           </ion-datetime>
                       </ion-item>
 
                       <ion-item slot="end" lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">End Time</ion-label>
+                          <ion-label color="primary" position="floating">Friday · Session 1 · End Time</ion-label>
                           <ion-datetime formControlName="Fend" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Friday-S1-end' }"
                               (ionChange)="setTimeValidatorsFri()">
                           </ion-datetime>
                       </ion-item>
@@ -406,15 +424,17 @@
                   <ion-item *ngIf="FridayS2.checked==true" lines="none" class="ion-no-padding">
 
                       <ion-item lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">Start Time</ion-label>
+                          <ion-label color="primary" position="floating">Friday · Session 2 · Start Time</ion-label>
                           <ion-datetime formControlName="Fstart2" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Friday-S2-start' }"
                               (ionChange)="setTimeValidatorsFri()">
                           </ion-datetime>
                       </ion-item>
 
                       <ion-item slot="end" lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">End Time</ion-label>
+                          <ion-label color="primary" position="floating">Friday · Session 2 · End Time</ion-label>
                           <ion-datetime formControlName="Fend2" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Friday-S2-end' }"
                               (ionChange)="setTimeValidatorsFri()">
                           </ion-datetime>
                       </ion-item>
@@ -453,15 +473,17 @@
                   <ion-item *ngIf="SaturdayS1.checked==true" lines="none" class="ion-no-padding">
 
                       <ion-item lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">Start Time</ion-label>
+                          <ion-label color="primary" position="floating">Saturday · Session 1 · Start Time</ion-label>
                           <ion-datetime formControlName="Sastart" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Saturday-S1-start' }"
                               (ionChange)="setTimeValidatorsSat()">
                           </ion-datetime>
                       </ion-item>
 
                       <ion-item slot="end" lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">End Time</ion-label>
+                          <ion-label color="primary" position="floating">Saturday · Session 1 · End Time</ion-label>
                           <ion-datetime formControlName="Saend" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Saturday-S1-end' }"
                               (ionChange)="setTimeValidatorsSat()">
                           </ion-datetime>
                       </ion-item>
@@ -473,15 +495,17 @@
                   <ion-item *ngIf="SaturdayS2.checked==true" lines="none" class="ion-no-padding">
 
                       <ion-item lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">Start Time</ion-label>
+                          <ion-label color="primary" position="floating">Saturday · Session 2 · Start Time</ion-label>
                           <ion-datetime formControlName="Sastart2" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Saturday-S2-start' }"
                               (ionChange)="setTimeValidatorsSat()">
                           </ion-datetime>
                       </ion-item>
 
                       <ion-item slot="end" lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">End Time</ion-label>
+                          <ion-label color="primary" position="floating">Saturday · Session 2 · End Time</ion-label>
                           <ion-datetime formControlName="Saend2" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Saturday-S2-end' }"
                               (ionChange)="setTimeValidatorsSat()">
                           </ion-datetime>
                       </ion-item>
@@ -519,15 +543,17 @@
                   <ion-item *ngIf="SundayS1.checked==true" lines="none" class="ion-no-padding">
 
                       <ion-item lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">Start Time</ion-label>
+                          <ion-label color="primary" position="floating">Sunday · Session 1 · Start Time</ion-label>
                           <ion-datetime formControlName="Sustart" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Sunday-S1-start' }"
                               (ionChange)="setTimeValidatorsSun()">
                           </ion-datetime>
                       </ion-item>
 
                       <ion-item slot="end" lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">End Time</ion-label>
+                          <ion-label color="primary" position="floating">Sunday · Session 1 · End Time</ion-label>
                           <ion-datetime formControlName="Suend" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Sunday-S1-end' }"
                               (ionChange)="setTimeValidatorsSun()">
                           </ion-datetime>
                       </ion-item>
@@ -539,15 +565,17 @@
                   <ion-item *ngIf="SundayS2.checked==true" lines="none" class="ion-no-padding">
 
                       <ion-item lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">Start Time</ion-label>
+                          <ion-label color="primary" position="floating">Sunday · Session 2 · Start Time</ion-label>
                           <ion-datetime formControlName="Sustart2" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Sunday-S2-start' }"
                               (ionChange)="setTimeValidatorsSun()">
                           </ion-datetime>
                       </ion-item>
 
                       <ion-item slot="end" lines="none" class="ion-no-padding">
-                          <ion-label color="primary" position="floating">End Time</ion-label>
+                          <ion-label color="primary" position="floating">Sunday · Session 2 · End Time</ion-label>
                           <ion-datetime formControlName="Suend2" display-format="h:mm a"
+                              [pickerOptions]="{ cssClass: 'time-picker-Sunday-S2-end' }"
                               (ionChange)="setTimeValidatorsSun()">
                           </ion-datetime>
                       </ion-item>
