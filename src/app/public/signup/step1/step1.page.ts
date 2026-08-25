@@ -19,7 +19,6 @@ import { ToastService } from "src/app/shared/toast.service";
 })
 export class Step1Page implements OnInit {
   fg: FormGroup;
-  checkedVal: any;
   isSubmitted = false;
   @ViewChild("speciality", { static: false }) selectPop: IonSelect;
 
@@ -32,7 +31,6 @@ export class Step1Page implements OnInit {
 
   ngOnInit() {
     this.fg = this.frombuilder.group({
-      DoctorType: new FormControl("CS"),
       Qualification: [],
       AdditionalInfo: ["", [Validators.required, this.OneLineValidator,]],
       // FirstName: ['', Validators.compose([
@@ -82,7 +80,7 @@ export class Step1Page implements OnInit {
       ),
       ShowPhone: [true],
       PMDC: new FormControl(
-        "12345-A",
+        "",
         Validators.compose([
           Validators.required,
           Validators.pattern("^[0-9-\\+]*-[a-zA-Z]$"),
@@ -572,11 +570,6 @@ export class Step1Page implements OnInit {
   //     }
   //   );
   // }
-
-  setValueAndShowSpeciality(value: String, checkedVal) {
-    this.fg.value.DoctorType = value;
-    this.checkedVal = checkedVal;
-  }
 
   opendrop() {
     this.selectPop.open();

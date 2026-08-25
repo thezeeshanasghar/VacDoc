@@ -1,4 +1,17 @@
 
+// Centre the form card and cap its width on wide (desktop) viewports —
+// without this the card sat top-left with a large flat expanse of empty
+// ion-content background filling the rest of the screen.
+.page-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+ion-card {
+  width: 100%;
+  max-width: 520px;
+}
+
 .error-message {
   color: red;
   font-size: 14px;

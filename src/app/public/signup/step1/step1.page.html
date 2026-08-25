@@ -8,12 +8,9 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+  <div class="page-wrap">
   <ion-card>
     <form [formGroup]="fg">
-      <ion-radio-group>
-        <ion-input type="hidden" formControlName="DoctorType" value="CS"></ion-input>
-      </ion-radio-group>
-
       <!-- <ion-item class="custom-item-background">
         <ion-label color="primary" position="floating">Qualification</ion-label>
         <ion-input type="text" formControlName="Qualification" class="ion-text-capitalize" required></ion-input>
@@ -43,7 +40,7 @@
       <ion-item class="custom-item-background">
         <ion-label color="primary" position="floating">Letterpad information ( don’t mention your name here)</ion-label>
         <ion-textarea type="text" formControlName="AdditionalInfo" class="ion-text-capitalize"
-          [autoGrow]="true" style="color: grey;"></ion-textarea>
+          [autoGrow]="true"></ion-textarea>
       </ion-item>
       <div class="validation-errors">
         <ng-container *ngFor="let validation of validation_messages.AdditionalInfo">
@@ -172,7 +169,7 @@
 
       <ion-item class="custom-item-background">
         <ion-label color="primary" position="floating">PMDC Number</ion-label>
-        <ion-input type="text" formControlName="PMDC" required></ion-input>
+        <ion-input type="text" formControlName="PMDC" placeholder="e.g. 12345-A" required></ion-input>
       </ion-item>
       <div class="validation-errors">
         <ng-container *ngFor="let validation of validation_messages.PMDC">
@@ -188,5 +185,5 @@
       {{ isSubmitted && fg.valid ? 'Processing...' : (fg.valid ? 'Sign Up' : 'Sign Up') }}
     </ion-button>
   </ion-card>
-
+  </div>
 </ion-content>

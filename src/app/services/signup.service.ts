@@ -35,7 +35,6 @@ export class SignupService extends BaseService {
       // },
       CountryCode: this.personalData.CountryCode,
       DisplayName: this.personalData.DisplayName,
-      DoctorType: this.personalData.DoctorType,
       Email: this.personalData.Email,
       FirstName: this.personalData.FirstName,
       LastName: this.personalData.LastName,
