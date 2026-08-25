@@ -145,7 +145,7 @@ export class AssignmentsPage {
       res => {
         this.loading = false;
         if (res && res.IsSuccess) {
-          this.assignments = res.ResponseData || [];
+          this.assignments = this.sortByUrgency(res.ResponseData || []);
         }
       },
       () => {
@@ -153,6 +153,19 @@ export class AssignmentsPage {
         this.toastService.create('Failed to load assignments', 'danger');
       }
     );
+  }
+
+  // Mock's list-caption promises "Sorted by urgency — overdue first, then today, then
+  // upcoming" but GetByPA returns rows in raw DB order — sort here using the same
+  // urgency() the pill itself renders with, so order and pill never disagree.
+  private sortByUrgency(list: any[]): any[] {
+    const rank = { overdue: 0, today: 1, upcoming: 2, none: 3 };
+    return [...list].sort((a, b) => {
+      const rankDiff = rank[this.urgency(a)] - rank[this.urgency(b)];
+      if (rankDiff !== 0) { return rankDiff; }
+      if (!a.TargetDate || !b.TargetDate) { return 0; }
+      return new Date(a.TargetDate).getTime() - new Date(b.TargetDate).getTime();
+    });
   }
 
   // Matches PaAssignmentTrackingPage's urgency() so overdue/today/upcoming read the same
