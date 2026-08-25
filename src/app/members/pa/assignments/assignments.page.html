@@ -62,6 +62,7 @@
           (click)="confirmComplete(a)">
         </ion-icon>
         <ion-icon
+          *ngIf="a.AssignmentStatus !== 'PendingCancellation'"
           name="close-circle-outline"
           class="iconchild cancel-icon"
           (click)="confirmCancel(a)">
@@ -90,6 +91,9 @@
       </div>
       <ion-badge color="warning" *ngIf="hasInvoiceForAssignment(a) && hasUnpaidSchedules(a)" class="payment-pending-badge">
         <ion-icon name="cash-outline"></ion-icon> Payment Pending
+      </ion-badge>
+      <ion-badge color="medium" *ngIf="a.AssignmentStatus === 'PendingCancellation'" class="payment-pending-badge">
+        <ion-icon name="time-outline"></ion-icon> Cancellation Requested — awaiting doctor
       </ion-badge>
       <br>
       <ion-button size="small" fill="outline" color="primary"

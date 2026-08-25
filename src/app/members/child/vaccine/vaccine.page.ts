@@ -55,6 +55,8 @@ export class VaccinePage {
   canUnskip = true;
   canEditSchedule = true;
   doctorId: number = null;
+  callerUserId: number = null;
+  securityStamp: string = null;
   clinicId: number = null;
   clinicPAs: any[] = [];
   assignPopupOpen: boolean = false;
@@ -151,6 +153,8 @@ export class VaccinePage {
     this.storage.get(environment.USER).then((user) => {
       if (!user) { console.error('No user data found in storage.'); return; }
       this.usertype = user.UserType;
+      this.callerUserId = user.Id ? Number(user.Id) : null;
+      this.storage.get(environment.SECURITY_STAMP).then(stamp => { this.securityStamp = stamp || null; });
       if (user.UserType === 'PA') {
         this.paId = Number(user.PAId) || null;
         // invoice-status is keyed by DoctorId, not PaId — bulkinvoice.page.ts reads
@@ -394,17 +398,21 @@ export class VaccinePage {
       await this.UnfillVaccine(v.Id);
       return;
     }
-    // Stage 3 — guarded confirm.
+    // Stage 3 — guarded confirm. Doctor ungive deletes the invoice immediately; PA ungive
+    // leaves it intact and sends it to the doctor's Pending Reversal Approvals queue instead
+    // — same asymmetry as everywhere else ungive is trusted-vs-reviewed by actor.
     const batch = v.BatchNo || v.LotNo || v.Batch || 'this batch';
     const doseName = (v.Dose && v.Dose.Name) ? v.Dose.Name : 'this dose';
     const amt = this.invoiceAmountMap[date];
-    const amtStr = amt > 0 ? ' The invoice total will be recalculated (currently Rs ' + amt.toLocaleString() + ').' : '';
+    const amtLabel = amt > 0 ? ' (currently Rs ' + amt.toLocaleString() + ')' : '';
+    const invoiceStr = this.usertype === 'DOCTOR'
+      ? ' The invoice for this visit' + amtLabel + ' will be deleted.'
+      : ' The invoice for this visit' + amtLabel + ' will be sent to the doctor for review before it\'s changed.';
     const alert = await this.alertController.create({
       header: 'Ungive ' + doseName + '?',
       cssClass: 'vac-confirm',
       message:
-        'This dose is on the invoice for this visit. Ungiving removes it and the invoice ' +
-        'is regenerated.' + amtStr + ' Stock for ' + batch + ' will be restored.',
+        'This dose is on the invoice for this visit.' + invoiceStr + ' Stock for ' + batch + ' will be restored.',
       buttons: [
         { text: 'Keep', role: 'cancel', cssClass: 'alert-btn-neutral' },
         {
@@ -421,17 +429,21 @@ export class VaccinePage {
     const doseName = (v.Dose && v.Dose.Name) ? v.Dose.Name : 'this dose';
     const amt = this.invoiceAmountMap[date];
     const amtStr = amt > 0 ? ' (Rs ' + amt.toLocaleString() + ')' : '';
-    const remaining = this.usertype === 'PA' ? (' You have ' + (2 - (v.UngiveCount || 0)) + ' same-day ungive(s) left.') : '';
+    const isDoctor = this.usertype === 'DOCTOR';
+    const remaining = isDoctor ? '' : (' You have ' + (2 - (v.UngiveCount || 0)) + ' same-day ungive(s) left. This is logged for the doctor to review.');
+    const invoiceAction = isDoctor
+      ? 'Ungiving will permanently delete the invoice and mark this dose due again.'
+      : 'Ungiving will mark this dose due again and send the invoice to the doctor for approval before anything is changed.';
     const alert = await this.alertController.create({
       header: 'Ungive paid dose?',
       cssClass: 'vac-confirm',
       message:
-        doseName + ' was invoiced and marked paid' + amtStr + '. Ungiving will void the invoice ' +
-        'and mark this dose due again. This cannot be undone from here.' + remaining,
+        doseName + ' was invoiced and marked paid' + amtStr + '. ' + invoiceAction +
+        ' This cannot be undone from here.' + remaining,
       buttons: [
         { text: 'Cancel', role: 'cancel', cssClass: 'alert-btn-neutral' },
         {
-          text: 'Ungive & void invoice',
+          text: isDoctor ? 'Ungive & delete invoice' : 'Ungive & send for review',
           cssClass: 'alert-btn-danger',
           handler: () => { this.UnfillVaccine(v.Id); }
         }
@@ -1794,7 +1806,7 @@ removal(type: string){
     this.paGuidelines = '';
     this.paTargetDate = '';
     this.pendingAssignScheduleIds = [];
-    this.paService.createAssignment(payload).subscribe(res => {
+    this.paService.createAssignment(payload, this.callerUserId, this.securityStamp).subscribe(res => {
       if (res && res.IsSuccess) {
         this.loadActiveAssignment(() => {
           this.assigningPA = false;
@@ -1833,7 +1845,7 @@ removal(type: string){
   // and already returns AssignmentId + AssignmentStatus for this child.
   loadActivePAAssignment(onDone?: () => void) {
     if (!this.paId || !this.childId) { if (onDone) onDone(); return; }
-    this.paService.getAssignments(this.paId).subscribe(res => {
+    this.paService.getAssignments(this.paId, this.callerUserId, this.securityStamp).subscribe(res => {
       if (res && res.IsSuccess) {
         const all: any[] = res.ResponseData || [];
         this.activeAssignment = all.find(a => a.ChildId === Number(this.childId)) || null;
@@ -1963,7 +1975,7 @@ removal(type: string){
     await loading.present();
     const targetDate = this.paTargetDate || null;
     this.paTargetDate = '';
-    this.paService.reassignAssignment(this.activeAssignment.AssignmentId, pa.Id, targetDate).subscribe(
+    this.paService.reassignAssignment(this.activeAssignment.AssignmentId, pa.Id, targetDate, null, this.callerUserId, this.securityStamp).subscribe(
       res => {
         loading.dismiss();
         if (res && res.IsSuccess) {

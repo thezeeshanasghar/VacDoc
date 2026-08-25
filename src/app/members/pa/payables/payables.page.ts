@@ -34,13 +34,14 @@ export class PayablesPage {
     const user = await this.storage.get(environment.USER);
     if (!user || user.UserType !== 'PA') return;
     const paId = Number(user.PAId);
+    const stamp = await this.storage.get(environment.SECURITY_STAMP);
 
     const loading = await this.loadingController.create({ message: 'Loading...' });
     await loading.present();
 
     try {
       const [assignRes, reconRes, pendingDsRes, completedDsRes] = await Promise.all([
-        this.paService.getAssignments(paId).toPromise(),
+        this.paService.getAssignments(paId, user.Id ? Number(user.Id) : undefined, stamp).toPromise(),
         this.paService.getMyReconciliation(paId).toPromise(),
         this.stockService.getPendingDirectSalesForPa(paId).toPromise(),
         this.stockService.getCompletedDirectSalesForPa(paId).toPromise()

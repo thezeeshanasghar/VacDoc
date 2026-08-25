@@ -64,6 +64,11 @@ export class PaAssignmentTrackingPage {
   requestingManagerId: number | null = null;
   canReassign = true;
 
+  // Doctor's own identity, needed to authorize a doctor-initiated Reassign (the manager path
+  // is authorized via requestingManagerId + ManagerPermission instead — see PAAssignmentController).
+  callerUserId: number | null = null;
+  securityStamp: string | null = null;
+
   // Reassign flow state — which row is currently picking a new PA, and the clinic-scoped
   // PA list to choose from (loaded once the row's clinic is known).
   reassigningRowId: number | null = null;
@@ -89,6 +94,13 @@ export class PaAssignmentTrackingPage {
   selectedIds: Set<number> = new Set();
   readonly STALE_DAYS = 14;
 
+  // PA-submitted cancellation requests awaiting doctor approve/reject — doctor-only
+  // (not part of the Manager permission tier), surfaced as its own panel rather than
+  // folded into the main filtered list, matching the dedicated pending-cancellations endpoint.
+  pendingCancellations: any[] = [];
+  rejectingCancelId: number | null = null;
+  rejectNote: string = '';
+
   constructor(
     private paService: PaService,
     private clinicService: ClinicService,
@@ -110,6 +122,8 @@ export class PaAssignmentTrackingPage {
     if (storedDoctorId) {
       this.doctorId = Number(storedDoctorId);
     }
+    this.callerUserId = user && user.Id ? Number(user.Id) : null;
+    this.securityStamp = await this.storage.get(environment.SECURITY_STAMP);
 
     if (user && user.UserType === 'MANAGER') {
       this.isManager = true;
@@ -120,6 +134,71 @@ export class PaAssignmentTrackingPage {
 
     await this.loadClinics();
     this.load();
+    if (!this.isManager) { this.loadPendingCancellations(); }
+  }
+
+  loadPendingCancellations() {
+    if (!this.doctorId) { return; }
+    this.paService.getPendingCancellations(this.doctorId).subscribe(
+      res => { this.pendingCancellations = (res && res.IsSuccess) ? (res.ResponseData || []) : []; },
+      () => { this.pendingCancellations = []; }
+    );
+  }
+
+  async approveCancellation(row: any) {
+    if (!this.doctorId) { return; }
+    const alert = await this.alertController.create({
+      header: 'Approve Cancellation',
+      message: `Cancel the assignment for ${row.ChildName}? This can't be undone.`,
+      buttons: [
+        { text: 'No', role: 'cancel' },
+        {
+          text: 'Yes, Approve',
+          handler: () => {
+            this.paService.approveCancelRequest(row.AssignmentId, this.doctorId).subscribe(
+              res => {
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Cancellation approved', 'success');
+                  this.pendingCancellations = this.pendingCancellations.filter(r => r.AssignmentId !== row.AssignmentId);
+                  this.load();
+                } else {
+                  this.toastService.create((res && res.Message) || 'Failed to approve', 'danger');
+                }
+              },
+              () => { this.toastService.create('Failed to approve cancellation', 'danger'); }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  openRejectCancellation(row: any) {
+    this.rejectingCancelId = row.AssignmentId;
+    this.rejectNote = '';
+  }
+
+  closeRejectCancellation() {
+    this.rejectingCancelId = null;
+    this.rejectNote = '';
+  }
+
+  confirmRejectCancellation(row: any) {
+    if (!this.doctorId) { return; }
+    this.paService.rejectCancelRequest(row.AssignmentId, this.doctorId, this.rejectNote || '').subscribe(
+      res => {
+        if (res && res.IsSuccess) {
+          this.toastService.create('Cancellation request rejected — assignment stays active', 'success');
+          this.pendingCancellations = this.pendingCancellations.filter(r => r.AssignmentId !== row.AssignmentId);
+          this.closeRejectCancellation();
+          this.load();
+        } else {
+          this.toastService.create((res && res.Message) || 'Failed to reject', 'danger');
+        }
+      },
+      () => { this.toastService.create('Failed to reject cancellation', 'danger'); }
+    );
   }
 
   private toDateStr(d: Date): string {
@@ -273,7 +352,9 @@ export class PaAssignmentTrackingPage {
       row.AssignmentId,
       this.reassignTargetPaId,
       row.TargetDate || undefined,
-      this.isManager ? (this.requestingManagerId || undefined) : undefined
+      this.isManager ? (this.requestingManagerId || undefined) : undefined,
+      this.callerUserId || undefined,
+      this.securityStamp || undefined
     ).subscribe(
       res => {
         if (res && res.IsSuccess) {
@@ -478,6 +559,7 @@ export class PaAssignmentTrackingPage {
     if (row.IsCancelled) { return 'cancelled'; }
     if (row.IsCashConfirmedByDoctor) { return 'cash-confirmed'; }
     if (row.IsCompleted) { return 'completed'; }
+    if (row.AssignmentStatus === 'PendingCancellation') { return 'pending-cancellation'; }
     if (row.AssignmentStatus === 'PendingHandover') { return 'handover'; }
     return 'active';
   }
@@ -486,6 +568,7 @@ export class PaAssignmentTrackingPage {
     if (row.IsCancelled) { return 'Cancelled'; }
     if (row.IsCashConfirmedByDoctor) { return 'Cash Confirmed'; }
     if (row.IsCompleted) { return 'Completed'; }
+    if (row.AssignmentStatus === 'PendingCancellation') { return 'Cancellation Requested'; }
     if (row.AssignmentStatus === 'PendingHandover') { return 'Pending Handover'; }
     return 'Active';
   }

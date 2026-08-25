@@ -16,6 +16,7 @@ import { environment } from "src/environments/environment";
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { SMS } from '@ionic-native/sms/ngx';
 import { TitleCasePipe } from '@angular/common';
+import { PaService } from "src/app/services/pa.service";
 
 //https://www.joshmorony.com/dynamic-infinite-input-fields-in-an-ionic-application/
 
@@ -28,6 +29,7 @@ export class ChildSceduleEditPage implements OnInit {
   public fg: FormGroup;
   ChildId: any;
   NewDoses = true;
+  canAddVaccine = true;
 
   doses: any;
   constructor(
@@ -41,13 +43,25 @@ export class ChildSceduleEditPage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private androidPermissions: AndroidPermissions ,
     private sms: SMS,
-    private titlecasePipe: TitleCasePipe
-    
+    private titlecasePipe: TitleCasePipe,
+    private paService: PaService
+
   ) {}
  async ngOnInit() {
     this.fg = this.formBuilder.group({});
     this.ChildId = await this.activatedRoute.snapshot.paramMap.get('id');
     this.getVaccineInfo(this.ChildId);
+
+    const user = await this.storage.get(environment.USER);
+    if (user && user.UserType === 'PA') {
+      this.paService.getPaPermissions(Number(user.PAId)).subscribe(perm => {
+        this.canAddVaccine = (perm && perm.AddVaccineToPatientRecord) || false;
+        if (!this.canAddVaccine) {
+          this.toastService.create('You do not have permission to add vaccines to the patient record', 'danger');
+          this.router.navigate([`/members/child/vaccine/${this.ChildId}`]);
+        }
+      });
+    }
   }
 
   async getVaccineInfo(id) {

@@ -20,6 +20,30 @@
       <p class="page-subtitle">See what's been assigned and given, and track payments — filtered by clinic and staff</p>
     </div>
 
+    <!-- Pending Cancellation Requests — doctor-only, separate from the filtered list below -->
+    <div class="pending-cancel-panel" *ngIf="!isManager && pendingCancellations.length > 0">
+      <div class="pending-cancel-header">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <span>{{ pendingCancellations.length }} cancellation request{{ pendingCancellations.length > 1 ? 's' : '' }} awaiting your decision</span>
+      </div>
+      <div class="pending-cancel-row" *ngFor="let r of pendingCancellations">
+        <div class="pending-cancel-info">
+          <span class="pending-cancel-child">{{ r.ChildName }}</span>
+          <span class="pending-cancel-pa">requested by {{ r.PaName }}</span>
+          <span class="pending-cancel-reason" *ngIf="r.CancelRequestReason">"{{ r.CancelRequestReason }}"</span>
+        </div>
+        <div class="pending-cancel-actions" *ngIf="rejectingCancelId !== r.AssignmentId">
+          <ion-button size="small" color="danger" fill="outline" (click)="openRejectCancellation(r)">Reject</ion-button>
+          <ion-button size="small" color="success" (click)="approveCancellation(r)">Approve</ion-button>
+        </div>
+        <div class="pending-cancel-reject-form" *ngIf="rejectingCancelId === r.AssignmentId">
+          <input type="text" [(ngModel)]="rejectNote" placeholder="Note to PA (optional)" class="pending-cancel-reject-input" />
+          <ion-button size="small" fill="clear" (click)="closeRejectCancellation()">Cancel</ion-button>
+          <ion-button size="small" color="danger" (click)="confirmRejectCancellation(r)">Confirm Reject</ion-button>
+        </div>
+      </div>
+    </div>
+
     <!-- Shared Filter Bar -->
     <div class="filter-bar">
       <div class="filter-group">
@@ -232,13 +256,13 @@
               <span *ngIf="row.Notes">Notes: "{{ row.Notes }}"</span>
               <span *ngIf="row.CancelReason">Reason: "{{ row.CancelReason }}"</span>
               <button *ngIf="!isManager" class="link-to-payments" (click)="viewInPayments(row); $event.stopPropagation()">View in Payments →</button>
-              <button *ngIf="isManager && canReassign && statusClass(row) === 'active'"
+              <button *ngIf="(!isManager || canReassign) && statusClass(row) === 'active'"
                 class="link-to-payments" (click)="openReassign(row); $event.stopPropagation()">
                 <ion-icon name="swap-horizontal-outline"></ion-icon> Reassign
               </button>
             </div>
 
-            <!-- Inline "reassign to" picker — Manager only, active assignments only. -->
+            <!-- Inline "reassign to" picker — doctor or Manager-with-ReassignPaTask, active assignments only. -->
             <div class="reassign-picker" *ngIf="reassigningRowId === row.AssignmentId" (click)="$event.stopPropagation()">
               <ion-select placeholder="Choose new PA" [(ngModel)]="reassignTargetPaId" interface="popover">
                 <ion-select-option *ngFor="let pa of reassignPaOptions" [value]="pa.Id">{{ pa.Name }}</ion-select-option>

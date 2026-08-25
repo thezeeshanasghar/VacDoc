@@ -112,13 +112,15 @@
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
-      <!-- ── PA Assignments (Doctor always; PA only if ViewPaAssignmentStatus granted) ── -->
-      <div *ngIf="showPaAssignmentTracking" routerLink="/members/doctor/pa-assignment-tracking" class="dash-card fam-teal">
+      <!-- ── PA Assignments (Doctor/Manager always via tracking page; PA to their own
+           assignments list if ViewPaAssignmentStatus granted — a PA has no reassign capability
+           and must never land on the doctor/manager tracking page, which shows the full clinic) -->
+      <div *ngIf="showPaAssignmentTracking" [routerLink]="isPa ? '/members/pa/assignments' : '/members/doctor/pa-assignment-tracking'" class="dash-card fam-teal">
         <div class="dash-card-icon">
           <ion-icon name="clipboard-outline"></ion-icon>
         </div>
         <span class="dash-card-label">PA Assignments</span>
-        <span class="dash-card-sub">{{ isPa ? 'Assignment status & reassign' : 'Track & reassign PA tasks' }}</span>
+        <span class="dash-card-sub">{{ isPa ? 'View your assignment status' : 'Track & reassign PA tasks' }}</span>
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 

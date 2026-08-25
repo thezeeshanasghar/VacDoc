@@ -103,12 +103,14 @@ export class BookingsPage {
     );
   }
 
-  assignPA(booking: any) {
+  async assignPA(booking: any) {
     if (!this.selectedPAId) {
       this.toastService.create('Select a PA first.', 'danger');
       return;
     }
     var notes = (this.paGuidelines || '').trim() || booking.Vaccines || '';
+    const callerUserId = this.usertype && this.usertype.Id ? Number(this.usertype.Id) : undefined;
+    const securityStamp = await this.storage.get(environment.SECURITY_STAMP);
     this.bookingService.confirm(booking.Id, this.doctorComment).subscribe(
       (res) => {
         if (res && res.IsSuccess) {
@@ -122,7 +124,7 @@ export class BookingsPage {
             Notes: notes,
             TargetDate: this.paTargetDate || null,
             BookingId: booking.Id
-          }).subscribe(
+          }, callerUserId, securityStamp).subscribe(
             (r) => {
               if (r && r.IsSuccess) {
                 this.expandedId = 0;

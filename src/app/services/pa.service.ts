@@ -176,8 +176,12 @@ export class PaService extends BaseService {
     return this.http.post(url, log, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  getAssignments(paId: number): Observable<any> {
-    const url = `${this.API_PA}PAAssignment/pa/${paId}`;
+  getAssignments(paId: number, callerUserId?: number, securityStamp?: string): Observable<any> {
+    let url = `${this.API_PA}PAAssignment/pa/${paId}`;
+    const params: string[] = [];
+    if (callerUserId) { params.push(`userId=${callerUserId}`); }
+    if (securityStamp) { params.push(`securityStamp=${encodeURIComponent(securityStamp)}`); }
+    if (params.length) { url += '?' + params.join('&'); }
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
@@ -191,9 +195,10 @@ export class PaService extends BaseService {
     return this.http.post(url, {}, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  createAssignment(data: any): Observable<any> {
+  createAssignment(data: any, callerUserId?: number, securityStamp?: string): Observable<any> {
     const url = `${this.API_PA}PAAssignment`;
-    return this.http.post(url, data, this.httpOptions).pipe(catchError(this.handleError));
+    const body = { ...data, CallerUserId: callerUserId, SecurityStamp: securityStamp };
+    return this.http.post(url, body, this.httpOptions).pipe(catchError(this.handleError));
   }
 
   getPAsForClinic(clinicId: number): Observable<any> {
@@ -211,11 +216,33 @@ export class PaService extends BaseService {
     return this.http.patch(url, { CallerType: callerType, CallerId: callerId, Reason: reason }, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  reassignAssignment(assignmentId: number, newPaId: number, targetDate?: string | null, requestingManagerId?: number | null): Observable<any> {
+  requestCancelAssignment(assignmentId: number, paId: number, reason: string = ''): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/request-cancel`;
+    return this.http.patch(url, { CallerType: 'PA', CallerId: paId, Reason: reason }, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  getPendingCancellations(doctorId: number): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/pending-cancellations/${doctorId}`;
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  approveCancelRequest(assignmentId: number, doctorId: number): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/approve-cancel?doctorId=${doctorId}`;
+    return this.http.patch(url, {}, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  rejectCancelRequest(assignmentId: number, doctorId: number, notes: string = ''): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/reject-cancel`;
+    return this.http.patch(url, { DoctorId: doctorId, Notes: notes }, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  reassignAssignment(assignmentId: number, newPaId: number, targetDate?: string | null, requestingManagerId?: number | null, callerUserId?: number, securityStamp?: string): Observable<any> {
     const url = `${this.API_PA}PAAssignment/${assignmentId}/reassign`;
     const body: any = { NewPaId: newPaId };
     if (targetDate) { body.TargetDate = targetDate; }
     if (requestingManagerId) { body.RequestingManagerId = requestingManagerId; }
+    if (callerUserId) { body.CallerUserId = callerUserId; }
+    if (securityStamp) { body.SecurityStamp = securityStamp; }
     return this.http.patch(url, body, this.httpOptions).pipe(catchError(this.handleError));
   }
 

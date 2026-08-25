@@ -417,8 +417,76 @@
   &.badge-completed      { background: var(--vac-green-tint); color: var(--vac-green); }
   &.badge-cash-confirmed { background: var(--vac-green-tint); color: var(--vac-green); }
   &.badge-handover       { background: var(--vac-warn-tint); color: var(--vac-warn); }
+  &.badge-pending-cancellation { background: var(--vac-red-tint); color: var(--vac-red); }
   &.badge-cancelled      { background: var(--vac-red-tint); color: var(--vac-red); }
   &.badge-auto      { background: var(--vac-hairline); color: var(--vac-ink-3); font-weight: 600; }
+}
+
+// ─── Pending Cancellation Requests panel ────────────────────────────────────────
+.pending-cancel-panel {
+  background: var(--vac-warn-tint);
+  border: 1px solid var(--vac-warn);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+
+.pending-cancel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--vac-warn);
+  margin-bottom: 10px;
+
+  ion-icon { font-size: 18px; }
+}
+
+.pending-cancel-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+
+  &:last-child { margin-bottom: 0; }
+}
+
+.pending-cancel-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 160px;
+}
+
+.pending-cancel-child { font-size: 14px; font-weight: 700; color: var(--vac-petrol); }
+.pending-cancel-pa { font-size: 12px; color: var(--vac-ink-3); }
+.pending-cancel-reason { font-size: 12px; color: var(--vac-ink-3); font-style: italic; }
+
+.pending-cancel-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.pending-cancel-reject-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 220px;
+}
+
+.pending-cancel-reject-input {
+  flex: 1;
+  border: 1px solid var(--vac-hairline);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
 }
 
 .due-pill {
