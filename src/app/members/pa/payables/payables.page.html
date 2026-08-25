@@ -91,6 +91,14 @@
             </span>
           </div>
 
+          <!-- Parent contact -->
+          <div class="contact-row" *ngIf="!a.IsDirectSale && a.ParentWhatsApp">
+            <span class="contact-label">Parent Mobile</span>
+            <span class="contact-wa" (click)="openParentWhatsApp(a.ParentWhatsApp); $event.stopPropagation()">
+              <ion-icon name="logo-whatsapp"></ion-icon> {{ a.ParentMobile }}
+            </span>
+          </div>
+
           <!-- Amount + Actions Row -->
           <div class="card-footer-row">
             <div class="card-amount" *ngIf="!a.IsDirectSale">

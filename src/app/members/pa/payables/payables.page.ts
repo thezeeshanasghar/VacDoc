@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AlertController, LoadingController, NavController } from '@ionic/angular';
+import { AlertController, LoadingController, NavController, Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { PaService } from 'src/app/services/pa.service';
 import { StockService } from 'src/app/services/stock.service';
@@ -27,7 +27,8 @@ export class PayablesPage {
     private loadingController: LoadingController,
     private toastService: ToastService,
     private navCtrl: NavController,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private platform: Platform
   ) {}
 
   async ionViewWillEnter() {
@@ -69,7 +70,7 @@ export class PayablesPage {
         newList = newList.concat(dsRows);
       }
 
-      this.newAssignments = newList.sort((a: any, b: any) => new Date(b.AssignedAt).getTime() - new Date(a.AssignedAt).getTime());
+      this.newAssignments = this.sortByUrgency(newList);
       this.pendingCount = this.newAssignments.length;
 
       let completedList: any[] = [];
@@ -113,6 +114,22 @@ export class PayablesPage {
     return 'MR-' + String(childId).padStart(6, '0');
   }
 
+  // Mirrors assignments.page.ts's sortByUrgency — this list previously sorted by
+  // AssignedAt descending only, which could put an overdue visit below one due next
+  // week. Direct-sale rows have no TargetDate/urgency, so they fall into 'none' and
+  // sort by AssignedAt among themselves, same as before this fix for that subset.
+  private sortByUrgency(list: any[]): any[] {
+    const rank = { overdue: 0, today: 1, upcoming: 2, none: 3 };
+    return [...list].sort((a, b) => {
+      const rankDiff = rank[this.urgency(a)] - rank[this.urgency(b)];
+      if (rankDiff !== 0) { return rankDiff; }
+      if (a.TargetDate && b.TargetDate) {
+        return new Date(a.TargetDate).getTime() - new Date(b.TargetDate).getTime();
+      }
+      return new Date(b.AssignedAt).getTime() - new Date(a.AssignedAt).getTime();
+    });
+  }
+
   // Matches PaAssignmentTrackingPage's/assignments.page.ts's urgency() so overdue/today/
   // upcoming read the same way everywhere this shows up.
   urgency(a: any): 'overdue' | 'today' | 'upcoming' | 'none' {
@@ -124,6 +141,17 @@ export class PayablesPage {
     if (targetDay < todayDay) { return 'overdue'; }
     if (targetDay === todayDay) { return 'today'; }
     return 'upcoming';
+  }
+
+  // whatsAppNumber is already normalized server-side (ToWhatsAppNumber: digits only, no
+  // leading 0, country code prefixed once) — opens a blank chat, no prefilled message.
+  // Same as assignments.page.ts's openParentWhatsApp — this page just never had it.
+  openParentWhatsApp(whatsAppNumber: string) {
+    if (!whatsAppNumber) { return; }
+    const url = (this.platform.is('android') || this.platform.is('ios'))
+      ? `whatsapp://send?phone=${whatsAppNumber}`
+      : `https://web.whatsapp.com/send?phone=${whatsAppNumber}`;
+    window.open(url, '_system');
   }
 
   formatTargetDate(dateStr: string): string {

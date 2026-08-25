@@ -188,6 +188,41 @@
   &.due-upcoming { background: var(--vac-blue-tint); color: var(--vac-blue); }
 }
 
+// ── Parent contact / WhatsApp chip ───────────────────────────────────────────
+.contact-row {
+  padding: 8px 14px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.contact-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vac-ink-4);
+}
+
+.contact-wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #128C4A;
+  background: #E7F9EF;
+  border: 1px solid rgba(37, 211, 102, 0.35);
+  border-radius: 20px;
+  padding: 4px 10px 4px 7px;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+
+  &:active { transform: scale(0.96); }
+
+  ion-icon { font-size: 15px; }
+}
+
 // Bottom row: amount + actions
 .card-footer-row {
   display: flex;
