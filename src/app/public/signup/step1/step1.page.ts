@@ -525,9 +525,12 @@ export class Step1Page implements OnInit {
           this.toastService.create('Phone number is already in use. Please use a different phone number.', 'danger');
           this.markFieldAsInvalid('MobileNumber');
         } else if (res.IsSuccess) {
-          // If signup is successful
-          this.toastService.create("Account created. Log in with your mobile number and the password you just set — we've also emailed a copy to " + payload.Email + ".", "success");
-          this.router.navigate(["/login"]);
+          // If signup is successful — wait for the toast to actually be
+          // on screen before navigating away, otherwise the route change
+          // can tear it down before it ever renders.
+          this.toastService.create("Account created. Log in with your mobile number and the password you just set — we've also emailed a copy to " + payload.Email + ".", "success", false, 4000).then(() => {
+            this.router.navigate(["/login"]);
+          });
         } else {
           // Handle any other generic errors
           this.isSubmitted = false;

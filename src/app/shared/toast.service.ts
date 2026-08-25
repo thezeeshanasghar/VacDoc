@@ -23,7 +23,7 @@ export class ToastService {
       // showCloseButton: ok,
       // closeButtonText: 'OK'
     });
-    this.toast.present();
+    await this.toast.present();
   }
 
 }
