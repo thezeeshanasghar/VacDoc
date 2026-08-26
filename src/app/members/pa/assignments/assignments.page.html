@@ -9,14 +9,24 @@
 
 <ion-content class="ion-padding">
 
-  <div *ngIf="assignments.length === 0 && pendingDirectSales.length === 0 && !loading" class="empty-state">
+  <div class="kpi-row" *ngIf="!loading">
+    <div class="kpi-card kpi-blue">
+      <div class="kpi-icon-wrap kpi-icon-blue">
+        <ion-icon name="wallet-outline"></ion-icon>
+      </div>
+      <div class="kpi-body">
+        <p class="kpi-label">Total Payable</p>
+        <p class="kpi-value">{{ totalPayable | number }}</p>
+        <p class="kpi-sub">PKR · Awaiting doctor confirmation</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="assignments.length === 0 && pendingDirectSales.length === 0 && completedDirectSales.length === 0 && orphanInvoiceRows.length === 0 && !loading" class="empty-state">
     <ion-icon name="clipboard-outline"></ion-icon>
     <p>No active assignments</p>
   </div>
 
-  <ion-list-header *ngIf="pendingDirectSales.length > 0">
-    <ion-label>Direct Sales — Record Payment</ion-label>
-  </ion-list-header>
   <div class="seg-toggle" *ngIf="assignments.length > 0">
     <div class="seg-btn tone-warn" [class.active]="dueFilter === 'today'" (click)="setDueFilter('today')">
       Today <span class="seg-count">{{ dueFilterCount('today') }}</span>
@@ -29,11 +39,14 @@
     </div>
   </div>
 
-  <div *ngIf="assignments.length > 0 && filteredAssignments.length === 0" class="empty-state">
+  <div *ngIf="assignments.length > 0 && filteredAssignments.length === 0 && dueFilter !== 'all'" class="empty-state">
     <ion-icon name="calendar-clear-outline"></ion-icon>
     <p>No assignments {{ dueFilter === 'today' ? 'due today' : 'upcoming' }}</p>
   </div>
 
+  <ion-list-header *ngIf="pendingDirectSales.length > 0">
+    <ion-label>Direct Sales — Record Payment</ion-label>
+  </ion-list-header>
   <ion-card *ngFor="let s of pendingDirectSales" class="direct-sale-card">
     <ion-card-content>
       <div class="icons">
@@ -60,6 +73,55 @@
     </ion-card-content>
   </ion-card>
 
+  <ng-container *ngIf="dueFilter === 'all'">
+    <ion-list-header *ngIf="completedDirectSales.length > 0">
+      <ion-label>Direct Sales — Awaiting Doctor Confirmation</ion-label>
+    </ion-list-header>
+    <ion-card *ngFor="let s of completedDirectSales" class="direct-sale-card">
+      <ion-card-content>
+        <div class="icons">
+          <div class="icons-left">
+            <ion-icon name="cash-outline" class="ds-money-icon"></ion-icon>
+            <span class="icons-name">{{ s.ClientName }}</span>
+          </div>
+          <div class="icons-right">
+            <span class="stage-pill stage-pendingHandover">Pending Handover</span>
+          </div>
+        </div>
+        <div class="ds-details">
+          <span>Rs. {{ s.Amount | number:'1.0-0' }}</span>
+          &nbsp;&nbsp;
+          <ion-icon name="calendar"></ion-icon> {{ s.Date | date:'dd MMM yyyy' }}
+        </div>
+        <div *ngIf="s.SaleBillNo" class="ds-bill-no">{{ s.SaleBillNo }}</div>
+        <div class="ds-status">{{ s.PaymentMode }} · handed off, awaiting doctor's cash confirmation</div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-list-header *ngIf="orphanInvoiceRows.length > 0">
+      <ion-label>Invoices Awaiting Confirmation</ion-label>
+    </ion-list-header>
+    <ion-card *ngFor="let r of orphanInvoiceRows" class="direct-sale-card">
+      <ion-card-content>
+        <div class="icons">
+          <div class="icons-left">
+            <ion-icon name="document-text-outline" class="ds-money-icon"></ion-icon>
+            <span class="icons-name">{{ r.PatientName }}</span>
+          </div>
+          <div class="icons-right">
+            <span class="stage-pill stage-pendingHandover">Pending Handover</span>
+          </div>
+        </div>
+        <div class="ds-details">
+          <span>Rs. {{ r.Amount | number:'1.0-0' }}</span>
+          &nbsp;&nbsp;
+          <ion-icon name="calendar"></ion-icon> {{ r.Date | date:'dd MMM yyyy' }}
+        </div>
+        <div class="ds-status">Invoice not linked to an active assignment — contact the doctor if this looks wrong.</div>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+
   <ion-card *ngFor="let a of filteredAssignments" [ngClass]="[a.Gender === 'Girl' ? 'girl' : 'boy', isBulkGroup(a) ? 'bulk-group' : '']">
 
     <div class="icons">
@@ -74,12 +136,19 @@
       </div>
       <div class="icons-right">
         <ion-icon
+          *ngIf="stage(a) === 'pendingHandover'"
           name="checkmark-done-circle-outline"
           class="iconchild complete-icon"
           (click)="confirmComplete(a)">
         </ion-icon>
         <ion-icon
-          *ngIf="a.AssignmentStatus !== 'PendingCancellation'"
+          *ngIf="stage(a) !== 'completed' && stage(a) !== 'pendingHandover' && a.AssignmentStatus !== 'PendingCancellation'"
+          name="checkmark-outline"
+          class="iconchild complete-icon"
+          (click)="promptMarkDone(a)">
+        </ion-icon>
+        <ion-icon
+          *ngIf="stage(a) !== 'completed' && a.AssignmentStatus !== 'PendingCancellation'"
           name="close-circle-outline"
           class="iconchild cancel-icon"
           (click)="confirmCancel(a)">
@@ -88,14 +157,25 @@
     </div>
 
     <ion-card-content>
-      <span class="due-pill" [ngClass]="'due-' + urgency(a)" *ngIf="urgency(a) !== 'none'">
-        <ng-container [ngSwitch]="urgency(a)">
-          <span *ngSwitchCase="'overdue'">⚠ Overdue · {{ formatTargetDate(a.TargetDate) }}</span>
-          <span *ngSwitchCase="'today'">📅 Due Today</span>
-          <span *ngSwitchCase="'upcoming'">📅 Due {{ formatTargetDate(a.TargetDate) }}</span>
+      <ng-container *ngIf="!isPastDueStage(a)">
+        <span class="due-pill" [ngClass]="'due-' + urgency(a)" *ngIf="urgency(a) !== 'none'">
+          <ng-container [ngSwitch]="urgency(a)">
+            <span *ngSwitchCase="'overdue'">⚠ Overdue · {{ formatTargetDate(a.TargetDate) }}</span>
+            <span *ngSwitchCase="'today'">📅 Due Today</span>
+            <span *ngSwitchCase="'upcoming'">📅 Due {{ formatTargetDate(a.TargetDate) }}</span>
+          </ng-container>
+        </span>
+      </ng-container>
+      <span class="stage-pill" [ngClass]="'stage-' + stage(a)">
+        <ng-container [ngSwitch]="stage(a)">
+          <span *ngSwitchCase="'new'">New</span>
+          <span *ngSwitchCase="'given'">Vaccine Given</span>
+          <span *ngSwitchCase="'invoiced'">Invoice Downloaded</span>
+          <span *ngSwitchCase="'pendingHandover'">Pending Handover</span>
+          <span *ngSwitchCase="'completed'">Completed — awaiting doctor</span>
         </ng-container>
       </span>
-      <br *ngIf="urgency(a) !== 'none'">
+      <br>
       <ion-icon name="person"></ion-icon> {{ a.FatherName }}
       &nbsp;&nbsp;
       <ion-icon name="calendar"></ion-icon> {{ a.DOB | date:'dd MMM yyyy' }}

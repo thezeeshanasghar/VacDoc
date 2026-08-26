@@ -15,9 +15,17 @@ import { environment } from 'src/environments/environment';
 export class AssignmentsPage {
   assignments: any[] = [];
   pendingDirectSales: any[] = [];
+  completedDirectSales: any[] = [];
+  // "Invoice" reconciliation rows with no matching PAAssignment in this response —
+  // see orphan-invoice note on loadAll(). Rare, but real money the PA is accountable for.
+  orphanInvoiceRows: any[] = [];
   loading: boolean = false;
   paId: number = null;
   dueFilter: 'today' | 'upcoming' | 'all' = 'all';
+
+  // Stat tiles, merged in from the retired Payables page — sourced from
+  // GetMyReconciliation.TotalPending, same number that page always showed.
+  totalPayable: number = 0;
 
   constructor(
     private paService: PaService,
@@ -34,20 +42,53 @@ export class AssignmentsPage {
     const user = await this.storage.get(environment.USER);
     if (user && user.PAId) {
       this.paId = Number(user.PAId);
-      this.loadAssignments(this.paId);
-      this.loadPendingDirectSales(this.paId);
+      await this.loadAll(this.paId);
     }
   }
 
-  loadPendingDirectSales(paId: number) {
-    this.stockService.getPendingDirectSalesForPa(paId).subscribe(
-      res => {
-        if (res && res.IsSuccess) {
-          this.pendingDirectSales = res.ResponseData || [];
-        }
-      },
-      () => {}
-    );
+  // Single load for the merged page — mirrors the old payables.page.ts's Promise.all
+  // pattern. GetMyReconciliation is kept (not dropped) purely to catch "orphan" Invoice
+  // rows whose InvoiceSubmissionId has no matching PAAssignment in this PA's own list
+  // (e.g. the assignment was later cancelled/deleted, or none existed when the invoice
+  // was downloaded — SyncInvoicePaToActiveAssignment's own self-heal comment in
+  // ScheduleController documents this as a real, if rare, case) — without this, such an
+  // invoice would silently vanish from the PA's view even though she's accountable for it.
+  async loadAll(paId: number) {
+    this.loading = true;
+    const user = await this.storage.get(environment.USER);
+    const stamp = await this.storage.get(environment.SECURITY_STAMP);
+    const callerUserId = user && user.Id ? Number(user.Id) : undefined;
+
+    try {
+      const [assignRes, reconRes, pendingDsRes, completedDsRes] = await Promise.all([
+        this.paService.getAssignments(paId, callerUserId, stamp).toPromise(),
+        this.paService.getMyReconciliation(paId).toPromise(),
+        this.stockService.getPendingDirectSalesForPa(paId).toPromise(),
+        this.stockService.getCompletedDirectSalesForPa(paId).toPromise(),
+      ]);
+
+      this.assignments = this.sortByUrgency((assignRes && assignRes.IsSuccess) ? (assignRes.ResponseData || []) : []);
+
+      if (reconRes && reconRes.IsSuccess && reconRes.ResponseData) {
+        this.totalPayable = reconRes.ResponseData.TotalPending || 0;
+        const coveredInvoiceIds = new Set(
+          this.assignments.filter(a => a.InvoiceSubmissionId).map(a => a.InvoiceSubmissionId)
+        );
+        this.orphanInvoiceRows = (reconRes.ResponseData.Rows || []).filter((r: any) =>
+          r.RowType === 'Invoice' && r.InvoiceSubmissionId && !coveredInvoiceIds.has(r.InvoiceSubmissionId)
+        );
+      } else {
+        this.totalPayable = 0;
+        this.orphanInvoiceRows = [];
+      }
+
+      this.pendingDirectSales = (pendingDsRes && pendingDsRes.IsSuccess) ? (pendingDsRes.ResponseData || []) : [];
+      this.completedDirectSales = (completedDsRes && completedDsRes.IsSuccess) ? (completedDsRes.ResponseData || []) : [];
+    } catch (e) {
+      this.toastService.create('Failed to load assignments', 'danger');
+    } finally {
+      this.loading = false;
+    }
   }
 
   // Step 1: record payment mode, or Step 2: mark done — depending on sale state
@@ -127,6 +168,7 @@ export class AssignmentsPage {
         if (res && res.IsSuccess) {
           this.pendingDirectSales = this.pendingDirectSales.filter(s => s.SaleBillNo !== sale.SaleBillNo);
           this.toastService.create('Marked as done.');
+          if (this.paId) { this.loadAll(this.paId); }
         } else {
           this.toastService.create((res && res.Message) || 'Failed to update', 'danger');
         }
@@ -134,24 +176,6 @@ export class AssignmentsPage {
       () => {
         loading.dismiss();
         this.toastService.create('Failed to update', 'danger');
-      }
-    );
-  }
-
-  async loadAssignments(paId: number) {
-    this.loading = true;
-    const user = await this.storage.get(environment.USER);
-    const stamp = await this.storage.get(environment.SECURITY_STAMP);
-    this.paService.getAssignments(paId, user && user.Id ? Number(user.Id) : undefined, stamp).subscribe(
-      res => {
-        this.loading = false;
-        if (res && res.IsSuccess) {
-          this.assignments = this.sortByUrgency(res.ResponseData || []);
-        }
-      },
-      () => {
-        this.loading = false;
-        this.toastService.create('Failed to load assignments', 'danger');
       }
     );
   }
@@ -170,7 +194,9 @@ export class AssignmentsPage {
   }
 
   // Matches PaAssignmentTrackingPage's urgency() so overdue/today/upcoming read the same
-  // way on both the doctor's tracking view and the PA's own list.
+  // way on both the doctor's tracking view and the PA's own list. Only meaningful for
+  // stage() === 'new'/'given'/'invoiced' — pendingHandover/completed cards use their stage
+  // pill instead (see due-pill guard in the template).
   urgency(a: any): 'overdue' | 'today' | 'upcoming' | 'none' {
     if (!a.TargetDate) { return 'none'; }
     const target = new Date(a.TargetDate);
@@ -182,28 +208,55 @@ export class AssignmentsPage {
     return 'upcoming';
   }
 
+  // Full visit lifecycle for one assignment card: New -> Vaccine Given -> Invoice
+  // Downloaded -> Pending Handover (PA marked done, MarkDone endpoint) -> Completed
+  // (all paid, Complete endpoint). Row disappears from GetByPA entirely once the doctor
+  // confirms cash (IsCashConfirmedByDoctor) — never computed here, that's a filter, not a
+  // stage. Order matters: check the latest-reached stage first.
+  stage(a: any): 'new' | 'given' | 'invoiced' | 'pendingHandover' | 'completed' {
+    if (a.IsCompleted) { return 'completed'; }
+    if (a.AssignmentStatus === 'PendingHandover') { return 'pendingHandover'; }
+    if (a.HasInvoice) { return 'invoiced'; }
+    if (Array.isArray(a.Schedules) && a.Schedules.some((s: any) => s.IsDone)) { return 'given'; }
+    return 'new';
+  }
+
+  // Cards past "invoiced" stop being about due-dates and start being about handover —
+  // their due-pill is replaced by the stage pill (see template), and they're excluded
+  // from Today/Upcoming so those tabs stay meant for "what visit do I still need to do".
+  isPastDueStage(a: any): boolean {
+    const s = this.stage(a);
+    return s === 'pendingHandover' || s === 'completed';
+  }
+
   // Counts for the segmented toggle. Overdue is folded into "Today" — it's the more
   // urgent surface and there's no separate tab for it (approved mock decision).
+  // Direct Sales have no TargetDate/urgency at all — always under "All" only, same as
+  // before the toggle existed.
   dueFilterCount(filter: 'today' | 'upcoming' | 'all'): number {
-    if (filter === 'all') { return this.assignments.length; }
-    if (filter === 'today') {
-      return this.assignments.filter(a => this.urgency(a) === 'today' || this.urgency(a) === 'overdue').length;
+    if (filter === 'all') {
+      return this.assignments.length + this.pendingDirectSales.length + this.completedDirectSales.length + this.orphanInvoiceRows.length;
     }
-    return this.assignments.filter(a => this.urgency(a) === 'upcoming').length;
+    const dated = this.assignments.filter(a => !this.isPastDueStage(a));
+    if (filter === 'today') {
+      return dated.filter(a => this.urgency(a) === 'today' || this.urgency(a) === 'overdue').length;
+    }
+    return dated.filter(a => this.urgency(a) === 'upcoming').length;
   }
 
   setDueFilter(filter: 'today' | 'upcoming' | 'all') {
     this.dueFilter = filter;
   }
 
-  // Assignments with no TargetDate (urgency 'none') only ever show under "All" —
-  // same known gap as the plain pill's *ngIf guard, not solved here either.
+  // Assignments with no TargetDate (urgency 'none'), pendingHandover/completed-stage
+  // cards, Direct Sales, and orphan invoice rows only ever show under "All".
   get filteredAssignments(): any[] {
     if (this.dueFilter === 'all') { return this.assignments; }
+    const dated = this.assignments.filter(a => !this.isPastDueStage(a));
     if (this.dueFilter === 'today') {
-      return this.assignments.filter(a => this.urgency(a) === 'today' || this.urgency(a) === 'overdue');
+      return dated.filter(a => this.urgency(a) === 'today' || this.urgency(a) === 'overdue');
     }
-    return this.assignments.filter(a => this.urgency(a) === 'upcoming');
+    return dated.filter(a => this.urgency(a) === 'upcoming');
   }
 
   formatTargetDate(dateStr: string): string {
@@ -254,7 +307,62 @@ export class AssignmentsPage {
       .map(function(s) { return s.DoseName || 'Unknown'; });
   }
 
+  // "Mark Done" — the earlier of the two completion actions (MarkDone endpoint): gates on
+  // at least one paid schedule, moves the assignment to Pending Handover. Available from
+  // new/given/invoiced stages. Brought over from the retired payables.page.ts.
+  async promptMarkDone(a: any, event?: Event) {
+    if (event) { event.stopPropagation(); }
+    const unpaid = (a.Schedules || []).filter((s: any) =>
+      s.IsDone && !s.IsPaymentCollected && s.Amount > 0 && s.PaymentCollectorPaId === this.paId);
+
+    if (unpaid.length > 0) {
+      const names = unpaid.map((s: any) => s.DoseName).join(', ');
+      const alert = await this.alertController.create({
+        header: 'Payment Pending',
+        message: 'Please record payment for: ' + names + '. Use the money icon on the vaccine page first.',
+        buttons: [{ text: 'OK', role: 'cancel' }]
+      });
+      await alert.present();
+      return;
+    }
+
+    const confirm = await this.alertController.create({
+      header: 'Mark as Done',
+      message: 'Mark assignment for ' + a.Name + ' as done? This will move it to Pending Cash Handover for the doctor to confirm.',
+      buttons: [
+        { text: 'Back', role: 'cancel' },
+        { text: 'Mark Done', handler: () => { this.doMarkAssignmentDone(a.AssignmentId); } }
+      ]
+    });
+    await confirm.present();
+  }
+
+  private async doMarkAssignmentDone(assignmentId: number) {
+    const loading = await this.loadingController.create({ message: 'Marking done...' });
+    await loading.present();
+    this.paService.markAssignmentDone(assignmentId, this.paId).subscribe(
+      res => {
+        loading.dismiss();
+        if (res && res.IsSuccess) {
+          this.toastService.create('Marked as done — pending cash handover', 'success');
+          if (this.paId) { this.loadAll(this.paId); }
+        } else {
+          this.toastService.create((res && res.Message) || 'Mark done failed', 'danger');
+        }
+      },
+      () => {
+        loading.dismiss();
+        this.toastService.create('Mark done failed', 'danger');
+      }
+    );
+  }
+
+  // "Complete" — the final completion action (Complete endpoint): gates on ALL pinned
+  // schedules being paid. Only reachable once an assignment is already at Pending
+  // Handover — a card can't jump straight from "new" to fully completed without the
+  // doctor being told a handover is pending first.
   async confirmComplete(assignment: any) {
+    if (this.stage(assignment) !== 'pendingHandover') { return; }
     if (this.hasUnpaidSchedules(assignment)) {
       const alert = await this.alertController.create({
         header: 'Record Payment Mode',
@@ -340,8 +448,7 @@ export class AssignmentsPage {
         loading.dismiss();
         if (res && res.IsSuccess) {
           this.toastService.create('Assignment completed', 'success');
-          const user = await this.storage.get(environment.USER);
-          if (user && user.PAId) { this.loadAssignments(Number(user.PAId)); }
+          if (this.paId) { this.loadAll(this.paId); }
         } else {
           this.toastService.create(res.Message || 'Failed to complete', 'danger');
         }
@@ -436,7 +543,7 @@ export class AssignmentsPage {
       },
       () => {
         loading.dismiss();
-        this.toastService.create('Failed to cancel assignment', 'danger');
+        this.toastService.create('Failed to cancel', 'danger');
       }
     );
   }

@@ -159,6 +159,82 @@
   &.due-upcoming { background: var(--vac-blue-tint); color: var(--vac-blue); }
 }
 
+// ── Visit lifecycle stage pill (New / Given / Invoiced / Handover / Completed) ──
+.stage-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 700;
+  margin: 4px 6px 6px 0;
+
+  &.stage-new             { background: var(--vac-hairline); color: var(--vac-ink-3); }
+  &.stage-given            { background: var(--vac-blue-tint); color: var(--vac-blue); }
+  &.stage-invoiced         { background: rgba(111, 177, 165, 0.16); color: var(--vac-teal-icon); }
+  &.stage-pendingHandover  { background: var(--vac-warn-tint); color: var(--vac-warn); }
+  &.stage-completed        { background: var(--vac-green-tint); color: var(--vac-green); }
+}
+
+// ── Payable stat tile, merged in from the retired Payables page ─────────────────
+.kpi-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.kpi-card {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: var(--vac-shadow-sm);
+}
+
+.kpi-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  ion-icon { font-size: 19px; }
+}
+
+.kpi-icon-blue { background: var(--vac-blue-tint); color: var(--vac-blue); }
+
+.kpi-body {
+  min-width: 0;
+}
+
+.kpi-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--vac-ink-4);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin: 0;
+}
+
+.kpi-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--vac-petrol);
+  margin: 1px 0;
+}
+
+.kpi-sub {
+  font-size: 10.5px;
+  color: var(--vac-ink-4);
+  margin: 0;
+}
+
 // ── Payment pending badge ─────────────────────────────────────────────────────
 .payment-pending-badge {
   font-size: 11px;

@@ -707,9 +707,9 @@ export class MembersPage implements OnInit {
             });
 
             this.appPages.push({
-              title: "Assignments & Payments",
-              url: "/members/pa/payables",
-              icon: "wallet-outline"
+              title: "Assignments",
+              url: "/members/pa/assignments",
+              icon: "clipboard-outline"
             });
 
           } else if (data === "MANAGER") {
@@ -991,9 +991,12 @@ export class MembersPage implements OnInit {
     );
   }
 
-  // Bell badge count (spec: reflect assignments still needing PA attention,
-  // not a lifetime total) — mirrors the active/actionable filter already used
-  // by payables.page.ts and pa-assignment-tracking.page.ts.
+  // Topbar clipboard badge count (spec: reflect assignments still needing PA attention,
+  // not a lifetime total) — same active/actionable filter assignments.page.ts's own
+  // stage() logic implies (new/given/invoiced only), and pa-assignment-tracking.page.ts's
+  // "Active" status. GetByPA itself now also returns pendingHandover/completed rows
+  // (kept visible until doctor cash-confirms), so this filter is what keeps the badge
+  // meaning "still needs your action" rather than "still visible in the list".
   refreshPaAssignmentCount() {
     if (this.isManagerUser) {
       // Manager has no assignments "of their own" — count active assignments across

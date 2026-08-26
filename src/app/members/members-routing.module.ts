@@ -40,9 +40,13 @@ const routes: Routes = [
         path: 'pa/assignments',
         loadChildren: () => import('./pa/assignments/assignments.module').then(m => m.AssignmentsPageModule)
       },
+      // Retired — Payables merged into pa/assignments (one list: new/given/invoiced/
+      // pending-handover/completed, filtered only by Today/Upcoming/All). Redirect
+      // rather than delete, in case anything (an old bookmark, a stale notification
+      // deep-link) still points here.
       {
         path: 'pa/payables',
-        loadChildren: () => import('./pa/payables/payables.module').then(m => m.PayablesPageModule)
+        redirectTo: 'pa/assignments'
       },
       {
         path: 'pa/profile',

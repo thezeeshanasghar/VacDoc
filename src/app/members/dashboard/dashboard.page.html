@@ -11,13 +11,13 @@
 
     <div class="dash-grid">
 
-      <!-- ── PA ONLY: Assignments & Payments ───────────────────── -->
-      <div *ngIf="isPa" routerLink="/members/pa/payables" class="dash-card fam-blue">
+      <!-- ── PA ONLY: Assignments (merged visits + payment handover, one list) ── -->
+      <div *ngIf="isPa" routerLink="/members/pa/assignments" class="dash-card fam-blue">
         <div class="dash-card-icon">
-          <ion-icon name="wallet-outline"></ion-icon>
+          <ion-icon name="clipboard-outline"></ion-icon>
         </div>
-        <span class="dash-card-label">Assignments & Payments</span>
-        <span class="dash-card-sub">Tasks &amp; cash handover</span>
+        <span class="dash-card-label">Assignments</span>
+        <span class="dash-card-sub">Visits &amp; cash handover</span>
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
@@ -112,15 +112,15 @@
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
-      <!-- ── PA Assignments (Doctor/Manager always via tracking page; PA to their own
-           assignments list if ViewPaAssignmentStatus granted — a PA has no reassign capability
-           and must never land on the doctor/manager tracking page, which shows the full clinic) -->
-      <div *ngIf="showPaAssignmentTracking" [routerLink]="isPa ? '/members/pa/assignments' : '/members/doctor/pa-assignment-tracking'" class="dash-card fam-teal">
+      <!-- ── PA Assignments Tracking (Doctor/Manager oversight only — a PA always
+           reaches her own list via the unconditional "Assignments" card above, never
+           this one; ViewPaAssignmentStatus still gates doctor/manager oversight access) -->
+      <div *ngIf="showPaAssignmentTracking && !isPa" routerLink="/members/doctor/pa-assignment-tracking" class="dash-card fam-teal">
         <div class="dash-card-icon">
           <ion-icon name="clipboard-outline"></ion-icon>
         </div>
         <span class="dash-card-label">PA Assignments</span>
-        <span class="dash-card-sub">{{ isPa ? 'View your assignment status' : 'Track & reassign PA tasks' }}</span>
+        <span class="dash-card-sub">Track & reassign PA tasks</span>
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
