@@ -182,14 +182,16 @@ export class AssignmentsPage {
 
   // Mock's list-caption promises "Sorted by urgency — overdue first, then today, then
   // upcoming" but GetByPA returns rows in raw DB order — sort here using the same
-  // urgency() the pill itself renders with, so order and pill never disagree.
+  // urgency() the pill itself renders with, so order and pill never disagree. Within each
+  // urgency group, newest-assigned-first (AssignedAt descending) — the most recently
+  // handed-off task should surface at the top of its group, not get buried under older
+  // ones sorted by target date.
   private sortByUrgency(list: any[]): any[] {
     const rank = { overdue: 0, today: 1, upcoming: 2, none: 3 };
     return [...list].sort((a, b) => {
       const rankDiff = rank[this.urgency(a)] - rank[this.urgency(b)];
       if (rankDiff !== 0) { return rankDiff; }
-      if (!a.TargetDate || !b.TargetDate) { return 0; }
-      return new Date(a.TargetDate).getTime() - new Date(b.TargetDate).getTime();
+      return new Date(b.AssignedAt).getTime() - new Date(a.AssignedAt).getTime();
     });
   }
 
@@ -229,8 +231,17 @@ export class AssignmentsPage {
     return s === 'pendingHandover' || s === 'completed';
   }
 
+  // An assignment that's had a dose given/invoiced but still has unpaid schedules needs
+  // action right now, regardless of its TargetDate — a PA (or the doctor) still has to
+  // record payment mode. Reuses hasUnpaidSchedules' own PaymentCollectorPaId scoping.
+  needsPaymentAction(a: any): boolean {
+    return this.isPastDueStage(a) ? false : this.hasUnpaidSchedules(a);
+  }
+
   // Counts for the segmented toggle. Overdue is folded into "Today" — it's the more
   // urgent surface and there's no separate tab for it (approved mock decision).
+  // needsPaymentAction() cards always count under "Today" too, even if their TargetDate
+  // is in the future or unset — unrecorded payment is itself an urgent, unfinished task.
   // Direct Sales have no TargetDate/urgency at all — always under "All" only, same as
   // before the toggle existed.
   dueFilterCount(filter: 'today' | 'upcoming' | 'all'): number {
@@ -239,9 +250,9 @@ export class AssignmentsPage {
     }
     const dated = this.assignments.filter(a => !this.isPastDueStage(a));
     if (filter === 'today') {
-      return dated.filter(a => this.urgency(a) === 'today' || this.urgency(a) === 'overdue').length;
+      return dated.filter(a => this.urgency(a) === 'today' || this.urgency(a) === 'overdue' || this.needsPaymentAction(a)).length;
     }
-    return dated.filter(a => this.urgency(a) === 'upcoming').length;
+    return dated.filter(a => this.urgency(a) === 'upcoming' && !this.needsPaymentAction(a)).length;
   }
 
   setDueFilter(filter: 'today' | 'upcoming' | 'all') {
@@ -249,14 +260,15 @@ export class AssignmentsPage {
   }
 
   // Assignments with no TargetDate (urgency 'none'), pendingHandover/completed-stage
-  // cards, Direct Sales, and orphan invoice rows only ever show under "All".
+  // cards, Direct Sales, and orphan invoice rows only ever show under "All" — unless they
+  // need payment action, in which case Today claims them regardless of date.
   get filteredAssignments(): any[] {
     if (this.dueFilter === 'all') { return this.assignments; }
     const dated = this.assignments.filter(a => !this.isPastDueStage(a));
     if (this.dueFilter === 'today') {
-      return dated.filter(a => this.urgency(a) === 'today' || this.urgency(a) === 'overdue');
+      return dated.filter(a => this.urgency(a) === 'today' || this.urgency(a) === 'overdue' || this.needsPaymentAction(a));
     }
-    return dated.filter(a => this.urgency(a) === 'upcoming');
+    return dated.filter(a => this.urgency(a) === 'upcoming' && !this.needsPaymentAction(a));
   }
 
   formatTargetDate(dateStr: string): string {
