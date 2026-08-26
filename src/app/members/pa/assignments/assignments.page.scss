@@ -95,6 +95,54 @@
   }
 }
 
+// ── Due Today / Upcoming / All segmented filter ──────────────────────────────
+.seg-toggle {
+  display: flex;
+  background: var(--vac-surface);
+  border: 1px solid var(--vac-border);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+  margin-bottom: 12px;
+}
+
+.seg-btn {
+  flex: 1;
+  text-align: center;
+  padding: 7px 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--vac-ink-3);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  white-space: nowrap;
+  transition: transform 0.1s ease;
+
+  &:active { transform: scale(0.97); }
+
+  .seg-count {
+    font-size: 10px;
+    font-weight: 800;
+    background: var(--vac-hairline);
+    color: var(--vac-ink-3);
+    padding: 1px 6px;
+    border-radius: 20px;
+  }
+
+  &.active {
+    background: #ffffff;
+    box-shadow: 0 1px 4px rgba(12,54,70,0.14);
+
+    &.tone-warn   { color: var(--vac-warn); .seg-count { background: var(--vac-warn-tint); color: var(--vac-warn); } }
+    &.tone-blue   { color: var(--vac-blue); .seg-count { background: var(--vac-blue-tint); color: var(--vac-blue); } }
+    &.tone-petrol { color: var(--vac-petrol); .seg-count { background: var(--vac-blue-tint); color: var(--vac-petrol); } }
+  }
+}
+
 // ── Target date urgency pill ─────────────────────────────────────────────────
 .due-pill {
   display: inline-flex;

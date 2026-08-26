@@ -17,6 +17,7 @@ export class AssignmentsPage {
   pendingDirectSales: any[] = [];
   loading: boolean = false;
   paId: number = null;
+  dueFilter: 'today' | 'upcoming' | 'all' = 'all';
 
   constructor(
     private paService: PaService,
@@ -179,6 +180,30 @@ export class AssignmentsPage {
     if (targetDay < todayDay) { return 'overdue'; }
     if (targetDay === todayDay) { return 'today'; }
     return 'upcoming';
+  }
+
+  // Counts for the segmented toggle. Overdue is folded into "Today" — it's the more
+  // urgent surface and there's no separate tab for it (approved mock decision).
+  dueFilterCount(filter: 'today' | 'upcoming' | 'all'): number {
+    if (filter === 'all') { return this.assignments.length; }
+    if (filter === 'today') {
+      return this.assignments.filter(a => this.urgency(a) === 'today' || this.urgency(a) === 'overdue').length;
+    }
+    return this.assignments.filter(a => this.urgency(a) === 'upcoming').length;
+  }
+
+  setDueFilter(filter: 'today' | 'upcoming' | 'all') {
+    this.dueFilter = filter;
+  }
+
+  // Assignments with no TargetDate (urgency 'none') only ever show under "All" —
+  // same known gap as the plain pill's *ngIf guard, not solved here either.
+  get filteredAssignments(): any[] {
+    if (this.dueFilter === 'all') { return this.assignments; }
+    if (this.dueFilter === 'today') {
+      return this.assignments.filter(a => this.urgency(a) === 'today' || this.urgency(a) === 'overdue');
+    }
+    return this.assignments.filter(a => this.urgency(a) === 'upcoming');
   }
 
   formatTargetDate(dateStr: string): string {

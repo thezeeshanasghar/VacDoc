@@ -17,6 +17,23 @@
   <ion-list-header *ngIf="pendingDirectSales.length > 0">
     <ion-label>Direct Sales — Record Payment</ion-label>
   </ion-list-header>
+  <div class="seg-toggle" *ngIf="assignments.length > 0">
+    <div class="seg-btn tone-warn" [class.active]="dueFilter === 'today'" (click)="setDueFilter('today')">
+      Today <span class="seg-count">{{ dueFilterCount('today') }}</span>
+    </div>
+    <div class="seg-btn tone-blue" [class.active]="dueFilter === 'upcoming'" (click)="setDueFilter('upcoming')">
+      Upcoming <span class="seg-count">{{ dueFilterCount('upcoming') }}</span>
+    </div>
+    <div class="seg-btn tone-petrol" [class.active]="dueFilter === 'all'" (click)="setDueFilter('all')">
+      All <span class="seg-count">{{ dueFilterCount('all') }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="assignments.length > 0 && filteredAssignments.length === 0" class="empty-state">
+    <ion-icon name="calendar-clear-outline"></ion-icon>
+    <p>No assignments {{ dueFilter === 'today' ? 'due today' : 'upcoming' }}</p>
+  </div>
+
   <ion-card *ngFor="let s of pendingDirectSales" class="direct-sale-card">
     <ion-card-content>
       <div class="icons">
@@ -43,7 +60,7 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-card *ngFor="let a of assignments" [ngClass]="[a.Gender === 'Girl' ? 'girl' : 'boy', isBulkGroup(a) ? 'bulk-group' : '']">
+  <ion-card *ngFor="let a of filteredAssignments" [ngClass]="[a.Gender === 'Girl' ? 'girl' : 'boy', isBulkGroup(a) ? 'bulk-group' : '']">
 
     <div class="icons">
       <div class="icons-left">
