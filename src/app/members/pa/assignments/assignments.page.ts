@@ -186,10 +186,15 @@ export class AssignmentsPage {
   // urgency group, newest-assigned-first (AssignedAt descending) — the most recently
   // handed-off task should surface at the top of its group, not get buried under older
   // ones sorted by target date.
+  // pendingHandover/completed-stage cards rank above everything else — they're unconfirmed
+  // cash still with the PA (see isPastDueStage's comment), which is more urgent than any
+  // TargetDate-based ranking their stale date would otherwise produce.
   private sortByUrgency(list: any[]): any[] {
-    const rank = { overdue: 0, today: 1, upcoming: 2, none: 3 };
+    const rank = { overdue: 1, today: 2, upcoming: 3, none: 4 };
     return [...list].sort((a, b) => {
-      const rankDiff = rank[this.urgency(a)] - rank[this.urgency(b)];
+      const rankA = this.isPastDueStage(a) ? 0 : rank[this.urgency(a)];
+      const rankB = this.isPastDueStage(b) ? 0 : rank[this.urgency(b)];
+      const rankDiff = rankA - rankB;
       if (rankDiff !== 0) { return rankDiff; }
       return new Date(b.AssignedAt).getTime() - new Date(a.AssignedAt).getTime();
     });
@@ -223,9 +228,15 @@ export class AssignmentsPage {
     return 'new';
   }
 
-  // Cards past "invoiced" stop being about due-dates and start being about handover —
-  // their due-pill is replaced by the stage pill (see template), and they're excluded
-  // from Today/Upcoming so those tabs stay meant for "what visit do I still need to do".
+  // Cards past "invoiced" stop being about due-dates — their due-pill is replaced by the
+  // stage pill (see template). But GetByPA only ever returns a pendingHandover/completed
+  // card while IsCashConfirmedByDoctor is still false (the backend filter drops it the
+  // instant the doctor confirms) — so every card that reaches this stage is, by
+  // definition, money still sitting with the PA that the doctor hasn't taken yet. That's
+  // urgent, not "done" — it belongs in Today (never Upcoming, and never date-gated out of
+  // Today) until it disappears from the list entirely on cash confirmation. Previously
+  // these were excluded from Today/Upcoming and only visible under "All", which buried an
+  // unconfirmed handover exactly when it needed to stay visible (real bug, fixed 2026-08-26).
   isPastDueStage(a: any): boolean {
     const s = this.stage(a);
     return s === 'pendingHandover' || s === 'completed';
@@ -242,33 +253,33 @@ export class AssignmentsPage {
   // urgent surface and there's no separate tab for it (approved mock decision).
   // needsPaymentAction() cards always count under "Today" too, even if their TargetDate
   // is in the future or unset — unrecorded payment is itself an urgent, unfinished task.
+  // pendingHandover/completed-stage cards always count under "Today" too — see
+  // isPastDueStage's comment: unconfirmed cash handover, never date-gated.
   // Direct Sales have no TargetDate/urgency at all — always under "All" only, same as
   // before the toggle existed.
   dueFilterCount(filter: 'today' | 'upcoming' | 'all'): number {
     if (filter === 'all') {
       return this.assignments.length + this.pendingDirectSales.length + this.completedDirectSales.length + this.orphanInvoiceRows.length;
     }
-    const dated = this.assignments.filter(a => !this.isPastDueStage(a));
     if (filter === 'today') {
-      return dated.filter(a => this.urgency(a) === 'today' || this.urgency(a) === 'overdue' || this.needsPaymentAction(a)).length;
+      return this.assignments.filter(a => this.isPastDueStage(a) || this.urgency(a) === 'today' || this.urgency(a) === 'overdue' || this.needsPaymentAction(a)).length;
     }
-    return dated.filter(a => this.urgency(a) === 'upcoming' && !this.needsPaymentAction(a)).length;
+    return this.assignments.filter(a => !this.isPastDueStage(a) && this.urgency(a) === 'upcoming' && !this.needsPaymentAction(a)).length;
   }
 
   setDueFilter(filter: 'today' | 'upcoming' | 'all') {
     this.dueFilter = filter;
   }
 
-  // Assignments with no TargetDate (urgency 'none'), pendingHandover/completed-stage
-  // cards, Direct Sales, and orphan invoice rows only ever show under "All" — unless they
-  // need payment action, in which case Today claims them regardless of date.
+  // Assignments with no TargetDate (urgency 'none'), Direct Sales, and orphan invoice rows
+  // only ever show under "All". pendingHandover/completed-stage cards and cards needing
+  // payment action always show under "Today" regardless of date — see isPastDueStage.
   get filteredAssignments(): any[] {
     if (this.dueFilter === 'all') { return this.assignments; }
-    const dated = this.assignments.filter(a => !this.isPastDueStage(a));
     if (this.dueFilter === 'today') {
-      return dated.filter(a => this.urgency(a) === 'today' || this.urgency(a) === 'overdue' || this.needsPaymentAction(a));
+      return this.assignments.filter(a => this.isPastDueStage(a) || this.urgency(a) === 'today' || this.urgency(a) === 'overdue' || this.needsPaymentAction(a));
     }
-    return dated.filter(a => this.urgency(a) === 'upcoming' && !this.needsPaymentAction(a));
+    return this.assignments.filter(a => !this.isPastDueStage(a) && this.urgency(a) === 'upcoming' && !this.needsPaymentAction(a));
   }
 
   formatTargetDate(dateStr: string): string {
