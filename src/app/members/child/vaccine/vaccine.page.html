@@ -21,7 +21,9 @@
 
 <ion-content class="ion-padding">
 
-  <!-- Active assignment card (Doctor view) — scrolls with content (spec §4.1) -->
+  <!-- Active assignment card (Doctor view) — Reassign/Cancel here are doctor-only actions;
+       Manager's reassign lives on the PA Assignment Tracking page, not this per-patient
+       card, so Manager gets the informational-only variant below instead. -->
   <div *ngIf="usertype === 'DOCTOR' && activeAssignment" class="active-assignment-card">
     <span class="assign-avatar">{{ paInitials(activeAssignment.PaName) }}</span>
     <span class="active-assign-label">Assigned to <strong>{{ activeAssignment.PaName }}</strong></span>
@@ -29,6 +31,13 @@
       <button class="assign-action-btn reassign-btn" (click)="openReassignPopup()">Reassign</button>
       <button class="assign-action-btn cancel-btn" (click)="confirmCancelAssignment()">Cancel</button>
     </div>
+  </div>
+
+  <!-- Active assignment card (Manager view) — informational only, same as Doctor's
+       avatar/label but no Reassign/Cancel (those aren't Manager actions on this page). -->
+  <div *ngIf="usertype === 'MANAGER' && activeAssignment" class="active-assignment-card">
+    <span class="assign-avatar">{{ paInitials(activeAssignment.PaName) }}</span>
+    <span class="active-assign-label">Assigned to <strong>{{ activeAssignment.PaName }}</strong></span>
   </div>
 
   <!-- Active assignment card (PA view) — lets a PA finish a remote-clinic visit without leaving this page -->
@@ -46,8 +55,9 @@
     <span class="active-assign-label">Marked done — pending cash handover</span>
   </div>
 
-  <!-- Unassigned state (spec §4.1) — Doctor, no active assignment, clinic has PAs -->
-  <div *ngIf="usertype === 'DOCTOR' && !activeAssignment && clinicPAs.length > 0"
+  <!-- Unassigned state (spec §4.1) — Doctor, or Manager with AssignPaToPatient, no
+       active assignment, clinic has PAs -->
+  <div *ngIf="(usertype === 'DOCTOR' || (usertype === 'MANAGER' && canAssignPa)) && !activeAssignment && clinicPAs.length > 0"
        class="active-assignment-card active-assignment-card--unassigned">
     <span class="assign-noavatar"><ion-icon name="person-outline"></ion-icon></span>
     <span class="active-assign-label active-assign-label--muted">Not assigned to a PA</span>
@@ -78,10 +88,11 @@
 
           <div class="date-group-actions">
 
-            <!-- Assign to PA (Doctor only) — only on actionable groups (doses still
-                 due, or given-but-unpaid); hidden on skipped-only / paid history. -->
+            <!-- Assign to PA (Doctor, or Manager with AssignPaToPatient) — only on
+                 actionable groups (doses still due, or given-but-unpaid); hidden on
+                 skipped-only / paid history. -->
             <button
-              *ngIf="usertype === 'DOCTOR' && clinicPAs.length > 0 && !activeAssignment
+              *ngIf="(usertype === 'DOCTOR' || (usertype === 'MANAGER' && canAssignPa)) && clinicPAs.length > 0 && !activeAssignment
                      && (giveCount(item.value) > 0 || (isStage(item.value, item.key, 2) || isStage(item.value, item.key, 3)))"
               class="grp-icobtn"
               (click)="openAssignPopup(item.value)"

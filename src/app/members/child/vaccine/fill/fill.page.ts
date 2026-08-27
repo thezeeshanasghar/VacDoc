@@ -79,6 +79,7 @@ export class FillPage implements OnInit {
   clinicPAs: any[] = [];
   paymentCollectorPaId: number = null;
   paId: number = null;
+  managerId: number = null;
   private readonly travelFieldStorageSuffix = 'travel-vaccine-fill-state';
 
   private getTodayIsoDate(): string {
@@ -169,6 +170,12 @@ export class FillPage implements OnInit {
           const paId = Number(user.PAId);
           if (paId && !isNaN(paId)) {
             this.paId = paId;
+          }
+        }
+        if (user.UserType === 'MANAGER') {
+          const managerId = Number(user.ManagerId);
+          if (managerId && !isNaN(managerId)) {
+            this.managerId = managerId;
           }
         }
         if (user.UserType === 'DOCTOR' && user.DoctorId) {
@@ -489,7 +496,7 @@ export class FillPage implements OnInit {
       this.fg.value.BrandId = null; 
     }
     console.log(this.usertype)
-    if (this.usertype === 'DOCTOR') {
+    if (this.usertype === 'DOCTOR' || this.usertype === 'MANAGER') {
       this.fg.value.IsPAApprove = true;
     } else {
       this.fg.value.IsPAApprove = false;
@@ -533,6 +540,9 @@ export class FillPage implements OnInit {
     this.fg.value.PaymentCollectorPaId = this.paymentCollectorPaId || null;
     if (this.usertype === 'PA' && this.paId) {
       this.fg.value.PaId = this.paId;
+    }
+    if (this.usertype === 'MANAGER' && this.managerId) {
+      this.fg.value.ManagerId = this.managerId;
     }
 
     // v2 deduction-decision prompt (§6.2a): a backdated give with a real brand is ambiguous —

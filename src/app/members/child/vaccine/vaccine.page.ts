@@ -13,6 +13,7 @@ import { Storage } from '@ionic/storage';
 import { Platform } from '@ionic/angular';
 import { FormBuilder, FormGroup } from "@angular/forms";
 import { PaService } from "src/app/services/pa.service";
+import { ManagerService } from "src/app/services/manager.service";
 import { InvoiceService } from "src/app/services/invoice.service";
 import { AuditPopoverComponent } from "./audit-popover/audit-popover.component";
 import { PdfOptionsPopoverComponent } from "./pdf-options-popover/pdf-options-popover.component";
@@ -40,6 +41,9 @@ export class VaccinePage {
   istravel: boolean = true;
   usertype: any;
   paId: number = null;
+  managerId: number = null;
+  canAssignPa: boolean = false;
+  canEditInvoiceAsManager: boolean = false;
   retryCount = 0;
   maxRetries = 3;
   canGiveVaccine = true;
@@ -117,6 +121,7 @@ export class VaccinePage {
     private formBuilder: FormBuilder,
     private scheduleService: ScheduleService,
     private paService: PaService,
+    private managerService: ManagerService,
     private invoiceService: InvoiceService,
     private popoverController: PopoverController,
     private actionSheetController: ActionSheetController,
@@ -196,6 +201,39 @@ export class VaccinePage {
           this.loadActiveAssignment();
         });
       }
+      if (user.UserType === 'MANAGER') {
+        this.managerId = user.ManagerId ? Number(user.ManagerId) : null;
+        this.storage.get(environment.DOCTOR_Id).then(val => { this.doctorId = val ? Number(val) : null; });
+        if (this.managerId) {
+          this.managerService.getManagerPermissions(this.managerId).subscribe(perm => {
+            this.canAssignPa            = (perm && perm.AssignPaToPatient) || false;
+            this.canGiveVaccine         = (perm && perm.CanGiveVaccine)    || false;
+            this.canUngiveVaccine       = (perm && perm.CanGiveVaccine)    || false;
+            this.canBulkGive            = (perm && perm.CanGiveVaccine)    || false;
+            this.canBulkUngive          = (perm && perm.CanGiveVaccine)    || false;
+            // Manager never collects/records payment mode (the assigned PA does) — only
+            // sees the invoice-menu entry point (for CanEditInvoice), never PAYMENT itself.
+            this.canCollectPayment      = false;
+            this.canInvoice             = (perm && perm.CanEditInvoice)    || false;
+            this.canEditInvoiceAsManager = (perm && perm.CanEditInvoice)   || false;
+          });
+        }
+        // Manager has no "online clinic" — the relevant clinic for the PA picker is
+        // this patient's own clinic (Child.ClinicId), populated once getVaccination()
+        // resolves it below, not a storage key Manager never writes to.
+        this.loadActiveAssignment();
+      }
+    });
+  }
+
+  // Manager-only: called once getVaccination() resolves the patient's own Child.ClinicId,
+  // since Manager has no ON_CLINIC storage concept to read clinicId from up front (unlike
+  // Doctor, whose "online clinic" is fixed and known before the page even loads).
+  private loadClinicPAsForManager(clinicId: number) {
+    if (!clinicId || this.clinicPAs.length > 0) { return; }
+    this.clinicId = clinicId;
+    this.paService.getPAsForClinic(clinicId).subscribe(res => {
+      if (res && res.IsSuccess) { this.clinicPAs = res.ResponseData || []; }
     });
   }
 
@@ -537,6 +575,10 @@ export class VaccinePage {
         this.ChildName = this.vaccine[0].Child.Name;
         this.type = this.vaccine[0].Child.Type;
         this.removal(this.type);
+
+        if (this.usertype === 'MANAGER' && this.vaccine[0].Child.ClinicId) {
+          this.loadClinicPAsForManager(Number(this.vaccine[0].Child.ClinicId));
+        }
 
         this.vaccine.forEach(doc => {
           doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
@@ -922,10 +964,16 @@ removal(type: string){
     if (this.usertype === 'PA' && this.paId) {
       unfillData.PaId = this.paId;
     }
+    if (this.usertype === 'MANAGER' && this.managerId) {
+      unfillData.ManagerId = this.managerId;
+    }
     if (Data) {
       unfillData = Data;
       if (this.usertype === 'PA' && this.paId) {
         unfillData.PaId = this.paId;
+      }
+      if (this.usertype === 'MANAGER' && this.managerId) {
+        unfillData.ManagerId = this.managerId;
       }
     }
 
@@ -1164,8 +1212,10 @@ removal(type: string){
     const groupIsPinned = vaccines.some(v => pinnedIds.has(v.Id));
     if (!groupIsPinned) return null;
     if (this.allVaccinesGiven(vaccines)) {
-      const givenByDoctor = vaccines.some(v => !v.GivenByPaId);
-      return givenByDoctor ? 'given-by-doctor' : null;
+      // "given-by-doctor" also covers Manager gives — the PA viewing this badge just needs
+      // to know "not me", not the distinction between Doctor and Manager.
+      const givenByOther = vaccines.some(v => !v.GivenByPaId);
+      return givenByOther ? 'given-by-doctor' : null;
     }
     return 'assigned';
   }
@@ -1678,8 +1728,15 @@ removal(type: string){
   // mirrors ScheduleController.cs Update()/updateInvoice() server-side checks,
   // it does not relax them; a stale client guess still gets rejected server-side.
   canOverridePaidInvoice(date: string): boolean {
-    if (!this.canInvoice) { return false; }
     if (this.usertype === 'DOCTOR') { return true; }
+    if (this.usertype === 'MANAGER') {
+      // Manager isn't the invoice's submitter, so no ownership check like PA's — just the
+      // permission flag + the shared edit cap (clinic-fence already enforced server-side).
+      if (!this.canEditInvoiceAsManager) { return false; }
+      const status = this.invoiceStatusMap[date];
+      return !!status && status.isSubmitted && status.canEdit;
+    }
+    if (!this.canInvoice) { return false; }
     if (this.usertype !== 'PA' || !this.paId) { return false; }
     const status = this.invoiceStatusMap[date];
     return !!status && status.isSubmitted && status.canEdit && status.submittedByPaId === this.paId;
@@ -1688,8 +1745,13 @@ removal(type: string){
   canOverridePaidUngive(v: any): boolean {
     if (!v || !v.IsPaymentCollected) { return false; }
     if (this.usertype === 'DOCTOR') { return true; }
-    if (this.usertype !== 'PA' || !this.paId || !this.canUngiveVaccine) { return false; }
-    if (v.GivenByPaId !== this.paId) { return false; }
+    if (this.usertype === 'MANAGER') {
+      if (!this.managerId || !this.canUngiveVaccine) { return false; }
+      if (v.GivenByManagerId !== this.managerId) { return false; }
+    } else {
+      if (this.usertype !== 'PA' || !this.paId || !this.canUngiveVaccine) { return false; }
+      if (v.GivenByPaId !== this.paId) { return false; }
+    }
     if (!v.DoneAt) { return false; }
     const doneDay = moment(v.DoneAt).utcOffset(5 * 60).format('YYYY-MM-DD');
     const today = moment().utcOffset(5 * 60).format('YYYY-MM-DD');
@@ -1794,7 +1856,7 @@ removal(type: string){
     }
     this.assigningPA = true;
     this.assignPopupOpen = false;
-    const payload = {
+    const payload: any = {
       DoctorId: this.doctorId,
       ClinicId: this.clinicId,
       PersonalAssistantId: pa.Id,
@@ -1803,6 +1865,9 @@ removal(type: string){
       ScheduleIds: this.pendingAssignScheduleIds || [],
       TargetDate: this.paTargetDate || null
     };
+    if (this.usertype === 'MANAGER' && this.managerId) {
+      payload.RequestingManagerId = this.managerId;
+    }
     this.paGuidelines = '';
     this.paTargetDate = '';
     this.pendingAssignScheduleIds = [];

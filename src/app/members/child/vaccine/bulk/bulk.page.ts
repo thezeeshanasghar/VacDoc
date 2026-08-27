@@ -40,6 +40,7 @@ export class BulkPage implements OnInit {
   };
   usertype: any;
   paId: number = null;
+  managerId: number = null;
   allowInventory: boolean = true;
   childType: string = "";
   paymentMode: string = 'Cash';
@@ -192,6 +193,8 @@ export class BulkPage implements OnInit {
           && (!onlineClinic || onlineClinic.MaintainInventory !== false);
         if (user.UserType === "PA") {
           this.paId = Number(user.PAId) || null;
+        } else if (user.UserType === "MANAGER") {
+          this.managerId = Number(user.ManagerId) || null;
         } else if (user.UserType === "DOCTOR" && user.DoctorId) {
           this.doctorId = Number(user.DoctorId);
         }
@@ -673,7 +676,7 @@ export class BulkPage implements OnInit {
       i++;
     });
 
-    this.fg.value.IsPAApprove = this.usertype === "DOCTOR";
+    this.fg.value.IsPAApprove = this.usertype === "DOCTOR" || this.usertype === "MANAGER";
 
     var data: any = {
       Circle: this.fg.value.Circle,
@@ -692,6 +695,9 @@ export class BulkPage implements OnInit {
     };
     if (this.usertype === 'PA' && this.paId) {
       data.PaId = this.paId;
+    }
+    if (this.usertype === 'MANAGER' && this.managerId) {
+      data.ManagerId = this.managerId;
     }
 
     this.fillVaccine(data);

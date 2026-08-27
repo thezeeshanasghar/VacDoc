@@ -14,11 +14,14 @@ export class ManagerPermissionsPage implements OnInit {
   managerName: string = '';
   perm: any = {};
 
-  // Manager has exactly these 6 flags — no other permission surface, so this is a
+  // Manager has exactly these 9 flags — no other permission surface, so this is a
   // flat list, not the 11-section PA accordion.
   fields = [
     { key: 'ViewPaAssignmentStatus',     label: 'View PA assignment status', desc: 'See which vaccination tasks are marked done vs. pending, per PA' },
     { key: 'ReassignPaTask',              label: 'Reassign task to another PA', desc: 'Move a pending assignment from one PA to another, within assigned clinics' },
+    { key: 'AssignPaToPatient',           label: 'Assign PA to a patient', desc: 'Create a new task for a PA to give a patient\'s vaccine — same action the Doctor uses' },
+    { key: 'CanGiveVaccine',              label: 'Give vaccine', desc: 'Mark a dose given, same as Doctor/PA — reconciliation stamps it "Manager"' },
+    { key: 'CanEditInvoice',              label: 'Download & edit invoice', desc: 'Same download/edit rights as PA, including the 1-edit cap — never final cash confirmation' },
     { key: 'ViewFeedbackResponseTracker', label: 'View feedback response tracker', desc: 'See how many clients were sent a feedback link and how many filled the form' },
     { key: 'SendFeedbackEmail',           label: 'Send feedback email', desc: 'Trigger the feedback-request email (magic link), individually or in bulk' },
     { key: 'SendFeedbackWhatsApp',        label: 'Send feedback WhatsApp message', desc: 'Open the prewritten WhatsApp message (magic link only), individually or in bulk' },

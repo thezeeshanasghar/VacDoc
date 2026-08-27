@@ -310,7 +310,9 @@ export class PaymentReconciliationPage {
                 IsConfirmed: !!s.IsPaymentApproved,
                 ConfirmedAt: s.ApprovedAt || null,
                 PaId: pa.PaId,
-                PaName: pa.PaName || '',
+                // Manager gave this dose; this PA only collected/recorded payment — flag it
+                // the same way the primary reconciliation path's "Manager/(PA Name)" does.
+                PaName: s.GivenByManagerId ? ('Manager/(' + (pa.PaName || '') + ')') : (pa.PaName || ''),
                 ClinicId: s.ClinicId || 0,
                 ClinicName: s.ClinicName || '',
               });
