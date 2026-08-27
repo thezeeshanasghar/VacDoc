@@ -13,6 +13,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { PaService } from "src/app/services/pa.service";
+import { ManagerService } from "src/app/services/manager.service";
 import * as moment from 'moment';
 // import { ClinicService } from 'src/app/services/clinic.service';
 
@@ -58,6 +59,7 @@ export class ChildPage {
     private alertService: AlertService,
     private callNumber: CallNumber,
     private paService: PaService,
+    private managerService: ManagerService,
     public clinicService: ClinicService,
     private popoverController: PopoverController,
   ) {
@@ -96,8 +98,9 @@ export class ChildPage {
   this.storage.get(environment.ON_CLINIC).then((clinic) => {
     this.clinic = clinic;
     console.log('Loaded clinic from storage:', this.clinic);
-    // For PA users, we need to load clinics separately to get PA-specific online clinic
-    if (this.usertype && this.usertype.UserType === 'PA') {
+    // For PA/Manager users, we need to load clinics separately (PA-specific online clinic,
+    // or Manager's granted-clinic list which has no "online" concept)
+    if (this.usertype && (this.usertype.UserType === 'PA' || this.usertype.UserType === 'MANAGER')) {
       this.loadClinics();
     }
   });
@@ -112,7 +115,7 @@ export class ChildPage {
           this.page = 0;
           this.search = false;
           this.childs = [];
-      if (this.usertype.UserType === 'PA') {
+      if (this.usertype.UserType === 'PA' || this.usertype.UserType === 'MANAGER') {
         this.loadClinics();
       } else {
         this.getChlidByClinic(false);
@@ -303,6 +306,10 @@ console.log('Current Clinic:', this.clinic);
   if (this.usertype.UserType === 'PA') {
     // For PA, use selectedClinicId (which should be the online clinic)
     clinicIdToUse = this.selectedClinicId || (this.clinic ? this.clinic.Id : null);
+  } else if (this.usertype.UserType === 'MANAGER') {
+    // Manager has no "online clinic" concept — selectedClinicId (from loadClinics/the
+    // clinic switcher) is the only source, never environment.ON_CLINIC storage.
+    clinicIdToUse = this.selectedClinicId;
   } else if (this.clinic && this.clinic.Id) {
     // For DOCTOR, use clinic from storage (doctor's online clinic)
     clinicIdToUse = this.clinic.Id;
@@ -364,6 +371,27 @@ onClinicChange() {
     await loading.present();
 
     try {
+      if (this.usertype.UserType === 'MANAGER') {
+        this.managerService.getManagerClinics(Number(this.usertype.ManagerId)).subscribe({
+          next: (response) => {
+            loading.dismiss();
+            if (response.IsSuccess) {
+              this.clinics = response.ResponseData;
+              // Manager has no "online clinic" concept (ManagerAccess carries no IsOnline) -
+              // always default to the first granted clinic, same as add.page.ts.
+              this.selectedClinicId = this.clinics.length > 0 ? this.clinics[0].Id : null;
+              this.getChlidByClinic(false);
+            } else {
+              this.toastService.create(response.Message, 'danger');
+            }
+          },
+          error: (error) => {
+            loading.dismiss();
+            console.error('Error fetching Manager clinics:', error);
+            this.toastService.create('Failed to load clinics', 'danger');
+          },
+        });
+      } else {
         this.paService.getPaClinics(Number(this.usertype.PAId)).subscribe({
           next: (response) => {
             loading.dismiss();
@@ -399,6 +427,7 @@ onClinicChange() {
             this.toastService.create('Failed to load clinics', 'danger');
           },
         });
+      }
     } catch (error) {
       loading.dismiss();
       console.error('Error in loadClinics:', error);

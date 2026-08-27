@@ -151,7 +151,7 @@
           Adding Patient To Clinic <span class="required-asterisk" *ngIf="clinics && clinics.length > 1">*</span>
         </div>
         <ion-item *ngIf="clinics && clinics.length > 1; else lockedClinic" class="clinic-select-item" lines="none">
-          <ion-select formControlName="ClinicId" class="clinic-select" interface="popover" required>
+          <ion-select formControlName="ClinicId" class="clinic-select" required>
             <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
               {{ clinic.Name }}
             </ion-select-option>

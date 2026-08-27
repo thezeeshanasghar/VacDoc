@@ -12,8 +12,8 @@
 
 <ion-content class="ion-padding">
 
-  <!-- PA clinic selector — moved inside ion-content -->
-  <ion-item *ngIf="type === 'PA'" class="clinic-select-item">
+  <!-- PA/Manager clinic selector — moved inside ion-content -->
+  <ion-item *ngIf="type === 'PA' || type === 'MANAGER'" class="clinic-select-item">
     <ion-label>Select Clinic</ion-label>
     <ion-select [(ngModel)]="selectedClinicId" (ionChange)="onClinicChange()">
       <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">

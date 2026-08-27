@@ -27,7 +27,7 @@
           <ion-col size="12">
             <ion-item lines="none" class="filter-item">
               <ion-label position="stacked">Clinic</ion-label>
-              <ion-select [(ngModel)]="selectedClinicId" interface="popover">
+              <ion-select [(ngModel)]="selectedClinicId">
                 <ion-select-option [value]="0">All Clinics</ion-select-option>
                 <ion-select-option *ngFor="let c of clinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
               </ion-select>

@@ -264,7 +264,7 @@
 
             <!-- Inline "reassign to" picker — doctor or Manager-with-ReassignPaTask, active assignments only. -->
             <div class="reassign-picker" *ngIf="reassigningRowId === row.AssignmentId" (click)="$event.stopPropagation()">
-              <ion-select placeholder="Choose new PA" [(ngModel)]="reassignTargetPaId" interface="popover">
+              <ion-select placeholder="Choose new PA" [(ngModel)]="reassignTargetPaId">
                 <ion-select-option *ngFor="let pa of reassignPaOptions" [value]="pa.Id">{{ pa.Name }}</ion-select-option>
               </ion-select>
               <button class="btn-reassign-confirm" [disabled]="!reassignTargetPaId" (click)="confirmReassign(row)">Confirm</button>
