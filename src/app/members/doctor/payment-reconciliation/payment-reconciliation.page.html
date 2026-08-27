@@ -81,6 +81,14 @@
         <input type="date" class="filter-input" [(ngModel)]="toDate" (change)="onFilterChange()">
       </div>
 
+      <div class="filter-group filter-date-quick">
+        <label>&nbsp;</label>
+        <div class="date-quick-btns">
+          <button type="button" class="btn-quick-date" (click)="setTodayFilter()">Today</button>
+          <button type="button" class="btn-quick-date" (click)="clearDateFilter()">All Dates</button>
+        </div>
+      </div>
+
       <div class="filter-group filter-search">
         <label>Search Patient</label>
         <div class="search-wrap">

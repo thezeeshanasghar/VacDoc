@@ -180,7 +180,7 @@ export class StockService {
     return this.http.get<any>(`${this.apiUrl}directsale/completed-for-pa/${paId}`);
   }
 
-  confirmDirectSale(saleBillNo: string): Observable<any> {
-    return this.http.patch<any>(`${this.apiUrl}directsale/by-bill/${encodeURIComponent(saleBillNo)}/confirm`, {});
+  confirmDirectSale(saleBillNo: string, doctorId: number): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}directsale/by-bill/${encodeURIComponent(saleBillNo)}/confirm?doctorId=${doctorId}`, {});
   }
 }

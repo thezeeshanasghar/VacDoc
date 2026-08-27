@@ -76,9 +76,16 @@ export class PaymentReconciliationPage {
   ) {}
 
   async ionViewWillEnter() {
-    const today = this.toDateStr(new Date());
-    this.fromDate = today;
-    this.toDate = today;
+    // Default to no date filter — shows every pending row regardless of how old its
+    // InvoiceDate is. Defaulting to today/today silently hid any invoice dated before
+    // today (e.g. a visit given weeks/months back but invoiced/paid-mode-recorded later),
+    // since GetByPA (the PA's own list) never date-filters at all. Live-verified 2026-08-27:
+    // widening from today-only to an open range took Payment Reconciliation from 12 rows to
+    // 623, surfacing real, still-unconfirmed invoices (e.g. "Ahmed Javed", dated 21 Jul 2026,
+    // PKR 7,866 Online) that had been invisible under the today-only default. See "Today"
+    // quick-filter button below for the narrower view.
+    this.fromDate = '';
+    this.toDate = '';
 
     const user = await this.storage.get(environment.USER);
     if (user && user.DoctorId) {
@@ -145,6 +152,19 @@ export class PaymentReconciliationPage {
   }
 
   onFilterChange() {
+    this.load();
+  }
+
+  setTodayFilter() {
+    const today = this.toDateStr(new Date());
+    this.fromDate = today;
+    this.toDate = today;
+    this.load();
+  }
+
+  clearDateFilter() {
+    this.fromDate = '';
+    this.toDate = '';
     this.load();
   }
 
@@ -653,7 +673,7 @@ export class PaymentReconciliationPage {
           handler: async () => {
             const loading = await this.loadingController.create({ message: 'Confirming...' });
             await loading.present();
-            this.stockService.confirmDirectSale(row.DirectSaleBillNo!).subscribe(
+            this.stockService.confirmDirectSale(row.DirectSaleBillNo!, this.doctorId!).subscribe(
               res => {
                 loading.dismiss();
                 if (res && res.IsSuccess) {

@@ -116,6 +116,34 @@
   cursor: pointer;
 }
 
+.filter-date-quick {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.date-quick-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-quick-date {
+  padding: 9px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--vac-blue);
+  background: var(--vac-blue-tint);
+  border: 1.5px solid var(--vac-border);
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #fff;
+    border-color: var(--vac-blue);
+  }
+}
+
 .search-wrap {
   position: relative;
   display: flex;
