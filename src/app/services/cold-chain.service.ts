@@ -55,6 +55,14 @@ export class ColdChainService {
     return this.http.get<any>(`${this.apiUrl}coldchain/requirement-status?clinicId=${clinicId}&date=${date}`);
   }
 
+  getReadingsPdfUrl(clinicId: number, fromDate: string, toDate: string, refrigeratorId?: number): string {
+    let url = `${this.apiUrl}coldchain/readings/pdf?clinicId=${clinicId}&fromDate=${fromDate}&toDate=${toDate}`;
+    if (refrigeratorId) {
+      url += `&refrigeratorId=${refrigeratorId}`;
+    }
+    return url;
+  }
+
   // ==================== WEEKLY APPROVAL ====================
 
   getAllClinicsRollup(doctorId: number, weekStart: string): Observable<any> {

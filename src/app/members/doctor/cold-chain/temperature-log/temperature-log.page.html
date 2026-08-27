@@ -38,6 +38,11 @@
             </select>
           </div>
         </div>
+        <ion-button expand="block" fill="outline" [disabled]="!canDownloadPdf" (click)="downloadPdf()">
+          <ion-icon name="download-outline" slot="start"></ion-icon>
+          Download PDF
+        </ion-button>
+        <p class="pdf-hint" *ngIf="!canDownloadPdf">Select a clinic to download the log</p>
       </ion-card-content>
     </ion-card>
 

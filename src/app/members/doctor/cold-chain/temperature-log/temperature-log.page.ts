@@ -116,6 +116,21 @@ export class TemperatureLogPage implements OnInit {
     return f ? f.Name : 'Unknown';
   }
 
+  get canDownloadPdf(): boolean {
+    return !!this.filterClinicId;
+  }
+
+  downloadPdf() {
+    if (!this.filterClinicId) {
+      this.toastService.create('Select a clinic to download the log', 'warning');
+      return;
+    }
+    const url = this.coldChainService.getReadingsPdfUrl(
+      this.filterClinicId, this.fromDate, this.toDate, this.filterRefrigeratorId || undefined
+    );
+    window.open(url);
+  }
+
   clinicName(clinicId: number): string {
     const c = this.clinics.find(x => x.Id === clinicId);
     return c ? c.Name : '';
