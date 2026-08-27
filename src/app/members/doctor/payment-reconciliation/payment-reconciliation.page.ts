@@ -53,6 +53,7 @@ export class PaymentReconciliationPage {
   fromDate: string = '';
   toDate: string = '';
   searchQuery: string = '';
+  selectedStatus: string = 'all';
 
   allRows: PaymentRow[] = [];
   filteredRows: PaymentRow[] = [];
@@ -525,11 +526,33 @@ export class PaymentReconciliationPage {
     await alert.present();
   }
 
+  // Mirrors the badge logic in the template's col-status cell — kept in sync with it
+  // so the Status filter always matches what the doctor actually sees on each row.
+  rowStatus(row: PaymentRow): string {
+    if (row.RowType === 'UngiveReversal') { return 'UngiveAfterDownload'; }
+    if (row.RowType === 'EditReversal') { return 'InvoiceEditReversal'; }
+    if (row.RowType === 'AwaitingInvoice') { return 'AwaitingInvoice'; }
+    if (row.RowType === 'DirectSale') {
+      if (row.IsConfirmed) { return 'Confirmed'; }
+      if (row.PendingHandover) { return 'PendingHandover'; }
+      if (row.IsPaymentCollected) { return 'PaymentRecorded'; }
+      return 'PendingWithPa';
+    }
+    // RowType === 'Invoice'
+    if (row.IsConfirmed) { return 'Confirmed'; }
+    if (row.PendingHandover) { return 'PendingHandover'; }
+    return 'PendingWithPa';
+  }
+
   applySearch() {
     const q = (this.searchQuery || '').toLowerCase().trim();
-    this.filteredRows = q
+    let rows = q
       ? this.allRows.filter(r => r.PatientName.toLowerCase().includes(q))
       : [...this.allRows];
+    if (this.selectedStatus !== 'all') {
+      rows = rows.filter(r => this.rowStatus(r) === this.selectedStatus);
+    }
+    this.filteredRows = rows;
     this.selectedIds = new Set();
   }
 

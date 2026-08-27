@@ -89,6 +89,20 @@
             (input)="onSearch()" placeholder="Search by patient name...">
         </div>
       </div>
+
+      <div class="filter-group">
+        <label>Status</label>
+        <select class="filter-select" [(ngModel)]="selectedStatus" (change)="onSearch()">
+          <option value="all">All Statuses</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="PendingWithPa">Pending With PA</option>
+          <option value="PendingHandover">Pending Handover</option>
+          <option value="AwaitingInvoice">Awaiting Invoice</option>
+          <option value="PaymentRecorded">Payment Recorded</option>
+          <option value="UngiveAfterDownload">Ungive After Download</option>
+          <option value="InvoiceEditReversal">Invoice Edit Reversal</option>
+        </select>
+      </div>
     </div>
 
     <!-- Summary Cards -->
