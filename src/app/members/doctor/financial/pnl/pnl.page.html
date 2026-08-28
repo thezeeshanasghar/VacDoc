@@ -19,8 +19,8 @@
     </div>
 
     <div class="filter-bar">
-      <input class="filter-date" type="date" formControlName="fromDate" (change)="onFilterChange()">
-      <input class="filter-date" type="date" formControlName="toDate" (change)="onFilterChange()">
+      <app-date-input formControlName="fromDate" (dateChange)="onFilterChange()"></app-date-input>
+      <app-date-input formControlName="toDate" (dateChange)="onFilterChange()"></app-date-input>
     </div>
 
     <ion-segment [(ngModel)]="expenseMode" [ngModelOptions]="{standalone: true}" (ionChange)="setExpenseMode(expenseMode)" class="expense-mode-segment">

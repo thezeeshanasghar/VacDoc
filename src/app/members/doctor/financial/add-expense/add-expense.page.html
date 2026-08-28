@@ -16,7 +16,7 @@
       <div class="row-pair">
         <div class="field">
           <label class="field-label">Date *</label>
-          <input type="date" [(ngModel)]="expenseDate" class="field-input">
+          <app-date-input [(ngModel)]="expenseDate"></app-date-input>
         </div>
         <div class="field">
           <label class="field-label">Amount (Rs) *</label>
@@ -97,7 +97,7 @@
 
       <div class="field field-full">
         <label class="field-label">Warranty Expiry <span class="hint">(optional)</span></label>
-        <input type="date" [(ngModel)]="warrantyExpiry" class="field-input">
+        <app-date-input [(ngModel)]="warrantyExpiry"></app-date-input>
       </div>
 
       <!-- Receipt image (optional) -->

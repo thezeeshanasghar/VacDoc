@@ -36,7 +36,7 @@
             <ion-card-title color="primary">
               To: {{msg.toNumber}}
             </ion-card-title>
-            <ion-card-subtitle>{{msg.created | date}} <span *ngIf="!msg.status">failed</span>
+            <ion-card-subtitle>{{msg.created | date:'dd MMM yyyy'}} <span *ngIf="!msg.status">failed</span>
               <ion-icon (click)="sendMessage(msg.toNumber , msg.message , msg.created)" *ngIf="!msg.status"
                 color="primary" name="refresh"></ion-icon>
             </ion-card-subtitle>
@@ -61,7 +61,7 @@
             <ion-card-title color="primary">
               To: {{msg.toNumber}}
             </ion-card-title>
-            <ion-card-subtitle>{{msg.created | date}} <span *ngIf="!msg.status" class="spansize">failed</span>
+            <ion-card-subtitle>{{msg.created | date:'dd MMM yyyy'}} <span *ngIf="!msg.status" class="spansize">failed</span>
               <ion-icon (click)="sendMessage(msg.toNumber , msg.message , msg.created)" *ngIf="!msg.status"
                 color="primary" name="sync-outline" size="large"></ion-icon>
             </ion-card-subtitle>

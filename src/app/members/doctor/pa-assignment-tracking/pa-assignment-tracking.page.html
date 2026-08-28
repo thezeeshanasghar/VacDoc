@@ -75,12 +75,12 @@
 
       <div class="filter-group">
         <label>From Date</label>
-        <input type="date" class="filter-input" [(ngModel)]="fromDate" (change)="onFilterChange()">
+        <app-date-input [(ngModel)]="fromDate" (dateChange)="onFilterChange()"></app-date-input>
       </div>
 
       <div class="filter-group">
         <label>To Date</label>
-        <input type="date" class="filter-input" [(ngModel)]="toDate" (change)="onFilterChange()">
+        <app-date-input [(ngModel)]="toDate" (dateChange)="onFilterChange()"></app-date-input>
       </div>
 
       <div class="filter-group filter-search">
@@ -201,8 +201,8 @@
               <ng-container *ngIf="statusClass(row) === 'active' || statusClass(row) === 'handover'">
                 <!-- Inline date picker: click "No date set" (or any due-pill) to set/change it -->
                 <span class="due-pill-edit" *ngIf="editingDateForAssignmentId === row.AssignmentId" (click)="$event.stopPropagation()">
-                  <input type="date" class="due-date-input" [value]="row.TargetDate ? (row.TargetDate | slice:0:10) : ''"
-                    #dateInput (change)="saveTargetDate(row, dateInput.value)">
+                  <app-date-input [value]="row.TargetDate ? (row.TargetDate | slice:0:10) : ''"
+                    (dateChange)="saveTargetDate(row, $event)"></app-date-input>
                   <button class="due-date-cancel" (click)="closeDatePicker()">✕</button>
                 </span>
                 <span class="due-pill" [ngClass]="'due-' + urgency(row)" *ngIf="editingDateForAssignmentId !== row.AssignmentId"

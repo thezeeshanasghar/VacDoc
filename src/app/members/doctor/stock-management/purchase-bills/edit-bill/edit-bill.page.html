@@ -20,7 +20,7 @@
 
       <ion-item lines="full">
         <ion-label position="stacked">Bill Date *</ion-label>
-        <ion-input type="date" [(ngModel)]="billDate"></ion-input>
+        <app-date-input [(ngModel)]="billDate"></app-date-input>
       </ion-item>
 
       <div class="field-block">
@@ -75,7 +75,7 @@
         <input type="text" [(ngModel)]="line.batchLot" class="cell-input" placeholder="Batch">
       </div>
       <div class="col-expiry">
-        <input type="date" [(ngModel)]="line.expiry" class="cell-input cell-date">
+        <app-date-input [(ngModel)]="line.expiry"></app-date-input>
       </div>
       <div class="col-qty">
         <input type="number" [(ngModel)]="line.qty" class="cell-input cell-num" placeholder="0" min="1">

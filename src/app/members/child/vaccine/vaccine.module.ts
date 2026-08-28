@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
+import { SharedModule } from '../../../shared/shared.module';
 
 import { VaccinePage } from './vaccine.page';
 import { AuditPopoverComponent } from './audit-popover/audit-popover.component';
@@ -30,6 +31,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
+    SharedModule,
     RouterModule.forChild(routes),
     ReactiveFormsModule,
     MatDatepickerModule,

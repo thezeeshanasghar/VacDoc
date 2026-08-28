@@ -70,7 +70,7 @@
       </div>
       <div class="unap-card-name-block">
         <span class="unap-child-name">{{ child.Name }}</span>
-        <span class="unap-child-meta">{{ child.FatherName }} &bull; {{ child.DOB | date }}</span>
+        <span class="unap-child-meta">{{ child.FatherName }} &bull; {{ child.DOB | date:'dd MMM yyyy' }}</span>
         <span class="unap-child-meta" *ngIf="child.ClinicName">
           <ion-icon name="business-outline"></ion-icon> {{ child.ClinicName }}
         </span>

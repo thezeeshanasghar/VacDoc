@@ -15,11 +15,11 @@
         <div class="field-row">
           <div class="field-wrap">
             <label class="field-label">From</label>
-            <input type="date" [(ngModel)]="fromDate" class="header-input" (change)="onFilterChange()">
+            <app-date-input [(ngModel)]="fromDate" (dateChange)="onFilterChange()"></app-date-input>
           </div>
           <div class="field-wrap">
             <label class="field-label">To</label>
-            <input type="date" [(ngModel)]="toDate" class="header-input" (change)="onFilterChange()">
+            <app-date-input [(ngModel)]="toDate" (dateChange)="onFilterChange()"></app-date-input>
           </div>
         </div>
         <div class="field-row">

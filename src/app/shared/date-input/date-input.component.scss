@@ -1,0 +1,63 @@
+:host {
+  display: block;
+}
+
+.app-date-input {
+  position: relative;
+
+  &.disabled .display {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.display {
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--vac-ink, #17313a);
+  background: var(--vac-blue-tint, #f3f8fb);
+  border: 1.5px solid var(--vac-border, #d8e6ec);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  user-select: none;
+
+  &:hover {
+    border-color: var(--vac-blue, #2f6690);
+  }
+
+  &.placeholder {
+    color: var(--vac-ink-3, #6b8894);
+    font-weight: 400;
+  }
+
+  svg {
+    flex: none;
+    opacity: 0.55;
+  }
+}
+
+.app-date-input.open .display {
+  border-color: var(--vac-blue, #2f6690);
+  box-shadow: 0 0 0 3px rgba(47, 102, 144, 0.12);
+}
+
+.cal-pop {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(12, 54, 70, 0.18);
+  border: 1px solid var(--vac-border, #d8e6ec);
+  z-index: 20;
+
+  ion-datetime {
+    --border-radius: 12px;
+  }
+}

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule, Routes } from '@angular/router';
+import { SharedModule } from '../../../../shared/shared.module';
 import { AdjustStockPage } from './adjust-stock.page';
 
 const routes: Routes = [
@@ -10,7 +11,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [CommonModule, FormsModule, IonicModule, RouterModule.forChild(routes)],
+  imports: [CommonModule, FormsModule, IonicModule, SharedModule, RouterModule.forChild(routes)],
   declarations: [AdjustStockPage]
 })
 export class AdjustStockPageModule {}

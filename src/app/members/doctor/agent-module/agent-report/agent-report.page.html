@@ -33,11 +33,11 @@
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
         <ion-item>
           <ion-label position="floating">From</ion-label>
-          <ion-input type="date" [(ngModel)]="fromDate"></ion-input>
+          <app-date-input [(ngModel)]="fromDate"></app-date-input>
         </ion-item>
         <ion-item>
           <ion-label position="floating">To</ion-label>
-          <ion-input type="date" [(ngModel)]="toDate"></ion-input>
+          <app-date-input [(ngModel)]="toDate"></app-date-input>
         </ion-item>
       </div>
       <ion-button

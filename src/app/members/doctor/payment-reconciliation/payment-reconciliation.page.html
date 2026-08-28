@@ -73,12 +73,12 @@
 
       <div class="filter-group">
         <label>From Date</label>
-        <input type="date" class="filter-input" [(ngModel)]="fromDate" (change)="onFilterChange()">
+        <app-date-input [(ngModel)]="fromDate" (dateChange)="onFilterChange()"></app-date-input>
       </div>
 
       <div class="filter-group">
         <label>To Date</label>
-        <input type="date" class="filter-input" [(ngModel)]="toDate" (change)="onFilterChange()">
+        <app-date-input [(ngModel)]="toDate" (dateChange)="onFilterChange()"></app-date-input>
       </div>
 
       <div class="filter-group filter-date-quick">

@@ -21,7 +21,7 @@
         </div>
         <div class="header-field">
           <label class="field-label">Bill Date *</label>
-          <input type="date" [(ngModel)]="billDate" class="header-input">
+          <app-date-input [(ngModel)]="billDate"></app-date-input>
         </div>
       </div>
 
@@ -82,7 +82,7 @@
         <input type="text" [(ngModel)]="line.batchLot" class="cell-input" placeholder="Batch">
       </div>
       <div class="col-expiry">
-        <input type="date" [(ngModel)]="line.expiry" class="cell-input cell-date">
+        <app-date-input [(ngModel)]="line.expiry"></app-date-input>
       </div>
       <div class="col-qty">
         <input type="number" [(ngModel)]="line.qty" class="cell-input cell-num" placeholder="0" min="1">
