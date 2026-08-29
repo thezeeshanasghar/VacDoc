@@ -1,5 +1,6 @@
-import { Component, ElementRef, EventEmitter, HostListener, Input, Output, forwardRef } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { IonDatetime } from '@ionic/angular';
 
 @Component({
   selector: 'app-date-input',
@@ -27,22 +28,15 @@ export class DateInputComponent implements ControlValueAccessor {
   @Output() valueChange = new EventEmitter<string | null>();
   @Output() dateChange = new EventEmitter<string | null>();
 
+  @ViewChild('picker', { static: true }) picker: IonDatetime;
+
   private _value: string | null = null;
-  isOpen = false;
   disabled = false;
 
   private onChange: (value: string | null) => void = () => {};
   private onTouched: () => void = () => {};
 
   constructor(private elementRef: ElementRef) {}
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
-    if (this.isOpen && !this.elementRef.nativeElement.contains(event.target)) {
-      this.isOpen = false;
-      this.onTouched();
-    }
-  }
 
   get displayValue(): string {
     if (!this.value) {
@@ -52,14 +46,12 @@ export class DateInputComponent implements ControlValueAccessor {
     return `${day}/${month}/${year}`;
   }
 
-  toggle(): void {
+  async open(): Promise<void> {
     if (this.disabled) {
       return;
     }
-    this.isOpen = !this.isOpen;
-    if (!this.isOpen) {
-      this.onTouched();
-    }
+    await this.picker.open();
+    this.onTouched();
   }
 
   onDateChange(event: CustomEvent): void {
@@ -68,8 +60,6 @@ export class DateInputComponent implements ControlValueAccessor {
     this.onChange(this.value);
     this.valueChange.emit(this.value);
     this.dateChange.emit(this.value);
-    this.isOpen = false;
-    this.onTouched();
   }
 
   writeValue(value: string | null): void {
