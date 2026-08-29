@@ -1,6 +1,6 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, forwardRef } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { IonDatetime } from '@ionic/angular';
+import { MatDatepicker, MatDatepickerInputEvent } from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-date-input',
@@ -16,8 +16,14 @@ import { IonDatetime } from '@ionic/angular';
 })
 export class DateInputComponent implements ControlValueAccessor {
   @Input() placeholder = 'DD/MM/YYYY';
-  @Input() min: string;
-  @Input() max: string;
+  @Input()
+  set min(val: string) {
+    this.minDate = val ? this.toDate(val) : null;
+  }
+  @Input()
+  set max(val: string) {
+    this.maxDate = val ? this.toDate(val) : null;
+  }
   @Input()
   set value(val: string | null) {
     this._value = val ? val.slice(0, 10) : null;
@@ -28,15 +34,15 @@ export class DateInputComponent implements ControlValueAccessor {
   @Output() valueChange = new EventEmitter<string | null>();
   @Output() dateChange = new EventEmitter<string | null>();
 
-  @ViewChild('picker', { static: true }) picker: IonDatetime;
+  @ViewChild('picker', { static: true }) picker: MatDatepicker<Date>;
 
-  private _value: string | null = null;
+  minDate: Date | null = null;
+  maxDate: Date | null = null;
   disabled = false;
 
+  private _value: string | null = null;
   private onChange: (value: string | null) => void = () => {};
   private onTouched: () => void = () => {};
-
-  constructor(private elementRef: ElementRef) {}
 
   get displayValue(): string {
     if (!this.value) {
@@ -46,17 +52,20 @@ export class DateInputComponent implements ControlValueAccessor {
     return `${day}/${month}/${year}`;
   }
 
-  async open(): Promise<void> {
+  get dateValue(): Date | null {
+    return this.value ? this.toDate(this.value) : null;
+  }
+
+  open(): void {
     if (this.disabled) {
       return;
     }
-    await this.picker.open();
+    this.picker.open();
     this.onTouched();
   }
 
-  onDateChange(event: CustomEvent): void {
-    const raw = event.detail.value as string;
-    this.value = raw ? raw.slice(0, 10) : null;
+  onDateChange(event: MatDatepickerInputEvent<Date>): void {
+    this.value = event.value ? this.toIso(event.value) : null;
     this.onChange(this.value);
     this.valueChange.emit(this.value);
     this.dateChange.emit(this.value);
@@ -76,5 +85,17 @@ export class DateInputComponent implements ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
+  }
+
+  private toDate(iso: string): Date {
+    const [year, month, day] = iso.split('-').map(n => parseInt(n, 10));
+    return new Date(year, month - 1, day);
+  }
+
+  private toIso(date: Date): string {
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const day = `${date.getDate()}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 }

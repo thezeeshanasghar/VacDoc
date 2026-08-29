@@ -9,13 +9,12 @@
     </svg>
   </div>
 
-  <ion-datetime
-    #picker
-    class="hidden-picker"
-    display-format="DD MMM YYYY"
-    [value]="value"
-    [min]="min"
-    [max]="max"
-    (ionChange)="onDateChange($event)">
-  </ion-datetime>
+  <input
+    class="hidden-picker-input"
+    [matDatepicker]="picker"
+    [value]="dateValue"
+    [min]="minDate"
+    [max]="maxDate"
+    (dateChange)="onDateChange($event)">
+  <mat-datepicker #picker></mat-datepicker>
 </div>
