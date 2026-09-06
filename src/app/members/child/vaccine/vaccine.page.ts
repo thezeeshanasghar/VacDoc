@@ -1879,7 +1879,11 @@ removal(type: string){
         });
       } else {
         this.assigningPA = false;
-        this.toastService.create(res.Message || 'Failed to assign', 'danger');
+        if (res && res.BlockedByAssignment) {
+          this.presentBlockedAssignmentAlert(res);
+        } else {
+          this.toastService.create((res && res.Message) || 'Failed to assign', 'danger');
+        }
       }
     }, (err) => {
       this.assigningPA = false;
@@ -1888,6 +1892,43 @@ removal(type: string){
                 : 'Failed to assign';
       this.toastService.create(msg, 'danger');
     });
+  }
+
+  // Fires when PAAssignmentController.Create blocks a new assignment because an earlier
+  // one for this child (any PA) is still open — i.e. !IsCashConfirmedByDoctor, which the
+  // doctor almost never associates with "go confirm a row on a different page." The plain
+  // toast this used to fall through to (see catch-all above) told the doctor to "Cancel
+  // that assignment or use Reassign" — both wrong: Cancel looks destructive for a dose that
+  // was correctly given and paid, and same-PA Reassign doesn't touch IsCashConfirmedByDoctor
+  // at all. This explains the real cause and deep-links to the one action that actually
+  // unblocks it — confirming the prior visit's invoice in Payment Reconciliation.
+  async presentBlockedAssignmentAlert(res: any) {
+    const paName = res.BlockingPaName || 'another PA';
+    const dateStr = res.BlockingAssignedDate || 'an earlier visit';
+    const hasInvoice = !!res.BlockingHasInvoice;
+
+    const detail = hasInvoice
+      ? `Go to Payment Reconciliation and tap Confirm on that invoice row. Once confirmed, this patient can be assigned again right away.`
+      : `${paName} hasn't submitted an invoice for that visit yet — ask them to submit it, then confirm it in Payment Reconciliation to unblock this patient.`;
+
+    const alert = await this.alertController.create({
+      header: "Can't Assign Yet",
+      cssClass: 'vac-confirm',
+      message:
+        `${paName}'s visit with this patient on ${dateStr} is still waiting on your confirmation — that's what's blocking a new assignment, not a duplicate or a stuck record.\n\n${detail}`,
+      buttons: [
+        { text: 'Cancel', role: 'cancel', cssClass: 'alert-btn-neutral' },
+        {
+          text: 'Go to Payment Reconciliation',
+          handler: () => {
+            const queryParams: any = { paId: res.BlockingPaId };
+            if (res.BlockingClinicId) { queryParams.clinicId = res.BlockingClinicId; }
+            this.router.navigate(['/members/doctor/payment-reconciliation'], { queryParams });
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
   loadActiveAssignment(onDone?: () => void) {
