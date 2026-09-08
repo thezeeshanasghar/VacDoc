@@ -1007,7 +1007,16 @@ removal(type: string){
                     unfillData.ConfirmPreResetUngive = true;
                     this.vaccineService.UnfillChildVaccine(unfillData).subscribe(
                       res2 => {
-                        if (res2.IsSuccess) { this.getVaccination(); }
+                        if (res2.IsSuccess) {
+                          if (this.isInfiniteVaccine(res2.ResponseData)) {
+                            var cId = res2.ResponseData.ChildId;
+                            var dId = res2.ResponseData.Dose.Id;
+                            var dSchedule = res2.ResponseData.Date;
+                            this.deleteFutureSchedules(cId, dId, dSchedule);
+                          } else {
+                            this.getVaccination();
+                          }
+                        }
                         else { this.toastService.create(res2.Message || 'Error: failed to undo', 'danger'); }
                       },
                       () => { this.toastService.create('Error: server failure', 'danger'); }
