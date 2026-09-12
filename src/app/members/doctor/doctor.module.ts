@@ -35,6 +35,10 @@ const routes: Routes = [
     loadChildren: () => import('./sms-setting/sms-setting.module').then(m => m.SMSSettingPageModule)
   },
   {
+    path: "email-setting",
+    loadChildren: () => import('./email-setting/email-setting.module').then(m => m.EmailSettingPageModule)
+  },
+  {
     path: "analytics",
     loadChildren: () => import('./analytics/analytics.module').then(m => m.AnalyticsPageModule)
   },

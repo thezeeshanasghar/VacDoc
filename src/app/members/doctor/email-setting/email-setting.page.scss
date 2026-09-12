@@ -1,0 +1,19 @@
+.result-box {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.result-success {
+  background: #EEF9F6;
+  border: 1px solid #CDEBE3;
+  color: #0E2A38;
+}
+
+.result-error {
+  background: #FBF1EF;
+  border: 1px solid #E7C9C3;
+  color: #B84A3E;
+}

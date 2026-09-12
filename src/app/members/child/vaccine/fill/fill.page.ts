@@ -754,11 +754,9 @@ export class FillPage implements OnInit {
     let VaccineData = {
     DoctorId : this.fg.value.DoctorId,
     IsDone : false,
-    BrandId : this.fg.value.BrandId,
     ChildId : this.childId,
     DoseId : this.doseId,
     Date : scheduleDate,
-    GivenDate:this.fg.value.GivenDate,
     Height:this.fg.value.Height,
     Weight: this.fg.value.Weight,
     IsSkip: false

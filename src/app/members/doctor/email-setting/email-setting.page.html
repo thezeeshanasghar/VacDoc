@@ -1,0 +1,114 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Email Settings (SMTP Test)</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="fg">
+
+    <ion-item>
+      <ion-label color="primary" position="floating">SMTP Host</ion-label>
+      <ion-input type="text" formControlName="Host" placeholder="smtp.gmail.com" required></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.Host">
+        <div class="error-message" *ngIf="fg.get('Host').hasError(validation.type) && (fg.get('Host').dirty || fg.get('Host').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Port</ion-label>
+      <ion-input type="number" formControlName="Port" placeholder="587" required></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.Port">
+        <div class="error-message" *ngIf="fg.get('Port').hasError(validation.type) && (fg.get('Port').dirty || fg.get('Port').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-label color="primary">Use SSL / TLS</ion-label>
+      <ion-toggle formControlName="UseSsl" slot="end"></ion-toggle>
+    </ion-item>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Username</ion-label>
+      <ion-input type="text" formControlName="Username" placeholder="you@example.com" required></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.Username">
+        <div class="error-message" *ngIf="fg.get('Username').hasError(validation.type) && (fg.get('Username').dirty || fg.get('Username').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Password</ion-label>
+      <ion-input type="password" formControlName="Password" required></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.Password">
+        <div class="error-message" *ngIf="fg.get('Password').hasError(validation.type) && (fg.get('Password').dirty || fg.get('Password').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">From Email</ion-label>
+      <ion-input type="text" formControlName="FromEmail" required></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.FromEmail">
+        <div class="error-message" *ngIf="fg.get('FromEmail').hasError(validation.type) && (fg.get('FromEmail').dirty || fg.get('FromEmail').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">From Name (optional)</ion-label>
+      <ion-input type="text" formControlName="FromName"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Send Test To</ion-label>
+      <ion-input type="text" formControlName="ToEmail" required></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.ToEmail">
+        <div class="error-message" *ngIf="fg.get('ToEmail').hasError(validation.type) && (fg.get('ToEmail').dirty || fg.get('ToEmail').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Subject</ion-label>
+      <ion-input type="text" formControlName="Subject"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Body</ion-label>
+      <ion-textarea formControlName="Body" rows="3"></ion-textarea>
+    </ion-item>
+
+    <ion-button expand="block" class="ion-margin-top" (click)="sendTestEmail()">
+      Send Test Email
+    </ion-button>
+
+    <div *ngIf="resultMessage" class="result-box" [class.result-success]="resultSuccess" [class.result-error]="!resultSuccess">
+      {{ resultMessage }}
+    </div>
+
+  </form>
+</ion-content>

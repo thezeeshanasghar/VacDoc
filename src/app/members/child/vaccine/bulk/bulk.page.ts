@@ -981,12 +981,10 @@ export class BulkPage implements OnInit {
     scheduleDate.setHours(0, 0, 0, 0);
 
     const scheduleDateText = (moment as any)(scheduleDate).format("DD-MM-YYYY");
-    const givenDateText = (moment as any)(this.fg.value.GivenDate, ["YYYY-MM-DD", "DD-MM-YYYY", (moment as any).ISO_8601]).format("DD-MM-YYYY");
 
     const VaccineData = {
       Date: scheduleDateText,
       DoctorId: this.doctorId,
-      GivenDate: givenDateText,
       Height: this.fg.value.Height,
       Weight: this.fg.value.Weight,
       IsDone: false,
