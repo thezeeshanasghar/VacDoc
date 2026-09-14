@@ -36,6 +36,11 @@ export class BulkInvoicePage implements OnInit {
   invoiceStatus: any = { isSubmitted: false, editCount: 0, canEdit: true };
   paId: any = null;
   parentDownloadedWarning: boolean = false;
+  // Fee-only mode (routed from the OHF "CHARGE FEE" action on vaccine.page.html):
+  // no clinic stock was used for any dose on this date, so there's no vaccine
+  // cost to bill — every Amount is locked at 0 and only ConsultationFee is
+  // editable. Reuses this same screen/endpoint; nothing else changes.
+  feeOnly: boolean = false;
   // invoiceNumber: string;
   constructor(
     private loadingController: LoadingController,
@@ -77,12 +82,13 @@ export class BulkInvoicePage implements OnInit {
     this.storage.get(environment.CLINIC_Id).then(val => { this.clinicId = val; });
     this.childId = this.activatedRoute.snapshot.paramMap.get("id");
     this.currentDate = this.activatedRoute.snapshot.paramMap.get("childId");
+    this.feeOnly = this.activatedRoute.snapshot.queryParamMap.get("feeOnly") === "1";
     // const storedInvoiceId = localStorage.getItem('invoiceId');
     // console.log('Stored Invoice ID:', storedInvoiceId);
     this.currentDate1 = new Date(this.currentDate);
     this.getBulk();
     this.fg = this.formBuilder.group({
-      IsConsultationFee: false,
+      IsConsultationFee: this.feeOnly ? true : false,
       ConsultationFee: [null, Validators.pattern('^[0-9]*$')] // Add Validators.pattern to allow only numbers
     });
     this.loadConsultationFeeFromOnlineClinic();
@@ -210,6 +216,11 @@ export class BulkInvoicePage implements OnInit {
         if (res.IsSuccess) {
           // Spec §3.3: only given, non-skipped doses are billable.
           this.bulkData = res.ResponseData.filter(x => x.IsDone == true && !x.IsSkip);
+          if (this.feeOnly) {
+            // No clinic stock used — nothing to bill per dose, only the
+            // consultation/vaccination fee below.
+            this.bulkData.forEach(item => { item.Amount = 0; });
+          }
           // console.log(this.bulkData);
           // console.log(res.ResponseData);
           this.bulkDatadiff = this.bulkData.map(item => {
@@ -349,6 +360,10 @@ getInvoiceId(doseId: string, childId: string) {
 }
 
 getAmount(id: string, doseId: string, childId: string) {
+  // Fee-only mode: no clinic stock was used, so there's no vaccine cost to
+  // suggest a price for — leave every dose's Amount at 0 (set in getBulk())
+  // instead of overwriting it with the server's normal per-brand price lookup.
+  if (this.feeOnly) { return; }
   this.invoiceService.getAmount(id, doseId, childId, this.clinicId).subscribe(res => {
     if (res.IsSuccess) {
       const bulkItem = this.bulkData.find(item => item.Dose.Id === doseId);

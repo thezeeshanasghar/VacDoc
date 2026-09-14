@@ -9,6 +9,13 @@
 
 <ion-content>
 
+  <!-- Fee-only banner (routed from OHF "CHARGE FEE" action) — no clinic stock
+       was used for these doses, so vaccine Amount is locked at 0; only the
+       consultation/vaccination fee below is billable. -->
+  <div *ngIf="feeOnly" class="invoice-status-bar">
+    <ion-badge color="warning">OHF — no clinic stock used. Vaccine cost locked at 0; charge a consultation/vaccination fee only.</ion-badge>
+  </div>
+
   <!-- Invoice edit status banner (PA only) -->
   <div *ngIf="paId" class="invoice-status-bar">
     <ng-container *ngIf="!invoiceStatus.isSubmitted">
@@ -43,7 +50,7 @@
                    type="text"
                    [ngModelOptions]="{standalone: true}"
                    (input)="validateInput($event)"
-                   [disabled]="paId && invoiceStatus.isSubmitted && !invoiceStatus.canEdit">
+                   [disabled]="feeOnly || (paId && invoiceStatus.isSubmitted && !invoiceStatus.canEdit)">
         </ion-input>
         <div *ngIf="!isValidInput" style="color: red;">Please enter only numbers.</div>
       </ion-item>

@@ -306,6 +306,21 @@ export class VaccinePage {
     return !!(data && data.length > 0) && data.every(v => this.isEpiHistoricalDose(v));
   }
 
+  // ── OHF (Other Health Facility) detection ─────────────────────────────────
+  // A dose given OHF never consumed this clinic's stock (BrandId is nulled out
+  // client-side before the give POST — see fill.page.ts/bulk.page.ts) — the
+  // clinic has nothing to bill for it. BrandId is also null for not-yet-given
+  // rows, so this only means OHF once the dose is actually done.
+  isOhfDose(v: any): boolean {
+    return !!(v && v.IsDone && !v.BrandId);
+  }
+  // Same all-or-nothing grouping as isEpiHistoricalGroup: a group that mixes an
+  // OHF dose with a real clinic-stock dose on the same date must stay
+  // invoiceable for the clinic-given part.
+  isOhfGroup(data: any[]): boolean {
+    return !!(data && data.length > 0) && data.every(v => this.isOhfDose(v));
+  }
+
   // ── Sequential action pipeline (spec §3) ──────────────────────────────────
   // A skipped dose leaves the pipeline entirely (§3.3): never counted, given,
   // invoiced or printed. isActiveDose() = a dose still "in" the pipeline.
@@ -346,14 +361,16 @@ export class VaccinePage {
    *   4 PAID      — invoice exists, all done doses paid
    * EPI-only / empty groups fall through to stage 1 (nothing to do here).
    *
-   * NOTE: a stage-2 group that is EPI-historical (isEpiHistoricalGroup()) is
-   * still reported as stage 2 here — it genuinely has given, uninvoiced doses.
-   * The template is responsible for not offering INVOICE for it (see
-   * isEpiHistoricalGroup() guard in vaccine.page.html) since the government
-   * EPI programme gave these doses for free; the clinic never billed for them
-   * and can't invoice them retroactively. Keeping the numeric stage unchanged
-   * avoids disturbing every other isStage() consumer (assign-to-PA, resolved
-   * card styling, stage-4 override, etc.) for a case that only affects one button.
+   * NOTE: a stage-2 group that is EPI-historical (isEpiHistoricalGroup()) or
+   * OHF (isOhfGroup()) is still reported as stage 2 here — it genuinely has
+   * given, uninvoiced doses. The template is responsible for not offering
+   * INVOICE for either case (see the guards in vaccine.page.html): EPI-historical
+   * because the government EPI programme gave these doses for free and the
+   * clinic never billed for them, OHF because the dose was given at another
+   * facility and never touched this clinic's stock. Keeping the numeric stage
+   * unchanged avoids disturbing every other isStage() consumer (assign-to-PA,
+   * resolved card styling, stage-4 override, etc.) for a case that only
+   * affects one button.
    */
   groupStage(data: any[], date: string): 1 | 2 | 3 | 4 {
     const given = this.givenActiveDoses(data);
