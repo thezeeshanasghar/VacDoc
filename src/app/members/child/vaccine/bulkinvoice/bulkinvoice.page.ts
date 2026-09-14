@@ -172,6 +172,23 @@ export class BulkInvoicePage implements OnInit {
     });
   }
 
+  // Reads THIS visit's actually-saved consultation fee from InvoiceSubmission,
+  // scoped by ChildId+date (same pattern as invoice-total). If a saved invoice
+  // already exists for this visit, its fee overrides the clinic-default seeded by
+  // loadConsultationFeeFromOnlineClinic() above — fixing the bug where reopening an
+  // invoiced dose showed a past visit's fee instead of what was actually charged
+  // today. If no invoice exists yet (new visit), the clinic default stands.
+  loadConsultationFeeForVisit() {
+    if (!this.childId || !this.bulkData || this.bulkData.length === 0) { return; }
+    const dateStr = this.resolveInvoiceDate();
+    this.invoiceService.getConsultationFeeForVisit(Number(this.childId), dateStr).subscribe(res => {
+      if (res && res.IsSuccess) {
+        this.fg.controls['ConsultationFee'].setValue(res.ResponseData);
+        this.fg.controls['IsConsultationFee'].setValue(true);
+      }
+    });
+  }
+
   setConsultationFeeFromClinic(clinic: any) {
     if (!clinic) {
       return;
@@ -225,10 +242,9 @@ export class BulkInvoicePage implements OnInit {
           // console.log(res.ResponseData);
           this.bulkDatadiff = this.bulkData.map(item => {
               // console.log(item.Dose.Id);
-              this.getInvoiceId(item.Dose.Id, this.childId);
-              // this.getFee(res.ResponseData.InvoiceId)
               this.getAmount(item.Id, item.Dose.Id, this.childId);
           });
+          this.loadConsultationFeeForVisit();
         } else {
           this.toastService.create(res.Message, "danger");
         }
@@ -349,16 +365,6 @@ export class BulkInvoicePage implements OnInit {
     );
   }
 
-getInvoiceId(doseId: string, childId: string) {
-  this.invoiceService.getInvoiceId(doseId, childId).subscribe(res => {
-    if (res.IsSuccess) {
-      const bulkItem = this.bulkData.find(item => item.Dose.Id === doseId);
-      this.getFee(res.ResponseData.InvoiceId);
-      if (bulkItem) { bulkItem.InvoiceId = res.ResponseData.InvoiceId; }
-    }
-  });
-}
-
 getAmount(id: string, doseId: string, childId: string) {
   // Fee-only mode: no clinic stock was used, so there's no vaccine cost to
   // suggest a price for — leave every dose's Amount at 0 (set in getBulk())
@@ -369,13 +375,6 @@ getAmount(id: string, doseId: string, childId: string) {
       const bulkItem = this.bulkData.find(item => item.Dose.Id === doseId);
       if (bulkItem) { bulkItem.Amount = res.ResponseData; }
     }
-  });
-}
-
-getFee(Id: string) {
-  this.invoiceService.getFee(Id).subscribe(res => {
-    this.fg.controls['ConsultationFee'].setValue(res.ResponseData.Amount);
-    this.fg.controls['IsConsultationFee'].setValue(true);
   });
 }
 

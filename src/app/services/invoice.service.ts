@@ -52,6 +52,14 @@ getInvoiceTotal(childId: number, scheduleDate: string): Observable<any> {
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
+  // ChildId+date scoped, same pattern as getInvoiceTotal — reads THIS visit's saved
+  // consultation fee instead of getFee()'s legacy Fee-table lookup, which is keyed by
+  // whatever InvoiceId getInvoiceId() resolves to (unscoped by date, can be a past visit).
+  getConsultationFeeForVisit(childId: number, scheduleDate: string): Observable<any> {
+    const url = `${this.API_INVOICE}Child/consultation-fee-for-visit?childId=${childId}&scheduleDate=${scheduleDate}`;
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
   // Primary-key lookup via Schedule.InvoiceSubmissionId — no date matching.
   getInvoiceTotalById(invoiceSubmissionId: number): Observable<any> {
     const url = `${this.API_INVOICE}Child/invoice-total-by-id?invoiceSubmissionId=${invoiceSubmissionId}`;
