@@ -41,7 +41,7 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">Username</ion-label>
-      <ion-input type="text" formControlName="SmtpUsername" placeholder="you@yourclinic.com" required></ion-input>
+      <ion-input type="text" formControlName="SmtpUsername" placeholder="you@yourclinic.com" required autocomplete="off"></ion-input>
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.SmtpUsername">
@@ -53,7 +53,7 @@
 
     <ion-item>
       <ion-label color="primary" position="floating">Password</ion-label>
-      <ion-input type="password" formControlName="SmtpPassword" required></ion-input>
+      <ion-input type="password" formControlName="SmtpPassword" required autocomplete="new-password"></ion-input>
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.SmtpPassword">
