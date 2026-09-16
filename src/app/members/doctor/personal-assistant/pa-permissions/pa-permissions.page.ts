@@ -93,6 +93,7 @@ export class PaPermissionsPage implements OnInit {
         { key: 'ViewAlerts',       label: 'View vaccine / follow-up / birthday alerts' },
         { key: 'SendBulkEmail',    label: 'Send bulk email to alert patients' },
         { key: 'OpenWhatsApp',     label: 'Open WhatsApp for alert patient' },
+        { key: 'OpenSms',          label: 'Open SMS for alert patient' },
         { key: 'DownloadAlertCsv',label: 'Download alert list as CSV' },
         { key: 'RetryMessage',     label: 'Retry failed message' },
       ]

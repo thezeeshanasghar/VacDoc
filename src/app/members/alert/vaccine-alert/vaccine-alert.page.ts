@@ -40,6 +40,7 @@ export class VaccineAlertPage implements OnInit {
   canSendEmail = true;
   canDownloadCsv = true;
   canWhatsApp = true;
+  canSms = true;
 
   // Clinic filter: default 'all' = today's existing merged-across-clinics behaviour.
   allChilds: any[] = [];
@@ -74,6 +75,7 @@ export class VaccineAlertPage implements OnInit {
         this.canSendEmail   = (perm && perm.SendBulkEmail)    || false;
         this.canDownloadCsv = (perm && perm.DownloadAlertCsv) || false;
         this.canWhatsApp    = (perm && perm.OpenWhatsApp)     || false;
+        this.canSms         = (perm && perm.OpenSms)          || false;
       });
     }
     await this.storage.get(environment.CLINIC_Id).then(clinicId => {
@@ -610,6 +612,54 @@ export class VaccineAlertPage implements OnInit {
     }
   );
 }
+
+  // Same message body as openWhatsApp, delivered via the phone's own Messages app
+  // instead of WhatsApp — user still taps Send there, so any reply (e.g. "how much
+  // does this cost?") lands in the doctor's native Messages app where they can see it.
+  openSms(mobileNumber: string, childName: string, doseName: string, child: any) {
+    const isPA = this.usertype && this.usertype.UserType === 'PA';
+    const paId = isPA ? Number(this.usertype.PAId) : undefined;
+    const doctorId = isPA ? undefined : Number(this.doctorId);
+    this.vaccineService.getDosesForChild(child.Child.Id, this.formatDateToString(this.selectedDate), child._sourceClinicId, paId, doctorId).subscribe(
+      (response) => {
+        if (response.IsSuccess && response.ResponseData) {
+          const doseNames = response.ResponseData.map((dose: any) => dose.Name).join(', ');
+          const childNm = child.Child.Name;
+          const clinicName = response.ResponseData[0] && response.ResponseData[0].Clinic ? response.ResponseData[0].Clinic.Name : 'Unknown Clinic';
+          const clinicPhoneNumber = response.ResponseData[0] && response.ResponseData[0].Clinic ? response.ResponseData[0].Clinic.PhoneNumber : 'Unknown Phone Number';
+          const password = child.Child.User.Password ? child.Child.User.Password : '******';
+
+          const childId = response.ResponseData[0].ChildId || child.Child.Id;
+          const linkToken = response.ResponseData[0].LinkToken || '';
+          const recordLink = 'https://client.vaccinationcentre.com/child/vaccine/' + childId +
+            (linkToken ? '?t=' + encodeURIComponent(linkToken) : '');
+
+          const message =
+            `Reminder: Vaccination ${doseNames} for ${childNm} is due. Please confirm your appointment.\n` +
+            `Clinic: ${clinicName}\nPhone: ${clinicPhoneNumber}\n` +
+            `View your child's vaccination record: ${recordLink}\nMobile: ${mobileNumber || ''}\nPassword: ${password}\n` +
+            `Thanks, ${this.displayName}`;
+
+          const mobile = mobileNumber.replace(/^0+/, '');
+          // iOS wants '&body=' before the number's query string, Android/others use '?body='.
+          const separator = this.platform.is('ios') ? '&' : '?';
+          const smsUrl = `sms:${mobile}${separator}body=${encodeURIComponent(message)}`;
+          window.open(smsUrl, '_system');
+
+          // Fire-and-forget: persist "sent" so the tick survives reload/logout-login.
+          this.vaccineService.markAlertSent(child.Id).subscribe(
+            () => { child.AlertSentAt = new Date(); },
+            (err) => console.error('Error marking alert sent:', err)
+          );
+        } else {
+          console.error('API Response Error: No doses available or ResponseData is undefined.', response);
+        }
+      },
+      (error) => {
+        console.error('Error fetching doses:', error);
+      }
+    );
+  }
 
   formatDateToString(date: string | Date): string {
     const d = new Date(date);

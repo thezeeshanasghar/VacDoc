@@ -262,6 +262,10 @@ ion-item {
 
   &.mail { background: #E3F2FD; }
   &.wa { background: #E8F8EE; }
+  &.sms {
+    background: #FFF3E0;
+    ion-icon { color: #F57C00; }
+  }
 }
 
 @media (max-width: 400px) {

@@ -36,6 +36,12 @@
                 <ion-icon name="checkmark"></ion-icon>
               </span>
             </span>
+            <span class="ic-btn sms wa-icon-wrap" (click)="openSms(child.User.MobileNumber, child.Name, child.DOB, child)">
+              <ion-icon name="chatbox-ellipses"></ion-icon>
+              <span class="wa-sent-badge" *ngIf="isBirthdayAlertSentThisYear(child)">
+                <ion-icon name="checkmark"></ion-icon>
+              </span>
+            </span>
           </div>
         </ion-item>
       </ion-col>

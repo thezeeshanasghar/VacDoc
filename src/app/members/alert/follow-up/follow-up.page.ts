@@ -268,6 +268,36 @@ export class FollowUpPage implements OnInit {
     this.getAllClinicsFollowups();
   }
 
+  // Same message body as openWhatsApp, delivered via the phone's own Messages app
+  // instead of WhatsApp — user still taps Send there, so any reply lands in the
+  // doctor's native Messages app where they can see it.
+  openSms(mobileNumber: string, childName: string, nextVisitDate: string, child: any) {
+    if (mobileNumber.trim() === '') {
+      alert('Invalid mobile number. Please provide a valid number.');
+      return;
+    }
+    const countryCode = child.Child.User.CountryCode ? child.Child.User.CountryCode : '+92';
+    const cleanedMobile = mobileNumber.replace(/^0+/, '');
+    const formattedPatientNumber = countryCode + cleanedMobile;
+
+    const password = child.Child.User.Password ? child.Child.User.Password : '******';
+    const message =
+      `Reminder: Follow-up visit for ${childName} is scheduled on ${nextVisitDate}.\n` +
+      `Please confirm your appointment.\n` +
+      `Login at https://client.vaccinationcentre.com\nUsername: ${formattedPatientNumber}\nPassword: ${password}\n` +
+      `Thanks, Baby Medics`;
+
+    const separator = this.platform.is('ios') ? '&' : '?';
+    const smsUrl = `sms:${formattedPatientNumber}${separator}body=${encodeURIComponent(message)}`;
+    window.open(smsUrl, '_system');
+
+    // Fire-and-forget: persist "sent" so the tick survives reload/logout-login.
+    this.followupService.markFollowupAlertSent(child.Id).subscribe(
+      () => { child.AlertSentAt = new Date(); },
+      (err) => console.error('Error marking follow-up alert sent:', err)
+    );
+  }
+
   openWhatsApp(mobileNumber: string, childName: string, nextVisitDate: string, child: any) {
   console.log('Child Name:', childName);
   console.log('Next Visit Date:', nextVisitDate);

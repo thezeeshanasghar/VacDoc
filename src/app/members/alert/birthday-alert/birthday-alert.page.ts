@@ -304,6 +304,36 @@ export class BirthdayAlertPage implements OnInit {
     return child.Id;
   }
 
+  // Same message body as openWhatsApp, delivered via the phone's own Messages app
+  // instead of WhatsApp — user still taps Send there, so any reply lands in the
+  // doctor's native Messages app where they can see it.
+  openSms(mobileNumber: string, childName: string, birthDate: string, child: any) {
+    if (mobileNumber.trim() === '') {
+      alert('Invalid mobile number. Please provide a valid number.');
+      return;
+    }
+
+    const clinicName = child.ClinicName || this.clinic || 'Unknown Clinic';
+    const message =
+      `🎉 Happy Birthday, ${childName}! 🎂\n\n` +
+      `Wishing you a day filled with joy, laughter, and happiness! May your year ahead be full of success and good health. 🎈\n\n` +
+      `🎁 Date of Birth: ${birthDate}\n` +
+      `🏥 Clinic: ${clinicName}\n\n` +
+      `Best wishes,\n` +
+      `👨‍⚕️ ${this.docname}`;
+    const formattedPatientNumber = mobileNumber.startsWith('+92')? mobileNumber: `+92${mobileNumber.replace(/^0/, '')}`;
+
+    const separator = this.platform.is('ios') ? '&' : '?';
+    const smsUrl = `sms:${formattedPatientNumber}${separator}body=${encodeURIComponent(message)}`;
+    window.open(smsUrl, '_system');
+
+    // Fire-and-forget: persist "sent" so the tick survives reload/logout-login.
+    this.birthdayService.markBirthdayAlertSent(child.Id).subscribe(
+      () => { child.LastBirthdayAlertSentAt = new Date(); },
+      (err) => console.error('Error marking birthday alert sent:', err)
+    );
+  }
+
   openWhatsApp(mobileNumber: string, childName: string, birthDate: string, child: any) {
     if (mobileNumber.trim() === '') {
       alert('Invalid mobile number. Please provide a valid number.');
