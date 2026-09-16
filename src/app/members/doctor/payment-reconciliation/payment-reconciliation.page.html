@@ -244,7 +244,7 @@
                   <input type="checkbox"
                     *ngIf="row.RowType === 'Invoice'"
                     [checked]="isSelected(row)"
-                    [disabled]="row.IsConfirmed"
+                    [disabled]="row.IsConfirmed || !!row.PendingAmendmentType"
                     (change)="toggleRow(row, $any($event.target).checked)"
                     class="row-checkbox">
                 </td>
@@ -264,8 +264,8 @@
                   <span class="amount-val" *ngIf="row.RowType === 'AwaitingInvoice'">—</span>
                   <ng-container *ngIf="row.RowType !== 'AwaitingInvoice'">
                     <span class="amount-val">{{ row.Amount | number:'1.0-0' }}</span>
-                    <!-- For amendment rows show old→new -->
-                    <div *ngIf="row.RowType === 'UngiveReversal' || row.RowType === 'EditReversal'" class="amount-sub-detail">
+                    <!-- Amendment rows, and Invoice rows with a pending edit/ungive folded onto them, show old→new -->
+                    <div *ngIf="row.RowType === 'UngiveReversal' || row.RowType === 'EditReversal' || row.PendingAmendmentType" class="amount-sub-detail">
                       {{ row.OldAmount | number:'1.0-0' }} → {{ row.NewAmount | number:'1.0-0' }}
                     </div>
                   </ng-container>
@@ -280,11 +280,19 @@
                 <td class="col-status">
                   <!-- Normal invoice row -->
                   <ng-container *ngIf="row.RowType === 'Invoice'">
-                    <ng-container *ngIf="row.IsConfirmed">
+                    <!-- A pending PA/Manager/Doctor edit or ungive folded onto this row takes
+                         priority over Confirmed/Pending — the doctor resolves that first. -->
+                    <ng-container *ngIf="row.PendingAmendmentType">
+                      <span class="badge" [ngClass]="row.PendingAmendmentType === 'UngiveReversal' ? 'badge-ungive' : 'badge-edit'">
+                        {{ row.PendingAmendmentType === 'UngiveReversal' ? 'Ungive After Download' : 'Invoice Edit Pending' }}
+                      </span>
+                      <div class="pending-sub">Awaiting your approval</div>
+                    </ng-container>
+                    <ng-container *ngIf="!row.PendingAmendmentType && row.IsConfirmed">
                       <span class="badge badge-confirmed">Confirmed</span>
                       <div class="confirm-ts">{{ formatDateTime(row.ConfirmedAt) }}</div>
                     </ng-container>
-                    <ng-container *ngIf="!row.IsConfirmed">
+                    <ng-container *ngIf="!row.PendingAmendmentType && !row.IsConfirmed">
                       <span class="badge badge-pending" *ngIf="!row.PendingHandover">Pending With PA</span>
                       <ng-container *ngIf="row.PendingHandover">
                         <span class="badge badge-handover">Pending Handover</span>
@@ -322,13 +330,24 @@
                   </ng-container>
                 </td>
                 <td class="col-action">
-                  <!-- Normal invoice: Confirm button -->
+                  <!-- Normal invoice: Confirm button, or Approve/Reject when a PA/Manager
+                       edit or ungive is pending on this same row -->
                   <ng-container *ngIf="row.RowType === 'Invoice'">
-                    <div *ngIf="row.IsConfirmed" class="action-confirmed">
-                      <ion-icon name="checkmark-circle" class="icon-confirmed"></ion-icon>
+                    <div class="amendment-actions" *ngIf="row.PendingAmendmentType">
+                      <button class="btn-approve" (click)="approveAmendment(row)">
+                        <ion-icon name="checkmark-outline"></ion-icon> Approve
+                      </button>
+                      <button class="btn-reject" (click)="rejectAmendment(row)">
+                        <ion-icon name="close-outline"></ion-icon> Reject
+                      </button>
                     </div>
-                    <button *ngIf="!row.IsConfirmed" class="btn-confirm-row"
-                      (click)="confirmPayment(row)">Confirm</button>
+                    <ng-container *ngIf="!row.PendingAmendmentType">
+                      <div *ngIf="row.IsConfirmed" class="action-confirmed">
+                        <ion-icon name="checkmark-circle" class="icon-confirmed"></ion-icon>
+                      </div>
+                      <button *ngIf="!row.IsConfirmed" class="btn-confirm-row"
+                        (click)="confirmPayment(row)">Confirm</button>
+                    </ng-container>
                   </ng-container>
                   <!-- Amendment rows: Approve / Reject -->
                   <ng-container *ngIf="row.RowType !== 'Invoice' && row.RowType !== 'AwaitingInvoice' && row.AmendmentId">

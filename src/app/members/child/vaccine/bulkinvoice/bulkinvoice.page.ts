@@ -180,7 +180,7 @@ export class BulkInvoicePage implements OnInit {
   // today. If no invoice exists yet (new visit), the clinic default stands.
   loadConsultationFeeForVisit() {
     if (!this.childId || !this.bulkData || this.bulkData.length === 0) { return; }
-    const dateStr = this.resolveInvoiceDate();
+    const dateStr = this.resolveInvoiceDateForDisplay();
     this.invoiceService.getConsultationFeeForVisit(Number(this.childId), dateStr).subscribe(res => {
       if (res && res.IsSuccess) {
         this.fg.controls['ConsultationFee'].setValue(res.ResponseData);
@@ -271,7 +271,19 @@ export class BulkInvoicePage implements OnInit {
   // whenever the device's local timezone is ahead of UTC (PKT always is, UTC+5). A bare
   // date string has no timezone component, so it's parsed as Kind=Unspecified at
   // midnight — .Date is then exact.
-  private resolveInvoiceDate(): string {
+  //
+  // Returns null when no valid GivenDate can be found — this.bulkData is already
+  // filtered to IsDone==true rows (getBulk() above), so a given dose with no parseable
+  // GivenDate means that dose's own record is broken, not just this screen. Callers
+  // decide what to do with null: buildInvoiceDTO() (the actual invoice write) must NOT
+  // silently substitute the due-date bucket here — a real invoice #176 was found live in
+  // production with InvoiceDate 5 months after its own SubmittedAt because this used to
+  // fall back to `this.currentDate1` (the due-date route param) unconditionally, and that
+  // fabricated date then propagates into every report that filters by InvoiceDate
+  // (Dashboard, P&L, StockController sales report, PA reconciliation). The lenient
+  // due-date fallback still exists as resolveInvoiceDateForDisplay() below, used only for
+  // the non-critical consultation-fee prefill lookup.
+  private resolveInvoiceDate(): string | null {
     const givenDateRaw = this.bulkData && this.bulkData.length > 0 ? this.bulkData[0].GivenDate : null;
     if (givenDateRaw) {
       const parsed = moment(givenDateRaw, "DD-MM-YYYY", true);
@@ -279,10 +291,27 @@ export class BulkInvoicePage implements OnInit {
         return parsed.format("YYYY-MM-DD");
       }
     }
-    return moment(this.currentDate1 || new Date()).format("YYYY-MM-DD");
+    return null;
   }
 
+  // Lenient variant for loadConsultationFeeForVisit()'s prefill lookup only — falling
+  // back to the due-date bucket there just means the fee-prefill lookup might miss (the
+  // clinic-default fee stands instead), never that a wrong date gets written anywhere.
+  private resolveInvoiceDateForDisplay(): string {
+    return this.resolveInvoiceDate() || moment(this.currentDate1 || new Date()).format("YYYY-MM-DD");
+  }
+
+  // Throws when no valid GivenDate exists among the billed doses — callers must catch
+  // this and stop before calling updateVaccineInvoice, instead of sending a fabricated
+  // InvoiceDate. See resolveInvoiceDate()'s comment for why this can't just fall back.
   buildInvoiceDTO(consultationFee: number): any {
+    const invoiceDate = this.resolveInvoiceDate();
+    if (!invoiceDate) {
+      throw new Error(
+        "Can't determine the actual given date for this visit — the dose record may be corrupted. " +
+        "Please correct the given date on the dose before invoicing."
+      );
+    }
     const schedules = (this.bulkData || []).map((schedule: any) => ({
       Id: schedule.Id,
       Amount: schedule.Amount
@@ -293,13 +322,19 @@ export class BulkInvoicePage implements OnInit {
       DoctorId: Number(this.doctorId),
       PaId: this.paId ? Number(this.paId) : null,
       ClinicId: this.clinicId ? Number(this.clinicId) : null,
-      InvoiceDate: this.resolveInvoiceDate(),
+      InvoiceDate: invoiceDate,
       ConsultationFee: consultationFee
     };
   }
 
   onSubmit() {
-    const dto = this.buildInvoiceDTO(this.fg.value.IsConsultationFee ? Number(this.fg.value.ConsultationFee) : 0);
+    let dto: any;
+    try {
+      dto = this.buildInvoiceDTO(this.fg.value.IsConsultationFee ? Number(this.fg.value.ConsultationFee) : 0);
+    } catch (e) {
+      this.toastService.create(e.message, "danger");
+      return;
+    }
     this.fillVaccine(dto);
   }
 
@@ -343,7 +378,13 @@ export class BulkInvoicePage implements OnInit {
 
   private async doSaveAndDownload() {
     this.consultationfee = this.fg.value.IsConsultationFee ? Number(this.fg.value.ConsultationFee) : 0;
-    const dto = this.buildInvoiceDTO(this.consultationfee);
+    let dto: any;
+    try {
+      dto = this.buildInvoiceDTO(this.consultationfee);
+    } catch (e) {
+      this.toastService.create(e.message, "danger");
+      return;
+    }
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
     this.bulkService.updateVaccineInvoice(dto).subscribe(

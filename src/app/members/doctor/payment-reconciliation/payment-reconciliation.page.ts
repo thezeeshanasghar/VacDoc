@@ -11,7 +11,10 @@ import { environment } from 'src/environments/environment';
 interface PaymentRow {
   InvoiceSubmissionId: number;
   ScheduleId: number;       // alias = InvoiceSubmissionId, kept for backwards compat
-  AmendmentId?: number;     // set when RowType is UngiveReversal or EditReversal
+  // Set when this Invoice row has a pending PA/Manager edit or ungive folded onto it —
+  // Approve/Reject act on THIS row instead of a separate UngiveReversal/EditReversal row.
+  AmendmentId?: number;
+  PendingAmendmentType?: 'UngiveReversal' | 'EditReversal';
   AssignmentId?: number;    // PAAssignment.Id — used for "delete assignment" cascade
   DirectSaleBillNo?: string; // set when RowType is DirectSale
   RowType: 'Invoice' | 'UngiveReversal' | 'EditReversal' | 'AwaitingInvoice' | 'DirectSale';
@@ -561,6 +564,7 @@ export class PaymentReconciliationPage {
       return 'PendingWithPa';
     }
     // RowType === 'Invoice'
+    if (row.PendingAmendmentType) { return row.PendingAmendmentType === 'UngiveReversal' ? 'UngiveAfterDownload' : 'InvoiceEditReversal'; }
     if (row.IsConfirmed) { return 'Confirmed'; }
     if (row.PendingHandover) { return 'PendingHandover'; }
     return 'PendingWithPa';
@@ -619,14 +623,18 @@ export class PaymentReconciliationPage {
     this.selectedIds = new Set(this.selectedIds);
   }
 
+  private isBulkSelectable(r: PaymentRow): boolean {
+    return !r.IsConfirmed && r.RowType === 'Invoice' && !r.PendingAmendmentType;
+  }
+
   get allChecked(): boolean {
-    const pending = this.filteredRows.filter(r => !r.IsConfirmed && r.RowType === 'Invoice');
+    const pending = this.filteredRows.filter(r => this.isBulkSelectable(r));
     return pending.length > 0 && pending.every(r => this.selectedIds.has(r.ScheduleId));
   }
 
   toggleAll(checked: boolean) {
     if (checked) {
-      this.filteredRows.filter(r => !r.IsConfirmed && r.RowType === 'Invoice').forEach(r => this.selectedIds.add(r.ScheduleId));
+      this.filteredRows.filter(r => this.isBulkSelectable(r)).forEach(r => this.selectedIds.add(r.ScheduleId));
     } else {
       this.selectedIds = new Set();
     }
@@ -756,11 +764,12 @@ export class PaymentReconciliationPage {
   }
 
   async approveAmendment(row: PaymentRow) {
+    const isUngive = row.RowType === 'UngiveReversal' || row.PendingAmendmentType === 'UngiveReversal';
     const alert = await this.alertController.create({
-      header: row.RowType === 'UngiveReversal' ? 'Approve Ungive' : 'Approve Invoice Edit Reversal',
-      message: row.RowType === 'UngiveReversal'
+      header: isUngive ? 'Approve Ungive' : 'Approve Invoice Edit',
+      message: isUngive
         ? `Approve ungive for ${row.PatientName}? PA payable will drop to PKR 0 for this invoice.`
-        : `Approve edit reversal for ${row.PatientName}? PA payable for Amount1 (PKR ${(row.OldAmount || 0).toLocaleString()}) will be reversed.`,
+        : `Approve this edit for ${row.PatientName}? PA payable will change from PKR ${(row.OldAmount || 0).toLocaleString()} to PKR ${(row.NewAmount || row.Amount || 0).toLocaleString()}.`,
       buttons: [
         { text: 'Cancel', role: 'cancel' },
         {
@@ -786,11 +795,12 @@ export class PaymentReconciliationPage {
   }
 
   async rejectAmendment(row: PaymentRow) {
+    const isUngive = row.RowType === 'UngiveReversal' || row.PendingAmendmentType === 'UngiveReversal';
     const alert = await this.alertController.create({
       header: 'Reject — PA Still Owes',
-      message: row.RowType === 'UngiveReversal'
+      message: isUngive
         ? `Reject ungive for ${row.PatientName}? PA will still owe PKR ${(row.OldAmount || row.Amount).toLocaleString()}.`
-        : `Reject edit reversal for ${row.PatientName}? PA still owes original amount PKR ${(row.OldAmount || row.Amount).toLocaleString()}.`,
+        : `Reject this edit for ${row.PatientName}? PA still owes original amount PKR ${(row.OldAmount || row.Amount).toLocaleString()}.`,
       inputs: [{ name: 'notes', type: 'text', placeholder: 'Optional notes...' }],
       buttons: [
         { text: 'Cancel', role: 'cancel' },
