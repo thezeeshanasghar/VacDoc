@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Storage } from '@ionic/storage';
+import { environment } from 'src/environments/environment';
+import { DoctorService } from 'src/app/services/doctor.service';
 
 @Component({
   selector: 'app-doctor',
@@ -7,9 +10,23 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DoctorPage implements OnInit {
 
-  constructor() { }
+  allowOwnEmail = false;
 
-  ngOnInit() {
+  constructor(
+    private storage: Storage,
+    private doctorService: DoctorService,
+  ) { }
+
+  async ngOnInit() {
+    const doctorId = await this.storage.get(environment.DOCTOR_Id);
+    if (!doctorId) {
+      return;
+    }
+    this.doctorService.getDoctorProfile(doctorId).subscribe(res => {
+      if (res.IsSuccess) {
+        this.allowOwnEmail = res.ResponseData.AllowOwnEmail === true;
+      }
+    });
   }
 
 }
