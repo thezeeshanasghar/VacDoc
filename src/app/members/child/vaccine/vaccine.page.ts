@@ -84,7 +84,7 @@ export class VaccinePage {
   // Stage-4 (paid) override support (spec §3.4a): per-date invoice ownership/edit
   // window, from the existing GET schedule/invoice-status endpoint (already used
   // by bulkinvoice.page.ts) — no new backend endpoint needed.
-  invoiceStatusMap: { [date: string]: { isSubmitted: boolean; editCount: number; canEdit: boolean; submittedByPaId: number | null } } = {};
+  invoiceStatusMap: { [date: string]: { isSubmitted: boolean; editCount: number; canEdit: boolean; submittedByPaId: number | null; isPrePaymentSystem?: boolean } } = {};
 
   isFilledToday(doneAt: any): boolean {
     if (!doneAt) return false;
@@ -1783,6 +1783,15 @@ removal(type: string){
     const today = moment().utcOffset(5 * 60).format('YYYY-MM-DD');
     if (doneDay !== today) { return false; }
     return (v.UngiveCount || 0) < 2;
+  }
+
+  // The invoice backing this date-group predates the PA payment system's real launch
+  // (2026-05-28) — a Historical Backfill row or similar fabricated/backdated invoice, not
+  // a real transaction. Hides PAYMENT so nobody records a cash/online collection against
+  // data that was never meant to go through PA cash handling in the first place; the
+  // invoice-menu icon (view/manage) stays available regardless.
+  isPrePaymentSystemInvoice(date: string): boolean {
+    return !!this.invoiceStatusMap[date] && !!this.invoiceStatusMap[date].isPrePaymentSystem;
   }
 
   hasUnpaidDoneVaccine(data: any[], date: string): boolean {

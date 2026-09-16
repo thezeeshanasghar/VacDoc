@@ -166,7 +166,7 @@
                 <ion-icon name="receipt-outline"></ion-icon>
               </button>
               <button
-                *ngIf="canCollectPayment"
+                *ngIf="canCollectPayment && !isPrePaymentSystemInvoice(item.key)"
                 class="stage-btn stage-btn--payment"
                 (click)="openPaymentPopup(getDoneScheduleId(item.value), item.value)"
                 title="Record payment">
