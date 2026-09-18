@@ -332,8 +332,11 @@ export class PaService extends BaseService {
     return this.http.patch(url, {}, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  confirmInvoice(invoiceSubmissionId: number, doctorId: number): Observable<any> {
-    const url = `${this.API_PA}Schedule/confirm-invoice/${invoiceSubmissionId}?doctorId=${doctorId}`;
+  confirmInvoice(invoiceSubmissionId: number, doctorId: number, callerUserId?: number, securityStamp?: string): Observable<any> {
+    const params = new URLSearchParams({ doctorId: String(doctorId) });
+    if (callerUserId) { params.set('callerUserId', String(callerUserId)); }
+    if (securityStamp) { params.set('securityStamp', securityStamp); }
+    const url = `${this.API_PA}Schedule/confirm-invoice/${invoiceSubmissionId}?${params.toString()}`;
     return this.http.patch(url, {}, this.httpOptions).pipe(catchError(this.handleError));
   }
 

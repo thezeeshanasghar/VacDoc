@@ -66,6 +66,8 @@ export class PaymentReconciliationPage {
 
   pendingReversals: any[] = [];
   pendingHandovers: any[] = [];
+  private callerUserId: number = null;
+  private securityStamp: string = null;
 
   constructor(
     private paService: PaService,
@@ -94,6 +96,8 @@ export class PaymentReconciliationPage {
     if (user && user.DoctorId) {
       this.doctorId = Number(user.DoctorId);
     }
+    this.callerUserId = user && user.Id ? Number(user.Id) : null;
+    this.securityStamp = await this.storage.get(environment.SECURITY_STAMP);
     await this.loadClinics();
 
     // Optional deep-link from PA Assignment Tracking's "View in Payments" — pre-selects
@@ -746,7 +750,7 @@ export class PaymentReconciliationPage {
         return;
       }
       const row = rows[index];
-      this.paService.confirmInvoice(row.InvoiceSubmissionId || row.ScheduleId, this.doctorId!).subscribe(
+      this.paService.confirmInvoice(row.InvoiceSubmissionId || row.ScheduleId, this.doctorId!, this.callerUserId, this.securityStamp).subscribe(
         res => {
           if (res && res.IsSuccess) {
             done++;

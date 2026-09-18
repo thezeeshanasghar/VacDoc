@@ -45,7 +45,7 @@ export class ScheduleService extends BaseService {
     return this.http.patch(url, payload, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  recordPaymentMode(scheduleId: number, payload: { PaymentMode: string; OnlineService?: string }): Observable<any> {
+  recordPaymentMode(scheduleId: number, payload: { PaymentMode: string; OnlineService?: string; CallerUserId?: number; SecurityStamp?: string }): Observable<any> {
     const url = `${this.API_SCHEDULE}Schedule/${scheduleId}/record-payment-mode`;
     return this.http.patch(url, payload, this.httpOptions).pipe(catchError(this.handleError));
   }

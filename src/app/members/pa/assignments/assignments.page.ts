@@ -23,6 +23,11 @@ export class AssignmentsPage {
   paId: number = null;
   dueFilter: 'today' | 'upcoming' | 'all' = 'all';
 
+  // Cached at loadAll() time — needed on every money-moving call (record-payment-mode,
+  // mark-payment-collected) now that those endpoints require caller identity.
+  private callerUserId: number = null;
+  private securityStamp: string = null;
+
   // Stat tiles, merged in from the retired Payables page — sourced from
   // GetMyReconciliation.TotalPending, same number that page always showed.
   totalPayable: number = 0;
@@ -58,6 +63,8 @@ export class AssignmentsPage {
     const user = await this.storage.get(environment.USER);
     const stamp = await this.storage.get(environment.SECURITY_STAMP);
     const callerUserId = user && user.Id ? Number(user.Id) : undefined;
+    this.callerUserId = callerUserId;
+    this.securityStamp = stamp;
 
     try {
       const [assignRes, reconRes, pendingDsRes, completedDsRes] = await Promise.all([
@@ -424,7 +431,7 @@ export class AssignmentsPage {
       const done = (ok: boolean) => { if (!settled) { settled = true; loading.dismiss(); resolve(ok); } };
       const next = (index: number) => {
         if (index >= unpaid.length) { done(true); return; }
-        this.scheduleService.recordPaymentMode(unpaid[index].Id, { PaymentMode: mode }).subscribe(
+        this.scheduleService.recordPaymentMode(unpaid[index].Id, { PaymentMode: mode, CallerUserId: this.callerUserId, SecurityStamp: this.securityStamp }).subscribe(
           res => {
             if (res && res.IsSuccess) {
               // Mark only this schedule as paid once server confirms

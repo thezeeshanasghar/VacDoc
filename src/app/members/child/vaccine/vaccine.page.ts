@@ -1869,7 +1869,7 @@ removal(type: string){
     const loading = await this.loadingController.create({ message: 'Recording payment...' });
     await loading.present();
     // Record payment mode for ALL schedules in this visit in parallel
-    const calls = ids.map(id => this.scheduleService.recordPaymentMode(id, { PaymentMode: mode }).toPromise());
+    const calls = ids.map(id => this.scheduleService.recordPaymentMode(id, { PaymentMode: mode, CallerUserId: this.callerUserId, SecurityStamp: this.securityStamp }).toPromise());
     try {
       await Promise.all(calls);
       loading.dismiss();
@@ -1942,6 +1942,33 @@ removal(type: string){
     const dateStr = res.BlockingAssignedDate || 'an earlier visit';
     const hasInvoice = !!res.BlockingHasInvoice;
 
+    // Sync-gap case (2026-09-18 incident): the blocking invoice is already Confirmed on
+    // Payment Reconciliation, but this assignment's own flag never flipped — telling the
+    // doctor to "go tap Confirm" would be a dead end, since there's nothing left to confirm.
+    // Offer a one-tap self-heal instead of repeating a satisfied instruction.
+    if (res.AlreadyConfirmedButUnsynced && res.BlockingInvoiceSubmissionId) {
+      const confirmedWhen = res.BlockingConfirmedAt
+        ? new Date(res.BlockingConfirmedAt).toLocaleString('en-US', { day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' })
+        : 'earlier';
+      const syncAlert = await this.alertController.create({
+        header: "Can't Assign Yet",
+        cssClass: 'vac-confirm',
+        message:
+          `${paName}'s visit with this patient on ${dateStr} was already confirmed on ${confirmedWhen} — but the assignment record itself never synced. This is a data gap, not something for you to re-confirm.\n\n` +
+          `Tap Fix to close out that old assignment now. This won't change the invoice, payment, or amount already confirmed.`,
+        buttons: [
+          { text: 'Cancel', role: 'cancel', cssClass: 'alert-btn-neutral' },
+          {
+            text: 'Fix & Continue',
+            cssClass: 'alert-btn-confirm',
+            handler: () => { this.healBlockedAssignmentSyncGap(res.BlockingInvoiceSubmissionId); }
+          }
+        ]
+      });
+      await syncAlert.present();
+      return;
+    }
+
     const detail = hasInvoice
       ? `Go to Payment Reconciliation and tap Confirm on that invoice row. Once confirmed, this patient can be assigned again right away.`
       : `${paName} hasn't submitted an invoice for that visit yet — ask them to submit it, then confirm it in Payment Reconciliation to unblock this patient.`;
@@ -1964,6 +1991,25 @@ removal(type: string){
       ]
     });
     await alert.present();
+  }
+
+  private async healBlockedAssignmentSyncGap(invoiceSubmissionId: number) {
+    const loading = await this.loadingController.create({ message: 'Fixing...' });
+    await loading.present();
+    this.paService.confirmInvoice(invoiceSubmissionId, this.doctorId, this.callerUserId, this.securityStamp).subscribe(
+      res => {
+        loading.dismiss();
+        if (res && res.IsSuccess) {
+          this.toastService.create('Fixed — you can assign this patient again now.', 'success');
+        } else {
+          this.toastService.create((res && res.Message) || 'Failed to fix — please try again.', 'danger');
+        }
+      },
+      () => {
+        loading.dismiss();
+        this.toastService.create('Failed to fix — please try again.', 'danger');
+      }
+    );
   }
 
   loadActiveAssignment(onDone?: () => void) {

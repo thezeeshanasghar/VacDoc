@@ -17,6 +17,8 @@ export class CollectionTasksPage implements OnInit {
   weight: number = null;
   height: number = null;
   circle: number = null;
+  private callerUserId: number = null;
+  private securityStamp: string = null;
 
   constructor(
     private storage: Storage,
@@ -27,11 +29,13 @@ export class CollectionTasksPage implements OnInit {
 
   ngOnInit() {
     this.storage.get(environment.USER).then(user => {
+      this.callerUserId = user && user.Id ? Number(user.Id) : null;
       if (user && user.PAId) {
         this.paId = Number(user.PAId);
         this.loadTasks();
       }
     });
+    this.storage.get(environment.SECURITY_STAMP).then(stamp => { this.securityStamp = stamp || null; });
   }
 
   async loadTasks() {
@@ -69,6 +73,8 @@ export class CollectionTasksPage implements OnInit {
       Weight: this.weight,
       Height: this.height,
       Circle: this.circle,
+      CallerUserId: this.callerUserId,
+      SecurityStamp: this.securityStamp,
     };
     this.scheduleService.markPaymentCollected(this.activeTask.Id, payload).subscribe(
       async res => {
