@@ -58,6 +58,7 @@ export class DashboardPage implements OnInit {
   assignmentCount: number = 0;
   pendingApprovalsCount: number = 0;
   hasPA: boolean = false;
+  showCompleteProfilePrompt: boolean = false;
 
   constructor(
     private loadingController: LoadingController,
@@ -96,6 +97,7 @@ export class DashboardPage implements OnInit {
       }
     } else {
       this.userName = (doctorProfile && (doctorProfile.DisplayName || doctorProfile.FirstName)) || '';
+      await this.checkCompleteProfilePrompt(doctorProfile);
     }
 
     const loading = await this.loadingController.create({ message: "Loading ..." });
@@ -206,6 +208,21 @@ export class DashboardPage implements OnInit {
         this.loadPendingCount();
       }
     }
+  }
+
+  private async checkCompleteProfilePrompt(doctorProfile: any) {
+    const hasAnyProfileField = !!(doctorProfile && (doctorProfile.PMDC || doctorProfile.Qualification || doctorProfile.AdditionalInfo));
+    if (hasAnyProfileField) {
+      this.showCompleteProfilePrompt = false;
+      return;
+    }
+    const dismissed = await this.storage.get(environment.PROFILE_PROMPT_DISMISSED + '_' + this.doctorId);
+    this.showCompleteProfilePrompt = !dismissed;
+  }
+
+  dismissCompleteProfilePrompt() {
+    this.showCompleteProfilePrompt = false;
+    this.storage.set(environment.PROFILE_PROMPT_DISMISSED + '_' + this.doctorId, true);
   }
 
   private loadPendingCount() {

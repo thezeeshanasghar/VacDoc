@@ -21,5 +21,6 @@ export const environment = {
   CITY: 'City',
   DOCTOR: 'Doctor',
   ON_CLINIC: 'OnlineClinic',
-  MESSAGES: 'Messages'
+  MESSAGES: 'Messages',
+  PROFILE_PROMPT_DISMISSED: 'ProfilePromptDismissed'
 };

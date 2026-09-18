@@ -100,36 +100,33 @@
       </ng-container>
     </div>
     <ion-item>
-      <ion-label color="primary" position="floating">PMDC</ion-label>
-      <ion-input type="text" formControlName="PMDC" required></ion-input>
+      <ion-label color="primary" position="floating">PMDC <span class="ion-text-wrap">(optional)</span></ion-label>
+      <ion-input type="text" formControlName="PMDC"></ion-input>
     </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.PMDC">
+        <div
+          class="error-message"
+          *ngIf="fg.get('PMDC').hasError(validation.type) && (fg.get('PMDC').dirty || fg.get('PMDC').touched)"
+        >
+          <ion-icon name="information-circle-outline"></ion-icon> {{
+          validation.message }}
+        </div>
+      </ng-container>
+    </div>
     <ion-item>
-      <ion-label color="primary" position="floating">Additional Info</ion-label>
+      <ion-label color="primary" position="floating">Letterpad Info <span class="ion-text-wrap">(optional, don't mention your name)</span></ion-label>
       <ion-textarea
         type="text"
         formControlName="AdditionalInfo"
         class="ion-text-capitalize"
       ></ion-textarea>
     </ion-item>
-    <div class="validation-errors">
-      <ng-container
-        *ngFor="let validation of validation_messages.AdditionalInfo"
-      >
-        <div
-          class="error-message"
-          *ngIf="fg.get('AdditionalInfo').hasError(validation.type) && (fg.get('AdditionalInfo').dirty || fg.get('AdditionalInfo').touched)"
-        >
-          <ion-icon name="information-circle-outline"></ion-icon>
-          {{validation.message }}
-        </div>
-      </ng-container>
-    </div>
     <ion-item>
-      <ion-label color="primary" position="floating">Qualification</ion-label>
+      <ion-label color="primary" position="floating">Qualification <span class="ion-text-wrap">(optional)</span></ion-label>
       <ion-input
         type="text"
         formControlName="Qualification"
-        required
       ></ion-input>
     </ion-item>
     <ion-item>

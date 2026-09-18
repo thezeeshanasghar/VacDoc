@@ -9,6 +9,17 @@
       <p class="dash-tagline" *ngIf="isManager">{{ Clinics.length }} clinic{{ Clinics.length === 1 ? '' : 's' }} assigned</p>
     </div>
 
+    <div *ngIf="showCompleteProfilePrompt" class="complete-profile-card">
+      <div class="complete-profile-text">
+        <div class="complete-profile-title">Complete your profile</div>
+        <div class="complete-profile-sub">Add your PMDC number, qualification and letterpad info — helps patients trust your listing.</div>
+      </div>
+      <div class="complete-profile-actions">
+        <button class="complete-profile-dismiss" (click)="dismissCompleteProfilePrompt()">Skip for now</button>
+        <a routerLink="/members/doctor/profile" class="complete-profile-cta">Complete Profile</a>
+      </div>
+    </div>
+
     <div class="dash-grid">
 
       <!-- ── PA ONLY: Assignments (merged visits + payment handover, one list) ── -->

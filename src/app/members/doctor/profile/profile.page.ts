@@ -86,14 +86,10 @@ export class ProfilePage implements OnInit {
       PMDC: new FormControl(
         "",
         Validators.compose([
-          Validators.required,
           Validators.pattern("^[0-9-\\+]*-[A-Z]$")
         ])
       ),
-      AdditionalInfo:["",
-       [Validators.required,
-        // this.fourLinesValidator,
-      ]],
+      AdditionalInfo: [""],
       Qualification:[null],
       // SignatureImage: new FormControl([null]),
       ProfileImage: new FormControl([null])
@@ -264,15 +260,7 @@ export class ProfilePage implements OnInit {
       { type: "pattern", message: "Enter Must be Number" }
     ],
     PMDC: [
-      { type: "required", message: "PMDC is required." },
-      { type: "pattern", message: "PMDC is required like 12345-A" }
-    ],
-    AdditionalInfo: [
-      { type: "required", message: "Additional Info is required." },
-      // {
-      //   type: "insufficientLines",
-      //   message: "Input must contain at least four lines.",
-      // },
+      { type: "pattern", message: "PMDC should look like 12345-A" }
     ],
   };
 }

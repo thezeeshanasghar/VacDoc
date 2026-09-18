@@ -24,6 +24,59 @@
   margin: 0;
 }
 
+// ── Complete-profile prompt ──────────────────────────────────────────────────
+.complete-profile-card {
+  background: var(--vac-blue-tint);
+  border: 1.5px solid var(--vac-border);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.complete-profile-title {
+  font-family: var(--vac-font-head);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--vac-petrol);
+}
+
+.complete-profile-sub {
+  font-size: 12.5px;
+  color: #5D7286;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.complete-profile-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.complete-profile-dismiss {
+  flex: 1;
+  text-align: center;
+  padding: 11px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #5D7286;
+  background: transparent;
+  border: 1.5px solid var(--vac-border);
+}
+
+.complete-profile-cta {
+  flex: 1;
+  text-align: center;
+  padding: 11px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--vac-blue);
+  text-decoration: none;
+}
+
 // ── Grid ──────────────────────────────────────────────────────────────────────
 .dash-grid {
   display: grid;
