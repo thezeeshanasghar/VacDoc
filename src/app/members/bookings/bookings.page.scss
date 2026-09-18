@@ -458,6 +458,21 @@
   font-size: 11px;
 }
 
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.whatsapp-btn {
+  --border-radius: 6px;
+  --border-color: #25d366;
+  --color: #1e9e50;
+  height: 26px;
+  font-size: 11px;
+}
+
 // ── Note textarea ────────────────────────────────────────────────────────────
 
 .expanded-note-area {

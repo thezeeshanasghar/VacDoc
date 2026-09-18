@@ -168,6 +168,16 @@
         <!-- Expanded panel -->
         <div *ngIf="expandedId === b.Id" class="row-expanded">
           <div class="expanded-details">
+            <div class="detail-row" *ngIf="b.Phone">
+              <span class="detail-label">Parent</span>
+              <span class="detail-value contact-row">
+                <span>{{b.FatherName}} &bull; {{b.Phone}}</span>
+                <ion-button fill="outline" size="small" class="whatsapp-btn" (click)="openParentWhatsApp(b)">
+                  <ion-icon slot="start" name="logo-whatsapp"></ion-icon>
+                  WhatsApp
+                </ion-button>
+              </span>
+            </div>
             <div class="detail-row" *ngIf="b.Vaccines">
               <span class="detail-label">Vaccines</span>
               <span class="detail-value">{{b.Vaccines}}</span>

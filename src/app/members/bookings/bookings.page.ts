@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { LoadingController, AlertController } from '@ionic/angular';
+import { LoadingController, AlertController, Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { forkJoin } from 'rxjs';
 import { environment } from 'src/environments/environment.prod';
@@ -7,6 +7,7 @@ import { ToastService } from 'src/app/shared/toast.service';
 import { BookingService } from 'src/app/services/booking.service';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { PaService } from 'src/app/services/pa.service';
+import { VaccineService } from 'src/app/services/vaccine.service';
 
 @Component({
   selector: 'app-bookings',
@@ -48,6 +49,8 @@ export class BookingsPage {
     private bookingService: BookingService,
     private clinicService: ClinicService,
     private paService: PaService,
+    private vaccineService: VaccineService,
+    private platform: Platform,
   ) {}
 
   ionViewWillEnter() {
@@ -119,6 +122,26 @@ export class BookingsPage {
     var notes = (this.paGuidelines || '').trim() || booking.Vaccines || '';
     const callerUserId = this.usertype && this.usertype.Id ? Number(this.usertype.Id) : undefined;
     const securityStamp = await this.storage.get(environment.SECURITY_STAMP);
+
+    // Same "assign every undone dose" behaviour as vaccine.page.ts's openAssignPopupAll() —
+    // without this, PAAssignmentController.Create gets no ScheduleIds, pins zero schedules
+    // to the assignment, and the PA's card shows up with "0 vaccines" and nothing to give.
+    this.vaccineService.getVaccinationById(String(booking.ChildId)).subscribe(
+      (scheduleRes) => {
+        const scheduleIds = (scheduleRes && scheduleRes.IsSuccess && scheduleRes.ResponseData)
+          ? scheduleRes.ResponseData.filter((s: any) => !s.IsDone).map((s: any) => s.Id)
+          : [];
+        this.confirmAndAssign(booking, notes, callerUserId, securityStamp, scheduleIds);
+      },
+      (err) => {
+        // Schedule lookup failing shouldn't block the assignment — fall back to none pinned,
+        // same as before this fix, rather than silently dropping the whole assign action.
+        this.confirmAndAssign(booking, notes, callerUserId, securityStamp, []);
+      }
+    );
+  }
+
+  private confirmAndAssign(booking: any, notes: string, callerUserId: number | undefined, securityStamp: string, scheduleIds: number[]) {
     this.bookingService.confirm(booking.Id, this.doctorComment).subscribe(
       (res) => {
         if (res && res.IsSuccess) {
@@ -131,7 +154,8 @@ export class BookingsPage {
             ChildId: booking.ChildId,
             Notes: notes,
             TargetDate: this.paTargetDate || null,
-            BookingId: booking.Id
+            BookingId: booking.Id,
+            ScheduleIds: scheduleIds
           }, callerUserId, securityStamp).subscribe(
             (r) => {
               if (r && r.IsSuccess) {
@@ -141,7 +165,7 @@ export class BookingsPage {
                 this.paTargetDate = '';
                 this.toastService.create('PA assigned and booking confirmed.');
               } else {
-                this.toastService.create('Booking confirmed but PA assignment failed.', 'warning');
+                this.toastService.create((r && r.Message) ? r.Message : 'Booking confirmed but PA assignment failed.', 'warning');
               }
             },
             (err) => { this.toastService.create('Booking confirmed but PA assignment failed.', 'warning'); }
@@ -416,6 +440,32 @@ export class BookingsPage {
 
   openLocation(location: string) {
     if (location) { window.open(location, '_system'); }
+  }
+
+  // Booking.Phone is stored as a plain local number with no CountryCode field (unlike
+  // User, which has one) — defaults to Pakistan's 92, same assumption
+  // PAAssignmentController.ToWhatsAppNumber falls back to server-side. Strips a leading
+  // 0 and any non-digits, and leaves an already-international number (already starts
+  // with 92) alone instead of double-prefixing it.
+  private toWhatsAppNumber(phone: string): string {
+    if (!phone) { return ''; }
+    let digits = phone.replace(/\D/g, '');
+    digits = digits.replace(/^0+/, '');
+    if (!digits) { return ''; }
+    if (digits.startsWith('92')) { return digits; }
+    return '92' + digits;
+  }
+
+  openParentWhatsApp(booking: any) {
+    const mobile = this.toWhatsAppNumber(booking.Phone);
+    if (!mobile) {
+      this.toastService.create('No phone number on this booking.', 'danger');
+      return;
+    }
+    const url = (this.platform.is('android') || this.platform.is('ios'))
+      ? `whatsapp://send?phone=${mobile}`
+      : `https://web.whatsapp.com/send?phone=${mobile}`;
+    window.open(url, '_system');
   }
 
   statusColor(status: string): string {
