@@ -18,24 +18,87 @@
     </ion-segment>
   </ion-toolbar>
 
-  <ng-container *ngIf="activeTab === 'bookings'">
-    <ion-toolbar class="filter-toolbar">
-      <ion-segment [(ngModel)]="selectedStatus" (ionChange)="filterChange()" class="status-segment">
-        <ion-segment-button value="">All</ion-segment-button>
-        <ion-segment-button value="Pending">Pending</ion-segment-button>
-        <ion-segment-button value="Confirmed">Confirmed</ion-segment-button>
-        <ion-segment-button value="Cancelled">Cancelled</ion-segment-button>
-      </ion-segment>
-    </ion-toolbar>
-    <ion-toolbar class="filter-toolbar type-toolbar">
-      <ion-segment [(ngModel)]="selectedType" (ionChange)="filterChange()" class="type-segment">
-        <ion-segment-button value="">All Types</ion-segment-button>
-        <ion-segment-button value="HomeBooked">Home</ion-segment-button>
-        <ion-segment-button value="ClinicBooked">Clinic</ion-segment-button>
-      </ion-segment>
-    </ion-toolbar>
-  </ng-container>
+  <ion-toolbar class="search-toolbar" *ngIf="activeTab === 'bookings'">
+    <div class="search-row">
+      <div class="search-box">
+        <ion-icon name="search-outline" class="search-icon"></ion-icon>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search child or parent…"
+          [(ngModel)]="searchText"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+      <button type="button" class="filter-btn" [class.active]="filtersOpen" (click)="toggleFilters()" aria-label="Filters">
+        <ion-icon name="options-outline"></ion-icon>
+        <span class="filter-badge" *ngIf="activeFilterCount > 0">{{activeFilterCount}}</span>
+      </button>
+    </div>
+  </ion-toolbar>
 </ion-header>
+
+<!-- ── Filter drawer ─────────────────────────────────────────────────── -->
+<div class="filter-drawer" *ngIf="activeTab === 'bookings' && filtersOpen">
+  <div class="filter-drawer-header">
+    <span class="filter-drawer-title">Filters</span>
+    <span class="filter-clear-link" (click)="clearAllFilters()">Clear all</span>
+  </div>
+
+  <div class="filter-group">
+    <div class="filter-group-label">Status</div>
+    <div class="filter-pills">
+      <span class="pill" [class.pill-active]="!selectedStatus" (click)="selectedStatus = ''; applyFilters()">All</span>
+      <span class="pill" [class.pill-active]="selectedStatus === 'Pending'" (click)="selectedStatus = 'Pending'; applyFilters()">Pending</span>
+      <span class="pill" [class.pill-active]="selectedStatus === 'Confirmed'" (click)="selectedStatus = 'Confirmed'; applyFilters()">Confirmed</span>
+      <span class="pill" [class.pill-active]="selectedStatus === 'Cancelled'" (click)="selectedStatus = 'Cancelled'; applyFilters()">Cancelled</span>
+    </div>
+  </div>
+
+  <div class="filter-group">
+    <div class="filter-group-label">Type</div>
+    <div class="filter-pills">
+      <span class="pill" [class.pill-active]="!selectedType" (click)="selectedType = ''; applyFilters()">All</span>
+      <span class="pill" [class.pill-active]="selectedType === 'HomeBooked'" (click)="selectedType = 'HomeBooked'; applyFilters()">Home</span>
+      <span class="pill" [class.pill-active]="selectedType === 'ClinicBooked'" (click)="selectedType = 'ClinicBooked'; applyFilters()">Clinic</span>
+    </div>
+  </div>
+
+  <div class="filter-group" *ngIf="cityOptions.length > 0">
+    <div class="filter-group-label">City</div>
+    <ion-select [(ngModel)]="selectedCity" (ionChange)="applyFilters()" placeholder="Any city" interface="action-sheet" class="filter-select">
+      <ion-select-option value="">Any city</ion-select-option>
+      <ion-select-option *ngFor="let c of cityOptions" [value]="c">{{c}}</ion-select-option>
+    </ion-select>
+  </div>
+
+  <div class="filter-group" *ngIf="clinics.length > 1">
+    <div class="filter-group-label">Clinic</div>
+    <ion-select [(ngModel)]="selectedClinicId" (ionChange)="applyFilters()" placeholder="All clinics" interface="action-sheet" class="filter-select">
+      <ion-select-option value="">All clinics</ion-select-option>
+      <ion-select-option *ngFor="let c of clinics" [value]="c.Id">{{c.Name}}</ion-select-option>
+    </ion-select>
+  </div>
+
+  <div class="filter-group">
+    <div class="filter-group-label">Preferred date range</div>
+    <div class="filter-date-row">
+      <app-date-input placeholder="From" [(ngModel)]="fromDate" (ngModelChange)="applyFilters()"></app-date-input>
+      <app-date-input placeholder="To" [(ngModel)]="toDate" (ngModelChange)="applyFilters()"></app-date-input>
+    </div>
+  </div>
+
+  <ion-button expand="block" size="small" color="primary" class="filter-done-btn" (click)="toggleFilters()">Done</ion-button>
+</div>
+
+<!-- ── Active filter chips ──────────────────────────────────────────── -->
+<div class="active-chips-row" *ngIf="activeTab === 'bookings' && !filtersOpen && activeFilterChips.length > 0">
+  <span class="active-chip" *ngFor="let chip of activeFilterChips">
+    {{chip.label}}
+    <ion-icon name="close-outline" (click)="removeFilterChip(chip.key)"></ion-icon>
+  </span>
+  <span class="active-chip-clear" (click)="clearAllFilters()">Clear</span>
+</div>
 
 <ion-content class="bookings-content">
 
@@ -69,6 +132,8 @@
 
   <!-- ── Bookings list tab ─────────────────────────────────────────────── -->
   <div *ngIf="activeTab === 'bookings'" class="bookings-list">
+
+    <div class="result-count" *ngIf="activeFilterChips.length > 0">{{bookings.length}} booking{{bookings.length === 1 ? '' : 's'}} match</div>
 
     <div *ngIf="bookings && bookings.length > 0">
       <div *ngFor="let b of bookings" class="booking-row" [class.expanded]="expandedId === b.Id">
@@ -235,7 +300,9 @@
 
     <div *ngIf="!bookings || bookings.length === 0" class="empty-state">
       <ion-icon name="calendar-outline"></ion-icon>
-      <p>No bookings found.</p>
+      <p *ngIf="activeFilterChips.length > 0">No bookings match these filters.</p>
+      <p *ngIf="activeFilterChips.length === 0">No bookings found.</p>
+      <span class="empty-clear-link" *ngIf="activeFilterChips.length > 0" (click)="clearAllFilters()">Clear filters</span>
     </div>
 
   </div>

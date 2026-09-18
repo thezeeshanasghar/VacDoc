@@ -15,11 +15,19 @@ import { PaService } from 'src/app/services/pa.service';
 })
 export class BookingsPage {
 
+  allBookings: any[] = [];
   bookings: any[] = [];
   selectedStatus: string = '';
   selectedType: string = '';
+  selectedClinicId: number | string = '';
+  selectedCity: string = '';
+  fromDate: string = '';
+  toDate: string = '';
+  searchText: string = '';
+  filtersOpen: boolean = false;
   clinic: any;
   clinics: any[] = [];
+  cityOptions: string[] = [];
   usertype: any;
   expandedId: number = 0;
   doctorComment: string = '';
@@ -208,15 +216,13 @@ export class BookingsPage {
     if (!this.doctorId) { return; }
     this.loadingController.create({ message: 'Loading bookings...' }).then((loading) => {
       loading.present();
-      this.bookingService.getByDoctor(
-        this.doctorId,
-        this.selectedStatus || null,
-        this.selectedType || null
-      ).subscribe(
+      this.bookingService.getByDoctor(this.doctorId, null, null).subscribe(
         (res) => {
           loading.dismiss();
           if (res && res.IsSuccess) {
-            this.bookings = res.ResponseData || [];
+            this.allBookings = res.ResponseData || [];
+            this.refreshCityOptions();
+            this.applyFilters();
           } else {
             this.toastService.create((res && res.Message) ? res.Message : 'Failed to load bookings', 'danger');
           }
@@ -233,9 +239,7 @@ export class BookingsPage {
     if (!this.clinics || this.clinics.length === 0) { return; }
     this.loadingController.create({ message: 'Loading bookings...' }).then((loading) => {
       loading.present();
-      const requests = this.clinics.map((c: any) =>
-        this.bookingService.getByClinic(c.Id, this.selectedStatus || null, this.selectedType || null)
-      );
+      const requests = this.clinics.map((c: any) => this.bookingService.getByClinic(c.Id, null, null));
       forkJoin(requests).subscribe(
         (results: any[]) => {
           loading.dismiss();
@@ -246,7 +250,9 @@ export class BookingsPage {
             }
           }
           merged.sort((a, b) => b.Id - a.Id);
-          this.bookings = merged;
+          this.allBookings = merged;
+          this.refreshCityOptions();
+          this.applyFilters();
         },
         (err) => {
           loading.dismiss();
@@ -256,9 +262,85 @@ export class BookingsPage {
     });
   }
 
-  filterChange() {
+  private refreshCityOptions() {
+    const cities = this.allBookings
+      .map((b: any) => (b.City || '').trim())
+      .filter((c: string) => !!c);
+    this.cityOptions = Array.from(new Set(cities)).sort();
+  }
+
+  toggleFilters() {
+    this.filtersOpen = !this.filtersOpen;
+  }
+
+  get activeFilterCount(): number {
+    let count = 0;
+    if (this.selectedStatus) { count++; }
+    if (this.selectedType) { count++; }
+    if (this.selectedClinicId) { count++; }
+    if (this.selectedCity) { count++; }
+    if (this.fromDate || this.toDate) { count++; }
+    return count;
+  }
+
+  get activeFilterChips(): { key: string; label: string }[] {
+    const chips: { key: string; label: string }[] = [];
+    if (this.selectedStatus) { chips.push({ key: 'status', label: this.selectedStatus }); }
+    if (this.selectedType) { chips.push({ key: 'type', label: this.typeLabel(this.selectedType) }); }
+    if (this.selectedClinicId) {
+      const c = this.clinics.find((cl: any) => cl.Id === this.selectedClinicId);
+      chips.push({ key: 'clinic', label: c ? c.Name : 'Clinic' });
+    }
+    if (this.selectedCity) { chips.push({ key: 'city', label: this.selectedCity }); }
+    if (this.fromDate || this.toDate) {
+      const from = this.fromDate ? this.formatShortDate(this.fromDate) : '…';
+      const to = this.toDate ? this.formatShortDate(this.toDate) : '…';
+      chips.push({ key: 'date', label: `${from} – ${to}` });
+    }
+    return chips;
+  }
+
+  private formatShortDate(iso: string): string {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) { return iso; }
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  removeFilterChip(key: string) {
+    if (key === 'status') { this.selectedStatus = ''; }
+    if (key === 'type') { this.selectedType = ''; }
+    if (key === 'clinic') { this.selectedClinicId = ''; }
+    if (key === 'city') { this.selectedCity = ''; }
+    if (key === 'date') { this.fromDate = ''; this.toDate = ''; }
+    this.applyFilters();
+  }
+
+  clearAllFilters() {
+    this.selectedStatus = '';
+    this.selectedType = '';
+    this.selectedClinicId = '';
+    this.selectedCity = '';
+    this.fromDate = '';
+    this.toDate = '';
+    this.applyFilters();
+  }
+
+  applyFilters() {
     this.expandedId = 0;
-    this.loadBookings();
+    const search = (this.searchText || '').trim().toLowerCase();
+    this.bookings = this.allBookings.filter((b: any) => {
+      if (this.selectedStatus && b.Status !== this.selectedStatus) { return false; }
+      if (this.selectedType && b.Type !== this.selectedType) { return false; }
+      if (this.selectedClinicId && b.ClinicId !== this.selectedClinicId) { return false; }
+      if (this.selectedCity && (b.City || '') !== this.selectedCity) { return false; }
+      if (this.fromDate && (!b.PreferredDate || b.PreferredDate.slice(0, 10) < this.fromDate)) { return false; }
+      if (this.toDate && (!b.PreferredDate || b.PreferredDate.slice(0, 10) > this.toDate)) { return false; }
+      if (search) {
+        const haystack = ((b.ChildName || '') + ' ' + (b.FatherName || '') + ' ' + (b.Phone || '')).toLowerCase();
+        if (haystack.indexOf(search) === -1) { return false; }
+      }
+      return true;
+    });
   }
 
   toggleExpand(booking: any) {
