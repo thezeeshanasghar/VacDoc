@@ -122,12 +122,6 @@ export class PaymentReconciliationPage {
     this.loadPendingHandovers();
   }
 
-  private toDateStr(d: Date): string {
-    const mm = (d.getMonth() + 1).toString().padStart(2, '0');
-    const dd = d.getDate().toString().padStart(2, '0');
-    return `${d.getFullYear()}-${mm}-${dd}`;
-  }
-
   async loadClinics() {
     if (!this.doctorId) { return; }
     this.clinicService.getClinics(this.doctorId!).subscribe(res => {
@@ -159,19 +153,6 @@ export class PaymentReconciliationPage {
   }
 
   onFilterChange() {
-    this.load();
-  }
-
-  setTodayFilter() {
-    const today = this.toDateStr(new Date());
-    this.fromDate = today;
-    this.toDate = today;
-    this.load();
-  }
-
-  clearDateFilter() {
-    this.fromDate = '';
-    this.toDate = '';
     this.load();
   }
 
