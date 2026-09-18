@@ -104,14 +104,6 @@ export class ClinicPage {
         loading.dismiss();
         if (res.IsSuccess) {
           this.Clinics = res.ResponseData;
-          for (let i = 0; i < this.Clinics.length; i++) {
-            const clinic = this.Clinics[i];
-            if (clinic.ClinicTimings) {
-              for (let j = 0; j < clinic.ClinicTimings.length; j++) {
-                const timing = clinic.ClinicTimings[j];
-              }
-            }
-          }
           this.storage.set(environment.CLINICS, this.Clinics);
           for (let i = 0; i < this.Clinics.length; i++) {
             if (this.Clinics[i].IsOnline) {

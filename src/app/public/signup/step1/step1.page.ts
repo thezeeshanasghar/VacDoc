@@ -1,5 +1,4 @@
-import { Component, ViewChild, OnInit } from "@angular/core";
-import { IonSelect } from "@ionic/angular";
+import { Component, OnInit } from "@angular/core";
 import {
   FormGroup,
   FormBuilder,
@@ -9,7 +8,10 @@ import {
   ValidatorFn
 } from "@angular/forms";
 import { Router } from "@angular/router";
+import { Storage } from "@ionic/storage";
+import { environment } from "src/environments/environment";
 import { SignupService } from "src/app/services/signup.service";
+import { LoginService } from "src/app/services/login.service";
 import { ToastService } from "src/app/shared/toast.service";
 
 @Component({
@@ -20,23 +22,18 @@ import { ToastService } from "src/app/shared/toast.service";
 export class Step1Page implements OnInit {
   fg: FormGroup;
   isSubmitted = false;
-  @ViewChild("speciality", { static: false }) selectPop: IonSelect;
 
   constructor(
     private frombuilder: FormBuilder,
     private router: Router,
+    private storage: Storage,
     private signupService: SignupService,
+    private loginService: LoginService,
     private toastService: ToastService,
   ) { }
 
   ngOnInit() {
     this.fg = this.frombuilder.group({
-      Qualification: [],
-      AdditionalInfo: ["", [Validators.required, this.OneLineValidator,]],
-      // FirstName: ['', Validators.compose([
-      //   Validators.required,
-      //   Validators.pattern(/^\s*[a-zA-Z]+(?:\s[a-zA-Z]+)*\s*$/)
-      // ])],
       DisplayName: ['', Validators.compose([
         Validators.required,
         Validators.pattern(/^\s*[a-zA-Z]+(?:\s[a-zA-Z]+)*\s*$/)
@@ -50,7 +47,6 @@ export class Step1Page implements OnInit {
           ),
         ])
       ),
-      Speciality: [],
       Password: new FormControl(
         "",
         Validators.compose([
@@ -69,25 +65,9 @@ export class Step1Page implements OnInit {
         ])
       ),
       ShowMobile: [true],
-      PhoneNo: new FormControl(
-        "",
-        Validators.compose([
-          Validators.required,
-          Validators.minLength(8),
-          Validators.maxLength(11),
-          Validators.pattern("^([0-9]*)$"),
-        ])
-      ),
-      ShowPhone: [true],
-      PMDC: new FormControl(
-        "",
-        Validators.compose([
-          Validators.required,
-          Validators.pattern("^[0-9-\\+]*-[a-zA-Z]$"),
-        ])
-      ),
     }, { validators: this.passwordsMatchValidator });
   }
+
   passwordsMatchValidator(group: AbstractControl): { [key: string]: any } | null {
     const password = group.get('Password');
     const confirmPassword = group.get('ConfirmPassword');
@@ -103,6 +83,7 @@ export class Step1Page implements OnInit {
     }
     return null;
   }
+
   mobileNumberLengthValidator(countryCodeControlName: string): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
       const formGroup = control.parent;
@@ -122,97 +103,7 @@ export class Step1Page implements OnInit {
       return null;
     };
   }
-  Speciality = [
-    "Acupuncturist",
-    "Aesthetic Gynecologist",
-    "Anesthesiologist",
-    "Asthma Specialist",
-    "Audiologist",
-    "Autism Consultant",
-    "Bio-resonance Specialist",
-    "Breast Surgeon",
-    "Cancer Surgeon",
-    "Cardiac Surgeon",
-    "Cardiologist",
-    "Cardiothoracic Surgeon",
-    "Chiropractor",
-    "Colorectal Cancer Surgeon",
-    "Cosmetic Dentist",
-    "Cosmetic Surgeon",
-    "Cosmetologist",
-    "Counselor",
-    "Dentist",
-    "Dermatologist",
-    "Diabetes Counsellor",
-    "Diabetologist",
-    "Dietitian",
-    "ENT Specialist",
-    "ENT Surgeon",
-    "Eye Specialist",
-    "Eye Surgeon",
-    "Family Physician",
-    "Fertility Consultant",
-    "General Physician",
-    "General Surgeon",
-    "Gastroenterologist",
-    "Gynecologist",
-    "Hair Transplant Surgeon",
-    "Hand Surgeon",
-    "Head and Neck Surgeon",
-    "Hematologist",
-    "Hepatobiliary and Liver Transplant Surgeon",
-    "Hepatologist",
-    "Hernia Surgeon",
-    "Homeopath",
-    "Hypertension Specialist",
-    "Immunologist",
-    "Infectious Disease Specialist",
-    "Internal Medicine Specialist",
-    "Interventional Cardiologist",
-    "Kidney Transplant Surgeon",
-    "Laparoscopic Surgeon",
-    "Laser Specialist",
-    "Neonatologist",
-    "Nephrologist",
-    "Neuro Surgeon",
-    "Neurologist",
-    "Neuroradiologist",
-    "Nutritional Psychologist",
-    "Obstetrician",
-    "Oncologist",
-    "Oral and Maxillofacial Surgeon",
-    "Orthopedic Surgeon",
-    "Pain Management Specialist",
-    "Pathology Lab",
-    "Pediatric Cardiologist",
-    "Pediatric Neurologist",
-    "Pediatric Oncologist",
-    "Pediatric Orthopedic Surgeon",
-    "Pediatric Surgeon",
-    "Pediatric Urologist",
-    "Pediatrician",
-    "Physiotherapist",
-    "Plastic Surgeon",
-    "Psychiatrist",
-    "Psychologist",
-    "Pulmonologist",
-    "Radiologist",
-    "Radiology Lab",
-    "Reconstructive Surgeon",
-    "Regenerative Medicine",
-    "Rehablitation Specialist",
-    "Rheumatologist",
-    "Sexologist",
-    "Sonologist",
-    "Specialist in Operative Dentistry",
-    "Speech and Language Pathologist",
-    "Spinal Surgeon",
-    "Sports Medicine Specialist",
-    "Thyroid Surgeon",
-    "Urologist",
-    "Vascular Surgeon",
-    "Weight Loss Surgeon",
-  ];
+
   countryCodes = [
     { name: "Afghanistan", code: "93" },
     { name: "Albania", code: "355" },
@@ -456,41 +347,6 @@ export class Step1Page implements OnInit {
     { name: "Zimbabwe", code: "263" },
   ];
 
-  OneLineValidator(control: FormControl) {
-    const value = control.value || "";
-    const lines = value.split('\n').filter(line => line.trim() !== '');
-    return lines.length >= 1 ? null : { insufficientLines: true };
-  }
-
-   PasswordGenerator(minLength = 6, maxLength = 9) {
-    // Define the character sets
-    var charset = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    var numbers = "0123456789";
-    var letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    
-    if (minLength < 6) {
-      minLength = 6;
-    }
-    if (maxLength < minLength) {
-      maxLength = minLength;
-    }
-    
-    var length = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
-  
-    var retVal = "";
-  
-    retVal += numbers.charAt(Math.floor(Math.random() * numbers.length));
-    retVal += letters.charAt(Math.floor(Math.random() * letters.length));
-  
-    for (var i = 2; i < length; ++i) {
-      retVal += charset.charAt(Math.floor(Math.random() * charset.length));
-    }
- 
-    retVal = retVal.split('').sort(() => Math.random() - 0.5).join('');
-  
-    return retVal;
-  }
-
   async nextpage() {
     if (!this.fg.valid || this.isSubmitted) {
       this.fg.markAllAsTouched();
@@ -500,92 +356,77 @@ export class Step1Page implements OnInit {
 
     const { ConfirmPassword, ...payload } = this.fg.value;
     this.signupService.personalData = payload;
-    console.log(payload);
 
-    // Make the API call to add the doctor
     this.signupService.addDoctor().subscribe(
-      res => {
-        console.log(res.Message);
-        // Handle specific error cases first
+      async res => {
         if (res.Message === 'Both email and phone number are already in use. Please use different email and phone number.') {
-          // If both email and phone are in use
           this.isSubmitted = false;
           this.toastService.create('Both email and phone number are already in use. Please use different email and phone number.', 'danger');
           this.markFieldsAsInvalid(['Email', 'MobileNumber']);
         } else if (res.Message === 'Email already exists. Please try another email.') {
-          // If only the email is in use
           this.isSubmitted = false;
           this.toastService.create('Email is already in use. Please use a different email.', 'danger');
           this.markFieldAsInvalid('Email');
         } else if (res.Message === 'Phone number is already in use. Please try a different phone number.') {
-          // If only the phone is in use
           this.isSubmitted = false;
           this.toastService.create('Phone number is already in use. Please use a different phone number.', 'danger');
           this.markFieldAsInvalid('MobileNumber');
         } else if (res.IsSuccess) {
-          // If signup is successful — wait for the toast to actually be
-          // on screen before navigating away, otherwise the route change
-          // can tear it down before it ever renders.
-          this.toastService.create("Account created. Log in with your mobile number and the password you just set — we've also emailed a copy to " + payload.Email + ".", "success", false, 4000).then(() => {
+          // Auto-login with the credentials just submitted, mirroring
+          // LoginPage.login() exactly, then send them straight into the
+          // mandatory clinic-setup gate (MembersPage blocks everything else
+          // until a clinic exists).
+          this.loginService.checkAuth({
+            MobileNumber: payload.MobileNumber,
+            Password: payload.Password,
+            CountryCode: payload.CountryCode,
+            UserType: 'DOCTOR'
+          }).subscribe(async loginRes => {
+            if (loginRes.IsSuccess) {
+              await this.storage.set(environment.USER, loginRes.ResponseData);
+              await this.storage.set(environment.DOCTOR_Id, loginRes.ResponseData.DoctorId);
+              await this.storage.set(environment.USER_Id, loginRes.ResponseData.Id);
+              await this.storage.set(environment.SECURITY_STAMP, loginRes.ResponseData.SecurityStamp);
+              this.loginService.changeState(true);
+              const doctorProfile: any = await this.loginService.getDoctorProfile(loginRes.ResponseData.Id).toPromise();
+              if (doctorProfile && doctorProfile.IsSuccess) {
+                await this.storage.set(environment.DOCTOR, doctorProfile.ResponseData);
+              }
+              this.toastService.create("Account created! Add your clinic to get started.", "success", false, 3000).then(() => {
+                this.router.navigate(["/members/doctor/clinic/add"]).then(() => {
+                  window.location.reload();
+                });
+              });
+            } else {
+              // Account was created but auto-login failed — fall back to the login screen.
+              this.isSubmitted = false;
+              this.router.navigate(["/login"]);
+            }
+          }, () => {
+            this.isSubmitted = false;
             this.router.navigate(["/login"]);
           });
         } else {
-          // Handle any other generic errors
           this.isSubmitted = false;
           this.toastService.create(res.Message, "danger");
         }
       },
       err => {
-        // Handle errors from the API call itself
         this.isSubmitted = false;
         this.toastService.create(err, "danger");
       }
     );
   }
-  
-  // Method to mark fields as invalid (updates the form control status)
+
   markFieldsAsInvalid(fields: string[]) {
     fields.forEach(field => this.fg.get(field).setErrors({ invalid: true }));
   }
-  
-  // Method to mark a single field as invalid
+
   markFieldAsInvalid(field: string) {
     this.fg.get(field).setErrors({ invalid: true });
   }
 
-  // async addDoctorSchedule(id) {
-  //   this.signupService.vaccineData = this.fg.value;
-  //   this.signupService.vaccineData2 = this.doses;
-  //   await this.signupService.addDoctor().subscribe(
-  //     res => {
-  //       if (res.IsSuccess) {
-  //         this.toastService.create("successfully added");
-  //         this.router.navigate(["/login"]);
-  //       } else {
-  //         this.toastService.create(res.Message, "danger");
-  //       }
-  //     },
-  //     err => {
-  //       this.toastService.create(err, "danger");
-  //     }
-  //   );
-  // }
-
-  opendrop() {
-    this.selectPop.open();
-  }
-
   validation_messages = {
-    qualification: [
-      { type: "required", message: "Qualification is required." },
-    ],
-    // FirstName: [
-    //   { type: 'required', message: 'First Name is required.' },
-    //   { type: 'pattern', message: 'PLeaseEnter Only Charecters in First Name.' }
-    // ],
-    // lastName: [{ type: "required", message: "LastName is required." },
-    // { type: 'pattern', message: 'You can Enter Only Charecters in Last Name.' }
-    // ],
     displayName: [{ type: "required", message: "DisplayName is required." },
     { type: 'pattern', message: 'You can Enter Only Charecters in Display Name.' }
     ],
@@ -603,32 +444,8 @@ export class Step1Page implements OnInit {
     ],
     mobileNumber: [
       { type: "required", message: "MobileNumber With Whatsapp is required." },
-      // { type: "pattern", message: "Mobile number  is required like 3331231231" }
       { type: "pattern", message: "Mobile number must be at least 10 digits." },
       { type: "invalidMobileNumberLength", message: "Mobile number must be 10 digits long for country code 92." }
-    ],
-    phoneNumber: [
-      { type: "required", message: "Appointment number is required" },
-      {
-        type: "minlength",
-        message: "Appointment Number must be at least 8 Digits long."
-      },
-      // {
-      //   type: "maxlength",
-      //   message: "Phone Number must be at least 11 Digits long."
-      // },
-      { type: "pattern", message: "Enter Must be Number" }
-    ],
-    PMDC: [
-      { type: "required", message: "PMDC is required." },
-      { type: "pattern", message: "PMDC is required like 12345-A" },
-    ],
-    AdditionalInfo: [
-      { type: "required", message: "Design Your Letterpad is required." },
-      {
-        type: "insufficientCharacters",
-        message: "At least 1 line required.",
-      },
     ],
   };
 

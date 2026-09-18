@@ -469,6 +469,7 @@
 // }
 
 import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 import { Storage } from "@ionic/storage";
 import { LoadingController } from "@ionic/angular";
 import { environment } from "src/environments/environment";
@@ -507,6 +508,7 @@ export class MembersPage implements OnInit {
   public isManagerUser: boolean = false;
 
   constructor(
+    private router: Router,
     public loadingController: LoadingController,
     private storage: Storage,
     public clinicService: ClinicService,
@@ -623,6 +625,13 @@ export class MembersPage implements OnInit {
           this.Name = this.doctorData.DisplayName;
           const clinics = this.doctorData.Clinics;
           this.hasClinics = clinics && clinics.length > 0;
+
+          // Mandatory clinic gate: a doctor account with zero clinics can only
+          // reach the clinic-add page until they create one. PAs are exempt —
+          // they work under a doctor whose clinic setup is a separate concern.
+          if (data !== "PA" && !this.hasClinics && !this.router.url.includes('/doctor/clinic')) {
+            this.router.navigate(['/members/doctor/clinic/add']);
+          }
           try {
             const pas = await this.paService.getPAsByDoctorId(this.DoctorId).toPromise();
             this.hasPA = (pas || []).length > 0;
