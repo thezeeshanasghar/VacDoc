@@ -1871,11 +1871,18 @@ removal(type: string){
     // Record payment mode for ALL schedules in this visit in parallel
     const calls = ids.map(id => this.scheduleService.recordPaymentMode(id, { PaymentMode: mode, CallerUserId: this.callerUserId, SecurityStamp: this.securityStamp }).toPromise());
     try {
-      await Promise.all(calls);
+      const results = await Promise.all(calls);
       loading.dismiss();
-      this.closePaymentPopup();
-      this.toastService.create('Payment recorded: ' + mode, 'success');
-      this.getVaccination();
+      const allOk = results.every((res: any) => res && res.IsSuccess);
+      if (allOk) {
+        this.closePaymentPopup();
+        this.toastService.create('Payment recorded: ' + mode, 'success');
+        this.getVaccination();
+      } else {
+        const failed = results.find((res: any) => !(res && res.IsSuccess)) as any;
+        this.toastService.create((failed && failed.Message) || 'Failed to record payment — please try again', 'danger');
+        // popup stays open so user can retry
+      }
     } catch {
       loading.dismiss();
       this.toastService.create('Error recording payment — please try again', 'danger');

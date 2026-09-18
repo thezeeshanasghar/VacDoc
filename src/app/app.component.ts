@@ -49,8 +49,14 @@ export class AppComponent {
   // stamp means this device must be force-logged-out.
   checkSessionValidity() {
     this.storage.get(environment.USER_Id).then(userId => {
+      if (!userId) {
+        return;
+      }
       this.storage.get(environment.SECURITY_STAMP).then(securityStamp => {
-        if (!userId || !securityStamp) {
+        if (!securityStamp) {
+          // Logged in before SECURITY_STAMP was cached locally — nothing valid to
+          // send server auth checks, so force a re-login to pick up a real stamp.
+          this.forceLogout();
           return;
         }
         this.loginService.validateSession(userId, securityStamp).subscribe(res => {
