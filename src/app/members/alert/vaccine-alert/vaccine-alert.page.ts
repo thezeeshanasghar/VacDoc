@@ -613,9 +613,10 @@ export class VaccineAlertPage implements OnInit {
   );
 }
 
-  // Same message body as openWhatsApp, delivered via the phone's own Messages app
-  // instead of WhatsApp — user still taps Send there, so any reply (e.g. "how much
-  // does this cost?") lands in the doctor's native Messages app where they can see it.
+  // Shortened SMS: dose + child + record link only, no clinic/phone/credentials/sign-off
+  // (those stay in the fuller WhatsApp message via openWhatsApp) — SMS is now a one-segment
+  // nudge, not a duplicate of the WhatsApp text. User still taps Send in their Messages app,
+  // so any reply (e.g. "how much does this cost?") lands where the doctor can see it.
   openSms(mobileNumber: string, childName: string, doseName: string, child: any) {
     const isPA = this.usertype && this.usertype.UserType === 'PA';
     const paId = isPA ? Number(this.usertype.PAId) : undefined;
@@ -625,20 +626,13 @@ export class VaccineAlertPage implements OnInit {
         if (response.IsSuccess && response.ResponseData) {
           const doseNames = response.ResponseData.map((dose: any) => dose.Name).join(', ');
           const childNm = child.Child.Name;
-          const clinicName = response.ResponseData[0] && response.ResponseData[0].Clinic ? response.ResponseData[0].Clinic.Name : 'Unknown Clinic';
-          const clinicPhoneNumber = response.ResponseData[0] && response.ResponseData[0].Clinic ? response.ResponseData[0].Clinic.PhoneNumber : 'Unknown Phone Number';
-          const password = child.Child.User.Password ? child.Child.User.Password : '******';
 
           const childId = response.ResponseData[0].ChildId || child.Child.Id;
           const linkToken = response.ResponseData[0].LinkToken || '';
           const recordLink = 'https://client.vaccinationcentre.com/child/vaccine/' + childId +
             (linkToken ? '?t=' + encodeURIComponent(linkToken) : '');
 
-          const message =
-            `Reminder: Vaccination ${doseNames} for ${childNm} is due. Please confirm your appointment.\n` +
-            `Clinic: ${clinicName}\nPhone: ${clinicPhoneNumber}\n` +
-            `View your child's vaccination record: ${recordLink}\nMobile: ${mobileNumber || ''}\nPassword: ${password}\n` +
-            `Thanks, ${this.displayName}`;
+          const message = `Vaccination ${doseNames} for ${childNm} is due. ${recordLink}`;
 
           const mobile = mobileNumber.replace(/^0+/, '');
           // iOS wants '&body=' before the number's query string, Android/others use '?body='.
