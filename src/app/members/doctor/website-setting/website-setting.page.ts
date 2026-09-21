@@ -84,4 +84,10 @@ export class WebsiteSettingPage implements OnInit {
       { type: "pattern", message: "Enter a full link starting with http:// or https://" }
     ]
   };
+
+  get verificationUrl(): string {
+    const raw = this.fg && this.fg.value ? this.fg.value.WebsiteUrl : "";
+    const url = (raw || "").trim().replace(/\/+$/, "");
+    return url ? `${url}/verify` : "";
+  }
 }

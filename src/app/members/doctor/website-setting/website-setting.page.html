@@ -11,7 +11,7 @@
   <form [formGroup]="fg">
 
     <p class="ion-padding-bottom">
-      Enter your own website link. It will be used in place of the default link in emails, WhatsApp messages, and patient verification.
+      Enter your own website link. It will be used in place of the default link in emails and WhatsApp messages.
     </p>
 
     <ion-item>
@@ -25,6 +25,14 @@
         </div>
       </ng-container>
     </div>
+
+    <ion-item lines="none" class="verification-preview" *ngIf="verificationUrl">
+      <ion-label position="stacked" color="medium">Verification Link (auto-generated)</ion-label>
+      <ion-note class="verification-url">{{ verificationUrl }}</ion-note>
+    </ion-item>
+    <p class="verification-hint" *ngIf="verificationUrl">
+      Used for QR code and MR number verification. Make sure a "/verify" page exists on your website — otherwise verification links will not work for your patients.
+    </p>
 
     <ion-button expand="block" class="ion-margin-top" (click)="saveSettings()">
       Save Settings
