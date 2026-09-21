@@ -39,6 +39,10 @@ const routes: Routes = [
     loadChildren: () => import('./email-setting/email-setting.module').then(m => m.EmailSettingPageModule)
   },
   {
+    path: "website-setting",
+    loadChildren: () => import('./website-setting/website-setting.module').then(m => m.WebsiteSettingPageModule)
+  },
+  {
     path: "analytics",
     loadChildren: () => import('./analytics/analytics.module').then(m => m.AnalyticsPageModule)
   },

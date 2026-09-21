@@ -142,6 +142,20 @@
         alt="No image"
       ></ion-img>
     </ion-item>
+    <ion-item *ngIf="allowOwnEmail" button routerLink="/members/doctor/email-setting" detail="true">
+      <ion-icon name="mail-outline" slot="start" color="primary"></ion-icon>
+      <ion-label>
+        <h2>Email Settings</h2>
+        <p>Your own SMTP configuration</p>
+      </ion-label>
+    </ion-item>
+    <ion-item *ngIf="allowOwnWebsite" button routerLink="/members/doctor/website-setting" detail="true">
+      <ion-icon name="globe-outline" slot="start" color="primary"></ion-icon>
+      <ion-label>
+        <h2>Website Settings</h2>
+        <p>Your own website link</p>
+      </ion-label>
+    </ion-item>
     <ion-item>
       <ion-button (click)="updateProfile()">Update</ion-button>
     </ion-item>

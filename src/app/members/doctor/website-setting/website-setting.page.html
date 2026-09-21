@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Website Settings</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="fg">
+
+    <p class="ion-padding-bottom">
+      Enter your own website link. It will be used in place of the default link in emails, WhatsApp messages, and patient verification.
+    </p>
+
+    <ion-item>
+      <ion-label color="primary" position="floating">Website Link</ion-label>
+      <ion-input type="text" formControlName="WebsiteUrl" placeholder="https://yourclinic.com" required></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.WebsiteUrl">
+        <div class="error-message" *ngIf="fg.get('WebsiteUrl').hasError(validation.type) && (fg.get('WebsiteUrl').dirty || fg.get('WebsiteUrl').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-button expand="block" class="ion-margin-top" (click)="saveSettings()">
+      Save Settings
+    </ion-button>
+
+  </form>
+</ion-content>

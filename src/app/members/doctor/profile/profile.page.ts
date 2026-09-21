@@ -23,6 +23,8 @@ export class ProfilePage implements OnInit {
   fg: FormGroup;
   doctorData: any;
   DocotrId: any;
+  allowOwnEmail = false;
+  allowOwnWebsite = false;
   uploading: any;
   profileImagePath: any;
   resourceURL = environment.RESOURCE_URL;
@@ -194,6 +196,8 @@ export class ProfilePage implements OnInit {
           this.fg.controls["IsApproved"].setValue(this.doctorData.IsApproved);
           this.profileImagePath = this.doctorData.ProfileImage;
           // this.signatureImagePath = this.doctorData.SignatureImage;
+          this.allowOwnEmail = this.doctorData.AllowOwnEmail === true;
+          this.allowOwnWebsite = this.doctorData.AllowOwnWebsite === true;
 
           loading.dismiss();
         } else {

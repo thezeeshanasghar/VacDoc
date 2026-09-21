@@ -11,6 +11,7 @@ import { DoctorService } from 'src/app/services/doctor.service';
 export class DoctorPage implements OnInit {
 
   allowOwnEmail = false;
+  allowOwnWebsite = false;
 
   constructor(
     private storage: Storage,
@@ -25,6 +26,7 @@ export class DoctorPage implements OnInit {
     this.doctorService.getDoctorProfile(doctorId).subscribe(res => {
       if (res.IsSuccess) {
         this.allowOwnEmail = res.ResponseData.AllowOwnEmail === true;
+        this.allowOwnWebsite = res.ResponseData.AllowOwnWebsite === true;
       }
     });
   }

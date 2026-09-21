@@ -55,5 +55,14 @@
       <ion-icon name="chevron-forward-outline" class="doc-card-arrow"></ion-icon>
     </div>
 
+    <div *ngIf="allowOwnWebsite" routerLink="/members/doctor/website-setting" class="doc-card card-website">
+      <div class="doc-card-icon">
+        <ion-icon name="globe-outline"></ion-icon>
+      </div>
+      <span class="doc-card-label">Website Settings</span>
+      <span class="doc-card-sub">Your own website link</span>
+      <ion-icon name="chevron-forward-outline" class="doc-card-arrow"></ion-icon>
+    </div>
+
   </div>
 </ion-content>
