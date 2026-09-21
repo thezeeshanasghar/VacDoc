@@ -7,41 +7,100 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="sc-content">
+  <div class="sc-wrap">
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Generate Report</ion-card-title>
-      <ion-card-subtitle>Select clinic and date range then download the PDF</ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
+    <!-- Summary stat row — totals for the selected clinic + date range -->
+    <div class="sc-summary-row" *ngIf="selectedClinicId">
+      <div class="sc-stat" *ngIf="!summaryLoading && summary">
+        <div class="sc-stat-k">Patients</div>
+        <div class="sc-stat-v">{{ summary.TotalPatients }}</div>
+      </div>
+      <div class="sc-stat" *ngIf="!summaryLoading && summary">
+        <div class="sc-stat-k">Vaccination Fee</div>
+        <div class="sc-stat-v">Rs {{ summary.TotalVaxFee | number:'1.0-0' }}</div>
+      </div>
+      <div class="sc-stat" *ngIf="!summaryLoading && summary">
+        <div class="sc-stat-k">Items</div>
+        <div class="sc-stat-v">Rs {{ summary.TotalItemsPrice | number:'1.0-0' }}</div>
+      </div>
+      <div class="sc-stat sc-stat-total" *ngIf="!summaryLoading && summary">
+        <div class="sc-stat-k">Grand Total</div>
+        <div class="sc-stat-v">Rs {{ summary.GrandTotal | number:'1.0-0' }}</div>
+      </div>
 
-      <ion-item>
-        <ion-label position="floating">Select Clinic</ion-label>
-        <ion-select [(ngModel)]="selectedClinicId" placeholder="Choose clinic">
-          <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
-            {{ clinic.Name }}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
+      <div class="sc-stat sc-stat-skeleton" *ngIf="summaryLoading">
+        <div class="sc-skel-line short"></div>
+        <div class="sc-skel-line"></div>
+      </div>
+      <div class="sc-stat sc-stat-skeleton" *ngIf="summaryLoading">
+        <div class="sc-skel-line short"></div>
+        <div class="sc-skel-line"></div>
+      </div>
 
-      <div [formGroup]="form">
-        <ion-item>
-          <ion-label position="stacked">From Date</ion-label>
-          <app-date-input formControlName="fromDate"></app-date-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="stacked">To Date</ion-label>
-          <app-date-input formControlName="toDate"></app-date-input>
+      <div class="sc-stat-empty" *ngIf="!summaryLoading && !summary">
+        No sales recorded for this date range yet.
+      </div>
+    </div>
+
+    <!-- Report generator -->
+    <div class="sc-card">
+      <h3 class="sc-card-title">Generate Report</h3>
+      <p class="sc-card-sub">Select clinic and date range then download the PDF</p>
+
+      <div class="sc-field">
+        <label class="sc-label">Select Clinic</label>
+        <ion-item class="sc-select-item" lines="none">
+          <ion-select
+            [(ngModel)]="selectedClinicId"
+            (ionChange)="onClinicChange()"
+            interface="popover"
+            placeholder="Choose clinic">
+            <ion-select-option *ngFor="let clinic of clinics" [value]="clinic.Id">
+              {{ clinic.Name }}
+            </ion-select-option>
+          </ion-select>
         </ion-item>
       </div>
 
-      <ion-button expand="block" class="ion-margin-top" (click)="downloadReport()">
+      <div [formGroup]="form" class="sc-row2">
+        <div class="sc-field">
+          <label class="sc-label">From Date</label>
+          <app-date-input formControlName="fromDate" class="sc-date"></app-date-input>
+        </div>
+        <div class="sc-field">
+          <label class="sc-label">To Date</label>
+          <app-date-input formControlName="toDate" class="sc-date"></app-date-input>
+        </div>
+      </div>
+
+      <ion-button expand="block" class="sc-btn" (click)="downloadReport()">
         <ion-icon name="download-outline" slot="start"></ion-icon>
         Download Sales Report
       </ion-button>
+    </div>
 
-    </ion-card-content>
-  </ion-card>
+    <!-- Recent reports -->
+    <div class="sc-recent" *ngIf="selectedClinicId">
+      <div class="sc-recent-title">Recent Reports</div>
 
+      <div class="sc-recent-item" *ngFor="let row of recentReports" (click)="redownloadReport(row)">
+        <div class="sc-recent-left">
+          <div class="sc-recent-icon">
+            <ion-icon name="document-text-outline"></ion-icon>
+          </div>
+          <div>
+            <div class="sc-recent-name">{{ row.FromDate | date:'dd MMM' }} – {{ row.ToDate | date:'dd MMM yyyy' }}</div>
+            <div class="sc-recent-meta">Rs {{ row.GrandTotal | number:'1.0-0' }} &middot; generated {{ row.GeneratedAt | date:'dd MMM, h:mm a' }}</div>
+          </div>
+        </div>
+        <ion-icon name="download-outline" class="sc-recent-dl"></ion-icon>
+      </div>
+
+      <div class="sc-recent-empty" *ngIf="!recentLoading && recentReports.length === 0">
+        No reports generated yet for this clinic.
+      </div>
+    </div>
+
+  </div>
 </ion-content>

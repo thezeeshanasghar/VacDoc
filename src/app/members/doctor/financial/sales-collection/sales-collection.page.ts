@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import * as moment from 'moment';
+import { Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { BrandService } from 'src/app/services/brand.service';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { PaService } from 'src/app/services/pa.service';
@@ -15,7 +17,7 @@ import { environment } from 'src/environments/environment';
   templateUrl: './sales-collection.page.html',
   styleUrls: ['./sales-collection.page.scss'],
 })
-export class SalesCollectionPage implements OnInit {
+export class SalesCollectionPage implements OnInit, OnDestroy {
   clinics: any[] = [];
   selectedClinicId: any;
   doctorId: any;
@@ -23,6 +25,12 @@ export class SalesCollectionPage implements OnInit {
   clinicid: any;
   form: FormGroup;
   todaydate: string;
+
+  summary: { TotalPatients: number; TotalVaxFee: number; TotalItemsPrice: number; GrandTotal: number } | null = null;
+  summaryLoading = false;
+  recentReports: any[] = [];
+  recentLoading = false;
+  private dateChangeSub: Subscription;
 
   constructor(
     private stockService: StockService,
@@ -50,6 +58,17 @@ export class SalesCollectionPage implements OnInit {
       return;
     }
     await this.loadClinics();
+    this.dateChangeSub = this.form.valueChanges
+      .pipe(debounceTime(400), distinctUntilChanged((a, b) => a.fromDate === b.fromDate && a.toDate === b.toDate))
+      .subscribe(() => this.refreshSummaryAndHistory());
+  }
+
+  ngOnDestroy() {
+    if (this.dateChangeSub) { this.dateChangeSub.unsubscribe(); }
+  }
+
+  onClinicChange() {
+    this.refreshSummaryAndHistory();
   }
 
   async loadClinics() {
@@ -63,6 +82,7 @@ export class SalesCollectionPage implements OnInit {
             if (res.IsSuccess) {
               this.clinics = res.ResponseData;
               this.selectedClinicId = this.clinicid || (this.clinics.length > 0 ? this.clinics[0].Id : null);
+              this.refreshSummaryAndHistory();
             } else {
               this.toastService.create(res.Message, 'danger');
             }
@@ -76,6 +96,7 @@ export class SalesCollectionPage implements OnInit {
             if (res.IsSuccess) {
               this.clinics = res.ResponseData;
               this.selectedClinicId = this.clinics.length > 0 ? this.clinics[0].Id : null;
+              this.refreshSummaryAndHistory();
             } else {
               this.toastService.create(res.Message, 'danger');
             }
@@ -87,6 +108,44 @@ export class SalesCollectionPage implements OnInit {
       loading.dismiss();
       this.toastService.create('An unexpected error occurred', 'danger');
     }
+  }
+
+  // Called on clinic-select change and date change (template) as well as after clinics load.
+  refreshSummaryAndHistory() {
+    if (!this.selectedClinicId || !this.doctorId) { return; }
+    this.loadSummary();
+    this.loadRecentReports();
+  }
+
+  private loadSummary() {
+    const fromDate = moment(this.form.value.fromDate).format('YYYY-MM-DD');
+    const toDate = moment(this.form.value.toDate).format('YYYY-MM-DD');
+    this.summaryLoading = true;
+    this.summary = null;
+    this.stockService.getSalesSummary(this.selectedClinicId, Number(this.doctorId), new Date(fromDate), new Date(toDate)).subscribe({
+      next: (res) => {
+        this.summaryLoading = false;
+        if (res.IsSuccess) { this.summary = res.ResponseData; }
+      },
+      error: () => { this.summaryLoading = false; /* summary is a nice-to-have, fail quietly */ }
+    });
+  }
+
+  private loadRecentReports() {
+    this.recentLoading = true;
+    this.stockService.getSalesReportLog(this.selectedClinicId, Number(this.doctorId), 5).subscribe({
+      next: (res) => {
+        this.recentLoading = false;
+        if (res.IsSuccess) { this.recentReports = res.ResponseData || []; }
+      },
+      error: () => { this.recentLoading = false; }
+    });
+  }
+
+  // Re-download: replay a past log row's exact date range through the normal download path.
+  redownloadReport(row: any) {
+    this.form.patchValue({ fromDate: row.FromDate, toDate: row.ToDate });
+    this.downloadReport();
   }
 
   async downloadReport() {
@@ -109,6 +168,7 @@ export class SalesCollectionPage implements OnInit {
         window.URL.revokeObjectURL(link.href);
         this.toastService.create('Report downloaded successfully', 'success');
         this.warnIfNoPriceList();
+        this.loadRecentReports(); // this download just wrote a new log row server-side
       },
       error: (err) => {
         loading.dismiss();

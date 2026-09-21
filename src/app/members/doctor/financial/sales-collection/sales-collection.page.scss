@@ -1,0 +1,226 @@
+.sc-content {
+  --background: var(--vac-surface);
+}
+
+.sc-wrap {
+  padding: 20px 16px 32px;
+}
+
+// ── Summary stat row ─────────────────────────────────────────────────────────
+.sc-summary-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.sc-stat {
+  background: var(--vac-card);
+  border-radius: 12px;
+  padding: 12px 13px;
+  box-shadow: var(--vac-shadow-sm);
+}
+
+.sc-stat-k {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  color: var(--vac-ink-4);
+  margin-bottom: 5px;
+}
+
+.sc-stat-v {
+  font-family: var(--vac-font-head);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--vac-petrol);
+  font-variant-numeric: tabular-nums;
+}
+
+.sc-stat-total .sc-stat-v {
+  color: var(--vac-green);
+}
+
+.sc-stat-empty {
+  grid-column: 1 / -1;
+  background: var(--vac-card);
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 13px;
+  color: var(--vac-ink-3);
+  text-align: center;
+  box-shadow: var(--vac-shadow-sm);
+}
+
+.sc-stat-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sc-skel-line {
+  height: 9px;
+  border-radius: 5px;
+  background: var(--vac-hairline);
+  animation: sc-pulse 1.1s ease-in-out infinite;
+}
+
+.sc-skel-line.short { width: 55%; height: 8px; }
+
+@keyframes sc-pulse {
+  0%, 100% { opacity: .55; }
+  50% { opacity: 1; }
+}
+
+@media (max-width: 620px) {
+  .sc-summary-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+// ── Generate Report card ─────────────────────────────────────────────────────
+.sc-card {
+  background: var(--vac-card);
+  border-radius: 16px;
+  padding: 18px 16px 16px;
+  box-shadow: var(--vac-shadow-sm);
+  border: 1px solid var(--vac-hairline);
+}
+
+.sc-card-title {
+  margin: 0 0 3px;
+  font-family: var(--vac-font-head);
+  font-size: 17px;
+  color: var(--vac-petrol);
+}
+
+.sc-card-sub {
+  margin: 0 0 16px;
+  color: var(--vac-ink-3);
+  font-size: 12.5px;
+}
+
+.sc-field {
+  margin-bottom: 14px;
+}
+
+.sc-label {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  color: var(--vac-ink-4);
+  margin-bottom: 6px;
+}
+
+.sc-row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+@media (max-width: 420px) {
+  .sc-row2 { grid-template-columns: 1fr; }
+}
+
+.sc-select-item {
+  --background: var(--vac-blue-tint);
+  --border-color: var(--vac-border);
+  --padding-start: 13px;
+  --padding-end: 6px;
+  --min-height: 44px;
+  border: 1px solid var(--vac-border);
+  border-radius: 10px;
+}
+
+// app-date-input already themes itself off --vac-blue-tint/--vac-border internally
+// (see date-input.component.scss) — no override needed here, it matches sc-select-item
+// out of the box.
+
+.sc-btn {
+  margin-top: 4px;
+  --background: var(--vac-blue);
+  --border-radius: 12px;
+  --box-shadow: var(--vac-shadow-blue);
+  font-weight: 700;
+  font-size: 14.5px;
+}
+
+// ── Recent reports ────────────────────────────────────────────────────────────
+.sc-recent {
+  margin-top: 18px;
+}
+
+.sc-recent-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  color: var(--vac-ink-4);
+  margin: 0 0 8px 2px;
+}
+
+.sc-recent-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--vac-card);
+  border-radius: 12px;
+  padding: 11px 13px;
+  box-shadow: var(--vac-shadow-sm);
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.sc-recent-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.sc-recent-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--vac-green-tint);
+  color: var(--vac-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+
+.sc-recent-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--vac-ink);
+}
+
+.sc-recent-meta {
+  font-size: 11px;
+  color: var(--vac-ink-3);
+  margin-top: 1px;
+}
+
+.sc-recent-dl {
+  flex-shrink: 0;
+  color: var(--vac-blue);
+  font-size: 17px;
+}
+
+.sc-recent-empty {
+  background: var(--vac-card);
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 13px;
+  color: var(--vac-ink-3);
+  text-align: center;
+  box-shadow: var(--vac-shadow-sm);
+}
