@@ -18,7 +18,9 @@ export class BookingsPage {
 
   allBookings: any[] = [];
   bookings: any[] = [];
-  selectedStatus: string = '';
+  // Defaults to Pending so the list opens on what needs action; doctor/PA can pick
+  // "All" (or another status) from the Status filter pills to see everything.
+  selectedStatus: string = 'Pending';
   selectedType: string = '';
   selectedClinicId: number | string = '';
   selectedCity: string = '';
