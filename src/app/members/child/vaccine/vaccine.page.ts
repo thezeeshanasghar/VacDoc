@@ -518,7 +518,8 @@ export class VaccinePage {
         text: 'Re-download PDF',
         icon: 'download-outline',
         handler: () => {
-          this.router.navigate([`/members/child/vaccine/${this.childId}/bulkinvoice/${date}`]);
+          const fee = this.invoiceAmountMap[date] || 0;
+          this.downloadInvoicePdf(this.childId, date, fee);
         }
       },
       {
@@ -545,6 +546,36 @@ export class VaccinePage {
       buttons
     });
     await sheet.present();
+  }
+
+  // Re-download the already-generated PDF straight from the action sheet — no
+  // navigation, no edit form. Mirrors BulkInvoicePage.download() (same URL
+  // shape/platform branching), which is what "Edit & regenerate" ultimately
+  // calls after saving.
+  private downloadInvoicePdf(id: any, date: string, fee: number) {
+    const today = new Date(date);
+    const year = today.getFullYear();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+
+    if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
+      const url = `${this.API_VACCINE}child/${id}/${formattedDate}/${formattedDate}/${fee}/Verify-Invoice-PDF`;
+      window.open(url);
+    } else {
+      const request: DownloadRequest = {
+        uri: `${this.API_VACCINE}child/${id}/${formattedDate}/${fee}/Download-Invoice-PDF`,
+        title: 'Invoice',
+        description: '',
+        mimeType: '',
+        visibleInDownloadsUi: true,
+        notificationVisibility: NotificationVisibility.VisibleNotifyCompleted,
+        destinationInExternalFilesDir: { dirType: 'Downloads', subPath: 'Invoice.pdf' }
+      };
+      this.downloader.download(request)
+        .then((location: string) => console.log('File downloaded at:' + location))
+        .catch((error: any) => console.error(error));
+    }
   }
 
   async confirmVoidInvoice(groupVaccines: any[], date: string) {
