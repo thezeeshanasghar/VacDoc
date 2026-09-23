@@ -48,7 +48,9 @@ export class AgentEditModalComponent implements OnInit {
     const done = () => { pending--; if (pending === 0) { this.loading = false; } };
 
     this.clinicService.getClinics(this.doctorId).subscribe(
-      (res: any) => { this.clinics = res || []; done(); },
+      // ClinicService returns the raw Response<T> wrapper ({IsSuccess, Message, ResponseData}),
+      // not an unwrapped array — same shape as VaccineService below.
+      (res: any) => { this.clinics = (res && res.ResponseData) || (Array.isArray(res) ? res : []); done(); },
       () => { done(); }
     );
 
