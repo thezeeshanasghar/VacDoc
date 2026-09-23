@@ -98,10 +98,11 @@
       </ion-item>
     </div>
 
-    <!-- Agent: shown for every patient type, defaults to "Vaccine.pk" (no referral fee). -->
+    <!-- Agent: shown for every patient type, defaults to "Vaccine.pk" (no referral fee).
+         Optional — never required to submit. -->
     <ion-item>
       <ion-label color="primary" position="floating">
-        Agent
+        Agent (Optional)
       </ion-label>
       <ion-select formControlName="AgentId" interface="popover" placeholder="Vaccine.pk">
         <ion-select-option [value]="null">Vaccine.pk</ion-select-option>

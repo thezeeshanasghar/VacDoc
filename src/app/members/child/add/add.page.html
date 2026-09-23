@@ -282,8 +282,10 @@
       </div>
 
       <!-- Agent: shown for every patient type, defaults to "Vaccine.pk" (no referral fee).
-           New agents are added only via the doctor's Agent Module, not inline here. -->
+           Optional — never required to submit. New agents are added only via the doctor's
+           Agent Module, not inline here. -->
       <div class="agent">
+        <div style="font-size: 12px; color: #888; margin: 4px 12px 2px;">Agent (Optional)</div>
         <ion-item appearance="outline" class="custom-input-item">
           <ion-select formControlName="AgentId" interface="popover" placeholder="Vaccine.pk" class="agent-select">
             <ion-select-option [value]="null">Vaccine.pk</ion-select-option>
