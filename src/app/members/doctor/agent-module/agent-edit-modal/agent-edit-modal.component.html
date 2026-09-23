@@ -31,7 +31,10 @@
     <div class="section-title">Assigned Clinic</div>
     <ion-item>
       <ion-label position="floating">Clinic</ion-label>
-      <ion-select [(ngModel)]="clinicId" interface="popover" placeholder="No default (choose manually each time)">
+      <!-- action-sheet, not popover: a popover's backdrop and this modal's own backdrop
+           are separate fixed-position stacking contexts that fight each other, silently
+           swallowing clicks on the options underneath. action-sheet doesn't have this clash. -->
+      <ion-select [(ngModel)]="clinicId" interface="action-sheet" placeholder="No default (choose manually each time)">
         <ion-select-option [value]="null">No default (choose manually each time)</ion-select-option>
         <ion-select-option *ngFor="let c of clinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
       </ion-select>
@@ -43,7 +46,8 @@
 
     <div class="section-title">Vaccine Fee Overrides</div>
     <div class="override-row" *ngFor="let o of overrides; let i = index">
-      <ion-select [(ngModel)]="o.vaccineId" interface="popover" placeholder="Choose vaccine" class="override-select">
+      <!-- action-sheet for the same reason as the Clinic select above. -->
+      <ion-select [(ngModel)]="o.vaccineId" interface="action-sheet" placeholder="Choose vaccine" class="override-select">
         <ion-select-option *ngFor="let v of vaccines" [value]="v.Id || v.id">{{ v.Name || v.name }}</ion-select-option>
       </ion-select>
       <div class="override-amount">
