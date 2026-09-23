@@ -63,4 +63,14 @@ export class LoginService extends BaseService {
       );
   }
 
+  // Magic-link auto-login for a PA-assignment email — token is the signed,
+  // 24-hour PaAssignmentLinkToken embedded in the email's "View assignment" link.
+  linkLoginPa(token: string): Observable<any> {
+    const url = `${this.API_LOGIN}link-login-pa?token=${encodeURIComponent(token)}`;
+    return this.http.get(url, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
 }
