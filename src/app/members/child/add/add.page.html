@@ -264,53 +264,36 @@
       </div>
 
       <div *ngIf="isCnicRequired">
-        <div class="agent">
-          <ion-item appearance="outline" class="custom-input-item">
-            <!-- <ion-label class="label-gray" position="floating">
-              Nationality <span class="required-asterisk">*</span>
-            </ion-label> -->
-            <ion-input type="text" formControlName="Nationality" placeholder="Nationality" required
-              class="ion-text-uppercase custom-input"></ion-input>
-          </ion-item>
-          <div class="validation-errors">
-            <ng-container *ngFor="let validation of validation_messages.nationality">
-              <div class="error-message"
-                *ngIf="fg1.get('Nationality') && fg1.get('Nationality').hasError(validation.type) && (fg1.get('Nationality').dirty || fg1.get('Nationality').touched)">
-                <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
-              </div>
-            </ng-container>
-          </div>
-          <!-- <ion-label class="label-gray" position="floating" style="font-size: 16px; display: flex; padding-left: 15px;">
-            Agent <span class="required-asterisk">*</span>
+        <ion-item appearance="outline" class="custom-input-item">
+          <!-- <ion-label class="label-gray" position="floating">
+            Nationality <span class="required-asterisk">*</span>
           </ion-label> -->
-          <mat-form-field appearance="outline" class="example-full-width custom-input-item">
-            <input type="text" aria-label="Number" placeholder="Agent" matInput formControlName="agent"
-              [matAutocomplete]="auto" (input)="filterAgents($event.target.value)" style="font-size: 15px;">
-            <mat-autocomplete #auto="matAutocomplete" class="no-indent">
-              <mat-option *ngFor="let option of agents" [value]="option">
-                {{option}}
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
-          <ion-item appearance="outline" class="custom-input-item">
-            <!-- <ion-label class="label-gray" position="floating">
-              Add New Agent <span class="required-asterisk">*</span>
-            </ion-label> -->
-            <ion-input type="text" formControlName="Agent2" required class="ion-text-capitalize custom-input"
-              placeholder="Add New Agent" [(ngModel)]="fg1.value.Agent2" [disabled]="fg1.get('agent') && fg1.get('agent').value !== ''"
-              (ionChange)="onAgentChange()">
-            </ion-input>
-          </ion-item>
-          <div class="validation-errors">
-            <ng-container *ngFor="let validation of validation_messages.Agent2">
-              <div class="error-message"
-                *ngIf="isCnicRequired && fg1.get('Agent2') && fg1.get('Agent2').hasError(validation.type) && (fg1.get('Agent2').dirty || fg1.get('Agent2').touched)">
-                <ion-icon name="information-circle-outline"></ion-icon> Agent required
-              </div>
-            </ng-container>
-          </div>
+          <ion-input type="text" formControlName="Nationality" placeholder="Nationality" required
+            class="ion-text-uppercase custom-input"></ion-input>
+        </ion-item>
+        <div class="validation-errors">
+          <ng-container *ngFor="let validation of validation_messages.nationality">
+            <div class="error-message"
+              *ngIf="fg1.get('Nationality') && fg1.get('Nationality').hasError(validation.type) && (fg1.get('Nationality').dirty || fg1.get('Nationality').touched)">
+              <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+            </div>
+          </ng-container>
         </div>
       </div>
+
+      <!-- Agent: shown for every patient type, defaults to "Vaccine.pk" (no referral fee).
+           New agents are added only via the doctor's Agent Module, not inline here. -->
+      <div class="agent">
+        <ion-item appearance="outline" class="custom-input-item">
+          <ion-select formControlName="AgentId" interface="popover" placeholder="Vaccine.pk" class="agent-select">
+            <ion-select-option [value]="null">Vaccine.pk</ion-select-option>
+            <ion-select-option *ngFor="let option of agents" [value]="option.Id || option.id">
+              {{ option.Name || option.name }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+      </div>
+
       <ion-button type="submit" [disabled]="!fg1.valid || (isCnicRequired && !fg1.get('CNIC').value)"
         style="display: block; margin: auto; width: 150px; margin-top: 15px; margin-bottom: 15px;">
         Submit

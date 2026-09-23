@@ -35,7 +35,6 @@ import { ManagerService } from "src/app/services/manager.service";
 export class AddPage implements OnInit {
   private readonly LAST_SELECTED_NATIONALITY_KEY =
     "LAST_SELECTED_NATIONALITY";
-  private readonly LAST_SELECTED_AGENT_KEY = "LAST_SELECTED_AGENT";
   isRadioDisabled: boolean = true;
   fg1: FormGroup;
   fg2: FormGroup;
@@ -49,7 +48,6 @@ export class AddPage implements OnInit {
   City: any;
   City2: any;
   Agent: any;
-  Agent2: any;
   CNIC: any;
   Doctor: any;
   epiDone = false;
@@ -146,10 +144,13 @@ filterCountryCodes(value: string) {
     );
   }
 
+  // Real Agent records (Id/Name/PhoneNumber) for the registration form's Agent dropdown —
+  // available for every patient type, defaulting to "Vaccine.pk" (agentId = null) meaning
+  // no referral fee applies. Doctor-created only, via the Agent Module.
   fetchAgent() {
-    this.childService.getAgent(1).subscribe(
+    this.agentService.getAllAgents().subscribe(
       (agents: any) => {
-        this.agents = agents.ResponseData;
+        this.agents = agents || [];
         this.originalAgents = [...this.agents];
       },
       (error: any) => {
@@ -163,7 +164,7 @@ filterCountryCodes(value: string) {
       this.agents = [...this.originalAgents];
     } else {
       this.agents = this.originalAgents.filter((agent) =>
-        agent.toLowerCase().includes(value.toLowerCase())
+        (agent.Name || agent.name || "").toLowerCase().includes(value.toLowerCase())
       );
     }
   }
@@ -279,10 +280,11 @@ filterCountryCodes(value: string) {
         { value: "", disabled: true },
         Validators.compose([Validators.required]),
       ],
-      Agent2: [{ value: "", disabled: true }, Validators.compose([])],
       Gender: [null, Validators.required],
       Type: [null, Validators.required],
-      agent: [""],
+      // Referring agent, available for every patient type. null = "Vaccine.pk" (the practice
+      // itself) — no referral fee applies. Set from the AgentId of a real Agent record.
+      AgentId: [null],
       travel: [false],
       CNIC: [""],
       IsEPIDone: [false],
@@ -320,11 +322,6 @@ filterCountryCodes(value: string) {
     this.storage.get(this.LAST_SELECTED_NATIONALITY_KEY).then((val) => {
       if (val != null && val !== "") {
         this.fg1.controls["Nationality"].setValue(val);
-      }
-    });
-    this.storage.get(this.LAST_SELECTED_AGENT_KEY).then((val) => {
-      if (val != null && val !== "") {
-        this.fg1.controls["agent"].setValue(val);
       }
     });
     this.storage.get(environment.DOCTOR).then((doc) => {
@@ -913,20 +910,11 @@ filterCountryCodes(value: string) {
     console.log("Form Group Value:", this.fg1.value);
     const cityControl = this.fg1.get("city");
     const city2Control = this.fg1.get("City2");
-    const agentControl = this.fg1.get("agent");
-    const agent2Control = this.fg1.get("Agent2");
     const nationalityControl = this.fg1.get("Nationality");
 
     const selectedCity = (
       (cityControl ? cityControl.value : "")
       || (city2Control ? city2Control.value : "")
-      || ""
-    )
-      .toString()
-      .trim();
-    const selectedAgent = (
-      (agentControl ? agentControl.value : "")
-      || (agent2Control ? agent2Control.value : "")
       || ""
     )
       .toString()
@@ -937,9 +925,6 @@ filterCountryCodes(value: string) {
 
     if (selectedCity) {
       await this.setCity(selectedCity);
-    }
-    if (selectedAgent) {
-      await this.setLastAgent(selectedAgent);
     }
     if (selectedNationality) {
       await this.setLastNationality(selectedNationality);
@@ -980,11 +965,6 @@ filterCountryCodes(value: string) {
 
   async addNewChild(data: any) {
     console.log("City2 value:", this.fg1.get("City2").value);
-    console.log("City2 value:", this.fg1.value.Agent2);
-    if (data.agent == "") {
-      data.agent = this.fg1.get("Agent2").value;
-      console.log("city2 data", data.agent);
-    }
     if (data.city == "") {
       data.city = this.fg1.get("City2").value;
       console.log("city2 data");
@@ -1146,10 +1126,6 @@ filterCountryCodes(value: string) {
     this.storage.set(this.LAST_SELECTED_NATIONALITY_KEY, nationality);
   }
 
-  async setLastAgent(agent: string) {
-    this.storage.set(this.LAST_SELECTED_AGENT_KEY, agent);
-  }
-
   async checkEpi() {
     let days = await this.calculateDiff(this.fg1.value.DOB);
     console.log(days);
@@ -1169,8 +1145,6 @@ filterCountryCodes(value: string) {
       this.presentScheduleTypePopover();
     }
     this.fg1.get("CNIC").clearValidators();
-    this.fg1.get("agent").clearValidators();
-    this.fg1.get("Agent2").clearValidators();
 
     // The Type control is left holding the radio's own literal value
     // ("epiplus" included) for the whole time the user is on this form -
@@ -1198,22 +1172,13 @@ filterCountryCodes(value: string) {
     if (selectedValue === "travel") {
       this.isCnicRequired = true;
       this.fg1.get("CNIC").setValidators([Validators.required]);
-      this.fg1.get("agent").setValidators([Validators.required]);
       this.fg1.get("Nationality").setValidators([Validators.required]);
       this.isButtonEnabled = true;
-      this.fg1.get("agent").enable();
-      this.onAgentChange();
     } else {
       this.isCnicRequired = false;
       this.isButtonEnabled = true;
-      this.fg1.get("agent").disable();
-      this.fg1.get("Agent2").disable();
-      this.fg1.get("agent").setValue("");
-      this.fg1.get("Agent2").setValue("");
     }
     this.fg1.get("CNIC").updateValueAndValidity();
-    this.fg1.get("agent").updateValueAndValidity();
-    this.fg1.get("Agent2").updateValueAndValidity();
     this.fg1.get("Nationality").updateValueAndValidity();
     // Do NOT call checkEpi() here: it re-derives IsEPIDone/isRadioDisabled
     // from the current DOB snapshot and would immediately undo the explicit
@@ -1265,27 +1230,6 @@ filterCountryCodes(value: string) {
     }
     this.fg1.get("city").updateValueAndValidity();
     this.fg1.get("City2").updateValueAndValidity();
-  }
-
-  onAgentChange() {
-    const agentValue = this.fg1.get("agent").value;
-    const agent2Value = this.fg1.get("Agent2").value;
-    console.log("Agent:", agentValue);
-    console.log("Agent2:", agent2Value);
-    if (agentValue) {
-      this.fg1.get("Agent2").clearValidators();
-      this.fg1.get("Agent2").updateValueAndValidity();
-      this.fg1.get("agent").setValidators([Validators.required]);
-    } else if (agent2Value) {
-      this.fg1.get("agent").clearValidators();
-      this.fg1.get("agent").updateValueAndValidity();
-      this.fg1.get("Agent2").setValidators([Validators.required]);
-    } else {
-      this.fg1.get("agent").setValidators([Validators.required]);
-      this.fg1.get("Agent2").setValidators([Validators.required]);
-    }
-    this.fg1.get("agent").updateValueAndValidity();
-    this.fg1.get("Agent2").updateValueAndValidity;
   }
 
   calculateDiff(dateSent: string | number | Date) {
@@ -1415,7 +1359,6 @@ filterCountryCodes(value: string) {
       },
     ],
     gender: [{ type: "required", message: "Gender is required." }],
-    Agent2: [{ type: "required", message: "Agent is required." }],
     email: [
       { type: "pattern", message: "Please enter a valid email address" },
       { type: "email", message: "Please enter a valid email address" },

@@ -12,6 +12,11 @@ import { ToastService } from 'src/app/shared/toast.service';
 export class AgentModulePage {
   agents: any[] = [];
 
+  activeAgents = 0;
+  totalReferred = 0;
+  totalAvailed = 0;
+  totalOwed = 0;
+
   constructor(
     private agentService: AgentService,
     private alertController: AlertController,
@@ -27,9 +32,14 @@ export class AgentModulePage {
   async loadAgents() {
     const loader = await this.loadingCtrl.create({ message: 'Loading...' });
     await loader.present();
-    this.agentService.getAllAgents().subscribe(
-      (data: any) => {
-        this.agents = data;
+    this.agentService.getAgentsSummary().subscribe(
+      (res: any) => {
+        const data = res && res.ResponseData;
+        this.agents = (data && data.Agents) || [];
+        this.activeAgents = (data && data.ActiveAgents) || 0;
+        this.totalReferred = (data && data.TotalReferred) || 0;
+        this.totalAvailed = (data && data.TotalAvailed) || 0;
+        this.totalOwed = (data && data.TotalOwed) || 0;
         loader.dismiss();
       },
       (_err: any) => {
@@ -45,10 +55,9 @@ export class AgentModulePage {
       inputs: [
         { name: 'name', type: 'text', placeholder: 'Agent Name *' },
         { name: 'phone', type: 'tel', placeholder: 'Phone Number (used as Login ID) *' },
-        { name: 'email', type: 'email', placeholder: 'Email Address *', attributes: { autocomplete: 'off' } },
-        { name: 'password', type: 'password', placeholder: 'Initial Password (min 4 characters) *', attributes: { autocomplete: 'new-password' } },
         { name: 'fee', type: 'number', placeholder: 'Referral Fee per Client (Rs.)' },
       ],
+      message: 'A default PIN of 0000 will be issued. The agent must change it the first time they sign in.',
       buttons: [
         { text: 'Cancel', role: 'cancel' },
         {
@@ -62,30 +71,24 @@ export class AgentModulePage {
               this.toastService.create('Phone number is required (used as login ID)', 'danger');
               return false;
             }
-            if (!data.email || !data.email.trim()) {
-              this.toastService.create('Email address is required', 'danger');
-              return false;
-            }
-            if (!data.password || data.password.length < 4) {
-              this.toastService.create('Password must be at least 4 characters', 'danger');
-              return false;
-            }
             const agent = {
               Name: data.name.trim(),
               PhoneNumber: data.phone.trim(),
-              Email: data.email.trim(),
-              Password: data.password,
               ReferralFeePerClient: parseFloat(data.fee) || 0
             };
             this.agentService.addAgent(agent).subscribe(
               (res: any) => {
                 this.loadAgents();
                 const code = (res && res.agentCode) ? res.agentCode : '';
-                if (code) {
-                  this.toastService.create('Agent added. Agent Code: ' + code, 'success');
-                }
+                this.toastService.create(
+                  code ? ('Agent added. Agent Code: ' + code + '. Default PIN: 0000.') : 'Agent added. Default PIN: 0000.',
+                  'success'
+                );
               },
-              (_err: any) => { this.toastService.create('Failed to add agent', 'danger'); }
+              (err: any) => {
+                const msg = (err && err.error && err.error.Message) || 'Failed to add agent';
+                this.toastService.create(msg, 'danger');
+              }
             );
           }
         }
@@ -100,8 +103,6 @@ export class AgentModulePage {
       inputs: [
         { name: 'name', type: 'text', placeholder: 'Agent Name *', value: agent.Name || agent.name },
         { name: 'phone', type: 'tel', placeholder: 'Phone Number (Login ID)', value: agent.PhoneNumber || agent.phoneNumber },
-        { name: 'email', type: 'email', placeholder: 'Email Address', value: agent.Email || agent.email || '', attributes: { autocomplete: 'off' } },
-        { name: 'password', type: 'password', placeholder: 'New Password (leave blank to keep current)', attributes: { autocomplete: 'new-password' } },
         { name: 'fee', type: 'number', placeholder: 'Referral Fee per Client (Rs.)', value: agent.ReferralFeePerClient || agent.referralFeePerClient },
       ],
       buttons: [
@@ -114,13 +115,13 @@ export class AgentModulePage {
               return false;
             }
             const id = agent.Id || agent.id;
+            // PutAgent merges onto the existing row server-side — only Name/Phone/Fee are
+            // ever written by this dialog, so Password/Email/MustChangePassword don't need
+            // to be sent at all.
             const updated = {
               Id: id,
               Name: data.name.trim(),
               PhoneNumber: data.phone || '',
-              Email: data.email || '',
-              Password: (data.password && data.password.length >= 4) ? data.password : (agent.Password || agent.password || ''),
-              AgentCode: agent.AgentCode || agent.agentCode || '',
               ReferralFeePerClient: parseFloat(data.fee) || 0
             };
             this.agentService.updateAgent(id, updated).subscribe(

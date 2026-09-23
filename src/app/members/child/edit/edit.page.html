@@ -90,21 +90,26 @@
     </ion-item>
 
     <div *ngIf="isCnicRequired">
-      <div class="agent">
       <ion-item>
         <ion-label color="primary" position="floating">
-          Nationality 
+          Nationality
         </ion-label>
         <ion-input type="text" formControlName="Nationality" required class="ion-text-capitalize"></ion-input>
       </ion-item>
-      <ion-item>
-        <ion-label color="primary" position="floating">
-          Agent 
-        </ion-label>
-        <ion-input type="text" formControlName="agent" required class="ion-text-capitalize"></ion-input>
-      </ion-item>
-      </div>
     </div>
+
+    <!-- Agent: shown for every patient type, defaults to "Vaccine.pk" (no referral fee). -->
+    <ion-item>
+      <ion-label color="primary" position="floating">
+        Agent
+      </ion-label>
+      <ion-select formControlName="AgentId" interface="popover" placeholder="Vaccine.pk">
+        <ion-select-option [value]="null">Vaccine.pk</ion-select-option>
+        <ion-select-option *ngFor="let option of agents" [value]="option.Id || option.id">
+          {{ option.Name || option.name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
     <!-- <ion-grid>
       <ion-row>
 

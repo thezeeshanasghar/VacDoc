@@ -9,6 +9,25 @@
 
 <ion-content class="ion-padding">
 
+  <div *ngIf="agents.length > 0" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px;">
+    <div style="background: var(--vac-blue-tint, #EDF4F8); border-radius: 12px; padding: 12px 14px;">
+      <div style="font-size: 20px; font-weight: 700; color: var(--vac-petrol, #0C3646);">{{ activeAgents }}</div>
+      <div style="font-size: 11px; color: #6b7280;">Active agents</div>
+    </div>
+    <div style="background: var(--vac-blue-tint, #EDF4F8); border-radius: 12px; padding: 12px 14px;">
+      <div style="font-size: 20px; font-weight: 700; color: var(--vac-petrol, #0C3646);">{{ totalReferred }}</div>
+      <div style="font-size: 11px; color: #6b7280;">Total referred patients</div>
+    </div>
+    <div style="background: var(--vac-green-tint, #E5F5EC); border-radius: 12px; padding: 12px 14px;">
+      <div style="font-size: 20px; font-weight: 700; color: var(--vac-green, #2E9463);">{{ totalAvailed }}</div>
+      <div style="font-size: 11px; color: #6b7280;">Availed (1st dose given)</div>
+    </div>
+    <div style="background: var(--vac-gold-soft, #E7D9AE); border-radius: 12px; padding: 12px 14px;">
+      <div style="font-size: 20px; font-weight: 700; color: var(--vac-gold-text, #B08F3E);">Rs {{ totalOwed }}</div>
+      <div style="font-size: 11px; color: #6b7280;">Owed to date</div>
+    </div>
+  </div>
+
   <ion-list *ngIf="agents.length > 0">
     <ion-card *ngFor="let agent of agents" style="margin: 8px 0;">
       <ion-card-content style="padding: 12px;">
@@ -16,6 +35,10 @@
           <div style="flex: 1;">
             <div style="font-size: 16px; font-weight: 600; color: var(--vac-blue);">
               {{ agent.Name || agent.name }}
+              <span *ngIf="agent.MustChangePassword || agent.mustChangePassword"
+                style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; background: var(--vac-warn-tint, #FBEFDD); color: var(--vac-warn, #D97A16); border-radius: 999px; padding: 2px 8px; margin-left: 6px; vertical-align: middle;">
+                PIN not changed
+              </span>
             </div>
             <div style="font-size: 12px; color: #888; margin-top: 1px;" *ngIf="agent.AgentCode || agent.agentCode">
               <ion-icon name="id-card-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
@@ -25,13 +48,14 @@
               <ion-icon name="call-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
               {{ agent.PhoneNumber || agent.phoneNumber }}
             </div>
-            <div style="font-size: 13px; color: #555; margin-top: 2px;" *ngIf="agent.Email || agent.email">
-              <ion-icon name="mail-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
-              {{ agent.Email || agent.email }}
-            </div>
             <div style="font-size: 13px; color: var(--vac-green); margin-top: 2px;">
               <ion-icon name="cash-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
               Rs. {{ agent.ReferralFeePerClient || agent.referralFeePerClient || 0 }} / client (first visit)
+            </div>
+            <div style="font-size: 12px; color: #6b7280; margin-top: 6px; display: flex; gap: 12px;">
+              <span><strong style="color: var(--vac-ink, #10222F);">{{ agent.ReferredCount || agent.referredCount || 0 }}</strong> referred</span>
+              <span><strong style="color: var(--vac-green, #2E9463);">{{ agent.AvailedCount || agent.availedCount || 0 }}</strong> availed</span>
+              <span><strong style="color: var(--vac-gold-text, #B08F3E);">Rs {{ agent.Owed || agent.owed || 0 }}</strong> owed</span>
             </div>
           </div>
           <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-end;">

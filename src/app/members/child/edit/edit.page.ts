@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CityService } from 'src/app/services/city.service';
 import { ChildService } from 'src/app/services/child.service';
+import { AgentService } from 'src/app/services/agent.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { LoadingController, AlertController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -26,8 +27,7 @@ export class EditPage implements OnInit {
   fg: FormGroup;
   isCnicRequired: boolean = false;
   check:string = '';
-  agents: string[] = [];
-  originalAgents: any[];
+  agents: any[] = [];
   Agent: any;
   Nationality: any;
 
@@ -39,6 +39,7 @@ export class EditPage implements OnInit {
     private formBuilder: FormBuilder,
     public cityService: CityService,
     public childService: ChildService,
+    public agentService: AgentService,
     private toastService: ToastService,
   ) {
   }
@@ -62,7 +63,7 @@ export class EditPage implements OnInit {
       'IsVerified': [null],
       'PreferredSchedule': [null],
       'Type': [null],
-      'agent': [null],
+      'AgentId': [null],
       'Nationality': [null],
     });
     this.getchild();
@@ -87,13 +88,9 @@ console.log(this.isCnicRequired);
   }
 
   fetchAgent() {
-    this.childService.getAgent(1).subscribe(
+    this.agentService.getAllAgents().subscribe(
       (agents: any) => {
-        this.agents = agents.ResponseData;
-        this.originalAgents = [...this.agents]; // Store original agents for filtering
-        console.log('Fetched agents:', agents.ResponseData); 
-        console.log('Fetched agents:', agents.ResponseData.length); 
-        // Log the fetched agents
+        this.agents = agents || [];
       },
       (error: any) => {
         console.error('Error fetching agents:', error);
@@ -101,16 +98,7 @@ console.log(this.isCnicRequired);
     );
   }
 
-  filterAgents(value: string) {
-    if (!value.trim()) {
-      this.agents = [...this.originalAgents]; // Restore original agents if input is empty
-    } else {
-      this.agents = this.originalAgents.filter(agent =>
-        agent.toLowerCase().includes(value.toLowerCase())
-      );
-    }
-  }
-  
+
   async getchild() {
     const loading = await this.loadingController.create({
       message: 'Loading',
@@ -139,8 +127,7 @@ console.log(this.isCnicRequired);
           this.fg.controls['IsVerified'].setValue(this.child.IsVerified);
           this.fg.controls['CNIC'].setValue(this.child.CNIC);
           this.fg.controls['Type'].setValue(this.child.Type);
-          this.fg.controls['agent'].setValue(this.child.Agent);
-          console.log(this.child.Agent);
+          this.fg.controls['AgentId'].setValue(this.child.AgentId != null ? this.child.AgentId : null);
           this.fg.controls['Nationality'].setValue(this.child.Nationality);
           this.check = this.child.Type;
           // Check availability and update isCnicRequired

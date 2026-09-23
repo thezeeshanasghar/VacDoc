@@ -47,6 +47,10 @@ export class AgentService extends BaseService {
       .pipe(catchError(this.handleError));
   }
 
+  getAgentsSummary(): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/summary`).pipe(catchError(this.handleError));
+  }
+
   othercity = false;
   agents = [];
 

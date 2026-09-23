@@ -19,7 +19,7 @@
       </div>
       <div style="font-size: 13px; color: var(--vac-green); margin-top: 2px;">
         <ion-icon name="cash-outline" style="vertical-align: middle;"></ion-icon>
-        Rs. {{ feePerClient }} per referred client (first visit only)
+        Rs. {{ feePerClient }} per referred client (flat rate, first invoiced dose only — some vaccines may differ)
       </div>
     </ion-card-content>
   </ion-card>
@@ -86,7 +86,7 @@
             </p>
           </ion-label>
           <ion-note slot="end" style="color: var(--vac-red); font-weight: 600; font-size: 13px;">
-            Rs. {{ feePerClient }}
+            Rs. {{ client.Fee || client.fee || feePerClient }}
           </ion-note>
         </ion-item>
       </ion-list>
@@ -94,7 +94,7 @@
 
     <div *ngIf="clients.length === 0" style="text-align: center; padding: 24px; color: #888;">
       <ion-icon name="people-outline" style="font-size: 40px; color: #ccc;"></ion-icon>
-      <p>No travel clients referred by this agent in the selected period.</p>
+      <p>No clients referred by this agent had their first invoiced dose in the selected period.</p>
     </div>
 
     <!-- Record as Expense placeholder -->
