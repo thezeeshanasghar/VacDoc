@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Edit Agent</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">Cancel</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="loading" style="text-align: center; padding: 40px 0; color: #888;">
+    Loading...
+  </div>
+
+  <div *ngIf="!loading">
+
+    <div class="section-title">Details</div>
+    <ion-item>
+      <ion-label position="floating">Agent Name</ion-label>
+      <ion-input type="text" [(ngModel)]="name"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Phone Number (Login ID)</ion-label>
+      <ion-input type="tel" [(ngModel)]="phone"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Referral Fee per Client (Rs.)</ion-label>
+      <ion-input type="number" [(ngModel)]="fee"></ion-input>
+    </ion-item>
+
+    <div class="section-title">Assigned Clinic</div>
+    <ion-item>
+      <ion-label position="floating">Clinic</ion-label>
+      <ion-select [(ngModel)]="clinicId" interface="popover" placeholder="No default (choose manually each time)">
+        <ion-select-option [value]="null">No default (choose manually each time)</ion-select-option>
+        <ion-select-option *ngFor="let c of clinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <p class="hint">
+      Patients registered under this agent by a PA or Manager default to this clinic (still changeable).
+      Doctor's own registrations always use his active clinic, regardless of agent.
+    </p>
+
+    <div class="section-title">Vaccine Fee Overrides</div>
+    <div class="override-row" *ngFor="let o of overrides; let i = index">
+      <ion-select [(ngModel)]="o.vaccineId" interface="popover" placeholder="Choose vaccine" class="override-select">
+        <ion-select-option *ngFor="let v of vaccines" [value]="v.Id || v.id">{{ v.Name || v.name }}</ion-select-option>
+      </ion-select>
+      <div class="override-amount">
+        <span class="rs-prefix">Rs</span>
+        <ion-input type="number" [(ngModel)]="o.fee"></ion-input>
+      </div>
+      <button class="remove-btn" type="button" (click)="removeOverrideRow(i)" aria-label="Remove override">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    </div>
+    <div *ngIf="overrides.length === 0" class="override-empty">No overrides — every vaccine pays the flat rate above.</div>
+    <ion-button fill="clear" size="small" (click)="addOverrideRow()">
+      <ion-icon name="add-outline" slot="start"></ion-icon>
+      Add vaccine override
+    </ion-button>
+    <p class="hint">Only vaccines listed here differ from this agent's flat rate above.</p>
+
+    <ion-button expand="full" style="margin-top: 20px;" (click)="save()">Save Agent</ion-button>
+
+  </div>
+</ion-content>

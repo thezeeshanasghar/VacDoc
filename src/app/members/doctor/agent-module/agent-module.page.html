@@ -57,6 +57,19 @@
               <span><strong style="color: var(--vac-green, #2E9463);">{{ agent.AvailedCount || agent.availedCount || 0 }}</strong> availed</span>
               <span><strong style="color: var(--vac-gold-text, #B08F3E);">Rs {{ agent.Owed || agent.owed || 0 }}</strong> owed</span>
             </div>
+            <div style="margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap;">
+              <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; border-radius: 999px; padding: 2px 8px;"
+                [style.background]="(agent.ClinicName || agent.clinicName) ? 'var(--vac-blue-tint, #EDF4F8)' : '#eef1ef'"
+                [style.color]="(agent.ClinicName || agent.clinicName) ? 'var(--vac-blue, #1178A9)' : '#8AA0B2'">
+                <ion-icon name="business-outline"></ion-icon>
+                {{ (agent.ClinicName || agent.clinicName) || 'No default clinic' }}
+              </span>
+              <span *ngIf="(agent.OverrideCount || agent.overrideCount) > 0"
+                style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; border-radius: 999px; padding: 2px 8px; background: var(--vac-gold-soft, #E7D9AE); color: var(--vac-gold-text, #B08F3E);">
+                <ion-icon name="pricetags-outline"></ion-icon>
+                {{ agent.OverrideCount || agent.overrideCount }} fee override{{ (agent.OverrideCount || agent.overrideCount) > 1 ? 's' : '' }}
+              </span>
+            </div>
           </div>
           <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-end;">
             <ion-button size="small" fill="solid" color="primary" (click)="viewReport(agent)">

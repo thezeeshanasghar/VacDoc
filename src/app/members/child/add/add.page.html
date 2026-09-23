@@ -287,13 +287,18 @@
       <div class="agent">
         <div style="font-size: 12px; color: #888; margin: 4px 12px 2px;">Agent (Optional)</div>
         <ion-item appearance="outline" class="custom-input-item">
-          <ion-select formControlName="AgentId" interface="popover" placeholder="Vaccine.pk" class="agent-select">
+          <ion-select formControlName="AgentId" interface="popover" placeholder="Vaccine.pk" class="agent-select"
+            (ionChange)="onAgentSelected()">
             <ion-select-option [value]="null">Vaccine.pk</ion-select-option>
             <ion-select-option *ngFor="let option of agents" [value]="option.Id || option.id">
               {{ option.Name || option.name }}
             </ion-select-option>
           </ion-select>
         </ion-item>
+        <div *ngIf="agentClinicAutoFillNote" class="agent-clinic-autofill-note">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          {{ agentClinicAutoFillNote }}
+        </div>
       </div>
 
       <ion-button type="submit" [disabled]="!fg1.valid || (isCnicRequired && !fg1.get('CNIC').value)"

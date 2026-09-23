@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule, Routes } from '@angular/router';
 import { AgentModulePage } from './agent-module.page';
+import { AgentEditModalComponent } from './agent-edit-modal/agent-edit-modal.component';
 
 const routes: Routes = [
   { path: '', component: AgentModulePage },
@@ -15,6 +16,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [CommonModule, FormsModule, IonicModule, RouterModule.forChild(routes)],
-  declarations: [AgentModulePage]
+  declarations: [AgentModulePage, AgentEditModalComponent],
+  entryComponents: [AgentEditModalComponent]
 })
 export class AgentModulePageModule {}

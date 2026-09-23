@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { Storage } from '@ionic/storage';
+import { environment } from 'src/environments/environment';
 import { AgentService } from 'src/app/services/agent.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { AgentEditModalComponent } from './agent-edit-modal/agent-edit-modal.component';
 
 @Component({
   selector: 'app-agent-module',
@@ -20,9 +23,11 @@ export class AgentModulePage {
   constructor(
     private agentService: AgentService,
     private alertController: AlertController,
+    private modalController: ModalController,
     private loadingCtrl: LoadingController,
     private toastService: ToastService,
-    private router: Router
+    private router: Router,
+    private storage: Storage
   ) {}
 
   ionViewWillEnter() {
@@ -97,42 +102,20 @@ export class AgentModulePage {
     await alert.present();
   }
 
+  // Edit Agent moved to a real modal (AgentEditModalComponent) — Ionic's AlertController
+  // inputs can't render the clinic dropdown or the repeatable vaccine-fee-override list
+  // this dialog needs.
   async editAgent(agent: any) {
-    const alert = await this.alertController.create({
-      header: 'Edit Agent',
-      inputs: [
-        { name: 'name', type: 'text', placeholder: 'Agent Name *', value: agent.Name || agent.name },
-        { name: 'phone', type: 'tel', placeholder: 'Phone Number (Login ID)', value: agent.PhoneNumber || agent.phoneNumber },
-        { name: 'fee', type: 'number', placeholder: 'Referral Fee per Client (Rs.)', value: agent.ReferralFeePerClient || agent.referralFeePerClient },
-      ],
-      buttons: [
-        { text: 'Cancel', role: 'cancel' },
-        {
-          text: 'Save',
-          handler: (data: any) => {
-            if (!data.name || !data.name.trim()) {
-              this.toastService.create('Agent name is required', 'danger');
-              return false;
-            }
-            const id = agent.Id || agent.id;
-            // PutAgent merges onto the existing row server-side — only Name/Phone/Fee are
-            // ever written by this dialog, so Password/Email/MustChangePassword don't need
-            // to be sent at all.
-            const updated = {
-              Id: id,
-              Name: data.name.trim(),
-              PhoneNumber: data.phone || '',
-              ReferralFeePerClient: parseFloat(data.fee) || 0
-            };
-            this.agentService.updateAgent(id, updated).subscribe(
-              () => { this.loadAgents(); },
-              (_err: any) => { this.toastService.create('Failed to update agent', 'danger'); }
-            );
-          }
-        }
-      ]
+    const doctorId = await this.storage.get(environment.DOCTOR_Id);
+    const modal = await this.modalController.create({
+      component: AgentEditModalComponent,
+      componentProps: { agent, doctorId }
     });
-    await alert.present();
+    await modal.present();
+    const { role } = await modal.onDidDismiss();
+    if (role === 'save') {
+      this.loadAgents();
+    }
   }
 
   viewReport(agent: any) {

@@ -50,6 +50,7 @@ export class AddPage implements OnInit {
   Agent: any;
   CNIC: any;
   Doctor: any;
+  agentClinicAutoFillNote: string | null = null;
   epiDone = false;
   Messages: any = [];
   Nationality: any;
@@ -167,6 +168,27 @@ filterCountryCodes(value: string) {
         (agent.Name || agent.name || "").toLowerCase().includes(value.toLowerCase())
       );
     }
+  }
+
+  // Auto-fills the Clinic field with the selected agent's assigned default clinic —
+  // PA/Manager only (a doctor's own registrations always use his active clinic
+  // regardless of agent, per instruction). Still just a default: the registering
+  // PA/Manager can change the Clinic dropdown afterwards. Only applies the switch when
+  // the agent's clinic is one this PA/Manager actually has access to — never silently
+  // sets a ClinicId outside their own clinic list.
+  onAgentSelected() {
+    this.agentClinicAutoFillNote = null;
+    if (this.type !== "PA" && this.type !== "MANAGER") { return; }
+    const agentId = this.fg1.get("AgentId").value;
+    if (agentId == null) { return; }
+    const agent = this.originalAgents.find((a) => (a.Id || a.id) === agentId);
+    const agentClinicId = agent ? (agent.ClinicId || agent.clinicId) : null;
+    if (agentClinicId == null) { return; }
+    const clinicMatch = (this.clinics || []).find((c: any) => (c.Id || c.id) === agentClinicId);
+    if (!clinicMatch) { return; }
+    this.selectedClinicId = agentClinicId;
+    this.fg1.get("ClinicId").setValue(agentClinicId);
+    this.agentClinicAutoFillNote = "Clinic switched to " + clinicMatch.Name + " (" + (agent.Name || agent.name) + "'s assigned clinic). You can still change it above.";
   }
 
    async loadClinics() {

@@ -354,3 +354,21 @@ ion-label {
   background: #3880ff;
 }
 
+.agent-clinic-autofill-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--vac-green-tint, #E5F5EC);
+  color: #1f5c3f;
+  border-radius: 10px;
+  padding: 10px 13px;
+  margin: 6px 12px 0;
+  font-size: 12.5px;
+
+  ion-icon {
+    font-size: 16px;
+    color: var(--vac-green, #2E9463);
+    flex-shrink: 0;
+  }
+}
+

@@ -51,6 +51,20 @@ export class AgentService extends BaseService {
     return this.http.get<any>(`${this.API_URL}/summary`).pipe(catchError(this.handleError));
   }
 
+  getFeeOverrides(agentId: number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/${agentId}/fee-overrides`).pipe(catchError(this.handleError));
+  }
+
+  upsertFeeOverride(agentId: number, vaccineId: number, fee: number): Observable<any> {
+    return this.http.put(`${this.API_URL}/${agentId}/fee-overrides/${vaccineId}`, { Fee: fee })
+      .pipe(catchError(this.handleError));
+  }
+
+  deleteFeeOverride(agentId: number, vaccineId: number): Observable<any> {
+    return this.http.delete(`${this.API_URL}/${agentId}/fee-overrides/${vaccineId}`)
+      .pipe(catchError(this.handleError));
+  }
+
   othercity = false;
   agents = [];
 
