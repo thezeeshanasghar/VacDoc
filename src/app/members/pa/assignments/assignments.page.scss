@@ -250,6 +250,7 @@
 // ── Bulk vaccine group highlight ─────────────────────────────────────────────
 .bulk-group {
   border: 3px solid var(--vac-warn) !important;
+  background: var(--vac-warn-tint) !important;
   box-shadow: 0 0 0 2px rgba(255, 69, 0, 0.20), 0 2px 16px rgba(255, 69, 0, 0.18) !important;
 }
 
