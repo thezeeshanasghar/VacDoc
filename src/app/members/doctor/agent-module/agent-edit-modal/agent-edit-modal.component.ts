@@ -24,6 +24,10 @@ export class AgentEditModalComponent implements OnInit {
   phone = '';
   fee: number | null = null;
   clinicId: number | null = null;
+  canRegisterRegular = false;
+  canRegisterEPI = false;
+  canRegisterCustomize = false;
+  canRegisterTravel = false;
 
   clinics: any[] = [];
   vaccines: any[] = [];
@@ -43,6 +47,10 @@ export class AgentEditModalComponent implements OnInit {
     this.phone = this.agent.PhoneNumber || this.agent.phoneNumber || '';
     this.fee = this.agent.ReferralFeePerClient || this.agent.referralFeePerClient || 0;
     this.clinicId = this.agent.ClinicId || this.agent.clinicId || null;
+    this.canRegisterRegular = this.agent.CanRegisterRegular || this.agent.canRegisterRegular || false;
+    this.canRegisterEPI = this.agent.CanRegisterEPI || this.agent.canRegisterEPI || false;
+    this.canRegisterCustomize = this.agent.CanRegisterCustomize || this.agent.canRegisterCustomize || false;
+    this.canRegisterTravel = this.agent.CanRegisterTravel || this.agent.canRegisterTravel || false;
 
     let pending = 3;
     const done = () => { pending--; if (pending === 0) { this.loading = false; } };
@@ -102,7 +110,11 @@ export class AgentEditModalComponent implements OnInit {
       Name: this.name.trim(),
       PhoneNumber: this.phone.trim(),
       ReferralFeePerClient: this.fee || 0,
-      ClinicId: this.clinicId
+      ClinicId: this.clinicId,
+      CanRegisterRegular: this.canRegisterRegular,
+      CanRegisterEPI: this.canRegisterEPI,
+      CanRegisterCustomize: this.canRegisterCustomize,
+      CanRegisterTravel: this.canRegisterTravel
     };
 
     this.agentService.updateAgent(id, updated).subscribe(

@@ -68,3 +68,30 @@
   font-style: italic;
   padding: 4px 16px;
 }
+
+.permission-row {
+  --border-radius: 8px;
+  --border-color: #eee;
+  --border-width: 1px;
+  --background: #fff;
+  --padding-start: 12px;
+  --inner-padding-end: 12px;
+  --min-height: 52px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+.permission-row--checked {
+  --border-color: #1178A9;
+  --background: #EDF4F8;
+  border-color: #1178A9;
+}
+.permission-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #10222F;
+}
+.permission-hint {
+  font-size: 11px;
+  color: #888;
+}

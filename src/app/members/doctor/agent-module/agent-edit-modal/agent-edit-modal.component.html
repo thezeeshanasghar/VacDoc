@@ -65,6 +65,40 @@
     </ion-button>
     <p class="hint">Only vaccines listed here differ from this agent's flat rate above.</p>
 
+    <div class="section-title">Allowed Patient Types</div>
+    <ion-item lines="none" class="permission-row" [class.permission-row--checked]="canRegisterTravel">
+      <ion-checkbox slot="start" [(ngModel)]="canRegisterTravel"></ion-checkbox>
+      <ion-label class="ion-text-wrap">
+        <div class="permission-title">Travel</div>
+        <div class="permission-hint">Passport/CNIC verification patients</div>
+      </ion-label>
+    </ion-item>
+    <ion-item lines="none" class="permission-row" [class.permission-row--checked]="canRegisterRegular">
+      <ion-checkbox slot="start" [(ngModel)]="canRegisterRegular"></ion-checkbox>
+      <ion-label class="ion-text-wrap">
+        <div class="permission-title">Regular</div>
+        <div class="permission-hint">Standard schedule</div>
+      </ion-label>
+    </ion-item>
+    <ion-item lines="none" class="permission-row" [class.permission-row--checked]="canRegisterEPI">
+      <ion-checkbox slot="start" [(ngModel)]="canRegisterEPI"></ion-checkbox>
+      <ion-label class="ion-text-wrap">
+        <div class="permission-title">EPI Plus</div>
+        <div class="permission-hint">Government programme</div>
+      </ion-label>
+    </ion-item>
+    <ion-item lines="none" class="permission-row" [class.permission-row--checked]="canRegisterCustomize">
+      <ion-checkbox slot="start" [(ngModel)]="canRegisterCustomize"></ion-checkbox>
+      <ion-label class="ion-text-wrap">
+        <div class="permission-title">Customize</div>
+        <div class="permission-hint">Adult / pregnancy / custom</div>
+      </ion-label>
+    </ion-item>
+    <p class="hint">
+      Unchecked types won't be offered in this agent's VacAgent app at all. Leave all unchecked to
+      keep this agent verification-only (no self-registration).
+    </p>
+
     <ion-button expand="full" style="margin-top: 20px;" (click)="save()">Save Agent</ion-button>
 
   </div>
