@@ -703,6 +703,12 @@ export class BulkPage implements OnInit {
         : null;
 
       const isDiseaseRow = !!this.diseaseSelections[i];
+      // ion-datetime writes back a full ISO string (e.g. "2026-01-01T00:00:00+05:00") on
+      // interaction, not a bare year — format down to YYYY before sending, same as
+      // fill.page.ts's single-give disease branch does.
+      const diseaseYearVal = isDiseaseRow
+        ? (moment as any)(this.diseaseYears[i], moment.ISO_8601).format('YYYY')
+        : null;
 
       brands.push({
         BrandId: isDiseaseRow ? null : (this.ohfSelections[i] ? null : (this.BrandIds[i] || null)),
@@ -713,7 +719,7 @@ export class BulkPage implements OnInit {
         Expiry: isDiseaseRow ? null : expiryVal,
         Validity: isDiseaseRow ? null : validityVal,
         IsDisease: isDiseaseRow,
-        DiseaseYear: isDiseaseRow ? (this.diseaseYears[i] || "") : null
+        DiseaseYear: diseaseYearVal
       });
       i++;
     });

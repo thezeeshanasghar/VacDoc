@@ -327,6 +327,14 @@ export class VaccinePage {
   isSkippedDose(v: any): boolean {
     return !!(v && v.IsSkip);
   }
+  // DiseaseYear should always be a bare "YYYY" — a bulk-give bug (fixed) briefly wrote a full
+  // ISO datetime instead. Normalize here so any already-saved bad rows still display cleanly.
+  diseaseYearDisplay(v: any): string {
+    const raw = (v && v.DiseaseYear) || '';
+    if (/^\d{4}$/.test(raw)) { return raw; }
+    const parsed = moment(raw, moment.ISO_8601);
+    return parsed.isValid() ? parsed.format('YYYY') : raw;
+  }
   isActiveDose(v: any): boolean {
     return !!v && !v.IsSkip && !v.Due2EPI;
   }

@@ -229,7 +229,7 @@
                   *ngIf="v.IsDisease"
                   class="status-date status-date--clickable"
                   routerLink="/members/child/vaccine/{{childId}}/fill/{{v.Id}}">
-                  · Disease Year: {{ v.DiseaseYear }}
+                  · Disease Year: {{ diseaseYearDisplay(v) }}
                 </span>
               </ng-container>
             </div>
