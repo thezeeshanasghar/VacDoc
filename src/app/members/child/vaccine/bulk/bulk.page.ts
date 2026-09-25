@@ -34,6 +34,13 @@ export class BulkPage implements OnInit {
   ohfSelections: boolean[] = [];
   brandSearchTerms: string[] = [];
   filteredBrandOptions: any[][] = [];
+
+  // Disease entry (Chicken Pox / Hepatitis A "had the disease, not the vaccine"), per row — a
+  // bulk give can mix a disease row with real injected doses in the same visit. Same gate as
+  // fill.page.ts's single-give Disease checkbox.
+  diseaseSelections: boolean[] = [];
+  diseaseYears: string[] = [];
+  birthYear: any;
   customActionSheetOptions: any = {
     header: "Select Brand",
     cssClass: "action-sheet-class"
@@ -169,6 +176,7 @@ export class BulkPage implements OnInit {
             this.childData = res.ResponseData;
             this.childType = (res.ResponseData.Type || "").toString();
             this.clinicId = this.resolveClinicId(res.ResponseData) || this.clinicId;
+            this.birthYear = (moment as any)(res.ResponseData.DOB, "DD-MM-YYYY").format("YYYY-MM-DD");
             this.applyTravelGivenDateToday();
           }
           resolve();
@@ -264,6 +272,8 @@ export class BulkPage implements OnInit {
     this.siteValues = [];
     this.availableSitesPerRow = [];
     this.siteLockedPerRow = [];
+    this.diseaseSelections = [];
+    this.diseaseYears = [];
 
     schedules.forEach((schedule: any, index: number) => {
       const brands = this.getSortedBrands(schedule);
@@ -288,6 +298,8 @@ export class BulkPage implements OnInit {
       this.selectedLotsPerRow[index] = "";
       this.selectedExpiriesPerRow[index] = "";
       this.selectedValidityPerRow[index] = (schedule && schedule.Validity != null) ? String(schedule.Validity) : "";
+      this.diseaseSelections[index] = false;
+      this.diseaseYears[index] = "2019";
 
       if (selectedBrand && this.BrandIds[index] && this.allowInventory) {
         this.loadBatchLotsForRow(index, Number(this.BrandIds[index]));
@@ -648,6 +660,32 @@ export class BulkPage implements OnInit {
     return `${doseOrder}: Select brand`;
   }
 
+  // Same gate as fill.page.ts's single-give Disease checkbox — only Chicken Pox / Hepatitis A.
+  isDiseaseEligible(schedule: any): boolean {
+    const vaccineName = ((schedule && schedule.Dose && schedule.Dose.Vaccine && schedule.Dose.Vaccine.Name) || "").trim();
+    return vaccineName === "Hepatitis A" || vaccineName === "Chicken Pox";
+  }
+
+  onDiseaseToggle(index: number, checked: boolean): void {
+    this.diseaseSelections[index] = checked;
+    if (checked) {
+      // A disease row has no brand/stock — clear whatever was selected so it isn't sent.
+      this.ohfSelections[index] = true;
+      this.BrandIds[index] = null;
+      this.brandSearchTerms[index] = "";
+      this.manufacturerValues[index] = "";
+      this.routeValues[index] = "";
+      this.clearLotsAndExpiries(index);
+    }
+  }
+
+  // True once every row eligible to be given right now (i.e. present in bulkData) is marked
+  // Disease — the shared Given Date field is only meaningless when NOTHING in the batch needs it.
+  get allRowsAreDisease(): boolean {
+    const rows: any[] = this.bulkData || [];
+    return rows.length > 0 && rows.every((_row: any, i: number) => this.diseaseSelections[i]);
+  }
+
   async onSubmit() {
     this.applyTravelGivenDateToday();
 
@@ -664,25 +702,33 @@ export class BulkPage implements OnInit {
         ? Number(this.selectedValidityPerRow[i])
         : null;
 
+      const isDiseaseRow = !!this.diseaseSelections[i];
+
       brands.push({
-        BrandId: this.ohfSelections[i] ? null : (this.BrandIds[i] || null),
+        BrandId: isDiseaseRow ? null : (this.ohfSelections[i] ? null : (this.BrandIds[i] || null)),
         ScheduleId: element.Id,
-        Manufacturer: manufacturerVal,
-        Site: this.siteValues[i] || null,   // nurse-chosen site for this dose (Route re-derived on server)
-        Lot: lotVal,
-        Expiry: expiryVal,
-        Validity: validityVal
+        Manufacturer: isDiseaseRow ? "" : manufacturerVal,
+        Site: isDiseaseRow ? null : (this.siteValues[i] || null),   // nurse-chosen site for this dose (Route re-derived on server)
+        Lot: isDiseaseRow ? "" : lotVal,
+        Expiry: isDiseaseRow ? null : expiryVal,
+        Validity: isDiseaseRow ? null : validityVal,
+        IsDisease: isDiseaseRow,
+        DiseaseYear: isDiseaseRow ? (this.diseaseYears[i] || "") : null
       });
       i++;
     });
 
     this.fg.value.IsPAApprove = this.usertype === "DOCTOR" || this.usertype === "MANAGER";
 
+    // When every row in this batch is a disease row, there's no real given date to send at
+    // all — the backend's bulk endpoint drops its GivenDate-required checks only in that case
+    // (see UpdateBulkInjection's allSelectedAreDisease). A mixed batch still sends the shared
+    // date for whichever rows are real gives.
     var data: any = {
       Circle: this.fg.value.Circle,
       Date: this.fg.value.Date,
       DoctorId: this.doctorId,
-      GivenDate: this.fg.value.GivenDate,
+      GivenDate: this.allRowsAreDisease ? null : this.fg.value.GivenDate,
       Height: this.fg.value.Height,
       Weight: this.fg.value.Weight,
       IsDone: true,
@@ -704,6 +750,9 @@ export class BulkPage implements OnInit {
   }
 
   isScheduleDateValid(): boolean {
+    // All-disease batch: no given date applies, so there's nothing to invalidate the submit
+    // button over.
+    if (this.allRowsAreDisease) { return false; }
     const today = new Date().toISOString().split("T")[0];
     const control = this.fg.get("GivenDate");
     const givenDate = control ? control.value : null;
@@ -815,6 +864,35 @@ export class BulkPage implements OnInit {
 
   async fillVaccine(data: any) {
     if (!(await this.confirmTwinBrands(data))) {
+      return;
+    }
+
+    // All-disease batch: no given date was ever collected (onSubmit already sent GivenDate as
+    // null) — skip the date-format/future-date/backdate logic below entirely, same short-circuit
+    // as fill.page.ts's single-give disease branch. A mixed batch still needs a real date for its
+    // non-disease rows, so it falls through to the normal path unchanged.
+    if (this.allRowsAreDisease) {
+      data.ReRecordHistorical = null;
+      data.ConfirmUnbatchedGive = null;
+      const loading = await this.loadingController.create({ message: "Filling Vaccine" });
+      await loading.present();
+      this.bulkService.updateVaccine(data).subscribe(
+        async res => {
+          loading.dismiss();
+          if (res.IsSuccess) {
+            this.toastService.create("Successfully Update");
+            this.autoCreateFollowUpForBulk(() => {
+              this.validationOfInfiniteVaccine();
+            });
+          } else {
+            this.toastService.create(this.getApiErrorMessage(res, "Error: failed to fill vaccine"), "danger");
+          }
+        },
+        err => {
+          loading.dismiss();
+          this.toastService.create(this.getApiErrorMessage(err, "Error: server failure"), "danger");
+        }
+      );
       return;
     }
 

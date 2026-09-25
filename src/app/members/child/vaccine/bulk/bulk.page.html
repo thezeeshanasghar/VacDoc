@@ -56,8 +56,8 @@
       <div class="dose-card-head">{{ getBrandFieldHint(user, i) }}</div>
       <div class="dose-card-body">
 
-        <!-- Brand — outlined Material autocomplete -->
-        <mat-form-field appearance="outline" class="give-field">
+        <!-- Brand — outlined Material autocomplete (hidden when this row records a past disease) -->
+        <mat-form-field appearance="outline" class="give-field" *ngIf="!diseaseSelections[i]">
           <mat-label>Brand</mat-label>
           <input
             type="text"
@@ -78,7 +78,7 @@
         </mat-form-field>
 
         <!-- Facts caption — one line: Manufacturer · Route · batch NNN · exp MM-YYYY -->
-        <div class="dose-facts" *ngIf="manufacturerValues[i] || routeValues[i] || selectedLotsPerRow[i]">
+        <div class="dose-facts" *ngIf="!diseaseSelections[i] && (manufacturerValues[i] || routeValues[i] || selectedLotsPerRow[i])">
           <span *ngIf="manufacturerValues[i]">{{ manufacturerValues[i] }}</span>
           <span *ngIf="routeValues[i]"> · {{ routeValues[i] }}</span>
           <span class="dose-facts-batch" *ngIf="allowInventory && selectedLotsPerRow[i]"
@@ -88,7 +88,7 @@
         </div>
 
         <!-- Site chips -->
-        <div *ngIf="availableSitesPerRow[i] && availableSitesPerRow[i].length" class="site-block">
+        <div *ngIf="!diseaseSelections[i] && availableSitesPerRow[i] && availableSitesPerRow[i].length" class="site-block">
           <div class="site-label">Site<span *ngIf="siteLockedPerRow[i]" class="site-fixed"> · fixed</span></div>
           <div class="site-chips">
             <button type="button" class="site-chip"
@@ -100,7 +100,7 @@
         </div>
 
         <!-- Validity (travel type only) — kept as outlined select -->
-        <mat-form-field appearance="outline" class="give-field" *ngIf="isTravelType">
+        <mat-form-field appearance="outline" class="give-field" *ngIf="isTravelType && !diseaseSelections[i]">
           <mat-label>Validity</mat-label>
           <mat-select [value]="selectedValidityPerRow[i]" (selectionChange)="onValidityChange(i, $event)">
             <mat-option value="365">1 Year</mat-option>
@@ -124,11 +124,29 @@
             <mat-option value="30000">Life Time</mat-option>
           </mat-select>
         </mat-form-field>
+
+        <!-- Disease toggle (Hepatitis A / Chicken Pox) + disease year — per row, same gate as
+             fill.page.html's single-give Disease row. A batch can mix a disease row with real
+             injected doses in the same visit. -->
+        <div class="give-disease-row" *ngIf="isDiseaseEligible(user)">
+          <ion-item lines="none" class="give-disease-item">
+            <ion-label color="primary">Disease</ion-label>
+            <ion-checkbox [checked]="diseaseSelections[i]"
+              (ionChange)="onDiseaseToggle(i, $event.detail.checked)" slot="end"></ion-checkbox>
+          </ion-item>
+          <ion-item lines="none" class="give-disease-item" *ngIf="diseaseSelections[i]">
+            <ion-label color="primary">Disease Year</ion-label>
+            <ion-datetime picker-format="YYYY" displayFormat="YYYY" [(ngModel)]="diseaseYears[i]"
+              [ngModelOptions]="{ standalone: true }" min="{{birthYear}}" max="{{todaydate}}"></ion-datetime>
+          </ion-item>
+        </div>
       </div>
     </div>
 
-    <!-- 5.4 Given Date — outlined, one for the whole sheet -->
-    <div class="give-date-field" (click)="picker.open()">
+    <!-- 5.4 Given Date — outlined, one for the whole sheet. Hidden when every dose in this batch
+         is a disease row (nothing left that needs a given date); still shown for a mixed batch,
+         applying only to the real doses. -->
+    <div class="give-date-field" *ngIf="!allRowsAreDisease" (click)="picker.open()">
       <span class="give-date-label">Given Date</span>
       <span class="give-date-value">
         <input formControlName="GivenDate" matInput [matDatepicker]="picker" value="{{currentDate1}}" max="{{todaydate}}" class="give-date-input" readonly>
