@@ -1,0 +1,14 @@
+// DTaP combo-coverage grey-out (mock-approved). A dose already satisfied by a
+// ContainsDTaP combo vaccine the child received: greyed row + muted "Covered by X" note,
+// checkbox disabled. First disabled-row + explanatory-note pattern in this app — no
+// existing precedent to reuse.
+.covered-dose {
+  --background: var(--vac-surface, #F6F7F5);
+}
+
+.covered-note {
+  margin: 2px 0 0;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--ion-color-medium, #5D7286);
+}

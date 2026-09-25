@@ -137,7 +137,11 @@ export class ChildSceduleEditPage implements OnInit {
 
     let newschedule = [];
     this.doses.forEach(dose => {
-      if (dose.IsSpecial == true) {
+      // Defensive skip: a dose already covered by a combo vaccine (grey/disabled in the
+      // template) must never be submitted, even if IsSpecial were somehow true — belt-and-
+      // suspenders against a stale/programmatic toggle. The checkbox's [disabled] binding
+      // already prevents this via normal user interaction.
+      if (dose.IsSpecial == true && !dose.IsCoveredByDTaP) {
         const entry: any = {
           DoseId: dose.Id,
           ChildId: this.ChildId,

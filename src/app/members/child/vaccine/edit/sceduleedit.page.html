@@ -11,9 +11,12 @@
   <ion-grid>
     <ion-row>
       <ion-col size="12" *ngFor="let dose of doses; let i = index">
-        <ion-item>
-          <ion-checkbox [(ngModel)]="dose.IsSpecial" slot="start"></ion-checkbox>
-          <ion-label>{{dose.Name}}</ion-label>
+        <ion-item [class.covered-dose]="dose.IsCoveredByDTaP">
+          <ion-checkbox [(ngModel)]="dose.IsSpecial" [disabled]="dose.IsCoveredByDTaP" slot="start"></ion-checkbox>
+          <ion-label>
+            {{dose.Name}}
+            <p *ngIf="dose.IsCoveredByDTaP" class="covered-note">Covered by {{dose.CoveredByVaccineNames}}</p>
+          </ion-label>
         </ion-item>
       </ion-col>
     </ion-row>
