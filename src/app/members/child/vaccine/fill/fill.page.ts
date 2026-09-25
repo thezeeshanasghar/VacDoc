@@ -507,6 +507,44 @@ export class FillPage implements OnInit {
     this.fg.value.DoctorId = this.doctorId;
     this.fg.value.IsDone = true;
     this.fg.value.DiseaseYear = moment(this.fg.value.DiseaseYear, 'YYYY-MM-DD').format('YYYY');
+
+    // Disease entry (Chicken Pox / Hepatitis A "had the disease, not the vaccine"): there is no
+    // given date to record, only the DiseaseYear picked above — the Given Date field is hidden
+    // for this mode (see fill.page.html). Skip the entire given-date/backdate/brand path below;
+    // the backend's give endpoint now accepts IsDisease=true with GivenDate null
+    // (ScheduleController.Update — BUG-16 and the future-date guard both exempt IsDisease).
+    if (this.fg.value.IsDisease) {
+      this.fg.value.GivenDate = null;
+      this.fg.value.BrandId = null;
+      this.fg.value.ReRecordHistorical = null;
+      this.fg.value.ConfirmUnbatchedGive = null;
+      this.fg.value.PaymentMode = this.paymentMode;
+      this.fg.value.OnlineService = null;
+      this.fg.value.PaymentCollectorPaId = this.paymentCollectorPaId || null;
+      if (this.usertype === 'PA' && this.paId) {
+        this.fg.value.PaId = this.paId;
+      }
+      if (this.usertype === 'MANAGER' && this.managerId) {
+        this.fg.value.ManagerId = this.managerId;
+      }
+      loading.dismiss();
+      await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
+        async res => {
+          if (res.IsSuccess) {
+            this.autoCreateFollowUp(() => {
+              this.router.navigate(['/members/child/vaccine/' + this.childId]);
+            });
+          } else {
+            this.toastService.create(res.Message || "Error: Failed to record disease", 'danger');
+          }
+        },
+        err => {
+          this.toastService.create("Error: Server Failure", 'danger');
+        }
+      );
+      return;
+    }
+
     let givenDateOfInjection: Date = this.fg.value.GivenDate;
     let scheduleDate: Date = this.addDays(givenDateOfInjection,this.MinGap,this.doseId);
     console.log('Schedule Date:', scheduleDate);

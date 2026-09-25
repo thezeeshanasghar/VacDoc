@@ -178,7 +178,7 @@
 
   <!-- 5.5 Sticky submit -->
   <div class="give-submit-bar">
-    <button type="button" class="give-submit" [disabled]="!isBrandFilled() || isScheduleDateValid()" (click)="fillVaccine()">
+    <button type="button" class="give-submit" [disabled]="!fg.value.IsDisease && (!isBrandFilled() || isScheduleDateValid())" (click)="fillVaccine()">
       SUBMIT — GIVE DOSE
     </button>
   </div>
