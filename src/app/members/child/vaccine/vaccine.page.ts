@@ -557,9 +557,11 @@ export class VaccinePage {
   }
 
   // Re-download the already-generated PDF straight from the action sheet — no
-  // navigation, no edit form. Mirrors BulkInvoicePage.download() (same URL
-  // shape/platform branching), which is what "Edit & regenerate" ultimately
-  // calls after saving.
+  // navigation, no edit form. Unlike BulkInvoicePage.download() (which follows
+  // an explicit Save and is allowed to (re)generate a new invoice number), this
+  // must be read-only: it hits the same invoice-file lookup VacParent uses,
+  // which 404s with a friendly message instead of silently minting a new
+  // invoice number and voiding the one the parent may already have downloaded.
   private downloadInvoicePdf(id: any, date: string, fee: number) {
     const today = new Date(date);
     const year = today.getFullYear();
@@ -567,12 +569,20 @@ export class VaccinePage {
     const day = today.getDate().toString().padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}`;
 
+    const url = `${this.API_VACCINE}child/${id}/${formattedDate}/invoice-file`;
     if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
-      const url = `${this.API_VACCINE}child/${id}/${formattedDate}/${formattedDate}/${fee}/Verify-Invoice-PDF`;
-      window.open(url);
+      fetch(url).then(res => {
+        if (!res.ok) {
+          this.toastService.create('No invoice PDF has been generated yet for this visit.', 'danger');
+          return;
+        }
+        window.open(url);
+      }).catch(() => {
+        this.toastService.create('No invoice PDF has been generated yet for this visit.', 'danger');
+      });
     } else {
       const request: DownloadRequest = {
-        uri: `${this.API_VACCINE}child/${id}/${formattedDate}/${fee}/Download-Invoice-PDF`,
+        uri: url,
         title: 'Invoice',
         description: '',
         mimeType: '',
@@ -582,7 +592,9 @@ export class VaccinePage {
       };
       this.downloader.download(request)
         .then((location: string) => console.log('File downloaded at:' + location))
-        .catch((error: any) => console.error(error));
+        .catch(() => {
+          this.toastService.create('No invoice PDF has been generated yet for this visit.', 'danger');
+        });
     }
   }
 
