@@ -29,6 +29,24 @@ export class AdjustStockPage {
   clinicId: number = 0;
   clinics: any[] = [];
 
+  // Caller identity for StockActionGuard (server-side permission enforcement on
+  // AdjustStockController). Undefined for a Doctor caller — the guard allows that with no
+  // flag check. See project_give_ungive_permission_enforcement for the source pattern.
+  usertype: string = '';
+  paId: number = null;
+  managerId: number = null;
+  callerUserId: number = null;
+  securityStamp: string = null;
+
+  private get caller() {
+    return {
+      paId: this.paId || undefined,
+      managerId: this.managerId || undefined,
+      callerUserId: this.callerUserId || undefined,
+      securityStamp: this.securityStamp || undefined,
+    };
+  }
+
   // Shared date across all rows
   adjustDate: string = '';
 
@@ -82,6 +100,17 @@ export class AdjustStockPage {
     this.clinicId = clinic ? clinic.Id : 0;
     const allClinics = await this.storage.get(environment.CLINICS);
     this.clinics = allClinics || (clinic ? [clinic] : []);
+
+    const user = await this.storage.get(environment.USER);
+    if (user) {
+      this.usertype = user.UserType;
+      if (user.UserType === 'PA') { this.paId = Number(user.PAId) || null; }
+      if (user.UserType === 'MANAGER') { this.managerId = Number(user.ManagerId) || null; }
+      if (user.UserType === 'PA' || user.UserType === 'MANAGER') {
+        this.callerUserId = user.Id ? Number(user.Id) : null;
+        this.securityStamp = await this.storage.get(environment.SECURITY_STAMP);
+      }
+    }
 
     this.setTodayDate();
     this.rows = [this.newRow()];
@@ -317,7 +346,11 @@ export class AdjustStockPage {
         BatchLot: row.batchLot,
         ExpiryDate: row.expiryDate ? row.expiryDate : null,
         Date: this.adjustDate,
-        ClearUnbatchedBacklog: row.adjustType === 'Increase' ? null : undefined
+        ClearUnbatchedBacklog: row.adjustType === 'Increase' ? null : undefined,
+        PaId: this.paId || undefined,
+        ManagerId: this.managerId || undefined,
+        CallerUserId: this.callerUserId || undefined,
+        SecurityStamp: this.securityStamp || undefined
       };
 
       try {
@@ -402,7 +435,7 @@ export class AdjustStockPage {
   }
 
   deleteAdjustment(id: number) {
-    this.stockService.deleteAdjustment(id).subscribe(
+    this.stockService.deleteAdjustment(id, this.caller).subscribe(
       (res: any) => {
         if (res.IsSuccess) {
           this.toastService.create('Adjustment deleted', 'success');

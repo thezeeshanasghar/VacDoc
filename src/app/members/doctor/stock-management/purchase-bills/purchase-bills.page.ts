@@ -21,6 +21,21 @@ export class PurchaseBillsPage {
   doctorId: number = 0;
   clinicId: number = 0;
 
+  usertype: string = '';
+  paId: number = null;
+  managerId: number = null;
+  callerUserId: number = null;
+  securityStamp: string = null;
+
+  private get caller() {
+    return {
+      paId: this.paId || undefined,
+      managerId: this.managerId || undefined,
+      callerUserId: this.callerUserId || undefined,
+      securityStamp: this.securityStamp || undefined,
+    };
+  }
+
   constructor(
     private stockService: StockService,
     private loadingController: LoadingController,
@@ -34,6 +49,18 @@ export class PurchaseBillsPage {
     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
     const clinic = await this.storage.get(environment.ON_CLINIC);
     this.clinicId = clinic ? clinic.Id : 0;
+
+    const user = await this.storage.get(environment.USER);
+    if (user) {
+      this.usertype = user.UserType;
+      if (user.UserType === 'PA') { this.paId = Number(user.PAId) || null; }
+      if (user.UserType === 'MANAGER') { this.managerId = Number(user.ManagerId) || null; }
+      if (user.UserType === 'PA' || user.UserType === 'MANAGER') {
+        this.callerUserId = user.Id ? Number(user.Id) : null;
+        this.securityStamp = await this.storage.get(environment.SECURITY_STAMP);
+      }
+    }
+
     this.loadBills();
   }
 
@@ -146,7 +173,11 @@ export class PurchaseBillsPage {
       Amount: amount,
       PaymentMethod: method,
       Notes: notes,
-      PaymentDate: date
+      PaymentDate: date,
+      PaId: this.paId || undefined,
+      ManagerId: this.managerId || undefined,
+      CallerUserId: this.callerUserId || undefined,
+      SecurityStamp: this.securityStamp || undefined
     }).subscribe(
       (res: any) => {
         loading.dismiss();
@@ -267,7 +298,7 @@ export class PurchaseBillsPage {
   async reverseBill(id: number, force: boolean = false) {
     const loading = await this.loadingController.create({ message: 'Reversing...' });
     await loading.present();
-    this.stockService.reverseBill(id, force).subscribe(
+    this.stockService.reverseBill(id, force, this.caller).subscribe(
       async (res: any) => {
         loading.dismiss();
         if (res.IsSuccess) {

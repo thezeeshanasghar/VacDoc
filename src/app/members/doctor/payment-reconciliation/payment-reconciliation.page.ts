@@ -168,7 +168,7 @@ export class PaymentReconciliationPage {
           handler: async () => {
             const loading = await this.loadingController.create({ message: 'Reversing...' });
             await loading.present();
-            this.stockService.deleteDirectSale(row.ScheduleId).subscribe(
+            this.stockService.deleteDirectSale(row.ScheduleId, { callerUserId: this.callerUserId, securityStamp: this.securityStamp }).subscribe(
               res => {
                 loading.dismiss();
                 if (res && res.IsSuccess) {
@@ -668,7 +668,7 @@ export class PaymentReconciliationPage {
           handler: async () => {
             const loading = await this.loadingController.create({ message: 'Confirming...' });
             await loading.present();
-            this.stockService.confirmDirectSale(row.DirectSaleBillNo!, this.doctorId!).subscribe(
+            this.stockService.confirmDirectSale(row.DirectSaleBillNo!, this.doctorId!, this.callerUserId, this.securityStamp).subscribe(
               res => {
                 loading.dismiss();
                 if (res && res.IsSuccess) {

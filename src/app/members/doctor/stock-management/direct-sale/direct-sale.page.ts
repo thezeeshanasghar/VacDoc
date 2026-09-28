@@ -47,6 +47,20 @@ export class DirectSalePage {
   history: any[] = [];
   historySearch: string = '';
 
+  paId: number = null;
+  managerId: number = null;
+  callerUserId: number = null;
+  securityStamp: string = null;
+
+  private get caller() {
+    return {
+      paId: this.paId || undefined,
+      managerId: this.managerId || undefined,
+      callerUserId: this.callerUserId || undefined,
+      securityStamp: this.securityStamp || undefined,
+    };
+  }
+
   // Group history by SaleBillNo for display
   get groupedHistory(): any[] {
     var groups: any = {};
@@ -119,6 +133,16 @@ export class DirectSalePage {
     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
     const clinic = await this.storage.get(environment.ON_CLINIC);
     this.clinicId = clinic ? clinic.Id : 0;
+
+    const user = await this.storage.get(environment.USER);
+    if (user) {
+      if (user.UserType === 'PA') { this.paId = Number(user.PAId) || null; }
+      if (user.UserType === 'MANAGER') { this.managerId = Number(user.ManagerId) || null; }
+      if (user.UserType === 'PA' || user.UserType === 'MANAGER') {
+        this.callerUserId = user.Id ? Number(user.Id) : null;
+        this.securityStamp = await this.storage.get(environment.SECURITY_STAMP);
+      }
+    }
 
     const today = new Date();
     const mm = (today.getMonth() + 1).toString().padStart(2, '0');
@@ -361,7 +385,11 @@ export class DirectSalePage {
       Notes: this.notes || '',
       SaleDate: this.saleDate,
       Items: itemPayloads,
-      PaymentCollectorPaId: this.selectedCollectorPaId || null
+      PaymentCollectorPaId: this.selectedCollectorPaId || null,
+      PaId: this.paId || undefined,
+      ManagerId: this.managerId || undefined,
+      CallerUserId: this.callerUserId || undefined,
+      SecurityStamp: this.securityStamp || undefined
     };
 
     var self = this;
@@ -404,7 +432,7 @@ export class DirectSalePage {
 
   deleteSale(id: number) {
     var self = this;
-    this.stockService.deleteDirectSale(id).subscribe(
+    this.stockService.deleteDirectSale(id, this.caller).subscribe(
       function(res: any) {
         if (res.IsSuccess) {
           self.toastService.create('Sale reversed', 'success');

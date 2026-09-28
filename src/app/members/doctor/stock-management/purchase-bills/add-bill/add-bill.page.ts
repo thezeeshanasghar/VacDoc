@@ -31,6 +31,11 @@ export class AddBillPage {
   suppliers: any[] = [];
   brands: any[] = [];
 
+  paId: number = null;
+  managerId: number = null;
+  callerUserId: number = null;
+  securityStamp: string = null;
+
   get filteredSuppliers(): any[] {
     const q = (this.supplierSearch || '').toLowerCase();
     if (!q) return this.suppliers;
@@ -67,6 +72,16 @@ export class AddBillPage {
     this.clinicId = clinic ? clinic.Id : 0;
     const allClinics = await this.storage.get(environment.CLINICS);
     this.clinics = allClinics || (clinic ? [clinic] : []);
+
+    const user = await this.storage.get(environment.USER);
+    if (user) {
+      if (user.UserType === 'PA') { this.paId = Number(user.PAId) || null; }
+      if (user.UserType === 'MANAGER') { this.managerId = Number(user.ManagerId) || null; }
+      if (user.UserType === 'PA' || user.UserType === 'MANAGER') {
+        this.callerUserId = user.Id ? Number(user.Id) : null;
+        this.securityStamp = await this.storage.get(environment.SECURITY_STAMP);
+      }
+    }
 
     const today = new Date();
     const mm = (today.getMonth() + 1).toString().padStart(2, '0');
@@ -240,7 +255,11 @@ export class AddBillPage {
         Expiry: l.expiry,
         Quantity: l.qty,
         UnitPrice: l.unitPrice
-      }))
+      })),
+      PaId: this.paId || undefined,
+      ManagerId: this.managerId || undefined,
+      CallerUserId: this.callerUserId || undefined,
+      SecurityStamp: this.securityStamp || undefined
     };
 
     this.stockService.createBill(payload).subscribe(

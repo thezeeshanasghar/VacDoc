@@ -29,6 +29,11 @@ export class EditBillPage implements OnInit {
   brands: any[] = [];
   lines: any[] = [];
 
+  paId: number = null;
+  managerId: number = null;
+  callerUserId: number = null;
+  securityStamp: string = null;
+
   get filteredSuppliers(): any[] {
     const q = (this.supplierSearch || '').toLowerCase();
     if (!q) return this.suppliers;
@@ -69,6 +74,16 @@ export class EditBillPage implements OnInit {
     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
     const clinic = await this.storage.get(environment.ON_CLINIC);
     this.clinicId = clinic ? clinic.Id : 0;
+
+    const user = await this.storage.get(environment.USER);
+    if (user) {
+      if (user.UserType === 'PA') { this.paId = Number(user.PAId) || null; }
+      if (user.UserType === 'MANAGER') { this.managerId = Number(user.ManagerId) || null; }
+      if (user.UserType === 'PA' || user.UserType === 'MANAGER') {
+        this.callerUserId = user.Id ? Number(user.Id) : null;
+        this.securityStamp = await this.storage.get(environment.SECURITY_STAMP);
+      }
+    }
 
     await this.loadSuppliers();
     await this.loadBrands();
@@ -294,7 +309,11 @@ export class EditBillPage implements OnInit {
         Expiry: l.expiry,
         Quantity: l.qty,
         UnitPrice: l.unitPrice
-      }))
+      })),
+      PaId: this.paId || undefined,
+      ManagerId: this.managerId || undefined,
+      CallerUserId: this.callerUserId || undefined,
+      SecurityStamp: this.securityStamp || undefined
     };
 
     this.stockService.updateBill(this.billId, payload).subscribe(

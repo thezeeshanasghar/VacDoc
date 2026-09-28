@@ -21,12 +21,30 @@ export interface StockDTO {
   Expiry?: Date | string;
 }
 
+export interface StockActionCaller {
+  paId?: number;
+  managerId?: number;
+  callerUserId?: number;
+  securityStamp?: string;
+}
+
 // Stub service — stock API endpoints removed pending stock module rebuild
 @Injectable({ providedIn: 'root' })
 export class StockService {
   private apiUrl = environment.BASE_URL;
 
   constructor(private http: HttpClient) {}
+
+  // Query-string builder for the caller-identity params StockActionGuard reads server-side
+  // (AdjustStock/Bill/StockTransfer/DirectSale Delete/Reverse, which take no body).
+  private callerQuery(caller?: StockActionCaller, extra: string[] = []): string {
+    const params = [...extra];
+    if (caller && caller.paId) { params.push(`paId=${caller.paId}`); }
+    if (caller && caller.managerId) { params.push(`managerId=${caller.managerId}`); }
+    if (caller && caller.callerUserId) { params.push(`callerUserId=${caller.callerUserId}`); }
+    if (caller && caller.securityStamp) { params.push(`securityStamp=${encodeURIComponent(caller.securityStamp)}`); }
+    return params.length ? `?${params.join('&')}` : '';
+  }
 
   getBatchLotsByBrand(brandId: number, clinicId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}stock/batch-lots?brandId=${brandId}&clinicId=${clinicId}`);
@@ -100,8 +118,9 @@ export class StockService {
     return this.http.post<any>(`${this.apiUrl}bill`, dto);
   }
 
-  reverseBill(id: number, force: boolean = false): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}bill/${id}/reverse${force ? '?force=true' : ''}`);
+  reverseBill(id: number, force: boolean = false, caller?: StockActionCaller): Observable<any> {
+    const qs = this.callerQuery(caller, force ? ['force=true'] : []);
+    return this.http.delete<any>(`${this.apiUrl}bill/${id}/reverse${qs}`);
   }
 
   updateBill(id: number, dto: any): Observable<any> {
@@ -136,8 +155,8 @@ export class StockService {
     return this.http.get<any>(`${this.apiUrl}adjuststock?doctorId=${doctorId}&clinicId=${clinicId}`);
   }
 
-  deleteAdjustment(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}adjuststock/${id}`);
+  deleteAdjustment(id: number, caller?: StockActionCaller): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}adjuststock/${id}${this.callerQuery(caller)}`);
   }
 
   createTransfer(dto: any): Observable<any> {
@@ -148,8 +167,8 @@ export class StockService {
     return this.http.get<any>(`${this.apiUrl}stocktransfer?doctorId=${doctorId}&clinicId=${clinicId}`);
   }
 
-  deleteTransfer(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}stocktransfer/${id}`);
+  deleteTransfer(id: number, caller?: StockActionCaller): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}stocktransfer/${id}${this.callerQuery(caller)}`);
   }
 
   downloadTransferPdf(billId: number): Observable<any> {
@@ -164,8 +183,8 @@ export class StockService {
     return this.http.get<any>(`${this.apiUrl}directsale?doctorId=${doctorId}&clinicId=${clinicId}`);
   }
 
-  deleteDirectSale(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}directsale/${id}`);
+  deleteDirectSale(id: number, caller?: StockActionCaller): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}directsale/${id}${this.callerQuery(caller)}`);
   }
 
   downloadDirectSalePdf(saleBillNo: string): Observable<any> {
@@ -188,7 +207,10 @@ export class StockService {
     return this.http.get<any>(`${this.apiUrl}directsale/completed-for-pa/${paId}`);
   }
 
-  confirmDirectSale(saleBillNo: string, doctorId: number): Observable<any> {
-    return this.http.patch<any>(`${this.apiUrl}directsale/by-bill/${encodeURIComponent(saleBillNo)}/confirm?doctorId=${doctorId}`, {});
+  confirmDirectSale(saleBillNo: string, doctorId: number, callerUserId?: number, securityStamp?: string): Observable<any> {
+    let url = `${this.apiUrl}directsale/by-bill/${encodeURIComponent(saleBillNo)}/confirm?doctorId=${doctorId}`;
+    if (callerUserId) { url += `&callerUserId=${callerUserId}`; }
+    if (securityStamp) { url += `&securityStamp=${encodeURIComponent(securityStamp)}`; }
+    return this.http.patch<any>(url, {});
   }
 }

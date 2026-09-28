@@ -44,6 +44,20 @@ export class StockTransferPage {
   history: any[] = [];
   historySearch: string = '';
 
+  paId: number = null;
+  managerId: number = null;
+  callerUserId: number = null;
+  securityStamp: string = null;
+
+  private get caller() {
+    return {
+      paId: this.paId || undefined,
+      managerId: this.managerId || undefined,
+      callerUserId: this.callerUserId || undefined,
+      securityStamp: this.securityStamp || undefined,
+    };
+  }
+
   get toClinicOptions(): any[] {
     var self = this;
     return this.clinics.filter(function(c: any) { return c.Id !== self.fromClinicId; });
@@ -117,6 +131,16 @@ export class StockTransferPage {
 
     const other = this.clinics.filter(function(c: any) { return c.Id !== clinic.Id; });
     this.toClinicId = other.length > 0 ? other[0].Id : 0;
+
+    const user = await this.storage.get(environment.USER);
+    if (user) {
+      if (user.UserType === 'PA') { this.paId = Number(user.PAId) || null; }
+      if (user.UserType === 'MANAGER') { this.managerId = Number(user.ManagerId) || null; }
+      if (user.UserType === 'PA' || user.UserType === 'MANAGER') {
+        this.callerUserId = user.Id ? Number(user.Id) : null;
+        this.securityStamp = await this.storage.get(environment.SECURITY_STAMP);
+      }
+    }
 
     const today = new Date();
     const mm = (today.getMonth() + 1).toString().padStart(2, '0');
@@ -339,7 +363,11 @@ export class StockTransferPage {
       AwtPercent: this.awtPercent || 0,
       Reason: this.reason || '',
       TransferDate: this.transferDate,
-      Items: itemPayloads
+      Items: itemPayloads,
+      PaId: this.paId || undefined,
+      ManagerId: this.managerId || undefined,
+      CallerUserId: this.callerUserId || undefined,
+      SecurityStamp: this.securityStamp || undefined
     };
 
     var self = this;
@@ -381,7 +409,7 @@ export class StockTransferPage {
 
   deleteTransfer(id: number) {
     var self = this;
-    this.stockService.deleteTransfer(id).subscribe(
+    this.stockService.deleteTransfer(id, this.caller).subscribe(
       function(res: any) {
         if (res.IsSuccess) {
           self.toastService.create('Transfer reversed', 'success');
