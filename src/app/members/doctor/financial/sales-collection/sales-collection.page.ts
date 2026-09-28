@@ -191,7 +191,7 @@ export class SalesCollectionPage implements OnInit, OnDestroy {
     this.brandService.getBrandAmount(Number(this.doctorId), Number(this.selectedClinicId)).subscribe({
       next: (res) => {
         const list = (res && res.ResponseData) || [];
-        const hasPrice = Array.isArray(list) && list.some((b: any) => b && b.Amount > 0);
+        const hasPrice = Array.isArray(list) && list.some((b: any) => b && b.SalePrice > 0);
         if (!hasPrice) {
           this.toastService.create(
             'Item prices are blank because no Brand Prices are set for this clinic. Set them up to see per-item amounts.',

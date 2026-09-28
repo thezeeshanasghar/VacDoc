@@ -262,7 +262,7 @@ export class DirectSalePage {
     item.batchLot = '';
     item.expiryDate = '';
     item.availableQty = 0;
-    item.salePrice = b.Amount || null;
+    item.salePrice = b.SalePrice || null;
     this.loadBatchesForItem(item);
   }
 

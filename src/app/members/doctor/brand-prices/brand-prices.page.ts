@@ -48,7 +48,7 @@ export class BrandPricesPage implements OnInit {
         loading.dismiss();
         if (res.IsSuccess) {
           this.brandAmounts = (res.ResponseData || []).map((item: any) => {
-            item.Amount = parseFloat((item.Amount || 0).toFixed(2));
+            item.SalePrice = parseFloat((item.SalePrice || 0).toFixed(2));
             return item;
           });
         } else {
