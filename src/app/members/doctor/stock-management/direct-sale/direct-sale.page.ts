@@ -142,9 +142,33 @@ export class DirectSalePage {
     this.paService.getPAsForClinic(this.clinicId).subscribe(
       function(res: any) {
         self.pasForClinic = (res && res.IsSuccess) ? (res.ResponseData || []) : [];
+        self.applyLastSelectedPa();
       },
       function() { self.pasForClinic = []; }
     );
+  }
+
+  getLastPaStorageKey(): string {
+    return 'directSale_lastPaId_clinic_' + this.clinicId;
+  }
+
+  applyLastSelectedPa() {
+    if (this.selectedCollectorPaId) { return; }
+    var raw = localStorage.getItem(this.getLastPaStorageKey());
+    if (!raw) { return; }
+    var lastPaId = parseInt(raw, 10);
+    var stillValid = this.pasForClinic.some(function(pa: any) { return pa.Id === lastPaId; });
+    if (stillValid) {
+      this.selectedCollectorPaId = lastPaId;
+    }
+  }
+
+  rememberLastSelectedPa() {
+    if (this.selectedCollectorPaId) {
+      localStorage.setItem(this.getLastPaStorageKey(), String(this.selectedCollectorPaId));
+    } else {
+      localStorage.removeItem(this.getLastPaStorageKey());
+    }
   }
 
   newItem(): SaleItem {
@@ -155,7 +179,7 @@ export class DirectSalePage {
       batchLot: '',
       expiryDate: '',
       availableQty: 0,
-      qty: null,
+      qty: 1,
       salePrice: null,
       batches: [],
       batchModalOpen: false
@@ -346,6 +370,7 @@ export class DirectSalePage {
         loading.dismiss();
         if (res.IsSuccess) {
           self.toastService.create('Sale recorded successfully', 'success');
+          self.rememberLastSelectedPa();
           self.resetForm();
           self.loadHistory();
           self.loadBrands();
@@ -416,6 +441,7 @@ export class DirectSalePage {
     this.onlineService = '';
     this.notes = '';
     this.selectedCollectorPaId = null;
+    this.applyLastSelectedPa();
     const today = new Date();
     const mm = (today.getMonth() + 1).toString().padStart(2, '0');
     const dd = today.getDate().toString().padStart(2, '0');
