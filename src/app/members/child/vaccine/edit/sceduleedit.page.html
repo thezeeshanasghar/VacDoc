@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content class="ion-padding" *ngIf="NewDoses">
-  <ion-grid>
+  <ion-grid class="dose-grid">
     <ion-row>
       <ion-col size="6" *ngFor="let dose of doses; let i = index">
         <ion-item [class.covered-dose]="dose.IsCoveredByDTaP">

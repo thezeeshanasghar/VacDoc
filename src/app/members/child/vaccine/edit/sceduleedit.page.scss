@@ -7,8 +7,66 @@
 }
 
 .covered-note {
-  margin: 2px 0 0;
-  font-size: 12px;
+  margin: 1px 0 0;
+  font-size: 10px;
   font-style: italic;
   color: var(--ion-color-medium, #5D7286);
+  line-height: 1.2;
+}
+
+// Two-column dose grid (mock-approved). Default sizing is tuned for phone width, where
+// the default ion-item/ion-col padding was too wide for two columns and pushed the
+// "Covered by" note onto a cramped second line. Past ~600px (tablet/desktop) the same
+// layout gets more breathing room instead of a separate design.
+.dose-grid {
+  --ion-grid-column-padding: 3px;
+}
+
+ion-col {
+  padding: 3px;
+}
+
+ion-item {
+  --padding-start: 8px;
+  --inner-padding-end: 8px;
+  --min-height: 0;
+}
+
+ion-item ion-label {
+  font-size: 12.5px;
+  line-height: 1.25;
+}
+
+ion-item ion-checkbox {
+  margin-top: 1px;
+  --size: 16px;
+}
+
+@media (min-width: 600px) {
+  .dose-grid {
+    --ion-grid-column-padding: 5px;
+  }
+
+  ion-col {
+    padding: 5px;
+  }
+
+  ion-item {
+    --padding-start: 14px;
+    --inner-padding-end: 14px;
+  }
+
+  ion-item ion-label {
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  ion-item ion-checkbox {
+    --size: 18px;
+  }
+
+  .covered-note {
+    font-size: 12px;
+    line-height: 1.3;
+  }
 }
