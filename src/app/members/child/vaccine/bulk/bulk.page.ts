@@ -48,6 +48,8 @@ export class BulkPage implements OnInit {
   usertype: any;
   paId: number = null;
   managerId: number = null;
+  callerUserId: number = null;
+  securityStamp: string = null;
   allowInventory: boolean = true;
   childType: string = "";
   paymentMode: string = 'Cash';
@@ -205,6 +207,12 @@ export class BulkPage implements OnInit {
           this.managerId = Number(user.ManagerId) || null;
         } else if (user.UserType === "DOCTOR" && user.DoctorId) {
           this.doctorId = Number(user.DoctorId);
+        }
+        if (user.UserType === "PA" || user.UserType === "MANAGER") {
+          this.callerUserId = user.Id ? Number(user.Id) : null;
+          this.storage.get(environment.SECURITY_STAMP).then((stamp) => {
+            this.securityStamp = stamp || null;
+          });
         }
         if (user.UserType === "DOCTOR" && user.DoctorId) {
           this.paService.getPAsByDoctorId(String(user.DoctorId)).subscribe(res => {
@@ -750,6 +758,10 @@ export class BulkPage implements OnInit {
     }
     if (this.usertype === 'MANAGER' && this.managerId) {
       data.ManagerId = this.managerId;
+    }
+    if (this.usertype === 'PA' || this.usertype === 'MANAGER') {
+      data.CallerUserId = this.callerUserId;
+      data.SecurityStamp = this.securityStamp;
     }
 
     this.fillVaccine(data);

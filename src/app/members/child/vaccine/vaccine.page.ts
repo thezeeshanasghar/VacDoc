@@ -1044,6 +1044,10 @@ removal(type: string){
         unfillData.ManagerId = this.managerId;
       }
     }
+    if (this.usertype === 'PA' || this.usertype === 'MANAGER') {
+      unfillData.CallerUserId = this.callerUserId;
+      unfillData.SecurityStamp = this.securityStamp;
+    }
 
     await this.vaccineService.UnfillChildVaccine(unfillData)
       .subscribe(

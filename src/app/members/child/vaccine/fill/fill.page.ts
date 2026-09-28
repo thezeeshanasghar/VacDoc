@@ -80,6 +80,8 @@ export class FillPage implements OnInit {
   paymentCollectorPaId: number = null;
   paId: number = null;
   managerId: number = null;
+  callerUserId: number = null;
+  securityStamp: string = null;
   private readonly travelFieldStorageSuffix = 'travel-vaccine-fill-state';
 
   private getTodayIsoDate(): string {
@@ -177,6 +179,12 @@ export class FillPage implements OnInit {
           if (managerId && !isNaN(managerId)) {
             this.managerId = managerId;
           }
+        }
+        if (user.UserType === 'PA' || user.UserType === 'MANAGER') {
+          this.callerUserId = user.Id ? Number(user.Id) : null;
+          this.storage.get(environment.SECURITY_STAMP).then((stamp) => {
+            this.securityStamp = stamp || null;
+          });
         }
         if (user.UserType === 'DOCTOR' && user.DoctorId) {
           this.paService.getPAsByDoctorId(String(user.DoctorId)).subscribe(res => {
@@ -527,6 +535,10 @@ export class FillPage implements OnInit {
       if (this.usertype === 'MANAGER' && this.managerId) {
         this.fg.value.ManagerId = this.managerId;
       }
+      if (this.usertype === 'PA' || this.usertype === 'MANAGER') {
+        this.fg.value.CallerUserId = this.callerUserId;
+        this.fg.value.SecurityStamp = this.securityStamp;
+      }
       loading.dismiss();
       await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
         async res => {
@@ -581,6 +593,10 @@ export class FillPage implements OnInit {
     }
     if (this.usertype === 'MANAGER' && this.managerId) {
       this.fg.value.ManagerId = this.managerId;
+    }
+    if (this.usertype === 'PA' || this.usertype === 'MANAGER') {
+      this.fg.value.CallerUserId = this.callerUserId;
+      this.fg.value.SecurityStamp = this.securityStamp;
     }
 
     // v2 deduction-decision prompt (§6.2a): a backdated give with a real brand is ambiguous —
