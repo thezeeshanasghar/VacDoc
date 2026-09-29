@@ -211,14 +211,19 @@ export class AssignmentsPage {
   // way on both the doctor's tracking view and the PA's own list. Only meaningful for
   // stage() === 'new'/'given'/'invoiced' — pendingHandover/completed cards use their stage
   // pill instead (see due-pill guard in the template).
+  // yyyy-mm-dd in Asia/Karachi (numeric month so string comparison sorts correctly),
+  // not the viewing device's local timezone — matches PaAssignmentTrackingPage's urgency().
+  private pktDayKey(dateStr: string): string {
+    const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Karachi', year: 'numeric', month: '2-digit', day: '2-digit' });
+    return fmt.format(new Date(dateStr));
+  }
+
   urgency(a: any): 'overdue' | 'today' | 'upcoming' | 'none' {
     if (!a.TargetDate) { return 'none'; }
-    const target = new Date(a.TargetDate);
-    const today = new Date();
-    const targetDay = new Date(target.getFullYear(), target.getMonth(), target.getDate()).getTime();
-    const todayDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
-    if (targetDay < todayDay) { return 'overdue'; }
-    if (targetDay === todayDay) { return 'today'; }
+    const targetKey = this.pktDayKey(a.TargetDate);
+    const todayKey = this.pktDayKey(new Date().toISOString());
+    if (targetKey < todayKey) { return 'overdue'; }
+    if (targetKey === todayKey) { return 'today'; }
     return 'upcoming';
   }
 
@@ -292,10 +297,8 @@ export class AssignmentsPage {
   formatTargetDate(dateStr: string): string {
     if (!dateStr) { return ''; }
     try {
-      const d = new Date(dateStr);
-      const dd = d.getDate().toString().padStart(2, '0');
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      return `${dd} ${months[d.getMonth()]}`;
+      const fmt = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Karachi', day: '2-digit', month: 'short' });
+      return fmt.format(new Date(dateStr));
     } catch { return dateStr; }
   }
 

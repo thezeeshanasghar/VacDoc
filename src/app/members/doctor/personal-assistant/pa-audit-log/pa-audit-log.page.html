@@ -33,7 +33,7 @@
           <ion-icon name="person-circle-outline" class="log-pa-icon"></ion-icon>
           <span class="log-pa-name">{{ log.PaName }}</span>
         </div>
-        <span class="log-date">{{ log.ActionDate | date:'dd MMM, HH:mm' }}</span>
+        <span class="log-date">{{ log.ActionDate | date:'dd MMM, HH:mm':'+0500' }}</span>
       </div>
 
       <!-- Row 2: Action chip + reversal tag -->

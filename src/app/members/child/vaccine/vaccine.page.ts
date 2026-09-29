@@ -2010,7 +2010,7 @@ removal(type: string){
     // Offer a one-tap self-heal instead of repeating a satisfied instruction.
     if (res.AlreadyConfirmedButUnsynced && res.BlockingInvoiceSubmissionId) {
       const confirmedWhen = res.BlockingConfirmedAt
-        ? new Date(res.BlockingConfirmedAt).toLocaleString('en-US', { day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' })
+        ? new Date(res.BlockingConfirmedAt).toLocaleString('en-US', { day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Karachi' })
         : 'earlier';
       const syncAlert = await this.alertController.create({
         header: "Can't Assign Yet",

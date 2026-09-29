@@ -159,12 +159,27 @@ export class PaEntryPage implements OnInit {
     return f ? f.Name : 'Unknown';
   }
 
+  // recordedDate/recordedTime are submitted to the backend as plain strings, as-is — so
+  // "now" must be computed in Asia/Karachi here, not read off the device's local clock,
+  // or a PA on a non-PKT device gets a silently wrong default reading time.
+  private pktNowParts(): { [key: string]: string } {
+    const fmt = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Karachi',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', hour12: false,
+    });
+    const parts: { [key: string]: string } = {};
+    fmt.formatToParts(new Date()).forEach(p => { parts[p.type] = p.value; });
+    return parts;
+  }
+
   private todayString(): string {
-    return this.coldChainService.toDateString(new Date());
+    const p = this.pktNowParts();
+    return `${p.year}-${p.month}-${p.day}`;
   }
 
   private nowString(): string {
-    const now = new Date();
-    return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const p = this.pktNowParts();
+    return `${p.hour}:${p.minute}`;
   }
 }

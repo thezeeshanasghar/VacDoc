@@ -86,8 +86,8 @@
         <ion-item lines="none">
           <ion-label>
             <h2>Rs. {{ h.Amount | number:'1.0-0' }}</h2>
-            <p>{{ h.CreatedAt | date:'dd MMM yyyy, h:mm a' }}</p>
-            <p *ngIf="h.ConfirmedAt">Confirmed: {{ h.ConfirmedAt | date:'dd MMM yyyy, h:mm a' }}</p>
+            <p>{{ h.CreatedAt | date:'dd MMM yyyy, h:mm a':'+0500' }}</p>
+            <p *ngIf="h.ConfirmedAt">Confirmed: {{ h.ConfirmedAt | date:'dd MMM yyyy, h:mm a':'+0500' }}</p>
             <p *ngIf="h.RejectionNote" style="color: red;">Reason: {{ h.RejectionNote }}</p>
           </ion-label>
           <ion-badge slot="end" [color]="statusColor(h.Status)">{{ h.Status }}</ion-badge>
@@ -115,7 +115,7 @@
             <h2>{{ h.PaName }}</h2>
             <p>{{ h.ClinicName }}</p>
             <p style="font-size: 18px; font-weight: bold; color: #2dd36f;">Rs. {{ h.Amount | number:'1.0-0' }}</p>
-            <p>Submitted: {{ h.CreatedAt | date:'dd MMM yyyy, h:mm a' }}</p>
+            <p>Submitted: {{ h.CreatedAt | date:'dd MMM yyyy, h:mm a':'+0500' }}</p>
             <p>Cash still in hand: Rs. {{ h.CashInHand | number:'1.0-0' }}</p>
           </ion-label>
         </ion-item>

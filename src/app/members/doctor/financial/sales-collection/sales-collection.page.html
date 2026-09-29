@@ -91,7 +91,7 @@
           </div>
           <div>
             <div class="sc-recent-name">{{ row.FromDate | date:'dd MMM' }} – {{ row.ToDate | date:'dd MMM yyyy' }}</div>
-            <div class="sc-recent-meta">Rs {{ row.GrandTotal | number:'1.0-0' }} &middot; generated {{ row.GeneratedAt | date:'dd MMM, h:mm a' }}</div>
+            <div class="sc-recent-meta">Rs {{ row.GrandTotal | number:'1.0-0' }} &middot; generated {{ row.GeneratedAt | date:'dd MMM, h:mm a':'+0500' }}</div>
           </div>
         </div>
         <ion-icon name="download-outline" class="sc-recent-dl"></ion-icon>

@@ -36,7 +36,7 @@
       <ion-label>
         <h2 [style.font-weight]="n.IsRead ? '400' : '700'">{{n.Title}}</h2>
         <p>{{n.Message}}</p>
-        <p class="notif-date">{{n.CreatedAt | date:'dd MMM yyyy, h:mm a'}}</p>
+        <p class="notif-date">{{n.CreatedAt | date:'dd MMM yyyy, h:mm a':'+0500'}}</p>
       </ion-label>
       <ion-badge *ngIf="!n.IsRead" color="primary" slot="end"></ion-badge>
     </ion-item>

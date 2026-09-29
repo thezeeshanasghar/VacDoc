@@ -544,14 +544,20 @@ export class PaAssignmentTrackingPage {
     removeNext(0);
   }
 
+  // yyyy-mm-dd in Asia/Karachi (numeric month so string comparison sorts correctly),
+  // not the viewing device's local timezone.
+  private pktDayKey(dateStr: string): string {
+    const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Karachi', year: 'numeric', month: '2-digit', day: '2-digit' });
+    return fmt.format(new Date(dateStr));
+  }
+
+  // A device set to a different zone must still agree with PKT on what "today" is.
   urgency(row: AssignmentRow): 'overdue' | 'today' | 'upcoming' | 'none' {
     if (!row.TargetDate) { return 'none'; }
-    const target = new Date(row.TargetDate);
-    const today = new Date();
-    const targetDay = new Date(target.getFullYear(), target.getMonth(), target.getDate()).getTime();
-    const todayDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
-    if (targetDay < todayDay) { return 'overdue'; }
-    if (targetDay === todayDay) { return 'today'; }
+    const targetKey = this.pktDayKey(row.TargetDate);
+    const todayKey = this.pktDayKey(new Date().toISOString());
+    if (targetKey < todayKey) { return 'overdue'; }
+    if (targetKey === todayKey) { return 'today'; }
     return 'upcoming';
   }
 
