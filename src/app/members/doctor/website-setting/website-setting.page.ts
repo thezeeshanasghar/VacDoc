@@ -86,6 +86,10 @@ export class WebsiteSettingPage implements OnInit {
   };
 
   get verificationUrl(): string {
+    // Dr. Salman (Doctor.Id == 1) has a dedicated verification page, independent of the typed website link.
+    if (Number(this.doctorId) === 1) {
+      return "https://vaccinepk.com/verify/";
+    }
     const raw = this.fg && this.fg.value ? this.fg.value.WebsiteUrl : "";
     const url = (raw || "").trim().replace(/\/+$/, "");
     return url ? `${url}/verify` : "";
