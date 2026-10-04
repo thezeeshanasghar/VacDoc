@@ -89,6 +89,10 @@ export class NotificationsPage {
         (err) => {}
       );
     }
+    if (n.Type === 'PaRefusal') {
+      this.router.navigate(['/members/doctor/pa-assignment-tracking']);
+      return;
+    }
     if (n.BookingId) {
       this.router.navigate(['/members/bookings'], { queryParams: { open: n.BookingId } });
     }

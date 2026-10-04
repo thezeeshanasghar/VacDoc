@@ -31,7 +31,7 @@
   </ion-list>
 
   <ion-list *ngIf="notifications && notifications.length > 0">
-    <ion-item *ngFor="let n of visibleNotifications; trackBy: trackByNotificationId" [class.unread-item]="!n.IsRead" (click)="tapNotification(n)" detail="false" button>
+    <ion-item *ngFor="let n of visibleNotifications; trackBy: trackByNotificationId" [class.unread-item]="!n.IsRead" [class.refusal-item]="n.Type === 'PaRefusal'" (click)="tapNotification(n)" detail="false" button>
       <ion-icon slot="start" [name]="n.IsRead ? 'notifications-outline' : 'notifications'" [color]="n.IsRead ? 'medium' : 'primary'"></ion-icon>
       <ion-label>
         <h2 [style.font-weight]="n.IsRead ? '400' : '700'">{{n.Title}}</h2>
