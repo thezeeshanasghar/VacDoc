@@ -101,6 +101,11 @@ export class PaAssignmentTrackingPage {
   rejectingCancelId: number | null = null;
   rejectNote: string = '';
 
+  // PA "patient refused at home" requests awaiting approve (= full reversal) / reject.
+  pendingRefusals: any[] = [];
+  rejectingRefusalId: number | null = null;
+  refusalRejectNote: string = '';
+
   constructor(
     private paService: PaService,
     private clinicService: ClinicService,
@@ -134,7 +139,70 @@ export class PaAssignmentTrackingPage {
 
     await this.loadClinics();
     this.load();
-    if (!this.isManager) { this.loadPendingCancellations(); }
+    if (!this.isManager) { this.loadPendingCancellations(); this.loadPendingRefusals(); }
+  }
+
+  loadPendingRefusals() {
+    if (!this.doctorId) { return; }
+    this.paService.getPendingRefusals(this.doctorId).subscribe(
+      res => { this.pendingRefusals = (res && res.IsSuccess) ? (res.ResponseData || []) : []; },
+      () => { this.pendingRefusals = []; }
+    );
+  }
+
+  async approveRefusal(row: any) {
+    if (!this.doctorId) { return; }
+    const alert = await this.alertController.create({
+      header: 'Approve & Reverse',
+      message: `${row.ChildName}'s family refused. Approving gives back the stock, sets the doses to not given, deletes the invoice and removes this assignment. This can't be undone.`,
+      buttons: [
+        { text: 'No', role: 'cancel' },
+        {
+          text: 'Yes, Reverse',
+          handler: () => {
+            this.paService.approveRefusal(row.AssignmentId, this.doctorId).subscribe(
+              res => {
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Visit reversed', 'success');
+                  this.pendingRefusals = this.pendingRefusals.filter(r => r.AssignmentId !== row.AssignmentId);
+                  this.load();
+                } else {
+                  this.toastService.create((res && res.Message) || 'Failed to reverse', 'danger');
+                }
+              },
+              () => { this.toastService.create('Failed to reverse the visit', 'danger'); }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  openRejectRefusal(row: any) {
+    this.rejectingRefusalId = row.AssignmentId;
+    this.refusalRejectNote = '';
+  }
+
+  closeRejectRefusal() {
+    this.rejectingRefusalId = null;
+    this.refusalRejectNote = '';
+  }
+
+  confirmRejectRefusal(row: any) {
+    if (!this.doctorId) { return; }
+    this.paService.rejectRefusal(row.AssignmentId, this.doctorId, this.refusalRejectNote || '').subscribe(
+      res => {
+        if (res && res.IsSuccess) {
+          this.toastService.create('Request rejected — assignment stays active', 'success');
+          this.pendingRefusals = this.pendingRefusals.filter(r => r.AssignmentId !== row.AssignmentId);
+          this.closeRejectRefusal();
+        } else {
+          this.toastService.create((res && res.Message) || 'Failed to reject', 'danger');
+        }
+      },
+      () => { this.toastService.create('Failed to reject request', 'danger'); }
+    );
   }
 
   loadPendingCancellations() {

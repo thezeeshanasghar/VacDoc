@@ -536,6 +536,53 @@ export class AssignmentsPage {
     await alert.present();
   }
 
+  // "Patient refused at home" is available from assignment until the payment mode is recorded.
+  canReportRefusal(a: any): boolean {
+    if (a.RefusalPending || a.AssignmentStatus === 'PendingCancellation') { return false; }
+    if (this.stage(a) === 'completed' || this.stage(a) === 'pendingHandover') { return false; }
+    const paid = (a.Schedules || []).some(function(s: any) { return s.IsPaymentCollected; });
+    return !paid;
+  }
+
+  async confirmRefusal(assignment: any) {
+    const alert = await this.alertController.create({
+      header: 'Patient Refused at Home',
+      message: `Send ${assignment.Name}'s refusal to the doctor? When the doctor approves, the visit is reversed: doses go back to not given, stock is restored and the invoice is deleted.`,
+      inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason (optional)' }],
+      buttons: [
+        { text: 'Never Mind', role: 'cancel' },
+        {
+          text: 'Send to Doctor',
+          handler: async (data) => { await this.requestRefusal(assignment.AssignmentId, data.reason || ''); }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async requestRefusal(assignmentId: number, reason: string) {
+    const user = await this.storage.get(environment.USER);
+    if (!user) return;
+    const loading = await this.loadingController.create({ message: 'Sending...' });
+    await loading.present();
+    this.paService.requestRefusal(assignmentId, Number(user.PAId), reason).subscribe(
+      res => {
+        loading.dismiss();
+        if (res && res.IsSuccess) {
+          this.toastService.create('Sent to the doctor for approval', 'success');
+          const row = this.assignments.find(a => a.AssignmentId === assignmentId);
+          if (row) { row.RefusalPending = true; }
+        } else {
+          this.toastService.create((res && res.Message) || 'Failed to send', 'danger');
+        }
+      },
+      () => {
+        loading.dismiss();
+        this.toastService.create('Failed to send the request', 'danger');
+      }
+    );
+  }
+
   async requestCancelAssignment(assignmentId: number, reason: string) {
     const user = await this.storage.get(environment.USER);
     if (!user) return;

@@ -44,6 +44,31 @@
       </div>
     </div>
 
+    <!-- Patient refused at home — doctor-only; approving reverses the whole visit -->
+    <div class="refusal-panel" *ngIf="!isManager && pendingRefusals.length > 0">
+      <div class="refusal-header">
+        <ion-icon name="hand-left-outline"></ion-icon>
+        <span>{{ pendingRefusals.length }} refused-at-home request{{ pendingRefusals.length > 1 ? 's' : '' }} awaiting your decision</span>
+      </div>
+      <div class="refusal-row" *ngFor="let r of pendingRefusals">
+        <div class="pending-cancel-info">
+          <span class="pending-cancel-child">{{ r.ChildName }}</span>
+          <span class="refusal-habit" *ngIf="r.PriorRefusals > 0">Refused before: {{ r.PriorRefusals }} time{{ r.PriorRefusals > 1 ? 's' : '' }}</span>
+          <span class="pending-cancel-pa">reported by {{ r.PaName }}</span>
+          <span class="pending-cancel-reason" *ngIf="r.Reason">"{{ r.Reason }}"</span>
+        </div>
+        <div class="pending-cancel-actions" *ngIf="rejectingRefusalId !== r.AssignmentId">
+          <ion-button size="small" color="danger" fill="outline" (click)="openRejectRefusal(r)">Reject</ion-button>
+          <ion-button size="small" color="success" (click)="approveRefusal(r)">Approve &amp; Reverse</ion-button>
+        </div>
+        <div class="pending-cancel-reject-form" *ngIf="rejectingRefusalId === r.AssignmentId">
+          <input type="text" [(ngModel)]="refusalRejectNote" placeholder="Note to PA (optional)" class="pending-cancel-reject-input" />
+          <ion-button size="small" fill="clear" (click)="closeRejectRefusal()">Cancel</ion-button>
+          <ion-button size="small" color="danger" (click)="confirmRejectRefusal(r)">Confirm Reject</ion-button>
+        </div>
+      </div>
+    </div>
+
     <!-- Shared Filter Bar -->
     <div class="filter-bar">
       <div class="filter-group">

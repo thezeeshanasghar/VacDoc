@@ -977,3 +977,19 @@ ion-content.ion-padding { --padding-bottom: 74px; }
   background: var(--vac-blue); color: #fff; box-shadow: var(--vac-shadow-blue);
 }
 .pa-row.offshift { opacity: .55; }
+
+.refusal-flag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 16px;
+  padding: 10px 12px;
+  background: #f6d86b;
+  border: 1px solid #d9b73a;
+  border-radius: 10px;
+  color: #3d2c00;
+  font-size: 13px;
+  font-weight: 600;
+
+  ion-icon { font-size: 18px; flex: 0 0 auto; }
+}

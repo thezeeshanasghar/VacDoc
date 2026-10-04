@@ -40,6 +40,12 @@
     <span class="active-assign-label">Assigned to <strong>{{ activeAssignment.PaName }}</strong></span>
   </div>
 
+  <!-- Golden marker: this family refused at home and no dose has been given since -->
+  <div *ngIf="usertype === 'DOCTOR' && refusalFlag && refusalFlag.Active" class="refusal-flag">
+    <ion-icon name="hand-left-outline"></ion-icon>
+    <span>Refused at home{{ refusalFlag.Count > 1 ? ' · ' + refusalFlag.Count + ' times' : '' }}<span *ngIf="refusalFlag.LastReason"> — "{{ refusalFlag.LastReason }}"</span></span>
+  </div>
+
   <!-- Active assignment card (PA view) — lets a PA finish a remote-clinic visit without leaving this page -->
   <div *ngIf="usertype === 'PA' && activeAssignment && activeAssignment.AssignmentStatus !== 'PendingHandover'" class="active-assignment-card">
     <ion-icon name="person-outline" class="active-assign-icon"></ion-icon>

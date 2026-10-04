@@ -150,9 +150,21 @@ export class VaccinePage {
       'Date': [null]
     });
     this.loadUserAndPAs();
+    this.loadRefusalFlag();
   }
 
   ngOnInit() {}
+
+  // Golden "refused at home" marker data (doctor view only renders it)
+  refusalFlag: any = null;
+
+  private loadRefusalFlag() {
+    this.refusalFlag = null;
+    this.paService.getRefusalFlag(Number(this.childId)).subscribe(
+      res => { this.refusalFlag = (res && res.IsSuccess) ? res.ResponseData : null; },
+      () => { this.refusalFlag = null; }
+    );
+  }
 
   private loadUserAndPAs() {
     this.storage.get(environment.USER).then((user) => {

@@ -236,6 +236,31 @@ export class PaService extends BaseService {
     return this.http.patch(url, { DoctorId: doctorId, Notes: notes }, this.httpOptions).pipe(catchError(this.handleError));
   }
 
+  requestRefusal(assignmentId: number, paId: number, reason: string = ''): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/request-refusal`;
+    return this.http.post(url, { CallerType: 'PA', CallerId: paId, Reason: reason }, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  getPendingRefusals(doctorId: number): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/pending-refusals/${doctorId}`;
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  approveRefusal(assignmentId: number, doctorId: number): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/approve-refusal?doctorId=${doctorId}`;
+    return this.http.patch(url, {}, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  rejectRefusal(assignmentId: number, doctorId: number, notes: string = ''): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/reject-refusal`;
+    return this.http.patch(url, { DoctorId: doctorId, Notes: notes }, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  getRefusalFlag(childId: number): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/refusal-flag/${childId}`;
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
   reassignAssignment(assignmentId: number, newPaId: number, targetDate?: string | null, requestingManagerId?: number | null, callerUserId?: number, securityStamp?: string): Observable<any> {
     const url = `${this.API_PA}PAAssignment/${assignmentId}/reassign`;
     const body: any = { NewPaId: newPaId };

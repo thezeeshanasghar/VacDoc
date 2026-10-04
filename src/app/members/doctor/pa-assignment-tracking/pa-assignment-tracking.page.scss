@@ -683,3 +683,40 @@
   background: transparent;
   color: var(--vac-ink-3);
 }
+
+// ─── Refused-at-home panel (golden) ─────────────────────────────────────────────
+.refusal-panel {
+  background: #fbe9a6;
+  border: 1px solid #d9b73a;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+
+.refusal-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #5c4500;
+  margin-bottom: 10px;
+
+  ion-icon { font-size: 18px; }
+}
+
+.refusal-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+
+  &:last-child { margin-bottom: 0; }
+}
+
+.refusal-habit { font-size: 12px; font-weight: 700; color: #7a5b00; }

@@ -142,13 +142,19 @@
           (click)="confirmComplete(a)">
         </ion-icon>
         <ion-icon
-          *ngIf="stage(a) !== 'completed' && stage(a) !== 'pendingHandover' && a.AssignmentStatus !== 'PendingCancellation'"
+          *ngIf="stage(a) !== 'completed' && stage(a) !== 'pendingHandover' && a.AssignmentStatus !== 'PendingCancellation' && !a.RefusalPending"
           name="checkmark-outline"
           class="iconchild complete-icon"
           (click)="promptMarkDone(a)">
         </ion-icon>
         <ion-icon
-          *ngIf="stage(a) !== 'completed' && a.AssignmentStatus !== 'PendingCancellation'"
+          *ngIf="canReportRefusal(a)"
+          name="hand-left-outline"
+          class="iconchild refusal-icon"
+          (click)="confirmRefusal(a)">
+        </ion-icon>
+        <ion-icon
+          *ngIf="stage(a) !== 'completed' && a.AssignmentStatus !== 'PendingCancellation' && !a.RefusalPending"
           name="close-circle-outline"
           class="iconchild cancel-icon"
           (click)="confirmCancel(a)">
@@ -191,6 +197,9 @@
       </ion-badge>
       <ion-badge color="medium" *ngIf="a.AssignmentStatus === 'PendingCancellation'" class="payment-pending-badge">
         <ion-icon name="time-outline"></ion-icon> Cancellation Requested — awaiting doctor
+      </ion-badge>
+      <ion-badge class="payment-pending-badge refusal-badge" *ngIf="a.RefusalPending">
+        <ion-icon name="hand-left-outline"></ion-icon> Refused at home — awaiting doctor
       </ion-badge>
       <br>
       <ion-button size="small" fill="outline" color="primary"
