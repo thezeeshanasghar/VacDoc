@@ -504,20 +504,20 @@ export class AssignmentsPage {
       return;
     }
 
-    if (this.hasGivenOrPaidSchedules(assignment)) {
+    const paid = (assignment.Schedules || []).some(function(s: any) { return s.IsPaymentCollected; });
+    if (paid) {
       const alert = await this.alertController.create({
-        header: 'Request Cancellation',
-        message: 'This assignment has vaccines given or payment recorded, so it can\'t be cancelled directly. Send a cancellation request to the doctor instead?',
-        inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason (optional — leave blank if none)' }],
-        buttons: [
-          { text: 'Never Mind', role: 'cancel' },
-          {
-            text: 'Send Request',
-            handler: async (data) => { await this.requestCancelAssignment(assignment.AssignmentId, data.reason || ''); }
-          }
-        ]
+        header: 'Cannot Cancel',
+        message: 'Payment is already recorded for this assignment, so it can no longer be cancelled from here. Please contact the doctor.',
+        buttons: ['OK']
       });
       await alert.present();
+      return;
+    }
+
+    // Doses already given but not yet paid: the doctor's approval reverses the visit.
+    if (this.hasGivenOrPaidSchedules(assignment)) {
+      await this.confirmRefusal(assignment);
       return;
     }
 
@@ -536,18 +536,10 @@ export class AssignmentsPage {
     await alert.present();
   }
 
-  // "Patient refused at home" is available from assignment until the payment mode is recorded.
-  canReportRefusal(a: any): boolean {
-    if (a.RefusalPending || a.AssignmentStatus === 'PendingCancellation') { return false; }
-    if (this.stage(a) === 'completed' || this.stage(a) === 'pendingHandover') { return false; }
-    const paid = (a.Schedules || []).some(function(s: any) { return s.IsPaymentCollected; });
-    return !paid;
-  }
-
   async confirmRefusal(assignment: any) {
     const alert = await this.alertController.create({
-      header: 'Patient Refused at Home',
-      message: `Send ${assignment.Name}'s refusal to the doctor? When the doctor approves, the visit is reversed: doses go back to not given, stock is restored and the invoice is deleted.`,
+      header: 'Cancel Assignment',
+      message: `Vaccines were already given to ${assignment.Name}. Send a cancellation request to the doctor? When the doctor approves, the visit is reversed: doses go back to not given, stock is restored and the invoice is deleted.`,
       inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason (optional)' }],
       buttons: [
         { text: 'Never Mind', role: 'cancel' },

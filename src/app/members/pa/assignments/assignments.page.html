@@ -148,12 +148,6 @@
           (click)="promptMarkDone(a)">
         </ion-icon>
         <ion-icon
-          *ngIf="canReportRefusal(a)"
-          name="hand-left-outline"
-          class="iconchild refusal-icon"
-          (click)="confirmRefusal(a)">
-        </ion-icon>
-        <ion-icon
           *ngIf="stage(a) !== 'completed' && a.AssignmentStatus !== 'PendingCancellation' && !a.RefusalPending"
           name="close-circle-outline"
           class="iconchild cancel-icon"
