@@ -8,6 +8,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { LoginService } from './services/login.service';
 import { ToastService } from './shared/toast.service';
+import { AuthSession } from 'src/app/services/auth-session';
 
 @Component({
   selector: 'app-root',
@@ -85,6 +86,7 @@ export class AppComponent {
       await this.storage.set(environment.DOCTOR_Id, res.ResponseData.DoctorId);
       await this.storage.set(environment.USER_Id, res.ResponseData.Id);
       await this.storage.set(environment.SECURITY_STAMP, res.ResponseData.SecurityStamp);
+      await AuthSession.set(this.storage, res.ResponseData.Token);
       this.loginService.changeState(true);
       this.router.navigate(['/members/pa/assignments']).then(() => {
         window.location.reload();

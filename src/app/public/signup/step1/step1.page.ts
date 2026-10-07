@@ -13,6 +13,7 @@ import { environment } from "src/environments/environment";
 import { SignupService } from "src/app/services/signup.service";
 import { LoginService } from "src/app/services/login.service";
 import { ToastService } from "src/app/shared/toast.service";
+import { AuthSession } from 'src/app/services/auth-session';
 
 @Component({
   selector: "app-step1",
@@ -387,6 +388,7 @@ export class Step1Page implements OnInit {
               await this.storage.set(environment.DOCTOR_Id, loginRes.ResponseData.DoctorId);
               await this.storage.set(environment.USER_Id, loginRes.ResponseData.Id);
               await this.storage.set(environment.SECURITY_STAMP, loginRes.ResponseData.SecurityStamp);
+              await AuthSession.set(this.storage, loginRes.ResponseData.Token);
               this.loginService.changeState(true);
               const doctorProfile: any = await this.loginService.getDoctorProfile(loginRes.ResponseData.Id).toPromise();
               if (doctorProfile && doctorProfile.IsSuccess) {

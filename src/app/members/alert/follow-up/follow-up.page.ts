@@ -9,6 +9,7 @@ import { Platform } from '@ionic/angular';
 import { ClinicService } from "src/app/services/clinic.service";
 import { PaService } from "src/app/services/pa.service";
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
+import { AuthSession } from 'src/app/services/auth-session';
 @Component({
   selector: "app-follow-up",
   templateUrl: "./follow-up.page.html",
@@ -192,10 +193,10 @@ export class FollowUpPage implements OnInit {
   
     const url = `${this.API_VACCINE}FollowUp/export-followups-csv?${query}`;
     if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
-      window.open(url, '_blank');
+      window.open(AuthSession.withToken(url), '_blank');
     } else {
       const request: DownloadRequest = {
-        uri: url,
+        uri: AuthSession.withToken(url),
         title: 'Child Alerts CSV',
         description: 'Downloading follow-up alerts CSV',
         mimeType: 'text/csv',

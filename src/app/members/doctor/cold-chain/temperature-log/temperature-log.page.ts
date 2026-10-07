@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { ColdChainService } from 'src/app/services/cold-chain.service';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { AuthSession } from 'src/app/services/auth-session';
 
 @Component({
   selector: 'app-temperature-log',
@@ -128,7 +129,7 @@ export class TemperatureLogPage implements OnInit {
     const url = this.coldChainService.getReadingsPdfUrl(
       this.filterClinicId, this.fromDate, this.toDate, this.filterRefrigeratorId || undefined
     );
-    window.open(url);
+    window.open(AuthSession.withToken(url));
   }
 
   clinicName(clinicId: number): string {

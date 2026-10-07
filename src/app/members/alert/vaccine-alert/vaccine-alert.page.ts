@@ -14,6 +14,7 @@ import { DoctorService } from "src/app/services/doctor.service";
 import { VaccineService } from 'src/app/services/vaccine.service'; 
 import { ClinicService } from "src/app/services/clinic.service";
 import { PaService } from "src/app/services/pa.service";
+import { AuthSession } from 'src/app/services/auth-session';
 
 @Component({
   selector: "app-vaccine-alert",
@@ -391,11 +392,11 @@ export class VaccineAlertPage implements OnInit {
 
     if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
       var url = `${this.API_VACCINE}child/downloadcsv?${query}`;
-      window.open(url);
+      window.open(AuthSession.withToken(url));
     }
     else {
       var request: DownloadRequest = {
-        uri: `${this.API_VACCINE}child/downloadcsv?${query}`,
+        uri: AuthSession.withToken(`${this.API_VACCINE}child/downloadcsv?${query}`),
         title: 'Child Alerts CSV',
         description: '',
         mimeType: '',

@@ -14,6 +14,7 @@ import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-nati
 import { Platform } from '@ionic/angular';
 import { ClinicService } from "src/app/services/clinic.service";
 import { PaService } from "src/app/services/pa.service";
+import { AuthSession } from 'src/app/services/auth-session';
 @Component({
   selector: "app-bulk",
   templateUrl: "./bulk.page.html",
@@ -118,7 +119,7 @@ export class BulkInvoicePage implements OnInit {
     if (!this.childId || !this.currentDate) { return; }
     const dateStr = new Date(this.currentDate).toISOString().split('T')[0];
     const url = `${this.API_VACCINE}child/${this.childId}/${dateStr}/invoice-warning`;
-    fetch(url, { headers: { 'Content-Type': 'application/json' } })
+    fetch(url, { headers: Object.assign({ 'Content-Type': 'application/json' }, AuthSession.token ? { Authorization: 'Bearer ' + AuthSession.token } : {}) })
       .then(r => r.json())
       .then((res: any) => { this.parentDownloadedWarning = res.parentDownloaded === true; })
       .catch(() => {});
@@ -436,7 +437,7 @@ getAmount(id: string, doseId: string, childId: string) {
       window.open(url);
     } else {
       var request: DownloadRequest = {
-        uri: `${this.API_VACCINE}child/${id}/${formattedDate}/${fee}/Download-Invoice-PDF`,
+        uri: AuthSession.withToken(`${this.API_VACCINE}child/${id}/${formattedDate}/${fee}/Download-Invoice-PDF`),
         title: 'Invoice',
         description: '',
         mimeType: '',

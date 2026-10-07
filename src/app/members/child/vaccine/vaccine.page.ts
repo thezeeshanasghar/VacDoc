@@ -17,6 +17,7 @@ import { ManagerService } from "src/app/services/manager.service";
 import { InvoiceService } from "src/app/services/invoice.service";
 import { AuditPopoverComponent } from "./audit-popover/audit-popover.component";
 import { PdfOptionsPopoverComponent } from "./pdf-options-popover/pdf-options-popover.component";
+import { AuthSession } from 'src/app/services/auth-session';
 
 @Component({
   selector: "app-vaccine",
@@ -583,18 +584,18 @@ export class VaccinePage {
 
     const url = `${this.API_VACCINE}child/${id}/${formattedDate}/invoice-file`;
     if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
-      fetch(url).then(res => {
+      fetch(url, { headers: AuthSession.token ? { Authorization: 'Bearer ' + AuthSession.token } : {} }).then(res => {
         if (!res.ok) {
           this.toastService.create('No invoice PDF has been generated yet for this visit.', 'danger');
           return;
         }
-        window.open(url);
+        window.open(AuthSession.withToken(url));
       }).catch(() => {
         this.toastService.create('No invoice PDF has been generated yet for this visit.', 'danger');
       });
     } else {
       const request: DownloadRequest = {
-        uri: url,
+        uri: AuthSession.withToken(url),
         title: 'Invoice',
         description: '',
         mimeType: '',
@@ -993,7 +994,7 @@ removal(type: string){
 
   download(id) {
     var request: DownloadRequest = {
-      uri: `${this.API_VACCINE}child/${id}/Download-Schedule-PDF`,
+      uri: AuthSession.withToken(`${this.API_VACCINE}child/${id}/Download-Schedule-PDF`),
       title: this.ChildName + '-Schedule',
       description: '',
       mimeType: '',

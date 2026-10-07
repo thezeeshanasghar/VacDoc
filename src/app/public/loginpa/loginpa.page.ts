@@ -10,6 +10,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { IonRouterOutlet, Platform } from '@ionic/angular';
 import { Plugins } from '@capacitor/core';
 import { AbstractControl, ValidatorFn } from '@angular/forms';
+import { AuthSession } from 'src/app/services/auth-session';
 
 const { App } = Plugins;
 
@@ -354,6 +355,7 @@ export class LoginPAPage implements OnInit {
           await this.storage.set(environment.DOCTOR_Id, res.ResponseData.DoctorId);
           await this.storage.set(environment.USER_Id, res.ResponseData.Id);
           await this.storage.set(environment.SECURITY_STAMP, res.ResponseData.SecurityStamp);
+          await AuthSession.set(this.storage, res.ResponseData.Token);
           console.log(res.ResponseData.UserType);
           let state = true;
           this.loginservice.changeState(state);

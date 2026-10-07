@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage';
 import { StockService } from 'src/app/services/stock.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
+import { AuthSession } from 'src/app/services/auth-session';
 
 @Component({
   selector: 'app-stock-overview',
@@ -151,7 +152,7 @@ export class StockOverviewPage {
 
   downloadPdf() {
     const url = environment.BASE_URL + 'stockoverview/pdf?doctorId=' + this.doctorId + '&clinicId=' + this.clinicId;
-    window.open(url, '_blank');
+    window.open(AuthSession.withToken(url), '_blank');
   }
 
   formatDate(d: string): string {
