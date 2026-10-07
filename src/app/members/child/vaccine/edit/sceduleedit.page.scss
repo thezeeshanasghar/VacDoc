@@ -38,7 +38,9 @@ ion-item ion-label {
 }
 
 ion-item ion-checkbox {
-  margin-top: 1px;
+  margin-top: 0;
+  margin-bottom: 0;
+  align-self: center;
   --size: 16px;
 }
 
