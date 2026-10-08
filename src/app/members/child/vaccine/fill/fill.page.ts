@@ -932,20 +932,35 @@ export class FillPage implements OnInit {
   onBrandSearchChange(value: string): void {
     this.brandSearchTerm = (value || '').toString();
     const term = this.brandSearchTerm.toLowerCase().trim();
-    const exactMatch = (this.brandName || []).find(
-      (brand) => ((brand && brand.Name) || '').toLowerCase() === term
-    );
+    // Exact-case first: case-twins ("Nimenrix"/"NIMENRIX") are distinct brands.
+    const exactMatch = this.findBrandByName(this.brandSearchTerm);
 
     if (term === 'ohf') {
       this.fg.controls['BrandId'].setValue('OHF');
     } else if (exactMatch) {
+      const changed = this.fg.get('BrandId').value !== exactMatch.Id;
       this.fg.controls['BrandId'].setValue(exactMatch.Id);
+      // Typing a full name must load (and so replace) the lots too — otherwise the previous
+      // brand's Lot/Expiry stay on the form. The loader dedupes the select event that follows.
+      if (changed) { this.onBrandChange(exactMatch.Id); }
     } else {
       this.fg.controls['BrandId'].setValue(null);
       this.fg.patchValue({ Manufacturer: '', Lot: '', Expiry: null }, { emitEvent: true });
+      this.lotsBrandId = null;
+      this.lotsLoading = false;
     }
 
+    if (term === 'ohf') { this.lotsBrandId = null; this.lotsLoading = false; }
+
     this.applyBrandFilter();
+  }
+
+  // Exact-case match first, case-insensitive only as a fallback (brand case-twins are distinct brands).
+  private findBrandByName(raw: string): any {
+    const name = (raw || '').trim();
+    const brands = this.brandName || [];
+    return brands.find((b) => ((b && b.Name) || '') === name)
+      || brands.find((b) => ((b && b.Name) || '').toLowerCase() === name.toLowerCase());
   }
 
   onBrandEnterKey(event: KeyboardEvent): void {
@@ -955,9 +970,7 @@ export class FillPage implements OnInit {
       return;
     }
 
-    const exactMatch = (this.brandName || []).find(
-      (brand) => ((brand && brand.Name) || '').toLowerCase() === term
-    );
+    const exactMatch = this.findBrandByName(this.brandSearchTerm);
 
     if (exactMatch) {
       this.brandSearchTerm = exactMatch.Name;
@@ -1044,6 +1057,11 @@ export class FillPage implements OnInit {
     const selectedRoute = this.getBrandRoute(brandId);
     const selectedBrand = (this.brandName || []).find((b) => b && b.Id == brandId);
 
+    if (!brandId || brandId === 'OHF' || !this.allowInventory) {
+      this.lotsBrandId = null;
+      this.lotsLoading = false;
+    }
+
     if (!brandId || brandId === 'OHF') {
       this.availableBatchLots = [];
       this.availableLots = [];
@@ -1107,11 +1125,39 @@ export class FillPage implements OnInit {
     });
   }
 
+  // Brand whose lots are loaded / in flight; dedupes the change + select events and lets a slow
+  // reply for a previous (or case-twin) brand be dropped instead of overwriting the current one.
+  private lotsBrandId: number = null;
+  lotsLoading = false;
+
   private loadBatchLotsForBrand(brandId: number, clinicId: number): void {
+    // Brand changed while the clinic lookup was resolving — this call is stale.
+    if (Number(this.fg.get('BrandId').value) !== Number(brandId)) { return; }
+    if (this.lotsBrandId === brandId) { return; }
+    this.lotsBrandId = brandId;
+    this.lotsLoading = true;
+    // Drop the previous brand's lot/expiry immediately so it can't be submitted for this brand.
+    this.availableBatchLots = [];
+    this.availableLots = [];
+    this.availableExpiries = [];
+    this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
+
     this.stockService.getBatchLotsByBrand(brandId, clinicId).subscribe(
       res => {
+        if (Number(this.fg.get('BrandId').value) !== Number(brandId)) { return; }
+        this.lotsLoading = false;
+        if (!(res && res.IsSuccess)) {
+          this.lotsBrandId = null;
+          this.toastService.create('Could not load batch/expiry. Re-select the brand to retry.', 'danger');
+        }
         const lots = (res && res.IsSuccess && res.ResponseData) ? res.ResponseData : [];
-        this.availableBatchLots = Array.isArray(lots) ? lots : [];
+        this.availableBatchLots = (Array.isArray(lots) ? lots : [])
+          .filter((x: any) => {
+          // Expired stock is never offered: expiry is the LAST usable day, so only dates before today are out.
+          if (!x || !x.Expiry) { return true; }
+          const e = new Date(x.Expiry); const t = new Date();
+          return new Date(e.getFullYear(), e.getMonth(), e.getDate()).getTime() >= new Date(t.getFullYear(), t.getMonth(), t.getDate()).getTime();
+        });
         // FEFO: sort by expiry date ascending so earliest-expiring stock appears first
         this.availableBatchLots.sort((a: any, b: any) => {
           const dateA = a && a.Expiry ? new Date(a.Expiry).getTime() : Infinity;
@@ -1142,9 +1188,14 @@ export class FillPage implements OnInit {
         this.refreshExpiryOptionsForLot(selectedLot);
       },
       () => {
+        if (Number(this.fg.get('BrandId').value) !== Number(brandId)) { return; }
+        this.lotsLoading = false;
+        this.lotsBrandId = null;
         this.availableBatchLots = [];
         this.availableLots = [];
         this.availableExpiries = [];
+        this.fg.patchValue({ Lot: '', Expiry: null }, { emitEvent: true });
+        this.toastService.create('Could not load batch/expiry. Re-select the brand to retry.', 'danger');
       }
     );
   }

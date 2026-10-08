@@ -276,6 +276,9 @@ export class BulkPage implements OnInit {
     this.selectedLotsPerRow = [];
     this.selectedExpiriesPerRow = [];
     this.selectedValidityPerRow = [];
+    this.lotsBrandPerRow = [];
+    this.lotsLoadingPerRow = [];
+    this.batchOverrideReasons = [];
     this.routeValues = [];
     this.siteValues = [];
     this.availableSitesPerRow = [];
@@ -440,7 +443,10 @@ export class BulkPage implements OnInit {
       ? brands.filter((b: any) => ((b && b.Name) || "").toLowerCase().includes(normalized))
       : brands;
 
-    const exactMatch = brands.find((b: any) => ((b && b.Name) || "").toLowerCase() === normalized);
+    // Case-twins (e.g. "Nimenrix" / "NIMENRIX") are distinct brands: prefer the exact-case match so
+    // typing/selecting never resolves to the twin that holds no stock.
+    const exactMatch = brands.find((b: any) => ((b && b.Name) || "") === term.trim())
+      || brands.find((b: any) => ((b && b.Name) || "").toLowerCase() === normalized);
     this.BrandIds[index] = exactMatch ? exactMatch.Id : null;
     this.manufacturerValues[index] = exactMatch ? (exactMatch.Manufacturer || "") : "";
     this.routeValues[index] = exactMatch ? (exactMatch.Route || exactMatch.route || "") : "";
@@ -482,7 +488,8 @@ export class BulkPage implements OnInit {
 
   onBrandEnterKey(index: number, event: KeyboardEvent): void {
     event.preventDefault();
-    const term = ((this.brandSearchTerms[index] || "") + "").toLowerCase().trim();
+    const rawTerm = ((this.brandSearchTerms[index] || "") + "").trim();
+    const term = rawTerm.toLowerCase();
     if (!term) { return; }
 
     if (term === "ohf") {
@@ -498,7 +505,9 @@ export class BulkPage implements OnInit {
 
     this.ohfSelections[index] = false;
     const brands = this.getSortedBrands(this.bulkData && this.bulkData[index]);
-    const exactMatch = brands.find((b: any) => ((b && b.Name) || "").toLowerCase() === term);
+    // Exact-case first: case-twins ("Nimenrix"/"NIMENRIX") are distinct brands.
+    const exactMatch = brands.find((b: any) => ((b && b.Name) || "") === rawTerm)
+      || brands.find((b: any) => ((b && b.Name) || "").toLowerCase() === term);
     if (exactMatch) {
       this.brandSearchTerms[index] = exactMatch.Name;
       this.BrandIds[index] = exactMatch.Id;
@@ -515,16 +524,40 @@ export class BulkPage implements OnInit {
     this.availableExpiriesPerRow[index] = [];
     this.selectedLotsPerRow[index] = "";
     this.selectedExpiriesPerRow[index] = "";
+    this.batchOverrideReasons[index] = "";
+    this.lotsBrandPerRow[index] = null;
+    this.lotsLoadingPerRow[index] = false;
   }
 
   private loadBatchLotsForRow(index: number, brandId: number): void {
     const clinicId = this.onlineClinicId || this.clinicId;
     if (!clinicId || !brandId) { this.clearLotsAndExpiries(index); return; }
 
+    // Same brand already loaded / in flight for this row (autocomplete fires change + select):
+    // keep what's there so a late duplicate can't reset a lot the nurse already picked.
+    if (Number(this.lotsBrandPerRow[index]) === Number(brandId)) { return; }
+
+    // New brand: drop the previous brand's lot/expiry NOW so it can never ride along in the payload
+    // while this request is in flight.
+    this.clearLotsAndExpiries(index);
+    this.lotsBrandPerRow[index] = brandId;
+    this.lotsLoadingPerRow[index] = true;
+
     this.stockService.getBatchLotsByBrand(brandId, clinicId).subscribe(
       res => {
+        // A newer brand pick for this row supersedes this response — never let a slow reply for a
+        // previous/twin brand overwrite the current brand's batch.
+        if (Number(this.BrandIds[index]) !== Number(brandId)) { return; }
+        this.lotsLoadingPerRow[index] = false;
+        if (!(res && res.IsSuccess)) { this.lotsBrandPerRow[index] = null; this.notifyLotLoadFailed(); }
         const lots = (res && res.IsSuccess && res.ResponseData) ? res.ResponseData : [];
-        const allLots: any[] = Array.isArray(lots) ? lots : [];
+        const allLots: any[] = (Array.isArray(lots) ? lots : [])
+          .filter((x: any) => {
+          // Expired stock is never offered: expiry is the LAST usable day, so only dates before today are out.
+          if (!x || !x.Expiry) { return true; }
+          const e = new Date(x.Expiry); const t = new Date();
+          return new Date(e.getFullYear(), e.getMonth(), e.getDate()).getTime() >= new Date(t.getFullYear(), t.getMonth(), t.getDate()).getTime();
+        });
 
         // FEFO: sort by expiry date ascending
         allLots.sort((a: any, b: any) => {
@@ -550,8 +583,25 @@ export class BulkPage implements OnInit {
         this.selectedLotsPerRow[index] = firstLot;
         this.refreshExpiriesForRow(index, firstLot);
       },
-      () => { this.clearLotsAndExpiries(index); }
+      () => {
+        if (Number(this.BrandIds[index]) === Number(brandId)) {
+          this.clearLotsAndExpiries(index);
+          this.notifyLotLoadFailed();
+        }
+      }
     );
+  }
+
+  // One toast per failure burst — an empty lot after a failed lookup must not look like "no stock".
+  private notifyLotLoadFailed(): void {
+    if (this.lotsErrorToastShown) { return; }
+    this.lotsErrorToastShown = true;
+    this.toastService.create("Could not load batch/expiry. Re-select the brand to retry.", "danger");
+    setTimeout(() => { this.lotsErrorToastShown = false; }, 3000);
+  }
+
+  get anyLotsLoading(): boolean {
+    return (this.lotsLoadingPerRow || []).some(x => !!x);
   }
 
   onLotChange(index: number, event: any): void {
@@ -582,12 +632,17 @@ export class BulkPage implements OnInit {
   }
 
   batchOverrideReasons: string[] = [];
+  // Brand id whose lots are loaded / in flight for each row, and whether that load is still pending.
+  private lotsBrandPerRow: any[] = [];
+  lotsLoadingPerRow: boolean[] = [];
+  private lotsErrorToastShown = false;
 
   async openBatchSheet(index: number) {
     if (!this.allowInventory) { return; }
     const brandName = this.brandSearchTerms[index] || '';
     const lots = this.availableBatchLotsPerRow[index] || [];
     if (!lots.length) { return; }
+    const brandAtOpen = this.BrandIds[index];
     const modal = await this.modalController.create({
       component: BatchPickerComponent,
       cssClass: 'batch-picker-modal',
@@ -600,10 +655,14 @@ export class BulkPage implements OnInit {
     });
     await modal.present();
     const { data, role } = await modal.onWillDismiss();
+    // The brand changed while the sheet was open: the chosen lot belongs to the old brand's list.
+    if (this.BrandIds[index] !== brandAtOpen) { return; }
     if (role === 'use' && data && data.batchLot) {
       this.selectedLotsPerRow[index] = data.batchLot;
+      // data.expiry is the sheet's display string (MM-YYYY), not a date — derive the real expiry
+      // key from the chosen lot instead (earliest expiry of that lot).
+      this.selectedExpiriesPerRow[index] = "";
       this.refreshExpiriesForRow(index, data.batchLot);
-      if (data.expiry) { this.selectedExpiriesPerRow[index] = data.expiry; }
       // Log the FEFO override reason so it can be sent with the give (audit trail).
       this.batchOverrideReasons[index] = data.overrideReason || '';
     }
@@ -696,6 +755,10 @@ export class BulkPage implements OnInit {
 
   async onSubmit() {
     this.applyTravelGivenDateToday();
+    if (this.anyLotsLoading) {
+      this.toastService.create("Loading batch details — try again in a moment.", "warning");
+      return;
+    }
 
     const canProceed = await this.confirmAndHandleClinicMismatch();
     if (!canProceed) { return; }

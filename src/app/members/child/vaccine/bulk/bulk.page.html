@@ -160,7 +160,7 @@
 
   <!-- 5.5 Sticky submit -->
   <div class="give-submit-bar">
-    <button type="button" class="give-submit" [disabled]="isScheduleDateValid()" (click)="onSubmit()">
+    <button type="button" class="give-submit" [disabled]="isScheduleDateValid() || anyLotsLoading" (click)="onSubmit()">
       GIVE {{ bulkData?.length || 0 }} DOSE{{ (bulkData?.length === 1) ? '' : 'S' }}
     </button>
   </div>
