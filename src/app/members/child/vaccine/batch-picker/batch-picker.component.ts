@@ -1,10 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, AlertController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 
 /**
  * Batch/Lot picker bottom sheet (spec §6).
- * FEFO pre-selected · expired batches blocked · non-FEFO choice logs a reason.
- * Presented via ModalController; returns { batchLot, expiry, overrideReason } on USE.
+ * FEFO pre-selected · expired batches blocked.
+ * Presented via ModalController; returns { batchLot, expiry, overrideReason: null } on USE.
  */
 @Component({
   selector: 'app-batch-picker',
@@ -22,7 +22,6 @@ export class BatchPickerComponent implements OnInit {
 
   constructor(
     private modalController: ModalController,
-    private alertController: AlertController,
   ) {}
 
   ngOnInit() {
@@ -61,23 +60,12 @@ export class BatchPickerComponent implements OnInit {
   select(row: any) {
     if (row.expired) { return; }
     this.chosen = row.batchLot;
+    this.confirm();   // one tap applies the batch — no reason, no second confirm
   }
 
-  private isChosenFefo(): boolean {
-    const r = this.rows.find(x => x.batchLot === this.chosen);
-    return !!r && r.isFefo;
-  }
-
-  async confirm() {
+  confirm() {
     const row = this.rows.find(r => r.batchLot === this.chosen);
     if (!row) { return; }
-    // Non-FEFO override → require a one-tap reason (spec §6, logged to audit).
-    if (!row.isFefo) {
-      const reason = await this.pickOverrideReason();
-      if (!reason) { return; }        // cancelled
-      this.dismissWith(row, reason);
-      return;
-    }
     this.dismissWith(row, null);
   }
 
@@ -87,26 +75,6 @@ export class BatchPickerComponent implements OnInit {
       expiry: row.expiry,
       overrideReason,
     }, 'use');
-  }
-
-  private async pickOverrideReason(): Promise<string | null> {
-    return new Promise(async (resolve) => {
-      const alert = await this.alertController.create({
-        header: 'Why not the FEFO batch?',
-        cssClass: 'vac-confirm',
-        inputs: [
-          { type: 'radio', label: 'Vial open',      value: 'Vial open' },
-          { type: 'radio', label: 'Parent request', value: 'Parent request' },
-          { type: 'radio', label: 'Damaged',        value: 'Damaged' },
-          { type: 'radio', label: 'Other',          value: 'Other' },
-        ],
-        buttons: [
-          { text: 'Cancel', role: 'cancel', cssClass: 'alert-btn-neutral', handler: () => resolve(null) },
-          { text: 'Confirm', handler: (val) => resolve(val || null) },
-        ],
-      });
-      await alert.present();
-    });
   }
 
   dismiss() { this.modalController.dismiss(null, 'cancel'); }
