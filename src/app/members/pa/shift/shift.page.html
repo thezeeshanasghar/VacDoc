@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Location Sharing</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="loading" class="center"><ion-spinner></ion-spinner></div>
+
+  <div *ngIf="!loading && !trackingAllowed" class="card">
+    <b>Location sharing is not enabled for your account.</b>
+    <p class="mute">Ask your doctor to turn on "Track location during shift" in your permissions.</p>
+  </div>
+
+  <ng-container *ngIf="!loading && trackingAllowed">
+    <div class="card">
+      <div class="head">
+        <b>Location sharing</b>
+        <span class="pill" [class.on]="onShift">{{ onShift ? 'ON SHIFT' : 'OFF DUTY' }}</span>
+      </div>
+      <p class="mute" *ngIf="onShift">Sharing with your doctor since {{ startedAt | date:'shortTime' }}, including when the screen is off. Your location is shared only during a shift.</p>
+      <p class="mute" *ngIf="!onShift">Not sharing. Tap to start your shift.</p>
+      <button class="big start" *ngIf="!onShift" [disabled]="busy" (click)="startShift()">Start shift</button>
+      <button class="big end" *ngIf="onShift" [disabled]="busy" (click)="endShift()">End shift</button>
+    </div>
+
+    <div class="card warn" *ngIf="!inApp">
+      <b>Use the VPK Assistant app</b>
+      <p class="mute">Location sharing only works in the VPK Assistant Android app, not in the browser.</p>
+    </div>
+
+    <div class="card warn" *ngIf="inApp && onShift && permission === 'foreground'">
+      <b>Allow location "all the time"</b>
+      <p class="mute">Without it, sharing can stop when the screen is off.</p>
+      <button class="small" (click)="allowAllTheTime()">Allow all the time</button>
+    </div>
+  </ng-container>
+</ion-content>

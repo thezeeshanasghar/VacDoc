@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Assistant Locations</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="wrap">
+    <div class="list">
+      <div *ngIf="!loading && assistants.length === 0" class="empty">
+        No assistants have location tracking enabled. Turn on "Track location during shift" in an assistant's permissions.
+      </div>
+      <div class="pa" *ngFor="let a of assistants" [class.sel]="a.paId === selectedPaId" (click)="select(a)">
+        <span class="dot" [ngClass]="a.status"></span><b>{{ a.name }}</b>
+        <div class="mute" *ngIf="a.status !== 'off'">
+          {{ a.status === 'live' ? 'On shift' : 'On shift · no signal' }} · updated {{ ageText(a) }}<span *ngIf="a.battery != null"> · battery {{ a.battery }}%</span>
+        </div>
+        <div class="mute" *ngIf="a.status === 'off'">Off duty<span *ngIf="a.lastSeen"> · last seen {{ a.lastSeen | date:'d MMM, h:mm a' }}</span></div>
+      </div>
+      <div class="trailbar" *ngIf="selectedPaId">
+        <label>Day <input type="date" [(ngModel)]="date" (change)="onDateChange()"></label>
+        <div class="mute">{{ trailInfo }}</div>
+      </div>
+    </div>
+    <div id="assistantMap" class="map"></div>
+  </div>
+  <p class="foot mute">Tap an assistant to show their route for the chosen day. History is kept 30 days.</p>
+</ion-content>

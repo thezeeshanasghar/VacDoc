@@ -54,6 +54,8 @@ export class DashboardPage implements OnInit {
   showAgent: boolean = false;
   showPersonalAssistant: boolean = false;
   showPaAssignmentTracking: boolean = false;
+  showShift: boolean = false;               // PA: Start/End shift (location sharing), Doctor 1 only
+  showAssistantLocations: boolean = false;  // Doctor 1 only
   showColdChain: boolean = false;
   assignmentCount: number = 0;
   pendingApprovalsCount: number = 0;
@@ -140,6 +142,7 @@ export class DashboardPage implements OnInit {
         this.showAgent     = false;
         this.showPersonalAssistant = false;
         this.showPaAssignmentTracking = (perm && perm.ViewPaAssignmentStatus) || false;
+        this.showShift = Number(this.doctorId) === 1 && !!(perm && perm.TrackLocation);
         // Doctor must have Cold Chain enabled (VacAdmin-controlled, cached under
         // environment.DOCTOR at login) AND this PA must hold ColdChainEntry.
         const doctorProfile = await this.storage.get(environment.DOCTOR);
@@ -189,6 +192,7 @@ export class DashboardPage implements OnInit {
       this.showAnalytics = this.user && this.user.AllowAnalytics === true;
       this.showAgent     = this.user && this.user.AllowAgent === true;
       this.showPersonalAssistant = this.doctorId === 1;
+      this.showAssistantLocations = Number(this.doctorId) === 1;
       this.showPaAssignmentTracking = true;
       // Doctor always has full access to their own Cold Chain module once
       // the platform admin has enabled it — no PA-style flag needed here.

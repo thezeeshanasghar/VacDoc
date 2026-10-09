@@ -32,6 +32,26 @@
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
+      <!-- ── PA ONLY: Location sharing shift (Doctor 1's assistants with TrackLocation) ── -->
+      <div *ngIf="isPa && showShift" routerLink="/members/pa/shift" class="dash-card fam-teal">
+        <div class="dash-card-icon">
+          <ion-icon name="location-outline"></ion-icon>
+        </div>
+        <span class="dash-card-label">Location Sharing</span>
+        <span class="dash-card-sub">Start / end your shift</span>
+        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
+      </div>
+
+      <!-- ── Doctor 1: assistant live locations ── -->
+      <div *ngIf="!isPa && !isManager && showAssistantLocations" routerLink="/members/doctor/assistant-locations" class="dash-card fam-teal">
+        <div class="dash-card-icon">
+          <ion-icon name="location-outline"></ion-icon>
+        </div>
+        <span class="dash-card-label">Assistant Locations</span>
+        <span class="dash-card-sub">Live map &amp; routes</span>
+        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
+      </div>
+
       <!-- ── Unapproved (Doctor only, requires at least one PA) ── -->
       <div *ngIf="!isPa && hasPA" routerLink="/members/child/unapprove" class="dash-card fam-red">
         <div class="dash-card-icon" style="position:relative">

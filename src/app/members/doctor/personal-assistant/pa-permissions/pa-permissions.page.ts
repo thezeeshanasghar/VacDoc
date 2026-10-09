@@ -159,6 +159,15 @@ export class PaPermissionsPage implements OnInit {
         { key: 'ColdChainEntry', label: 'Log fridge temperature readings', desc: 'Submit temperature readings for the assigned clinic. Minimum 2 readings/day required per fridge; unlimited extra readings allowed.' },
       ]
     },
+    {
+      key: 'location',
+      label: 'Location',
+      icon: 'location-outline',
+      scopeNote: 'The assistant must also start a shift in the VPK Assistant app. Location is shared only during a shift.',
+      fields: [
+        { key: 'TrackLocation', label: 'Track location during shift', desc: 'Share live location with you while on shift. Shown on the Assistant Locations page.' },
+      ]
+    },
   ];
 
   constructor(

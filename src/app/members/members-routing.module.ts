@@ -37,6 +37,10 @@ const routes: Routes = [
         loadChildren: () => import('./notifications/notifications.module').then(m => m.NotificationsPageModule)
       },
       {
+        path: 'pa/shift',
+        loadChildren: () => import('./pa/shift/shift.module').then(m => m.ShiftPageModule)
+      },
+      {
         path: 'pa/assignments',
         loadChildren: () => import('./pa/assignments/assignments.module').then(m => m.AssignmentsPageModule)
       },
