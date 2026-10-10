@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { catchError,map } from 'rxjs/operators';
+import { PushService } from './push.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,8 @@ export class LoginService extends BaseService {
   private authenticationState = new BehaviorSubject(false);
   private readonly API_LOGIN = `${environment.BASE_URL}user/`
   constructor(
-    protected http: HttpClient
+    protected http: HttpClient,
+    private push: PushService
   ) { super(http); }
 
   isAuthenticated() {
@@ -22,6 +24,7 @@ export class LoginService extends BaseService {
 
   changeState(val: boolean) {
     this.authenticationState.next(val);
+    if (val) { this.push.start(); }
   }
 
   checkAuth(data): Observable<any> {

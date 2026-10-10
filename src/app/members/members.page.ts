@@ -481,6 +481,7 @@ import { ManagerService } from "src/app/services/manager.service";
 import { ChildService } from "src/app/services/child.service";
 import { BookingService } from "src/app/services/booking.service";
 import { NotificationService } from "src/app/services/notification.service";
+import { PushService } from "src/app/services/push.service";
 
 @Component({
   selector: "app-members",
@@ -509,6 +510,7 @@ export class MembersPage implements OnInit {
 
   constructor(
     private router: Router,
+    private push: PushService,
     public loadingController: LoadingController,
     private storage: Storage,
     public clinicService: ClinicService,
@@ -1045,6 +1047,7 @@ export class MembersPage implements OnInit {
   }
 
   clearStorage() {
+    this.push.stop();
     this.storage.clear();
     this.clinicService.clinics = null;
     this.clinicService.doctorId = null;
