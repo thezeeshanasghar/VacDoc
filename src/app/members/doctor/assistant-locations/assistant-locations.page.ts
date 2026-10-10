@@ -20,10 +20,12 @@ export class AssistantLocationsPage implements OnDestroy {
   date: string = '';                // yyyy-MM-dd, Pakistan day
   trailInfo = '';
   loading = true;
+  showAll = false;
+  readonly palette = ['#e4572e', '#2f6fdb', '#8e44ad', '#e0a800', '#17a2b8', '#d6336c', '#6f4e37', '#5c7c00'];
 
   private map: any = null;
   private markers: any[] = [];
-  private trailLayer: any = null;
+  private trailLayers: any[] = [];
   private timer: any = null;
   private fitted = false;
 
@@ -48,7 +50,7 @@ export class AssistantLocationsPage implements OnDestroy {
   private stop() {
     if (this.timer) { clearInterval(this.timer); this.timer = null; }
     if (this.map) { this.map.remove(); this.map = null; }
-    this.markers = []; this.trailLayer = null; this.fitted = false;
+    this.markers = []; this.trailLayers = []; this.fitted = false;
   }
 
   private todayPkt(): string {
@@ -93,7 +95,7 @@ export class AssistantLocationsPage implements OnDestroy {
         a.status = !a.onShift ? 'off' : (a.ageMin === null || a.ageMin > 5 ? 'nosignal' : 'live');
       });
       this.drawMarkers();
-      if (this.selectedPaId) { await this.loadTrail(); }
+      if (this.selectedPaId || this.showAll) { await this.loadTrail(); }
     } catch (e) {
       this.toastService.create('Could not load locations', 'danger');
     } finally {
@@ -108,6 +110,9 @@ export class AssistantLocationsPage implements OnDestroy {
     return Math.round(a.ageMin / 60) + ' h ago';
   }
 
+  // Fixed colour per assistant (by id) so the same person always has the same colour.
+  colorOf(a: any): string { return this.palette[Math.abs(Number(a.paId)) % this.palette.length]; }
+
   private drawMarkers() {
     if (!this.map) { return; }
     this.markers.forEach(m => this.map.removeLayer(m));
@@ -116,7 +121,7 @@ export class AssistantLocationsPage implements OnDestroy {
     const pts: any[] = [];
     this.assistants.filter(a => a.latitude != null).forEach(a => {
       const m = L.circleMarker([a.latitude, a.longitude], {
-        radius: 9, color: '#fff', weight: 2, fillColor: colors[a.status], fillOpacity: 1
+        radius: 9, color: this.colorOf(a), weight: 4, fillColor: colors[a.status], fillOpacity: 1
       }).addTo(this.map);
       m.bindTooltip(`${a.name} · ${this.ageText(a)}`, { permanent: true, direction: 'right', offset: [8, 0] });
       m.on('click', () => this.select(a));
@@ -135,22 +140,42 @@ export class AssistantLocationsPage implements OnDestroy {
     if (a.latitude != null && this.map) { this.map.setView([a.latitude, a.longitude], Math.max(this.map.getZoom(), 14)); }
   }
 
-  async onDateChange() { if (this.selectedPaId) { await this.loadTrail(); } }
+  async onDateChange() { if (this.selectedPaId || this.showAll) { await this.loadTrail(); } }
+
+  async onShowAllChange() { await this.loadTrail(); }
 
   private async loadTrail() {
-    if (this.trailLayer && this.map) { this.map.removeLayer(this.trailLayer); this.trailLayer = null; }
-    const pts: any[] = (await this.locationService.getTrail(this.doctorId, this.selectedPaId, this.date).toPromise()) || [];
-    if (!pts.length) { this.trailInfo = 'No locations recorded for this day.'; return; }
-    const latlngs = pts.map(p => [p.Latitude !== undefined ? p.Latitude : p.latitude, p.Longitude !== undefined ? p.Longitude : p.longitude]);
-    let km = 0;
-    for (let i = 1; i < latlngs.length; i++) { km += this.haversine(latlngs[i - 1], latlngs[i]); }
-    const first = this.utc(pts[0].RecordedAt || pts[0].recordedAt);
-    const last = this.utc(pts[pts.length - 1].RecordedAt || pts[pts.length - 1].recordedAt);
-    const t = (d: Date) => d.toLocaleTimeString('en-GB', { timeZone: 'Asia/Karachi', hour: '2-digit', minute: '2-digit' });
-    this.trailInfo = `${t(first)} → ${t(last)} · ${km.toFixed(1)} km · ${pts.length} points`;
-    if (this.map) {
-      this.trailLayer = L.polyline(latlngs, { color: '#0f5b63', weight: 4, opacity: .8 }).addTo(this.map);
-      if (this.date !== this.todayPkt() || this.markers.length === 0) { this.map.fitBounds(this.trailLayer.getBounds(), { padding: [40, 40] }); }
+    this.trailLayers.forEach(l => { if (this.map) { this.map.removeLayer(l); } });
+    this.trailLayers = [];
+    this.trailInfo = '';
+    if (!this.map) { return; }
+    const targets = this.showAll ? this.assistants : this.assistants.filter(a => a.paId === this.selectedPaId);
+    const results = await Promise.all(targets.map(async a => ({
+      a, pts: ((await this.locationService.getTrail(this.doctorId, a.paId, this.date).toPromise()) || []) as any[]
+    })));
+    if (!this.map) { return; }
+    let bounds: any = null;
+    results.forEach(r => {
+      if (!r.pts.length) { return; }
+      const latlngs = r.pts.map(p => [p.Latitude !== undefined ? p.Latitude : p.latitude, p.Longitude !== undefined ? p.Longitude : p.longitude]);
+      const isSel = r.a.paId === this.selectedPaId;
+      const line = L.polyline(latlngs, {
+        color: this.colorOf(r.a), weight: isSel || !this.showAll ? 5 : 3, opacity: isSel || !this.showAll ? .9 : .6
+      }).addTo(this.map);
+      this.trailLayers.push(line);
+      bounds = bounds ? bounds.extend(line.getBounds()) : line.getBounds();
+      if (isSel) {
+        let km = 0;
+        for (let i = 1; i < latlngs.length; i++) { km += this.haversine(latlngs[i - 1], latlngs[i]); }
+        const first = this.utc(r.pts[0].RecordedAt || r.pts[0].recordedAt);
+        const last = this.utc(r.pts[r.pts.length - 1].RecordedAt || r.pts[r.pts.length - 1].recordedAt);
+        const t = (d: Date) => d.toLocaleTimeString('en-GB', { timeZone: 'Asia/Karachi', hour: '2-digit', minute: '2-digit' });
+        this.trailInfo = `${t(first)} → ${t(last)} · ${km.toFixed(1)} km · ${r.pts.length} points`;
+      }
+    });
+    if (this.selectedPaId && !this.trailInfo) { this.trailInfo = 'No locations recorded for this day.'; }
+    if (bounds && (this.date !== this.todayPkt() || this.markers.length === 0)) {
+      this.map.fitBounds(bounds, { padding: [40, 40] });
     }
   }
 

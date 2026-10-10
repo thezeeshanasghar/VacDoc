@@ -13,7 +13,11 @@
       <div *ngIf="!loading && assistants.length === 0" class="empty">
         No assistants have location tracking enabled. Turn on "Track location during shift" in an assistant's permissions.
       </div>
-      <div class="pa" *ngFor="let a of assistants" [class.sel]="a.paId === selectedPaId" (click)="select(a)">
+      <div class="trailbar" *ngIf="assistants.length">
+        <label><input type="checkbox" [(ngModel)]="showAll" (change)="onShowAllChange()"> Show all trails</label>
+        <label *ngIf="!selectedPaId" class="day">Day <input type="date" [(ngModel)]="date" (change)="onDateChange()"></label>
+      </div>
+      <div class="pa" *ngFor="let a of assistants" [class.sel]="a.paId === selectedPaId" [style.border-left-color]="colorOf(a)" (click)="select(a)">
         <span class="dot" [ngClass]="a.status"></span><b>{{ a.name }}</b>
         <div class="mute" *ngIf="a.status !== 'off'">
           {{ a.status === 'live' ? 'On shift' : 'On shift · no signal' }} · updated {{ ageText(a) }}<span *ngIf="a.battery != null"> · battery {{ a.battery }}%</span>
