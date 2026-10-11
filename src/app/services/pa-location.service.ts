@@ -30,4 +30,10 @@ export class PaLocationService {
     const d = date ? `&date=${date}` : '';
     return this.http.get<any>(`${this.apiUrl}palocation/doctor/${doctorId}/trail?paId=${paId}${d}`);
   }
+
+  // from/to = yyyy-MM-dd (Pakistan days, max 31); omit for this month
+  getKm(doctorId: number, from?: string, to?: string): Observable<any> {
+    const q = from && to ? `?from=${from}&to=${to}` : '';
+    return this.http.get<any>(`${this.apiUrl}palocation/doctor/${doctorId}/km${q}`);
+  }
 }

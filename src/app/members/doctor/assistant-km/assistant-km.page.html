@@ -1,0 +1,60 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Assistant KM</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="bar">
+    <span class="chip" [class.on]="range === 'week'" (click)="setRange('week')">Last 7 days</span>
+    <span class="chip" [class.on]="range === 'month'" (click)="setRange('month')">This month</span>
+    <span class="chip" [class.on]="range === 'custom'" (click)="range = 'custom'">Custom</span>
+    <span class="grow"></span>
+    <span class="btn" (click)="exportCsv()">Export CSV</span>
+  </div>
+  <div class="bar" *ngIf="range === 'custom'">
+    <label>From <input type="date" [(ngModel)]="from"></label>
+    <label>To <input type="date" [(ngModel)]="to"></label>
+    <span class="btn" (click)="load()">Show</span>
+  </div>
+
+  <div class="empty" *ngIf="!loading && assistants.length === 0">
+    No assistants have location tracking enabled.
+  </div>
+
+  <div class="scroll" *ngIf="assistants.length">
+    <table>
+      <tr>
+        <th>Assistant</th>
+        <th *ngFor="let d of days">{{ dayLabel(d) }}</th>
+        <th class="tot">Total km</th>
+        <th class="tot">Avg / day</th>
+      </tr>
+      <tr *ngFor="let a of assistants">
+        <td>
+          <b>{{ a.name }}</b>
+          <span class="mute">{{ a.totalShifts }} shifts · {{ a.totalHours }} h</span>
+        </td>
+        <td *ngFor="let c of a.cells" [class.z]="!c.shifts && !c.fixes" [class.tap]="c.shifts || c.fixes" (click)="openDay(a, c)">
+          <ng-container *ngIf="c.shifts || c.fixes; else none">{{ c.km | number:'1.1-1' }}<span class="warn" *ngIf="c.gaps" title="GPS gaps – real distance probably higher"> ⚠</span></ng-container>
+          <ng-template #none>–</ng-template>
+        </td>
+        <td class="tot">{{ a.totalKm | number:'1.1-1' }}</td>
+        <td class="tot">{{ a.avgKm | number:'1.1-1' }}</td>
+      </tr>
+      <tr class="sum">
+        <td>All assistants</td>
+        <td *ngFor="let d of days">{{ dayTotal(d) | number:'1.1-1' }}</td>
+        <td class="tot">{{ grandTotal() | number:'1.1-1' }}</td>
+        <td class="tot">–</td>
+      </tr>
+    </table>
+  </div>
+  <p class="note" *ngIf="assistants.length">
+    – = no shift that day · ⚠ = GPS gaps (phone offline / app closed), real distance is probably higher · tap a cell to see that day's route.
+    Distances are approximate (±5–10% vs odometer). History is kept 30 days.
+  </p>
+</ion-content>

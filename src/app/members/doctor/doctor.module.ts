@@ -83,6 +83,10 @@ const routes: Routes = [
     loadChildren: () => import('./vaccine-education/vaccine-education.module').then(m => m.VaccineEducationPageModule)
   },
   {
+    path: "assistant-km",
+    loadChildren: () => import('./assistant-km/assistant-km.module').then(m => m.AssistantKmPageModule)
+  },
+  {
     path: "assistant-locations",
     loadChildren: () => import('./assistant-locations/assistant-locations.module').then(m => m.AssistantLocationsPageModule)
   },

@@ -1,4 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Storage } from '@ionic/storage';
 import { PaLocationService } from 'src/app/services/pa-location.service';
 import { ToastService } from 'src/app/shared/toast.service';
@@ -33,6 +34,7 @@ export class AssistantLocationsPage implements OnDestroy {
     private locationService: PaLocationService,
     private storage: Storage,
     private toastService: ToastService,
+    private route: ActivatedRoute,
   ) {}
 
   async ionViewWillEnter() {
@@ -40,7 +42,13 @@ export class AssistantLocationsPage implements OnDestroy {
     this.date = this.todayPkt();
     await this.loadLeaflet();
     this.initMap();
+    const qp = this.route.snapshot.queryParams;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(qp.date || '')) { this.date = qp.date; }
     await this.refresh();
+    if (qp.paId) {
+      const a = this.assistants.find(x => String(x.paId) === String(qp.paId));
+      if (a) { await this.select(a); }
+    }
     this.timer = setInterval(() => this.refresh(), 30000);
   }
 
