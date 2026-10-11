@@ -52,16 +52,6 @@
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
-      <!-- ── Doctor 1: assistant km per day ── -->
-      <div *ngIf="!isPa && !isManager && showAssistantLocations" routerLink="/members/doctor/assistant-km" class="dash-card fam-teal">
-        <div class="dash-card-icon">
-          <ion-icon name="speedometer-outline"></ion-icon>
-        </div>
-        <span class="dash-card-label">Assistant KM</span>
-        <span class="dash-card-sub">Distance per day</span>
-        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
-      </div>
-
       <!-- ── Unapproved (Doctor only, requires at least one PA) ── -->
       <div *ngIf="!isPa && hasPA" routerLink="/members/child/unapprove" class="dash-card fam-red">
         <div class="dash-card-icon" style="position:relative">
