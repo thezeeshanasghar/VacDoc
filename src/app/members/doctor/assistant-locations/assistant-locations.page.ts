@@ -20,6 +20,7 @@ export class AssistantLocationsPage implements OnDestroy {
   selectedPaId: number = null;
   date: string = '';                // yyyy-MM-dd, Pakistan day
   trailInfo = '';
+  kmByPa: { [paId: number]: any } = {};
   loading = true;
   showAll = false;
   readonly palette = ['#e4572e', '#2f6fdb', '#8e44ad', '#e0a800', '#17a2b8', '#d6336c', '#6f4e37', '#5c7c00'];
@@ -103,12 +104,29 @@ export class AssistantLocationsPage implements OnDestroy {
         a.status = !a.onShift ? 'off' : (a.ageMin === null || a.ageMin > 5 ? 'nosignal' : 'live');
       });
       this.drawMarkers();
+      await this.loadKm();
       if (this.selectedPaId || this.showAll) { await this.loadTrail(); }
     } catch (e) {
       this.toastService.create('Could not load locations', 'danger');
     } finally {
       this.loading = false;
     }
+  }
+
+  // Km for the chosen day, shown on each assistant row (same figures as the Assistant KM report).
+  private async loadKm() {
+    try {
+      const res: any = await this.locationService.getKm(this.doctorId, this.date, this.date).toPromise();
+      const map: any = {};
+      ((res && res.assistants) || []).forEach(a => { map[a.paId] = a.cells && a.cells[0]; });
+      this.kmByPa = map;
+    } catch (e) { this.kmByPa = {}; }
+  }
+
+  kmText(a: any): string {
+    const c = this.kmByPa[a.paId];
+    if (!c || (!c.shifts && !c.fixes)) { return ''; }
+    return c.km.toFixed(1) + ' km' + (c.gaps ? ' ⚠' : '');
   }
 
   ageText(a: any): string {
@@ -148,7 +166,7 @@ export class AssistantLocationsPage implements OnDestroy {
     if (a.latitude != null && this.map) { this.map.setView([a.latitude, a.longitude], Math.max(this.map.getZoom(), 14)); }
   }
 
-  async onDateChange() { if (this.selectedPaId || this.showAll) { await this.loadTrail(); } }
+  async onDateChange() { await this.loadKm(); if (this.selectedPaId || this.showAll) { await this.loadTrail(); } }
 
   async onShowAllChange() { await this.loadTrail(); }
 
