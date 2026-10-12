@@ -1291,14 +1291,14 @@ removal(type: string){
     return 'date-label--upcoming';
   }
 
-  // True for the first still-due (stage 1) group in the chronologically-sorted
-  // list, so the template can drop a one-time "Upcoming" divider right before
-  // it — separating past/given history from future/due groups.
+  // True for the first group that still has doses to give, so the template can
+  // drop a one-time "Upcoming" divider right before it. Skipped-only groups are
+  // stage 1 in groupStage() but have nothing to give, so they stay above it.
   isFirstUpcomingGroup(groups: { key: string, value: any[] }[], index: number): boolean {
     const entry = groups[index];
-    if (!entry || this.groupStage(entry.value, entry.key) !== 1) return false;
+    if (!entry || this.giveCount(entry.value) === 0) return false;
     for (let j = 0; j < index; j++) {
-      if (this.groupStage(groups[j].value, groups[j].key) === 1) return false;
+      if (this.giveCount(groups[j].value) > 0) return false;
     }
     return true;
   }
