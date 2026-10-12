@@ -356,6 +356,34 @@
 
 <!-- ═══ Bottom-sheet overlays (spec §7.2, §4.1) ══════════════════════════════ -->
 
+<!-- Growth sheet: PA must document growth (or mark Not measured) before payment on a regular child -->
+<div class="sheet-backdrop" *ngIf="growthSheetOpen" (click)="closeGrowthSheet()"></div>
+<div class="sheet" *ngIf="growthSheetOpen">
+  <div class="sheet-grab"></div>
+  <div class="sheet-title-row">
+    <div class="sheet-title">Growth not recorded</div>
+    <ion-icon name="close-outline" class="sheet-close" (click)="closeGrowthSheet()"></ion-icon>
+  </div>
+  <div class="growth-sub">Enter what you measured, or mark it not measured. Then you can record payment.</div>
+  <div class="growth-grid">
+    <label class="growth-field">Weight (kg)
+      <input type="number" inputmode="decimal" step="0.1" [disabled]="growthNotMeasured" [(ngModel)]="growthW" placeholder="12.4">
+    </label>
+    <label class="growth-field">Height (cm)
+      <input type="number" inputmode="decimal" step="0.1" [disabled]="growthNotMeasured" [(ngModel)]="growthH" placeholder="88">
+    </label>
+    <label class="growth-field">OFC (cm)
+      <input type="number" inputmode="decimal" step="0.1" [disabled]="growthNotMeasured" [(ngModel)]="growthO" placeholder="optional">
+    </label>
+  </div>
+  <div class="growth-hint">{{ growthMessage() }}</div>
+  <label class="growth-nm">
+    <input type="checkbox" [(ngModel)]="growthNotMeasured">
+    <span><b>Not measured</b><br><small>Logged against you. The doctor can see it.</small></span>
+  </label>
+  <button type="button" class="sheet-confirm" [disabled]="!growthValid()" (click)="continueFromGrowth()">CONTINUE TO PAYMENT</button>
+</div>
+
 <!-- Record Payment sheet -->
 <div class="sheet-backdrop" *ngIf="paymentPopupOpen" (click)="closePaymentPopup()"></div>
 <div class="sheet" *ngIf="paymentPopupOpen">

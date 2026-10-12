@@ -334,10 +334,19 @@ export class AssignmentsPage {
   }
 
   getMissingGrowthVaccines(a: any): string[] {
-    if (!a.Schedules || !Array.isArray(a.Schedules)) { return []; }
+    if (!a.Schedules || !Array.isArray(a.Schedules) || a.ChildType !== 'regular') { return []; }
     return a.Schedules
-      .filter(function(s) { return !s.Weight && !s.Height && !s.Circle; })
+      .filter(function(s) { return s.IsDone && !s.IsDisease && !s.GrowthNotMeasured && !(s.Weight > 0 && s.Height > 0); })
       .map(function(s) { return s.DoseName || 'Unknown'; });
+  }
+
+  // Mirrors the server gate (ScheduleController.ApplyGrowthGate): regular child, given,
+  // non-disease dose with neither weight+height nor Not measured recorded.
+  needsGrowthBeforePayment(a: any): boolean {
+    if (a.ChildType !== 'regular') { return false; }
+    return (a.Schedules || []).some(function(s: any) {
+      return s.IsDone && !s.IsDisease && !s.GrowthNotMeasured && !(s.Weight > 0 && s.Height > 0);
+    });
   }
 
   // "Mark Done" — the earlier of the two completion actions (MarkDone endpoint): gates on
@@ -396,6 +405,15 @@ export class AssignmentsPage {
   // doctor being told a handover is pending first.
   async confirmComplete(assignment: any) {
     if (this.stage(assignment) !== 'pendingHandover') { return; }
+    if (this.hasUnpaidSchedules(assignment) && this.needsGrowthBeforePayment(assignment)) {
+      const gAlert = await this.alertController.create({
+        header: 'Growth Not Recorded',
+        message: 'Record weight and height (or mark Not measured) on the child\'s vaccine page first, using the payment icon. Then come back to complete.',
+        buttons: [{ text: 'OK', role: 'cancel' }]
+      });
+      await gAlert.present();
+      return;
+    }
     if (this.hasUnpaidSchedules(assignment)) {
       const alert = await this.alertController.create({
         header: 'Record Payment Mode',

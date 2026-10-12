@@ -79,6 +79,15 @@ export class VaccinePage {
   paymentTargetScheduleId: number = null;
   paymentTargetScheduleIds: number[] = [];
   paymentDueAmount: number = 0;
+  // Growth gate before payment (PA + regular child). growthSheetOpen shows the box;
+  // pendingGrowth rides along on each recordPaymentMode call of the visit.
+  growthSheetOpen: boolean = false;
+  growthW: string = '';
+  growthH: string = '';
+  growthO: string = '';
+  growthNotMeasured: boolean = false;
+  pendingGrowth: any = null;
+  private growthResume: { scheduleId: number, group: any[] } | null = null;
   canCollectPayment = true;
   invoiceExistsMap: { [date: string]: boolean } = {};
   invoiceAmountMap: { [date: string]: number } = {};
@@ -1890,7 +1899,55 @@ removal(type: string){
     return done ? done.Id : data[0].Id;
   }
 
-  async openPaymentPopup(scheduleId: number, groupVaccines: any[]) {
+  // PA recording payment on a regular child's given doses must document growth first (or mark
+  // Not measured). Doctors/Managers, non-regular children and disease rows skip it. The server
+  // enforces the same rule in ScheduleController.ApplyGrowthGate.
+  private needsGrowth(groupVaccines: any[]): boolean {
+    if (this.usertype !== 'PA' || !this.paId || this.type !== 'regular') { return false; }
+    return (groupVaccines || []).some(function(v) {
+      return v.IsDone && !v.IsDisease && !v.GrowthNotMeasured && !(v.Weight > 0 && v.Height > 0);
+    });
+  }
+
+  // Pure (called from the template): returns the validation message, '' when fine.
+  growthMessage(): string {
+    if (this.growthNotMeasured) { return ''; }
+    const w = parseFloat(this.growthW), h = parseFloat(this.growthH), o = parseFloat(this.growthO);
+    if (this.growthW && (isNaN(w) || w < 2 || w > 40)) { return 'Weight looks wrong (2 to 40 kg).'; }
+    if (this.growthH && (isNaN(h) || h < 40 || h > 150)) { return 'Height looks wrong (40 to 150 cm).'; }
+    if (this.growthO && (isNaN(o) || o < 30 || o > 60)) { return 'OFC looks wrong (30 to 60 cm).'; }
+    return '';
+  }
+
+  growthValid(): boolean {
+    if (this.growthNotMeasured) { return true; }
+    return !this.growthMessage() && parseFloat(this.growthW) > 0 && parseFloat(this.growthH) > 0;
+  }
+
+  closeGrowthSheet() {
+    this.growthSheetOpen = false;
+    this.growthResume = null;
+  }
+
+  continueFromGrowth() {
+    if (!this.growthValid() || !this.growthResume) { return; }
+    this.pendingGrowth = this.growthNotMeasured
+      ? { GrowthNotMeasured: true }
+      : { Weight: Number(this.growthW), Height: Number(this.growthH), Circle: this.growthO ? Number(this.growthO) : null };
+    const r = this.growthResume;
+    this.growthSheetOpen = false;
+    this.growthResume = null;
+    this.openPaymentPopup(r.scheduleId, r.group, true);
+  }
+
+  async openPaymentPopup(scheduleId: number, groupVaccines: any[], growthDone: boolean = false) {
+    if (!growthDone && this.needsGrowth(groupVaccines)) {
+      this.growthW = ''; this.growthH = ''; this.growthO = '';
+      this.growthNotMeasured = false; this.pendingGrowth = null;
+      this.growthResume = { scheduleId: scheduleId, group: groupVaccines };
+      this.growthSheetOpen = true;
+      return;
+    }
     this.paymentTargetScheduleId = scheduleId;
     // Collect ALL done schedule IDs in this group — payment mode is recorded for the whole
     // visit even when individual schedules have Amount=0 (e.g. consultation-fee-only invoices).
@@ -1923,6 +1980,7 @@ removal(type: string){
   }
 
   closePaymentPopup() {
+    this.pendingGrowth = null;
     this.paymentPopupOpen = false;
     this.paymentTargetScheduleId = null;
     this.paymentTargetScheduleIds = [];
@@ -1937,7 +1995,8 @@ removal(type: string){
     const loading = await this.loadingController.create({ message: 'Recording payment...' });
     await loading.present();
     // Record payment mode for ALL schedules in this visit in parallel
-    const calls = ids.map(id => this.scheduleService.recordPaymentMode(id, { PaymentMode: mode, CallerUserId: this.callerUserId, SecurityStamp: this.securityStamp }).toPromise());
+    const growth = this.pendingGrowth || {};
+    const calls = ids.map(id => this.scheduleService.recordPaymentMode(id, Object.assign({ PaymentMode: mode, CallerUserId: this.callerUserId, SecurityStamp: this.securityStamp }, growth)).toPromise());
     try {
       const results = await Promise.all(calls);
       loading.dismiss();
