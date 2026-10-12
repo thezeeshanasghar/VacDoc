@@ -4,7 +4,7 @@
 .pa { padding: 10px 14px; border-left: 5px solid transparent; border-bottom: 1px solid #eef2f2; cursor: pointer; }
 .pa.sel { background: #e7f1f2; }
 .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; background: #9aa8aa; }
-.dot.live { background: #1b9a5b; }
+.dot.onshift { background: #1b9a5b; }
 .dot.nosignal { background: #c98a0a; }
 .mute { color: #5d7376; font-size: 12px; }
 .empty { padding: 16px; color: #5d7376; }
@@ -13,3 +13,5 @@
 .day { margin-left: 12px; }
 .km { float: right; font-weight: 700; color: #0f5b63; }
 .kmlink { margin-left: 12px; padding: 4px 10px; border-radius: 8px; background: #0f5b63; color: #fff; font-size: 12px; font-weight: 600; text-decoration: none; }
+.warn { cursor: pointer; color: #c98a0a; }
+.trailinfo { padding-top: 0; }

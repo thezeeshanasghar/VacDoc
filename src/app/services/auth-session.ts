@@ -39,6 +39,11 @@ export class AuthSession {
     storage.clear = function () {
       AuthSession.token = null;
       AuthSession.loaded = true;
+      // Logged out: stop the native GPS service (only exists inside the Assistant app).
+      try {
+        const t = (window as any).VpkTracker;
+        if (t && typeof t.stop === 'function') { t.stop(); }
+      } catch (e) { /* web build / bridge missing: nothing to stop */ }
       return original();
     };
   }

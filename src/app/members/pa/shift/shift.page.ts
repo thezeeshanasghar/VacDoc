@@ -140,6 +140,7 @@ export class ShiftPage implements OnDestroy {
   async endShift() {
     this.busy = true;
     try {
+      if (this.inApp) { await this.flushTracker(10000); }
       await this.locationService.endShift(this.paId).toPromise();
       if (this.inApp) { this.tracker.stop(); }
       this.onShift = false;
@@ -149,6 +150,23 @@ export class ShiftPage implements OnDestroy {
     } finally {
       this.busy = false;
     }
+  }
+
+  // Asks the app to upload queued fixes and waits until none are left, or the timeout passes
+  // (offline: carry on; the app keeps the rest and uploads them later).
+  private flushTracker(timeoutMs: number): Promise<void> {
+    return new Promise<void>(resolve => {
+      try {
+        if (!this.tracker.requestFlush || !this.tracker.pendingCount) { resolve(); return; }
+        this.tracker.requestFlush();
+        const started = Date.now();
+        const t = setInterval(() => {
+          let left = 0;
+          try { left = this.tracker.pendingCount(); } catch (e) { left = 0; }
+          if (left <= 0 || Date.now() - started > timeoutMs) { clearInterval(t); resolve(); }
+        }, 500);
+      } catch (e) { resolve(); }
+    });
   }
 
   private stopPoll() {

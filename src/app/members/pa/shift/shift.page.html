@@ -21,7 +21,7 @@
         <b>Location sharing</b>
         <span class="pill" [class.on]="onShift">{{ onShift ? 'ON SHIFT' : 'OFF DUTY' }}</span>
       </div>
-      <p class="mute" *ngIf="onShift">Sharing with your doctor since {{ startedAt | date:'shortTime' }}, including when the screen is off. Your location is shared only during a shift.</p>
+      <p class="mute" *ngIf="onShift">Sharing with your doctor since {{ startedAt | date:'shortTime':'+0500' }}, including when the screen is off. Your location is shared only during a shift.</p>
       <p class="mute" *ngIf="!onShift">Not sharing. Tap to start your shift.</p>
       <button class="big start" *ngIf="!onShift" [disabled]="busy" (click)="startShift()">Start shift</button>
       <button class="big end" *ngIf="onShift" [disabled]="busy" (click)="endShift()">End shift</button>

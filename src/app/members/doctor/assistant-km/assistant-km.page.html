@@ -38,8 +38,8 @@
           <b>{{ a.name }}</b>
           <span class="mute">{{ a.totalShifts }} shifts · {{ a.totalHours }} h</span>
         </td>
-        <td *ngFor="let c of a.cells" [class.z]="!c.shifts && !c.fixes" [class.tap]="c.shifts || c.fixes" (click)="openDay(a, c)">
-          <ng-container *ngIf="c.shifts || c.fixes; else none">{{ c.km | number:'1.1-1' }}<span class="warn" *ngIf="c.gaps" title="GPS gaps – real distance probably higher"> ⚠</span></ng-container>
+        <td *ngFor="let c of a.cells" [class.z]="!showCell(c)" [class.tap]="showCell(c) && !c.noGps" (click)="openDay(a, c)">
+          <ng-container *ngIf="showCell(c); else none"><ng-container *ngIf="c.noGps; else kmv">No GPS</ng-container><ng-template #kmv>{{ c.km | number:'1.1-1' }}<span class="warn" *ngIf="c.gaps" title="GPS gap over 15 min — real distance may be higher"> ⚠</span></ng-template></ng-container>
           <ng-template #none>–</ng-template>
         </td>
         <td class="tot">{{ a.totalKm | number:'1.1-1' }}</td>
@@ -54,7 +54,7 @@
     </table>
   </div>
   <p class="note" *ngIf="assistants.length">
-    – = no shift that day · ⚠ = GPS gaps (phone offline / app closed), real distance is probably higher · tap a cell to see that day's route.
-    Distances are approximate (±5–10% vs odometer). History is kept 30 days.
+    – = no shift that day · No GPS = shift without usable location · ⚠ GPS gap over 15 min — real distance may be higher · tap a cell to see that day's route.
+    Distance is estimated from GPS and may differ from an odometer. History is kept 30 days.
   </p>
 </ion-content>

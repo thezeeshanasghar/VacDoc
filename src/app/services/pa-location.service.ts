@@ -36,4 +36,10 @@ export class PaLocationService {
     const q = from && to ? `?from=${from}&to=${to}` : '';
     return this.http.get<any>(`${this.apiUrl}palocation/doctor/${doctorId}/km${q}`);
   }
+
+  // Trail V2: { serverNowPkt, km, gaps, skipped, points:[{lat,lng,recordedAt,accuracy,shiftId,usable}] }
+  getTrailV2(doctorId: number, paId: number, date?: string): Observable<any> {
+    const d = date ? `&date=${date}` : '';
+    return this.http.get<any>(`${this.apiUrl}palocation/doctor/${doctorId}/trailv2?paId=${paId}${d}`);
+  }
 }
