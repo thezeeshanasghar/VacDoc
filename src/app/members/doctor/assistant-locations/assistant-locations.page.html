@@ -19,7 +19,8 @@
         <label class="day">Day <input type="date" [(ngModel)]="date" [max]="maxDate" (change)="onDateChange()"></label>
         <div class="mute" *ngIf="kmError">KM figures unavailable right now.</div>
       </div>
-      <div class="pa" *ngFor="let a of assistants" [class.sel]="a.paId === selectedPaId" [style.border-left-color]="colorOf(a)" (click)="select(a)">
+      <div class="pa" *ngFor="let a of assistants" [class.sel]="checked[a.paId]" [style.border-left-color]="colorOf(a)" (click)="toggle(a)">
+        <input type="checkbox" class="pick" [checked]="checked[a.paId]" (click)="$event.stopPropagation()" (change)="toggle(a)">
         <span class="dot" [ngClass]="a.status"></span><b>{{ a.name }}</b>
         <span class="km" *ngIf="kmText(a)">{{ kmText(a) }}<span class="warn" *ngIf="hasGap(a)" (click)="explainGap($event)"> ⚠</span></span>
         <div class="mute" *ngIf="a.status !== 'off'">
@@ -28,9 +29,9 @@
         <div class="mute" *ngIf="a.status === 'off'">Off duty<span *ngIf="a.lastSeenAt"> · last seen {{ lastKnownText(a) }}</span></div>
         <div class="mute" *ngIf="lowCoverage(a)">Low GPS coverage - distance may be understated</div>
       </div>
-      <div class="trailbar trailinfo" *ngIf="selectedPaId"><div class="mute">{{ trailInfo }}</div></div>
+      <div class="trailbar trailinfo" *ngIf="checkedList().length === 1"><div class="mute">{{ trailInfo }}</div></div>
     </div>
     <div id="assistantMap" class="map"></div>
   </div>
-  <p class="foot mute">Tap an assistant to show their route for the chosen day. History is kept 30 days. ⚠ GPS gap over 15 min — real distance may be higher.</p>
+  <p class="foot mute">Tick an assistant to show only their position and route for the chosen day. History is kept 30 days. ⚠ GPS gap over 15 min — real distance may be higher.</p>
 </ion-content>

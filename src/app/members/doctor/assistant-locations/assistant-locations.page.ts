@@ -49,7 +49,7 @@ function loadLeafletOnce(): Promise<void> {
 export class AssistantLocationsPage implements OnDestroy {
   doctorId: number = null;
   assistants: any[] = [];
-  selectedPaId: number = null;
+  checked: { [paId: number]: boolean } = {};   // assistants ticked in the list: only these show on the map
   date: string = '';                // yyyy-MM-dd, Pakistan day
   maxDate = '';                     // server "today"
   trailInfo = '';
@@ -98,7 +98,7 @@ export class AssistantLocationsPage implements OnDestroy {
       if (!this.active) { return; }
       if (qp.paId) {
         const a = this.assistants.find(x => String(x.paId) === String(qp.paId));
-        if (a) { await this.select(a, true); }
+        if (a) { await this.toggle(a, true); }
       }
     } catch (e) {
       // fall through: the timer must still start
@@ -124,7 +124,7 @@ export class AssistantLocationsPage implements OnDestroy {
   }
 
   private resetState() {
-    this.selectedPaId = null; this.trailInfo = ''; this.kmByPa = {}; this.kmError = false;
+    this.checked = {}; this.trailInfo = ''; this.kmByPa = {}; this.kmError = false;
     this.showAll = false; this.assistants = []; this.date = ''; this.lastGoodDate = ''; this.maxDate = '';
     this.loading = true;
   }
@@ -170,12 +170,14 @@ export class AssistantLocationsPage implements OnDestroy {
       this.liveMono = performance.now();
       if (nowPkt) { this.setToday(String(nowPkt).substring(0, 10)); }
       this.assistants = list;
+      Object.keys(this.checked).forEach(k => { if (!list.some(a => String(a.paId) === k)) { delete this.checked[k as any]; } });
+      this.syncShowAll();
       this.assignColors();
       if (!this.date) { this.setDate(forceDate && forceDate <= (this.maxDate || forceDate) ? forceDate : (this.maxDate || '')); }
       this.drawMarkers(initial);
       await this.loadKm();
       if (!this.active || tok !== this.liveTok) { return; }
-      if (this.selectedPaId || this.showAll) { await this.loadTrail(false); }
+      if (this.checkedList().length) { await this.loadTrail(false); }
     } catch (e) {
       if (this.active && tok === this.liveTok) { this.notify('Could not load locations'); }
     } finally {
@@ -272,7 +274,8 @@ export class AssistantLocationsPage implements OnDestroy {
     const colors: any = { onshift: '#1b9a5b', nosignal: '#c98a0a', off: '#9aa8aa' };
     const pts: any[] = [];
     const seen: any = {};
-    this.assistants.filter(a => a.latitude != null && a.longitude != null).forEach(a => {
+    const anyChecked = this.checkedList().length > 0;
+    this.assistants.filter(a => a.latitude != null && a.longitude != null && (!anyChecked || this.checked[a.paId])).forEach(a => {
       seen[a.paId] = true;
       const stale = a.status !== 'onshift';
       const style = {
@@ -288,7 +291,7 @@ export class AssistantLocationsPage implements OnDestroy {
       } else {
         m = L.circleMarker([a.latitude, a.longitude], style).addTo(this.map);
         m.bindTooltip(label, { permanent: true, direction: 'right', offset: [8, 0] });
-        m.on('click', () => this.select(a));
+        m.on('click', () => this.toggle(a));
         this.markerMap[a.paId] = m;
       }
       pts.push([a.latitude, a.longitude]);
@@ -302,21 +305,22 @@ export class AssistantLocationsPage implements OnDestroy {
     }
   }
 
-  // Tapping the selected assistant again deselects.
-  async select(a: any, forceSelect?: boolean) {
+  checkedList(): any[] { return this.assistants.filter(a => this.checked[a.paId]); }
+
+  private syncShowAll() { this.showAll = this.assistants.length > 0 && this.checkedList().length === this.assistants.length; }
+
+  // Tick / untick one assistant. With nothing ticked the map shows everyone's latest position.
+  async toggle(a: any, forceOn?: boolean) {
     try {
-      if (this.selectedPaId === a.paId && !forceSelect) {
-        this.selectedPaId = null;
-        this.trailInfo = '';
-        await this.loadTrail(false);
-        return;
-      }
-      this.selectedPaId = a.paId;
+      this.checked[a.paId] = forceOn ? true : !this.checked[a.paId];
+      if (!this.checked[a.paId]) { delete this.checked[a.paId]; }
+      this.syncShowAll();
+      this.drawMarkers(false);
       const drew = await this.loadTrail(true);
-      if (drew === false && a.latitude != null && this.map && this.selectedPaId === a.paId) {
+      if (drew === false && this.checked[a.paId] && a.latitude != null && this.map && this.checkedList().length === 1) {
         this.map.setView([a.latitude, a.longitude], Math.max(this.map.getZoom(), 14));
       }
-    } catch (e) { /* keep going: the timer must not die with a failed select */ }
+    } catch (e) { /* keep going: the timer must not die with a failed toggle */ }
   }
 
   async onDateChange() {
@@ -326,11 +330,16 @@ export class AssistantLocationsPage implements OnDestroy {
     }
     this.lastGoodDate = this.date;
     await this.loadKm();
-    if (this.selectedPaId || this.showAll) { await this.loadTrail(true); }
+    if (this.checkedList().length) { await this.loadTrail(true); }
     else { this.clearTrails(); this.trailInfo = ''; }
   }
 
-  async onShowAllChange() { await this.loadTrail(true); }
+  async onShowAllChange() {
+    this.checked = {};
+    if (this.showAll) { this.assistants.forEach(a => { this.checked[a.paId] = true; }); }
+    this.drawMarkers(false);
+    await this.loadTrail(true);
+  }
 
   private clearTrails() {
     this.trailLayers.forEach(l => { if (this.map) { this.map.removeLayer(l); } });
@@ -367,9 +376,11 @@ export class AssistantLocationsPage implements OnDestroy {
   // false if nothing to draw, undefined if superseded. fit = user action: allowed to move the map.
   private async loadTrail(fit: boolean): Promise<boolean> {
     const tok = ++this.trailTok;
-    const date = this.date, sel = this.selectedPaId, all = this.showAll;
+    const date = this.date;
+    const targets = this.checkedList();
+    const key = targets.map(a => a.paId).join(',');
+    const single = targets.length === 1 ? targets[0].paId : null;
     if (!this.map || !date) { return false; }
-    const targets = all ? this.assistants.slice() : this.assistants.filter(a => a.paId === sel);
     if (!targets.length) { this.clearTrails(); this.trailInfo = ''; return false; }
     let failed = 0;
     const results = await Promise.all(targets.map(async a => {
@@ -377,7 +388,7 @@ export class AssistantLocationsPage implements OnDestroy {
         return { a, res: await this.locationService.getTrailV2(this.doctorId, a.paId, date).toPromise(), err: false };
       } catch (e) { failed++; return { a, res: null, err: true }; }
     }));
-    if (!this.active || !this.map || tok !== this.trailTok || date !== this.date || sel !== this.selectedPaId || all !== this.showAll) {
+    if (!this.active || !this.map || tok !== this.trailTok || date !== this.date || key !== this.checkedList().map(a => a.paId).join(',')) {
       return undefined;
     }
     if (failed) { this.notify(failed === targets.length ? 'Could not load the route' : 'Could not load some routes'); }
@@ -386,7 +397,8 @@ export class AssistantLocationsPage implements OnDestroy {
     let bounds: any = null;
     let selBounds: any = null;
     results.forEach(r => {
-      const isSel = r.a.paId === sel;
+      const isSel = r.a.paId === single;
+      const multi = targets.length > 1;
       if (r.err) { if (isSel) { this.trailInfo = 'Could not load this route.'; } return; }
       const res = r.res || {};
       if (res.serverNowPkt) { this.setToday(String(res.serverNowPkt).substring(0, 10)); }
@@ -394,7 +406,7 @@ export class AssistantLocationsPage implements OnDestroy {
       const segs = this.segments(points);
       segs.forEach(seg => {
         const line = L.polyline(seg, {
-          color: this.colorOf(r.a), weight: isSel || !all ? 5 : 3, opacity: isSel || !all ? .9 : .6
+          color: this.colorOf(r.a), weight: multi ? 3 : 5, opacity: multi ? .7 : .9
         }).addTo(this.map);
         this.trailLayers.push(line);
         if (isSel) { this.selLayers.push(line); }
@@ -412,10 +424,10 @@ export class AssistantLocationsPage implements OnDestroy {
       }
     });
     this.selLayers.forEach(l => l.bringToFront());
-    if (sel && !this.trailInfo) { this.trailInfo = 'No locations recorded for this day.'; }
+    if (single && !this.trailInfo) { this.trailInfo = 'No locations recorded for this day.'; }
     const target = selBounds || bounds;
     if (fit && target) { this.map.fitBounds(target, { padding: [40, 40] }); }
-    return !!(sel ? selBounds : bounds);
+    return !!(single ? selBounds : bounds);
   }
 
   private haversine(a: number[], b: number[]): number {
