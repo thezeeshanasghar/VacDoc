@@ -49,6 +49,13 @@ export class LoginPage implements OnInit {
       if (value) {
         this.router.navigate(['/members']);
       } else {
+        // The assistant APK (the only place window.VpkTracker exists) opens on the Personal Assistant login.
+        // Once per launch, so the "back" link on that page can still reach the doctor login.
+        if ((window as any).VpkTracker && !sessionStorage.getItem('vpkPaLoginShown')) {
+          sessionStorage.setItem('vpkPaLoginShown', '1');
+          this.router.navigate(['/loginpa'], { replaceUrl: true });
+          return;
+        }
         this.skipLoginIfAlreadyLoggedIn();
         this.loginservice.changeState(false);
         this.fg = this.formBuilder.group({
