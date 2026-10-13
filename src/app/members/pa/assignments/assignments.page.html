@@ -27,24 +27,24 @@
     <p>No active assignments</p>
   </div>
 
-  <div class="seg-toggle" *ngIf="assignments.length > 0 || todayExtrasCount > 0">
+  <div class="seg-toggle" *ngIf="hasAnyRows">
     <div class="seg-btn tone-warn" [class.active]="dueFilter === 'today'" (click)="setDueFilter('today')">
       Today <span class="seg-count">{{ dueFilterCount('today') }}</span>
     </div>
-    <div class="seg-btn tone-blue" [class.active]="dueFilter === 'upcoming'" (click)="setDueFilter('upcoming')">
-      Upcoming <span class="seg-count">{{ dueFilterCount('upcoming') }}</span>
+    <div class="seg-btn tone-blue" [class.active]="dueFilter === 'others'" (click)="setDueFilter('others')">
+      Others <span class="seg-count">{{ dueFilterCount('others') }}</span>
     </div>
   </div>
 
-  <div *ngIf="filteredAssignments.length === 0 && (dueFilter === 'upcoming' || todayExtrasCount === 0) && (assignments.length > 0 || todayExtrasCount > 0)" class="empty-state">
+  <div *ngIf="hasAnyRows && filteredAssignments.length === 0 && visibleDirectSales.length + visibleCompletedSales.length + visibleOrphans.length === 0" class="empty-state">
     <ion-icon name="calendar-clear-outline"></ion-icon>
-    <p>No assignments {{ dueFilter === 'today' ? 'due today' : 'upcoming' }}</p>
+    <p>{{ dueFilter === 'today' ? 'Nothing assigned today' : 'No other pending assignments' }}</p>
   </div>
 
-  <ion-list-header *ngIf="dueFilter === 'today' && pendingDirectSales.length > 0">
+  <ion-list-header *ngIf="visibleDirectSales.length > 0">
     <ion-label>Direct Sales — Record Payment</ion-label>
   </ion-list-header>
-  <ion-card *ngFor="let s of (dueFilter === 'today' ? pendingDirectSales : [])" class="direct-sale-card">
+  <ion-card *ngFor="let s of visibleDirectSales" class="direct-sale-card">
     <ion-card-content>
       <div class="icons">
         <div class="icons-left">
@@ -70,11 +70,11 @@
     </ion-card-content>
   </ion-card>
 
-  <ng-container *ngIf="dueFilter === 'today'">
-    <ion-list-header *ngIf="completedDirectSales.length > 0">
+  <ng-container>
+    <ion-list-header *ngIf="visibleCompletedSales.length > 0">
       <ion-label>Direct Sales — Awaiting Doctor Confirmation</ion-label>
     </ion-list-header>
-    <ion-card *ngFor="let s of completedDirectSales" class="direct-sale-card">
+    <ion-card *ngFor="let s of visibleCompletedSales" class="direct-sale-card">
       <ion-card-content>
         <div class="icons">
           <div class="icons-left">
@@ -95,10 +95,10 @@
       </ion-card-content>
     </ion-card>
 
-    <ion-list-header *ngIf="orphanInvoiceRows.length > 0">
+    <ion-list-header *ngIf="visibleOrphans.length > 0">
       <ion-label>Invoices Awaiting Confirmation</ion-label>
     </ion-list-header>
-    <ion-card *ngFor="let r of orphanInvoiceRows" class="direct-sale-card">
+    <ion-card *ngFor="let r of visibleOrphans" class="direct-sale-card">
       <ion-card-content>
         <div class="icons">
           <div class="icons-left">
