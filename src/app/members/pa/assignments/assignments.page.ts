@@ -21,7 +21,7 @@ export class AssignmentsPage {
   orphanInvoiceRows: any[] = [];
   loading: boolean = false;
   paId: number = null;
-  dueFilter: 'today' | 'upcoming' | 'all' = 'all';
+  dueFilter: 'today' | 'upcoming' = 'today';
 
   // Cached at loadAll() time — needed on every money-moving call (record-payment-mode,
   // mark-payment-collected) now that those endpoints require caller identity.
@@ -268,14 +268,10 @@ export class AssignmentsPage {
   // is in the future or unset — unrecorded payment is itself an urgent, unfinished task.
   // pendingHandover/completed-stage cards always count under "Today" too — see
   // isPastDueStage's comment: unconfirmed cash handover, never date-gated.
-  // Direct Sales have no TargetDate/urgency at all — always under "All" only, same as
-  // before the toggle existed.
-  dueFilterCount(filter: 'today' | 'upcoming' | 'all'): number {
-    if (filter === 'all') {
-      return this.assignments.length + this.pendingDirectSales.length + this.completedDirectSales.length + this.orphanInvoiceRows.length;
-    }
+  // Direct Sales have no TargetDate/urgency at all — counted under "Today" (todayExtrasCount).
+  dueFilterCount(filter: 'today' | 'upcoming'): number {
     if (filter === 'today') {
-      return this.assignments.filter(a => this.isTodayBucket(a)).length;
+      return this.assignments.filter(a => this.isTodayBucket(a)).length + this.todayExtrasCount;
     }
     return this.assignments.filter(a => !this.isPastDueStage(a) && this.urgency(a) === 'upcoming' && !this.needsPaymentAction(a)).length;
   }
@@ -289,15 +285,21 @@ export class AssignmentsPage {
     return this.isPastDueStage(a) || u === 'today' || u === 'overdue' || u === 'none' || this.needsPaymentAction(a);
   }
 
-  setDueFilter(filter: 'today' | 'upcoming' | 'all') {
+  // Direct sales and orphan invoice rows have no TargetDate and are unconfirmed money —
+  // Today only. The API drops each of them the moment the doctor confirms, so nothing
+  // lingers once handover is confirmed; there is deliberately no "All" tab to keep them.
+  get todayExtrasCount(): number {
+    return this.pendingDirectSales.length + this.completedDirectSales.length + this.orphanInvoiceRows.length;
+  }
+
+  setDueFilter(filter: 'today' | 'upcoming') {
     this.dueFilter = filter;
   }
 
-  // Direct Sales and orphan invoice rows only ever show under "All"; undated assignments
+  // Direct Sales and orphan invoice rows only ever show under "Today"; undated assignments
   // count as Today (see isTodayBucket). pendingHandover/completed-stage cards and cards needing
   // payment action always show under "Today" regardless of date — see isPastDueStage.
   get filteredAssignments(): any[] {
-    if (this.dueFilter === 'all') { return this.assignments; }
     if (this.dueFilter === 'today') {
       return this.assignments.filter(a => this.isTodayBucket(a));
     }
