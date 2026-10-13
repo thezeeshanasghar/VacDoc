@@ -197,7 +197,8 @@ export class AssignmentsPage {
   // cash still with the PA (see isPastDueStage's comment), which is more urgent than any
   // TargetDate-based ranking their stale date would otherwise produce.
   private sortByUrgency(list: any[]): any[] {
-    const rank = { overdue: 1, today: 2, upcoming: 3, none: 4 };
+    // 'none' (no TargetDate) ranks with 'today' — an undated assignment is open work now.
+    const rank = { overdue: 1, today: 2, none: 2, upcoming: 3 };
     return [...list].sort((a, b) => {
       const rankA = this.isPastDueStage(a) ? 0 : rank[this.urgency(a)];
       const rankB = this.isPastDueStage(b) ? 0 : rank[this.urgency(b)];
@@ -274,22 +275,31 @@ export class AssignmentsPage {
       return this.assignments.length + this.pendingDirectSales.length + this.completedDirectSales.length + this.orphanInvoiceRows.length;
     }
     if (filter === 'today') {
-      return this.assignments.filter(a => this.isPastDueStage(a) || this.urgency(a) === 'today' || this.urgency(a) === 'overdue' || this.needsPaymentAction(a)).length;
+      return this.assignments.filter(a => this.isTodayBucket(a)).length;
     }
     return this.assignments.filter(a => !this.isPastDueStage(a) && this.urgency(a) === 'upcoming' && !this.needsPaymentAction(a)).length;
+  }
+
+  // Today bucket: unconfirmed handovers, overdue/today-dated, payment-action cards, and
+  // assignments with no TargetDate at all. The assign form's date is optional, and an
+  // undated assignment used to match neither Today nor Upcoming — it hid under "All" below
+  // every old handover row, so a freshly assigned PA never saw new work (reported 2026-10-13).
+  private isTodayBucket(a: any): boolean {
+    const u = this.urgency(a);
+    return this.isPastDueStage(a) || u === 'today' || u === 'overdue' || u === 'none' || this.needsPaymentAction(a);
   }
 
   setDueFilter(filter: 'today' | 'upcoming' | 'all') {
     this.dueFilter = filter;
   }
 
-  // Assignments with no TargetDate (urgency 'none'), Direct Sales, and orphan invoice rows
-  // only ever show under "All". pendingHandover/completed-stage cards and cards needing
+  // Direct Sales and orphan invoice rows only ever show under "All"; undated assignments
+  // count as Today (see isTodayBucket). pendingHandover/completed-stage cards and cards needing
   // payment action always show under "Today" regardless of date — see isPastDueStage.
   get filteredAssignments(): any[] {
     if (this.dueFilter === 'all') { return this.assignments; }
     if (this.dueFilter === 'today') {
-      return this.assignments.filter(a => this.isPastDueStage(a) || this.urgency(a) === 'today' || this.urgency(a) === 'overdue' || this.needsPaymentAction(a));
+      return this.assignments.filter(a => this.isTodayBucket(a));
     }
     return this.assignments.filter(a => !this.isPastDueStage(a) && this.urgency(a) === 'upcoming' && !this.needsPaymentAction(a));
   }
