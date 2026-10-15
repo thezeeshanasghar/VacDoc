@@ -345,6 +345,14 @@ filterCountryCodes(value: string) {
       if (val != null && val !== "") {
         this.fg1.controls["Nationality"].setValue(val);
       }
+      // Remember it as soon as it is typed (valid only), not just after a successful
+      // submit, so a blocked/abandoned registration still pre-fills next time.
+      this.fg1.get("Nationality").valueChanges.subscribe((v) => {
+        const n = (v || "").toString().trim();
+        if (n && this.fg1.get("Nationality").valid) {
+          this.setLastNationality(n);
+        }
+      });
     });
     this.storage.get(environment.DOCTOR).then((doc) => {
       this.Doctor = doc;
