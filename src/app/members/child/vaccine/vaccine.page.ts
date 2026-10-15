@@ -1323,6 +1323,20 @@ removal(type: string){
     return 'assigned';
   }
 
+  // True when this date-group belongs to the child's active PA assignment. Drives the
+  // amber group styling for every role. PA responses carry Schedules[{Id}], the doctor's
+  // active-assignment list carries ScheduleIds. A group the doctor already gave on their
+  // own (PA viewer's "given-by-doctor" case) is not highlighted.
+  isAssignedGroup(vaccines: any[]): boolean {
+    const a = this.activeAssignment;
+    if (!a || !vaccines || !vaccines.length) return false;
+    const ids = new Set<number>(a.Schedules ? a.Schedules.map((s: any) => s.Id) : (a.ScheduleIds || []));
+    if (!vaccines.some(v => ids.has(v.Id))) return false;
+    if (this.usertype === 'PA' && this.getPaAssignmentTag(vaccines) === null) return false;
+    if (this.usertype === 'PA' && this.getPaAssignmentTag(vaccines) === 'given-by-doctor') return false;
+    return true;
+  }
+
   async addNewVaccineInScheduleTable(scheduleDate, unfillData) {
     const loading = await this.loadingController.create({
       message: 'Updating Schedule'

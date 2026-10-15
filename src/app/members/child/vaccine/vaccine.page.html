@@ -79,7 +79,7 @@
       <span>Upcoming</span>
     </div>
 
-    <ion-card class="date-group-card" [class.date-group-card--resolved]="isStage(item.value, item.key, 4)">
+    <ion-card class="date-group-card" [class.date-group-card--resolved]="isStage(item.value, item.key, 4)" [class.date-group-card--assigned]="isAssignedGroup(item.value)">
       <ion-card-content>
 
         <!-- ── Date Group Header (SEQUENTIAL ACTION MODEL — spec §3.1) ────── -->
@@ -90,6 +90,7 @@
             <span class="date-group-sub date-group-sub--given" *ngIf="!isStage(item.value, item.key, 1)">{{ groupGivenDate(item.value) | date:'MMM d, y' }}</span>
           </div>
           <ion-badge *ngIf="getPaAssignmentTag(item.value) === 'assigned'" color="primary" class="pa-assign-badge">Assigned to you</ion-badge>
+          <ion-badge *ngIf="usertype !== 'PA' && isAssignedGroup(item.value)" class="pa-assign-badge pa-assign-badge--with">With PA · {{ activeAssignment.PaName }}</ion-badge>
           <ion-badge *ngIf="getPaAssignmentTag(item.value) === 'given-by-doctor'" class="pa-assign-badge pa-assign-badge--muted">Given by Doctor</ion-badge>
 
           <div class="date-group-actions">

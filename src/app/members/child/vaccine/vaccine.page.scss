@@ -63,6 +63,13 @@ ion-buttons {
   box-shadow: var(--vac-shadow);
 }
 
+// Date group that belongs to the child's active PA assignment: same warm orange as the
+// bulk group on the PA Assignments page so the two pages read as one system.
+.date-group-card--assigned {
+  border: 2px solid var(--vac-warn);
+  background: var(--vac-warn-tint);
+}
+
 // Fully resolved (stage 4 — paid) history reads as settled, not actionable:
 // desaturate slightly so it recedes behind still-due groups.
 .date-group-card--resolved {
@@ -421,6 +428,11 @@ ion-buttons {
   &--muted {
     --background: #eceff1;
     --color: #607d8b;
+  }
+
+  &--with {
+    --background: var(--vac-warn);
+    --color: #fff;
   }
 }
 
