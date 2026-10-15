@@ -183,6 +183,14 @@
           <ion-icon name="logo-whatsapp"></ion-icon> {{ a.ParentMobile }}
         </span>
       </div>
+      <div class="vaccine-chips-wrap" *ngIf="a.Schedules && a.Schedules.length">
+        <div class="vaccine-chips-head">{{ givenCount(a) }} of {{ a.Schedules.length }} given</div>
+        <div class="vaccine-chips">
+          <span class="vaccine-chip" *ngFor="let s of a.Schedules" [class.given]="s.IsDone">
+            <ion-icon *ngIf="s.IsDone" name="checkmark"></ion-icon> {{ s.DoseName }}
+          </span>
+        </div>
+      </div>
       <ion-badge color="warning" *ngIf="hasInvoiceForAssignment(a) && hasUnpaidSchedules(a)" class="payment-pending-badge">
         <ion-icon name="cash-outline"></ion-icon> Payment Pending
       </ion-badge>

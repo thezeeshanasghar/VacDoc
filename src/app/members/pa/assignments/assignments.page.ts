@@ -327,6 +327,10 @@ export class AssignmentsPage {
     return Array.isArray(a.Schedules) && a.Schedules.filter(function(s: any) { return s.IsDone; }).length >= 2;
   }
 
+  givenCount(a: any): number {
+    return (a.Schedules || []).filter(function(s: any) { return s.IsDone; }).length;
+  }
+
   hasUnpaidSchedules(a: any): boolean {
     if (!a.Schedules || !Array.isArray(a.Schedules)) { return false; }
     const paId = this.paId;
