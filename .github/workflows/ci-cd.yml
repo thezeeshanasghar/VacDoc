@@ -30,33 +30,41 @@ jobs:
         with:
           name: build-output
           path: www/
-      - uses: appleboy/ssh-action@v1.0.3
+      - name: Deploy to Hostinger (FTP)
+        id: deploy
+        continue-on-error: true
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          script: |
-            sudo rm -rf /var/www/doctor.vaccinationcentre.com/html/*
-            mkdir -p /tmp/doctor-deploy
-      - uses: appleboy/scp-action@v0.1.7
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          server-dir: /
+          local-dir: ./www/
+          timeout: 300000
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+      - name: Wait before retry
+        if: steps.deploy.outcome == 'failure'
+        run: sleep 45
+      - name: Retry deploy (clean slate)
+        if: steps.deploy.outcome == 'failure'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          source: "www/*"
-          target: "/tmp/doctor-deploy/"
-          strip_components: 1
-      - uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          script: |
-            sudo mv /tmp/doctor-deploy/* /var/www/doctor.vaccinationcentre.com/html/
-            sudo chown -R ec2-user:ec2-user /var/www/doctor.vaccinationcentre.com/html/
-            sudo chmod -R 755 /var/www/doctor.vaccinationcentre.com/html/
-            rm -rf /tmp/doctor-deploy
-            sudo systemctl reload nginx
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          server-dir: /
+          local-dir: ./www/
+          timeout: 300000
+          dangerous-clean-slate: true
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
