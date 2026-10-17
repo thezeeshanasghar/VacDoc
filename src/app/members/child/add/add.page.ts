@@ -33,8 +33,6 @@ import { ManagerService } from "src/app/services/manager.service";
   styleUrls: ["./add.page.scss"],
 })
 export class AddPage implements OnInit {
-  private readonly LAST_SELECTED_NATIONALITY_KEY =
-    "LAST_SELECTED_NATIONALITY";
   isRadioDisabled: boolean = true;
   fg1: FormGroup;
   fg2: FormGroup;
@@ -318,7 +316,7 @@ filterCountryCodes(value: string) {
       Password: [null],
       ChildVaccines: [null],
       Nationality: [
-        "",
+        "PAKISTANI",
         Validators.compose([Validators.pattern(/^[a-zA-Z\s]+$/)]),
       ],
     });
@@ -340,19 +338,6 @@ filterCountryCodes(value: string) {
         this.fg1.controls["city"].setValue(val);
         console.log("Loaded previous city from storage:", val);
       }
-    });
-    this.storage.get(this.LAST_SELECTED_NATIONALITY_KEY).then((val) => {
-      if (val != null && val !== "") {
-        this.fg1.controls["Nationality"].setValue(val);
-      }
-      // Remember it as soon as it is typed (valid only), not just after a successful
-      // submit, so a blocked/abandoned registration still pre-fills next time.
-      this.fg1.get("Nationality").valueChanges.subscribe((v) => {
-        const n = (v || "").toString().trim();
-        if (n && this.fg1.get("Nationality").valid) {
-          this.setLastNationality(n);
-        }
-      });
     });
     this.storage.get(environment.DOCTOR).then((doc) => {
       this.Doctor = doc;
@@ -940,7 +925,6 @@ filterCountryCodes(value: string) {
     console.log("Form Group Value:", this.fg1.value);
     const cityControl = this.fg1.get("city");
     const city2Control = this.fg1.get("City2");
-    const nationalityControl = this.fg1.get("Nationality");
 
     const selectedCity = (
       (cityControl ? cityControl.value : "")
@@ -949,15 +933,9 @@ filterCountryCodes(value: string) {
     )
       .toString()
       .trim();
-    const selectedNationality = ((nationalityControl ? nationalityControl.value : "") || "")
-      .toString()
-      .trim();
 
     if (selectedCity) {
       await this.setCity(selectedCity);
-    }
-    if (selectedNationality) {
-      await this.setLastNationality(selectedNationality);
     }
 
     this.fg1.value.DOB = await moment(this.fg1.value.DOB, "YYYY-MM-DD").format(
@@ -1152,9 +1130,6 @@ filterCountryCodes(value: string) {
     this.storage.set(environment.CITY, city);
   }
 
-  async setLastNationality(nationality: string) {
-    this.storage.set(this.LAST_SELECTED_NATIONALITY_KEY, nationality);
-  }
 
   async checkEpi() {
     let days = await this.calculateDiff(this.fg1.value.DOB);
