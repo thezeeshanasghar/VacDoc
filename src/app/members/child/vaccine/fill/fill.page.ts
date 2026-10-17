@@ -496,7 +496,8 @@ export class FillPage implements OnInit {
       return;
     }
 
-    const loading = await this.loadingController.create({
+    // The spinner stays up until the give request answers (it blocks a second tap on Give).
+    let loading = await this.loadingController.create({
       message: 'Updating'
     });
     await loading.present();
@@ -539,9 +540,9 @@ export class FillPage implements OnInit {
         this.fg.value.CallerUserId = this.callerUserId;
         this.fg.value.SecurityStamp = this.securityStamp;
       }
-      loading.dismiss();
       await this.vaccineService.fillUpChildVaccine(this.fg.value).subscribe(
         async res => {
+          loading.dismiss();
           if (res.IsSuccess) {
             this.autoCreateFollowUp(() => {
               this.router.navigate(['/members/child/vaccine/' + this.childId]);
@@ -551,6 +552,7 @@ export class FillPage implements OnInit {
           }
         },
         err => {
+          loading.dismiss();
           this.toastService.create("Error: Server Failure", 'danger');
         }
       );
@@ -571,7 +573,6 @@ export class FillPage implements OnInit {
       loading.dismiss();
       return;
     }
-    loading.dismiss();
     this.fg.value.GivenDate = moment(this.fg.value.GivenDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
 
     if (!this.allowInventory) {
@@ -605,9 +606,12 @@ export class FillPage implements OnInit {
     const isBackdated = givenDate < currentDate;
     const hasRealBrand = !!this.fg.value.BrandId; // OHF was already nulled above
     if (isBackdated && hasRealBrand) {
+      await loading.dismiss();
       const choice = await this.askReRecordChoice();
       if (choice === 'cancel') { return; }
       this.fg.value.ReRecordHistorical = (choice === 'historical');
+      loading = await this.loadingController.create({ message: 'Updating' });
+      await loading.present();
     } else {
       this.fg.value.ReRecordHistorical = null;
     }
