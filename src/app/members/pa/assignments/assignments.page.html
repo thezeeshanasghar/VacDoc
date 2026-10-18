@@ -36,9 +36,36 @@
     </div>
   </div>
 
+  <div class="filter-bar" *ngIf="hasAnyRows">
+    <div class="filter-search">
+      <ion-icon name="search-outline"></ion-icon>
+      <input type="text" placeholder="Search name" [(ngModel)]="searchText" />
+      <ion-icon name="close-circle" *ngIf="searchText" (click)="searchText = ''"></ion-icon>
+    </div>
+    <div class="filter-date" [class.on]="dateKey" (click)="toggleCal()">
+      <ion-icon name="calendar-outline"></ion-icon> {{ dateLabel }}
+      <ion-icon name="close" *ngIf="dateKey" (click)="clearDate($event)"></ion-icon>
+    </div>
+  </div>
+  <div class="cal-box" *ngIf="calOpen && hasAnyRows">
+    <div class="cal-head">
+      <ion-icon name="chevron-back" (click)="shiftMonth(-1)"></ion-icon>
+      <span>{{ calTitle }}</span>
+      <ion-icon name="chevron-forward" (click)="shiftMonth(1)"></ion-icon>
+    </div>
+    <div class="cal-grid">
+      <i *ngFor="let w of weekdayLabels">{{ w }}</i>
+      <ng-container *ngFor="let c of calCells">
+        <span *ngIf="!c"></span>
+        <button *ngIf="c" type="button" class="cal-day" [class.enabled]="c.enabled" [class.selected]="c.selected" [disabled]="!c.enabled" (click)="pickDay(c)">{{ c.day }}</button>
+      </ng-container>
+    </div>
+    <p class="cal-hint">Search and date filter look across Today and Others. Highlighted days have a vaccine given that is still awaiting cash handover confirmation.</p>
+  </div>
+
   <div *ngIf="hasAnyRows && filteredAssignments.length === 0 && visibleDirectSales.length + visibleCompletedSales.length + visibleOrphans.length === 0" class="empty-state">
     <ion-icon name="calendar-clear-outline"></ion-icon>
-    <p>{{ dueFilter === 'today' ? 'Nothing assigned today' : 'No other pending assignments' }}</p>
+    <p>{{ filtersActive ? 'No assignments match' : (dueFilter === 'today' ? 'Nothing assigned today' : 'No other pending assignments') }}</p>
   </div>
 
   <ion-list-header *ngIf="visibleDirectSales.length > 0">

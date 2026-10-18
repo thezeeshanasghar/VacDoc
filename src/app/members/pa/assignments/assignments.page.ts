@@ -262,8 +262,8 @@ export class AssignmentsPage {
     return this.isPastDueStage(a) ? false : this.hasUnpaidSchedules(a);
   }
 
-  // Two tabs. Today = assigned today (PKT, with or without a TargetDate) or targeted for
-  // today. Others = everything else still on the list — future-dated and past/overdue,
+  // Two tabs. Today = assigned today (PKT), targeted for today, or overdue.
+  // Others = future-dated work and anything else still on the list,
   // anything whose cash handover the doctor hasn't confirmed yet. Confirmed rows are
   // dropped by the API, so nothing lingers once the doctor confirms.
   private todayKey(): string { return this.pktDayKey(new Date().toISOString()); }
@@ -274,9 +274,13 @@ export class AssignmentsPage {
     return d.length === 10 ? d : this.pktDayKey(d);
   }
 
+  // Overdue work stays in Today until it is done or moved: an assignment whose target date
+  // has passed and still on the list (not cash-confirmed) is still the PA's job. Only future-dated
+  // ones wait in Others.
   private isTodayBucket(a: any): boolean {
     const t = this.todayKey();
-    return this.dayKeyOf(a.AssignedAt) === t || this.dayKeyOf(a.TargetDate) === t;
+    if (this.dayKeyOf(a.AssignedAt) === t || this.dayKeyOf(a.TargetDate) === t) { return true; }
+    return this.urgency(a) === 'overdue';
   }
 
   private isTodayExtra(x: any, dateField: string): boolean {
@@ -307,13 +311,113 @@ export class AssignmentsPage {
     this.dueFilter = filter;
   }
 
-  get filteredAssignments(): any[] {
-    return this.assignments.filter(a => (this.dueFilter === 'today') === this.isTodayBucket(a));
+  // ── Search + given-date filter ──────────────────────────────────────────────
+  // Only rows still on this list (API drops cash-confirmed ones) feed the calendar, so a
+  // day is enabled only if a vaccine/sale on it is still awaiting this PA's handover.
+  searchText: string = '';
+  dateKey: string = '';
+  calOpen: boolean = false;
+  calYear: number = new Date().getFullYear();
+  calMonth: number = new Date().getMonth();
+  readonly weekdayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+  private assignmentGivenKeys(a: any): string[] {
+    return (a.Schedules || []).filter((s: any) => s.IsDone && s.Date).map((s: any) => this.dayKeyOf(s.Date));
   }
 
-  get visibleDirectSales(): any[] { return this.dueFilter === 'today' ? this.todayDirectSales : this.otherDirectSales; }
-  get visibleCompletedSales(): any[] { return this.dueFilter === 'today' ? this.todayCompletedSales : this.otherCompletedSales; }
-  get visibleOrphans(): any[] { return this.dueFilter === 'today' ? this.todayOrphans : this.otherOrphans; }
+  get givenDayKeys(): Set<string> {
+    const keys = new Set<string>();
+    this.assignments.forEach(a => this.assignmentGivenKeys(a).forEach(k => keys.add(k)));
+    [].concat(this.pendingDirectSales, this.completedDirectSales, this.orphanInvoiceRows)
+      .forEach((r: any) => { if (r.Date) { keys.add(this.dayKeyOf(r.Date)); } });
+    return keys;
+  }
+
+  private textMatch(...parts: string[]): boolean {
+    const q = this.searchText.trim().toLowerCase();
+    return !q || parts.some(p => (p || '').toLowerCase().indexOf(q) !== -1);
+  }
+
+  private dateMatch(keys: string[]): boolean {
+    return !this.dateKey || keys.indexOf(this.dateKey) !== -1;
+  }
+
+  private rowMatches(r: any, nameField: string): boolean {
+    return this.textMatch(r[nameField]) && this.dateMatch(r.Date ? [this.dayKeyOf(r.Date)] : []);
+  }
+
+  get filtersActive(): boolean { return !!this.searchText.trim() || !!this.dateKey; }
+
+  get filteredAssignments(): any[] {
+    return this.assignments.filter(a => this.filtersActive || (this.dueFilter === 'today') === this.isTodayBucket(a))
+      .filter(a => this.textMatch(a.Name, a.FatherName) && this.dateMatch(this.assignmentGivenKeys(a)));
+  }
+
+  // While searching / date-filtering, results span both tabs so an enabled date never
+  // lands on an empty list; the tab split applies only when no filter is set.
+  private tabRows(today: any[], others: any[]): any[] {
+    return this.filtersActive ? today.concat(others) : (this.dueFilter === 'today' ? today : others);
+  }
+
+  get visibleDirectSales(): any[] {
+    return this.tabRows(this.todayDirectSales, this.otherDirectSales).filter(r => this.rowMatches(r, 'ClientName'));
+  }
+  get visibleCompletedSales(): any[] {
+    return this.tabRows(this.todayCompletedSales, this.otherCompletedSales).filter(r => this.rowMatches(r, 'ClientName'));
+  }
+  get visibleOrphans(): any[] {
+    return this.tabRows(this.todayOrphans, this.otherOrphans).filter(r => this.rowMatches(r, 'PatientName'));
+  }
+
+  toggleCal() {
+    this.calOpen = !this.calOpen;
+    if (this.calOpen) {
+      const base = this.dateKey || this.todayKey();
+      this.calYear = Number(base.slice(0, 4));
+      this.calMonth = Number(base.slice(5, 7)) - 1;
+    }
+  }
+
+  clearDate(ev?: Event) {
+    if (ev) { ev.stopPropagation(); }
+    this.dateKey = '';
+    this.calOpen = false;
+  }
+
+  shiftMonth(delta: number) {
+    const d = new Date(this.calYear, this.calMonth + delta, 1);
+    this.calYear = d.getFullYear();
+    this.calMonth = d.getMonth();
+  }
+
+  get calTitle(): string {
+    return new Date(this.calYear, this.calMonth, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  }
+
+  // Monday-first grid; null = leading blank cell.
+  get calCells(): any[] {
+    const keys = this.givenDayKeys;
+    const lead = (new Date(this.calYear, this.calMonth, 1).getDay() + 6) % 7;
+    const days = new Date(this.calYear, this.calMonth + 1, 0).getDate();
+    const cells: any[] = [];
+    for (let i = 0; i < lead; i++) { cells.push(null); }
+    for (let d = 1; d <= days; d++) {
+      const key = this.calYear + '-' + ('0' + (this.calMonth + 1)).slice(-2) + '-' + ('0' + d).slice(-2);
+      cells.push({ day: d, key: key, enabled: keys.has(key), selected: key === this.dateKey });
+    }
+    return cells;
+  }
+
+  pickDay(c: any) {
+    if (!c || !c.enabled) { return; }
+    this.dateKey = c.key;
+    this.calOpen = false;
+  }
+
+  get dateLabel(): string {
+    if (!this.dateKey) { return 'Date'; }
+    return new Date(this.dateKey + 'T00:00:00').toLocaleDateString('en-US', { day: '2-digit', month: 'short' });
+  }
 
   formatTargetDate(dateStr: string): string {
     if (!dateStr) { return ''; }
