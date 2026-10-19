@@ -74,6 +74,7 @@ export class VaccinePage {
   paTargetDate: string = '';
   pendingAssignPA: any = null;
   pendingAssignScheduleIds: number[] = [];
+  pendingAssignGroupIds: number[] = [];
   pendingReassignPA: any = null;
   paymentPopupOpen: boolean = false;
   paymentTargetScheduleId: number = null;
@@ -1331,7 +1332,17 @@ removal(type: string){
     const a = this.activeAssignment;
     if (!a || !vaccines || !vaccines.length) return false;
     const ids = new Set<number>(a.Schedules ? a.Schedules.map((s: any) => s.Id) : (a.ScheduleIds || []));
-    if (!vaccines.some(v => ids.has(v.Id))) return false;
+    const pinned = vaccines.filter(v => ids.has(v.Id));
+    if (!pinned.length) return false;
+    // Doctor/manager view: a pinned dose only keeps the group "With PA" while it still needs
+    // the PA — undone, unpaid (PA is on the hook for the cash), or collected by the assigned
+    // PA. A given, settled dose that merely carries a stale pin no longer highlights the group.
+    if (this.usertype !== 'PA') {
+      const paId = a.PaId;
+      const needsPa = pinned.some(v =>
+        !v.IsDone || !v.IsPaymentCollected || v.PaymentCollectorPaId === paId || v.GivenByPaId === paId);
+      if (!needsPa) return false;
+    }
     if (this.usertype === 'PA' && this.getPaAssignmentTag(vaccines) === null) return false;
     if (this.usertype === 'PA' && this.getPaAssignmentTag(vaccines) === 'given-by-doctor') return false;
     return true;
@@ -1677,6 +1688,9 @@ removal(type: string){
     this.pendingAssignScheduleIds = (groupVaccines || [])
       .filter(function(v) { return !v.IsDone; })
       .map(function(v) { return v.Id; });
+    // Every dose (given + undone) of the clicked group, so the server can tell which invoice
+    // doses genuinely belong to this visit even when the group is already fully given.
+    this.pendingAssignGroupIds = (groupVaccines || []).map(function(v) { return v.Id; });
     this.assignPopupOpen = true;
   }
 
@@ -2046,6 +2060,7 @@ removal(type: string){
       ChildId: Number(this.childId),
       Notes: this.paGuidelines || '',
       ScheduleIds: this.pendingAssignScheduleIds || [],
+      GroupScheduleIds: this.pendingAssignGroupIds || [],
       TargetDate: this.paTargetDate || null
     };
     if (this.usertype === 'MANAGER' && this.managerId) {
@@ -2054,11 +2069,16 @@ removal(type: string){
     this.paGuidelines = '';
     this.paTargetDate = '';
     this.pendingAssignScheduleIds = [];
+    this.pendingAssignGroupIds = [];
     this.paService.createAssignment(payload, this.callerUserId, this.securityStamp).subscribe(res => {
       if (res && res.IsSuccess) {
         this.loadActiveAssignment(() => {
           this.assigningPA = false;
           this.toastService.create('Assigned to ' + pa.Name, 'success');
+          const skipped = res.ResponseData && res.ResponseData.ExcludedStaleDoses;
+          if (skipped > 0) {
+            this.toastService.create(skipped + ' older given dose(s) were not added to this assignment', 'warning');
+          }
         });
       } else {
         this.assigningPA = false;
