@@ -67,7 +67,10 @@ export class VaccinePage {
   assignPopupOpen: boolean = false;
   assignPopupLoading: boolean = false;
   assigningPA: boolean = false;
-  activeAssignment: any = null;
+  // Every assignment is its own entity (one per pressed vaccine group): the page holds ALL of this
+  // child's open assignments and resolves each date-group against the assignment that pins it.
+  childAssignments: any[] = [];
+  pendingReassignAsg: any = null;
   activeAssignmentLoading: boolean = false;
   reassignPopupOpen: boolean = false;
   paGuidelines: string = '';
@@ -1304,17 +1307,28 @@ removal(type: string){
     return true;
   }
 
+  private assignmentPinnedIds(a: any): Set<number> {
+    return new Set<number>(a.Schedules ? a.Schedules.map((s: any) => s.Id) : (a.ScheduleIds || []));
+  }
+
+  // The open assignment that pins any dose of this date-group (no "still needs the PA" test).
+  pinnedAssignmentForGroup(vaccines: any[]): any {
+    if (!vaccines || !vaccines.length) return null;
+    for (let i = 0; i < this.childAssignments.length; i++) {
+      const a = this.childAssignments[i];
+      const ids = this.assignmentPinnedIds(a);
+      if (vaccines.some(v => ids.has(v.Id))) return a;
+    }
+    return null;
+  }
+
   // Tag shown to a PA on each date-group: tells them whether this group is
   // theirs to act on, or was already handled by the doctor.
   getPaAssignmentTag(vaccines: any[]): 'assigned' | 'given-by-doctor' | null {
-    if (this.usertype !== 'PA' || !this.activeAssignment) return null;
+    if (this.usertype !== 'PA') return null;
     // GetByPA's Schedules array is pinned via PAAssignmentSchedule — only Schedule IDs
-    // actually linked to this assignment, not every group for this child. Check this
-    // group's own IDs against that list instead of assuming any active assignment
-    // applies to every date-group.
-    const pinnedIds = new Set((this.activeAssignment.Schedules || []).map((s: any) => s.Id));
-    const groupIsPinned = vaccines.some(v => pinnedIds.has(v.Id));
-    if (!groupIsPinned) return null;
+    // actually linked to an assignment. Each group is checked against its OWN assignment.
+    if (!this.pinnedAssignmentForGroup(vaccines)) return null;
     if (this.allVaccinesGiven(vaccines)) {
       // "given-by-doctor" also covers Manager gives — the PA viewing this badge just needs
       // to know "not me", not the distinction between Doctor and Manager.
@@ -1324,28 +1338,63 @@ removal(type: string){
     return 'assigned';
   }
 
-  // True when this date-group belongs to the child's active PA assignment. Drives the
-  // amber group styling for every role. PA responses carry Schedules[{Id}], the doctor's
-  // active-assignment list carries ScheduleIds. A group the doctor already gave on their
-  // own (PA viewer's "given-by-doctor" case) is not highlighted.
-  isAssignedGroup(vaccines: any[]): boolean {
-    const a = this.activeAssignment;
-    if (!a || !vaccines || !vaccines.length) return false;
-    const ids = new Set<number>(a.Schedules ? a.Schedules.map((s: any) => s.Id) : (a.ScheduleIds || []));
-    const pinned = vaccines.filter(v => ids.has(v.Id));
-    if (!pinned.length) return false;
-    // Doctor/manager view: a pinned dose only keeps the group "With PA" while it still needs
-    // the PA — undone, unpaid (PA is on the hook for the cash), or collected by the assigned
-    // PA. A given, settled dose that merely carries a stale pin no longer highlights the group.
-    if (this.usertype !== 'PA') {
-      const paId = a.PaId;
-      const needsPa = pinned.some(v =>
-        !v.IsDone || !v.IsPaymentCollected || v.PaymentCollectorPaId === paId || v.GivenByPaId === paId);
-      if (!needsPa) return false;
+  // The assignment that makes this date-group "With PA" (amber styling + tag), or null.
+  // Doctor/manager view: a pinned dose only counts while it still needs the PA — undone,
+  // unpaid (the PA is on the hook for the cash), or collected/given by the assigned PA.
+  assignmentForGroup(vaccines: any[]): any {
+    const a = this.pinnedAssignmentForGroup(vaccines);
+    if (!a) return null;
+    if (this.usertype === 'PA') {
+      const tag = this.getPaAssignmentTag(vaccines);
+      return (tag === null || tag === 'given-by-doctor') ? null : a;
     }
-    if (this.usertype === 'PA' && this.getPaAssignmentTag(vaccines) === null) return false;
-    if (this.usertype === 'PA' && this.getPaAssignmentTag(vaccines) === 'given-by-doctor') return false;
-    return true;
+    const ids = this.assignmentPinnedIds(a);
+    const paId = a.PaId;
+    const needsPa = vaccines.filter(v => ids.has(v.Id)).some(v =>
+      !v.IsDone || !v.IsPaymentCollected || v.PaymentCollectorPaId === paId || v.GivenByPaId === paId);
+    return needsPa ? a : null;
+  }
+
+  isAssignedGroup(vaccines: any[]): boolean {
+    return !!this.assignmentForGroup(vaccines);
+  }
+
+  paNameForGroup(vaccines: any[]): string {
+    const a = this.assignmentForGroup(vaccines);
+    return a ? (a.PaName || '') : '';
+  }
+
+  // PA viewer: this group's own assignment while it can still be marked done / is handed off.
+  paOpenAssignmentForGroup(vaccines: any[]): any {
+    if (this.usertype !== 'PA') return null;
+    const a = this.pinnedAssignmentForGroup(vaccines);
+    return a && a.AssignmentStatus !== 'PendingHandover' ? a : null;
+  }
+
+  paHandoffAssignmentForGroup(vaccines: any[]): any {
+    if (this.usertype !== 'PA') return null;
+    const a = this.pinnedAssignmentForGroup(vaccines);
+    return a && a.AssignmentStatus === 'PendingHandover' ? a : null;
+  }
+
+  // Doctor menu on an assigned group: Reassign / Cancel act on THAT group's assignment only.
+  async openAssignmentMenu(vaccines: any[]) {
+    const asg = this.assignmentForGroup(vaccines);
+    if (!asg) return;
+    let action = '';
+    const alert = await this.alertController.create({
+      header: asg.PaName || 'Assignment',
+      subHeader: 'Assignment for this group',
+      buttons: [
+        { text: 'Reassign to another PA', handler: () => { action = 'reassign'; } },
+        { text: 'Cancel this assignment', handler: () => { action = 'cancel'; } },
+        { text: 'Close', role: 'cancel' }
+      ]
+    });
+    await alert.present();
+    await alert.onDidDismiss();
+    if (action === 'reassign') { this.openReassignPopup(asg); }
+    else if (action === 'cancel') { this.confirmCancelAssignment(asg); }
   }
 
   async addNewVaccineInScheduleTable(scheduleDate, unfillData) {
@@ -1692,15 +1741,6 @@ removal(type: string){
     // doses genuinely belong to this visit even when the group is already fully given.
     this.pendingAssignGroupIds = (groupVaccines || []).map(function(v) { return v.Id; });
     this.assignPopupOpen = true;
-  }
-
-  // Whole-schedule assign from the top assign bar (spec §4.1): pins every
-  // undone schedule across all date-groups to the new assignment.
-  openAssignPopupAll() {
-    const all: any[] = [];
-    const grouped: any = this.dataGrouping || {};
-    Object.keys(grouped).forEach(k => (grouped[k] || []).forEach((v: any) => all.push(v)));
-    this.openAssignPopup(all);
   }
 
   selectPendingAssign(pa: any) {
@@ -2075,6 +2115,12 @@ removal(type: string){
         this.loadActiveAssignment(() => {
           this.assigningPA = false;
           this.toastService.create('Assigned to ' + pa.Name, 'success');
+          if (res.ResponseData && res.ResponseData.BookingConfirmedId) {
+            this.toastService.create('Booking confirmed. Parent notified.', 'success');
+          }
+          if (res.ResponseData && res.ResponseData.SpanningInvoiceNotAdopted) {
+            this.toastService.create('An earlier invoice also covers another group, so it was not attached to this assignment.', 'warning');
+          }
           const skipped = res.ResponseData && res.ResponseData.ExcludedStaleDoses;
           if (skipped > 0) {
             this.toastService.create(skipped + ' older given dose(s) were not added to this assignment', 'warning');
@@ -2187,7 +2233,7 @@ removal(type: string){
       this.activeAssignmentLoading = false;
       if (res && res.IsSuccess) {
         const all: any[] = res.ResponseData || [];
-        this.activeAssignment = all.find(a => a.ChildId === Number(this.childId)) || null;
+        this.childAssignments = all.filter(a => a.ChildId === Number(this.childId));
       }
       if (onDone) onDone();
     }, () => {
@@ -2203,7 +2249,7 @@ removal(type: string){
     this.paService.getAssignments(this.paId, this.callerUserId, this.securityStamp).subscribe(res => {
       if (res && res.IsSuccess) {
         const all: any[] = res.ResponseData || [];
-        this.activeAssignment = all.find(a => a.ChildId === Number(this.childId)) || null;
+        this.childAssignments = all.filter(a => a.ChildId === Number(this.childId));
       }
       if (onDone) onDone();
     }, () => { if (onDone) onDone(); });
@@ -2212,10 +2258,11 @@ removal(type: string){
   // Mirrors payables.page.ts's promptDone()/doCompleteAssignment(), but checks payment
   // status against this.vaccine (already loaded on this page) instead of a separate
   // Schedules array — same source of truth, no extra request.
-  async promptDoneFromVaccinePage() {
-    if (!this.activeAssignment) { return; }
+  async promptDoneFromVaccinePage(asg: any) {
+    if (!asg) { return; }
+    const pinned = this.assignmentPinnedIds(asg);
     const unpaid = (this.vaccine || []).filter((s: any) =>
-      s.IsDone && s.PaymentCollectorPaId === this.paId && !s.IsPaymentCollected);
+      pinned.has(s.Id) && s.IsDone && s.PaymentCollectorPaId === this.paId && !s.IsPaymentCollected);
 
     if (unpaid.length > 0) {
       const names = unpaid.map((s: any) => s.Dose && s.Dose.Name ? s.Dose.Name : '').filter((n: string) => !!n).join(', ');
@@ -2233,17 +2280,17 @@ removal(type: string){
       message: 'Mark this assignment as done? This will move it to Pending Cash Handover for the doctor to confirm.',
       buttons: [
         { text: 'Back', role: 'cancel' },
-        { text: 'Mark Done', handler: () => { this.doCompleteAssignmentFromVaccinePage(); } }
+        { text: 'Mark Done', handler: () => { this.doCompleteAssignmentFromVaccinePage(asg); } }
       ]
     });
     await confirm.present();
   }
 
-  async doCompleteAssignmentFromVaccinePage() {
-    if (!this.activeAssignment || !this.paId) { return; }
+  async doCompleteAssignmentFromVaccinePage(asg: any) {
+    if (!asg || !this.paId) { return; }
     const loading = await this.loadingController.create({ message: 'Marking done...' });
     await loading.present();
-    this.paService.markAssignmentDone(this.activeAssignment.AssignmentId, this.paId).subscribe(
+    this.paService.markAssignmentDone(asg.AssignmentId, this.paId).subscribe(
       (res: any) => {
         loading.dismiss();
         if (res && res.IsSuccess) {
@@ -2258,29 +2305,29 @@ removal(type: string){
     );
   }
 
-  async confirmCancelAssignment() {
+  async confirmCancelAssignment(asg: any) {
     const alert = await this.alertController.create({
       header: 'Cancel Assignment',
-      message: `Cancel the active assignment for ${this.activeAssignment ? this.activeAssignment.ChildName : 'this patient'}?`,
+      message: `Cancel this assignment for ${asg && asg.ChildName ? asg.ChildName : 'this patient'}?`,
       inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason (optional)' }],
       buttons: [
         { text: 'No', role: 'cancel' },
-        { text: 'Yes, Cancel', handler: (data) => { this.doCancelAssignment(data.reason || ''); } }
+        { text: 'Yes, Cancel', handler: (data) => { this.doCancelAssignment(asg, data.reason || ''); } }
       ]
     });
     await alert.present();
   }
 
-  async doCancelAssignment(reason: string) {
-    if (!this.activeAssignment) return;
+  async doCancelAssignment(asg: any, reason: string) {
+    if (!asg) return;
     const loading = await this.loadingController.create({ message: 'Cancelling...' });
     await loading.present();
-    this.paService.cancelAssignment(this.activeAssignment.AssignmentId, 'DOCTOR', this.doctorId, reason).subscribe(
+    this.paService.cancelAssignment(asg.AssignmentId, 'DOCTOR', this.doctorId, reason).subscribe(
       res => {
         loading.dismiss();
         if (res && res.IsSuccess) {
           this.toastService.create('Assignment cancelled', 'success');
-          this.activeAssignment = null;
+          this.loadActiveAssignment();
         } else {
           this.toastService.create(res.Message || 'Failed to cancel', 'danger');
         }
@@ -2289,8 +2336,8 @@ removal(type: string){
     );
   }
 
-  openReassignPopup() {
-    if (!this.activeAssignment) {
+  openReassignPopup(asg: any) {
+    if (!asg) {
       this.toastService.create('No active assignment to reassign', 'warning');
       return;
     }
@@ -2299,8 +2346,9 @@ removal(type: string){
       return;
     }
     this.paGuidelines = '';
-    this.paTargetDate = this.activeAssignment.TargetDate
-      ? String(this.activeAssignment.TargetDate).slice(0, 10)
+    this.pendingReassignAsg = asg;
+    this.paTargetDate = asg.TargetDate
+      ? String(asg.TargetDate).slice(0, 10)
       : '';
     this.pendingReassignPA = null;
     this.reassignPopupOpen = true;
@@ -2319,18 +2367,21 @@ removal(type: string){
   closeReassignPopup() {
     this.reassignPopupOpen = false;
     this.pendingReassignPA = null;
+    this.pendingReassignAsg = null;
     this.paGuidelines = '';
     this.paTargetDate = '';
   }
 
   async doReassign(pa: any) {
     this.reassignPopupOpen = false;
-    if (!this.activeAssignment) return;
+    const asgToReassign = this.pendingReassignAsg;
+    this.pendingReassignAsg = null;
+    if (!asgToReassign) return;
     const loading = await this.loadingController.create({ message: 'Reassigning...' });
     await loading.present();
     const targetDate = this.paTargetDate || null;
     this.paTargetDate = '';
-    this.paService.reassignAssignment(this.activeAssignment.AssignmentId, pa.Id, targetDate, null, this.callerUserId, this.securityStamp).subscribe(
+    this.paService.reassignAssignment(asgToReassign.AssignmentId, pa.Id, targetDate, null, this.callerUserId, this.securityStamp).subscribe(
       res => {
         loading.dismiss();
         if (res && res.IsSuccess) {

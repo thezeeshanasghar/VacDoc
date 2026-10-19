@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { LoadingController, AlertController, Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { forkJoin } from 'rxjs';
@@ -33,6 +34,8 @@ export class BookingsPage {
   cityOptions: string[] = [];
   usertype: any;
   expandedId: number = 0;
+  // Booked group per booking id: the child's vaccine group that matches what was booked.
+  bookedGroups: { [id: number]: any } = {};
   doctorComment: string = '';
   activeTab: string = 'bookings';
   homeCities: any[] = [];
@@ -53,6 +56,7 @@ export class BookingsPage {
     private paService: PaService,
     private vaccineService: VaccineService,
     private platform: Platform,
+    private router: Router,
   ) {}
 
   ionViewWillEnter() {
@@ -116,67 +120,110 @@ export class BookingsPage {
     );
   }
 
+  // Finds the ONE vaccine group of the child that this booking is for, by matching the booked
+  // vaccine names (free text) and the preferred date against the child's schedule. Only groups
+  // that still have something to give are considered. No match = nothing preselected; the
+  // doctor uses "Choose group" (the child's normal vaccine page).
+  loadBookedGroup(booking: any) {
+    this.bookedGroups[booking.Id] = { state: 'loading' };
+    this.vaccineService.getVaccinationById(String(booking.ChildId)).subscribe(
+      (res) => {
+        const schedules = (res && res.IsSuccess && res.ResponseData) ? res.ResponseData : [];
+        this.bookedGroups[booking.Id] = this.matchBookedGroup(booking, schedules);
+      },
+      (err) => { this.bookedGroups[booking.Id] = { state: 'none' }; }
+    );
+  }
+
+  private matchBookedGroup(booking: any, schedules: any[]): any {
+    const groups: any = {};
+    schedules.filter((s: any) => s.IsSkip !== true).forEach((s: any) => {
+      const k = String(s.Date).slice(0, 10);
+      if (!groups[k]) { groups[k] = []; }
+      groups[k].push(s);
+    });
+    const tokens = String(booking.Vaccines || '').toLowerCase().split(/[,;\n\/&+]+/)
+      .map((x: string) => x.trim()).filter((x: string) => x.length >= 3);
+    const pref = booking.PreferredDate ? new Date(String(booking.PreferredDate).slice(0, 10)).getTime() : null;
+    let bestKey: string | null = null;
+    let bestScore = 0;
+    let bestGap = Number.MAX_VALUE;
+    Object.keys(groups).forEach((k: string) => {
+      const g = groups[k];
+      if (!g.some((s: any) => !s.IsDone)) { return; }
+      const names = g.map((s: any) => String((s.Dose && s.Dose.Name) || '').toLowerCase());
+      let score = 0;
+      tokens.forEach((tk: string) => {
+        if (names.some((n: string) => n.indexOf(tk) >= 0)) { score++; }
+      });
+      const gap = pref === null ? 0 : Math.abs(new Date(k).getTime() - pref);
+      if (score > 0 && (score > bestScore || (score === bestScore && gap < bestGap))) {
+        bestKey = k; bestScore = score; bestGap = gap;
+      }
+    });
+    if (!bestKey && pref !== null) {
+      // No vaccine name matched: take the group due exactly on the preferred day, if any.
+      Object.keys(groups).forEach((k: string) => {
+        if (new Date(k).getTime() === pref && groups[k].some((s: any) => !s.IsDone)) { bestKey = k; }
+      });
+    }
+    if (!bestKey) { return { state: 'none' }; }
+    const g = groups[bestKey];
+    return {
+      state: 'matched',
+      date: bestKey,
+      doses: g.map((s: any) => String((s.Dose && s.Dose.Name) || '')),
+      undoneIds: g.filter((s: any) => !s.IsDone).map((s: any) => s.Id),
+      allIds: g.map((s: any) => s.Id)
+    };
+  }
+
+  // "Change" / "Choose group": the child's normal vaccine page, as if nothing was booked.
+  // The doctor assigns a group there; the assignment itself confirms the booking.
+  openChildVaccinePage(booking: any) {
+    this.router.navigate(['/members/child/vaccine/' + booking.ChildId]);
+  }
+
   async assignPA(booking: any) {
     if (!this.selectedPAId) {
       this.toastService.create('Select a PA first.', 'danger');
       return;
     }
+    const grp = this.bookedGroups[booking.Id];
+    if (!grp || grp.state !== 'matched') {
+      this.toastService.create('No vaccine group matches this booking. Use Choose group.', 'warning');
+      return;
+    }
     var notes = (this.paGuidelines || '').trim() || booking.Vaccines || '';
     const callerUserId = this.usertype && this.usertype.Id ? Number(this.usertype.Id) : undefined;
     const securityStamp = await this.storage.get(environment.SECURITY_STAMP);
-
-    // Same "assign every undone dose" behaviour as vaccine.page.ts's openAssignPopupAll() —
-    // without this, PAAssignmentController.Create gets no ScheduleIds, pins zero schedules
-    // to the assignment, and the PA's card shows up with "0 vaccines" and nothing to give.
-    this.vaccineService.getVaccinationById(String(booking.ChildId)).subscribe(
-      (scheduleRes) => {
-        const scheduleIds = (scheduleRes && scheduleRes.IsSuccess && scheduleRes.ResponseData)
-          ? scheduleRes.ResponseData.filter((s: any) => !s.IsDone).map((s: any) => s.Id)
-          : [];
-        this.confirmAndAssign(booking, notes, callerUserId, securityStamp, scheduleIds);
-      },
-      (err) => {
-        // Schedule lookup failing shouldn't block the assignment — fall back to none pinned,
-        // same as before this fix, rather than silently dropping the whole assign action.
-        this.confirmAndAssign(booking, notes, callerUserId, securityStamp, []);
-      }
-    );
-  }
-
-  private confirmAndAssign(booking: any, notes: string, callerUserId: number | undefined, securityStamp: string, scheduleIds: number[]) {
-    this.bookingService.confirm(booking.Id, this.doctorComment).subscribe(
-      (res) => {
-        if (res && res.IsSuccess) {
+    // One group only. The assignment itself confirms the booking and notifies the parent.
+    this.paService.createAssignment({
+      DoctorId: this.doctorId,
+      ClinicId: booking.ClinicId,
+      PersonalAssistantId: this.selectedPAId,
+      ChildId: booking.ChildId,
+      Notes: notes,
+      TargetDate: this.paTargetDate || null,
+      BookingId: booking.Id,
+      BookingDoctorComment: this.doctorComment,
+      ScheduleIds: grp.undoneIds,
+      GroupScheduleIds: grp.allIds
+    }, callerUserId, securityStamp).subscribe(
+      (r) => {
+        if (r && r.IsSuccess) {
           booking.Status = 'Confirmed';
           booking.DoctorComment = this.doctorComment;
-          this.paService.createAssignment({
-            DoctorId: this.doctorId,
-            ClinicId: booking.ClinicId,
-            PersonalAssistantId: this.selectedPAId,
-            ChildId: booking.ChildId,
-            Notes: notes,
-            TargetDate: this.paTargetDate || null,
-            BookingId: booking.Id,
-            ScheduleIds: scheduleIds
-          }, callerUserId, securityStamp).subscribe(
-            (r) => {
-              if (r && r.IsSuccess) {
-                this.expandedId = 0;
-                this.selectedPAId = 0;
-                this.paGuidelines = '';
-                this.paTargetDate = '';
-                this.toastService.create('PA assigned and booking confirmed.');
-              } else {
-                this.toastService.create((r && r.Message) ? r.Message : 'Booking confirmed but PA assignment failed.', 'warning');
-              }
-            },
-            (err) => { this.toastService.create('Booking confirmed but PA assignment failed.', 'warning'); }
-          );
+          this.expandedId = 0;
+          this.selectedPAId = 0;
+          this.paGuidelines = '';
+          this.paTargetDate = '';
+          this.toastService.create('PA assigned and booking confirmed. Parent notified.');
         } else {
-          this.toastService.create((res && res.Message) ? res.Message : 'Failed to confirm booking.', 'danger');
+          this.toastService.create((r && r.Message) ? r.Message : 'PA assignment failed.', 'danger');
         }
       },
-      (err) => { this.toastService.create('Failed to confirm booking.', 'danger'); }
+      (err) => { this.toastService.create('PA assignment failed.', 'danger'); }
     );
   }
 
@@ -380,6 +427,7 @@ export class BookingsPage {
       // Auto-fill Target Date from what the parent actually requested — the doctor can
       // still change it before assigning.
       this.paTargetDate = booking.PreferredDate ? String(booking.PreferredDate).slice(0, 10) : '';
+      if (booking.Type === 'HomeBooked' && booking.ChildId) { this.loadBookedGroup(booking); }
     }
   }
 

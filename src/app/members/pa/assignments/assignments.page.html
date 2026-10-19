@@ -211,7 +211,7 @@
         </span>
       </div>
       <div class="vaccine-chips-wrap" *ngIf="a.Schedules && a.Schedules.length">
-        <div class="vaccine-chips-head">{{ givenCount(a) }} of {{ a.Schedules.length }} given</div>
+        <div class="vaccine-chips-head">Visit {{ a.Schedules[0].Date | date:'dd MMM yyyy' }} · {{ givenCount(a) }} of {{ a.Schedules.length }} given</div>
         <div class="vaccine-chips">
           <span class="vaccine-chip" *ngFor="let s of a.Schedules" [class.given]="s.IsDone">
             <ion-icon *ngIf="s.IsDone" name="checkmark"></ion-icon> {{ s.DoseName }}

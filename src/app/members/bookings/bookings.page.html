@@ -262,7 +262,26 @@
                   rows="2">
                 </textarea>
               </div>
-              <ion-button expand="block" size="small" color="secondary" class="pa-assign-btn-full" (click)="assignPA(b)" [disabled]="!selectedPAId">
+              <!-- The booked vaccine group (matched from the booking). Change / Choose group open the
+                   child's normal vaccine page; assigning there also confirms the booking. -->
+              <div class="pa-guidelines-wrap" *ngIf="bookedGroups[b.Id]">
+                <div class="pa-guidelines-label">Booked group</div>
+                <div *ngIf="bookedGroups[b.Id].state === 'loading'" class="pa-none-text">Finding the booked group...</div>
+                <div *ngIf="bookedGroups[b.Id].state === 'matched'" class="comments-ref">
+                  <div class="comment-row">
+                    <span class="comment-text"><strong>{{ bookedGroups[b.Id].date | date:'dd MMM yyyy' }}</strong> &middot; {{ bookedGroups[b.Id].doses.join(', ') }}</span>
+                    <button type="button" class="comment-copy-btn" (click)="openChildVaccinePage(b)">Change</button>
+                  </div>
+                </div>
+                <div *ngIf="bookedGroups[b.Id].state === 'none'" class="comments-ref">
+                  <div class="comment-row">
+                    <span class="comment-text">No group on the schedule matches this booking.</span>
+                    <button type="button" class="comment-copy-btn" (click)="openChildVaccinePage(b)">Choose group</button>
+                  </div>
+                </div>
+              </div>
+              <ion-button expand="block" size="small" color="secondary" class="pa-assign-btn-full" (click)="assignPA(b)"
+                          [disabled]="!selectedPAId || !bookedGroups[b.Id] || bookedGroups[b.Id].state !== 'matched'">
                 <ion-icon slot="start" name="person-add-outline"></ion-icon>
                 Assign &amp; Confirm
               </ion-button>
