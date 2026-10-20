@@ -138,7 +138,9 @@ export class BookingsPage {
   private matchBookedGroup(booking: any, schedules: any[]): any {
     const groups: any = {};
     schedules.filter((s: any) => s.IsSkip !== true).forEach((s: any) => {
-      const k = String(s.Date).slice(0, 10);
+      // API schedule dates are dd-MM-yyyy; normalise to yyyy-MM-dd so Date() and the date pipe can read them.
+      const raw = String(s.Date).slice(0, 10);
+      const k = /^\d{2}-\d{2}-\d{4}$/.test(raw) ? raw.slice(6, 10) + '-' + raw.slice(3, 5) + '-' + raw.slice(0, 2) : raw;
       if (!groups[k]) { groups[k] = []; }
       groups[k].push(s);
     });
