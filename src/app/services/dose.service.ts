@@ -71,6 +71,22 @@ export class DoseService extends BaseService {
       .pipe(catchError(this.handleError));
   }
 
+  // Travel quick select: a doctor's up-to-4 common travel doses.
+  getTravelQuick(doctorId): Observable<any> {
+    const url = `${environment.BASE_URL}travelquick/${doctorId}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
+  saveTravelQuick(doctorId, doseIds): Observable<any> {
+    const url = `${environment.BASE_URL}travelquick/${doctorId}`;
+    return this.http
+      .put(url, doseIds, this.httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+
   addScheduleDoseChild(data): Observable<any> {
     const url = `${this.API_schedule1}`;
     return this.http

@@ -26,6 +26,7 @@ import { CityService } from "src/app/services/city.service";
 import { AgentService } from "src/app/services/agent.service";
 import { PaService } from "src/app/services/pa.service";
 import { ManagerService } from "src/app/services/manager.service";
+import { DoseService } from "src/app/services/dose.service";
 
 @Component({
   selector: "app-add",
@@ -67,6 +68,10 @@ export class AddPage implements OnInit {
   type: any;
   filteredCountryCodes: any[] = [];
   canAddPatient = true;
+  travelQuick: any[] = [];
+  travelPicked: any = {};
+  travelMode: string = "quick";
+  canUseTravelQuick = false;
 
   constructor(
     public loadingController: LoadingController,
@@ -88,12 +93,12 @@ export class AddPage implements OnInit {
     private paService: PaService,
     private managerService: ManagerService,
     private cd: ChangeDetectorRef,
-    private popoverController: PopoverController
+    private popoverController: PopoverController,
+    private doseService: DoseService
   ) {}
 
   async ngOnInit() {
     this.loadCities();
-    this.logDoctorId();
     this.fetchAgent();
     this.loadCities();
     this.doctorId = await this.storage.get(environment.DOCTOR_Id);
@@ -327,7 +332,6 @@ filterCountryCodes(value: string) {
     }
     this.storage.get(environment.DOCTOR_Id).then((val) => {
       this.doctorId = val;
-      this.logDoctorId();
     });
     console.log(this.doctorId);
     this.storage.get(environment.ON_CLINIC).then((val) => {
@@ -341,6 +345,7 @@ filterCountryCodes(value: string) {
     });
     this.storage.get(environment.DOCTOR).then((doc) => {
       this.Doctor = doc;
+      this.applyTravelAccess();
     });
     this.storage.get(environment.MESSAGES).then((messages) => {
       messages == null ? "" : (this.Messages = messages);
@@ -348,9 +353,69 @@ filterCountryCodes(value: string) {
     this.cities = this.cities;
   }
 
-  logDoctorId() {
-    if (this.doctorId == 1) {
-      this.isTravel = true;
+  // Travel is available to doctors holding the Travel permission set in VacAdmin.
+  applyTravelAccess() {
+    this.isTravel = !!(this.Doctor && this.Doctor.AllowTravel);
+    this.loadTravelQuick();
+  }
+
+  // Travel quick select: the doctor's up-to-4 common travel doses, shown as one-tap buttons.
+  // Doctor always sees them; a PA only with UseTravelQuickSelect; a Manager never.
+  async loadTravelQuick() {
+    this.travelQuick = [];
+    this.travelPicked = {};
+    if (!this.isTravel || !this.Doctor || !this.Doctor.Id) return;
+    const user = await this.storage.get(environment.USER);
+    let allowed = false;
+    if (user && user.UserType === "DOCTOR") {
+      allowed = true;
+    } else if (user && user.UserType === "PA") {
+      const perm: any = await this.paService.getPaPermissions(Number(user.PAId)).toPromise();
+      allowed = !!(perm && perm.UseTravelQuickSelect);
+    }
+    this.canUseTravelQuick = allowed;
+    if (!allowed) return;
+    this.doseService.getTravelQuick(this.Doctor.Id).subscribe(
+      (res) => {
+        this.travelQuick = res && res.IsSuccess && res.ResponseData ? res.ResponseData : [];
+        this.cd.detectChanges();
+      },
+      () => {
+        this.travelQuick = [];
+      }
+    );
+  }
+
+  toggleTravelDose(doseId: number) {
+    this.travelPicked[doseId] = !this.travelPicked[doseId];
+  }
+
+  travelPickedCount(): number {
+    return this.travelQuick.filter((q) => this.travelPicked[q.DoseId]).length;
+  }
+
+  // Adds the chosen quick-select doses through the same POST /schedule path the dose picker
+  // uses (MinGap/DoseOrder/start-date rules all apply server-side). Returns false on failure
+  // so the caller can tell the user the child exists but the doses still need adding.
+  async addTravelQuickDoses(childId: number): Promise<boolean> {
+    const picked = this.travelQuick.filter((q) => this.travelPicked[q.DoseId]);
+    if (this.fg1.value.Type !== "travel" || this.travelMode !== "quick" || picked.length === 0) {
+      return true;
+    }
+    const paId =
+      this.usertype && this.usertype.UserType === "PA" ? Number(this.usertype.PAId) || null : null;
+    const doctorId = this.Doctor && this.Doctor.Id ? Number(this.Doctor.Id) : null;
+    const payload = picked.map((q) => {
+      const entry: any = { DoseId: q.DoseId, ChildId: childId, IsDone: false, Due2EPI: false };
+      if (paId) entry.PaId = paId;
+      if (doctorId) entry.DoctorId = doctorId;
+      return entry;
+    });
+    try {
+      await this.doseService.addScheduleDoseChild(payload).toPromise();
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 
@@ -1036,6 +1101,10 @@ filterCountryCodes(value: string) {
           console.log(sms1);
           const ChildId = res.ResponseData.Id;
           console.log("child id", ChildId);
+          let travelDosesFailed = false;
+          if (res.ResponseData.Type == "travel" && this.canUseTravelQuick) {
+            travelDosesFailed = !(await this.addTravelQuickDoses(ChildId));
+          }
           loading.dismiss();
           const whatsappNumber =
             "+" + res.ResponseData.CountryCode + res.ResponseData.MobileNumber;
@@ -1060,7 +1129,14 @@ filterCountryCodes(value: string) {
             ],
           });
           await alert.present();
-          this.toastService.create("Client added successfully.");
+          if (travelDosesFailed) {
+            this.toastService.create(
+              "Client added, but the selected vaccines could not be added. Add them from the schedule page.",
+              "danger"
+            );
+          } else {
+            this.toastService.create("Client added successfully.");
+          }
           if (res.ResponseData.Type == "special") {
             this.router.navigate([`/members/child/vaccine/${ChildId}`]);
           } else {

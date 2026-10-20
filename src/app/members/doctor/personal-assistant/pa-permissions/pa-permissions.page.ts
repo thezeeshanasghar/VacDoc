@@ -54,6 +54,7 @@ export class PaPermissionsPage implements OnInit {
         { key: 'AddSpecialDoses',    label: 'Add special doses to schedule' },
         { key: 'EditVaccineSchedule',label: 'Edit vaccine schedule' },
         { key: 'AddVaccineToPatientRecord', label: 'Add vaccine to individual patient record' },
+        { key: 'UseTravelQuickSelect', label: 'Use travel quick select', desc: 'Tap the doctor\'s common travel vaccines when registering a Travel client. Only works if the doctor has the Travel permission.' },
         { key: 'ViewPaAssignmentStatus', label: 'View own assignment status', desc: 'See the "PA Assignments" card and list on the dashboard — status only, cannot reassign to another PA' },
       ]
     },

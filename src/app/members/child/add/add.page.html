@@ -112,6 +112,31 @@
         </ion-grid>
       </ion-radio-group>
 
+      <!-- Travel quick select: doctor's up-to-4 common travel doses as one-tap buttons. Nothing
+           is pre-selected; "Standard" (or selecting none) keeps today's blank travel schedule. -->
+      <div class="travel-quick" *ngIf="fg1.get('Type').value === 'travel' && canUseTravelQuick && travelQuick.length > 0">
+        <ion-segment [(ngModel)]="travelMode" [ngModelOptions]="{standalone: true}">
+          <ion-segment-button value="standard"><ion-label>Standard</ion-label></ion-segment-button>
+          <ion-segment-button value="quick"><ion-label>Quick select</ion-label></ion-segment-button>
+        </ion-segment>
+        <div *ngIf="travelMode === 'quick'">
+          <div class="travel-quick-chips">
+            <ion-chip *ngFor="let q of travelQuick" [color]="travelPicked[q.DoseId] ? 'primary' : 'medium'"
+              [outline]="!travelPicked[q.DoseId]" (click)="toggleTravelDose(q.DoseId)">
+              <ion-icon *ngIf="travelPicked[q.DoseId]" name="checkmark"></ion-icon>
+              <ion-label>{{ q.DoseName }}</ion-label>
+            </ion-chip>
+          </div>
+          <p class="travel-quick-note">
+            {{ travelPickedCount() === 0 ? 'None selected' : travelPickedCount() + ' vaccine(s) will be added to the schedule' }}.
+            You can add more later from the schedule page.
+          </p>
+        </div>
+        <p class="travel-quick-note" *ngIf="travelMode === 'standard'">
+          Client is created with an empty schedule. Add vaccines afterwards from the schedule page.
+        </p>
+      </div>
+
       <!-- EPI Plus sub-choice: shown inline once "epiplus" is selected. Mark as Given (default)
            keeps today's behaviour; Schedule Only inserts the same EPI dose set as not-yet-given. -->
       <div class="epi-subchoice" *ngIf="fg1.get('IsEPIDone').value === true">

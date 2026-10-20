@@ -43,6 +43,10 @@ const routes: Routes = [
     loadChildren: () => import('./website-setting/website-setting.module').then(m => m.WebsiteSettingPageModule)
   },
   {
+    path: "travel-quick-setting",
+    loadChildren: () => import('./travel-quick-setting/travel-quick-setting.module').then(m => m.TravelQuickSettingPageModule)
+  },
+  {
     path: "analytics",
     loadChildren: () => import('./analytics/analytics.module').then(m => m.AnalyticsPageModule)
   },
