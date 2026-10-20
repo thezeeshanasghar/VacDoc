@@ -41,7 +41,29 @@ interface AssignmentRow {
   DosesGiven: number;
   Doses: DoseRow[];
   CashAmount: number | null;
+  // Computed by the API (AssignmentStage): 1 Assigned, 2 Given, 3 Invoiced, 4 Paid, 5 Confirmed.
+  // A manager only ever receives 1-2. Absent on an older API, so every use falls back.
+  Stage?: number;
+  StageLabel?: string;
+  StageAgeDays?: number;
   expanded?: boolean;
+  history?: any[];
+  historyLoaded?: boolean;
+}
+
+// Why a visit is being called off. The reason pre-selects an option but never runs it.
+const CANCEL_REASONS: { code: string; label: string }[] = [
+  { code: 'refused', label: 'Client refused' },
+  { code: 'postponed', label: 'Postponed or booking cancelled' },
+  { code: 'wrongpa', label: 'Wrong PA or PA unavailable' },
+  { code: 'mistake', label: 'Entered by mistake' },
+];
+
+interface ActionOption {
+  code: 'task' | 'reassign' | 'takeback' | 'reverse';
+  title: string;
+  effects: string[];
+  danger?: boolean;
 }
 
 @Component({
@@ -77,7 +99,12 @@ export class PaAssignmentTrackingPage {
 
   selectedClinicId: number | null = null;
   selectedPaId: number | null = null;
-  selectedStatus: string = 'Active';
+  // The list is always loaded with every status; the counted view tabs below decide what shows.
+  selectedStatus: string = 'All';
+  view: 'needs' | 'stuck' | 'with' | 'closed' = 'needs';
+  closedKind: 'confirmed' | 'cancelled' = 'confirmed';
+  readonly STUCK_DAYS = 3;
+  readonly CANCEL_REASONS = CANCEL_REASONS;
   fromDate: string = '';
   toDate: string = '';
   searchQuery: string = '';
@@ -105,6 +132,14 @@ export class PaAssignmentTrackingPage {
   pendingRefusals: any[] = [];
   rejectingRefusalId: number | null = null;
   refusalRejectNote: string = '';
+
+  // The "Cancel, reassign or reverse" dialog (null = closed).
+  // `options` is built once when the dialog opens: the template must never call a method that
+  // returns fresh objects on every change-detection pass (ngFor would rebuild forever).
+  dlg: {
+    row: AssignmentRow; reason: string; note: string; opt: string; newPaId: number | null;
+    ack: boolean; touched: boolean; busy: boolean; paOptions: any[]; options: ActionOption[];
+  } | null = null;
 
   constructor(
     private paService: PaService,
@@ -333,7 +368,7 @@ export class PaAssignmentTrackingPage {
   clearFilters() {
     this.selectedClinicId = null;
     this.selectedPaId = null;
-    this.selectedStatus = 'Active';
+    this.selectedStatus = 'All';
     this.pas = [];
     this.searchQuery = '';
     this.fromDate = this.toDateStr(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
@@ -383,13 +418,241 @@ export class PaAssignmentTrackingPage {
 
   applySearch() {
     const q = (this.searchQuery || '').toLowerCase().trim();
+    const inView = this.allRows.filter(r => this.inView(r, this.view));
     this.filteredRows = q
-      ? this.allRows.filter(r => (r.ChildName || '').toLowerCase().includes(q))
-      : [...this.allRows];
+      ? inView.filter(r => (r.ChildName || '').toLowerCase().includes(q))
+      : [...inView];
+  }
+
+  // ---- counted view tabs (PA_TRACKING_MERGE_SPEC.md). Cancelled and cash-confirmed rows never
+  // appear in the working views; pending cancel requests are handled by their own panel.
+  setView(v: 'needs' | 'stuck' | 'with' | 'closed') {
+    this.view = v;
+    this.selectedIds = new Set();
+    this.applySearch();
+  }
+
+  setClosedKind(k: 'confirmed' | 'cancelled') {
+    this.closedKind = k;
+    this.selectedIds = new Set();
+    this.applySearch();
+  }
+
+  isStuck(row: AssignmentRow): boolean {
+    return row.Stage !== undefined && row.Stage < 4 && (row.StageAgeDays || 0) >= this.STUCK_DAYS;
+  }
+
+  inView(row: AssignmentRow, v: string): boolean {
+    const cls = this.statusClass(row);
+    if (v === 'closed') {
+      return this.closedKind === 'confirmed' ? cls === 'cash-confirmed' : cls === 'cancelled';
+    }
+    if (cls === 'cancelled' || cls === 'cash-confirmed' || cls === 'pending-cancellation') { return false; }
+    if (v === 'needs') { return cls === 'handover' || cls === 'completed'; }
+    if (v === 'stuck') { return cls === 'active' && this.isStuck(row); }
+    return cls === 'active';
+  }
+
+  viewCount(v: 'needs' | 'stuck' | 'with' | 'closed'): number {
+    const n = this.allRows.filter(r => this.inView(r, v)).length;
+    return v === 'needs' ? n + this.pendingCancellations.length + this.pendingRefusals.length : n;
+  }
+
+  get waitingOnYouCount(): number { return this.viewCount('needs'); }
+  get stuckCount(): number { return this.viewCount('stuck'); }
+
+  // ---- stage bar (computed by the API; falls back to the dose count on an older API)
+  stageNo(row: AssignmentRow): number {
+    if (row.Stage) { return row.Stage; }
+    return row.DosesTotal > 0 && row.DosesGiven === row.DosesTotal ? 2 : 1;
+  }
+
+  get stageNames(): string[] {
+    return this.isManager ? ['Assigned', 'Given'] : ['Assigned', 'Given', 'Invoiced', 'Paid', 'Confirmed'];
+  }
+
+  stepClass(row: AssignmentRow, i: number): string {
+    // Stage n means steps 1..n are reached; the next step is the one in progress.
+    const reached = this.stageNo(row);
+    if (i < reached) { return 'done'; }
+    return i === reached && reached < this.stageNames.length ? 'now' : '';
+  }
+
+  stageText(row: AssignmentRow): string {
+    const s = this.stageNo(row);
+    if (this.isManager) {
+      return s >= 2 ? 'Given' : `${row.DosesGiven} of ${row.DosesTotal} given`;
+    }
+    if (s >= 5 || row.IsCashConfirmedByDoctor) { return 'Closed · cash confirmed'; }
+    if (s === 4) { return 'Paid · waiting for your confirmation'; }
+    if (s === 3) { return 'Invoiced · payment not complete'; }
+    if (s === 2) { return 'Given · invoice not created'; }
+    return `${row.DosesGiven} of ${row.DosesTotal} given`;
+  }
+
+  ageText(row: AssignmentRow): string {
+    if (row.StageAgeDays === undefined || row.StageAgeDays === null) { return ''; }
+    return row.StageAgeDays === 0 ? 'today' : `${row.StageAgeDays}d in this stage`;
   }
 
   toggleExpand(row: AssignmentRow) {
     row.expanded = !row.expanded;
+    if (row.expanded && !row.historyLoaded) {
+      row.historyLoaded = true;
+      this.paService.getAssignmentHistory(row.AssignmentId, this.requestingManagerId).subscribe(
+        res => { row.history = (res && res.IsSuccess) ? (res.ResponseData || []) : []; },
+        () => { row.history = []; }
+      );
+    }
+  }
+
+  actorLabel(e: any): string {
+    if (e.Actor === 'DOCTOR') { return 'Doctor'; }
+    if (e.Actor === 'MANAGER') { return 'Manager'; }
+    if (e.Actor === 'PA') { return 'PA'; }
+    return '';
+  }
+
+  // ---- Cancel, reassign or reverse (one dialog; the reason pre-selects, never executes)
+  canOpenActionDialog(row: AssignmentRow): boolean {
+    const cls = this.statusClass(row);
+    if (cls === 'cancelled' || cls === 'cash-confirmed' || cls === 'pending-cancellation') { return false; }
+    return !this.isManager || this.canReassign;
+  }
+
+  openActionDialog(row: AssignmentRow) {
+    this.dlg = { row, reason: '', note: '', opt: '', newPaId: null, ack: false, touched: false, busy: false, paOptions: [], options: this.buildOptions(row) };
+    if (row.ClinicId) {
+      this.paService.getPAsForClinic(row.ClinicId).subscribe(res => {
+        const all = (res && res.IsSuccess) ? (res.ResponseData || []) : [];
+        if (this.dlg && this.dlg.row === row) {
+          this.dlg.paOptions = all.filter((p: any) => p.Id !== row.PaId);
+        }
+      });
+    }
+  }
+
+  closeActionDialog() { this.dlg = null; }
+
+  private buildOptions(row: AssignmentRow): ActionOption[] {
+    const s = this.stageNo(row);
+    if (s >= 5 || row.IsCashConfirmedByDoctor) { return []; }
+    const f = (row.PaName || 'The PA').split(' ')[0];
+    const n = row.DosesTotal;
+    const amt = row.CashAmount;
+    const reassign: ActionOption = {
+      code: 'reassign', title: 'Cancel and reassign to another PA',
+      effects: [`The ${n} dose${n === 1 ? '' : 's'} move to the new PA.`]
+        .concat(!this.isManager && s >= 2 && s < 4 && amt ? [`Unpaid credit of Rs ${amt} moves to the new PA.`] : [])
+        .concat(!this.isManager && s >= 3 ? ['Invoice owner changes to the new PA.'] : [])
+        .concat(!this.isManager && s >= 4 ? [`Cash ${f} already collected stays with ${f} until handed over.`] : [])
+    };
+    if (this.isManager) { return [reassign]; }
+    if (s <= 1) {
+      return [{
+        code: 'task', title: 'Cancel the task only',
+        effects: [`${f} is removed from this visit.`, 'Nothing is given and nothing is paid, so the child\'s schedule is unchanged.']
+      }, reassign];
+    }
+    const reverse: ActionOption = {
+      code: 'reverse', title: 'Reverse everything', danger: true,
+      effects: [`${row.DosesGiven} dose${row.DosesGiven === 1 ? '' : 's'} ungiven, stock returned to the clinic.`]
+        .concat(s >= 3 ? ['The invoice is deleted.'] : [])
+        .concat(s >= 4 ? [`The cash ${f} holds stays on ${f}'s ledger until you settle it.`] : [])
+        .concat([`Assignment closed. ${f} is notified. This cannot be undone.`])
+    };
+    if (s < 4) {
+      return [reassign, {
+        code: 'takeback', title: 'Take it back, I will handle it',
+        effects: ['Doses stay given.', `${f} is no longer credited for the payment.`, 'You collect the payment yourself.', `${f} is told the visit was taken back.`]
+      }, reverse];
+    }
+    return [reassign, reverse];
+  }
+
+  private preselect(row: AssignmentRow, reason: string): string {
+    if (!reason) { return ''; }
+    const s = this.stageNo(row);
+    if (this.isManager) { return 'reassign'; }
+    if (s <= 1) { return reason === 'wrongpa' ? 'reassign' : 'task'; }
+    if (reason === 'refused' || reason === 'mistake') { return 'reverse'; }
+    if (reason === 'wrongpa') { return 'reassign'; }
+    return '';
+  }
+
+  dlgChooseReason(code: string) {
+    if (!this.dlg) { return; }
+    this.dlg.reason = code;
+    this.dlg.ack = false;
+    if (!this.dlg.touched) { this.dlg.opt = this.preselect(this.dlg.row, code); }
+  }
+
+  dlgChooseOption(code: string) {
+    if (!this.dlg) { return; }
+    this.dlg.opt = code;
+    this.dlg.touched = true;
+    this.dlg.ack = false;
+  }
+
+  get dlgReady(): boolean {
+    const d = this.dlg;
+    if (!d || d.busy || !d.reason || !d.opt) { return false; }
+    if (d.opt === 'reassign' && !d.newPaId) { return false; }
+    if (d.opt === 'reverse' && !d.ack) { return false; }
+    return true;
+  }
+
+  get dlgLabel(): string {
+    if (!this.dlg) { return ''; }
+    switch (this.dlg.opt) {
+      case 'task': return 'Cancel task';
+      case 'reassign': return 'Cancel and reassign';
+      case 'takeback': return 'Take it back';
+      case 'reverse': return 'Reverse everything';
+      default: return 'Choose what should happen';
+    }
+  }
+
+  private dlgReasonText(): string {
+    const d = this.dlg;
+    if (!d) { return ''; }
+    const label = (CANCEL_REASONS.find(r => r.code === d.reason) || { label: '' }).label;
+    return d.note && d.note.trim() ? `${label}: ${d.note.trim()}` : label;
+  }
+
+  runActionDialog() {
+    const d = this.dlg;
+    if (!d || !this.dlgReady || !this.doctorId) { return; }
+    const row = d.row;
+    const reason = this.dlgReasonText();
+    d.busy = true;
+    const done = (res: any, okMessage: string) => {
+      if (res && res.IsSuccess) {
+        this.toastService.create(okMessage, 'success');
+        this.dlg = null;
+        this.load();
+        if (!this.isManager) { this.loadPendingCancellations(); this.loadPendingRefusals(); }
+      } else {
+        d.busy = false;
+        this.toastService.create((res && res.Message) || 'That did not work', 'danger');
+      }
+    };
+    const failed = () => { d.busy = false; this.toastService.create('That did not work. Nothing was changed.', 'danger'); };
+
+    if (d.opt === 'task') {
+      this.paService.cancelAssignment(row.AssignmentId, 'DOCTOR', this.doctorId, reason).subscribe(res => done(res, 'Task cancelled'), failed);
+    } else if (d.opt === 'reassign') {
+      this.paService.reassignAssignment(
+        row.AssignmentId, d.newPaId as number, row.TargetDate || undefined,
+        this.isManager ? (this.requestingManagerId || undefined) : undefined,
+        this.callerUserId || undefined, this.securityStamp || undefined, reason
+      ).subscribe(res => done(res, 'Assignment reassigned'), failed);
+    } else if (d.opt === 'takeback') {
+      this.paService.takeBackAssignment(row.AssignmentId, reason, this.callerUserId || undefined, this.securityStamp || undefined)
+        .subscribe(res => done(res, 'Visit taken back. Doses stay given.'), failed);
+    } else if (d.opt === 'reverse') {
+      this.paService.deleteAssignment(row.AssignmentId, this.doctorId, 'FullReset', reason).subscribe(res => done(res, 'Visit reversed'), failed);
+    }
   }
 
   // Opens the inline "reassign to" PA picker for this row — loads the PA list scoped to
@@ -666,7 +929,7 @@ export class PaAssignmentTrackingPage {
   }
 
   get activePACount(): number {
-    return new Set(this.allRows.map(r => r.PaId)).size;
+    return new Set(this.allRows.filter(r => !r.IsCancelled && !r.IsCashConfirmedByDoctor).map(r => r.PaId)).size;
   }
 
   // Pakistan Standard Time is fixed (no DST), but the device/browser rendering this may

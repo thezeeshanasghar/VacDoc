@@ -21,7 +21,7 @@
     </div>
 
     <!-- Pending Cancellation Requests — doctor-only, separate from the filtered list below -->
-    <div class="pending-cancel-panel" *ngIf="!isManager && pendingCancellations.length > 0">
+    <div class="pending-cancel-panel" *ngIf="!isManager && view === 'needs' && pendingCancellations.length > 0">
       <div class="pending-cancel-header">
         <ion-icon name="alert-circle-outline"></ion-icon>
         <span>{{ pendingCancellations.length }} cancellation request{{ pendingCancellations.length > 1 ? 's' : '' }} awaiting your decision</span>
@@ -45,7 +45,7 @@
     </div>
 
     <!-- Patient refused at home — doctor-only; approving reverses the whole visit -->
-    <div class="refusal-panel" *ngIf="!isManager && pendingRefusals.length > 0">
+    <div class="refusal-panel" *ngIf="!isManager && view === 'needs' && pendingRefusals.length > 0">
       <div class="refusal-header">
         <ion-icon name="hand-left-outline"></ion-icon>
         <span>{{ pendingRefusals.length }} refused-at-home request{{ pendingRefusals.length > 1 ? 's' : '' }} awaiting your decision</span>
@@ -88,17 +88,6 @@
       </div>
 
       <div class="filter-group">
-        <label>Status</label>
-        <select class="filter-select" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
-          <option value="Active">Active</option>
-          <option value="PendingHandover">Pending Handover</option>
-          <option value="Completed">Completed</option>
-          <option value="Cancelled">Cancelled</option>
-          <option value="All">All</option>
-        </select>
-      </div>
-
-      <div class="filter-group">
         <label>From Date</label>
         <app-date-input [(ngModel)]="fromDate" (dateChange)="onFilterChange()"></app-date-input>
       </div>
@@ -131,36 +120,42 @@
       <button class="switcher-btn" (click)="goToPayments()"><ion-icon name="cash-outline"></ion-icon> Payments</button>
     </div>
 
-    <!-- Active/Cash Confirmed toggle — Cash Confirmed means the doctor has confirmed
-         receiving the cash handover for this assignment; it then leaves Active
-         immediately regardless of age. The Status dropdown above still covers finer
-         filtering (Pending Handover / Completed / Cancelled / All). -->
-    <div class="status-tab-row">
-      <div class="status-tabs">
-        <button class="status-tab" [class.selected]="selectedStatus === 'Active'" (click)="setStatusTab('Active')">
-          Active <span class="tab-count">{{ activeCount }}</span>
-        </button>
-        <button class="status-tab status-tab-cash" [class.selected]="selectedStatus === 'CashConfirmed'" (click)="setStatusTab('CashConfirmed')">
-          <ion-icon name="checkmark-circle-outline"></ion-icon> Cash Confirmed <span class="tab-count">{{ cashConfirmedCount }}</span>
-        </button>
-      </div>
-      <p class="status-tab-hint">Cash Confirmed = doctor has confirmed the cash handover for this assignment. Once confirmed, it's no longer Active, no matter how old it is.</p>
+    <!-- Counted views. "Needs you" holds the approval panels above plus assignments the PA has
+         finished and handed over; "Stuck" flags groups with no progress for STUCK_DAYS (flag
+         only: nothing closes automatically); "Closed" is cash-confirmed or cancelled. -->
+    <div class="view-tabs" role="tablist">
+      <button class="view-tab" role="tab" [class.selected]="view === 'needs'" [class.alert]="viewCount('needs') > 0" (click)="setView('needs')">
+        Needs you <span class="tab-count">{{ viewCount('needs') }}</span>
+      </button>
+      <button class="view-tab" role="tab" [class.selected]="view === 'stuck'" (click)="setView('stuck')">
+        Stuck {{ STUCK_DAYS }}+ days <span class="tab-count">{{ viewCount('stuck') }}</span>
+      </button>
+      <button class="view-tab" role="tab" [class.selected]="view === 'with'" (click)="setView('with')">
+        With PAs <span class="tab-count">{{ viewCount('with') }}</span>
+      </button>
+      <button class="view-tab" role="tab" [class.selected]="view === 'closed'" (click)="setView('closed')">
+        Closed <span class="tab-count">{{ viewCount('closed') }}</span>
+      </button>
+    </div>
+    <div class="closed-kind" *ngIf="view === 'closed'">
+      <button [class.selected]="closedKind === 'confirmed'" (click)="setClosedKind('confirmed')">Cash confirmed</button>
+      <button [class.selected]="closedKind === 'cancelled'" (click)="setClosedKind('cancelled')">Cancelled</button>
     </div>
 
     <ng-container>
 
       <div class="summary-strip">
         <div class="stat-card">
+          <div class="stat-icon warn"><ion-icon name="alert-circle-outline"></ion-icon></div>
+          <div><div class="stat-label">Waiting on you</div><div class="stat-value">{{ waitingOnYouCount }}</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon warn"><ion-icon name="time-outline"></ion-icon></div>
+          <div><div class="stat-label">Stuck {{ STUCK_DAYS }}+ days</div><div class="stat-value">{{ stuckCount }}</div></div>
+        </div>
+        <div class="stat-card">
           <div class="stat-icon blue"><ion-icon name="clipboard-outline"></ion-icon></div>
-          <div><div class="stat-label">Active Assignments</div><div class="stat-value">{{ activeCount }}</div></div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon warn"><ion-icon name="sync-outline"></ion-icon></div>
-          <div><div class="stat-label">Pending Handover</div><div class="stat-value">{{ pendingHandoverCount }}</div></div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon green"><ion-icon name="checkmark-done-outline"></ion-icon></div>
-          <div><div class="stat-label">Completed (Range)</div><div class="stat-value">{{ completedCount }}</div></div>
+          <div><div class="stat-label">Active assignments</div><div class="stat-value">{{ activeCount }}</div></div>
         </div>
         <div class="stat-card">
           <div class="stat-icon petrol"><ion-icon name="people-outline"></ion-icon></div>
@@ -242,7 +237,7 @@
               </ng-container>
               <span class="clinic-chip" *ngIf="row.ClinicName">{{ row.ClinicName }}</span>
               <span class="pa-chip"><span class="pa-dot">{{ (row.PaName || '?').slice(0,2).toUpperCase() }}</span>{{ row.PaName }}</span>
-              <span class="badge" [ngClass]="'badge-' + statusClass(row)">{{ statusLabel(row) }}</span>
+              <span class="badge" *ngIf="statusClass(row) !== 'active'" [ngClass]="'badge-' + statusClass(row)">{{ statusLabel(row) }}</span>
               <button class="btn-remove-assignment" *ngIf="statusClass(row) === 'completed' || statusClass(row) === 'cancelled'"
                 (click)="confirmRemove(row); $event.stopPropagation()" title="Remove from list">
                 <ion-icon name="trash-outline"></ion-icon>
@@ -251,10 +246,25 @@
             </div>
           </div>
 
-          <div class="assign-progress" *ngIf="row.DosesTotal > 0">
-            <div class="progress-track"><div class="progress-fill" [style.width.%]="(row.DosesGiven / row.DosesTotal) * 100"></div></div>
-            <div class="progress-label">{{ row.DosesGiven }} / {{ row.DosesTotal }} doses given</div>
+          <!-- Stage bar: Assigned, Given, Invoiced, Paid, Confirmed (a manager only gets the first
+               two). Computed by the API so every screen agrees; the dose count is only the
+               fallback for an older API. -->
+          <div class="stage-block" *ngIf="row.Stage !== undefined; else doseProgress">
+            <div class="stage-bar" [ngClass]="'steps-' + stageNames.length">
+              <span *ngFor="let n of stageNames; let i = index" class="stage-seg" [ngClass]="stepClass(row, i)" [title]="n"></span>
+            </div>
+            <div class="stage-line">
+              <span class="stage-text">{{ stageText(row) }}</span>
+              <span class="stage-age" *ngIf="statusClass(row) === 'active' || statusClass(row) === 'handover'"
+                [class.stage-age-old]="isStuck(row)">{{ ageText(row) }}</span>
+            </div>
           </div>
+          <ng-template #doseProgress>
+            <div class="assign-progress" *ngIf="row.DosesTotal > 0">
+              <div class="progress-track"><div class="progress-fill" [style.width.%]="(row.DosesGiven / row.DosesTotal) * 100"></div></div>
+              <div class="progress-label">{{ row.DosesGiven }} / {{ row.DosesTotal }} doses given</div>
+            </div>
+          </ng-template>
 
           <!-- Cash amount hidden entirely from Managers — Manager never gets any
                cash/Financial figure, not just the Payments screens. -->
@@ -276,29 +286,96 @@
                 <ion-icon [name]="d.IsDone ? 'checkmark-circle' : 'ellipse-outline'" [ngClass]="d.IsDone ? 'dose-icon-done' : 'dose-icon-pending'"></ion-icon>
               </div>
             </div>
+            <div class="history-block">
+              <div class="history-title">History</div>
+              <div *ngIf="!row.history" class="history-empty">Loading…</div>
+              <div *ngIf="row.history && row.history.length === 0" class="history-empty">No history recorded.</div>
+              <div class="history-entry" *ngFor="let e of row.history">
+                <span class="history-time">{{ formatDateTime(e.At) }}</span>
+                <span class="history-text"><b *ngIf="actorLabel(e)">{{ actorLabel(e) }}</b> {{ e.Text }}
+                  <i *ngIf="e.Source === 'derived'" class="history-derived" title="Rebuilt from the record's own timestamp">· from record</i></span>
+                <span class="history-reason" *ngIf="e.Reason">Reason: {{ e.Reason }}</span>
+              </div>
+            </div>
             <div class="assign-footer-meta">
               <span>Assignment #{{ row.AssignmentId }}</span>
               <span *ngIf="row.Notes">Notes: "{{ row.Notes }}"</span>
               <span *ngIf="row.CancelReason">Reason: "{{ row.CancelReason }}"</span>
               <button *ngIf="!isManager" class="link-to-payments" (click)="viewInPayments(row); $event.stopPropagation()">View in Payments →</button>
-              <button *ngIf="(!isManager || canReassign) && statusClass(row) === 'active'"
-                class="link-to-payments" (click)="openReassign(row); $event.stopPropagation()">
-                <ion-icon name="swap-horizontal-outline"></ion-icon> Reassign
+              <button *ngIf="canOpenActionDialog(row)"
+                class="link-to-payments link-danger" (click)="openActionDialog(row); $event.stopPropagation()">
+                <ion-icon name="swap-horizontal-outline"></ion-icon> {{ isManager ? 'Reassign…' : 'Cancel, reassign or reverse…' }}
               </button>
-            </div>
-
-            <!-- Inline "reassign to" picker — doctor or Manager-with-ReassignPaTask, active assignments only. -->
-            <div class="reassign-picker" *ngIf="reassigningRowId === row.AssignmentId" (click)="$event.stopPropagation()">
-              <ion-select placeholder="Choose new PA" [(ngModel)]="reassignTargetPaId">
-                <ion-select-option *ngFor="let pa of reassignPaOptions" [value]="pa.Id">{{ pa.Name }}</ion-select-option>
-              </ion-select>
-              <button class="btn-reassign-confirm" [disabled]="!reassignTargetPaId" (click)="confirmReassign(row)">Confirm</button>
-              <button class="btn-reassign-cancel" (click)="closeReassign()">Cancel</button>
             </div>
           </div>
         </div>
       </div>
     </ng-container>
 
+  </div>
+
+  <!-- Cancel, reassign or reverse. Reason first: it pre-selects an option, never runs it. Only the
+       options that are valid for the assignment's stage are listed, each with its exact effects. -->
+  <div slot="fixed" class="ad-layer" *ngIf="dlg">
+  <div class="action-dialog-backdrop" (click)="closeActionDialog()"></div>
+  <div class="action-dialog" role="dialog" aria-label="Cancel, reassign or reverse">
+    <div class="ad-head">
+      <div>
+        <div class="ad-title">{{ isManager ? 'Reassign' : 'Cancel, reassign or reverse' }}</div>
+        <div class="ad-sub">{{ dlg.row.ChildName }} · {{ dlg.row.PaName }}</div>
+      </div>
+      <button class="ad-x" (click)="closeActionDialog()" aria-label="Close">✕</button>
+    </div>
+
+    <div class="ad-body">
+      <div class="ad-warn" *ngIf="dlg.options.length === 0">
+        This assignment is closed. The invoice is confirmed, so it cannot be cancelled or reversed here. Changes go through an Amendment that you approve.
+      </div>
+
+      <ng-container *ngIf="dlg.options.length > 0">
+        <div class="ad-section">
+          <div class="ad-label">1. Why is this being called off?</div>
+          <div class="ad-chips">
+            <button *ngFor="let r of CANCEL_REASONS" class="ad-chip" [class.on]="dlg.reason === r.code"
+              (click)="dlgChooseReason(r.code)">{{ r.label }}</button>
+          </div>
+        </div>
+
+        <div class="ad-section">
+          <div class="ad-label">2. What should happen?</div>
+          <div class="ad-opt" *ngFor="let o of dlg.options" [class.on]="dlg.opt === o.code" [class.danger]="o.danger"
+            role="radio" tabindex="0" [attr.aria-checked]="dlg.opt === o.code" (click)="dlgChooseOption(o.code)">
+            <div class="ad-opt-title">{{ o.title }}
+              <span class="ad-pre" *ngIf="dlg.opt === o.code && !dlg.touched && dlg.reason">Pre-selected from your reason</span>
+            </div>
+            <ul><li *ngFor="let e of o.effects">{{ e }}</li></ul>
+
+            <div class="ad-field" *ngIf="o.code === 'reassign' && dlg.opt === 'reassign'" (click)="$event.stopPropagation()">
+              <label>New PA</label>
+              <select [(ngModel)]="dlg.newPaId">
+                <option [ngValue]="null">Choose a PA</option>
+                <option *ngFor="let p of dlg.paOptions" [ngValue]="p.Id">{{ p.Name }}</option>
+              </select>
+            </div>
+            <label class="ad-ack" *ngIf="o.code === 'reverse' && dlg.opt === 'reverse'" (click)="$event.stopPropagation()">
+              <input type="checkbox" [(ngModel)]="dlg.ack"> I understand this undoes the visit and cannot be undone
+            </label>
+          </div>
+        </div>
+
+        <div class="ad-section">
+          <div class="ad-label">Details (optional)</div>
+          <input class="ad-input" type="text" [(ngModel)]="dlg.note" placeholder="Anything the history should record">
+          <div class="ad-hint">The reason and your choice are written to the history with your name and the time.</div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="ad-foot">
+      <button class="ad-btn ad-btn-ghost" (click)="closeActionDialog()">Close</button>
+      <button *ngIf="dlg.options.length > 0" class="ad-btn" [class.ad-btn-danger]="dlg.opt === 'reverse'"
+        [disabled]="!dlgReady" (click)="runActionDialog()">{{ dlgLabel }}</button>
+    </div>
+  </div>
   </div>
 </ion-content>

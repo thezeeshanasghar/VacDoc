@@ -185,9 +185,26 @@ export class PaService extends BaseService {
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  deleteAssignment(assignmentId: number, doctorId: number, mode: 'UnassignOnly' | 'FullReset' = 'UnassignOnly'): Observable<any> {
-    const url = `${this.API_PA}PAAssignment/${assignmentId}?doctorId=${doctorId}&mode=${mode}`;
+  deleteAssignment(assignmentId: number, doctorId: number, mode: 'UnassignOnly' | 'FullReset' = 'UnassignOnly', reason: string = ''): Observable<any> {
+    let url = `${this.API_PA}PAAssignment/${assignmentId}?doctorId=${doctorId}&mode=${mode}`;
+    if (reason) { url += `&reason=${encodeURIComponent(reason)}`; }
     return this.http.delete(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  // Doctor takes a given-but-unpaid visit back from the PA and handles the payment personally.
+  takeBackAssignment(assignmentId: number, reason: string, callerUserId?: number, securityStamp?: string): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/take-back`;
+    const body: any = { Reason: reason };
+    if (callerUserId) { body.CallerUserId = callerUserId; }
+    if (securityStamp) { body.SecurityStamp = securityStamp; }
+    return this.http.patch(url, body, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  // Audit trail of one assignment (log entries + events rebuilt from record timestamps).
+  getAssignmentHistory(assignmentId: number, requestingManagerId?: number | null): Observable<any> {
+    let url = `${this.API_PA}PAAssignment/${assignmentId}/history`;
+    if (requestingManagerId) { url += `?requestingManagerId=${requestingManagerId}`; }
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
   completeAssignment(assignmentId: number): Observable<any> {
@@ -261,9 +278,10 @@ export class PaService extends BaseService {
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  reassignAssignment(assignmentId: number, newPaId: number, targetDate?: string | null, requestingManagerId?: number | null, callerUserId?: number, securityStamp?: string): Observable<any> {
+  reassignAssignment(assignmentId: number, newPaId: number, targetDate?: string | null, requestingManagerId?: number | null, callerUserId?: number, securityStamp?: string, reason?: string): Observable<any> {
     const url = `${this.API_PA}PAAssignment/${assignmentId}/reassign`;
     const body: any = { NewPaId: newPaId };
+    if (reason) { body.Reason = reason; }
     if (targetDate) { body.TargetDate = targetDate; }
     if (requestingManagerId) { body.RequestingManagerId = requestingManagerId; }
     if (callerUserId) { body.CallerUserId = callerUserId; }
