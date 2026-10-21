@@ -510,6 +510,7 @@ export class PaAssignmentTrackingPage {
   }
 
   actorLabel(e: any): string {
+    if (e.ActorName) { return e.ActorName; }
     if (e.Actor === 'DOCTOR') { return 'Doctor'; }
     if (e.Actor === 'MANAGER') { return 'Manager'; }
     if (e.Actor === 'PA') { return 'PA'; }
