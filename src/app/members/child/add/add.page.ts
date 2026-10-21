@@ -346,11 +346,33 @@ filterCountryCodes(value: string) {
     this.storage.get(environment.DOCTOR).then((doc) => {
       this.Doctor = doc;
       this.applyTravelAccess();
+      this.refreshDoctorFlags();
     });
     this.storage.get(environment.MESSAGES).then((messages) => {
       messages == null ? "" : (this.Messages = messages);
     });
     this.cities = this.cities;
+  }
+
+  // The stored doctor object is a snapshot from login (a PA's dates from her last login), so
+  // AllowTravel/AllowAdult can be stale. Re-read the live flags and write them back.
+  async refreshDoctorFlags() {
+    const docId = await this.storage.get(environment.DOCTOR_Id);
+    if (!docId) return;
+    this.doctorService.getDoctorProfile(docId).subscribe(
+      async (res) => {
+        if (!res || !res.IsSuccess || !res.ResponseData) return;
+        const fresh = res.ResponseData;
+        const changed = !this.Doctor || this.Doctor.AllowTravel !== fresh.AllowTravel;
+        this.Doctor = Object.assign({}, this.Doctor || {}, fresh);
+        await this.storage.set(environment.DOCTOR, this.Doctor);
+        if (changed) {
+          this.applyTravelAccess();
+          this.cd.detectChanges();
+        }
+      },
+      () => {}
+    );
   }
 
   // Travel is available to doctors holding the Travel permission set in VacAdmin.

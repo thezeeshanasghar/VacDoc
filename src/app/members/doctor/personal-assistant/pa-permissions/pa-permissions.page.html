@@ -15,65 +15,97 @@
 
 <ion-content>
 
-  <div *ngFor="let section of sections" class="section-wrap" [class.manager-section]="section.key === 'manager'">
-
-    <!-- Section header — tap to expand/collapse -->
-    <div class="section-header" (click)="toggleSection(section.key)">
-      <div class="section-icon-badge">
-        <ion-icon [name]="section.icon" class="section-icon"></ion-icon>
-      </div>
-      <div class="section-meta">
-        <span class="section-title">
-          {{ section.label }}
-          <span *ngIf="section.isNew" class="new-tag">New</span>
-        </span>
-        <span class="section-count">{{ countGranted(section) }} / {{ section.fields.length }} permitted</span>
-      </div>
-      <ion-icon [name]="expanded[section.key] ? 'chevron-up-outline' : 'chevron-down-outline'" class="chevron"></ion-icon>
+  <!-- Load failed: block everything. Saving an empty object would wipe all permissions. -->
+  <div *ngIf="loadFailed" class="load-error" role="alert">
+    <ion-icon name="alert-circle-outline"></ion-icon>
+    <div class="le-text">
+      <strong>Couldn't load this assistant's permissions.</strong>
+      <span>Nothing has been changed. Saving is disabled until they load.</span>
     </div>
-
-    <!-- Section body -->
-    <div *ngIf="expanded[section.key]" class="section-body">
-      <div class="section-bulk-actions">
-        <ion-button fill="outline" size="small" color="success" (click)="selectAll(section)">
-          <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
-          All
-        </ion-button>
-        <ion-button fill="outline" size="small" color="medium" (click)="clearAll(section)">
-          <ion-icon name="close-outline" slot="start"></ion-icon>
-          None
-        </ion-button>
-      </div>
-
-      <div *ngIf="section.exclusionNote" class="exclusion-note">
-        <ion-icon name="warning-outline"></ion-icon>
-        <span>{{ section.exclusionNote }}</span>
-      </div>
-      <div *ngIf="section.scopeNote" class="scope-note">
-        <ion-icon name="business-outline"></ion-icon>
-        <span>{{ section.scopeNote }}</span>
-      </div>
-
-      <ion-item *ngFor="let field of section.fields" lines="none" class="perm-row">
-        <ion-toggle [(ngModel)]="perm[field.key]" slot="start" color="success"></ion-toggle>
-        <ion-label class="perm-label-text">
-          <div class="perm-name">{{ field.label }}</div>
-          <div *ngIf="field.desc" class="perm-desc">{{ field.desc }}</div>
-        </ion-label>
-      </ion-item>
-    </div>
-
+    <ion-button size="small" fill="outline" (click)="loadPermissions()">Retry</ion-button>
   </div>
 
-  <div style="height: 80px;"></div>
+  <ng-container *ngIf="loaded">
+
+    <div class="tools">
+      <div class="summary">
+        <span><b>{{ grantedTotal }}</b> of <b>{{ totalCount }}</b> allowed</span>
+        <span *ngIf="dirtyCount" class="unsaved-count">{{ dirtyCount }} unsaved</span>
+      </div>
+      <div class="search-wrap">
+        <ion-icon name="search-outline"></ion-icon>
+        <input id="perm-search" class="search" type="search" [(ngModel)]="query"
+               placeholder="Search permissions (e.g. delete, stock, invoice)"
+               aria-label="Search permissions" autocomplete="off">
+        <button *ngIf="query" class="search-clear" (click)="clearSearch()" aria-label="Clear search">
+          <ion-icon name="close-circle"></ion-icon>
+        </button>
+      </div>
+      <div class="chips" role="tablist" aria-label="Categories">
+        <button class="chip" role="tab" [class.on]="activeCat === 'all' && !query" (click)="setCat('all')">
+          All <i>{{ grantedTotal }}/{{ totalCount }}</i>
+        </button>
+        <button *ngFor="let s of sections" class="chip" role="tab" [class.on]="activeCat === s.key && !query" (click)="setCat(s.key)">
+          {{ s.label }} <i>{{ countGranted(s) }}/{{ s.fields.length }}</i>
+        </button>
+      </div>
+    </div>
+
+    <div class="layout">
+      <nav class="rail" aria-label="Categories">
+        <button class="cat" [class.on]="activeCat === 'all' && !query" (click)="setCat('all')">
+          All permissions <i>{{ grantedTotal }}/{{ totalCount }}</i>
+        </button>
+        <button *ngFor="let s of sections" class="cat" [class.on]="activeCat === s.key && !query"
+                [class.zero]="countGranted(s) === 0" (click)="setCat(s.key)">
+          {{ s.label }} <i>{{ countGranted(s) }}/{{ s.fields.length }}</i>
+        </button>
+      </nav>
+
+      <div class="main">
+        <section *ngFor="let section of visibleSections" class="sec">
+          <div class="sh">
+            <div class="sh-meta">
+              <h3>{{ section.label }}</h3>
+              <div class="sh-count">{{ countGranted(section) }} of {{ section.fields.length }} allowed<span *ngIf="isFiltered(section)"> · showing {{ visibleFields(section).length }} match{{ visibleFields(section).length === 1 ? '' : 'es' }}</span></div>
+            </div>
+            <div class="bulk">
+              <button (click)="allowAll(section)" [attr.aria-label]="'Allow ' + (isFiltered(section) ? 'matching' : 'all') + ' in ' + section.label">{{ isFiltered(section) ? 'Allow matching' : 'Allow all' }}</button>
+              <button class="clr" (click)="clearAll(section)" [attr.aria-label]="'Clear ' + (isFiltered(section) ? 'matching' : 'all') + ' in ' + section.label">{{ isFiltered(section) ? 'Clear matching' : 'Clear all' }}</button>
+            </div>
+          </div>
+
+          <div *ngIf="section.scopeNote && !isFiltered(section)" class="note">{{ section.scopeNote }}</div>
+
+          <div *ngFor="let field of visibleFields(section)" class="r" [class.chg]="isChanged(field.key)" (click)="toggle(field.key)">
+            <div class="t">
+              <div class="rn">{{ field.label }}<span *ngIf="highImpact[field.key]" class="tag">High impact</span></div>
+              <div *ngIf="field.desc" class="rd">{{ field.desc }}</div>
+              <div *ngIf="highImpact[field.key]" class="rd">{{ highImpact[field.key] }}</div>
+            </div>
+            <ion-toggle [ngModel]="!!perm[field.key]" (ngModelChange)="perm[field.key] = $event"
+                        (click)="$event.stopPropagation()" color="success" [attr.aria-label]="field.label"></ion-toggle>
+          </div>
+        </section>
+
+        <div *ngIf="!visibleSections.length" class="empty">
+          No permission matches "{{ query }}".<br><br>
+          <ion-button size="small" fill="outline" (click)="clearSearch()">Clear search</ion-button>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+  <div class="toast-pill" *ngIf="toastText" role="status">
+    <span>{{ toastText }}</span>
+    <a *ngIf="canUndo" tabindex="0" role="button" (click)="undo()" (keydown.enter)="undo()">Undo</a>
+  </div>
+
+  <div class="savebar" *ngIf="dirtyCount > 0">
+    <span>{{ dirtyCount }} unsaved change{{ dirtyCount > 1 ? 's' : '' }}</span>
+    <ion-button fill="outline" color="medium" (click)="discard()">Discard</ion-button>
+    <ion-button color="success" [disabled]="saving" (click)="save()">Save changes</ion-button>
+  </div>
 
 </ion-content>
-
-<ion-footer>
-  <ion-toolbar>
-    <ion-button expand="block" class="lava-btn" (click)="save()">
-      <ion-icon name="save-outline" slot="start"></ion-icon>
-      Save All Permissions
-    </ion-button>
-  </ion-toolbar>
-</ion-footer>
