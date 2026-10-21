@@ -135,7 +135,7 @@ export class SceduleEditPage implements OnInit {
       res => {
         loading.dismiss();
         this.toastService.create("successfully Added", "success");
-        this.router.navigate(['/members/doctor/schedule']);
+        this.router.navigate(['/members/doctor/schedule/regular']);
       },
       err => {
         loading.dismiss();

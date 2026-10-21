@@ -1,0 +1,16 @@
+<ion-content class="sh-content">
+  <div class="sh-grid" *ngIf="showCards">
+    <div routerLink="/members/doctor/schedule/regular" class="sh-card card-regular">
+      <div class="sh-icon"><ion-icon name="recording-outline"></ion-icon></div>
+      <span class="sh-label">Regular</span>
+      <span class="sh-sub">Vaccine schedule and ages</span>
+      <ion-icon name="chevron-forward-outline" class="sh-arrow"></ion-icon>
+    </div>
+    <div routerLink="/members/doctor/travel-quick-setting" class="sh-card card-travel">
+      <div class="sh-icon"><ion-icon name="airplane-outline"></ion-icon></div>
+      <span class="sh-label">Travel quick pick list</span>
+      <span class="sh-sub">Up to 4 common travel vaccines</span>
+      <ion-icon name="chevron-forward-outline" class="sh-arrow"></ion-icon>
+    </div>
+  </div>
+</ion-content>

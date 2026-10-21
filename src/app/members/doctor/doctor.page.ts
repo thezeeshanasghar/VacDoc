@@ -12,7 +12,6 @@ export class DoctorPage implements OnInit {
 
   allowOwnEmail = false;
   allowOwnWebsite = false;
-  allowTravel = false;
 
   constructor(
     private storage: Storage,
@@ -28,7 +27,6 @@ export class DoctorPage implements OnInit {
       if (res.IsSuccess) {
         this.allowOwnEmail = res.ResponseData.AllowOwnEmail === true;
         this.allowOwnWebsite = res.ResponseData.AllowOwnWebsite === true;
-        this.allowTravel = res.ResponseData.AllowTravel === true;
       }
     });
   }

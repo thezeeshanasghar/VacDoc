@@ -6,10 +6,15 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { SchedulePage } from './schedule.page';
+import { ScheduleHomePage } from './home/schedule-home.page';
 
 const routes: Routes = [
   {
     path: '',
+    component: ScheduleHomePage
+  },
+  {
+    path: 'regular',
     component: SchedulePage
   },
   { path: "edit", loadChildren: () => import('./edit/scheduleeditdoctor.module').then(m => m.SceduleEditPageModule) },
@@ -24,6 +29,6 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     ReactiveFormsModule
   ],
-  declarations: [SchedulePage]
+  declarations: [SchedulePage, ScheduleHomePage]
 })
 export class SchedulePageModule {}

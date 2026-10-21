@@ -121,7 +121,7 @@ export class AddschedulePage implements OnInit {
       res => {
         if (res.IsSuccess) {
           this.toastService.create("successfully added");
-          this.router.navigate(["./members/doctor/schedule"]);
+          this.router.navigate(["./members/doctor/schedule/regular"]);
         } else {
           this.toastService.create(res.Message, "danger");
         }
