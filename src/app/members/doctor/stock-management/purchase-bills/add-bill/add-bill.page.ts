@@ -7,6 +7,7 @@ import { SupplierService } from 'src/app/services/supplier.service';
 import { BrandService } from 'src/app/services/brand.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
+import { today as todayDay } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-add-bill',
@@ -83,10 +84,7 @@ export class AddBillPage {
       }
     }
 
-    const today = new Date();
-    const mm = (today.getMonth() + 1).toString().padStart(2, '0');
-    const dd = today.getDate().toString().padStart(2, '0');
-    this.billDate = today.getFullYear() + '-' + mm + '-' + dd;
+    this.billDate = todayDay();
 
     if (this.lines.length === 0) this.addLine();
     this.loadSuppliers();

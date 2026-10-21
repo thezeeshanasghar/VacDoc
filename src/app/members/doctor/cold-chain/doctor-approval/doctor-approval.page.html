@@ -118,7 +118,7 @@
         <div class="excursion-card" *ngIf="currentLog.ExcursionReadings?.length || currentLog.FridgesWithNoReadings?.length">
           <p class="ex-h">⚠ {{ currentLog.ExcursionReadings?.length || 0 }} out-of-range reading{{ (currentLog.ExcursionReadings?.length || 0) === 1 ? '' : 's' }} · {{ currentLog.MissedChecks }} missed checks</p>
           <div class="excursion-row" *ngFor="let e of currentLog.ExcursionReadings">
-            <span>{{ e.RefrigeratorName }} · {{ e.RecordedDate | date:'EEE' }} {{ e.RecordedTime }} · {{ e.RecordedByName }}</span>
+            <span>{{ e.RefrigeratorName }} · {{ e.RecordedDate | day:'EEE' }} {{ e.RecordedTime }} · {{ e.RecordedByName }}</span>
             <span class="ex-temp">{{ e.Temperature }}°C</span>
           </div>
           <div class="excursion-row" *ngFor="let f of currentLog.FridgesWithNoReadings">

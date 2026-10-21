@@ -3,6 +3,7 @@ import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
 import { ColdChainService } from 'src/app/services/cold-chain.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { addDays, formatDay } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-doctor-approval',
@@ -146,10 +147,6 @@ export class DoctorApprovalPage implements OnInit {
   }
 
   weekLabel(startStr: string): string {
-    const start = new Date(startStr);
-    const end = new Date(start);
-    end.setDate(end.getDate() + 6);
-    const opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-    return `${start.toLocaleDateString('en-US', opts)} – ${end.toLocaleDateString('en-US', opts)}`;
+    return `${formatDay(startStr, 'MMM d')} – ${formatDay(addDays(startStr, 6), 'MMM d')}`;
   }
 }

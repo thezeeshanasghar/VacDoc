@@ -5,7 +5,7 @@ import { StockService, StockDTO } from 'src/app/services/stock.service';
 import { ChildService } from 'src/app/services/child.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { LoadingController, AlertController } from '@ionic/angular';
-import * as moment from 'moment';
+import { today, dayOf, parseDay, pickerDate, diffDays, toLegacyDay, addMonths, addYears, addDays as dayAdd } from 'src/app/shared/time';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
@@ -53,7 +53,7 @@ export class FillPage implements OnInit {
   birthYear: any;
   MinAge: any;
   MinGap: any;
-  todayDate: string = new Date().toISOString().split('T')[0];
+  todayDate: string = today();
   fgAddData: FormGroup;
   scheduleDate: string = '';  // Bind this to the ion-datetime value
   isScheduleDateInvalid: boolean = false;
@@ -85,7 +85,7 @@ export class FillPage implements OnInit {
   private readonly travelFieldStorageSuffix = 'travel-vaccine-fill-state';
 
   private getTodayIsoDate(): string {
-    return new Date().toISOString().split('T')[0];
+    return today();
   }
 
   private applyTravelGivenDateToday(): void {
@@ -150,7 +150,7 @@ export class FillPage implements OnInit {
       }
     });
     this.storage.get('BirthYear').then((val) => {
-      this.birthYear = moment(val, "DD-MM-YYYY").format("YYYY-MM-DD");
+      this.birthYear = parseDay(val);
     });
     this.storage.get('vaccinesData').then((val) => {
       this.vaccinesData = val || [];
@@ -236,8 +236,7 @@ export class FillPage implements OnInit {
       'Date': [null]
     });
     this.getVaccination();
-    this.todaydate = new Date();
-    this.todaydate = moment(this.todaydate, 'DD-MM-YYYY').format("YYYY-MM-DD");
+    this.todaydate = today();
   }
   // checkDate() {
   //   const today = new Date();
@@ -275,7 +274,7 @@ export class FillPage implements OnInit {
             this.loadSuggestedBrandsByVaccineId(this.vaccineData.Dose.VaccineId);
           }
           this.Date = this.vaccineData.Date;
-          this.Date = moment(this.Date, 'DD-MM-YYYY').format('YYYY-MM-DD');
+          this.Date = parseDay(this.Date);
           // this.isScheduleDateValid(this.Date);
           this.fg.controls.GivenDate.setValue(this.Date);
 
@@ -381,9 +380,8 @@ export class FillPage implements OnInit {
   }
   
   isScheduleDateValid(): boolean {
-    const today = new Date().toISOString().split('T')[0];
-    const givenDate = this.fg.get('GivenDate').value;
-    return givenDate > today;
+    const givenDate = parseDay(this.fg.get('GivenDate').value);
+    return givenDate > today();
   }
 
   // v2 (§6.2a): backdated brand give — ask whether the vaccine came from our stock.
@@ -515,7 +513,7 @@ export class FillPage implements OnInit {
     this.fg.value.Id = this.route.snapshot.paramMap.get('id');
     this.fg.value.DoctorId = this.doctorId;
     this.fg.value.IsDone = true;
-    this.fg.value.DiseaseYear = moment(this.fg.value.DiseaseYear, 'YYYY-MM-DD').format('YYYY');
+    this.fg.value.DiseaseYear = (parseDay(this.fg.value.DiseaseYear) || '').substring(0, 4);
 
     // Disease entry (Chicken Pox / Hepatitis A "had the disease, not the vaccine"): there is no
     // given date to record, only the DiseaseYear picked above — the Given Date field is hidden
@@ -559,21 +557,17 @@ export class FillPage implements OnInit {
       return;
     }
 
-    let givenDateOfInjection: Date = this.fg.value.GivenDate;
-    let scheduleDate: Date = this.addDays(givenDateOfInjection,this.MinGap,this.doseId);
+    let givenDateOfInjection: any = this.fg.value.GivenDate;
+    let scheduleDate: string = this.addDays(givenDateOfInjection,this.MinGap,this.doseId);
     console.log('Schedule Date:', scheduleDate);
-    this.scheduleDatecheck = moment(scheduleDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
+    this.scheduleDatecheck = toLegacyDay(scheduleDate);
     console.log('Schedule Date Check:', this.scheduleDatecheck);
-    const givenDate = new Date(this.fg.value.GivenDate);
-    const currentDate = new Date();
-    givenDate.setHours(0, 0, 0, 0);
-    currentDate.setHours(0, 0, 0, 0);
-    if (givenDate > currentDate) {
+    if (parseDay(this.fg.value.GivenDate) > today()) {
       this.toastService.create("Given date is not today. Cannot update injection.", 'danger');
       loading.dismiss();
       return;
     }
-    this.fg.value.GivenDate = moment(this.fg.value.GivenDate, 'YYYY-MM-DD').format('DD-MM-YYYY');
+    this.fg.value.GivenDate = toLegacyDay(this.fg.value.GivenDate);
 
     if (!this.allowInventory) {
       this.fg.value.Lot = '';
@@ -581,7 +575,7 @@ export class FillPage implements OnInit {
     }
 
     if (this.fg.value.Expiry) {
-      this.fg.value.Expiry = moment(this.fg.value.Expiry, 'YYYY-MM-DD').format('YYYY-MM-DD');
+      this.fg.value.Expiry = parseDay(this.fg.value.Expiry);
     } else {
       this.fg.value.Expiry = null;
     }
@@ -602,8 +596,8 @@ export class FillPage implements OnInit {
 
     // v2 deduction-decision prompt (§6.2a): a backdated give with a real brand is ambiguous —
     // ask whether the vaccine came from our stock. Today's gives, OHF, and pre-period gives are
-    // auto-decided by the backend and never prompt. (givenDate here is a Date, currentDate too.)
-    const isBackdated = givenDate < currentDate;
+    // auto-decided by the backend and never prompt. (compared as yyyy-MM-dd day strings.)
+    const isBackdated = parseDay(this.fg.value.GivenDate) < today();
     const hasRealBrand = !!this.fg.value.BrandId; // OHF was already nulled above
     if (isBackdated && hasRealBrand) {
       await loading.dismiss();
@@ -839,94 +833,52 @@ export class FillPage implements OnInit {
     );
   }
 
-  addDays(date: Date | string, days: number, doseId: number): Date {
-    const baseDate = this.toLocalDate(date);
+  addDays(date: any, days: number, doseId: number): string {
+    const baseDate = parseDay(date) || today();
     const safeDays = Number(days);
     const gapDays = !isNaN(safeDays) ? safeDays : 0;
 
     if (gapDays === 30 || gapDays === 31) {
-      return this.addMonths(baseDate, 1);
+      return addMonths(baseDate, 1);
     }
 
     if (gapDays === 150) {
-      return this.addMonths(baseDate, 5);
+      return addMonths(baseDate, 5);
     }
 
     if (gapDays === 84) {
-      return this.addMonths(baseDate, 3);
+      return addMonths(baseDate, 3);
     }
 
     if (gapDays === 3315) {
-      return this.addMonths(this.addYears(baseDate, 9), 1);
+      return addMonths(addYears(baseDate, 9), 1);
     }
 
     if (gapDays === 3833) {
-      return this.addMonths(this.addYears(baseDate, 10), 6);
+      return addMonths(addYears(baseDate, 10), 6);
     }
 
     if (gapDays >= 365 && gapDays <= 9125 && gapDays % 365 === 0) {
-      return this.addYears(baseDate, Math.floor(gapDays / 365));
+      return addYears(baseDate, Math.floor(gapDays / 365));
     }
 
     if (gapDays >= 168 && gapDays <= 334) {
-      return this.addMonths(baseDate, Math.floor(gapDays / 28));
+      return addMonths(baseDate, Math.floor(gapDays / 28));
     }
 
     if (gapDays >= 401 && gapDays <= 460) {
-      return this.addMonths(baseDate, gapDays - 400);
+      return addMonths(baseDate, gapDays - 400);
     }
 
     if (gapDays >= 395 && gapDays <= 608) {
-      return this.addMonths(baseDate, Math.floor(gapDays / 29));
+      return addMonths(baseDate, Math.floor(gapDays / 29));
     }
 
     if (gapDays >= 639 && gapDays <= 1795) {
-      return this.addMonths(baseDate, Math.floor(gapDays / 30));
+      return addMonths(baseDate, Math.floor(gapDays / 30));
     }
 
-    const nextDate = new Date(baseDate);
-    nextDate.setDate(nextDate.getDate() + gapDays);
-    return nextDate;
-  }
-
-  private toLocalDate(input: any): Date {
-    if (input instanceof Date) {
-      return new Date(input.getFullYear(), input.getMonth(), input.getDate());
-    }
-
-    if (typeof input === 'string') {
-      const ddmmyyyy = /^(\d{2})-(\d{2})-(\d{4})$/;
-      const yyyymmdd = /^(\d{4})-(\d{2})-(\d{2})$/;
-
-      let m = input.match(ddmmyyyy);
-      if (m) {
-        return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
-      }
-
-      m = input.match(yyyymmdd);
-      if (m) {
-        return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
-      }
-    }
-
-    const fallback = new Date(input);
-    if (isNaN(fallback.getTime())) {
-      return new Date();
-    }
-
-    return new Date(fallback.getFullYear(), fallback.getMonth(), fallback.getDate());
-  }
-
-  private addMonths(date: Date, months: number): Date {
-    const nextDate = new Date(date);
-    nextDate.setMonth(nextDate.getMonth() + months);
-    return nextDate;
-  }
-
-  private addYears(date: Date, years: number): Date {
-    const nextDate = new Date(date);
-    nextDate.setFullYear(nextDate.getFullYear() + years);
-    return nextDate;
+    return dayAdd(baseDate, gapDays);
   }
 
   isBrandFilled(): boolean {
@@ -1010,7 +962,7 @@ export class FillPage implements OnInit {
 
   private filterBrandsByChildAge(brands: any[]): any[] {
     if (!brands || !this.birthYear) return brands || [];
-    const childAgeDays = Math.floor((new Date().getTime() - new Date(this.birthYear).getTime()) / (1000 * 60 * 60 * 24));
+    const childAgeDays = diffDays(today(), this.birthYear);
     return brands.filter(b => !b.MinAge || childAgeDays >= this.minAgeCodeToDays(b.MinAge));
   }
 
@@ -1159,14 +1111,13 @@ export class FillPage implements OnInit {
           .filter((x: any) => {
           // Expired stock is never offered: expiry is the LAST usable day, so only dates before today are out.
           if (!x || !x.Expiry) { return true; }
-          const e = new Date(x.Expiry); const t = new Date();
-          return new Date(e.getFullYear(), e.getMonth(), e.getDate()).getTime() >= new Date(t.getFullYear(), t.getMonth(), t.getDate()).getTime();
+          return parseDay(x.Expiry) >= today();
         });
         // FEFO: sort by expiry date ascending so earliest-expiring stock appears first
         this.availableBatchLots.sort((a: any, b: any) => {
-          const dateA = a && a.Expiry ? new Date(a.Expiry).getTime() : Infinity;
-          const dateB = b && b.Expiry ? new Date(b.Expiry).getTime() : Infinity;
-          return dateA - dateB;
+          const dateA = a && a.Expiry ? parseDay(a.Expiry) : '9999-99-99';
+          const dateB = b && b.Expiry ? parseDay(b.Expiry) : '9999-99-99';
+          return dateA < dateB ? -1 : (dateA > dateB ? 1 : 0);
         });
         this.availableLots = Array.from(
           new Set(
@@ -1230,7 +1181,7 @@ export class FillPage implements OnInit {
       )
     );
 
-    expiryOptions.sort((a: string, b: string) => new Date(a).getTime() - new Date(b).getTime());
+    expiryOptions.sort((a: string, b: string) => (a < b ? -1 : (a > b ? 1 : 0)));
 
     this.availableExpiries = expiryOptions;
 
@@ -1252,15 +1203,7 @@ export class FillPage implements OnInit {
       return '';
     }
 
-    const date = new Date(value);
-    if (isNaN(date.getTime())) {
-      return '';
-    }
-
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, '0');
-    const dd = String(date.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
+    return parseDay(value) || '';
   }
 
   private resolveClinicId(payload: any): number {
@@ -1280,14 +1223,14 @@ export class FillPage implements OnInit {
 
   private autoCreateFollowUp(onDone: () => void): void {
     this.storage.get(environment.DOCTOR_Id).then(realDoctorId => {
-      const today = moment().format('DD-MM-YYYY');
+      const todayLegacy = toLegacyDay(today());
       // NextVisitDate is always null for auto-vaccine follow-up rows: vaccine
       // reminders are driven by the Schedule table, not by FollowUp.NextVisitDate.
       const payload = {
         ChildId: Number(this.childId),
         DoctorId: Number(realDoctorId),
         Disease: 'Vaccination',
-        CurrentVisitDate: today,
+        CurrentVisitDate: todayLegacy,
         NextVisitDate: null,
         Weight: this.fg.value.Weight ? Number(this.fg.value.Weight) : null,
         Height: this.fg.value.Height ? Number(this.fg.value.Height) : null,
@@ -1328,9 +1271,10 @@ export class FillPage implements OnInit {
   private childAgeYears(): number | null {
     const dob = this.childData && this.childData.DOB;
     if (!dob) { return null; }
-    const m = moment(dob, 'DD-MM-YYYY');
-    if (!m.isValid()) { return null; }
-    return moment().diff(m, 'years');
+    const d = parseDay(dob);
+    if (!d) { return null; }
+    const t = today();
+    return (+t.substring(0, 4) - +d.substring(0, 4)) - (t.substring(5) < d.substring(5) ? 1 : 0);
   }
 
   // Populate availableSites + default the Site control for the given route.
@@ -1390,7 +1334,7 @@ export class FillPage implements OnInit {
   private saveTravelFieldState(): void {
     const expiryControl = this.fg.get('Expiry');
     const expiryValue = expiryControl ? expiryControl.value : null;
-    const expiry = expiryValue ? moment(expiryValue).format('YYYY-MM-DD') : null;
+    const expiry = expiryValue ? parseDay(expiryValue) : null;
 
     const manufacturerControl = this.fg.get('Manufacturer');
     const lotControl = this.fg.get('Lot');
@@ -1428,7 +1372,7 @@ export class FillPage implements OnInit {
             ? saved.Lot
             : (lotControl ? lotControl.value : null),
           Expiry: saved && saved.Expiry
-            ? new Date(saved.Expiry)
+            ? pickerDate(saved.Expiry)
             : (expiryControl ? expiryControl.value : null),
           Validity: saved && saved.Validity != null
             ? saved.Validity

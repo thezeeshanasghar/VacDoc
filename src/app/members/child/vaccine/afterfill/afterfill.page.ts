@@ -5,10 +5,10 @@ import { StockService, StockDTO } from 'src/app/services/stock.service';
 import { ChildService } from 'src/app/services/child.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { LoadingController } from '@ionic/angular';
-import * as moment from 'moment';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
+import { today, dayOf, parseDay } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-afterfill',
@@ -36,7 +36,7 @@ export class AfterFillPage implements OnInit {
   birthYear: any;
   MinAge: any;
   MinGap: any;
-  todayDate: string = new Date().toISOString().split('T')[0];
+  todayDate: string = today();
   fgAddData: FormGroup;
   scheduleDate: string = ''; 
   isScheduleDateInvalid: boolean = false;
@@ -74,7 +74,7 @@ export class AfterFillPage implements OnInit {
       this.doctorId = val;
     });
     this.storage.get('BirthYear').then((val) => {
-      this.birthYear = moment(val, "DD-MM-YYYY").format("YYYY-MM-DD");
+      this.birthYear = parseDay(val);
     });
     this.storage.get(environment.ON_CLINIC).then((onlineClinic) => {
       const onlineClinicId = onlineClinic && onlineClinic.Id ? Number(onlineClinic.Id) : null;
@@ -141,11 +141,10 @@ export class AfterFillPage implements OnInit {
           // After-fill is same-day-only (PKT = UTC+5): vitals can only be edited on the
           // same calendar day the dose was given. DoneAt is the authoritative UTC
           // timestamp set when IsDone was marked; fall back to GivenDate if missing.
-          const todayPkt = moment().utcOffset(5 * 60).format('YYYY-MM-DD');
-          const visitDateSource = this.vaccineData.DoneAt
-            ? moment.utc(this.vaccineData.DoneAt).utcOffset(5 * 60)
-            : moment(this.vaccineData.GivenDate);
-          const visitDatePkt = visitDateSource.format('YYYY-MM-DD');
+          const todayPkt = today();
+          const visitDatePkt = this.vaccineData.DoneAt
+            ? dayOf(this.vaccineData.DoneAt)
+            : parseDay(this.vaccineData.GivenDate);
           this.isSameDayVisit = !!this.vaccineData.IsDone && visitDatePkt === todayPkt;
 
           if (!this.isSameDayVisit) {
@@ -299,15 +298,7 @@ export class AfterFillPage implements OnInit {
       return '';
     }
 
-    const date = new Date(value);
-    if (isNaN(date.getTime())) {
-      return '';
-    }
-
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, '0');
-    const dd = String(date.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
+    return parseDay(value) || '';
   }
 
   private resolveClinicId(payload: any): number {
@@ -326,9 +317,8 @@ export class AfterFillPage implements OnInit {
   }
   
   isScheduleDateValid(): boolean {
-    const today = new Date().toISOString().split('T')[0]; 
-    const givenDate = this.fg.get('GivenDate').value; 
-    return givenDate > today;
+    const givenDate = parseDay(this.fg.get('GivenDate').value);
+    return givenDate > today();
   }
 
   async fillVaccine() {
@@ -350,7 +340,7 @@ export class AfterFillPage implements OnInit {
     }
 
     if (this.fg.value.Expiry) {
-      this.fg.value.Expiry = moment(this.fg.value.Expiry, 'YYYY-MM-DD').format('YYYY-MM-DD');
+      this.fg.value.Expiry = parseDay(this.fg.value.Expiry);
     } else {
       this.fg.value.Expiry = null;
     }

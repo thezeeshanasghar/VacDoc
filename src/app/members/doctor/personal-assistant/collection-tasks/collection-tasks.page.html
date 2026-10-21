@@ -16,7 +16,7 @@
           <h2>{{ getChildName(task) }}</h2>
           <p>{{ getVaccineName(task) }}</p>
           <p>Amount: Rs. {{ task.Amount }}</p>
-          <p>Given: {{ task.GivenDate | date:'dd MMM yyyy' }}</p>
+          <p>Given: {{ task.GivenDate | day:'dd MMM yyyy' }}</p>
         </ion-label>
         <ion-badge slot="end" color="warning">Collect</ion-badge>
       </ion-item>

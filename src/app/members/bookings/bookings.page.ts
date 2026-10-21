@@ -1,3 +1,4 @@
+import { diffDays, formatDay, parseDay } from 'src/app/shared/time';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoadingController, AlertController, Platform } from '@ionic/angular';
@@ -139,14 +140,13 @@ export class BookingsPage {
     const groups: any = {};
     schedules.filter((s: any) => s.IsSkip !== true).forEach((s: any) => {
       // API schedule dates are dd-MM-yyyy; normalise to yyyy-MM-dd so Date() and the date pipe can read them.
-      const raw = String(s.Date).slice(0, 10);
-      const k = /^\d{2}-\d{2}-\d{4}$/.test(raw) ? raw.slice(6, 10) + '-' + raw.slice(3, 5) + '-' + raw.slice(0, 2) : raw;
+      const k = parseDay(s.Date);
       if (!groups[k]) { groups[k] = []; }
       groups[k].push(s);
     });
     const tokens = String(booking.Vaccines || '').toLowerCase().split(/[,;\n\/&+]+/)
       .map((x: string) => x.trim()).filter((x: string) => x.length >= 3);
-    const pref = booking.PreferredDate ? new Date(String(booking.PreferredDate).slice(0, 10)).getTime() : null;
+    const pref: string | null = booking.PreferredDate ? parseDay(booking.PreferredDate) : null;
     let bestKey: string | null = null;
     let bestScore = 0;
     let bestGap = Number.MAX_VALUE;
@@ -158,7 +158,7 @@ export class BookingsPage {
       tokens.forEach((tk: string) => {
         if (names.some((n: string) => n.indexOf(tk) >= 0)) { score++; }
       });
-      const gap = pref === null ? 0 : Math.abs(new Date(k).getTime() - pref);
+      const gap = pref === null ? 0 : Math.abs(diffDays(k, pref));
       if (score > 0 && (score > bestScore || (score === bestScore && gap < bestGap))) {
         bestKey = k; bestScore = score; bestGap = gap;
       }
@@ -166,7 +166,7 @@ export class BookingsPage {
     if (!bestKey && pref !== null) {
       // No vaccine name matched: take the group due exactly on the preferred day, if any.
       Object.keys(groups).forEach((k: string) => {
-        if (new Date(k).getTime() === pref && groups[k].some((s: any) => !s.IsDone)) { bestKey = k; }
+        if (k === pref && groups[k].some((s: any) => !s.IsDone)) { bestKey = k; }
       });
     }
     if (!bestKey) { return { state: 'none' }; }
@@ -376,9 +376,8 @@ export class BookingsPage {
   }
 
   private formatShortDate(iso: string): string {
-    const d = new Date(iso);
-    if (isNaN(d.getTime())) { return iso; }
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const t = formatDay(iso, 'MMM d');
+    return t || iso;
   }
 
   removeFilterChip(key: string) {

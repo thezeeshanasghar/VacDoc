@@ -40,9 +40,9 @@
         <!-- ── Date Group Header (SEQUENTIAL ACTION MODEL — spec §3.1) ────── -->
         <div class="date-group-header" [class.date-group-header--stacked]="isStage(item.value, item.key, 3)">
           <div class="date-group-heading">
-            <span class="date-group-label" [ngClass]="getGroupDateClass(item.key, item.value)">{{ item.key | date:'dd MMM yyyy' }}</span>
+            <span class="date-group-label" [ngClass]="getGroupDateClass(item.key, item.value)">{{ item.key | day:'dd MMM yyyy' }}</span>
             <span class="date-group-sub" *ngIf="isStage(item.value, item.key, 1)">{{ groupStageSubline(item.value, item.key) }}</span>
-            <span class="date-group-sub date-group-sub--given" *ngIf="!isStage(item.value, item.key, 1)">{{ groupGivenDate(item.value) | date:'MMM d, y' }}</span>
+            <span class="date-group-sub date-group-sub--given" *ngIf="!isStage(item.value, item.key, 1)">{{ groupGivenDate(item.value) | day:'MMM d, y' }}</span>
           </div>
           <ion-badge *ngIf="getPaAssignmentTag(item.value) === 'assigned'" color="primary" class="pa-assign-badge">Assigned to you</ion-badge>
           <ion-badge *ngIf="usertype !== 'PA' && isAssignedGroup(item.value)" class="pa-assign-badge pa-assign-badge--with">With PA · {{ paNameForGroup(item.value) }}</ion-badge>
@@ -195,7 +195,7 @@
               <ng-container *ngIf="!v.Due2EPI && !v.IsSkip && !v.IsDone">
                 <span class="status-brand">{{ v.Brand?.Name || v.Dose.Name }}</span>
                 <span class="status-overdue" *ngIf="isOverdue(v)"> · {{ overdueLabel(v) }}</span>
-                <span *ngIf="!isOverdue(v)"> · due {{ v.Date | date:'MMM d' }}</span>
+                <span *ngIf="!isOverdue(v)"> · due {{ v.Date | day:'MMM d' }}</span>
               </ng-container>
               <ng-container *ngIf="!v.Due2EPI && v.IsDone">
                 <!-- Given date now lives once on the group header (groupGivenDate) —

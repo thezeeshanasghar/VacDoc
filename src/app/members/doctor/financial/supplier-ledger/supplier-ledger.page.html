@@ -61,7 +61,7 @@
       </div>
       <div *ngFor="let entry of ledger.Entries" class="ledger-row">
         <span class="col-date">
-          <small>{{ entry.Type === 'OpeningBalance' ? '—' : (entry.Date | date:'dd/MM/yy') }}</small>
+          <small>{{ entry.Type === 'OpeningBalance' ? '—' : (entry.Date | day:'dd/MM/yy') }}</small>
         </span>
         <span class="col-desc">
           <ion-badge [color]="entryColor(entry.Type)" style="font-size: 9px; margin-right: 4px;">

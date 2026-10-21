@@ -5,6 +5,7 @@ import { StockService } from 'src/app/services/stock.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
 import { AuthSession } from 'src/app/services/auth-session';
+import { formatDay, parseDay, today as todayDay } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-stock-overview',
@@ -157,24 +158,22 @@ export class StockOverviewPage {
 
   formatDate(d: string): string {
     if (!d) return '—';
-    const dt = new Date(d);
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return dt.getDate() + ' ' + months[dt.getMonth()] + ' ' + dt.getFullYear();
+    return formatDay(d, 'd MMM yyyy');
   }
 
   isExpiringSoon(expiryStr: string): boolean {
     if (!expiryStr) return false;
-    const expiry = new Date(expiryStr);
-    const today = new Date();
-    if (expiry < today) return false;
-    const sixMonths = new Date(today);
-    sixMonths.setMonth(sixMonths.getMonth() + 6);
+    const expiry = parseDay(expiryStr);
+    const t = todayDay();
+    if (expiry < t) return false;
+    const m = +t.substring(5, 7) - 1 + 6;
+    const sixMonths = (+t.substring(0, 4) + Math.floor(m / 12)) + '-' + ('0' + (m % 12 + 1)).slice(-2) + '-' + t.substring(8, 10);
     return expiry <= sixMonths;
   }
 
   isExpired(expiryStr: string): boolean {
     if (!expiryStr) return false;
-    return new Date(expiryStr) < new Date();
+    return parseDay(expiryStr) < todayDay();
   }
 
   trackByBrandId(_index: number, brand: any): any {

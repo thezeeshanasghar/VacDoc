@@ -7,7 +7,7 @@ import { ToastService } from "src/app/shared/toast.service";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
-import * as moment from "moment";
+import { today, parseDay, diffDays, toLegacyDay, addMonths, addYears, addDays as dayAdd } from "src/app/shared/time";
 import { AlertController } from "@ionic/angular";
 import { VaccineService } from "src/app/services/vaccine.service";
 import { ChildService } from "src/app/services/child.service";
@@ -88,7 +88,7 @@ export class BulkPage implements OnInit {
   onlineClinicDoctorId: any = null;
 
   private getTodayIsoDate(): string {
-    return new Date().toISOString().split("T")[0];
+    return today();
   }
 
   get isTravelType(): boolean {
@@ -150,9 +150,9 @@ export class BulkPage implements OnInit {
     this.childId = this.activatedRoute.snapshot.paramMap.get("id");
 
     const dateParam = this.activatedRoute.snapshot.paramMap.get("childId") || "";
-    this.currentDate = new Date(dateParam);
-    this.currentDate1 = (moment as any)(this.currentDate).format("YYYY-MM-DD");
-    this.todaydate = (moment as any)(new Date(), "DD-MM-YYYY").format("YYYY-MM-DD");
+    this.currentDate = parseDay(dateParam);
+    this.currentDate1 = this.currentDate;
+    this.todaydate = today();
 
     this.fg = this.formBuilder.group({
       DoctorId: [""],
@@ -178,7 +178,7 @@ export class BulkPage implements OnInit {
             this.childData = res.ResponseData;
             this.childType = (res.ResponseData.Type || "").toString();
             this.clinicId = this.resolveClinicId(res.ResponseData) || this.clinicId;
-            this.birthYear = (moment as any)(res.ResponseData.DOB, "DD-MM-YYYY").format("YYYY-MM-DD");
+            this.birthYear = parseDay(res.ResponseData.DOB);
             this.applyTravelGivenDateToday();
           }
           resolve();
@@ -330,9 +330,10 @@ export class BulkPage implements OnInit {
   private childAgeYears(): number | null {
     const dob = this.childData && this.childData.DOB;
     if (!dob) { return null; }
-    const m = moment(dob, 'DD-MM-YYYY');
-    if (!m.isValid()) { return null; }
-    return moment().diff(m, 'years');
+    const d = parseDay(dob);
+    if (!d) { return null; }
+    const t = today();
+    return (+t.substring(0, 4) - +d.substring(0, 4)) - (t.substring(5) < d.substring(5) ? 1 : 0);
   }
 
   // "Fill R+L then other muscle": walk injectable (multi-site) rows in order and assign
@@ -555,15 +556,14 @@ export class BulkPage implements OnInit {
           .filter((x: any) => {
           // Expired stock is never offered: expiry is the LAST usable day, so only dates before today are out.
           if (!x || !x.Expiry) { return true; }
-          const e = new Date(x.Expiry); const t = new Date();
-          return new Date(e.getFullYear(), e.getMonth(), e.getDate()).getTime() >= new Date(t.getFullYear(), t.getMonth(), t.getDate()).getTime();
+          return parseDay(x.Expiry) >= today();
         });
 
         // FEFO: sort by expiry date ascending
         allLots.sort((a: any, b: any) => {
-          const dateA = a && a.Expiry ? new Date(a.Expiry).getTime() : Infinity;
-          const dateB = b && b.Expiry ? new Date(b.Expiry).getTime() : Infinity;
-          return dateA - dateB;
+          const dateA = a && a.Expiry ? parseDay(a.Expiry) : '9999-99-99';
+          const dateB = b && b.Expiry ? parseDay(b.Expiry) : '9999-99-99';
+          return dateA < dateB ? -1 : (dateA > dateB ? 1 : 0);
         });
 
         this.availableBatchLotsPerRow[index] = allLots;
@@ -686,7 +686,7 @@ export class BulkPage implements OnInit {
       });
 
     // FEFO: sort expiry dates ascending
-    expiryKeys.sort((a: string, b: string) => new Date(a).getTime() - new Date(b).getTime());
+    expiryKeys.sort((a: string, b: string) => (a < b ? -1 : (a > b ? 1 : 0)));
 
     this.availableExpiriesPerRow[index] = expiryKeys;
     const current = this.selectedExpiriesPerRow[index];
@@ -697,12 +697,7 @@ export class BulkPage implements OnInit {
 
   private toExpiryKey(value: any): string {
     if (!value) { return ""; }
-    const date = new Date(value);
-    if (isNaN(date.getTime())) { return ""; }
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, "0");
-    const dd = String(date.getDate()).padStart(2, "0");
-    return `${yyyy}-${mm}-${dd}`;
+    return parseDay(value) || "";
   }
 
   private getSortedBrands(schedule: any): any[] {
@@ -778,7 +773,7 @@ export class BulkPage implements OnInit {
       // interaction, not a bare year — format down to YYYY before sending, same as
       // fill.page.ts's single-give disease branch does.
       const diseaseYearVal = isDiseaseRow
-        ? (moment as any)(this.diseaseYears[i], moment.ISO_8601).format('YYYY')
+        ? (parseDay(this.diseaseYears[i]) || '').substring(0, 4)
         : null;
 
       brands.push({
@@ -834,12 +829,10 @@ export class BulkPage implements OnInit {
     // All-disease batch: no given date applies, so there's nothing to invalidate the submit
     // button over.
     if (this.allRowsAreDisease) { return false; }
-    const today = new Date().toISOString().split("T")[0];
     const control = this.fg.get("GivenDate");
     const givenDate = control ? control.value : null;
     if (!givenDate) { return false; }
-    const formattedDate = new Date(givenDate).toISOString().split("T")[0];
-    return formattedDate > today;
+    return parseDay(givenDate) > today();
   }
 
   // v2 (§6.2a): backdated bulk give with real brands — ask ONCE for the whole batch whether the
@@ -978,15 +971,13 @@ export class BulkPage implements OnInit {
     }
 
     this.applyTravelGivenDateToday();
-    data.GivenDate = (moment as any)(this.fg.value.GivenDate, "YYYY-MM-DD").format("DD-MM-YYYY");
+    data.GivenDate = toLegacyDay(this.fg.value.GivenDate);
 
     const loading = await this.loadingController.create({ message: "Filling Vaccine" });
     await loading.present();
 
-    const givenDate = new Date(this.fg.value.GivenDate);
-    const currentDate = new Date();
-    givenDate.setHours(0, 0, 0, 0);
-    currentDate.setHours(0, 0, 0, 0);
+    const givenDate = parseDay(this.fg.value.GivenDate);
+    const currentDate = today();
 
     if (givenDate > currentDate) {
       this.toastService.create("Given date is not today. Cannot update injection.", "danger");
@@ -1084,14 +1075,14 @@ export class BulkPage implements OnInit {
 
   private autoCreateFollowUpForBulk(onDone: () => void): void {
     this.storage.get(environment.DOCTOR_Id).then(realDoctorId => {
-      const today = moment().format('DD-MM-YYYY');
+      const todayLegacy = toLegacyDay(today());
       // NextVisitDate is always null for auto-vaccine follow-up rows: vaccine
       // reminders are driven by the Schedule table, not by FollowUp.NextVisitDate.
       const payload = {
         ChildId: Number(this.childId),
         DoctorId: Number(realDoctorId),
         Disease: 'Vaccination',
-        CurrentVisitDate: today,
+        CurrentVisitDate: todayLegacy,
         NextVisitDate: null,
         Weight: this.fg.value.Weight ? Number(this.fg.value.Weight) : null,
         Height: this.fg.value.Height ? Number(this.fg.value.Height) : null,
@@ -1136,10 +1127,9 @@ export class BulkPage implements OnInit {
 
   async addNewVaccineInScheduleTable(element: any): Promise<void> {
     const gapDays = this.resolveNextDoseGapDays(element);
-    const scheduleDate: Date = this.calculateDateByMinGap(this.fg.value.GivenDate, gapDays);
-    scheduleDate.setHours(0, 0, 0, 0);
+    const scheduleDate: string = this.calculateDateByMinGap(this.fg.value.GivenDate, gapDays);
 
-    const scheduleDateText = (moment as any)(scheduleDate).format("DD-MM-YYYY");
+    const scheduleDateText = toLegacyDay(scheduleDate);
 
     const VaccineData = {
       Date: scheduleDateText,
@@ -1274,53 +1264,23 @@ export class BulkPage implements OnInit {
     return false;
   }
 
-  private calculateDateByMinGap(date: any, days: number): Date {
-    const baseDate = this.toLocalDate(date);
+  private calculateDateByMinGap(date: any, days: number): string {
+    const baseDate = parseDay(date) || today();
     const gapDays = !isNaN(Number(days)) ? Number(days) : 0;
 
-    if (gapDays === 30 || gapDays === 31) { return this.addMonths(baseDate, 1); }
-    if (gapDays === 150) { return this.addMonths(baseDate, 5); }
-    if (gapDays === 84) { return this.addMonths(baseDate, 3); }
-    if (gapDays === 3315) { return this.addMonths(this.addYears(baseDate, 9), 1); }
-    if (gapDays === 3833) { return this.addMonths(this.addYears(baseDate, 10), 6); }
+    if (gapDays === 30 || gapDays === 31) { return addMonths(baseDate, 1); }
+    if (gapDays === 150) { return addMonths(baseDate, 5); }
+    if (gapDays === 84) { return addMonths(baseDate, 3); }
+    if (gapDays === 3315) { return addMonths(addYears(baseDate, 9), 1); }
+    if (gapDays === 3833) { return addMonths(addYears(baseDate, 10), 6); }
     if (gapDays >= 365 && gapDays <= 9125 && gapDays % 365 === 0) {
-      return this.addYears(baseDate, Math.floor(gapDays / 365));
+      return addYears(baseDate, Math.floor(gapDays / 365));
     }
-    if (gapDays >= 168 && gapDays <= 334) { return this.addMonths(baseDate, Math.floor(gapDays / 28)); }
-    if (gapDays >= 401 && gapDays <= 460) { return this.addMonths(baseDate, gapDays - 400); }
-    if (gapDays >= 395 && gapDays <= 608) { return this.addMonths(baseDate, Math.floor(gapDays / 29)); }
-    if (gapDays >= 639 && gapDays <= 1795) { return this.addMonths(baseDate, Math.floor(gapDays / 30)); }
+    if (gapDays >= 168 && gapDays <= 334) { return addMonths(baseDate, Math.floor(gapDays / 28)); }
+    if (gapDays >= 401 && gapDays <= 460) { return addMonths(baseDate, gapDays - 400); }
+    if (gapDays >= 395 && gapDays <= 608) { return addMonths(baseDate, Math.floor(gapDays / 29)); }
+    if (gapDays >= 639 && gapDays <= 1795) { return addMonths(baseDate, Math.floor(gapDays / 30)); }
 
-    const nextDate = new Date(baseDate);
-    nextDate.setDate(nextDate.getDate() + gapDays);
-    return nextDate;
-  }
-
-  private addMonths(date: Date, months: number): Date {
-    const d = new Date(date);
-    d.setMonth(d.getMonth() + months);
-    return d;
-  }
-
-  private addYears(date: Date, years: number): Date {
-    const d = new Date(date);
-    d.setFullYear(d.getFullYear() + years);
-    return d;
-  }
-
-  private toLocalDate(input: any): Date {
-    if (input instanceof Date) {
-      return new Date(input.getFullYear(), input.getMonth(), input.getDate());
-    }
-    if (typeof input === "string") {
-      const ddmmyyyy = /^(\d{2})-(\d{2})-(\d{4})$/;
-      const yyyymmdd = /^(\d{4})-(\d{2})-(\d{2})$/;
-      let m = input.match(ddmmyyyy);
-      if (m) { return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])); }
-      m = input.match(yyyymmdd);
-      if (m) { return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])); }
-    }
-    const fallback = new Date(input);
-    return new Date(fallback.getFullYear(), fallback.getMonth(), fallback.getDate());
+    return dayAdd(baseDate, gapDays);
   }
 }

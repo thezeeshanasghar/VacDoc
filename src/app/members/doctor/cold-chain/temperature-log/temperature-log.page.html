@@ -57,7 +57,7 @@
       <div class="r-body">
         <div class="r-fridge">{{ fridgeName(r.RefrigeratorId) }}</div>
         <div class="r-clinic" *ngIf="!filterClinicId">{{ clinicName(r._clinicId) }}</div>
-        <div class="r-meta">{{ r.RecordedDate | date:'mediumDate' }} · {{ r.RecordedTime }} · {{ r.RecordedByName }}</div>
+        <div class="r-meta">{{ r.RecordedDate | day:'MMM d, y' }} · {{ r.RecordedTime }} · {{ r.RecordedByName }}</div>
         <div class="r-notes" *ngIf="r.Notes">{{ r.Notes }}</div>
       </div>
       <span class="pill" [class.ok]="r.IsInRange" [class.bad]="!r.IsInRange">{{ r.IsInRange ? 'In range' : 'Out of range' }}</span>

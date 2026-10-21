@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { SupplierService } from 'src/app/services/supplier.service';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { today } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-supplier-ledger',
@@ -21,7 +22,7 @@ export class SupplierLedgerPage implements OnInit {
   showPaymentForm = false;
   payment = {
     amount: null as number | null,
-    paymentDate: new Date().toISOString().slice(0, 10),
+    paymentDate: today(),
     paymentMethod: 'Cash',
     notes: ''
   };
@@ -175,7 +176,7 @@ export class SupplierLedgerPage implements OnInit {
   private resetPaymentForm() {
     this.payment = {
       amount: null,
-      paymentDate: new Date().toISOString().slice(0, 10),
+      paymentDate: today(),
       paymentMethod: 'Cash',
       notes: ''
     };

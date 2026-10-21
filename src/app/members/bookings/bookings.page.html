@@ -157,7 +157,7 @@
             <div class="row-meta">
               <span class="meta-parent">{{b.FatherName}} &bull; {{b.Phone}}</span>
               <span class="meta-dot">·</span>
-              <span class="meta-date">{{b.PreferredDate | date:'MMM d, y'}}</span>
+              <span class="meta-date">{{b.PreferredDate | day:'MMM d, y'}}</span>
             </div>
           </div>
           <div class="row-right">
@@ -192,7 +192,7 @@
             </div>
             <div class="detail-row">
               <span class="detail-label">Booked</span>
-              <span class="detail-value">{{b.CreatedAt | date:'MMM d, y'}}</span>
+              <span class="detail-value">{{b.CreatedAt | instant:'MMM d, y'}}</span>
             </div>
             <div class="detail-row" *ngIf="b.Comments">
               <span class="detail-label">Parent Note</span>
@@ -269,7 +269,7 @@
                 <div *ngIf="bookedGroups[b.Id].state === 'loading'" class="pa-none-text">Finding the booked group...</div>
                 <div *ngIf="bookedGroups[b.Id].state === 'matched'" class="comments-ref">
                   <div class="comment-row">
-                    <span class="comment-text"><strong>{{ bookedGroups[b.Id].date | date:'dd MMM yyyy' }}</strong> &middot; {{ bookedGroups[b.Id].doses.join(', ') }}</span>
+                    <span class="comment-text"><strong>{{ bookedGroups[b.Id].date | day:'dd MMM yyyy' }}</strong> &middot; {{ bookedGroups[b.Id].doses.join(', ') }}</span>
                     <button type="button" class="comment-copy-btn" (click)="openChildVaccinePage(b)">Change</button>
                   </div>
                 </div>

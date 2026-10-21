@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage';
 import { ExpenseService } from 'src/app/services/expense.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
+import { today, parseDay, formatDay } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-fixed-assets',
@@ -92,16 +93,16 @@ export class FixedAssetsPage {
 
   formatDate(dateStr: string): string {
     if (!dateStr) return '';
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('en-PK', { day: '2-digit', month: 'short', year: 'numeric' });
+    return formatDay(dateStr, 'dd MMM yyyy');
   }
 
   // Months between purchase date and today
   getAgeMonths(asset: any): number {
     if (!asset.ExpenseDate) return 0;
-    const purchase = new Date(asset.ExpenseDate);
-    const now      = new Date();
-    return Math.max(0, (now.getFullYear() - purchase.getFullYear()) * 12 + (now.getMonth() - purchase.getMonth()));
+    const p = parseDay(asset.ExpenseDate);
+    const t = today();
+    if (!p) { return 0; }
+    return Math.max(0, (+t.substring(0, 4) - +p.substring(0, 4)) * 12 + (+t.substring(5, 7) - +p.substring(5, 7)));
   }
 
   // Monthly depreciation = cost ÷ (life in years × 12)
@@ -124,7 +125,7 @@ export class FixedAssetsPage {
 
   isWarrantyExpired(asset: any): boolean {
     if (!asset.WarrantyExpiry) return false;
-    return new Date(asset.WarrantyExpiry) < new Date();
+    return parseDay(asset.WarrantyExpiry) < today();
   }
 
   viewImage(path: string) {

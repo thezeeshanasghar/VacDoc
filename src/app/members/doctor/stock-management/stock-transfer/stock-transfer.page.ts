@@ -5,6 +5,7 @@ import { StockService } from 'src/app/services/stock.service';
 import { BrandService } from 'src/app/services/brand.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
+import { diffDays as diffDaysBetween, formatDay, parseDay, today as todayDay } from 'src/app/shared/time';
 
 interface TransferItem {
   brandId: number;
@@ -142,10 +143,7 @@ export class StockTransferPage {
       }
     }
 
-    const today = new Date();
-    const mm = (today.getMonth() + 1).toString().padStart(2, '0');
-    const dd = today.getDate().toString().padStart(2, '0');
-    this.transferDate = today.getFullYear() + '-' + mm + '-' + dd;
+    this.transferDate = todayDay();
 
     this.loadBrands();
     this.loadHistory();
@@ -302,10 +300,7 @@ export class StockTransferPage {
 
   formatDateInput(d: string): string {
     if (!d) return '';
-    var dt = new Date(d);
-    var mm = (dt.getMonth() + 1).toString().padStart(2, '0');
-    var dd = dt.getDate().toString().padStart(2, '0');
-    return dt.getFullYear() + '-' + mm + '-' + dd;
+    return parseDay(d) || '';
   }
 
   async save() {
@@ -443,29 +438,22 @@ export class StockTransferPage {
     this.items = [this.newItem()];
     this.awtPercent = 0;
     this.reason = '';
-    const today = new Date();
-    const mm = (today.getMonth() + 1).toString().padStart(2, '0');
-    const dd = today.getDate().toString().padStart(2, '0');
-    this.transferDate = today.getFullYear() + '-' + mm + '-' + dd;
+    this.transferDate = todayDay();
   }
 
   formatDate(d: string): string {
     if (!d) return '—';
-    var dt = new Date(d);
-    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return dt.getDate() + ' ' + months[dt.getMonth()] + ' ' + dt.getFullYear();
+    return formatDay(d, 'd MMM yyyy');
   }
 
   isExpired(expiryStr: string): boolean {
     if (!expiryStr) return false;
-    return new Date(expiryStr) < new Date();
+    return parseDay(expiryStr) < todayDay();
   }
 
   isExpiringSoon(expiryStr: string): boolean {
     if (!expiryStr) return false;
-    var expiry = new Date(expiryStr);
-    var today = new Date();
-    var diffDays = (expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
-    return diffDays <= 90 && diffDays >= 0;
+    const left = diffDaysBetween(parseDay(expiryStr), todayDay());
+    return left <= 90 && left >= 0;
   }
 }

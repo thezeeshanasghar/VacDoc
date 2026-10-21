@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import * as moment from 'moment';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,6 +7,7 @@ import { FollowupService } from 'src/app/services/followup.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { LoadingController } from '@ionic/angular';
 import { VaccineService } from 'src/app/services/vaccine.service';
+import { today, parseDay, pickerDate, dayFromPicker, toLegacyDay } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-addfollowup',
@@ -31,8 +31,8 @@ export class AddfollowupPage implements OnInit {
     private storage: Storage,
     private vaccineService: VaccineService
   ) {
-    this.minDate = moment().format('YYYY-MM-DD');
-    this.maxDate = moment().add(20, 'years').format('YYYY-MM-DD');
+    this.minDate = today();
+    this.maxDate = (+today().substring(0, 4) + 20) + today().substring(4);
   }
 
   ngOnInit() {
@@ -78,9 +78,7 @@ export class AddfollowupPage implements OnInit {
           if (!latestGiven) {
             latestGiven = given[i];
           } else {
-            var a = moment(latestGiven.GivenDate, 'DD-MM-YYYY');
-            var b = moment(given[i].GivenDate, 'DD-MM-YYYY');
-            if (b.isAfter(a)) { latestGiven = given[i]; }
+            if (parseDay(given[i].GivenDate) > parseDay(latestGiven.GivenDate)) { latestGiven = given[i]; }
           }
         }
         if (latestGiven) {
@@ -96,14 +94,11 @@ export class AddfollowupPage implements OnInit {
           if (!nextVaccine) {
             nextVaccine = upcoming[j];
           } else {
-            var c = moment(nextVaccine.Date, 'DD-MM-YYYY');
-            var d = moment(upcoming[j].Date, 'DD-MM-YYYY');
-            if (d.isBefore(c)) { nextVaccine = upcoming[j]; }
+            if (parseDay(upcoming[j].Date) < parseDay(nextVaccine.Date)) { nextVaccine = upcoming[j]; }
           }
         }
         if (nextVaccine && nextVaccine.Date) {
-          var nextDate = moment(nextVaccine.Date, 'DD-MM-YYYY').toDate();
-          this.fg.controls['NextVisitDate'].setValue(nextDate);
+          this.fg.controls['NextVisitDate'].setValue(pickerDate(nextVaccine.Date));
         }
       },
       function(_err) {}
@@ -114,10 +109,9 @@ export class AddfollowupPage implements OnInit {
     this.fg.value.DoctorId = this.doctorId;
     this.fg.value.ChildId = this.route.snapshot.paramMap.get('id');
     if (this.fg.value.NextVisitDate) {
-      // Append 00:00:00 to NextVisitDate
-      this.fg.value.NextVisitDate = moment(this.fg.value.NextVisitDate)
-        .set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
-        .format('YYYY-MM-DDTHH:mm:ss');
+      // A day: the picked calendar day at 00:00:00, never shifted through a zone
+      const nv = this.fg.value.NextVisitDate;
+      this.fg.value.NextVisitDate = (nv instanceof Date ? dayFromPicker(nv) : parseDay(nv)) + 'T00:00:00';
     }
 
     const loading = await this.loadingController.create({
@@ -142,6 +136,6 @@ export class AddfollowupPage implements OnInit {
   }
 
   GetCurrentDate() {
-    return moment().format('DD-MM-YYYY');
+    return toLegacyDay(today());
   }
 }

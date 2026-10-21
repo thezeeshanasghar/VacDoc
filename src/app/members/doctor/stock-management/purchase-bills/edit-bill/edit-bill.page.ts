@@ -7,6 +7,7 @@ import { SupplierService } from 'src/app/services/supplier.service';
 import { BrandService } from 'src/app/services/brand.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
+import { parseDay } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-edit-bill',
@@ -123,10 +124,7 @@ export class EditBillPage implements OnInit {
         if (res.IsSuccess) {
           const b = res.ResponseData;
           this.billNo = b.BillNo || '';
-          const d = new Date(b.BillDate);
-          const mm = (d.getMonth() + 1).toString().padStart(2, '0');
-          const dd = d.getDate().toString().padStart(2, '0');
-          this.billDate = d.getFullYear() + '-' + mm + '-' + dd;
+          this.billDate = parseDay(b.BillDate) || '';
           this.supplierId = b.SupplierId || null;
           this.supplierSearch = b.SupplierName || '';
           this.awtPercent = b.AwtPercent || 0;
@@ -134,10 +132,7 @@ export class EditBillPage implements OnInit {
             const brand = this.brands.find((br: any) => br.BrandId === l.BrandId);
             let expStr = '';
             if (l.Expiry) {
-              const ed = new Date(l.Expiry);
-              const em = (ed.getMonth() + 1).toString().padStart(2, '0');
-              const eday = ed.getDate().toString().padStart(2, '0');
-              expStr = ed.getFullYear() + '-' + em + '-' + eday;
+              expStr = parseDay(l.Expiry) || '';
             }
             return {
               stockId: l.StockId,

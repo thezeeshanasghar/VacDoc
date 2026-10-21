@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
-import * as moment from 'moment';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { BrandService } from 'src/app/services/brand.service';
@@ -11,6 +10,7 @@ import { PaService } from 'src/app/services/pa.service';
 import { StockService } from 'src/app/services/stock.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
+import { today, parseDay } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-sales-collection',
@@ -42,7 +42,7 @@ export class SalesCollectionPage implements OnInit, OnDestroy {
     private storage: Storage,
     private fb: FormBuilder
   ) {
-    this.todaydate = new Date().toISOString().slice(0, 10);
+    this.todaydate = today();
     this.form = this.fb.group({
       fromDate: [this.todaydate],
       toDate: [this.todaydate],
@@ -118,11 +118,11 @@ export class SalesCollectionPage implements OnInit, OnDestroy {
   }
 
   private loadSummary() {
-    const fromDate = moment(this.form.value.fromDate).format('YYYY-MM-DD');
-    const toDate = moment(this.form.value.toDate).format('YYYY-MM-DD');
+    const fromDate = parseDay(this.form.value.fromDate);
+    const toDate = parseDay(this.form.value.toDate);
     this.summaryLoading = true;
     this.summary = null;
-    this.stockService.getSalesSummary(this.selectedClinicId, Number(this.doctorId), new Date(fromDate), new Date(toDate)).subscribe({
+    this.stockService.getSalesSummary(this.selectedClinicId, Number(this.doctorId), fromDate, toDate).subscribe({
       next: (res) => {
         this.summaryLoading = false;
         if (res.IsSuccess) { this.summary = res.ResponseData; }
@@ -153,11 +153,11 @@ export class SalesCollectionPage implements OnInit, OnDestroy {
       this.toastService.create('Please select a clinic', 'warning');
       return;
     }
-    const fromDate = moment(this.form.value.fromDate).format('YYYY-MM-DD');
-    const toDate = moment(this.form.value.toDate).format('YYYY-MM-DD');
+    const fromDate = parseDay(this.form.value.fromDate);
+    const toDate = parseDay(this.form.value.toDate);
     const loading = await this.loadingController.create({ message: 'Generating report...' });
     await loading.present();
-    this.stockService.getSalesCollectionReportFile(this.selectedClinicId, Number(this.doctorId), new Date(fromDate), new Date(toDate)).subscribe({
+    this.stockService.getSalesCollectionReportFile(this.selectedClinicId, Number(this.doctorId), fromDate, toDate).subscribe({
       next: (response: any) => {
         loading.dismiss();
         const blob = new Blob([response.body], { type: 'application/pdf' });

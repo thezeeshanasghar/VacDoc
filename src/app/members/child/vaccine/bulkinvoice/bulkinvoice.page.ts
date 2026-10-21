@@ -7,7 +7,6 @@ import { InvoiceService } from "src/app/services/invoice.service";
 import { FormBuilder, FormGroup, FormControl, Validators } from "@angular/forms";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
-import * as moment from "moment";
 import { AlertController } from '@ionic/angular';
 import { elementAt } from 'rxjs/operators';
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
@@ -15,6 +14,7 @@ import { Platform } from '@ionic/angular';
 import { ClinicService } from "src/app/services/clinic.service";
 import { PaService } from "src/app/services/pa.service";
 import { AuthSession } from 'src/app/services/auth-session';
+import { today, parseDay } from 'src/app/shared/time';
 @Component({
   selector: "app-bulk",
   templateUrl: "./bulk.page.html",
@@ -86,7 +86,7 @@ export class BulkInvoicePage implements OnInit {
     this.feeOnly = this.activatedRoute.snapshot.queryParamMap.get("feeOnly") === "1";
     // const storedInvoiceId = localStorage.getItem('invoiceId');
     // console.log('Stored Invoice ID:', storedInvoiceId);
-    this.currentDate1 = new Date(this.currentDate);
+    this.currentDate1 = parseDay(this.currentDate);
     this.getBulk();
     this.fg = this.formBuilder.group({
       IsConsultationFee: this.feeOnly ? true : false,
@@ -108,7 +108,7 @@ export class BulkInvoicePage implements OnInit {
 
   loadInvoiceStatus() {
     if (!this.doctorId || !this.childId || !this.currentDate) { return; }
-    const dateStr = new Date(this.currentDate).toISOString().split('T')[0];
+    const dateStr = parseDay(this.currentDate);
     this.bulkService.getInvoiceStatus(this.childId, this.doctorId, dateStr).subscribe({
       next: (res: any) => { this.invoiceStatus = res || { isSubmitted: false, editCount: 0, canEdit: true }; },
       error: () => {}
@@ -117,7 +117,7 @@ export class BulkInvoicePage implements OnInit {
 
   loadInvoiceWarning() {
     if (!this.childId || !this.currentDate) { return; }
-    const dateStr = new Date(this.currentDate).toISOString().split('T')[0];
+    const dateStr = parseDay(this.currentDate);
     const url = `${this.API_VACCINE}child/${this.childId}/${dateStr}/invoice-warning`;
     fetch(url, { headers: Object.assign({ 'Content-Type': 'application/json' }, AuthSession.token ? { Authorization: 'Bearer ' + AuthSession.token } : {}) })
       .then(r => r.json())
@@ -287,9 +287,9 @@ export class BulkInvoicePage implements OnInit {
   private resolveInvoiceDate(): string | null {
     const givenDateRaw = this.bulkData && this.bulkData.length > 0 ? this.bulkData[0].GivenDate : null;
     if (givenDateRaw) {
-      const parsed = moment(givenDateRaw, "DD-MM-YYYY", true);
-      if (parsed.isValid() && parsed.year() > 2020) {
-        return parsed.format("YYYY-MM-DD");
+      const parsed = parseDay(givenDateRaw);
+      if (parsed && +parsed.substring(0, 4) > 2020) {
+        return parsed;
       }
     }
     return null;
@@ -299,7 +299,7 @@ export class BulkInvoicePage implements OnInit {
   // back to the due-date bucket there just means the fee-prefill lookup might miss (the
   // clinic-default fee stands instead), never that a wrong date gets written anywhere.
   private resolveInvoiceDateForDisplay(): string {
-    return this.resolveInvoiceDate() || moment(this.currentDate1 || new Date()).format("YYYY-MM-DD");
+    return this.resolveInvoiceDate() || parseDay(this.currentDate1) || today();
   }
 
   // Throws when no valid GivenDate exists among the billed doses — callers must catch
@@ -426,11 +426,7 @@ getAmount(id: string, doseId: string, childId: string) {
 // }
 
   download(id, date, fee) {
-    const today = new Date(date); // Use the provided date instead of today's date
-    const year = today.getFullYear();
-    const month = (today.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-indexed
-    const day = today.getDate().toString().padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
+    const formattedDate = parseDay(date); // Use the provided date instead of today's date
 
     if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
       const url = `${this.API_VACCINE}child/${id}/${formattedDate}/${formattedDate}/${fee}/Verify-Invoice-PDF`;

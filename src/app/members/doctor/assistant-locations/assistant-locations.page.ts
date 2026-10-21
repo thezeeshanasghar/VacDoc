@@ -4,7 +4,9 @@ import { Storage } from '@ionic/storage';
 import { PaLocationService } from 'src/app/services/pa-location.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
-import { fmtDateTime, fmtTime, isDay, parsePkt } from 'src/app/shared/pkt.util';
+import { formatInstant, parseDay, parseInstant } from 'src/app/shared/time';
+
+function isDay(v: string): boolean { return /^\d{4}-\d{2}-\d{2}$/.test(v || '') && !!parseDay(v); }
 
 declare const L: any;
 
@@ -238,7 +240,7 @@ export class AssistantLocationsPage implements OnDestroy {
     return 'Off duty';
   }
 
-  lastKnownText(a: any): string { return fmtDateTime(a.lastSeenAt); }
+  lastKnownText(a: any): string { return formatInstant(a.lastSeenAt, 'd MMM h:mm a'); }
 
   private ageSec(a: any): number {
     if (a.ageSeconds === null || a.ageSeconds === undefined) { return null; }
@@ -348,7 +350,7 @@ export class AssistantLocationsPage implements OnDestroy {
 
   private jump(a: any, b: any): boolean {
     const km = this.haversine([a.lat, a.lng], [b.lat, b.lng]);
-    const hrs = (parsePkt(b.recordedAt).getTime() - parsePkt(a.recordedAt).getTime()) / 3600000;
+    const hrs = (parseInstant(b.recordedAt).getTime() - parseInstant(a.recordedAt).getTime()) / 3600000;
     return hrs > 0 && km / hrs > MAX_JUMP_KMH;
   }
 
@@ -357,9 +359,9 @@ export class AssistantLocationsPage implements OnDestroy {
     const segs: number[][][] = [];
     let cur: number[][] = [];
     let prev: any = null;
-    points.filter(p => p.usable !== false && parsePkt(p.recordedAt)).forEach(p => {
+    points.filter(p => p.usable !== false && parseInstant(p.recordedAt)).forEach(p => {
       if (prev) {
-        const dt = parsePkt(p.recordedAt).getTime() - parsePkt(prev.recordedAt).getTime();
+        const dt = parseInstant(p.recordedAt).getTime() - parseInstant(prev.recordedAt).getTime();
         if (p.shiftId !== prev.shiftId || dt > GAP_MS || this.jump(prev, p)) {
           if (cur.length) { segs.push(cur); }
           cur = [];
@@ -419,7 +421,7 @@ export class AssistantLocationsPage implements OnDestroy {
         if (!usable.length) { this.trailInfo = 'No locations recorded for this day.'; }
         else {
           const km = Number(res.km || 0).toFixed(1);
-          this.trailInfo = `${fmtTime(usable[0].recordedAt)} → ${fmtTime(usable[usable.length - 1].recordedAt)} · ${km} km${res.gaps ? ' ⚠' : ''} · ${usable.length} points`;
+          this.trailInfo = `${formatInstant(usable[0].recordedAt, 'h:mm a')} → ${formatInstant(usable[usable.length - 1].recordedAt, 'h:mm a')} · ${km} km${res.gaps ? ' ⚠' : ''} · ${usable.length} points`;
         }
       }
     });

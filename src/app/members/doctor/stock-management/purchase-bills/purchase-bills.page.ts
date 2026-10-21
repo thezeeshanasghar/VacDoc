@@ -5,6 +5,8 @@ import { Storage } from '@ionic/storage';
 import { StockService } from 'src/app/services/stock.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
+import { today as todayDay } from 'src/app/shared/time';
+import { formatDay } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-purchase-bills',
@@ -152,10 +154,7 @@ export class PurchaseBillsPage {
               this.toastService.create('Enter a valid amount', 'danger');
               return false;
             }
-            const today = new Date();
-            const mm = (today.getMonth() + 1).toString().padStart(2, '0');
-            const dd = today.getDate().toString().padStart(2, '0');
-            const dateStr = today.getFullYear() + '-' + mm + '-' + dd;
+            const dateStr = todayDay();
             this.savePayment(bill.Id, amount, data.method || 'Cash', data.notes || null, dateStr);
             return true;
           }
@@ -327,9 +326,6 @@ export class PurchaseBillsPage {
 
   formatDate(d: string): string {
     if (!d) return '';
-    const dt = new Date(d);
-    const day = dt.getDate().toString().padStart(2, '0');
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return day + ' ' + months[dt.getMonth()] + ' ' + dt.getFullYear();
+    return formatDay(d, 'dd MMM yyyy');
   }
 }

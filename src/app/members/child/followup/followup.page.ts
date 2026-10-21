@@ -8,7 +8,7 @@ import { LoadingController } from '@ionic/angular';
 import { AlertService } from 'src/app/shared/alert.service';
 import { PaService } from 'src/app/services/pa.service';
 import { ChildService } from 'src/app/services/child.service';
-import * as moment from 'moment';
+import { parseDay, formatDay, diffDays } from 'src/app/shared/time';
 @Component({
   selector: 'app-followup',
   templateUrl: './followup.page.html',
@@ -59,7 +59,7 @@ export class FollowupPage implements OnInit {
       if (res.IsSuccess) {
         const child = res.ResponseData;
         this.childName = child.Name;
-        this.childDOB = moment(child.DOB).format('DD MMM YYYY');
+        this.childDOB = formatDay(child.DOB, 'dd MMM yyyy');
         this.childInitials = (child.Name || '')
           .split(' ')
           .filter(part => part.length > 0)
@@ -131,10 +131,10 @@ export class FollowupPage implements OnInit {
   }
 
   private yearsBetween(fromDateStr: string, toDateStr: string): number {
-    const from = moment(fromDateStr, 'DD-MM-YYYY');
-    const to = moment(toDateStr, 'DD-MM-YYYY');
-    if (!from.isValid() || !to.isValid()) { return 0; }
-    return to.diff(from, 'days') / 365.25;
+    const from = parseDay(fromDateStr);
+    const to = parseDay(toDateStr);
+    if (!from || !to) { return 0; }
+    return diffDays(to, from) / 365.25;
   }
   // async Deletechild(id) {
   //   const loading = await this.loadingController.create({
@@ -194,8 +194,7 @@ export class FollowupPage implements OnInit {
   
   formatVisitDate(dateStr: string): string {
     if (!dateStr) { return ''; }
-    const parsed = moment(dateStr, 'DD-MM-YYYY');
-    return parsed.isValid() ? parsed.format('DD MMM YYYY') : dateStr;
+    return parseDay(dateStr) ? formatDay(dateStr, 'dd MMM yyyy') : dateStr;
   }
 
   downloadFollowUpPdf(childId) {

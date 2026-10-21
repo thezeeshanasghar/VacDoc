@@ -6,6 +6,7 @@ import { ScheduleService } from 'src/app/services/schedule.service';
 import { StockService } from 'src/app/services/stock.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
+import { addDays, dayOf, diffDays, formatDay, parseDay, parseInstant, today as todayDay, weekdayOf } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-assignments',
@@ -204,7 +205,7 @@ export class AssignmentsPage {
       const rankB = this.isPastDueStage(b) ? 0 : rank[this.urgency(b)];
       const rankDiff = rankA - rankB;
       if (rankDiff !== 0) { return rankDiff; }
-      return new Date(b.AssignedAt).getTime() - new Date(a.AssignedAt).getTime();
+      return parseInstant(b.AssignedAt).getTime() - parseInstant(a.AssignedAt).getTime();
     });
   }
 
@@ -212,17 +213,10 @@ export class AssignmentsPage {
   // way on both the doctor's tracking view and the PA's own list. Only meaningful for
   // stage() === 'new'/'given'/'invoiced' — pendingHandover/completed cards use their stage
   // pill instead (see due-pill guard in the template).
-  // yyyy-mm-dd in Asia/Karachi (numeric month so string comparison sorts correctly),
-  // not the viewing device's local timezone — matches PaAssignmentTrackingPage's urgency().
-  private pktDayKey(dateStr: string): string {
-    const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Karachi', year: 'numeric', month: '2-digit', day: '2-digit' });
-    return fmt.format(new Date(dateStr));
-  }
-
   urgency(a: any): 'overdue' | 'today' | 'upcoming' | 'none' {
     if (!a.TargetDate) { return 'none'; }
-    const targetKey = this.pktDayKey(a.TargetDate);
-    const todayKey = this.pktDayKey(new Date().toISOString());
+    const targetKey = parseDay(a.TargetDate);
+    const todayKey = todayDay();
     if (targetKey < todayKey) { return 'overdue'; }
     if (targetKey === todayKey) { return 'today'; }
     return 'upcoming';
@@ -266,12 +260,13 @@ export class AssignmentsPage {
   // Others = future-dated work and anything else still on the list,
   // anything whose cash handover the doctor hasn't confirmed yet. Confirmed rows are
   // dropped by the API, so nothing lingers once the doctor confirms.
-  private todayKey(): string { return this.pktDayKey(new Date().toISOString()); }
+  private todayKey(): string { return todayDay(); }
 
   // Accepts 'yyyy-MM-dd' (direct sales) or a full timestamp.
   private dayKeyOf(d: string): string {
     if (!d) { return ''; }
-    return d.length === 10 ? d : this.pktDayKey(d);
+    // A value with a zone is an instant (AssignedAt); a bare one is a calendar day.
+    return /Z$|[+-]\d\d:?\d\d$/.test(d) && d.length > 10 ? dayOf(d) : parseDay(d);
   }
 
   // Overdue work stays in Today until it is done or moved: an assignment whose target date
@@ -317,8 +312,8 @@ export class AssignmentsPage {
   searchText: string = '';
   dateKey: string = '';
   calOpen: boolean = false;
-  calYear: number = new Date().getFullYear();
-  calMonth: number = new Date().getMonth();
+  calYear: number = +todayDay().substring(0, 4);
+  calMonth: number = +todayDay().substring(5, 7) - 1;
   readonly weekdayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
   private assignmentGivenKeys(a: any): string[] {
@@ -385,20 +380,23 @@ export class AssignmentsPage {
   }
 
   shiftMonth(delta: number) {
-    const d = new Date(this.calYear, this.calMonth + delta, 1);
-    this.calYear = d.getFullYear();
-    this.calMonth = d.getMonth();
+    const m = this.calYear * 12 + this.calMonth + delta;
+    this.calYear = Math.floor(m / 12);
+    this.calMonth = m % 12;
   }
 
   get calTitle(): string {
-    return new Date(this.calYear, this.calMonth, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    return formatDay(this.calFirst(), 'MMMM yyyy');
   }
+
+  private calFirst(): string { return this.calYear + '-' + ('0' + (this.calMonth + 1)).slice(-2) + '-01'; }
 
   // Monday-first grid; null = leading blank cell.
   get calCells(): any[] {
     const keys = this.givenDayKeys;
-    const lead = (new Date(this.calYear, this.calMonth, 1).getDay() + 6) % 7;
-    const days = new Date(this.calYear, this.calMonth + 1, 0).getDate();
+    const lead = (weekdayOf(this.calFirst()) + 6) % 7;
+    const nextFirst = this.calMonth === 11 ? (this.calYear + 1) + '-01-01' : this.calYear + '-' + ('0' + (this.calMonth + 2)).slice(-2) + '-01';
+    const days = diffDays(nextFirst, this.calFirst());
     const cells: any[] = [];
     for (let i = 0; i < lead; i++) { cells.push(null); }
     for (let d = 1; d <= days; d++) {
@@ -416,16 +414,10 @@ export class AssignmentsPage {
 
   get dateLabel(): string {
     if (!this.dateKey) { return 'Date'; }
-    return new Date(this.dateKey + 'T00:00:00').toLocaleDateString('en-US', { day: '2-digit', month: 'short' });
+    return formatDay(this.dateKey, 'dd MMM');
   }
 
-  formatTargetDate(dateStr: string): string {
-    if (!dateStr) { return ''; }
-    try {
-      const fmt = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Karachi', day: '2-digit', month: 'short' });
-      return fmt.format(new Date(dateStr));
-    } catch { return dateStr; }
-  }
+  formatTargetDate(dateStr: string): string { return formatDay(dateStr, 'dd MMM'); }
 
   isBulkGroup(a: any): boolean {
     return Array.isArray(a.Schedules) && a.Schedules.filter(function(s: any) { return s.IsDone; }).length >= 2;

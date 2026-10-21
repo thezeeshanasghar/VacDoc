@@ -7,6 +7,7 @@ import { ClinicService } from 'src/app/services/clinic.service';
 import { PaService } from 'src/app/services/pa.service';
 import { PnLService } from 'src/app/services/pnl.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { today, monthStart } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-pnl',
@@ -57,11 +58,9 @@ export class PnlPage {
     private pnlService: PnLService,
     private toastService: ToastService,
   ) {
-    const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
     this.form = this.fb.group({
-      fromDate: [monthStart.toISOString().slice(0, 10)],
-      toDate: [now.toISOString().slice(0, 10)]
+      fromDate: [monthStart(today())],
+      toDate: [today()]
     });
   }
 

@@ -27,6 +27,7 @@ import { AgentService } from "src/app/services/agent.service";
 import { PaService } from "src/app/services/pa.service";
 import { ManagerService } from "src/app/services/manager.service";
 import { DoseService } from "src/app/services/dose.service";
+import { today, dayOf, diffDays, toLegacyDay, dayFromPicker } from 'src/app/shared/time';
 
 @Component({
   selector: "app-add",
@@ -271,8 +272,7 @@ filterCountryCodes(value: string) {
       this.loadClinics();
     }
     this.storage.set(environment.MESSAGES, this.Messages);
-    this.todaydate = new Date();
-    this.todaydate = moment(this.todaydate, "DD-MM-YYYY").format("YYYY-MM-DD");
+    this.todaydate = today();
     this.fg1 = this.formBuilder.group({
       ClinicId: [""],
       Name: [
@@ -1025,8 +1025,8 @@ filterCountryCodes(value: string) {
       await this.setCity(selectedCity);
     }
 
-    this.fg1.value.DOB = await moment(this.fg1.value.DOB, "YYYY-MM-DD").format(
-      "DD-MM-YYYY"
+    this.fg1.value.DOB = toLegacyDay(
+      this.fg1.value.DOB instanceof Date ? dayFromPicker(this.fg1.value.DOB) : this.fg1.value.DOB
     );
     if (this.fg1.value.Name) this.fg1.value.Name = this.fg1.value.Name.toUpperCase();
     if (this.fg1.value.FatherName) this.fg1.value.FatherName = this.fg1.value.FatherName.toUpperCase();
@@ -1336,21 +1336,7 @@ filterCountryCodes(value: string) {
   }
 
   calculateDiff(dateSent: string | number | Date) {
-    let currentDate = new Date();
-    dateSent = new Date(dateSent);
-    return Math.floor(
-      (Date.UTC(
-        currentDate.getFullYear(),
-        currentDate.getMonth(),
-        currentDate.getDate()
-      ) -
-        Date.UTC(
-          dateSent.getFullYear(),
-          dateSent.getMonth(),
-          dateSent.getDate()
-        )) /
-        (1000 * 60 * 60 * 24)
-    );
+    return diffDays(today(), dayOf(dateSent));
   }
 
   async otherCityAlert() {

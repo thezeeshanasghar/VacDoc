@@ -9,6 +9,7 @@ import { ClinicService } from "src/app/services/clinic.service";
 import { PaService } from "src/app/services/pa.service";
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 import { AuthSession } from 'src/app/services/auth-session';
+import { today, dayOf, parseDay, dayFromPicker, nowInstant } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-birthday-alert',
@@ -16,7 +17,7 @@ import { AuthSession } from 'src/app/services/auth-session';
   styleUrls: ['./birthday-alert.page.scss'],
 })
 export class BirthdayAlertPage implements OnInit {
-  selectedDate: string = new Date().toISOString();
+  selectedDate: string = today();
   formattedDate: string;
   doctorId: any;
   docname: string = '';
@@ -168,14 +169,12 @@ export class BirthdayAlertPage implements OnInit {
   }
 
   formatDateToString(date: string | Date): string {
-    const d = new Date(date);
-    const month = ('0' + (d.getMonth() + 1)).slice(-2);
-    const day = ('0' + d.getDate()).slice(-2);
-    return `${month}-${day}`;
+    const p = parseDay(date instanceof Date ? dayFromPicker(date) : date);
+    return p ? p.substring(5, 7) + '-' + p.substring(8, 10) : '';
   }
 
   onDateChange(event: any) {
-    this.selectedDate = event.value;
+    this.selectedDate = dayFromPicker(event.value);
     this.formattedDate = this.formatDateToString(this.selectedDate);
     this.getAllClinicsBirthdays();
   }
@@ -295,10 +294,7 @@ export class BirthdayAlertPage implements OnInit {
   // the date rolls over, even though LastBirthdayAlertSentAt itself is never cleared server-side.
   isBirthdayAlertSentThisYear(child: any): boolean {
     if (!child.LastBirthdayAlertSentAt) return false;
-    const pktDay = (d: Date) => new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'Asia/Karachi', year: 'numeric', month: '2-digit', day: '2-digit',
-    }).format(d);
-    return pktDay(new Date(child.LastBirthdayAlertSentAt)) === pktDay(new Date());
+    return dayOf(child.LastBirthdayAlertSentAt) === today();
   }
 
   trackByChildId(_index: number, child: any): any {
@@ -330,7 +326,7 @@ export class BirthdayAlertPage implements OnInit {
 
     // Fire-and-forget: persist "sent" so the tick survives reload/logout-login.
     this.birthdayService.markBirthdayAlertSent(child.Id).subscribe(
-      () => { child.LastBirthdayAlertSentAt = new Date(); },
+      () => { child.LastBirthdayAlertSentAt = nowInstant(); },
       (err) => console.error('Error marking birthday alert sent:', err)
     );
   }
@@ -361,7 +357,7 @@ export class BirthdayAlertPage implements OnInit {
 
     // Fire-and-forget: persist "sent" so the tick survives reload/logout-login.
     this.birthdayService.markBirthdayAlertSent(child.Id).subscribe(
-      () => { child.LastBirthdayAlertSentAt = new Date(); },
+      () => { child.LastBirthdayAlertSentAt = nowInstant(); },
       (err) => console.error('Error marking birthday alert sent:', err)
     );
   }

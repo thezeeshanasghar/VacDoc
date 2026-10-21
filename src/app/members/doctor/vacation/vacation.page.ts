@@ -7,9 +7,9 @@ import { environment } from 'src/environments/environment';
 import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
 import { VacationService } from 'src/app/services/vacation.service';
 import { Router } from '@angular/router';
-import * as moment from 'moment';
 import { HttpClient } from '@angular/common/http';
 import { PaService } from 'src/app/services/pa.service';
+import { today, parseDay } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-vacation',
@@ -38,7 +38,7 @@ export class VacationPage implements OnInit {
     private paService: PaService
 
   ) {
-    this.todaydate = new Date().toISOString().slice(0, 10);
+    this.todaydate = today();
     this.fg2 = this.formBuilder.group({
       clinics: new FormArray([]),
       'formDate': [this.todaydate],
@@ -221,8 +221,8 @@ export class VacationPage implements OnInit {
       return acc;
     }, []);
 
-    const fromDate = moment(this.fg2.value.formDate).format('YYYY-MM-DD');
-    const toDate = moment(this.fg2.value.ToDate).format('YYYY-MM-DD');
+    const fromDate = parseDay(this.fg2.value.formDate);
+    const toDate = parseDay(this.fg2.value.ToDate);
     console.log(fromDate);
     console.log(toDate);
 

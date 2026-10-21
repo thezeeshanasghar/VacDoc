@@ -10,6 +10,7 @@ import { ClinicService } from "src/app/services/clinic.service";
 import { PaService } from "src/app/services/pa.service";
 import { Downloader, DownloadRequest, NotificationVisibility } from '@ionic-native/downloader/ngx';
 import { AuthSession } from 'src/app/services/auth-session';
+import { today, dayOf, parseDay, dayFromPicker, nowInstant } from 'src/app/shared/time';
 @Component({
   selector: "app-follow-up",
   templateUrl: "./follow-up.page.html",
@@ -21,7 +22,7 @@ export class FollowUpPage implements OnInit {
   followUpChild: any[] = []; // Initialize as an empty array
   numOfDays: number = 0;
   clinicId: any;
-  selectedDate: string = new Date().toISOString();
+  selectedDate: string = today();
   formattedDate: string;
   Childs: any;
   usertype: any;
@@ -222,15 +223,11 @@ export class FollowUpPage implements OnInit {
   }
 
   formatDateToString(date: string | Date): string {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = ('0' + (d.getMonth() + 1)).slice(-2);
-    const day = ('0' + d.getDate()).slice(-2);
-    return `${year}-${month}-${day}`;
+    return parseDay(date instanceof Date ? dayFromPicker(date) : date);
   }
 
   onDateChange(event: any) {
-    this.selectedDate = event.value;
+    this.selectedDate = dayFromPicker(event.value);
     console.log('Selected Date:', this.selectedDate);
     this.getFollowups(this.selectedDate);
   }
@@ -294,7 +291,7 @@ export class FollowUpPage implements OnInit {
 
     // Fire-and-forget: persist "sent" so the tick survives reload/logout-login.
     this.followupService.markFollowupAlertSent(child.Id).subscribe(
-      () => { child.AlertSentAt = new Date(); },
+      () => { child.AlertSentAt = nowInstant(); },
       (err) => console.error('Error marking follow-up alert sent:', err)
     );
   }
@@ -331,7 +328,7 @@ export class FollowUpPage implements OnInit {
 
   // Fire-and-forget: persist "sent" so the tick survives reload/logout-login.
   this.followupService.markFollowupAlertSent(child.Id).subscribe(
-    () => { child.AlertSentAt = new Date(); },
+    () => { child.AlertSentAt = nowInstant(); },
     (err) => console.error('Error marking follow-up alert sent:', err)
   );
 }
@@ -340,9 +337,6 @@ export class FollowUpPage implements OnInit {
   // the date rolls over, even though AlertSentAt itself is never cleared server-side.
   isAlertSentToday(child: any): boolean {
     if (!child.AlertSentAt) return false;
-    const pktDay = (d: Date) => new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'Asia/Karachi', year: 'numeric', month: '2-digit', day: '2-digit',
-    }).format(d);
-    return pktDay(new Date(child.AlertSentAt)) === pktDay(new Date());
+    return dayOf(child.AlertSentAt) === today();
   }
 }

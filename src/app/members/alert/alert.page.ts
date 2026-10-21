@@ -18,6 +18,7 @@ import { DoctorService } from "src/app/services/doctor.service";
 import { VaccineService } from 'src/app/services/vaccine.service'; 
 import { ClinicService } from "src/app/services/clinic.service";
 import { PaService } from "src/app/services/pa.service";
+import { today } from 'src/app/shared/time';
 // import { Console } from 'console';
 @Component({
   selector: 'app-alert',
@@ -37,7 +38,7 @@ export class AlertPage implements OnInit {
   private readonly API_VACCINE = `${environment.BASE_URL}`;
   Messages = [];
   numOfDays: number = 0;
-  selectedDate: string = new Date().toISOString();
+  selectedDate: string = today();
   usertype: any;
   clinics: any;
   selectedClinicId: any;

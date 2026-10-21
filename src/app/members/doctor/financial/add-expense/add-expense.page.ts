@@ -6,6 +6,7 @@ import { Storage } from '@ionic/storage';
 import { ExpenseService } from 'src/app/services/expense.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
+import { today } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-add-expense',
@@ -104,10 +105,7 @@ export class AddExpensePage {
     this.receiptPreview = '';
     this.warrantyPreview = '';
 
-    const today = new Date();
-    const mm = (today.getMonth() + 1).toString().padStart(2, '0');
-    const dd = today.getDate().toString().padStart(2, '0');
-    this.expenseDate = `${today.getFullYear()}-${mm}-${dd}`;
+    this.expenseDate = today();
   }
 
   loadExpense(id: number) {

@@ -6,6 +6,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "prebuild": "bash scripts/check-time.sh",
     "build": "NODE_OPTIONS=\"--openssl-legacy-provider --max-old-space-size=4096\" ng build",
     "test": "ng test",
     "lint": "ng lint",

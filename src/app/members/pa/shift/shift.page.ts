@@ -5,6 +5,7 @@ import { PaLocationService } from 'src/app/services/pa-location.service';
 import { AuthSession } from 'src/app/services/auth-session';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
+import { nowInstant, parseInstant } from 'src/app/shared/time';
 
 // Lets an assistant start/end a shift. While a shift is on, the VPK Assistant Android app
 // (window.VpkTracker, a native foreground service) posts a GPS fix to the API every minute.
@@ -49,7 +50,7 @@ export class ShiftPage implements OnDestroy {
       const s = await this.locationService.getShiftStatus(this.paId).toPromise();
       this.trackingAllowed = !!s.trackingAllowed;
       this.onShift = !!s.onShift;
-      this.startedAt = s.startedAt ? this.utc(s.startedAt) : null;
+      this.startedAt = s.startedAt ? parseInstant(s.startedAt) : null;
       this.readPermission();
       if (this.inApp) {
         if (this.onShift && !this.tracker.isRunning() && this.permission !== 'none') {
@@ -68,10 +69,6 @@ export class ShiftPage implements OnDestroy {
 
   private readPermission() {
     this.permission = this.inApp ? (this.tracker.permissionState() as any) : 'none';
-  }
-
-  private utc(v: string): Date {
-    return new Date(/Z|[+-]\d\d:\d\d$/.test(v) ? v : v + 'Z');
   }
 
   async startShift() {
@@ -93,7 +90,7 @@ export class ShiftPage implements OnDestroy {
         return;
       }
       this.onShift = true;
-      this.startedAt = new Date();
+      this.startedAt = nowInstant();
       this.readPermission();
       if (this.permission === 'foreground') { this.offerAllTheTime(); }
     } catch (e) {

@@ -161,14 +161,14 @@
     </div>
 
     <!-- Schedule date (read-only reference) -->
-    <div class="give-schedule-note" *ngIf="Date">Scheduled for {{ Date | date:'dd-MM-yyyy' }}</div>
+    <div class="give-schedule-note" *ngIf="Date">Scheduled for {{ Date | day:'dd-MM-yyyy' }}</div>
 
     <!-- 5.4 Given Date — outlined (hidden when recording past disease) -->
     <div class="give-date-field" *ngIf="!fg.value.IsDisease" (click)="picker.open()">
       <span class="give-date-label">Given Date</span>
       <span class="give-date-value">
         <input formControlName="GivenDate" matInput [matDatepicker]="picker" value="{{Date}}" max="{{todaydate}}" class="give-date-input" readonly>
-        {{ fg.get('GivenDate').value ? (fg.get('GivenDate').value | date:'dd-MM-yyyy') : (Date | date:'dd-MM-yyyy') }}
+        {{ fg.get('GivenDate').value ? (fg.get('GivenDate').value | day:'dd-MM-yyyy') : (Date | day:'dd-MM-yyyy') }}
       </span>
       <ion-icon name="calendar-outline" class="give-date-icon"></ion-icon>
       <mat-datepicker #picker disabled="false"></mat-datepicker>

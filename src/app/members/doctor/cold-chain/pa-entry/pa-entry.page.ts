@@ -3,6 +3,7 @@ import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
 import { ColdChainService } from 'src/app/services/cold-chain.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { formatInstant, nowInstant, today as todayDay } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-pa-entry',
@@ -159,27 +160,9 @@ export class PaEntryPage implements OnInit {
     return f ? f.Name : 'Unknown';
   }
 
-  // recordedDate/recordedTime are submitted to the backend as plain strings, as-is — so
-  // "now" must be computed in Asia/Karachi here, not read off the device's local clock,
-  // or a PA on a non-PKT device gets a silently wrong default reading time.
-  private pktNowParts(): { [key: string]: string } {
-    const fmt = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'Asia/Karachi',
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit', hour12: false,
-    });
-    const parts: { [key: string]: string } = {};
-    fmt.formatToParts(new Date()).forEach(p => { parts[p.type] = p.value; });
-    return parts;
-  }
+  // recordedDate/recordedTime are submitted to the backend as plain strings, so "now" comes
+  // from the app zone, not the device clock.
+  private todayString(): string { return todayDay(); }
 
-  private todayString(): string {
-    const p = this.pktNowParts();
-    return `${p.year}-${p.month}-${p.day}`;
-  }
-
-  private nowString(): string {
-    const p = this.pktNowParts();
-    return `${p.hour}:${p.minute}`;
-  }
+  private nowString(): string { return formatInstant(nowInstant(), 'HH:mm'); }
 }

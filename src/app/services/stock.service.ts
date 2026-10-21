@@ -54,16 +54,16 @@ export class StockService {
     return this.http.get<any>(`${this.apiUrl}supplier?doctorId=${doctorId}`);
   }
 
-  getSalesReportFile(clinicId: number, doctorId: number, fromDate: Date, toDate: Date): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}stock/sales-report?clinicId=${clinicId}&doctorId=${doctorId}&from=${fromDate.toISOString()}&to=${toDate.toISOString()}`, { observe: 'response', responseType: 'blob' as 'json' });
+  getSalesReportFile(clinicId: number, doctorId: number, fromDate: string, toDate: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}stock/sales-report?clinicId=${clinicId}&doctorId=${doctorId}&from=${fromDate}&to=${toDate}`, { observe: 'response', responseType: 'blob' as 'json' });
   }
 
-  getSalesCollectionReportFile(clinicId: number, doctorId: number, fromDate: Date, toDate: Date): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}stock/sales-collection-report?clinicId=${clinicId}&doctorId=${doctorId}&from=${fromDate.toISOString()}&to=${toDate.toISOString()}`, { observe: 'response', responseType: 'blob' as 'json' });
+  getSalesCollectionReportFile(clinicId: number, doctorId: number, fromDate: string, toDate: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}stock/sales-collection-report?clinicId=${clinicId}&doctorId=${doctorId}&from=${fromDate}&to=${toDate}`, { observe: 'response', responseType: 'blob' as 'json' });
   }
 
-  getSalesSummary(clinicId: number, doctorId: number, fromDate: Date, toDate: Date): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}stock/sales-summary?clinicId=${clinicId}&doctorId=${doctorId}&from=${fromDate.toISOString()}&to=${toDate.toISOString()}`);
+  getSalesSummary(clinicId: number, doctorId: number, fromDate: string, toDate: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}stock/sales-summary?clinicId=${clinicId}&doctorId=${doctorId}&from=${fromDate}&to=${toDate}`);
   }
 
   getSalesReportLog(clinicId: number, doctorId: number, take = 5): Observable<any> {

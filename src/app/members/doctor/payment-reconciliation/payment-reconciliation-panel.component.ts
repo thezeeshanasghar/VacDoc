@@ -5,6 +5,7 @@ import { PaService } from 'src/app/services/pa.service';
 import { StockService } from 'src/app/services/stock.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
+import { formatDay, formatInstant, nowInstant } from 'src/app/shared/time';
 
 // One card per PA on the Cash tab (built once per load, never inside the template).
 interface PaCard {
@@ -724,7 +725,7 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
                 loading.dismiss();
                 if (res && res.IsSuccess) {
                   row.IsConfirmed = true;
-                  row.ConfirmedAt = new Date().toISOString();
+                  row.ConfirmedAt = nowInstant().toISOString(); // time-ok
                   this.toastService.create('Payment confirmed', 'success');
                 } else {
                   this.toastService.create((res && res.Message) || 'Failed to confirm', 'danger');
@@ -787,7 +788,7 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
           if (res && res.IsSuccess) {
             done++;
             row.IsConfirmed = true;
-            row.ConfirmedAt = new Date().toISOString();
+            row.ConfirmedAt = nowInstant().toISOString(); // time-ok
           } else {
             failed++;
           }
@@ -862,36 +863,11 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
     await alert.present();
   }
 
-  // Pakistan Standard Time is fixed (no DST), but the device/browser rendering this may
-  // not be — so parts are pulled via Intl with an explicit Asia/Karachi timeZone instead
-  // of trusting d.getDate()/getHours() (which read the LOCAL device timezone).
-  private pktParts(dateStr: string): { [key: string]: string } {
-    const d = new Date(dateStr);
-    const fmt = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'Asia/Karachi',
-      year: 'numeric', month: 'short', day: '2-digit',
-      hour: 'numeric', minute: '2-digit', hour12: true,
-    });
-    const parts: { [key: string]: string } = {};
-    fmt.formatToParts(d).forEach(p => { parts[p.type] = p.value; });
-    return parts;
-  }
-
-  formatDate(dateStr: string): string {
-    if (!dateStr) { return ''; }
-    try {
-      const p = this.pktParts(dateStr);
-      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const mm = (months.indexOf(p.month) + 1).toString().padStart(2, '0');
-      return `${p.day}/${mm}/${p.year.slice(-2)}`;
-    } catch { return dateStr; }
-  }
+  // Row.Date is a calendar day; the *At stamps are UTC instants.
+  formatDate(dateStr: string): string { return formatDay(dateStr, 'dd/MM/yy'); }
 
   formatDateTime(dateStr: string): string {
-    if (!dateStr) { return ''; }
-    try {
-      const p = this.pktParts(dateStr);
-      return `${p.day} ${p.month} ${p.year} ${p.hour}:${p.minute} ${p.dayPeriod} PKT`;
-    } catch { return dateStr; }
+    const t = formatInstant(dateStr, 'dd MMM yyyy h:mm a');
+    return t ? t + ' PKT' : '';
   }
 }

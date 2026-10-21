@@ -7,6 +7,7 @@ import { PaService } from 'src/app/services/pa.service';
 import { ManagerService } from 'src/app/services/manager.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
+import { addDays, formatDay, parseDay, formatInstant, nowInstant, parseInstant, today as todayDay } from 'src/app/shared/time';
 
 interface DoseRow {
   ScheduleId: number;
@@ -154,9 +155,8 @@ export class PaAssignmentTrackingPage {
   ) {}
 
   async ionViewWillEnter() {
-    const today = this.toDateStr(new Date());
-    this.fromDate = this.toDateStr(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
-    this.toDate = today;
+    this.fromDate = addDays(todayDay(), -30);
+    this.toDate = todayDay();
 
     const user = await this.storage.get(environment.USER);
     const storedDoctorId = await this.storage.get(environment.DOCTOR_Id);
@@ -314,12 +314,6 @@ export class PaAssignmentTrackingPage {
     );
   }
 
-  private toDateStr(d: Date): string {
-    const mm = (d.getMonth() + 1).toString().padStart(2, '0');
-    const dd = d.getDate().toString().padStart(2, '0');
-    return `${d.getFullYear()}-${mm}-${dd}`;
-  }
-
   async loadClinics() {
     if (!this.doctorId) { return; }
 
@@ -382,8 +376,8 @@ export class PaAssignmentTrackingPage {
     this.selectedStatus = 'All';
     this.pas = [];
     this.searchQuery = '';
-    this.fromDate = this.toDateStr(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
-    this.toDate = this.toDateStr(new Date());
+    this.fromDate = addDays(todayDay(), -30);
+    this.toDate = todayDay();
     this.load();
   }
 
@@ -783,14 +777,14 @@ export class PaAssignmentTrackingPage {
   // the only way to surface "this has been sitting untouched for weeks."
   isStale(row: AssignmentRow): boolean {
     if (row.IsCompleted || row.IsCancelled) { return false; }
-    const assignedAt = new Date(row.AssignedAt).getTime();
-    const ageMs = Date.now() - assignedAt;
+    const assignedAt = parseInstant(row.AssignedAt).getTime();
+    const ageMs = nowInstant().getTime() - assignedAt;
     return ageMs >= this.STALE_DAYS * 24 * 60 * 60 * 1000;
   }
 
   daysAgo(dateStr: string): number {
-    const then = new Date(dateStr).getTime();
-    return Math.floor((Date.now() - then) / (24 * 60 * 60 * 1000));
+    const then = parseInstant(dateStr).getTime();
+    return Math.floor((nowInstant().getTime() - then) / (24 * 60 * 60 * 1000));
   }
 
   isSelected(row: AssignmentRow): boolean {
@@ -875,18 +869,11 @@ export class PaAssignmentTrackingPage {
     removeNext(0);
   }
 
-  // yyyy-mm-dd in Asia/Karachi (numeric month so string comparison sorts correctly),
-  // not the viewing device's local timezone.
-  private pktDayKey(dateStr: string): string {
-    const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Karachi', year: 'numeric', month: '2-digit', day: '2-digit' });
-    return fmt.format(new Date(dateStr));
-  }
-
   // A device set to a different zone must still agree with PKT on what "today" is.
   urgency(row: AssignmentRow): 'overdue' | 'today' | 'upcoming' | 'none' {
     if (!row.TargetDate) { return 'none'; }
-    const targetKey = this.pktDayKey(row.TargetDate);
-    const todayKey = this.pktDayKey(new Date().toISOString());
+    const targetKey = parseDay(row.TargetDate);
+    const todayKey = todayDay();
     if (targetKey < todayKey) { return 'overdue'; }
     if (targetKey === todayKey) { return 'today'; }
     return 'upcoming';
@@ -932,34 +919,11 @@ export class PaAssignmentTrackingPage {
     return new Set(this.allRows.filter(r => !r.IsCancelled && !r.IsCashConfirmedByDoctor).map(r => r.PaId)).size;
   }
 
-  // Pakistan Standard Time is fixed (no DST), but the device/browser rendering this may
-  // not be — so parts are pulled via Intl with an explicit Asia/Karachi timeZone instead
-  // of trusting d.getDate()/getHours() (which read the LOCAL device timezone).
-  private pktParts(dateStr: string): { [key: string]: string } {
-    const d = new Date(dateStr);
-    const fmt = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'Asia/Karachi',
-      year: 'numeric', month: 'short', day: '2-digit',
-      hour: 'numeric', minute: '2-digit', hour12: true,
-    });
-    const parts: { [key: string]: string } = {};
-    fmt.formatToParts(d).forEach(p => { parts[p.type] = p.value; });
-    return parts;
-  }
-
-  formatDate(dateStr: string | null): string {
-    if (!dateStr) { return ''; }
-    try {
-      const p = this.pktParts(dateStr);
-      return `${p.day} ${p.month} ${p.year}`;
-    } catch { return dateStr; }
-  }
+  // TargetDate is a calendar day; the *At stamps are UTC instants.
+  formatDate(dateStr: string | null): string { return formatDay(dateStr, 'dd MMM yyyy'); }
 
   formatDateTime(dateStr: string | null): string {
-    if (!dateStr) { return ''; }
-    try {
-      const p = this.pktParts(dateStr);
-      return `${p.day} ${p.month} ${p.year}, ${p.hour}:${p.minute} ${p.dayPeriod} PKT`;
-    } catch { return dateStr; }
+    const t = formatInstant(dateStr, 'dd MMM yyyy, h:mm a');
+    return t ? t + ' PKT' : '';
   }
 }

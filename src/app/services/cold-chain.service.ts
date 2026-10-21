@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { today, parseDay, addDays, weekdayOf, dayFromPicker } from '../shared/time';
 
 @Injectable({ providedIn: 'root' })
 export class ColdChainService {
@@ -86,25 +87,19 @@ export class ColdChainService {
 
   // ==================== HELPERS ====================
 
-  /** Monday of the week containing `date` (defaults to today), as YYYY-MM-DD. */
-  getWeekStart(date: Date = new Date()): string {
-    const d = new Date(date);
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-    d.setDate(diff);
-    return this.toDateString(d);
+  /** Monday of the week containing `day` (defaults to today), as YYYY-MM-DD. */
+  getWeekStart(day?: string): string {
+    const d = parseDay(day) || today();
+    const wd = weekdayOf(d);
+    return addDays(d, wd === 0 ? -6 : 1 - wd);
   }
 
   getWeekEnd(weekStartDate: string): string {
-    const d = new Date(weekStartDate);
-    d.setDate(d.getDate() + 6);
-    return this.toDateString(d);
+    return addDays(weekStartDate, 6);
   }
 
-  toDateString(date: Date): string {
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, '0');
-    const d = String(date.getDate()).padStart(2, '0');
-    return `${y}-${m}-${d}`;
+  /** YYYY-MM-DD of a day string, or of a picker Date. */
+  toDateString(date: any): string {
+    return date instanceof Date ? dayFromPicker(date) : parseDay(date);
   }
 }

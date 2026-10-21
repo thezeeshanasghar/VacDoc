@@ -15,6 +15,7 @@ import { VaccineService } from 'src/app/services/vaccine.service';
 import { ClinicService } from "src/app/services/clinic.service";
 import { PaService } from "src/app/services/pa.service";
 import { AuthSession } from 'src/app/services/auth-session';
+import { today, dayOf, parseDay, dayFromPicker, nowInstant } from 'src/app/shared/time';
 
 @Component({
   selector: "app-vaccine-alert",
@@ -34,7 +35,7 @@ export class VaccineAlertPage implements OnInit {
   private readonly API_VACCINE = `${environment.BASE_URL}`;
   Messages = [];
   numOfDays: number = 0;
-  selectedDate: string = new Date().toISOString();
+  selectedDate: string = today();
   usertype: any;
   clinics: any;
   allClinicIds: number[] = [];
@@ -600,7 +601,7 @@ export class VaccineAlertPage implements OnInit {
         // Fire-and-forget: persist "sent" so the tick survives reload/logout-login.
         // Only called here, inside the success branch, so a failed fetch never marks sent.
         this.vaccineService.markAlertSent(child.Id).subscribe(
-          () => { child.AlertSentAt = new Date(); },
+          () => { child.AlertSentAt = nowInstant(); },
           (err) => console.error('Error marking alert sent:', err)
         );
 
@@ -643,7 +644,7 @@ export class VaccineAlertPage implements OnInit {
 
           // Fire-and-forget: persist "sent" so the tick survives reload/logout-login.
           this.vaccineService.markAlertSent(child.Id).subscribe(
-            () => { child.AlertSentAt = new Date(); },
+            () => { child.AlertSentAt = nowInstant(); },
             (err) => console.error('Error marking alert sent:', err)
           );
         } else {
@@ -657,15 +658,11 @@ export class VaccineAlertPage implements OnInit {
   }
 
   formatDateToString(date: string | Date): string {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = ('0' + (d.getMonth() + 1)).slice(-2);
-    const day = ('0' + d.getDate()).slice(-2);
-    return `${year}-${month}-${day}`;
+    return parseDay(date instanceof Date ? dayFromPicker(date) : date);
   }
 
   onDateChange(event: any) {
-    this.selectedDate = event.value;
+    this.selectedDate = dayFromPicker(event.value);
     console.log('Selected Date:', this.selectedDate);
     this.getAlerts(this.selectedDate);
   }
@@ -680,9 +677,6 @@ export class VaccineAlertPage implements OnInit {
   // the date rolls over, even though AlertSentAt itself is never cleared server-side.
   isAlertSentToday(child: any): boolean {
     if (!child.AlertSentAt) return false;
-    const pktDay = (d: Date) => new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'Asia/Karachi', year: 'numeric', month: '2-digit', day: '2-digit',
-    }).format(d);
-    return pktDay(new Date(child.AlertSentAt)) === pktDay(new Date());
+    return dayOf(child.AlertSentAt) === today();
   }
 }

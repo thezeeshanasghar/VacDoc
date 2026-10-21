@@ -38,7 +38,7 @@
       <div class="exp-mid">
         <div class="exp-desc">{{ e.Description }}</div>
         <div class="exp-meta">
-          <span class="exp-date">{{ e.ExpenseDate | date:'dd MMM yy' }}</span>
+          <span class="exp-date">{{ e.ExpenseDate | day:'dd MMM yy' }}</span>
           <span class="exp-dot">·</span>
           <span class="exp-cat">{{ e.ExpenseType === 'Capital' ? e.AssetName || 'Fixed Asset' : e.Category }}</span>
           <span class="exp-dot" *ngIf="e.ClinicId">·</span>

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { today, parseDay } from 'src/app/shared/time';
 
 /**
  * Batch/Lot picker bottom sheet (spec §6).
@@ -25,13 +26,13 @@ export class BatchPickerComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const now = new Date();
+    const todayDay = today();
     // Lots arrive FEFO-sorted (earliest expiry first). First non-expired = FEFO pick.
     let fefoAssigned = false;
     this.rows = (this.lots || []).map(l => {
       const batchLot = l && l.BatchLot ? String(l.BatchLot).trim() : '';
-      const expRaw = l && l.Expiry ? new Date(l.Expiry) : null;
-      const expired = !!expRaw && expRaw.getTime() < now.getTime();
+      const expRaw = l && l.Expiry ? parseDay(l.Expiry) : null;
+      const expired = !!expRaw && expRaw <= todayDay;
       const isFefo = !expired && !fefoAssigned;
       if (isFefo) { fefoAssigned = true; }
       return {
@@ -48,9 +49,8 @@ export class BatchPickerComponent implements OnInit {
     this.chosen = current ? current.batchLot : (fefo ? fefo.batchLot : null);
   }
 
-  private fmtMonthYear(d: Date): string {
-    const m = ('0' + (d.getMonth() + 1)).slice(-2);
-    return `${m}-${d.getFullYear()}`;
+  private fmtMonthYear(d: string): string {
+    return d.substring(5, 7) + '-' + d.substring(0, 4);
   }
 
   title(): string {

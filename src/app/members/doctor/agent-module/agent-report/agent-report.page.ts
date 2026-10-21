@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import { AgentService } from 'src/app/services/agent.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { monthStart, today as todayDay } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-agent-report',
@@ -29,10 +30,8 @@ export class AgentReportPage implements OnInit {
     private loadingCtrl: LoadingController,
     private toastService: ToastService
   ) {
-    const today = new Date();
-    const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    this.fromDate = firstOfMonth.toISOString().slice(0, 10);
-    this.toDate = today.toISOString().slice(0, 10);
+    this.fromDate = monthStart(todayDay());
+    this.toDate = todayDay();
   }
 
   ngOnInit() {

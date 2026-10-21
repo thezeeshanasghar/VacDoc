@@ -89,7 +89,7 @@
       <div class="ds-details">
         <span>Rs. {{ s.Amount | number:'1.0-0' }}</span>
         &nbsp;&nbsp;
-        <ion-icon name="calendar"></ion-icon> {{ s.Date | date:'dd MMM yyyy' }}
+        <ion-icon name="calendar"></ion-icon> {{ s.Date | day:'dd MMM yyyy' }}
       </div>
       <div *ngIf="s.SaleBillNo" class="ds-bill-no">{{ s.SaleBillNo }}</div>
       <div class="ds-status" *ngIf="!s.IsPaymentCollected">Tap to record payment mode</div>
@@ -115,7 +115,7 @@
         <div class="ds-details">
           <span>Rs. {{ s.Amount | number:'1.0-0' }}</span>
           &nbsp;&nbsp;
-          <ion-icon name="calendar"></ion-icon> {{ s.Date | date:'dd MMM yyyy' }}
+          <ion-icon name="calendar"></ion-icon> {{ s.Date | day:'dd MMM yyyy' }}
         </div>
         <div *ngIf="s.SaleBillNo" class="ds-bill-no">{{ s.SaleBillNo }}</div>
         <div class="ds-status">{{ s.PaymentMode }} · handed off, awaiting doctor's cash confirmation</div>
@@ -139,7 +139,7 @@
         <div class="ds-details">
           <span>Rs. {{ r.Amount | number:'1.0-0' }}</span>
           &nbsp;&nbsp;
-          <ion-icon name="calendar"></ion-icon> {{ r.Date | date:'dd MMM yyyy' }}
+          <ion-icon name="calendar"></ion-icon> {{ r.Date | day:'dd MMM yyyy' }}
         </div>
         <div class="ds-status">Invoice not linked to an active assignment — contact the doctor if this looks wrong.</div>
       </ion-card-content>
@@ -202,7 +202,7 @@
       <br>
       <ion-icon name="person"></ion-icon> {{ a.FatherName }}
       &nbsp;&nbsp;
-      <ion-icon name="calendar"></ion-icon> {{ a.DOB | date:'dd MMM yyyy' }}
+      <ion-icon name="calendar"></ion-icon> {{ a.DOB | day:'dd MMM yyyy' }}
       <br>
       <div class="contact-row" *ngIf="a.ParentWhatsApp">
         <span class="contact-label">Parent Mobile</span>
@@ -211,7 +211,7 @@
         </span>
       </div>
       <div class="vaccine-chips-wrap" *ngIf="a.Schedules && a.Schedules.length">
-        <div class="vaccine-chips-head">Visit {{ a.Schedules[0].Date | date:'dd MMM yyyy' }} · {{ givenCount(a) }} of {{ a.Schedules.length }} given</div>
+        <div class="vaccine-chips-head">Visit {{ a.Schedules[0].Date | day:'dd MMM yyyy' }} · {{ givenCount(a) }} of {{ a.Schedules.length }} given</div>
         <div class="vaccine-chips">
           <span class="vaccine-chip" *ngFor="let s of a.Schedules" [class.given]="s.IsDone">
             <ion-icon *ngIf="s.IsDone" name="checkmark"></ion-icon> {{ s.DoseName }}

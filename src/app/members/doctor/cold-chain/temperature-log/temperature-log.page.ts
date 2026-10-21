@@ -7,6 +7,7 @@ import { ColdChainService } from 'src/app/services/cold-chain.service';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { AuthSession } from 'src/app/services/auth-session';
+import { addDays, today as todayDay } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-temperature-log',
@@ -38,11 +39,8 @@ export class TemperatureLogPage implements OnInit {
   async ngOnInit() {
     await this.storage.get(environment.DOCTOR_Id).then(val => { this.doctorId = val; });
 
-    const today = new Date();
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    this.toDate = this.coldChainService.toDateString(today);
-    this.fromDate = this.coldChainService.toDateString(weekAgo);
+    this.toDate = todayDay();
+    this.fromDate = addDays(todayDay(), -7);
 
     this.loadClinics();
   }

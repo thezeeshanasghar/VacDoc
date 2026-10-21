@@ -33,6 +33,9 @@ export class MessagePage implements OnInit {
 
     this.storage.get(environment.MESSAGES).then(messages => { this.Messages = messages });
   }
+  // msg.created is an epoch-ms instant stored on the device.
+  at(ms: number): Date { return new Date(ms); } // time-ok
+
   segmentChanged(eve: any) {
 
   }

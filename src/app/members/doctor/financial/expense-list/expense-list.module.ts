@@ -7,8 +7,11 @@ import { ExpenseListPage } from './expense-list.page';
 
 const routes: Routes = [{ path: '', component: ExpenseListPage }];
 
+import { SharedModule } from '../../../../shared/shared.module';
+
 @NgModule({
-  imports: [CommonModule, FormsModule, IonicModule, RouterModule.forChild(routes)],
+  imports: [
+    SharedModule,CommonModule, FormsModule, IonicModule, RouterModule.forChild(routes)],
   declarations: [ExpenseListPage]
 })
 export class ExpenseListPageModule {}

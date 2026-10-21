@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { environment } from 'src/environments/environment';
+import { today, monthStart, addDays, addMonths, addYears, parseDay } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-data',
@@ -48,12 +49,12 @@ export class DataPage implements OnInit {
     private loadingCtrl: LoadingController,
     private storage: Storage
   ) {
-    const now   = new Date();
-    const first = new Date(now.getFullYear(), now.getMonth(), 1);
-    this.fromDate    = this.fmt(first);
-    this.toDate      = this.fmt(now);
-    this.compareFrom = this.fmt(new Date(first.getFullYear() - 1, first.getMonth(), 1));
-    this.compareTo   = this.fmt(new Date(now.getFullYear() - 1, now.getMonth(), now.getDate()));
+    const now   = today();
+    const first = monthStart(now);
+    this.fromDate    = first;
+    this.toDate      = now;
+    this.compareFrom = addYears(first, -1);
+    this.compareTo   = addYears(now, -1);
   }
 
   async ngOnInit() {
@@ -76,10 +77,8 @@ export class DataPage implements OnInit {
 
     // Auto-set compare dates unless user customised them
     if (!this.customCompare) {
-      const f = new Date(this.fromDate);
-      const t = new Date(this.toDate);
-      this.compareFrom = this.fmt(new Date(f.getFullYear() - 1, f.getMonth(), f.getDate()));
-      this.compareTo   = this.fmt(new Date(t.getFullYear() - 1, t.getMonth(), t.getDate()));
+      this.compareFrom = addYears(parseDay(this.fromDate), -1);
+      this.compareTo   = addYears(parseDay(this.toDate), -1);
     }
 
     const loader = await this.loadingCtrl.create({ message: 'Loading analytics...' });
@@ -161,33 +160,29 @@ export class DataPage implements OnInit {
 
   // Quick date presets
   setPreset(p: string) {
-    const now = new Date();
+    const now = today();
+    const y = +now.substring(0, 4);
     switch (p) {
       case 'thismonth':
-        this.fromDate = this.fmt(new Date(now.getFullYear(), now.getMonth(), 1));
-        this.toDate   = this.fmt(now);
+        this.fromDate = monthStart(now);
+        this.toDate   = now;
         break;
       case 'lastmonth': {
-        const lm = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-        this.fromDate = this.fmt(lm);
-        this.toDate   = this.fmt(new Date(now.getFullYear(), now.getMonth(), 0));
+        this.fromDate = addMonths(monthStart(now), -1);
+        this.toDate   = addDays(monthStart(now), -1);
         break;
       }
       case 'thisyear':
-        this.fromDate = this.fmt(new Date(now.getFullYear(), 0, 1));
-        this.toDate   = this.fmt(now);
+        this.fromDate = y + '-01-01';
+        this.toDate   = now;
         break;
       case 'lastyear':
-        this.fromDate = this.fmt(new Date(now.getFullYear() - 1, 0, 1));
-        this.toDate   = this.fmt(new Date(now.getFullYear() - 1, 11, 31));
+        this.fromDate = (y - 1) + '-01-01';
+        this.toDate   = (y - 1) + '-12-31';
         break;
     }
     this.customCompare = false;
     this.load();
-  }
-
-  private fmt(d: Date): string {
-    return d.toISOString().slice(0, 10);
   }
 
   fmtMoney(n: number): string {

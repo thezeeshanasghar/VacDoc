@@ -6,8 +6,10 @@ import { MatNativeDateModule } from '@angular/material';
 import { Number2WeekPipe } from './number2-week.pipe';
 import { DateInputComponent } from './date-input/date-input.component';
 
+import { InstantPipe, DayPipe } from './time';
+
 @NgModule({
-  declarations: [Number2WeekPipe, DateInputComponent],
+  declarations: [Number2WeekPipe, DateInputComponent, InstantPipe, DayPipe],
   imports: [
     CommonModule,
     FormsModule,
@@ -15,6 +17,8 @@ import { DateInputComponent } from './date-input/date-input.component';
     MatNativeDateModule
   ],
   exports: [
+    InstantPipe,
+    DayPipe,
     Number2WeekPipe,
     DateInputComponent
   ]

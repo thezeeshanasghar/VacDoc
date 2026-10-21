@@ -4,7 +4,6 @@ import { VaccineService } from "src/app/services/vaccine.service";
 import { ScheduleService } from "src/app/services/schedule.service";
 import { ToastService } from "src/app/shared/toast.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import * as moment from "moment";
 import { BulkService } from "src/app/services/bulk.service";
 import { AlertController } from '@ionic/angular';
 import { environment } from 'src/environments/environment';
@@ -18,6 +17,7 @@ import { InvoiceService } from "src/app/services/invoice.service";
 import { AuditPopoverComponent } from "./audit-popover/audit-popover.component";
 import { PdfOptionsPopoverComponent } from "./pdf-options-popover/pdf-options-popover.component";
 import { AuthSession } from 'src/app/services/auth-session';
+import { today, dayOf, parseDay, diffDays, toLegacyDay, dayFromPicker, formatInstant, addMonths, addYears, addDays as dayAdd } from 'src/app/shared/time';
 
 @Component({
   selector: "app-vaccine",
@@ -36,7 +36,6 @@ export class VaccinePage {
   BirthYear: any;
   ChildName: string;
   fgAddData: FormGroup;
-  today: Date = new Date();
   private readonly API_VACCINE = `${environment.BASE_URL}`
   type: string;
   istravel: boolean = true;
@@ -102,9 +101,7 @@ export class VaccinePage {
 
   isFilledToday(doneAt: any): boolean {
     if (!doneAt) return false;
-    const today = new Date().toISOString().split('T')[0];
-    const done = String(doneAt).split('T')[0];
-    return done === today;
+    return dayOf(doneAt) === today();
   }
 
   private isInfiniteVaccine(data: any): boolean {
@@ -358,8 +355,7 @@ export class VaccinePage {
   diseaseYearDisplay(v: any): string {
     const raw = (v && v.DiseaseYear) || '';
     if (/^\d{4}$/.test(raw)) { return raw; }
-    const parsed = moment(raw, moment.ISO_8601);
-    return parsed.isValid() ? parsed.format('YYYY') : raw;
+    return /^\d{4}-/.test(raw) ? raw.substring(0, 4) : raw;
   }
   isActiveDose(v: any): boolean {
     return !!v && !v.IsSkip && !v.Due2EPI;
@@ -461,13 +457,13 @@ export class VaccinePage {
   // ── Overdue helper for the row subtitle (spec §3.2) ───────────────────────
   isOverdue(v: any): boolean {
     if (!v || v.IsDone || v.IsSkip || v.Due2EPI || !v.Date) { return false; }
-    const due = moment(v.Date, 'YYYY-MM-DD');
-    return due.isValid() && due.isBefore(moment().startOf('day'));
+    const due = parseDay(v.Date);
+    return !!due && due < today();
   }
   overdueLabel(v: any): string {
-    const due = moment(v.Date, 'YYYY-MM-DD');
-    if (!due.isValid()) { return 'overdue'; }
-    const days = moment().startOf('day').diff(due.startOf('day'), 'days');
+    const due = parseDay(v.Date);
+    if (!due) { return 'overdue'; }
+    const days = diffDays(today(), due);
     return days <= 0 ? 'overdue' : `overdue ${days}d`;
   }
 
@@ -589,11 +585,7 @@ export class VaccinePage {
   // which 404s with a friendly message instead of silently minting a new
   // invoice number and voiding the one the parent may already have downloaded.
   private downloadInvoicePdf(id: any, date: string, fee: number) {
-    const today = new Date(date);
-    const year = today.getFullYear();
-    const month = (today.getMonth() + 1).toString().padStart(2, '0');
-    const day = today.getDate().toString().padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
+    const formattedDate = parseDay(date);
 
     const url = `${this.API_VACCINE}child/${id}/${formattedDate}/invoice-file`;
     if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
@@ -675,9 +667,9 @@ export class VaccinePage {
         }
 
         this.vaccine.forEach(doc => {
-          doc.Date = moment(doc.Date, "DD-MM-YYYY").format("YYYY-MM-DD");
+          doc.Date = parseDay(doc.Date);
           if (doc.GivenDate)
-            doc.GivenDate = moment(doc.GivenDate, "DD-MM-YYYY").format("YYYY-MM-DD");
+            doc.GivenDate = parseDay(doc.GivenDate);
           this.vaccinesData.push({ childId: doc.Child.Id, vaccineId: doc.Dose.VaccineId, brandId: doc.BrandId });
         });
 
@@ -728,7 +720,7 @@ export class VaccinePage {
   async updateDate($event, vacId) {
     // console.log($event.value);
     let newDate = $event.value;
-    newDate = moment(newDate, "YYYY-MM-DD").format("DD-MM-YYYY");
+    newDate = toLegacyDay(newDate instanceof Date ? dayFromPicker(newDate) : newDate);
     let data = { Date: newDate, Id: vacId };
     await this.vaccineService.updateVaccinationDate(data, false, false, false).subscribe(
       res => {
@@ -748,7 +740,7 @@ export class VaccinePage {
 
   async updateBulkDate($event, id) {
     let newDate = $event.value; //$event.detail.value;
-    newDate = moment(newDate, "YYYY-MM-DD").format("DD-MM-YYYY");
+    newDate = toLegacyDay(newDate instanceof Date ? dayFromPicker(newDate) : newDate);
     let data = { Date: newDate, Id: id };
 
     await this.bulkService.updateInjectionDate(data, false, false, false).subscribe(
@@ -934,13 +926,6 @@ export class VaccinePage {
     if ((name == 'Pneumococcal # 3') || (name == 'Pneumococcal # 4')) {
       // console.log(name);
       //       const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-      let firstDate = new Date(DOB);
-      const secondDate = new Date(this.Pneum2Date);
-
-      // const diffDays = Math.round(Math.abs((firstDate - secondDate) / oneDay));
-      var diff = Math.abs(firstDate.getTime() - secondDate.getTime());
-      var diffDays = Math.ceil(diff / (1000 * 3600 * 24));
-      // console.log(diffDays); console.log(firstDate); console.log(secondDate);
 
     }
     else {
@@ -1149,7 +1134,7 @@ removal(type: string){
       return;
     }
 
-    const existingExpiry = v.Expiry ? new Date(v.Expiry).toISOString().substring(0, 10) : '';
+    const existingExpiry = parseDay(v.Expiry) || '';
     const alert = await this.alertController.create({
       header: 'Correct Batch Details',
       subHeader: (v.Brand && v.Brand.Name) ? v.Brand.Name : '',
@@ -1287,10 +1272,10 @@ removal(type: string){
         return 'date-label--payment-pending';
       return 'date-label--given';
     }
-    const today = new Date(); today.setHours(0, 0, 0, 0);
-    const d = new Date(dateKey); d.setHours(0, 0, 0, 0);
-    if (d < today) return 'date-label--missed';
-    const diff = (d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+    const t = today();
+    const d = parseDay(dateKey);
+    if (d < t) return 'date-label--missed';
+    const diff = diffDays(d, t);
     if (diff <= 7) return 'date-label--due-soon';
     return 'date-label--upcoming';
   }
@@ -1481,89 +1466,51 @@ removal(type: string){
 
   // Keep MinGap conversion aligned with backend ScheduleController.calculateDate
   addDays(date, days) {
-    const baseDate = this.toLocalDate(date);
+    const baseDate = parseDay(date);
     const safeDays = Number(days);
     const gapDays = !isNaN(safeDays) ? safeDays : 0;
 
     if (gapDays === 30 || gapDays === 31) {
-      return this.addMonths(baseDate, 1);
+      return addMonths(baseDate, 1);
     }
 
     if (gapDays === 150) {
-      return this.addMonths(baseDate, 5);
+      return addMonths(baseDate, 5);
     }
 
     if (gapDays === 84) {
-      return this.addMonths(baseDate, 3);
+      return addMonths(baseDate, 3);
     }
 
     if (gapDays === 3315) {
-      return this.addMonths(this.addYears(baseDate, 9), 1);
+      return addMonths(addYears(baseDate, 9), 1);
     }
 
     if (gapDays === 3833) {
-      return this.addMonths(this.addYears(baseDate, 10), 6);
+      return addMonths(addYears(baseDate, 10), 6);
     }
 
     if (gapDays >= 365 && gapDays <= 9125 && gapDays % 365 === 0) {
-      return this.addYears(baseDate, Math.floor(gapDays / 365));
+      return addYears(baseDate, Math.floor(gapDays / 365));
     }
 
     if (gapDays >= 168 && gapDays <= 334) {
-      return this.addMonths(baseDate, Math.floor(gapDays / 28));
+      return addMonths(baseDate, Math.floor(gapDays / 28));
     }
 
     if (gapDays >= 401 && gapDays <= 460) {
-      return this.addMonths(baseDate, gapDays - 400);
+      return addMonths(baseDate, gapDays - 400);
     }
 
     if (gapDays >= 395 && gapDays <= 608) {
-      return this.addMonths(baseDate, Math.floor(gapDays / 29));
+      return addMonths(baseDate, Math.floor(gapDays / 29));
     }
 
     if (gapDays >= 639 && gapDays <= 1795) {
-      return this.addMonths(baseDate, Math.floor(gapDays / 30));
+      return addMonths(baseDate, Math.floor(gapDays / 30));
     }
 
-    const nextDate = new Date(baseDate);
-    nextDate.setDate(nextDate.getDate() + gapDays);
-    return nextDate;
-  }
-
-  private toLocalDate(input: any): Date {
-    if (input instanceof Date) {
-      return new Date(input.getFullYear(), input.getMonth(), input.getDate());
-    }
-
-    if (typeof input === 'string') {
-      const ddmmyyyy = /^(\d{2})-(\d{2})-(\d{4})$/;
-      const yyyymmdd = /^(\d{4})-(\d{2})-(\d{2})$/;
-
-      let m = input.match(ddmmyyyy);
-      if (m) {
-        return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
-      }
-
-      m = input.match(yyyymmdd);
-      if (m) {
-        return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
-      }
-    }
-
-    const fallback = new Date(input);
-    return new Date(fallback.getFullYear(), fallback.getMonth(), fallback.getDate());
-  }
-
-  private addMonths(date: Date, months: number): Date {
-    const nextDate = new Date(date);
-    nextDate.setMonth(nextDate.getMonth() + months);
-    return nextDate;
-  }
-
-  private addYears(date: Date, years: number): Date {
-    const nextDate = new Date(date);
-    nextDate.setFullYear(nextDate.getFullYear() + years);
-    return nextDate;
+    return dayAdd(baseDate, gapDays);
   }
 
   async updateScheduleApproval(scheduleId: number) {
@@ -1768,8 +1715,8 @@ removal(type: string){
   // NOT new Date() / split('T'), which misreads "12-06-2026" as Dec 6 instead of Jun 12
   // for any day-of-month <= 12.
   private toInvoiceDateStr(givenDate: any): string | null {
-    const parsed = moment(givenDate, ["YYYY-MM-DD", "DD-MM-YYYY"], true);
-    return parsed.isValid() && parsed.year() > 2020 ? parsed.format("YYYY-MM-DD") : null;
+    const parsed = parseDay(givenDate);
+    return parsed && +parsed.substring(0, 4) > 2020 ? parsed : null;
   }
 
   private async loadInvoiceExistence() {
@@ -1846,9 +1793,7 @@ removal(type: string){
           return;
         }
         // PKT/UTC midnight boundary fallback
-        const prev = new Date(givenDateStr);
-        prev.setDate(prev.getDate() - 1);
-        const prevStr = prev.toISOString().split('T')[0];
+        const prevStr = dayAdd(givenDateStr, -1);
         const res2 = await this.invoiceService.getInvoiceTotal(childId, prevStr).toPromise();
         if (res2 && res2.IsSuccess) {
           this.invoiceExistsMap[date] = true;
@@ -1924,9 +1869,7 @@ removal(type: string){
       if (v.GivenByPaId !== this.paId) { return false; }
     }
     if (!v.DoneAt) { return false; }
-    const doneDay = moment(v.DoneAt).utcOffset(5 * 60).format('YYYY-MM-DD');
-    const today = moment().utcOffset(5 * 60).format('YYYY-MM-DD');
-    if (doneDay !== today) { return false; }
+    if (dayOf(v.DoneAt) !== today()) { return false; }
     return (v.UngiveCount || 0) < 2;
   }
 
@@ -2035,9 +1978,7 @@ removal(type: string){
         if (res && res.IsSuccess && res.ResponseData > 0) {
           this.paymentDueAmount = res.ResponseData;
         } else {
-          const prev = new Date(givenDateStr);
-          prev.setDate(prev.getDate() - 1);
-          const prevStr = prev.toISOString().split('T')[0];
+          const prevStr = dayAdd(givenDateStr, -1);
           const res2 = await this.invoiceService.getInvoiceTotal(childId, prevStr).toPromise();
           if (res2 && res2.IsSuccess && res2.ResponseData > 0) {
             this.paymentDueAmount = res2.ResponseData;
@@ -2162,7 +2103,7 @@ removal(type: string){
     // Offer a one-tap self-heal instead of repeating a satisfied instruction.
     if (res.AlreadyConfirmedButUnsynced && res.BlockingInvoiceSubmissionId) {
       const confirmedWhen = res.BlockingConfirmedAt
-        ? new Date(res.BlockingConfirmedAt).toLocaleString('en-US', { day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Karachi' })
+        ? formatInstant(res.BlockingConfirmedAt, 'dd MMM yyyy, h:mm a')
         : 'earlier';
       const syncAlert = await this.alertController.create({
         header: "Can't Assign Yet",

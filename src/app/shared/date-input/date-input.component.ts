@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output, ViewChild, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDatepicker, MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { pickerDate, dayFromPicker } from '../time';
 
 @Component({
   selector: 'app-date-input',
@@ -88,14 +89,10 @@ export class DateInputComponent implements ControlValueAccessor {
   }
 
   private toDate(iso: string): Date {
-    const [year, month, day] = iso.split('-').map(n => parseInt(n, 10));
-    return new Date(year, month - 1, day);
+    return pickerDate(iso);
   }
 
   private toIso(date: Date): string {
-    const year = date.getFullYear();
-    const month = `${date.getMonth() + 1}`.padStart(2, '0');
-    const day = `${date.getDate()}`.padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return dayFromPicker(date);
   }
 }

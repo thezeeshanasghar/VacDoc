@@ -8,6 +8,7 @@ import { BrandService } from 'src/app/services/brand.service';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { PaService } from 'src/app/services/pa.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { today } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-reporting',
@@ -47,7 +48,7 @@ export class ReportingPage implements OnInit {
     private paService: PaService,
     private toastService: ToastService
   ) {
-    this.todaydate = new Date().toISOString().slice(0, 10);
+    this.todaydate = today();
     this.form = this.fb.group({ fromDate: [this.todaydate], toDate: [this.todaydate] });
   }
 
@@ -160,7 +161,7 @@ export class ReportingPage implements OnInit {
     if (!this.selectedClinicId) { this.toastService.create('Please select a clinic', 'danger'); return; }
     const loader = await this.loadingCtrl.create({ message: 'Generating sales report...' });
     await loader.present();
-    this.stockService.getSalesReportFile(this.selectedClinicId, Number(this.doctorId), new Date(this.fromDate), new Date(this.toDate))
+    this.stockService.getSalesReportFile(this.selectedClinicId, Number(this.doctorId), this.fromDate, this.toDate)
       .subscribe({
         next: (res) => { loader.dismiss(); this.downloadBlob(res, `SalesReport_${this.fromDate}_${this.toDate}.pdf`); },
         error: (err: any) => { loader.dismiss(); if (err.status === 404) this.toastService.create('No sales in period', 'warning'); else this.toastService.create('Failed', 'danger'); }

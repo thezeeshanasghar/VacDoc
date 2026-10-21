@@ -4,7 +4,9 @@ import { Storage } from '@ionic/storage';
 import { PaLocationService } from 'src/app/services/pa-location.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
-import { addDays, dayLabel, isDay, monthStart } from 'src/app/shared/pkt.util';
+import { addDays, formatDay, monthStart, parseDay } from 'src/app/shared/time';
+
+function isDay(v: string): boolean { return /^\d{4}-\d{2}-\d{2}$/.test(v || '') && !!parseDay(v); }
 
 // Doctor report: km travelled per assistant per day (computed server-side from shift GPS fixes).
 @Component({
@@ -78,7 +80,7 @@ export class AssistantKmPage {
     }
   }
 
-  dayLabel(d: string): string { return dayLabel(d); }
+  dayLabel(d: string): string { return formatDay(d, 'EEE d'); }
 
   showCell(c: any): boolean { return !!(c.noGps || c.shifts || c.fixes); }
 
