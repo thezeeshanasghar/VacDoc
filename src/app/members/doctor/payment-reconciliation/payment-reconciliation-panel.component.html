@@ -1,37 +1,4 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/members/doctor"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Payment Reconciliation</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="load()" fill="clear">
-        <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-  <div class="recon-page">
-
-    <!-- Page header -->
-    <div class="page-header">
-      <div>
-        <h1 class="page-title">Payment Reconciliation</h1>
-        <p class="page-subtitle">Track and reconcile payments collected by Physician Assistants</p>
-      </div>
-    </div>
-
-    <!-- Page switcher — jumps to the sibling PA Assignment Tracking page, carrying the
-         current clinic/PA scope so filters stay aligned (see PaAssignmentTrackingPage). -->
-    <div class="page-switcher">
-      <button class="switcher-btn" [routerLink]="['/members/doctor/pa-assignment-tracking']"
-        [queryParams]="{ clinicId: selectedClinicId, paId: selectedPaId }">
-        <ion-icon name="clipboard-outline"></ion-icon> Assignments
-      </button>
-      <button class="switcher-btn active"><ion-icon name="cash-outline"></ion-icon> Payments</button>
-    </div>
+<div class="recon-page">
 
     <!-- Pending Reversal Approvals -->
     <div *ngIf="pendingReversals.length > 0" class="reversal-section">
@@ -55,22 +22,6 @@
 
     <!-- Filter Bar -->
     <div class="filter-bar">
-      <div class="filter-group">
-        <label>Clinic</label>
-        <select class="filter-select" [(ngModel)]="selectedClinicId" (change)="onClinicChange()">
-          <option [ngValue]="null">All Clinics</option>
-          <option *ngFor="let c of clinics" [ngValue]="c.Id">{{ c.Name }}</option>
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <label>Staff / PA</label>
-        <select class="filter-select" [(ngModel)]="selectedPaId" (change)="onFilterChange()">
-          <option [ngValue]="null">All Staff / PA</option>
-          <option *ngFor="let p of pas" [ngValue]="p.PaId || p.Id">{{ p.Name || p.PaName }}</option>
-        </select>
-      </div>
-
       <div class="filter-group">
         <label>From Date</label>
         <app-date-input [(ngModel)]="fromDate" (dateChange)="onFilterChange()"></app-date-input>
@@ -125,7 +76,7 @@
         <div class="card-body">
           <div class="card-label">Cash Still With PA</div>
           <div class="card-amount orange">PKR {{ cashWithPA | number:'1.0-0' }}</div>
-          <div class="card-sub warn-text">Money not yet handed over to owner</div>
+          <div class="card-sub warn-text">Collected cash not yet handed over</div>
         </div>
       </div>
 
@@ -152,22 +103,103 @@
       </div>
     </div>
 
+    <!-- Show: By PA (default) or the full payments table -->
+    <div class="cash-toggle">
+      <span class="cash-toggle-label">Show</span>
+      <button [class.on]="cashView === 'pa'" (click)="setCashView('pa')">By PA</button>
+      <button [class.on]="cashView === 'all'" (click)="setCashView('all')">All payments (table)</button>
+    </div>
+
+    <!-- One card per PA: what they hold, handovers waiting, invoices waiting for you -->
+    <div class="pa-cards" *ngIf="cashView === 'pa'">
+      <div *ngIf="loading" class="table-loading"><ion-spinner name="crescent"></ion-spinner><span>Loading payments...</span></div>
+      <div *ngIf="!loading && cards.length === 0" class="table-empty">
+        <ion-icon name="receipt-outline"></ion-icon>
+        <p>Nothing waiting on cash</p>
+        <span>No PA holds cash or has anything to confirm for this scope</span>
+      </div>
+      <div class="pa-card" *ngFor="let c of cards">
+        <div class="pa-card-head">
+          <div>
+            <div class="pa-card-name">{{ c.PaName }}</div>
+            <div class="pa-card-label">Holds</div>
+            <div class="pa-card-big">PKR {{ c.Holds | number:'1.0-0' }}</div>
+          </div>
+          <button class="btn-adjust" (click)="promptAdjust(c.PaId)">&#177; Adjust Payable</button>
+        </div>
+
+        <div class="pa-sec" *ngFor="let h of c.Handovers">
+          <div class="pa-sec-head">
+            <span><span class="pa-tag pa-tag-pet">Pending handover</span> PKR {{ h.Amount | number:'1.0-0' }}</span>
+            <span class="pa-sec-btns">
+              <button class="btn-reject-handover" (click)="rejectHandover(h)">Send back</button>
+              <button class="btn-confirm-handover" (click)="confirmHandover(h)">Count &amp; confirm</button>
+            </span>
+          </div>
+        </div>
+
+        <div class="pa-sec" *ngIf="c.Decisions.length > 0">
+          <div class="pa-sec-head"><span><span class="pa-tag pa-tag-bad">Needs your decision</span></span></div>
+          <div class="pa-inv" *ngFor="let r of c.Decisions">
+            <span class="pa-inv-main">
+              <b>{{ r.PatientName }}</b>
+              <span class="pa-inv-sub">{{ r.RowType === 'UngiveReversal' || r.PendingAmendmentType === 'UngiveReversal' ? 'Ungive after download' : 'Invoice edit' }} · {{ r.OldAmount | number:'1.0-0' }} → {{ r.NewAmount | number:'1.0-0' }}</span>
+            </span>
+            <button class="btn-reject" (click)="rejectAmendment(r)">Reject</button>
+            <button class="btn-approve" (click)="approveAmendment(r)">Approve</button>
+          </div>
+        </div>
+
+        <div class="pa-sec" *ngIf="c.Invoices.length > 0">
+          <div class="pa-sec-head">
+            <span>Invoices awaiting your confirmation</span>
+            <button class="btn-confirm-handover" [disabled]="cardSelected(c).length === 0" (click)="confirmCardSelected(c)">Confirm {{ cardSelected(c).length }} selected</button>
+          </div>
+          <div class="pa-inv" *ngFor="let r of c.Invoices">
+            <input type="checkbox" class="row-checkbox" [checked]="isSelected(r)" (change)="toggleRow(r, $any($event.target).checked)">
+            <span class="pa-inv-main"><b>{{ r.PatientName }}</b><span class="pa-inv-sub">{{ r.Vaccines }}</span></span>
+            <span class="badge" [ngClass]="r.PaymentMode === 'Cash' ? 'badge-cash' : 'badge-online'">{{ r.PaymentMode || '—' }}</span>
+            <span class="pa-inv-amt">{{ r.Amount | number:'1.0-0' }}</span>
+            <button class="btn-confirm-row" (click)="confirmPayment(r)">Confirm</button>
+          </div>
+        </div>
+
+        <div class="pa-sec" *ngIf="c.DirectSales.length > 0">
+          <div class="pa-sec-head"><span>Direct sales (no assignment)</span></div>
+          <div class="pa-inv" *ngFor="let r of c.DirectSales">
+            <span class="pa-tag pa-tag-amber">Direct sale</span>
+            <span class="pa-inv-main"><b>{{ r.DirectSaleBillNo || r.PatientName }}</b><span class="pa-inv-sub">{{ r.PatientName }}</span></span>
+            <span class="pa-inv-amt">{{ r.Amount | number:'1.0-0' }}</span>
+            <button class="btn-delete-assignment" (click)="confirmDeleteDirectSale(r)" title="Reverse sale">🗑️</button>
+            <button class="btn-confirm-row" [disabled]="!r.IsPaymentCollected" (click)="confirmDirectSale(r)">{{ r.IsPaymentCollected ? 'Confirm' : 'Not paid yet' }}</button>
+          </div>
+        </div>
+
+        <div class="pa-sec pa-sec-note" *ngIf="c.AwaitingInvoice > 0">
+          {{ c.AwaitingInvoice }} visit{{ c.AwaitingInvoice > 1 ? 's' : '' }} given with no invoice yet. They are in the All payments table.
+        </div>
+      </div>
+    </div>
+
     <!-- Main Content: Table -->
-    <div class="main-content-area">
+    <div class="main-content-area" *ngIf="cashView === 'all'">
 
       <!-- Table Section -->
       <div class="table-section">
 
+        <!-- Handovers waiting for the doctor: the cash is counted, and a count that differs from the
+             PA's amount is sent back rather than partly accepted. -->
+        <div class="handover-list" *ngIf="pendingHandovers.length > 0">
+          <div class="handover-list-head"><ion-icon name="swap-horizontal-outline"></ion-icon> Handovers waiting for you ({{ pendingHandovers.length }})</div>
+          <div class="handover-inline" *ngFor="let h of pendingHandovers">
+            <span><b>{{ paName(h.PaId) || 'PA' }}</b> says Rs {{ h.Amount | number:'1.0-0' }}</span>
+            <button class="btn-confirm-handover" (click)="confirmHandover(h)">Count &amp; confirm</button>
+            <button class="btn-reject-handover" (click)="rejectHandover(h)">Send back</button>
+          </div>
+        </div>
+
         <!-- Pending Handover + Adjust Payable (only when a specific PA is selected) -->
         <div class="pa-actions-bar" *ngIf="selectedPaId">
-          <ng-container *ngIf="panelPendingHandover as h">
-            <div class="handover-inline">
-              <ion-icon name="swap-horizontal-outline"></ion-icon>
-              <span>Handover Pending: Rs {{ h.Amount | number:'1.0-0' }}</span>
-              <button class="btn-confirm-handover" (click)="confirmHandover(h)">Cash Received</button>
-              <button class="btn-reject-handover" (click)="rejectHandover(h)">Reject</button>
-            </div>
-          </ng-container>
           <button class="btn-adjust" (click)="promptAdjust()">&#177; Adjust Payable</button>
         </div>
 
@@ -241,7 +273,6 @@
                     class="row-checkbox">
                 </td>
                 <td class="col-delete">
-                  <button *ngIf="row.AssignmentId" class="btn-delete-assignment" (click)="confirmDeleteAssignment(row)" title="Delete assignment">🗑️</button>
                   <button *ngIf="row.RowType === 'DirectSale'" class="btn-delete-assignment" (click)="confirmDeleteDirectSale(row)" title="Reverse sale">🗑️</button>
                 </td>
                 <td class="col-date">
@@ -375,4 +406,3 @@
 
     </div>
   </div>
-</ion-content>

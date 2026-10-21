@@ -198,7 +198,7 @@ export class CashHandoverPage {
     this.confirmingId = handover.Id;
     const loading = await this.loadingController.create({ message: 'Confirming...' });
     await loading.present();
-    this.cashHandoverService.confirmHandover(handover.Id).subscribe(
+    this.cashHandoverService.confirmHandover(handover.Id, this.doctorId).subscribe(
       (res) => {
         loading.dismiss();
         this.confirmingId = null;
@@ -241,7 +241,7 @@ export class CashHandoverPage {
     this.rejectingId = id;
     const loading = await this.loadingController.create({ message: 'Rejecting...' });
     await loading.present();
-    this.cashHandoverService.rejectHandover(id, note).subscribe(
+    this.cashHandoverService.rejectHandover(id, note, this.doctorId).subscribe(
       (res) => {
         loading.dismiss();
         this.rejectingId = null;

@@ -1,15 +1,13 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
 import { RouterModule, Routes } from '@angular/router';
-import { SharedModule } from '../../../shared/shared.module';
-import { PaymentReconciliationPage } from './payment-reconciliation.page';
+import { PaymentReconciliationRedirectPage } from './payment-reconciliation-redirect.page';
 
-const routes: Routes = [{ path: '', component: PaymentReconciliationPage }];
+// The Payments page now lives in the "Cash" tab of PA Assignment Tracking. This route stays only
+// so existing links and bookmarks land on that tab.
+const routes: Routes = [{ path: '', component: PaymentReconciliationRedirectPage }];
 
 @NgModule({
-  imports: [CommonModule, FormsModule, IonicModule, SharedModule, RouterModule.forChild(routes)],
-  declarations: [PaymentReconciliationPage]
+  imports: [RouterModule.forChild(routes)],
+  declarations: [PaymentReconciliationRedirectPage]
 })
 export class PaymentReconciliationPageModule {}

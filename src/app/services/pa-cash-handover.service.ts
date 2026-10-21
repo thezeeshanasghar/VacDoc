@@ -28,11 +28,11 @@ export class PaCashHandoverService {
     return this.http.get(`${this.BASE}/history/${paId}/${clinicId}`, this.httpOptions);
   }
 
-  confirmHandover(id: number): Observable<any> {
-    return this.http.patch(`${this.BASE}/${id}/confirm`, {}, this.httpOptions);
+  confirmHandover(id: number, doctorId: number): Observable<any> {
+    return this.http.patch(`${this.BASE}/${id}/confirm?doctorId=${doctorId}`, {}, this.httpOptions);
   }
 
-  rejectHandover(id: number, rejectionNote: string): Observable<any> {
-    return this.http.patch(`${this.BASE}/${id}/reject`, { RejectionNote: rejectionNote }, this.httpOptions);
+  rejectHandover(id: number, rejectionNote: string, doctorId: number): Observable<any> {
+    return this.http.patch(`${this.BASE}/${id}/reject`, { RejectionNote: rejectionNote, DoctorId: doctorId }, this.httpOptions);
   }
 }

@@ -1,8 +1,7 @@
 // ─── Page Shell ───────────────────────────────────────────────────────────────
 .recon-page {
   background: var(--vac-surface);
-  min-height: 100%;
-  padding: 24px 20px;
+  padding: 0;
 }
 
 // ─── Page Header ──────────────────────────────────────────────────────────────
@@ -785,4 +784,77 @@
   &:hover {
     background: var(--vac-red-tint);
   }
+}
+
+.handover-list {
+  margin: 0 0 14px;
+  border: 1px solid var(--vac-hairline);
+  border-radius: 10px;
+  background: var(--vac-blue-tint);
+  overflow: hidden;
+
+  .handover-list-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .3px;
+    color: var(--vac-petrol);
+    border-bottom: 1px solid var(--vac-hairline);
+  }
+
+  .handover-inline {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--vac-hairline);
+    &:last-child { border-bottom: 0; }
+    > span { flex: 1 1 200px; font-weight: 600; }
+  }
+}
+
+// ─── Cash tab: By PA ──────────────────────────────────────────────────────────
+.cash-toggle {
+  display: flex; align-items: center; gap: 6px; margin: 4px 0 14px;
+  .cash-toggle-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--vac-muted, #5d7276); margin-right: 4px; }
+  button {
+    border: 1px solid var(--vac-hairline); background: var(--vac-surface); color: inherit;
+    border-radius: 8px; padding: 7px 14px; font-weight: 600; cursor: pointer;
+    &.on { background: var(--vac-petrol); border-color: var(--vac-petrol); color: #fff; }
+  }
+}
+
+.pa-cards { display: flex; flex-direction: column; gap: 14px; }
+
+.pa-card {
+  background: var(--vac-surface); border: 1px solid var(--vac-hairline); border-radius: 14px; overflow: hidden;
+
+  .pa-card-head {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 16px;
+    .pa-card-name { font-size: 16px; font-weight: 700; }
+    .pa-card-label { font-size: 12px; opacity: .65; }
+    .pa-card-big { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  }
+
+  .pa-sec {
+    padding: 10px 16px; border-top: 1px solid var(--vac-hairline); display: flex; flex-direction: column; gap: 8px;
+    &.pa-sec-note { font-size: 12px; opacity: .7; }
+  }
+  .pa-sec-head {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-weight: 600;
+    .pa-sec-btns { display: flex; gap: 8px; }
+  }
+  .pa-inv {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 0; border-top: 1px solid var(--vac-hairline);
+    .pa-inv-main { flex: 1 1 160px; min-width: 0; display: flex; flex-direction: column; }
+    .pa-inv-sub { font-size: 12px; opacity: .65; }
+    .pa-inv-amt { font-variant-numeric: tabular-nums; font-weight: 600; }
+  }
+  .pa-tag {
+    font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; border-radius: 6px; padding: 2px 7px;
+    &.pa-tag-pet { background: var(--vac-blue-tint); color: var(--vac-petrol); }
+    &.pa-tag-bad { background: #fbe3e1; color: #b3261e; }
+    &.pa-tag-amber { background: #fbeed3; color: #a45f00; }
+  }
+  button:disabled { opacity: .4; cursor: default; }
 }

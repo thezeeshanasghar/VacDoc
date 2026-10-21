@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { ClinicService } from 'src/app/services/clinic.service';
@@ -101,7 +101,7 @@ export class PaAssignmentTrackingPage {
   selectedPaId: number | null = null;
   // The list is always loaded with every status; the counted view tabs below decide what shows.
   selectedStatus: string = 'All';
-  view: 'needs' | 'stuck' | 'with' | 'closed' = 'needs';
+  view: 'needs' | 'stuck' | 'with' | 'closed' | 'cash' = 'needs';
   closedKind: 'confirmed' | 'cancelled' = 'confirmed';
   readonly STUCK_DAYS = 3;
   readonly CANCEL_REASONS = CANCEL_REASONS;
@@ -150,6 +150,7 @@ export class PaAssignmentTrackingPage {
     private alertController: AlertController,
     private loadingController: LoadingController,
     private router: Router,
+    private route: ActivatedRoute,
   ) {}
 
   async ionViewWillEnter() {
@@ -173,6 +174,15 @@ export class PaAssignmentTrackingPage {
     }
 
     await this.loadClinics();
+
+    // Deep link (the old Payments route and "View in Payments"): ?view=cash&clinicId=&paId=
+    const qp = this.route.snapshot.queryParamMap;
+    if (!this.isManager && qp.get('view') === 'cash') { this.view = 'cash'; }
+    if (qp.get('clinicId')) {
+      this.selectedClinicId = Number(qp.get('clinicId'));
+      this.loadPasForClinic(qp.get('paId') ? Number(qp.get('paId')) : null);
+    }
+
     this.load();
     if (!this.isManager) { this.loadPendingCancellations(); this.loadPendingRefusals(); }
   }
@@ -330,7 +340,7 @@ export class PaAssignmentTrackingPage {
     });
   }
 
-  loadPasForClinic() {
+  loadPasForClinic(keepPaId: number | null = null) {
     if (!this.selectedClinicId) {
       this.pas = [];
       this.selectedPaId = null;
@@ -338,7 +348,8 @@ export class PaAssignmentTrackingPage {
     }
     this.paService.getPAsForClinic(this.selectedClinicId).subscribe(res => {
       this.pas = (res && res.IsSuccess) ? (res.ResponseData || []) : [];
-      this.selectedPaId = null;
+      this.selectedPaId = keepPaId;
+      if (keepPaId) { this.load(); }
     });
   }
 
@@ -376,16 +387,8 @@ export class PaAssignmentTrackingPage {
     this.load();
   }
 
-  // Jumps to the sibling Payment Reconciliation page, carrying the current clinic/PA
-  // filter scope as query params — Payment Reconciliation reads these on entry to
-  // pre-select its own filters (see its ionViewWillEnter()). This is a page navigation,
-  // not an in-place tab, since Payment Reconciliation owns its own ion-header/ion-content
-  // and can't be nested inside this page's template.
   goToPayments() {
-    const queryParams: any = {};
-    if (this.selectedClinicId) { queryParams.clinicId = this.selectedClinicId; }
-    if (this.selectedPaId) { queryParams.paId = this.selectedPaId; }
-    this.router.navigate(['/members/doctor/payment-reconciliation'], { queryParams });
+    this.setView('cash');
   }
 
   load() {
@@ -426,7 +429,7 @@ export class PaAssignmentTrackingPage {
 
   // ---- counted view tabs (PA_TRACKING_MERGE_SPEC.md). Cancelled and cash-confirmed rows never
   // appear in the working views; pending cancel requests are handled by their own panel.
-  setView(v: 'needs' | 'stuck' | 'with' | 'closed') {
+  setView(v: 'needs' | 'stuck' | 'with' | 'closed' | 'cash') {
     this.view = v;
     this.selectedIds = new Set();
     this.applySearch();
@@ -700,15 +703,11 @@ export class PaAssignmentTrackingPage {
     );
   }
 
-  // Jump to Payment Reconciliation pre-scoped to this row's clinic/PA — the closest the
-  // two pages get to a direct cross-link without duplicating money-state logic (Payment
-  // Reconciliation already filters by PA + clinic, it just has no per-assignment
-  // drill-down of its own).
+  // Opens the Cash tab scoped to this row's clinic/PA.
   viewInPayments(row: AssignmentRow) {
-    const queryParams: any = {};
-    if (row.ClinicId) { queryParams.clinicId = row.ClinicId; }
-    if (row.PaId) { queryParams.paId = row.PaId; }
-    this.router.navigate(['/members/doctor/payment-reconciliation'], { queryParams });
+    this.selectedClinicId = row.ClinicId || null;
+    this.loadPasForClinic(row.PaId || null);
+    this.setView('cash');
   }
 
   // Opens/closes the inline date picker on the "No date set" pill — click elsewhere on

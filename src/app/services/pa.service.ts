@@ -318,14 +318,15 @@ export class PaService extends BaseService {
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  confirmHandover(handoverId: number): Observable<any> {
-    const url = `${this.API_PA}PaCashHandover/${handoverId}/confirm`;
+  confirmHandover(handoverId: number, doctorId: number, counted?: number): Observable<any> {
+    let url = `${this.API_PA}PaCashHandover/${handoverId}/confirm?doctorId=${doctorId}`;
+    if (counted !== undefined && counted !== null) { url += `&counted=${counted}`; }
     return this.http.patch(url, {}, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  rejectHandover(handoverId: number, note: string): Observable<any> {
+  rejectHandover(handoverId: number, note: string, doctorId: number): Observable<any> {
     const url = `${this.API_PA}PaCashHandover/${handoverId}/reject`;
-    return this.http.patch(url, { RejectionNote: note }, this.httpOptions).pipe(catchError(this.handleError));
+    return this.http.patch(url, { RejectionNote: note, DoctorId: doctorId }, this.httpOptions).pipe(catchError(this.handleError));
   }
 
   getOutstanding(doctorId: number): Observable<any> {

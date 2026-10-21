@@ -87,17 +87,17 @@
         </select>
       </div>
 
-      <div class="filter-group">
+      <div class="filter-group" *ngIf="view !== 'cash'">
         <label>From Date</label>
         <app-date-input [(ngModel)]="fromDate" (dateChange)="onFilterChange()"></app-date-input>
       </div>
 
-      <div class="filter-group">
+      <div class="filter-group" *ngIf="view !== 'cash'">
         <label>To Date</label>
         <app-date-input [(ngModel)]="toDate" (dateChange)="onFilterChange()"></app-date-input>
       </div>
 
-      <div class="filter-group filter-search">
+      <div class="filter-group filter-search" *ngIf="view !== 'cash'">
         <label>Search Patient</label>
         <div class="search-wrap">
           <ion-icon name="search-outline" class="search-icon"></ion-icon>
@@ -106,18 +106,7 @@
         </div>
       </div>
 
-      <button class="btn-clear-filters" (click)="clearFilters()">Clear Filters</button>
-    </div>
-
-    <!-- Page switcher — Payment Reconciliation owns its own header/content and can't be
-         nested here, so this jumps there as a real navigation, carrying the current
-         clinic/PA scope along as query params (see goToPayments()).
-         Hidden entirely for manager PAs: cash/Financial access is explicitly excluded from
-         the manager permission tier (see PaPermission's Manager-Level Permissions section) —
-         Payment Reconciliation must never be reachable from here in a PA session. -->
-    <div class="page-switcher" *ngIf="!isManager">
-      <button class="switcher-btn active"><ion-icon name="clipboard-outline"></ion-icon> Assignments</button>
-      <button class="switcher-btn" (click)="goToPayments()"><ion-icon name="cash-outline"></ion-icon> Payments</button>
+      <button class="btn-clear-filters" *ngIf="view !== 'cash'" (click)="clearFilters()">Clear Filters</button>
     </div>
 
     <!-- Counted views. "Needs you" holds the approval panels above plus assignments the PA has
@@ -136,13 +125,19 @@
       <button class="view-tab" role="tab" [class.selected]="view === 'closed'" (click)="setView('closed')">
         Closed <span class="tab-count">{{ viewCount('closed') }}</span>
       </button>
+      <button class="view-tab" role="tab" *ngIf="!isManager" [class.selected]="view === 'cash'" (click)="setView('cash')">
+        Cash
+      </button>
     </div>
     <div class="closed-kind" *ngIf="view === 'closed'">
       <button [class.selected]="closedKind === 'confirmed'" (click)="setClosedKind('confirmed')">Cash confirmed</button>
       <button [class.selected]="closedKind === 'cancelled'" (click)="setClosedKind('cancelled')">Cancelled</button>
     </div>
 
-    <ng-container>
+    <app-payment-reconciliation-panel *ngIf="view === 'cash' && !isManager"
+      [clinicId]="selectedClinicId" [paId]="selectedPaId"></app-payment-reconciliation-panel>
+
+    <ng-container *ngIf="view !== 'cash'">
 
       <div class="summary-strip">
         <div class="stat-card">

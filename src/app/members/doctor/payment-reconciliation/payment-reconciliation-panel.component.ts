@@ -1,12 +1,22 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
-import { ClinicService } from 'src/app/services/clinic.service';
 import { PaService } from 'src/app/services/pa.service';
 import { StockService } from 'src/app/services/stock.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { environment } from 'src/environments/environment';
+
+// One card per PA on the Cash tab (built once per load, never inside the template).
+interface PaCard {
+  PaId: number;
+  PaName: string;
+  Holds: number;             // server cash-in-hand: collected cash minus confirmed handovers
+  Handovers: any[];          // pending handovers waiting for the doctor
+  Invoices: PaymentRow[];    // unconfirmed invoices ready to confirm
+  Decisions: PaymentRow[];   // rows carrying a pending edit / ungive to approve or reject
+  DirectSales: PaymentRow[]; // unconfirmed direct sales
+  AwaitingInvoice: number;   // visits given with no invoice yet
+}
 
 interface PaymentRow {
   InvoiceSubmissionId: number;
@@ -41,14 +51,17 @@ interface PaymentRow {
 }
 
 @Component({
-  selector: 'app-payment-reconciliation',
-  templateUrl: './payment-reconciliation.page.html',
-  styleUrls: ['./payment-reconciliation.page.scss'],
+  selector: 'app-payment-reconciliation-panel',
+  templateUrl: './payment-reconciliation-panel.component.html',
+  styleUrls: ['./payment-reconciliation-panel.component.scss'],
 })
-export class PaymentReconciliationPage {
+// The "Cash" tab of PA Assignment Tracking. Clinic/PA scope comes from the tracking page's own
+// filter bar, so this panel has no header or clinic/PA pickers of its own.
+export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
+  @Input() clinicId: number | null = null;
+  @Input() paId: number | null = null;
   doctorId: number | null = null;
-  clinics: any[] = [];
-  pas: any[] = [];
+  private ready = false;
 
   selectedClinicId: number | null = null;
 
@@ -66,31 +79,30 @@ export class PaymentReconciliationPage {
 
   pendingReversals: any[] = [];
   pendingHandovers: any[] = [];
+  outstanding: any[] = [];
+  outstandingLoaded = false;
+  cashView: 'pa' | 'all' = 'pa';
+  cards: PaCard[] = [];
   private callerUserId: number = null;
   private securityStamp: string = null;
 
   constructor(
     private paService: PaService,
-    private clinicService: ClinicService,
     private stockService: StockService,
     private storage: Storage,
     private toastService: ToastService,
     private alertController: AlertController,
     private loadingController: LoadingController,
-    private route: ActivatedRoute,
   ) {}
 
-  async ionViewWillEnter() {
-    // Default to no date filter — shows every pending row regardless of how old its
-    // InvoiceDate is. Defaulting to today/today silently hid any invoice dated before
-    // today (e.g. a visit given weeks/months back but invoiced/paid-mode-recorded later),
-    // since GetByPA (the PA's own list) never date-filters at all. Live-verified 2026-08-27:
-    // widening from today-only to an open range took Payment Reconciliation from 12 rows to
-    // 623, surfacing real, still-unconfirmed invoices (e.g. "Ahmed Javed", dated 21 Jul 2026,
-    // PKR 7,866 Online) that had been invisible under the today-only default. See "Today"
-    // quick-filter button below for the narrower view.
+  async ngOnInit() {
+    // No date filter by default — shows every pending row regardless of how old its InvoiceDate is.
+    // A today-only default silently hid invoices dated before today (live-verified 2026-08-27:
+    // widening took Payment Reconciliation from 12 rows to 623 still-unconfirmed invoices).
     this.fromDate = '';
     this.toDate = '';
+    this.selectedClinicId = this.clinicId;
+    this.selectedPaId = this.paId;
 
     const user = await this.storage.get(environment.USER);
     if (user && user.DoctorId) {
@@ -98,57 +110,17 @@ export class PaymentReconciliationPage {
     }
     this.callerUserId = user && user.Id ? Number(user.Id) : null;
     this.securityStamp = await this.storage.get(environment.SECURITY_STAMP);
-    await this.loadClinics();
-
-    // Optional deep-link from PA Assignment Tracking's "View in Payments" — pre-selects
-    // clinic/PA scope so the doctor lands on the right filter instead of "All Clinics".
-    const params = this.route.snapshot.queryParamMap;
-    const qClinicId = params.get('clinicId');
-    const qPaId = params.get('paId');
-    if (qClinicId) {
-      this.selectedClinicId = Number(qClinicId);
-      await new Promise<void>(resolve => {
-        this.loadPasForClinic();
-        // loadPasForClinic() is async (subscribe-based); give it a tick before applying paId
-        setTimeout(resolve, 300);
-      });
-    }
-    if (qPaId) {
-      this.selectedPaId = Number(qPaId);
-    }
+    this.ready = true;
 
     this.load();
     this.loadPendingReversals();
     this.loadPendingHandovers();
   }
 
-  async loadClinics() {
-    if (!this.doctorId) { return; }
-    this.clinicService.getClinics(this.doctorId!).subscribe(res => {
-      if (res && res.IsSuccess) {
-        this.clinics = res.ResponseData || [];
-      }
-    });
-  }
-
-  loadPasForClinic() {
-    if (!this.selectedClinicId) {
-      this.pas = [];
-      this.selectedPaId = null;
-      return;
-    }
-    this.paService.getPAsForClinic(this.selectedClinicId).subscribe(res => {
-      if (res && res.IsSuccess) {
-        this.pas = res.ResponseData || [];
-      } else {
-        this.pas = [];
-      }
-      this.selectedPaId = null;
-    });
-  }
-
-  onClinicChange() {
-    this.loadPasForClinic();
+  ngOnChanges(changes: SimpleChanges) {
+    if (!this.ready || (!changes.clinicId && !changes.paId)) { return; }
+    this.selectedClinicId = this.clinicId;
+    this.selectedPaId = this.paId;
     this.load();
   }
 
@@ -185,64 +157,6 @@ export class PaymentReconciliationPage {
       ]
     });
     await alert.present();
-  }
-
-  async confirmDeleteAssignment(row: PaymentRow) {
-    if (!row.AssignmentId) {
-      this.toastService.create('No assignment linked to this row', 'warning');
-      return;
-    }
-    const alert = await this.alertController.create({
-      header: 'Remove Assignment',
-      message: `How should this assignment for ${row.PatientName} be removed?`,
-      buttons: [
-        { text: 'Cancel', role: 'cancel' },
-        {
-          text: 'Remove from list only',
-          cssClass: 'alert-btn-neutral',
-          handler: () => this.runDeleteAssignment(row, 'UnassignOnly',
-            'This only removes the assignment from your reconciliation table and the PA\'s list. The child\'s vaccine and payment records are not affected.')
-        },
-        {
-          text: 'Reverse everything',
-          cssClass: 'alert-btn-danger',
-          handler: () => this.runDeleteAssignment(row, 'FullReset',
-            'This will delete the invoice, restore any consumed stock, and reset the patient\'s vaccine records for this visit back to never-given. Cannot be undone.')
-        }
-      ]
-    });
-    await alert.present();
-  }
-
-  private async runDeleteAssignment(row: PaymentRow, mode: 'UnassignOnly' | 'FullReset', confirmMessage: string) {
-    const confirm = await this.alertController.create({
-      header: mode === 'FullReset' ? 'Reverse Everything?' : 'Remove From List Only?',
-      message: confirmMessage,
-      buttons: [
-        { text: 'Cancel', role: 'cancel' },
-        {
-          text: mode === 'FullReset' ? 'Reverse' : 'Remove',
-          cssClass: mode === 'FullReset' ? 'alert-btn-danger' : 'alert-btn-neutral',
-          handler: async () => {
-            const loading = await this.loadingController.create({ message: 'Processing...' });
-            await loading.present();
-            this.paService.deleteAssignment(row.AssignmentId!, this.doctorId!, mode).subscribe(
-              res => {
-                loading.dismiss();
-                if (res && res.IsSuccess) {
-                  this.toastService.create(mode === 'FullReset' ? 'Assignment reset and removed' : 'Assignment removed', 'success');
-                  this.load();
-                } else {
-                  this.toastService.create((res && res.Message) || 'Action failed', 'danger');
-                }
-              },
-              () => { loading.dismiss(); this.toastService.create('Action failed', 'danger'); }
-            );
-          }
-        }
-      ]
-    });
-    await confirm.present();
   }
 
   load() {
@@ -359,10 +273,21 @@ export class PaymentReconciliationPage {
       res => {
         if (res && res.IsSuccess && res.ResponseData) {
           this.pendingHandovers = res.ResponseData.PendingHandovers || [];
+          this.outstanding = res.ResponseData.Outstanding || [];
+          this.outstandingLoaded = true;
+          this.buildCards();
         }
       },
       () => {}
     );
+  }
+
+  // Name for a PA id from whatever the page has loaded (payment rows, then cash-in-hand list).
+  paName(paId: number): string {
+    const r = this.allRows.find(x => x.PaId === paId && !!x.PaName);
+    if (r) { return r.PaName; }
+    const o = this.outstanding.find(x => x.PaId === paId && !!x.PaName);
+    return o ? o.PaName : '';
   }
 
   getPendingHandoverForPa(paId: number): any {
@@ -374,22 +299,36 @@ export class PaymentReconciliationPage {
     return this.getPendingHandoverForPa(this.selectedPaId);
   }
 
+  // The cash must be counted before it is accepted: the entered amount has to equal what the PA
+  // declared. A different amount is never partly accepted; the doctor sends it back instead.
   async confirmHandover(h: any) {
     const alert = await this.alertController.create({
       header: 'Cash Received',
-      message: `Confirm you received Rs ${h.Amount} cash from this PA?`,
+      subHeader: this.paName(h.PaId),
+      message: `The PA says Rs ${h.Amount}. Count the cash and enter what you actually received.`,
+      inputs: [{ name: 'counted', type: 'number', placeholder: 'Amount counted (Rs)' }],
       buttons: [
         { text: 'Cancel', role: 'cancel' },
         {
           text: 'Confirm',
-          handler: () => {
-            this.paService.confirmHandover(h.Id).subscribe(
+          handler: (data) => {
+            const counted = Number(data.counted);
+            if (data.counted === '' || isNaN(counted)) {
+              this.toastService.create('Enter the amount you counted', 'warning');
+              return false;
+            }
+            if (counted !== Number(h.Amount)) {
+              this.toastService.create(`Counted Rs ${counted} does not match Rs ${h.Amount}. Use Send back to return it to the PA.`, 'danger');
+              return false;
+            }
+            this.paService.confirmHandover(h.Id, this.doctorId, counted).subscribe(
               res => {
                 if (res && res.IsSuccess) {
                   this.toastService.create('Handover confirmed', 'success');
                   this.loadPendingHandovers();
+                  this.load();
                 } else {
-                  this.toastService.create(res.Message || 'Failed', 'danger');
+                  this.toastService.create((res && res.Message) || 'Failed', 'danger');
                 }
               },
               () => this.toastService.create('Failed to confirm', 'danger')
@@ -403,17 +342,19 @@ export class PaymentReconciliationPage {
 
   async rejectHandover(h: any) {
     const alert = await this.alertController.create({
-      header: 'Reject Handover',
+      header: 'Send back to PA',
+      subHeader: this.paName(h.PaId),
+      message: `Rs ${h.Amount} will go back to the PA as not handed over.`,
       inputs: [{ name: 'note', type: 'text', placeholder: 'Reason (optional)' }],
       buttons: [
         { text: 'Cancel', role: 'cancel' },
         {
           text: 'Reject',
           handler: (data) => {
-            this.paService.rejectHandover(h.Id, data.note || '').subscribe(
+            this.paService.rejectHandover(h.Id, data.note || '', this.doctorId).subscribe(
               res => {
                 if (res && res.IsSuccess) {
-                  this.toastService.create('Handover rejected', 'warning');
+                  this.toastService.create('Sent back to the PA', 'warning');
                   this.loadPendingHandovers();
                 } else {
                   this.toastService.create(res.Message || 'Failed', 'danger');
@@ -489,11 +430,13 @@ export class PaymentReconciliationPage {
     await alert.present();
   }
 
-  async promptAdjust() {
-    if (!this.selectedPaId) { return; }
-    const pa = this.pas.find(p => p.PaId === this.selectedPaId || p.Id === this.selectedPaId);
-    const paName = pa ? (pa.Name || pa.PaName) : 'Selected PA';
-    const clinicId = this.selectedClinicId || 0;
+  async promptAdjust(forPaId?: number) {
+    const paId = forPaId || this.selectedPaId;
+    if (!paId) { return; }
+    const paName = this.paName(paId) || 'Selected PA';
+    // A PA's clinic is known when the scope names one, or when they only hold cash in one.
+    const paClinics = this.outstanding.filter(o => o.PaId === paId).map(o => o.ClinicId);
+    const clinicId = this.selectedClinicId || (paClinics.length === 1 ? paClinics[0] : 0);
     const alert = await this.alertController.create({
       header: 'Adjust Payable',
       subHeader: paName,
@@ -518,11 +461,12 @@ export class PaymentReconciliationPage {
             }
             const loading = await this.loadingController.create({ message: 'Applying...' });
             await loading.present();
-            this.paService.adjustPayable(this.selectedPaId!, this.doctorId!, clinicId, amt, data.reason.trim()).subscribe(
+            this.paService.adjustPayable(paId, this.doctorId!, clinicId, amt, data.reason.trim()).subscribe(
               res => {
                 loading.dismiss();
                 if (res && res.IsSuccess) {
                   this.toastService.create('Adjustment applied', 'success');
+                  this.loadPendingHandovers();
                 } else {
                   this.toastService.create((res && res.Message) || 'Failed', 'danger');
                 }
@@ -565,6 +509,69 @@ export class PaymentReconciliationPage {
     }
     this.filteredRows = rows;
     this.selectedIds = new Set();
+    this.buildCards();
+  }
+
+  setCashView(v: 'pa' | 'all') {
+    this.cashView = v;
+  }
+
+  // Cash held per PA comes from the server's cash-in-hand figure (the same one the PA sees),
+  // not from adding up invoice rows, so the two screens cannot disagree.
+  private holdsFor(paId: number): number {
+    return this.outstanding
+      .filter(o => o.PaId === paId && (!this.selectedClinicId || o.ClinicId === this.selectedClinicId))
+      .reduce((sum, o) => sum + (o.PendingCash || 0), 0);
+  }
+
+  buildCards() {
+    const byPa: { [id: number]: PaCard } = {};
+    const card = (paId: number, name: string): PaCard => {
+      if (!byPa[paId]) {
+        byPa[paId] = { PaId: paId, PaName: name || this.paName(paId) || ('PA ' + paId), Holds: this.holdsFor(paId),
+          Handovers: [], Invoices: [], Decisions: [], DirectSales: [], AwaitingInvoice: 0 };
+      }
+      return byPa[paId];
+    };
+    this.filteredRows.forEach(r => {
+      if (!r.PaId) { return; }
+      if (r.RowType === 'DirectSale') {
+        if (!r.IsConfirmed) { card(r.PaId, r.PaName).DirectSales.push(r); }
+      } else if (r.RowType === 'AwaitingInvoice') {
+        card(r.PaId, r.PaName).AwaitingInvoice++;
+      } else if (r.RowType !== 'Invoice' || r.PendingAmendmentType) {
+        if (r.AmendmentId) { card(r.PaId, r.PaName).Decisions.push(r); }
+      } else if (!r.IsConfirmed) {
+        card(r.PaId, r.PaName).Invoices.push(r);
+      }
+    });
+    this.pendingHandovers
+      .filter(h => (!this.selectedPaId || h.PaId === this.selectedPaId) && (!this.selectedClinicId || h.ClinicId === this.selectedClinicId))
+      .forEach(h => card(h.PaId, '').Handovers.push(h));
+    this.outstanding
+      .filter(o => (!this.selectedPaId || o.PaId === this.selectedPaId) && this.holdsFor(o.PaId) > 0)
+      .forEach(o => card(o.PaId, o.PaName));
+    this.cards = Object.keys(byPa).map(k => byPa[Number(k)])
+      .sort((a, b) => (b.Holds - a.Holds) || a.PaName.localeCompare(b.PaName));
+  }
+
+  cardSelected(c: PaCard): PaymentRow[] {
+    return c.Invoices.filter(r => this.selectedIds.has(r.ScheduleId));
+  }
+
+  async confirmCardSelected(c: PaCard) {
+    const rows = this.cardSelected(c);
+    if (rows.length === 0) { return; }
+    const total = rows.reduce((sum, r) => sum + (r.Amount || 0), 0);
+    const alert = await this.alertController.create({
+      header: `Confirm ${rows.length} invoice${rows.length > 1 ? 's' : ''}`,
+      message: `Confirm ${rows.length} invoice${rows.length > 1 ? 's' : ''} from ${c.PaName}, PKR ${total.toLocaleString()}?`,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        { text: 'Confirm', handler: () => { this.doConfirm(rows); } }
+      ]
+    });
+    await alert.present();
   }
 
   onSearch() {
@@ -577,6 +584,11 @@ export class PaymentReconciliationPage {
   }
 
   get cashWithPA(): number {
+    if (this.outstandingLoaded) {
+      return this.outstanding
+        .filter(o => (!this.selectedPaId || o.PaId === this.selectedPaId) && (!this.selectedClinicId || o.ClinicId === this.selectedClinicId))
+        .reduce((sum, o) => sum + (o.PendingCash || 0), 0);
+    }
     return this.allRows
       .filter(r => !r.IsConfirmed && r.PaymentMode === 'Cash')
       .reduce((s, r) => s + (r.Amount || 0), 0);
