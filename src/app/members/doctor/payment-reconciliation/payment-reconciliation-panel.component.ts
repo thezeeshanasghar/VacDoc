@@ -13,6 +13,7 @@ interface PaCard {
   Holds: number;             // server cash-in-hand: collected cash minus confirmed handovers
   Handovers: any[];          // pending handovers waiting for the doctor
   Invoices: PaymentRow[];    // unconfirmed invoices ready to confirm
+  Deleted: PaymentRow[];     // invoices of deleted patients: the doctor cancels them (no Confirm)
   Decisions: PaymentRow[];   // rows carrying a pending edit / ungive to approve or reject
   DirectSales: PaymentRow[]; // unconfirmed direct sales
   AwaitingInvoice: number;   // visits given with no invoice yet
@@ -31,6 +32,7 @@ interface PaymentRow {
   Date: string;
   AssignedAt?: string;
   PatientName: string;
+  PatientDeleted?: boolean;  // the patient no longer exists (name comes from the delete audit)
   Vaccines: string;
   Amount: number;
   OldAmount?: number;
@@ -529,7 +531,7 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
     const card = (paId: number, name: string): PaCard => {
       if (!byPa[paId]) {
         byPa[paId] = { PaId: paId, PaName: name || this.paName(paId) || ('PA ' + paId), Holds: this.holdsFor(paId),
-          Handovers: [], Invoices: [], Decisions: [], DirectSales: [], AwaitingInvoice: 0 };
+          Handovers: [], Invoices: [], Deleted: [], Decisions: [], DirectSales: [], AwaitingInvoice: 0 };
       }
       return byPa[paId];
     };
@@ -539,6 +541,8 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
         if (!r.IsConfirmed) { card(r.PaId, r.PaName).DirectSales.push(r); }
       } else if (r.RowType === 'AwaitingInvoice') {
         card(r.PaId, r.PaName).AwaitingInvoice++;
+      } else if (r.RowType === 'Invoice' && r.PatientDeleted) {
+        card(r.PaId, r.PaName).Deleted.push(r);
       } else if (r.RowType !== 'Invoice' || r.PendingAmendmentType) {
         if (r.AmendmentId) { card(r.PaId, r.PaName).Decisions.push(r); }
       } else if (!r.IsConfirmed) {
@@ -621,7 +625,7 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
   }
 
   private isBulkSelectable(r: PaymentRow): boolean {
-    return !r.IsConfirmed && r.RowType === 'Invoice' && !r.PendingAmendmentType;
+    return !r.IsConfirmed && r.RowType === 'Invoice' && !r.PendingAmendmentType && !r.PatientDeleted;
   }
 
   get allChecked(): boolean {
@@ -660,6 +664,41 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
           cssClass: 'alert-btn-confirm',
           handler: () => {
             this.doConfirm([row]);
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  // Invoice of a deleted patient: one plain confirm, no typed reason ("patient deleted" is the reason).
+  async cancelDeletedPatientPayment(row: PaymentRow) {
+    const alert = await this.alertController.create({
+      header: 'Cancel payment',
+      message: `Cancel PKR ${row.Amount.toLocaleString()} (${row.PaymentMode || 'no mode'}) from ${row.PaName}? The patient was deleted, so ${row.PaName} will no longer owe this money.`,
+      buttons: [
+        { text: 'Keep', role: 'cancel' },
+        {
+          text: 'Cancel payment',
+          cssClass: 'alert-btn-danger',
+          handler: async () => {
+            const loading = await this.loadingController.create({ message: 'Cancelling...' });
+            await loading.present();
+            this.paService.cancelDeletedPatientPayment(row.InvoiceSubmissionId || row.ScheduleId, this.doctorId!).subscribe(
+              res => {
+                loading.dismiss();
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Payment cancelled', 'success');
+                  this.load();
+                } else {
+                  this.toastService.create((res && res.Message) || 'Could not cancel', 'danger');
+                }
+              },
+              () => {
+                loading.dismiss();
+                this.toastService.create('Could not cancel', 'danger');
+              }
+            );
           }
         }
       ]

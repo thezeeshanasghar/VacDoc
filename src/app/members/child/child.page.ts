@@ -7,6 +7,7 @@ import { ClinicService } from 'src/app/services/clinic.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment.prod';
+import { AlertController } from '@ionic/angular';
 import { AlertService } from 'src/app/shared/alert.service';
 import { Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -57,6 +58,7 @@ export class ChildPage {
     private toastService: ToastService,
     private storage: Storage,
     private alertService: AlertService,
+    private alertController: AlertController,
     private callNumber: CallNumber,
     private paService: PaService,
     private managerService: ManagerService,
@@ -214,6 +216,31 @@ export class ChildPage {
   }
 
   async alertforDeleteChild(id) {
+    const isPa = this.usertype && this.usertype.UserType === 'PA';
+    if (isPa) {
+      this.confirmPlainDelete(id);
+      return;
+    }
+    const loading = await this.loadingController.create({ message: 'Checking patient entries...' });
+    await loading.present();
+    this.childService.getDeletePreview(id).subscribe(
+      res => {
+        loading.dismiss();
+        const fp = res && res.ResponseData;
+        if (!res || !res.IsSuccess || !fp || (!fp.HasFootprint && !(fp.GivenDoses && fp.GivenDoses.length) && !(fp.Invoices && fp.Invoices.length))) {
+          this.confirmPlainDelete(id);
+          return;
+        }
+        this.presentDeleteChoice(id, fp);
+      },
+      () => {
+        loading.dismiss();
+        this.alertService.simpleAlert('Could not check this patient\'s entries. Nothing was deleted.', 'Cannot Delete Patient');
+      }
+    );
+  }
+
+  private confirmPlainDelete(id) {
     this.alertService.confirmAlert('Are you sure you want to delete this ?', null)
       .then((yes) => {
         if (yes) {
@@ -222,13 +249,47 @@ export class ChildPage {
       });
   }
 
-  async Deletechild(id) {
+  // The patient has given doses and/or invoices: the doctor chooses between putting the stock back
+  // and deleting, or keeping the record and deactivating. Payments are never voided from here.
+  private async presentDeleteChoice(id, fp: any) {
+    const doses = fp.GivenDoses || [];
+    const invoices = fp.Invoices || [];
+    const consumed = doses.filter(d => d.ConsumedStock).length;
+    const total = invoices.reduce((s, i) => s + (i.Amount || 0), 0);
+    const confirmed = invoices.filter(i => i.IsConfirmed).length;
+    let msg = `${fp.Name || 'This patient'} has ${doses.length} given dose(s)`;
+    if (consumed) { msg += ` (${consumed} used stock)`; }
+    if (invoices.length) {
+      msg += ` and ${invoices.length} invoice(s) totalling PKR ${Math.round(total).toLocaleString()}`;
+      if (confirmed) { msg += `, ${confirmed} already confirmed by you`; }
+    }
+    msg += '.<br><br><b>Reverse and delete:</b> stock goes back to inventory. Payments stay in Payment Reconciliation, tagged "Patient deleted", until you cancel them there.<br><br><b>Deactivate:</b> nothing is reversed and the record is kept.';
+    const buttons: any[] = [
+      { text: 'Close', role: 'cancel' },
+      {
+        text: 'Reverse stock and delete',
+        cssClass: 'alert-btn-danger',
+        handler: () => { this.Deletechild(id, 'reverse'); }
+      }
+    ];
+    if (this.canToggleStatus) {
+      buttons.push({ text: 'Deactivate patient', handler: () => { this.toggleChildActiveStatus(id); } });
+    }
+    const alert = await this.alertController.create({
+      header: 'This patient has entries',
+      message: msg,
+      buttons
+    });
+    await alert.present();
+  }
+
+  async Deletechild(id, mode?: string) {
     const loading = await this.loadingController.create({
       message: "Loading"
     });
     await loading.present();
     const paId = (this.usertype && this.usertype.UserType === 'PA') ? this.usertype.PAId : undefined;
-    await this.childService.deleteChild(id, this.usertype ? this.usertype.UserType : null, paId).subscribe(
+    await this.childService.deleteChild(id, this.usertype ? this.usertype.UserType : null, paId, mode).subscribe(
       res => {
         if (res.IsSuccess) {
           this.toastService.create(res.Message);

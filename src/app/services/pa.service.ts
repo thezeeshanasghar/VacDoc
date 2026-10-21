@@ -376,6 +376,11 @@ export class PaService extends BaseService {
     return this.http.patch(url, {}, this.httpOptions).pipe(catchError(this.handleError));
   }
 
+  // Doctor cancels the payment of a deleted patient; the PA stops owing it.
+  cancelDeletedPatientPayment(invoiceId: number, doctorId: number): Observable<any> {
+    return this.http.patch(`${environment.BASE_URL}PaCashHandover/invoice/${invoiceId}/cancel-deleted-patient?doctorId=${doctorId}`, {}, this.httpOptions);
+  }
+
   confirmInvoice(invoiceSubmissionId: number, doctorId: number, callerUserId?: number, securityStamp?: string): Observable<any> {
     const params = new URLSearchParams({ doctorId: String(doctorId) });
     if (callerUserId) { params.set('callerUserId', String(callerUserId)); }

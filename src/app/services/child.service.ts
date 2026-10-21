@@ -58,12 +58,21 @@ export class ChildService extends BaseService {
       );
   }
 
-  deleteChild(id: string, userType?: string, paId?: number): Observable<any> {
+  deleteChild(id: string, userType?: string, paId?: number, mode?: string): Observable<any> {
     let params = '';
     if (userType) { params += `?userType=${encodeURIComponent(userType)}`; }
     if (paId) { params += `${params ? '&' : '?'}paId=${paId}`; }
+    if (mode) { params += `${params ? '&' : '?'}mode=${encodeURIComponent(mode)}`; }
     const url = `${this.API_CHILD}child/${id}${params}`;
     return this.http.delete(url, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  // What deleting this patient would leave behind (given doses, invoices, open assignments).
+  getDeletePreview(id: string): Observable<any> {
+    return this.http.get(`${this.API_CHILD}child/${id}/delete-preview`, this.httpOptions)
       .pipe(
         catchError(this.handleError)
       );

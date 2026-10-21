@@ -164,6 +164,16 @@
           </div>
         </div>
 
+        <div class="pa-sec" *ngIf="c.Deleted.length > 0">
+          <div class="pa-sec-head"><span><span class="pa-tag pa-tag-bad">Patient deleted</span> Cancel to stop the PA owing these</span></div>
+          <div class="pa-inv" *ngFor="let r of c.Deleted">
+            <span class="pa-inv-main"><b>{{ r.PatientName || 'Unknown patient' }}</b><span class="pa-inv-sub">{{ r.IsConfirmed ? 'Already confirmed ' + formatDateTime(r.ConfirmedAt) : r.Date }}</span></span>
+            <span class="badge" [ngClass]="r.PaymentMode === 'Cash' ? 'badge-cash' : 'badge-online'">{{ r.PaymentMode || '—' }}</span>
+            <span class="pa-inv-amt">{{ r.Amount | number:'1.0-0' }}</span>
+            <button class="btn-reject" (click)="cancelDeletedPatientPayment(r)">Cancel</button>
+          </div>
+        </div>
+
         <div class="pa-sec" *ngIf="c.DirectSales.length > 0">
           <div class="pa-sec-head"><span>Direct sales (no assignment)</span></div>
           <div class="pa-inv" *ngFor="let r of c.DirectSales">
@@ -280,7 +290,8 @@
                   <div class="assigned-ts" *ngIf="row.AssignedAt">Assigned {{ formatDateTime(row.AssignedAt) }}</div>
                 </td>
                 <td class="col-patient">
-                  <div class="patient-name">{{ row.PatientName }}</div>
+                  <div class="patient-name">{{ row.PatientName || (row.PatientDeleted ? 'Unknown patient' : '') }}
+                    <span class="pa-tag pa-tag-bad" *ngIf="row.PatientDeleted">Patient deleted</span></div>
                   <div class="patient-pa" *ngIf="row.PaName">{{ row.PaName }}</div>
                 </td>
                 <td class="col-amount">
@@ -364,7 +375,9 @@
                         <ion-icon name="close-outline"></ion-icon> Reject
                       </button>
                     </div>
-                    <ng-container *ngIf="!row.PendingAmendmentType">
+                    <button *ngIf="!row.PendingAmendmentType && row.PatientDeleted" class="btn-reject"
+                      (click)="cancelDeletedPatientPayment(row)">Cancel</button>
+                    <ng-container *ngIf="!row.PendingAmendmentType && !row.PatientDeleted">
                       <div *ngIf="row.IsConfirmed" class="action-confirmed">
                         <ion-icon name="checkmark-circle" class="icon-confirmed"></ion-icon>
                       </div>
