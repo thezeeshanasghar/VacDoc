@@ -863,6 +863,57 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
     await alert.present();
   }
 
+  // ---- Activity log drawer (the Date cell opens the assignment's full timestamped history)
+  log: { row: PaymentRow; entries: any[] | null; filter: string } | null = null;
+  readonly logKinds = [
+    { key: 'all', label: 'All' },
+    { key: 'assign', label: 'Assignment' },
+    { key: 'given', label: 'Vaccine' },
+    { key: 'invoice', label: 'Invoice' },
+    { key: 'pay', label: 'Payment' },
+    { key: 'hand', label: 'Handover' },
+  ];
+
+  openLog(row: PaymentRow) {
+    if (!row.AssignmentId) { return; }
+    const cur = { row, entries: null as any[] | null, filter: 'all' };
+    this.log = cur;
+    this.paService.getAssignmentHistory(row.AssignmentId).subscribe(
+      res => { cur.entries = (res && res.IsSuccess) ? (res.ResponseData || []) : []; },
+      () => { cur.entries = []; }
+    );
+  }
+
+  closeLog() { this.log = null; }
+
+  private logKind(e: any): string {
+    switch (e.Action) {
+      case 'Given': case 'Ungiven': case 'MarkedDone': return 'given';
+      case 'Invoiced': case 'Confirmed': case 'InvoiceDownloaded': return 'invoice';
+      case 'PaymentRecorded': case 'PaymentVerified': return 'pay';
+      case 'HandedOver': return 'hand';
+      default: return 'assign';
+    }
+  }
+
+  visibleEntries(): any[] {
+    if (!this.log || !this.log.entries) { return []; }
+    const f = this.log.filter;
+    return f === 'all' ? this.log.entries : this.log.entries.filter(e => this.logKind(e) === f);
+  }
+
+  dayLabel(at: string): string { return formatInstant(at, 'EEE d MMM yyyy'); }
+  timeLabel(at: string): string { return formatInstant(at, 'h:mm a'); }
+
+  actorLabel(e: any): string {
+    if (e.ActorName) { return e.ActorName + (e.Actor === 'PA' ? ' (PA)' : e.Actor === 'MANAGER' ? ' (Manager)' : e.Actor === 'DOCTOR' ? ' (Doctor)' : ''); }
+    if (e.Actor === 'PARENT') { return 'Parent'; }
+    if (e.Actor === 'DOCTOR') { return 'Doctor'; }
+    if (e.Actor === 'MANAGER') { return 'Manager'; }
+    if (e.Actor === 'PA') { return 'PA'; }
+    return '';
+  }
+
   // Row.Date is a calendar day; the *At stamps are UTC instants.
   formatDate(dateStr: string): string { return formatDay(dateStr, 'dd/MM/yy'); }
 

@@ -286,8 +286,15 @@
                   <button *ngIf="row.RowType === 'DirectSale'" class="btn-delete-assignment" (click)="confirmDeleteDirectSale(row)" title="Reverse sale">🗑️</button>
                 </td>
                 <td class="col-date">
-                  <div class="date-val">{{ formatDate(row.Date) }}</div>
-                  <div class="assigned-ts" *ngIf="row.AssignedAt">Assigned {{ formatDateTime(row.AssignedAt) }}</div>
+                  <button type="button" class="date-link" *ngIf="row.AssignmentId && row.RowType !== 'DirectSale'; else plainDate"
+                          (click)="openLog(row)" title="Open the full activity log">
+                    <div class="date-val">{{ formatDate(row.Date) }}</div>
+                    <div class="assigned-ts" *ngIf="row.AssignedAt">Assigned {{ formatDateTime(row.AssignedAt) }}</div>
+                  </button>
+                  <ng-template #plainDate>
+                    <div class="date-val">{{ formatDate(row.Date) }}</div>
+                    <div class="assigned-ts" *ngIf="row.AssignedAt">Assigned {{ formatDateTime(row.AssignedAt) }}</div>
+                  </ng-template>
                 </td>
                 <td class="col-patient">
                   <div class="patient-name">{{ row.PatientName || (row.PatientDeleted ? 'Unknown patient' : '') }}
@@ -419,3 +426,34 @@
 
     </div>
   </div>
+
+<!-- Activity log drawer: opened from the Date cell of a row -->
+<div class="log-scrim" *ngIf="log" (click)="closeLog()"></div>
+<aside class="log-drawer" *ngIf="log" role="dialog" aria-label="Activity log">
+  <div class="log-head">
+    <div>
+      <div class="log-title">{{ log.row.PatientName }} · activity log</div>
+      <div class="log-sub">{{ log.row.ClinicName }}<span *ngIf="log.entries"> · {{ log.entries.length }} events</span></div>
+    </div>
+    <button type="button" class="log-close" (click)="closeLog()">Close</button>
+  </div>
+  <div class="log-chips" *ngIf="log.entries && log.entries.length">
+    <button type="button" *ngFor="let k of logKinds" class="log-chip" [class.on]="log.filter === k.key" (click)="log.filter = k.key">{{ k.label }}</button>
+  </div>
+  <div class="log-body">
+    <div *ngIf="!log.entries" class="log-empty">Loading…</div>
+    <div *ngIf="log.entries && visibleEntries().length === 0" class="log-empty">No events of this type.</div>
+    <ng-container *ngFor="let e of visibleEntries(); let i = index">
+      <div class="log-day" *ngIf="i === 0 || dayLabel(e.At) !== dayLabel(visibleEntries()[i - 1].At)">{{ dayLabel(e.At) }}</div>
+      <div class="log-ev">
+        <div class="log-time">{{ timeLabel(e.At) }}</div>
+        <div class="log-main">
+          <div class="log-what">{{ e.Text }} <span class="log-tag" [class.derived]="e.Source === 'derived'">{{ e.Source === 'derived' ? 'derived' : 'log' }}</span></div>
+          <div class="log-who" *ngIf="actorLabel(e)">{{ actorLabel(e) }}</div>
+          <div class="log-reason" *ngIf="e.Reason">Reason: {{ e.Reason }}</div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <div class="log-foot">All times PKT. <b>log</b> = written when it happened. <b>derived</b> = rebuilt from record timestamps. Only the parent's invoice downloads are tracked; PA and doctor re-downloads are not.</div>
+</aside>
