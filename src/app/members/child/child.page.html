@@ -57,7 +57,7 @@
         <span class="icons-name">{{child.Name}}</span>
       </div>
       <div class="icons-right">
-        <span class="clinic-badge" *ngIf="child.ClinicName"><ion-icon name="business"></ion-icon>{{child.ClinicName}}</span>
+        <span class="clinic-badge" *ngIf="child.ClinicName"><ion-icon name="business"></ion-icon><span class="clinic-badge-text">{{child.ClinicName}}</span></span>
         <ion-icon class="iconchild" name="ellipsis-vertical"
           *ngIf="canEditPatient || canDeletePatient || canSmsPatient || canCallPatient || canToggleStatus"
           (click)="openActions($event, child)"></ion-icon>
