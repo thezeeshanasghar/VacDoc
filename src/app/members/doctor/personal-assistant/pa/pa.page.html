@@ -32,6 +32,10 @@
           <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
         </div>
       </ng-container>
+      <div class="error-message"
+        *ngIf="fg.get('MobileNumber').hasError('phoneInvalid') && (fg.get('MobileNumber').dirty || fg.get('MobileNumber').touched)">
+        <ion-icon name="information-circle-outline"></ion-icon> {{ fg.get('MobileNumber').getError('phoneInvalid') }}
+      </div>
     </div>
 
     <ion-item>

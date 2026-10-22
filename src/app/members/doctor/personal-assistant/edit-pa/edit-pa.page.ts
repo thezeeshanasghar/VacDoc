@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { PaService } from 'src/app/services/pa.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { phoneValidator, normalizePhone } from 'src/app/shared/phone-rules';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -43,7 +44,7 @@ export class EditPaPage implements OnInit {
     this.fg = this.fb.group({
       Name:         [this.paName, Validators.required],
       Email:        [email,  [Validators.required, Validators.email]],
-      MobileNumber: [mobile, [Validators.required, Validators.pattern('[0-9]{10}$')]]
+      MobileNumber: [mobile, [Validators.required, (c: AbstractControl) => (c.value === mobile ? null : phoneValidator()(c))]]
     });
 
     const doctorId = await this.storage.get(environment.DOCTOR_Id);
@@ -110,7 +111,7 @@ export class EditPaPage implements OnInit {
     const loader = await this.loadingCtrl.create({ message: 'Saving...' });
     await loader.present();
 
-    this.paService.updatePaProfile(this.paId, this.fg.value).subscribe({
+    this.paService.updatePaProfile(this.paId, { ...this.fg.value, MobileNumber: normalizePhone('92', this.fg.value.MobileNumber) }).subscribe({
       next: (res: any) => {
         loader.dismiss();
         if (res && res.IsSuccess) {

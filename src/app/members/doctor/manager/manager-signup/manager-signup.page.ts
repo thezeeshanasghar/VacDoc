@@ -8,6 +8,7 @@ import { ManagerService } from 'src/app/services/manager.service';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { phoneValidator, normalizePhone } from 'src/app/shared/phone-rules';
 import { Validators } from '@angular/forms';
 
 @Component({
@@ -41,7 +42,7 @@ export class ManagerSignupPage implements OnInit {
       CountryCode: ['92'],
       MobileNumber: new FormControl('', Validators.compose([
         Validators.required,
-        Validators.pattern('[0-9]{10}$')
+        phoneValidator('CountryCode')
       ])),
       Email: new FormControl('', Validators.required),
       // Required (not optional like PA's) - a Manager with no clinic access can't
@@ -70,7 +71,7 @@ export class ManagerSignupPage implements OnInit {
     const managerData = {
       Name: this.fg.value.Name,
       CountryCode: this.fg.value.CountryCode,
-      MobileNumber: this.fg.value.MobileNumber,
+      MobileNumber: normalizePhone(this.fg.value.CountryCode, this.fg.value.MobileNumber),
       Password: this.generatePassword(8),
       DoctorId: this.DoctorId,
       Email: this.fg.value.Email,

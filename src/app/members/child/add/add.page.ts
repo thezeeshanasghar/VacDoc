@@ -28,6 +28,7 @@ import { PaService } from "src/app/services/pa.service";
 import { ManagerService } from "src/app/services/manager.service";
 import { DoseService } from "src/app/services/dose.service";
 import { today, dayOf, diffDays, toLegacyDay, dayFromPicker } from 'src/app/shared/time';
+import { phoneValidator, normalizePhone } from 'src/app/shared/phone-rules';
 
 @Component({
   selector: "app-add",
@@ -297,7 +298,7 @@ filterCountryCodes(value: string) {
         "",
         Validators.compose([
           Validators.required,
-          Validators.pattern("^[1-9][0-9]*$"), // Updated pattern
+          phoneValidator("CountryCode"),
         ])
       ),
       city: ["", Validators.compose([Validators.required])],
@@ -324,6 +325,10 @@ filterCountryCodes(value: string) {
         "PAKISTANI",
         Validators.compose([Validators.pattern(/^[a-zA-Z\s]+$/)]),
       ],
+    });
+    // Dial code decides the allowed length, so re-check the number when it changes.
+    this.fg1.get("CountryCode").valueChanges.subscribe(() => {
+      this.fg1.get("MobileNumber").updateValueAndValidity();
     });
     // Covers the case where loadClinics()'s response already landed (and set
     // selectedClinicId) before this rebuild of fg1 on a later ionViewWillEnter.
@@ -713,27 +718,10 @@ filterCountryCodes(value: string) {
   }
   removeSpaces(event: any) {
     const input = event.target as HTMLInputElement;
-    let value = input.value.replace(/[\s-]/g, ""); // Remove spaces and dashes
-
     const countryCodeControl = this.fg1.get("CountryCode");
     const countryCode = countryCodeControl ? countryCodeControl.value : null;
-
-    // Strip a leading "+" or "00" international prefix
-    if (value.startsWith("+")) {
-      value = value.substring(1);
-    } else if (value.startsWith("00")) {
-      value = value.substring(2);
-    }
-
-    // If the pasted number starts with the selected country code, strip it
-    if (countryCode && value.startsWith(countryCode)) {
-      value = value.substring(countryCode.length);
-    }
-
-    // If country code is 92 (Pakistan), remove leading zero
-    if (countryCode === "92" && value.startsWith("0")) {
-      value = value.substring(1); // Remove leading 0
-    }
+    // Strips spaces/dashes, +/00, a typed country code and the trunk 0 (shared rules).
+    const value = normalizePhone(countryCode, input.value);
 
     input.value = value;
     this.fg1.get("MobileNumber").setValue(value);

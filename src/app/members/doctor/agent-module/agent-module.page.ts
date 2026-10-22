@@ -5,6 +5,7 @@ import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
 import { AgentService } from 'src/app/services/agent.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { phoneError, normalizePhone } from 'src/app/shared/phone-rules';
 import { AgentEditModalComponent } from './agent-edit-modal/agent-edit-modal.component';
 
 @Component({
@@ -76,9 +77,15 @@ export class AgentModulePage {
               this.toastService.create('Phone number is required (used as login ID)', 'danger');
               return false;
             }
+            const phone = normalizePhone('92', data.phone);
+            const phoneMsg = phoneError('92', data.phone);
+            if (phoneMsg) {
+              this.toastService.create(phoneMsg, 'danger');
+              return false;
+            }
             const agent = {
               Name: data.name.trim(),
-              PhoneNumber: data.phone.trim(),
+              PhoneNumber: phone,
               ReferralFeePerClient: parseFloat(data.fee) || 0
             };
             this.agentService.addAgent(agent).subscribe(

@@ -48,7 +48,7 @@
         <ion-input formControlName="MobileNumber" type="tel" placeholder="10-digit mobile number" class="field-input"></ion-input>
       </div>
       <div class="error-text" *ngIf="fg.get('MobileNumber').invalid && fg.get('MobileNumber').touched">
-        Enter a valid 10-digit mobile number.
+        {{ fg.get('MobileNumber').getError('phoneInvalid') || 'Mobile number is required.' }}
       </div>
     </div>
 

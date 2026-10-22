@@ -13,6 +13,7 @@ import { environment } from "src/environments/environment";
 import { SignupService } from "src/app/services/signup.service";
 import { LoginService } from "src/app/services/login.service";
 import { ToastService } from "src/app/shared/toast.service";
+import { phoneValidator, normalizePhone } from 'src/app/shared/phone-rules';
 import { AuthSession } from 'src/app/services/auth-session';
 
 @Component({
@@ -61,8 +62,7 @@ export class Step1Page implements OnInit {
         "",
         Validators.compose([
           Validators.required,
-          Validators.pattern(/^\d{10,}$/),
-          this.mobileNumberLengthValidator('CountryCode')
+          phoneValidator('CountryCode')
         ])
       ),
       ShowMobile: [true],
@@ -83,26 +83,6 @@ export class Step1Page implements OnInit {
       confirmPassword.setErrors(null);
     }
     return null;
-  }
-
-  mobileNumberLengthValidator(countryCodeControlName: string): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
-      const formGroup = control.parent;
-      if (!formGroup) {
-        return null;
-      }
-      const countryCodeControl = formGroup.get(countryCodeControlName);
-      if (!countryCodeControl) {
-        return null;
-      }
-      const countryCode = countryCodeControl.value;
-      const mobileNumber = control.value;
-
-      if (countryCode === '92' && mobileNumber.length > 10 && mobileNumber.length !== 10) {
-        return { 'invalidMobileNumberLength': true };
-      }
-      return null;
-    };
   }
 
   countryCodes = [
@@ -356,6 +336,7 @@ export class Step1Page implements OnInit {
     this.isSubmitted = true;
 
     const { ConfirmPassword, ...payload } = this.fg.value;
+    payload.MobileNumber = normalizePhone(payload.CountryCode, payload.MobileNumber);
     this.signupService.personalData = payload;
 
     this.signupService.addDoctor().subscribe(
@@ -446,8 +427,6 @@ export class Step1Page implements OnInit {
     ],
     mobileNumber: [
       { type: "required", message: "MobileNumber With Whatsapp is required." },
-      { type: "pattern", message: "Mobile number must be at least 10 digits." },
-      { type: "invalidMobileNumberLength", message: "Mobile number must be 10 digits long for country code 92." }
     ],
   };
 

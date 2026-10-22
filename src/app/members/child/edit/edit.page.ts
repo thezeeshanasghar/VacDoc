@@ -3,6 +3,7 @@ import { CityService } from 'src/app/services/city.service';
 import { ChildService } from 'src/app/services/child.service';
 import { AgentService } from 'src/app/services/agent.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { phoneError, normalizePhone } from 'src/app/shared/phone-rules';
 import { LoadingController, AlertController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
@@ -388,6 +389,19 @@ console.log(this.isCnicRequired);
   ];
 
   async editChild(confirmMerge: boolean = false) {
+    // Existing stored numbers are grandfathered: only check when the number or code was changed.
+    const cc = this.fg.value.CountryCode;
+    const changed = !this.child ||
+      String(this.fg.value.MobileNumber || '') !== String(this.child.MobileNumber || '') ||
+      String(cc || '') !== String(this.child.CountryCode || '');
+    if (changed) {
+      const msg = normalizePhone(cc, this.fg.value.MobileNumber) ? phoneError(cc, this.fg.value.MobileNumber) : 'Mobile number is required.';
+      if (msg) {
+        this.toastService.create(msg, 'danger');
+        return;
+      }
+      this.fg.controls['MobileNumber'].setValue(normalizePhone(cc, this.fg.value.MobileNumber));
+    }
     const loading = await this.loadingController.create({
       message: 'Loading'
     });
