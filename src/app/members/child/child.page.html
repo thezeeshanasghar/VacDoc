@@ -56,7 +56,7 @@
       <div class="pc-info">
         <span><ion-icon name="person"></ion-icon> {{child.FatherName}}</span>
         <span><ion-icon name="calendar"></ion-icon> {{child.DOB}}</span>
-        <span><ion-icon name="call"></ion-icon> {{child.MobileNumber}}</span>
+        <span class="pc-wa" (click)="openWhatsApp(child)"><ion-icon name="call"></ion-icon> {{child.MobileNumber}}</span>
       </div>
       <div class="pc-btns">
         <ion-button *ngIf="canViewVaccine" class="chip-tonal" size="small" fill="solid"

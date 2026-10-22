@@ -519,6 +519,21 @@ onClinicChange() {
       });
   }
 
+  // Number text stays as-is; tapping it opens a WhatsApp chat via wa.me (digits only, country code included).
+  openWhatsApp(child: any) {
+    let digits = String(child.MobileNumber || '').replace(/\D/g, '');
+    if (!digits) { return; }
+    if (digits.indexOf('00') === 0) {
+      digits = digits.substring(2);
+    } else if (digits.charAt(0) === '0') {
+      digits = '92' + digits.substring(1);
+    } else if (digits.length <= 10) {
+      const cc = String(child.CountryCode || '+92').replace(/\D/g, '') || '92';
+      digits = cc + digits;
+    }
+    window.open('https://wa.me/' + digits, '_system');
+  }
+
   callFunction(celnumber) {
     this.callNumber.callNumber(0 + celnumber, true)
       .then(res => console.log('Launched dialer!', res))
