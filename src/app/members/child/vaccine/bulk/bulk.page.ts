@@ -238,7 +238,7 @@ export class BulkPage implements OnInit {
   }
 
   async getBulk() {
-    const data = { ChildId: this.childId, Date: this.currentDate };
+    const data = { ChildId: this.childId, Date: toLegacyDay(this.currentDate) };
     const loading = await this.loadingController.create({ message: "Loading" });
     await loading.present();
     this.bulkService.getBulk(data).subscribe(
@@ -773,7 +773,7 @@ export class BulkPage implements OnInit {
       // interaction, not a bare year — format down to YYYY before sending, same as
       // fill.page.ts's single-give disease branch does.
       const diseaseYearVal = isDiseaseRow
-        ? (parseDay(this.diseaseYears[i]) || '').substring(0, 4)
+        ? (/^\d{4}$/.test(String(this.diseaseYears[i])) ? String(this.diseaseYears[i]) : (parseDay(this.diseaseYears[i]) || '').substring(0, 4))
         : null;
 
       brands.push({

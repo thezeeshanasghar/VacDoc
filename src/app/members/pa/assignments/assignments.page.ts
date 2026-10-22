@@ -205,7 +205,8 @@ export class AssignmentsPage {
       const rankB = this.isPastDueStage(b) ? 0 : rank[this.urgency(b)];
       const rankDiff = rankA - rankB;
       if (rankDiff !== 0) { return rankDiff; }
-      return parseInstant(b.AssignedAt).getTime() - parseInstant(a.AssignedAt).getTime();
+      const tb = parseInstant(b.AssignedAt); const ta = parseInstant(a.AssignedAt);
+      return (tb ? tb.getTime() : 0) - (ta ? ta.getTime() : 0);
     });
   }
 

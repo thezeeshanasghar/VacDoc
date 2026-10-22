@@ -1336,7 +1336,7 @@ filterCountryCodes(value: string) {
   }
 
   calculateDiff(dateSent: string | number | Date) {
-    return diffDays(today(), dayOf(dateSent));
+    return diffDays(today(), dateSent instanceof Date ? dayFromPicker(dateSent) : dayOf(dateSent));
   }
 
   async otherCityAlert() {

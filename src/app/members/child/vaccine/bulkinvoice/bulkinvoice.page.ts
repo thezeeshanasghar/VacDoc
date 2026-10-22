@@ -14,7 +14,7 @@ import { Platform } from '@ionic/angular';
 import { ClinicService } from "src/app/services/clinic.service";
 import { PaService } from "src/app/services/pa.service";
 import { AuthSession } from 'src/app/services/auth-session';
-import { today, parseDay } from 'src/app/shared/time';
+import { today, parseDay, toLegacyDay } from 'src/app/shared/time';
 @Component({
   selector: "app-bulk",
   templateUrl: "./bulk.page.html",
@@ -224,7 +224,7 @@ export class BulkInvoicePage implements OnInit {
 // }
 
   async getBulk() {
-    let data = { ChildId: this.childId, Date: this.currentDate1 };
+    let data = { ChildId: this.childId, Date: toLegacyDay(this.currentDate1) };
     const loading = await this.loadingController.create({
       message: "Loading"
     });

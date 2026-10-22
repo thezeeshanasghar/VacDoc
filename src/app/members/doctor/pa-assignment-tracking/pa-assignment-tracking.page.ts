@@ -777,13 +777,17 @@ export class PaAssignmentTrackingPage {
   // the only way to surface "this has been sitting untouched for weeks."
   isStale(row: AssignmentRow): boolean {
     if (row.IsCompleted || row.IsCancelled) { return false; }
-    const assignedAt = parseInstant(row.AssignedAt).getTime();
+    const at = parseInstant(row.AssignedAt);
+    if (!at) { return false; }
+    const assignedAt = at.getTime();
     const ageMs = nowInstant().getTime() - assignedAt;
     return ageMs >= this.STALE_DAYS * 24 * 60 * 60 * 1000;
   }
 
   daysAgo(dateStr: string): number {
-    const then = parseInstant(dateStr).getTime();
+    const t = parseInstant(dateStr);
+    if (!t) { return 0; }
+    const then = t.getTime();
     return Math.floor((nowInstant().getTime() - then) / (24 * 60 * 60 * 1000));
   }
 

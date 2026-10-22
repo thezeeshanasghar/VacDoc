@@ -513,7 +513,7 @@ export class FillPage implements OnInit {
     this.fg.value.Id = this.route.snapshot.paramMap.get('id');
     this.fg.value.DoctorId = this.doctorId;
     this.fg.value.IsDone = true;
-    this.fg.value.DiseaseYear = (parseDay(this.fg.value.DiseaseYear) || '').substring(0, 4);
+    this.fg.value.DiseaseYear = (/^\d{4}$/.test(String(this.fg.value.DiseaseYear)) ? String(this.fg.value.DiseaseYear) : (parseDay(this.fg.value.DiseaseYear) || '').substring(0, 4));
 
     // Disease entry (Chicken Pox / Hepatitis A "had the disease, not the vaccine"): there is no
     // given date to record, only the DiseaseYear picked above — the Given Date field is hidden
