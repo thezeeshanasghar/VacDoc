@@ -47,51 +47,43 @@
   </div>
 
   <ion-card *ngFor="let child of childs; trackBy: trackByChildId" [ngClass]="child.Gender=='Girl' ? 'girl' : 'boy'">
-
-    <!-- Compact single-row header: avatar + name on left, action icons on right -->
-    <div class="icons">
-      <div class="icons-left">
-        <ion-thumbnail class="icons-thumb">
-          <ion-img [src]="child._avatarSrc || getAvatarImage(child)"></ion-img>
-        </ion-thumbnail>
-        <span class="icons-name">{{child.Name}}</span>
+    <!-- Grid: phone = header row / info row / buttons row; desktop (>=1000px) = one row -->
+    <div class="pc-row">
+      <ion-thumbnail class="pc-thumb">
+        <ion-img [src]="child._avatarSrc || getAvatarImage(child)"></ion-img>
+      </ion-thumbnail>
+      <span class="pc-name">{{child.Name}}</span>
+      <div class="pc-info">
+        <span><ion-icon name="person"></ion-icon> {{child.FatherName}}</span>
+        <span><ion-icon name="calendar"></ion-icon> {{child.DOB}}</span>
+        <span><ion-icon name="call"></ion-icon> {{child.MobileNumber}}</span>
       </div>
-      <div class="icons-right">
+      <div class="pc-btns">
+        <ion-button *ngIf="canViewVaccine" class="chip-tonal" size="small" fill="solid"
+          routerLink="/members/child/vaccine/{{child.Id}}">
+          Vaccine
+        </ion-button>
+        <ion-button *ngIf="canViewFollowup" class="chip-tonal" size="small" fill="solid"
+          routerLink="/members/child/followup/{{child.Id}}">
+          Follow Up
+        </ion-button>
+        <ion-button *ngIf="canDownloadPid" class="chip-tonal" size="small" fill="solid" (click)="downloadPdf(child.Id)">
+          PID
+        </ion-button>
+        <ion-button *ngIf="canDownloadCard" size="small" fill="solid" color="secondary"
+          [routerLink]="['/members/child/immunization-card', child.Id]"
+          [queryParams]="{ name: child.Name }">
+          <ion-icon name="card-outline" slot="start" style="font-size:14px;"></ion-icon>
+          Card
+        </ion-button>
+      </div>
+      <div class="pc-right">
         <span class="clinic-badge" *ngIf="child.ClinicName"><ion-icon name="business"></ion-icon><span class="clinic-badge-text">{{child.ClinicName}}</span></span>
         <ion-icon class="iconchild" name="ellipsis-vertical"
           *ngIf="canEditPatient || canDeletePatient || canSmsPatient || canCallPatient || canToggleStatus"
           (click)="openActions($event, child)"></ion-icon>
       </div>
     </div>
-
-    <ion-card-content>
-      <ion-icon name="person"></ion-icon> {{child.FatherName}}
-      &nbsp;&nbsp;
-      <ion-icon name="calendar"></ion-icon> {{child.DOB}}
-      &nbsp;&nbsp;
-      <ion-icon name="call"></ion-icon> {{child.MobileNumber}}
-      <br>
-      <ion-button *ngIf="canViewVaccine" class="chip-tonal" size="small" fill="solid"
-        routerLink="/members/child/vaccine/{{child.Id}}">
-        Vaccine
-      </ion-button>
-      &nbsp;
-      <ion-button *ngIf="canViewFollowup" class="chip-tonal" size="small" fill="solid"
-        routerLink="/members/child/followup/{{child.Id}}">
-        Follow Up
-      </ion-button>
-      &nbsp;
-      <ion-button *ngIf="canDownloadPid" class="chip-tonal" size="small" fill="solid" (click)="downloadPdf(child.Id)">
-        PID
-      </ion-button>
-      &nbsp;
-      <ion-button *ngIf="canDownloadCard" size="small" fill="solid" color="secondary"
-        [routerLink]="['/members/child/immunization-card', child.Id]"
-        [queryParams]="{ name: child.Name }">
-        <ion-icon name="card-outline" slot="start" style="font-size:14px;"></ion-icon>
-        Card
-      </ion-button>
-    </ion-card-content>
   </ion-card>
 
   <ion-infinite-scroll threshold="100%" (ionInfinite)="loadData()">
