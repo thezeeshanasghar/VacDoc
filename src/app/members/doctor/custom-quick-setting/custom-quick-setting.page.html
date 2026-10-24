@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/doctor/schedule"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Custom Quick Select</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <p class="ion-padding-bottom">
+    Choose up to {{ MAX }} vaccines you add most often for Customize clients. They appear as one-tap buttons when
+    Customize is selected on Add Client.
+  </p>
+
+  <ion-list>
+    <ion-list-header><ion-label>Your list ({{ selected.length }} of {{ MAX }})</ion-label></ion-list-header>
+    <ion-item *ngFor="let s of selected; let i = index">
+      <ion-label>{{ i + 1 }}. {{ s.Name }}</ion-label>
+      <ion-button slot="end" fill="clear" color="danger" (click)="remove(i)" aria-label="Remove">
+        <ion-icon name="close-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+    <ion-item lines="none" *ngIf="selected.length === 0">
+      <ion-note>No vaccines chosen yet.</ion-note>
+    </ion-item>
+  </ion-list>
+
+  <ion-item *ngIf="selected.length < MAX">
+    <ion-label position="floating">Search vaccine to add</ion-label>
+    <ion-input type="text" [(ngModel)]="search" placeholder="e.g. MenACWY"></ion-input>
+  </ion-item>
+  <ion-list *ngIf="results.length > 0">
+    <ion-item button *ngFor="let d of results" (click)="add(d)">
+      <ion-label>{{ d.Name }}</ion-label>
+      <ion-icon name="add-circle-outline" slot="end"></ion-icon>
+    </ion-item>
+  </ion-list>
+
+  <ion-button expand="block" class="ion-margin-top" (click)="save()">Save</ion-button>
+</ion-content>

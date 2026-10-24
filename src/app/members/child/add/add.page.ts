@@ -74,6 +74,11 @@ export class AddPage implements OnInit {
   travelPicked: any = {};
   travelMode: string = "quick";
   canUseTravelQuick = false;
+  // Customize ("special") quick select: separate from Travel (own list, own PA permission).
+  customQuick: any[] = [];
+  customPicked: any = {};
+  customMode: string = "quick";
+  canUseCustomQuick = false;
 
   constructor(
     public loadingController: LoadingController,
@@ -384,6 +389,7 @@ filterCountryCodes(value: string) {
   applyTravelAccess() {
     this.isTravel = !!(this.Doctor && this.Doctor.AllowTravel);
     this.loadTravelQuick();
+    this.loadCustomQuick();
   }
 
   // Travel quick select: the doctor's up-to-4 common travel doses, shown as one-tap buttons.
@@ -411,6 +417,66 @@ filterCountryCodes(value: string) {
         this.travelQuick = [];
       }
     );
+  }
+
+  // Doctor always sees the Customize quick select; a PA only with UseCustomQuickSelect;
+  // a Manager never. No dependency on the Travel permission.
+  async loadCustomQuick() {
+    this.customQuick = [];
+    this.customPicked = {};
+    this.canUseCustomQuick = false;
+    if (!this.Doctor || !this.Doctor.Id) return;
+    const user = await this.storage.get(environment.USER);
+    let allowed = false;
+    if (user && user.UserType === "DOCTOR") {
+      allowed = true;
+    } else if (user && user.UserType === "PA") {
+      const perm: any = await this.paService.getPaPermissions(Number(user.PAId)).toPromise();
+      allowed = !!(perm && perm.UseCustomQuickSelect);
+    }
+    this.canUseCustomQuick = allowed;
+    if (!allowed) return;
+    this.doseService.getCustomQuick(this.Doctor.Id).subscribe(
+      (res) => {
+        this.customQuick = res && res.IsSuccess && res.ResponseData ? res.ResponseData : [];
+        this.cd.detectChanges();
+      },
+      () => {
+        this.customQuick = [];
+      }
+    );
+  }
+
+  toggleCustomDose(doseId: number) {
+    this.customPicked[doseId] = !this.customPicked[doseId];
+  }
+
+  customPickedCount(): number {
+    return this.customQuick.filter((q) => this.customPicked[q.DoseId]).length;
+  }
+
+  // Adds the chosen Customize quick-select doses through the same POST /schedule path the dose
+  // picker uses. Returns false on failure so the caller can tell the user the doses still need adding.
+  async addCustomQuickDoses(childId: number): Promise<boolean> {
+    const picked = this.customQuick.filter((q) => this.customPicked[q.DoseId]);
+    if (this.fg1.value.Type !== "special" || this.customMode !== "quick" || picked.length === 0) {
+      return true;
+    }
+    const paId =
+      this.usertype && this.usertype.UserType === "PA" ? Number(this.usertype.PAId) || null : null;
+    const doctorId = this.Doctor && this.Doctor.Id ? Number(this.Doctor.Id) : null;
+    const payload = picked.map((q) => {
+      const entry: any = { DoseId: q.DoseId, ChildId: childId, IsDone: false, Due2EPI: false };
+      if (paId) entry.PaId = paId;
+      if (doctorId) entry.DoctorId = doctorId;
+      return entry;
+    });
+    try {
+      await this.doseService.addScheduleDoseChild(payload).toPromise();
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   toggleTravelDose(doseId: number) {
@@ -1114,6 +1180,9 @@ filterCountryCodes(value: string) {
           let travelDosesFailed = false;
           if (res.ResponseData.Type == "travel" && this.canUseTravelQuick) {
             travelDosesFailed = !(await this.addTravelQuickDoses(ChildId));
+          }
+          if (res.ResponseData.Type == "special" && this.canUseCustomQuick) {
+            travelDosesFailed = !(await this.addCustomQuickDoses(ChildId));
           }
           loading.dismiss();
           const whatsappNumber =

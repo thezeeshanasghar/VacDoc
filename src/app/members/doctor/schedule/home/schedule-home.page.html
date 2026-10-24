@@ -6,10 +6,16 @@
       <span class="sh-sub">Vaccine schedule and ages</span>
       <ion-icon name="chevron-forward-outline" class="sh-arrow"></ion-icon>
     </div>
-    <div routerLink="/members/doctor/travel-quick-setting" class="sh-card card-travel">
+    <div *ngIf="allowTravel" routerLink="/members/doctor/travel-quick-setting" class="sh-card card-travel">
       <div class="sh-icon"><ion-icon name="airplane-outline"></ion-icon></div>
       <span class="sh-label">Travel quick pick list</span>
       <span class="sh-sub">Up to 4 common travel vaccines</span>
+      <ion-icon name="chevron-forward-outline" class="sh-arrow"></ion-icon>
+    </div>
+    <div routerLink="/members/doctor/custom-quick-setting" class="sh-card card-custom">
+      <div class="sh-icon"><ion-icon name="star-outline"></ion-icon></div>
+      <span class="sh-label">Custom quick pick list</span>
+      <span class="sh-sub">Up to 4 common custom vaccines</span>
       <ion-icon name="chevron-forward-outline" class="sh-arrow"></ion-icon>
     </div>
   </div>

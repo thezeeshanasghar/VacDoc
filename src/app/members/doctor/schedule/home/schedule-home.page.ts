@@ -4,9 +4,8 @@ import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { DoctorService } from "src/app/services/doctor.service";
 
-// Schedule menu entry. A doctor holding the Travel permission picks Regular or the Travel
-// quick pick list; everyone else (no Travel permission, PA, Manager) goes straight to the
-// regular schedule page exactly as before.
+// Schedule menu entry. A doctor picks Regular, the Custom quick pick list, or (with the Travel
+// permission) the Travel quick pick list; PA and Manager go straight to the regular schedule page.
 @Component({
   selector: "app-schedule-home",
   templateUrl: "./schedule-home.page.html",
@@ -14,6 +13,7 @@ import { DoctorService } from "src/app/services/doctor.service";
 })
 export class ScheduleHomePage implements OnInit {
   showCards = false;
+  allowTravel = false;
 
   constructor(
     private router: Router,
@@ -30,7 +30,8 @@ export class ScheduleHomePage implements OnInit {
     }
     this.doctorService.getDoctorProfile(doctorId).subscribe(
       res => {
-        if (res && res.IsSuccess && res.ResponseData && res.ResponseData.AllowTravel === true) {
+        if (res && res.IsSuccess && res.ResponseData) {
+          this.allowTravel = res.ResponseData.AllowTravel === true;
           this.showCards = true;
         } else {
           this.goRegular();

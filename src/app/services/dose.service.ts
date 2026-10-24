@@ -87,6 +87,22 @@ export class DoseService extends BaseService {
       .pipe(catchError(this.handleError));
   }
 
+  // Custom (Customize) quick select: a doctor's up-to-4 common doses. Independent of Travel.
+  getCustomQuick(doctorId): Observable<any> {
+    const url = `${environment.BASE_URL}customquick/${doctorId}`;
+    return this.http.get(url, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
+  saveCustomQuick(doctorId, doseIds): Observable<any> {
+    const url = `${environment.BASE_URL}customquick/${doctorId}`;
+    return this.http
+      .put(url, doseIds, this.httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+
   addScheduleDoseChild(data): Observable<any> {
     const url = `${this.API_schedule1}`;
     return this.http

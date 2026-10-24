@@ -47,6 +47,10 @@ const routes: Routes = [
     loadChildren: () => import('./travel-quick-setting/travel-quick-setting.module').then(m => m.TravelQuickSettingPageModule)
   },
   {
+    path: "custom-quick-setting",
+    loadChildren: () => import('./custom-quick-setting/custom-quick-setting.module').then(m => m.CustomQuickSettingPageModule)
+  },
+  {
     path: "analytics",
     loadChildren: () => import('./analytics/analytics.module').then(m => m.AnalyticsPageModule)
   },
