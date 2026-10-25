@@ -51,7 +51,16 @@ interface PaymentRow {
   PaName: string;
   ClinicId: number;
   ClinicName: string;
+  // Growth flag (Invoice rows, PA-given regular doses on/after the server's cutoff). Display only.
+  GrowthTotal?: number;
+  GrowthMissing?: number;
+  GrowthNotMeasured?: number;
+  GrowthMissingVaccines?: string;
+  GrowthNotMeasuredBy?: string;
+  GrowthNotMeasuredAt?: string;
 }
+
+interface GrowthPaStat { PaId: number; PaName: string; Missing: number; NotMeasured: number; Total: number; }
 
 @Component({
   selector: 'app-payment-reconciliation-panel',
@@ -73,6 +82,12 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
   toDate: string = '';
   searchQuery: string = '';
   selectedStatus: string = 'all';
+  // Growth flag filters (spec: GROWTH_FLAG_SPEC.md). Chips never block Confirm.
+  growthFilter: '' | 'missing' | 'notmeasured' = '';
+  growthPaFilter: number | null = null;
+  growthMissingRows = 0;
+  growthNotMeasuredRows = 0;
+  growthPaStats: GrowthPaStat[] = [];
 
   allRows: PaymentRow[] = [];
   filteredRows: PaymentRow[] = [];
@@ -502,7 +517,7 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
     return 'PendingWithPa';
   }
 
-  applySearch() {
+  applySearch(keepSelection: boolean = false) {
     const q = (this.searchQuery || '').toLowerCase().trim();
     let rows = q
       ? this.allRows.filter(r => r.PatientName.toLowerCase().includes(q))
@@ -510,9 +525,90 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
     if (this.selectedStatus !== 'all') {
       rows = rows.filter(r => this.rowStatus(r) === this.selectedStatus);
     }
+    this.buildGrowthSummary(rows);
+    if (this.growthFilter === 'missing') {
+      rows = rows.filter(r => this.growthMissingOf(r) > 0);
+    } else if (this.growthFilter === 'notmeasured') {
+      rows = rows.filter(r => this.growthNotMeasuredOf(r) > 0);
+    }
+    if (this.growthPaFilter !== null) {
+      const paId = this.growthPaFilter;
+      rows = rows.filter(r => r.PaId === paId);
+    }
     this.filteredRows = rows;
-    this.selectedIds = new Set();
+    if (keepSelection) {
+      // Only keep ticks that are still on screen, so a hidden row is never confirmed by accident.
+      const visible = new Set(rows.map(r => r.ScheduleId));
+      const kept = new Set<number>();
+      this.selectedIds.forEach(id => { if (visible.has(id)) { kept.add(id); } });
+      this.selectedIds = kept;
+    } else {
+      this.selectedIds = new Set();
+    }
     this.buildCards();
+  }
+
+  // ── Growth flag helpers (Invoice rows only: other row types have no growth meaning) ──
+  growthMissingOf(r: PaymentRow): number {
+    return r.RowType === 'Invoice' ? (r.GrowthMissing || 0) : 0;
+  }
+
+  growthNotMeasuredOf(r: PaymentRow): number {
+    return r.RowType === 'Invoice' ? (r.GrowthNotMeasured || 0) : 0;
+  }
+
+  growthMissingTip(r: PaymentRow): string {
+    return r.GrowthMissingVaccines ? 'No weight, height or OFC recorded: ' + r.GrowthMissingVaccines : 'No growth recorded';
+  }
+
+  growthNotMeasuredTip(r: PaymentRow): string {
+    const by = r.GrowthNotMeasuredBy ? ('Marked Not measured by ' + r.GrowthNotMeasuredBy) : 'Marked Not measured by the PA';
+    return r.GrowthNotMeasuredAt ? by + ' · ' + formatInstant(r.GrowthNotMeasuredAt, 'd MMM, h:mm a') : by;
+  }
+
+  // Counts come from the rows on screen before the growth chips apply, so the chips stay stable.
+  private buildGrowthSummary(rows: PaymentRow[]) {
+    let missingRows = 0;
+    let notMeasuredRows = 0;
+    const byPa: { [id: number]: GrowthPaStat } = {};
+    rows.forEach(r => {
+      if (r.RowType !== 'Invoice') { return; }
+      const m = this.growthMissingOf(r);
+      const n = this.growthNotMeasuredOf(r);
+      if (m > 0) { missingRows++; }
+      if (n > 0) { notMeasuredRows++; }
+      if (m + n === 0) { return; }
+      const st = byPa[r.PaId] || (byPa[r.PaId] = { PaId: r.PaId, PaName: r.PaName, Missing: 0, NotMeasured: 0, Total: 0 });
+      st.Missing += m;
+      st.NotMeasured += n;
+    });
+    // Total doses per PA (flagged or not) so "x of n" is honest.
+    rows.forEach(r => {
+      if (r.RowType === 'Invoice' && byPa[r.PaId]) { byPa[r.PaId].Total += (r.GrowthTotal || 0); }
+    });
+    this.growthMissingRows = missingRows;
+    this.growthNotMeasuredRows = notMeasuredRows;
+    this.growthPaStats = Object.keys(byPa).map(k => byPa[+k])
+      .sort((a, b) => ((b.Missing + b.NotMeasured) - (a.Missing + a.NotMeasured)) || a.PaName.localeCompare(b.PaName));
+  }
+
+  setGrowthFilter(f: '' | 'missing' | 'notmeasured') {
+    this.growthFilter = this.growthFilter === f ? '' : f;
+    this.applySearch(true);
+  }
+
+  setGrowthPaFilter(paId: number) {
+    this.growthPaFilter = this.growthPaFilter === paId ? null : paId;
+    this.applySearch(true);
+  }
+
+  // Bulk warning: selected invoices with no growth recorded or marked Not measured. Never blocks Confirm.
+  growthWarnCount(rows: PaymentRow[]): number {
+    return rows.filter(r => this.growthMissingOf(r) + this.growthNotMeasuredOf(r) > 0).length;
+  }
+
+  get selectedGrowthWarn(): number {
+    return this.growthWarnCount(this.filteredRows.filter(r => this.selectedIds.has(r.ScheduleId)));
   }
 
   setCashView(v: 'pa' | 'all') {

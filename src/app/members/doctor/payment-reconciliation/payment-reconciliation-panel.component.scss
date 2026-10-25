@@ -890,3 +890,51 @@
 .log-tag { font-size: 10.5px; border-radius: 5px; padding: 1px 6px; background: var(--vac-blue-tint); color: var(--vac-petrol); margin-left: 6px;
   &.derived { background: #fbeedd; color: #b9651a; } }
 .log-foot { padding: 10px 18px; border-top: 1px solid var(--vac-border); font-size: 12px; color: var(--vac-ink-3); }
+
+// ─── Growth flag (display only; GROWTH_FLAG_SPEC.md) ─────────────────────────
+.growth-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+.growth-by {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--vac-ink-3);
+}
+.growth-chip {
+  border: 1.5px solid var(--vac-border);
+  background: var(--vac-surface);
+  color: var(--vac-ink-3);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  .growth-n { opacity: .7; margin-left: 4px; }
+  &.growth-chip-miss.on { background: var(--vac-warn-tint); border-color: var(--vac-warn); color: var(--vac-warn); }
+  &.growth-chip-nm.on, &.growth-chip-pa.on { background: var(--vac-blue-tint); border-color: var(--vac-blue); color: var(--vac-petrol); }
+}
+.growth-tag {
+  display: inline-block;
+  margin-top: 4px;
+  margin-right: 6px;
+  padding: 1px 7px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--vac-surface);
+  cursor: help;
+  &.growth-tag-miss { border: 1.4px solid var(--vac-warn); color: var(--vac-warn); }
+  &.growth-tag-nm { border: 1.4px dashed var(--vac-ink-3); color: var(--vac-ink-3); font-weight: 600; }
+}
+.growth-warn {
+  margin-left: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--vac-warn);
+}

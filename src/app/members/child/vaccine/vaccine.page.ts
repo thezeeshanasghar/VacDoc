@@ -89,6 +89,7 @@ export class VaccinePage {
   growthH: string = '';
   growthO: string = '';
   growthNotMeasured: boolean = false;
+  growthOfcEnabled: boolean = true;   // OFC is unfillable from the child's 2nd birthday
   pendingGrowth: any = null;
   private growthResume: { scheduleId: number, group: any[] } | null = null;
   canCollectPayment = true;
@@ -1910,29 +1911,43 @@ removal(type: string){
     return done ? done.Id : data[0].Id;
   }
 
-  // PA recording payment on a regular child's given doses must document growth first (or mark
-  // Not measured). Doctors/Managers, non-regular children and disease rows skip it. The server
-  // enforces the same rule in ScheduleController.ApplyGrowthGate.
+  // OFC is only recorded under 2 years; from the 2nd birthday it is locked and not counted.
+  private ofcAllowedAt(given: any): boolean {
+    if (!this.BirthYear) { return true; }
+    const dob = new Date(this.BirthYear);
+    const at = given ? new Date(given) : new Date();
+    if (isNaN(dob.getTime()) || isNaN(at.getTime())) { return true; }
+    return at < new Date(dob.getFullYear() + 2, dob.getMonth(), dob.getDate());
+  }
+
+  // PA recording payment on a regular child's given doses must document growth first: at least one
+  // of weight, height or OFC (OFC only under 2 years), or Not measured. Doctors/Managers,
+  // non-regular children and disease rows skip it. The server enforces the same rule in
+  // ScheduleController.ApplyGrowthGate (GROWTH_FLAG_SPEC.md). No range checks.
   private needsGrowth(groupVaccines: any[]): boolean {
     if (this.usertype !== 'PA' || !this.paId || this.type !== 'regular') { return false; }
+    const self = this;
     return (groupVaccines || []).some(function(v) {
-      return v.IsDone && !v.IsDisease && !v.GrowthNotMeasured && !(v.Weight > 0 && v.Height > 0);
+      const hasGrowth = v.Weight > 0 || v.Height > 0 || (v.Circle > 0 && self.ofcAllowedAt(v.GivenDate));
+      return v.IsDone && !v.IsDisease && !v.GrowthNotMeasured && !hasGrowth;
     });
   }
 
-  // Pure (called from the template): returns the validation message, '' when fine.
+  // Pure (called from the template): returns the validation message, '' when fine. Only rejects
+  // non-numeric / non-positive entries; there is no normal-range rejection yet.
   growthMessage(): string {
     if (this.growthNotMeasured) { return ''; }
-    const w = parseFloat(this.growthW), h = parseFloat(this.growthH), o = parseFloat(this.growthO);
-    if (this.growthW && (isNaN(w) || w < 2 || w > 40)) { return 'Weight looks wrong (2 to 40 kg).'; }
-    if (this.growthH && (isNaN(h) || h < 40 || h > 150)) { return 'Height looks wrong (40 to 150 cm).'; }
-    if (this.growthO && (isNaN(o) || o < 30 || o > 60)) { return 'OFC looks wrong (30 to 60 cm).'; }
+    const bad = function(x: string) { return !!x && !(parseFloat(x) > 0); };
+    if (bad(this.growthW) || bad(this.growthH) || (this.growthOfcEnabled && bad(this.growthO))) {
+      return 'Enter a number above 0.';
+    }
     return '';
   }
 
   growthValid(): boolean {
     if (this.growthNotMeasured) { return true; }
-    return !this.growthMessage() && parseFloat(this.growthW) > 0 && parseFloat(this.growthH) > 0;
+    return !this.growthMessage()
+      && (parseFloat(this.growthW) > 0 || parseFloat(this.growthH) > 0 || (this.growthOfcEnabled && parseFloat(this.growthO) > 0));
   }
 
   closeGrowthSheet() {
@@ -1944,7 +1959,11 @@ removal(type: string){
     if (!this.growthValid() || !this.growthResume) { return; }
     this.pendingGrowth = this.growthNotMeasured
       ? { GrowthNotMeasured: true }
-      : { Weight: Number(this.growthW), Height: Number(this.growthH), Circle: this.growthO ? Number(this.growthO) : null };
+      : {
+          Weight: parseFloat(this.growthW) > 0 ? Number(this.growthW) : null,
+          Height: parseFloat(this.growthH) > 0 ? Number(this.growthH) : null,
+          Circle: (this.growthOfcEnabled && parseFloat(this.growthO) > 0) ? Number(this.growthO) : null
+        };
     const r = this.growthResume;
     this.growthSheetOpen = false;
     this.growthResume = null;
@@ -1955,6 +1974,8 @@ removal(type: string){
     if (!growthDone && this.needsGrowth(groupVaccines)) {
       this.growthW = ''; this.growthH = ''; this.growthO = '';
       this.growthNotMeasured = false; this.pendingGrowth = null;
+      const given = (groupVaccines || []).find(function(v) { return v.IsDone && v.GivenDate; });
+      this.growthOfcEnabled = this.ofcAllowedAt(given ? given.GivenDate : null);
       this.growthResume = { scheduleId: scheduleId, group: groupVaccines };
       this.growthSheetOpen = true;
       return;

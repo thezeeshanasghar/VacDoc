@@ -103,6 +103,20 @@
       </div>
     </div>
 
+    <!-- Growth flag: chips + per-PA counts. Display only, never blocks Confirm. Hidden when nothing is flagged. -->
+    <div class="growth-bar" *ngIf="growthMissingRows + growthNotMeasuredRows > 0 || growthFilter || growthPaFilter !== null">
+      <button class="growth-chip growth-chip-miss" [class.on]="growthFilter === 'missing'" (click)="setGrowthFilter('missing')">
+        Growth missing <span class="growth-n">{{ growthMissingRows }}</span>
+      </button>
+      <button class="growth-chip growth-chip-nm" [class.on]="growthFilter === 'notmeasured'" (click)="setGrowthFilter('notmeasured')">
+        Not measured <span class="growth-n">{{ growthNotMeasuredRows }}</span>
+      </button>
+      <span class="growth-by" *ngIf="growthPaStats.length > 0">By PA</span>
+      <button class="growth-chip growth-chip-pa" *ngFor="let p of growthPaStats" [class.on]="growthPaFilter === p.PaId" (click)="setGrowthPaFilter(p.PaId)">
+        {{ p.PaName }} · missing {{ p.Missing }} · not measured {{ p.NotMeasured }} of {{ p.Total }}
+      </button>
+    </div>
+
     <!-- Show: By PA (default) or the full payments table -->
     <div class="cash-toggle">
       <span class="cash-toggle-label">Show</span>
@@ -154,10 +168,14 @@
           <div class="pa-sec-head">
             <span>Invoices awaiting your confirmation</span>
             <button class="btn-confirm-handover" [disabled]="cardSelected(c).length === 0" (click)="confirmCardSelected(c)">Confirm {{ cardSelected(c).length }} selected</button>
+            <span class="growth-warn" *ngIf="growthWarnCount(cardSelected(c)) > 0">{{ growthWarnCount(cardSelected(c)) }} without growth. Confirm still allowed</span>
           </div>
           <div class="pa-inv" *ngFor="let r of c.Invoices">
             <input type="checkbox" class="row-checkbox" [checked]="isSelected(r)" (change)="toggleRow(r, $any($event.target).checked)">
-            <span class="pa-inv-main"><b>{{ r.PatientName }}</b><span class="pa-inv-sub">{{ r.Vaccines }}</span></span>
+            <span class="pa-inv-main"><b>{{ r.PatientName }}</b><span class="pa-inv-sub">{{ r.Vaccines }}</span>
+              <span class="growth-tag growth-tag-miss" *ngIf="growthMissingOf(r) > 0" [title]="growthMissingTip(r)">Growth · {{ growthMissingOf(r) }} of {{ r.GrowthTotal }}</span>
+              <span class="growth-tag growth-tag-nm" *ngIf="growthNotMeasuredOf(r) > 0" [title]="growthNotMeasuredTip(r)">Not measured</span>
+            </span>
             <span class="badge" [ngClass]="r.PaymentMode === 'Cash' ? 'badge-cash' : 'badge-online'">{{ r.PaymentMode || '—' }}</span>
             <span class="pa-inv-amt">{{ r.Amount | number:'1.0-0' }}</span>
             <button class="btn-confirm-row" (click)="confirmPayment(r)">Confirm</button>
@@ -228,6 +246,7 @@
               <ion-icon name="checkmark-outline"></ion-icon>
               Mark Selected Payments Received
             </button>
+            <span class="growth-warn" *ngIf="selectedGrowthWarn > 0">{{ selectedGrowthWarn }} of the selected without growth. Confirm still allowed</span>
           </div>
           <div class="bulk-right">
             <button class="btn-refresh" (click)="load()">
@@ -300,6 +319,8 @@
                   <div class="patient-name">{{ row.PatientName || (row.PatientDeleted ? 'Unknown patient' : '') }}
                     <span class="pa-tag pa-tag-bad" *ngIf="row.PatientDeleted">Patient deleted</span></div>
                   <div class="patient-pa" *ngIf="row.PaName">{{ row.PaName }}</div>
+                  <span class="growth-tag growth-tag-miss" *ngIf="growthMissingOf(row) > 0" [title]="growthMissingTip(row)">Growth · {{ growthMissingOf(row) }} of {{ row.GrowthTotal }}</span>
+                  <span class="growth-tag growth-tag-nm" *ngIf="growthNotMeasuredOf(row) > 0" [title]="growthNotMeasuredTip(row)">Not measured</span>
                 </td>
                 <td class="col-amount">
                   <span class="amount-val" *ngIf="row.RowType === 'AwaitingInvoice'">—</span>

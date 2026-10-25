@@ -458,16 +458,17 @@ export class AssignmentsPage {
   getMissingGrowthVaccines(a: any): string[] {
     if (!a.Schedules || !Array.isArray(a.Schedules) || a.ChildType !== 'regular') { return []; }
     return a.Schedules
-      .filter(function(s) { return s.IsDone && !s.IsDisease && !s.GrowthNotMeasured && !(s.Weight > 0 && s.Height > 0); })
+      .filter(function(s) { return s.IsDone && !s.IsDisease && !s.GrowthNotMeasured && !(s.Weight > 0 || s.Height > 0 || s.Circle > 0); })
       .map(function(s) { return s.DoseName || 'Unknown'; });
   }
 
   // Mirrors the server gate (ScheduleController.ApplyGrowthGate): regular child, given,
-  // non-disease dose with neither weight+height nor Not measured recorded.
+  // non-disease dose with none of weight / height / OFC and no Not measured recorded. (The server also
+  // ignores OFC from the 2nd birthday; it is authoritative if this pre-check lets one through.)
   needsGrowthBeforePayment(a: any): boolean {
     if (a.ChildType !== 'regular') { return false; }
     return (a.Schedules || []).some(function(s: any) {
-      return s.IsDone && !s.IsDisease && !s.GrowthNotMeasured && !(s.Weight > 0 && s.Height > 0);
+      return s.IsDone && !s.IsDisease && !s.GrowthNotMeasured && !(s.Weight > 0 || s.Height > 0 || s.Circle > 0);
     });
   }
 
@@ -530,7 +531,7 @@ export class AssignmentsPage {
     if (this.hasUnpaidSchedules(assignment) && this.needsGrowthBeforePayment(assignment)) {
       const gAlert = await this.alertController.create({
         header: 'Growth Not Recorded',
-        message: 'Record weight and height (or mark Not measured) on the child\'s vaccine page first, using the payment icon. Then come back to complete.',
+        message: 'Record at least one of weight, height or OFC (or mark Not measured) on the child\'s vaccine page first, using the payment icon. Then come back to complete.',
         buttons: [{ text: 'OK', role: 'cancel' }]
       });
       await gAlert.present();

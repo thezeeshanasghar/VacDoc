@@ -336,7 +336,7 @@
     <div class="sheet-title">Growth not recorded</div>
     <ion-icon name="close-outline" class="sheet-close" (click)="closeGrowthSheet()"></ion-icon>
   </div>
-  <div class="growth-sub">Enter what you measured, or mark it not measured. Then you can record payment.</div>
+  <div class="growth-sub">Enter at least one of weight, height or OFC, or mark it not measured. Then you can record payment.</div>
   <div class="growth-grid">
     <label class="growth-field">Weight (kg)
       <input type="number" inputmode="decimal" step="0.1" [disabled]="growthNotMeasured" [(ngModel)]="growthW" placeholder="12.4">
@@ -345,7 +345,7 @@
       <input type="number" inputmode="decimal" step="0.1" [disabled]="growthNotMeasured" [(ngModel)]="growthH" placeholder="88">
     </label>
     <label class="growth-field">OFC (cm)
-      <input type="number" inputmode="decimal" step="0.1" [disabled]="growthNotMeasured" [(ngModel)]="growthO" placeholder="optional">
+      <input type="number" inputmode="decimal" step="0.1" [disabled]="growthNotMeasured || !growthOfcEnabled" [(ngModel)]="growthO" [placeholder]="growthOfcEnabled ? 'optional' : 'locked (2y+)'">
     </label>
   </div>
   <div class="growth-hint">{{ growthMessage() }}</div>
