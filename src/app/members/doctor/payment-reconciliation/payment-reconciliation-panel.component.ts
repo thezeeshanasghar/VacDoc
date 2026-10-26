@@ -301,11 +301,18 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
   }
 
   // Name for a PA id from whatever the page has loaded (payment rows, then cash-in-hand list).
+  // Row PaName can be a "given by" label ("Doctor/(Ali)", "Manager/(Ali)", "(Ali)"), not the
+  // PA's own name, so prefer the outstanding list and strip the label wrapper from rows.
+  private plainPaName(label: string): string {
+    const m = /^(?:Doctor|Manager)?\/?\((.*)\)$/.exec(label || '');
+    return m ? m[1] : label;
+  }
+
   paName(paId: number): string {
-    const r = this.allRows.find(x => x.PaId === paId && !!x.PaName);
-    if (r) { return r.PaName; }
     const o = this.outstanding.find(x => x.PaId === paId && !!x.PaName);
-    return o ? o.PaName : '';
+    if (o) { return this.plainPaName(o.PaName); }
+    const r = this.allRows.find(x => x.PaId === paId && !!x.PaName);
+    return r ? this.plainPaName(r.PaName) : '';
   }
 
   getPendingHandoverForPa(paId: number): any {
@@ -627,7 +634,7 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
     const byPa: { [id: number]: PaCard } = {};
     const card = (paId: number, name: string): PaCard => {
       if (!byPa[paId]) {
-        byPa[paId] = { PaId: paId, PaName: name || this.paName(paId) || ('PA ' + paId), Holds: this.holdsFor(paId),
+        byPa[paId] = { PaId: paId, PaName: this.paName(paId) || this.plainPaName(name) || ('PA ' + paId), Holds: this.holdsFor(paId),
           Handovers: [], Invoices: [], Deleted: [], Decisions: [], DirectSales: [], AwaitingInvoice: 0 };
       }
       return byPa[paId];

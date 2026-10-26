@@ -7,6 +7,10 @@
   position: relative;
   height: 100%;
   overflow: hidden;
+  box-sizing: border-box;
+  // Glass header and rounded page card float on the split-pane backdrop
+  padding: 10px;
+  gap: 10px;
 }
 
 // Router outlet takes all remaining height below the 2 shell toolbars
@@ -219,7 +223,7 @@ ion-menu ion-header ion-toolbar {
   --background: transparent;
   --border-width: 0 0 1px 0;
   --border-color: rgba(255,255,255,.1);
-  --min-height: 56px;
+  --min-height: 88px;
 }
 ion-menu ion-header::after { display: none; }
 
@@ -268,4 +272,41 @@ ion-menu ion-item[color="primary"] { border-left: 0; }
   ion-menu { --width: 244px; --background: transparent; }
   ion-menu::part(container) { width: 234px; }
   .shell-main { background: var(--vac-surface); }
+}
+
+// ── Glass top bars: same family as the menu (blur, edge, 10px gutters, radius) ─
+// Backdrop moves to the split-pane at every width so both panels have glow to blur.
+ion-split-pane {
+  background:
+    radial-gradient(420px 320px at 8% 12%, rgba(111,177,165,.55), transparent 70%),
+    radial-gradient(380px 300px at 18% 78%, rgba(194,161,77,.38), transparent 70%),
+    radial-gradient(500px 360px at 60% 110%, rgba(17,120,169,.45), transparent 70%),
+    linear-gradient(180deg, var(--vac-petrol-dark), var(--vac-petrol));
+}
+.shell-header {
+  flex: none;
+  border-radius: 20px;
+  overflow: hidden;
+  background: linear-gradient(160deg, rgba(255,255,255,.16), rgba(12,54,70,.62) 40%, rgba(255,255,255,.05));
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  backdrop-filter: blur(22px) saturate(160%);
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 18px 40px rgba(4,20,28,.38);
+}
+.shell-header::after { display: none; }
+.shell-header .toolbar-blue,
+.shell-header .toolbar-green { --background: transparent; --border-width: 0; }
+.toolbar-blue::after {
+  left: 16px; right: 16px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--vac-gold), var(--vac-gold-soft), var(--vac-gold), transparent);
+}
+.shell-outlet {
+  border-radius: 20px;
+  background: var(--vac-surface);
+}
+
+@media (min-width: 1024px) {
+  ion-menu ion-header ion-toolbar { --min-height: 80px; }
+  .shell-main { background: transparent; }
 }
