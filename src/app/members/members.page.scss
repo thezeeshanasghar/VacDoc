@@ -310,3 +310,23 @@ ion-split-pane {
   ion-menu ion-header ion-toolbar { --min-height: 80px; }
   .shell-main { background: transparent; }
 }
+
+// Doctor/PA profile picture: keep it a true circle. The slotted avatar is a flex
+// child and was shrinking sideways next to a long name, turning it into an egg.
+ion-menu ion-avatar {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.28);
+  background: rgba(255,255,255,.9);
+}
+ion-menu ion-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
