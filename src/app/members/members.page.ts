@@ -498,6 +498,22 @@ export class MembersPage implements OnInit {
   user: any; // Declare the user property
   hasPA: boolean = false; // Flag to check if doctor has any Personal Assistants
   public profile: any = [];
+  // Menu glyphs: maps the ionicon names used in the page lists to the custom
+  // SVGs in assets/menu-icons. Unmapped names fall back to the ionicon.
+  private menuIconMap: any = {
+    "create": "user", "home-outline": "grid", "moon-outline": "home", "recording-outline": "cal",
+    "locate": "sun", "key-outline": "key", "stats-chart-outline": "chart", "bar-chart-outline": "chart",
+    "calendar-outline": "cal", "notifications-outline": "bell", "alert-circle-outline": "tick",
+    "wallet-outline": "team", "people-outline": "team", "people-circle-outline": "team",
+    "cube-outline": "box", "clipboard-outline": "book", "pricetag-outline": "tag",
+    "thermometer-outline": "thermo"
+  };
+
+  menuIconSrc(name: string): string {
+    const f = this.menuIconMap[name];
+    return f ? "assets/menu-icons/" + f + ".svg" : undefined;
+  }
+
   public appPages: any = [];
   public doctorPages: any = [];
   public childPages: any = [];

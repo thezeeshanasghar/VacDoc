@@ -9,10 +9,10 @@
     <ion-content>
       <ion-list class="menu">
         <ion-menu-toggle auto-hide="false" *ngFor="let p of profile">
-          <ion-item [routerDirection]="'root'" [routerLink]="[p.url]">
+          <ion-item routerLinkActive="selected" [routerDirection]="'root'" [routerLink]="[p.url]">
             <ion-avatar slot="start">
               <img [src]="p.imageUrl" *ngIf="p.imageUrl" />
-              <ion-icon color="primary" *ngIf="!p.imageUrl" [name]="p.icon"></ion-icon>
+              <ion-icon color="primary" *ngIf="!p.imageUrl" [name]="p.icon" [src]="menuIconSrc(p.icon)"></ion-icon>
             </ion-avatar>
             <ion-label>
              {{p.title}}
@@ -20,8 +20,8 @@
           </ion-item>
         </ion-menu-toggle>
         <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
-          <ion-item lines="none" [routerDirection]="'root'" [routerLink]="[p.url]">
-            <ion-icon [name]="p.icon" [color]="p.title === 'Alerts' ? 'danger' : 'primary'" slot="start"></ion-icon>
+          <ion-item lines="none" routerLinkActive="selected" [routerDirection]="'root'" [routerLink]="[p.url]">
+            <ion-icon [name]="p.icon" [src]="menuIconSrc(p.icon)" [color]="p.title === 'Alerts' ? 'danger' : 'primary'" slot="start"></ion-icon>
             <ion-label>
               {{p.title}}
             </ion-label>
@@ -29,34 +29,34 @@
         </ion-menu-toggle>
 
         <ion-menu-toggle auto-hide="false" *ngFor="let p of doctorPages">
-          <ion-item lines="none" *ngIf="!p.children" [routerDirection]="'root'" [routerLink]="[p.url]">
-            <ion-icon slot="start" [name]="p.icon" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
+          <ion-item lines="none" *ngIf="!p.children" routerLinkActive="selected" [routerDirection]="'root'" [routerLink]="[p.url]">
+            <ion-icon slot="start" [name]="p.icon" [src]="menuIconSrc(p.icon)" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
             <ion-label>{{p.title}}</ion-label>
           </ion-item>
 
           <ion-item lines="none" *ngIf="p.children" (click)="p.isOpen = !p.isOpen" detail="false">
-            <ion-icon slot="start" [name]="p.icon" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
+            <ion-icon slot="start" [name]="p.icon" [src]="menuIconSrc(p.icon)" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
             <ion-label>{{p.title}}</ion-label>
             <ion-icon slot="end" [name]="p.isOpen ? 'chevron-down' : 'chevron-forward'"></ion-icon>
           </ion-item>
 
           <ion-list *ngIf="p.isOpen" class="sub-menu">
             <ion-menu-toggle auto-hide="false" *ngFor="let sub of p.children">
-              <ion-item lines="none" *ngIf="!sub.children" class="sub-item" [routerDirection]="'root'" [routerLink]="[sub.url]">
-                <ion-icon slot="start" [name]="sub.icon" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
+              <ion-item lines="none" *ngIf="!sub.children" class="sub-item" routerLinkActive="selected" [routerDirection]="'root'" [routerLink]="[sub.url]">
+                <ion-icon slot="start" [name]="sub.icon" [src]="menuIconSrc(sub.icon)" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
                 <ion-label>{{sub.title}}</ion-label>
               </ion-item>
 
               <ion-item lines="none" *ngIf="sub.children" class="sub-item" (click)="sub.isOpen = !sub.isOpen" detail="false">
-                <ion-icon slot="start" [name]="sub.icon" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
+                <ion-icon slot="start" [name]="sub.icon" [src]="menuIconSrc(sub.icon)" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
                 <ion-label>{{sub.title}}</ion-label>
                 <ion-icon slot="end" [name]="sub.isOpen ? 'chevron-down' : 'chevron-forward'"></ion-icon>
               </ion-item>
 
               <ion-list *ngIf="sub.isOpen" class="sub-sub-menu">
                 <ion-menu-toggle auto-hide="false" *ngFor="let subSub of sub.children">
-                  <ion-item lines="none" class="sub-sub-item" [routerDirection]="'root'" [routerLink]="[subSub.url]">
-                    <ion-icon slot="start" [name]="subSub.icon" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
+                  <ion-item lines="none" class="sub-sub-item" routerLinkActive="selected" [routerDirection]="'root'" [routerLink]="[subSub.url]">
+                    <ion-icon slot="start" [name]="subSub.icon" [src]="menuIconSrc(subSub.icon)" [color]="p.title === 'Alerts' ? 'danger' : 'primary'"></ion-icon>
                     <ion-label>{{subSub.title}}</ion-label>
                   </ion-item>
                 </ion-menu-toggle>
@@ -66,8 +66,8 @@
         </ion-menu-toggle>
 
         <ion-menu-toggle auto-hide="false" *ngFor="let p of childPages">
-          <ion-item lines="none" [routerDirection]="'root'" [routerLink]="[p.url]">
-            <ion-icon color="primary" slot="start" [name]="p.icon"></ion-icon>
+          <ion-item lines="none" routerLinkActive="selected" [routerDirection]="'root'" [routerLink]="[p.url]">
+            <ion-icon color="primary" slot="start" [name]="p.icon" [src]="menuIconSrc(p.icon)"></ion-icon>
             <ion-label>{{p.title}}</ion-label>
             <ion-badge *ngIf="p.title === 'Unapproved' && pendingApprovalsCount > 0" color="danger" slot="end">
               {{pendingApprovalsCount}}
