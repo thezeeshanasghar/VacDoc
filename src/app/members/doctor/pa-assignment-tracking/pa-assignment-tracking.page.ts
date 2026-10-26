@@ -183,6 +183,8 @@ export class PaAssignmentTrackingPage {
       this.loadPasForClinic(qp.get('paId') ? Number(qp.get('paId')) : null);
     }
 
+    if (!qp.get('clinicId')) { this.loadPasForClinic(); }
+
     this.load();
     if (!this.isManager) { this.loadPendingCancellations(); this.loadPendingRefusals(); }
   }
@@ -336,19 +338,29 @@ export class PaAssignmentTrackingPage {
 
   loadPasForClinic(keepPaId: number | null = null) {
     if (!this.selectedClinicId) {
+      // No clinic picked: offer all of the doctor's active PAs so staff can be filtered on their own
       this.pas = [];
-      this.selectedPaId = null;
+      this.selectedPaId = keepPaId;
+      if (this.doctorId) {
+        this.paService.getPAsForDoctor(this.doctorId).subscribe(res => {
+          const all = Array.isArray(res) ? res : [];
+          this.pas = all.filter((p: any) => p.IsActive !== false);
+        }, () => { this.pas = []; });
+      }
       return;
     }
     this.paService.getPAsForClinic(this.selectedClinicId).subscribe(res => {
       this.pas = (res && res.IsSuccess) ? (res.ResponseData || []) : [];
-      this.selectedPaId = keepPaId;
+      // Keep the chosen PA only if they work at this clinic; otherwise drop the filter
+      const stillThere = keepPaId != null && this.pas.some((p: any) => (p.PaId || p.Id) === keepPaId);
+      this.selectedPaId = stillThere ? keepPaId : null;
       if (keepPaId) { this.load(); }
     });
   }
 
   onClinicChange() {
-    this.loadPasForClinic();
+    // The PA filter stands on its own — carry it across the clinic change
+    this.loadPasForClinic(this.selectedPaId);
     this.load();
   }
 
@@ -374,7 +386,7 @@ export class PaAssignmentTrackingPage {
     this.selectedClinicId = null;
     this.selectedPaId = null;
     this.selectedStatus = 'All';
-    this.pas = [];
+    this.loadPasForClinic();
     this.searchQuery = '';
     this.fromDate = addDays(todayDay(), -30);
     this.toDate = todayDay();
