@@ -171,19 +171,44 @@ export class ChildPage {
   // from the template binding — avoids re-running the moment.js DOB parse for every
   // visible row on every change-detection cycle.
   private withAvatars(children: any[]): any[] {
-    children.forEach(child => { child._avatarSrc = this.getAvatarImage(child); });
+    children.forEach(child => {
+      child._avatarSrc = this.getAvatarImage(child);
+      child._clinicCode = this.clinicCode(child.ClinicName);
+      child._clinicHue = this.clinicHue(child.ClinicName);
+    });
     return children;
   }
 
-  trackByChildId(_index: number, child: any): any {
+  // Two-letter flag code from the clinic name: first letters of the first two words, or the first
+  // two letters of a single word. The full name always stays beside it.
+  private clinicCode(name: string): string {
+    const words = String(name || '').replace(/[^A-Za-z0-9\s]/g, ' ').split(/\s+/).filter(w => w.length > 0);
+    if (words.length === 0) { return ''; }
+    if (words.length === 1) { return words[0].substring(0, 2).toUpperCase(); }
+    return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
+  }
+
+  // Stable colour class per clinic name (same name, same colour, every session). Only a scanning
+  // aid: the code and name carry the meaning.
+  private clinicHue(name: string): string {
+    const text = String(name || '');
+    let hash = 0;
+    for (let i = 0; i < text.length; i++) {
+      hash = (hash * 31 + text.charCodeAt(i)) % 9973;
+    }
+    return 'pt-hue-' + (hash % 5);
+  }
+
+  trackByChildId(index: number, child: any): any {
     return child.Id;
   }
 
   loadData() {
-    if (this.search)
+    if (this.search) {
       this.getChlidbyUser(false);
-    else
+    } else {
       this.getChlidByClinic(false);
+    }
   }
 
   async openActions(event: Event, child: any) {
@@ -191,6 +216,7 @@ export class ChildPage {
     const popover = await this.popoverController.create({
       component: PatientActionsPopoverComponent,
       componentProps: {
+        canFollowUp: this.canViewFollowup,
         canEdit: this.canEditPatient,
         canMessage: this.canSmsPatient,
         canCall: this.canCallPatient,
@@ -204,7 +230,9 @@ export class ChildPage {
     });
     await popover.present();
     const { data: action } = await popover.onDidDismiss();
-    if (action === 'edit') {
+    if (action === 'followUp') {
+      this.router.navigate(['/members/child/followup', child.Id]);
+    } else if (action === 'edit') {
       this.router.navigate(['/members/child/edit', child.Id]);
     } else if (action === 'message') {
       this.router.navigate(['/members/child/cmsg', child.Id]);

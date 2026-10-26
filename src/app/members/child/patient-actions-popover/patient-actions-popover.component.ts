@@ -7,6 +7,7 @@ import { PopoverController } from '@ionic/angular';
   styleUrls: ['./patient-actions-popover.component.scss'],
 })
 export class PatientActionsPopoverComponent {
+  @Input() canFollowUp: boolean;
   @Input() canEdit: boolean;
   @Input() canMessage: boolean;
   @Input() canCall: boolean;

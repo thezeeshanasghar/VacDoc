@@ -46,45 +46,53 @@
     <p>No patients match your search.</p>
   </div>
 
-  <ion-card *ngFor="let child of childs; trackBy: trackByChildId" [ngClass]="child.Gender=='Girl' ? 'girl' : 'boy'">
-    <!-- Grid: phone = header row / info row / buttons row; desktop (>=1000px) = one row -->
-    <div class="pc-row">
-      <ion-thumbnail class="pc-thumb">
+  <div class="pt-list" *ngIf="childs.length > 0">
+    <!-- Row: avatar | name, details, clinic flag | Vaccine, Card, PID, more. Phone: actions wrap to a second line. -->
+    <div class="pt-row" *ngFor="let child of childs; trackBy: trackByChildId">
+      <ion-thumbnail class="pt-avatar">
         <ion-img [src]="child._avatarSrc || getAvatarImage(child)"></ion-img>
       </ion-thumbnail>
-      <span class="pc-name">{{child.Name}}</span>
-      <div class="pc-info">
-        <span><ion-icon name="person"></ion-icon> {{child.FatherName}}</span>
-        <span><ion-icon name="calendar"></ion-icon> {{child.DOB}}</span>
-        <span class="pc-wa" (click)="openWhatsApp(child)"><ion-icon name="call"></ion-icon> {{child.MobileNumber}}</span>
+
+      <div class="pt-info">
+        <div class="pt-title">
+          <span class="pt-name">{{child.Name}}</span>
+          <span class="pt-status" *ngIf="child.IsInactive">Inactive</span>
+        </div>
+        <div class="pt-meta">
+          <span><ion-icon name="person"></ion-icon> {{child.FatherName}}</span>
+          <span><ion-icon name="calendar"></ion-icon> {{child.DOB}}</span>
+          <span class="pt-phone" (click)="openWhatsApp(child)"><ion-icon name="logo-whatsapp"></ion-icon> {{child.MobileNumber}}</span>
+        </div>
+        <span class="pt-flag" *ngIf="child.ClinicName" [ngClass]="child._clinicHue"
+          [attr.title]="child.ClinicName" [attr.aria-label]="'Clinic: ' + child.ClinicName">
+          <ion-icon name="flag"></ion-icon>
+          <b>{{child._clinicCode}}</b>
+          <span class="pt-flag-name">{{child.ClinicName}}</span>
+        </span>
       </div>
-      <div class="pc-btns">
-        <ion-button *ngIf="canViewVaccine" class="chip-tonal" size="small" fill="solid"
+
+      <div class="pt-actions">
+        <ion-button *ngIf="canViewVaccine" class="pt-act" size="small" fill="solid"
           routerLink="/members/child/vaccine/{{child.Id}}">
           Vaccine
         </ion-button>
-        <ion-button *ngIf="canViewFollowup" class="chip-tonal" size="small" fill="solid"
-          routerLink="/members/child/followup/{{child.Id}}">
-          Follow Up
-        </ion-button>
-        <ion-button *ngIf="canDownloadPid" class="chip-tonal" size="small" fill="solid" (click)="downloadPdf(child.Id)">
-          PID
-        </ion-button>
-        <ion-button *ngIf="canDownloadCard" size="small" fill="solid" color="secondary"
+        <ion-button *ngIf="canDownloadCard" class="pt-act" size="small" fill="solid"
           [routerLink]="['/members/child/immunization-card', child.Id]"
           [queryParams]="{ name: child.Name }">
-          <ion-icon name="card-outline" slot="start" style="font-size:14px;"></ion-icon>
           Card
         </ion-button>
-      </div>
-      <div class="pc-right">
-        <span class="clinic-badge" *ngIf="child.ClinicName"><ion-icon name="business"></ion-icon><span class="clinic-badge-text">{{child.ClinicName}}</span></span>
-        <ion-icon class="iconchild" name="ellipsis-vertical"
-          *ngIf="canEditPatient || canDeletePatient || canSmsPatient || canCallPatient || canToggleStatus"
-          (click)="openActions($event, child)"></ion-icon>
+        <ion-button *ngIf="canDownloadPid" class="pt-act" size="small" fill="solid" (click)="downloadPdf(child.Id)">
+          PID
+        </ion-button>
+        <ion-button class="pt-more" size="small" fill="clear"
+          *ngIf="canViewFollowup || canEditPatient || canDeletePatient || canSmsPatient || canCallPatient || canToggleStatus"
+          [attr.aria-label]="'More actions for ' + child.Name"
+          (click)="openActions($event, child)">
+          <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+        </ion-button>
       </div>
     </div>
-  </ion-card>
+  </div>
 
   <ion-infinite-scroll threshold="100%" (ionInfinite)="loadData()">
     <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">

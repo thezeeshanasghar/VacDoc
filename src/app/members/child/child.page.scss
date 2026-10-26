@@ -1,57 +1,38 @@
-// ── Child gender card tint ─────────────────────────────────────────────────────
-ion-card.girl,
-ion-card.boy {
-  border-radius: 16px;
+// ── Patient list ──────────────────────────────────────────────────────────────
+// One neutral container, hairlines between rows, no per-row card, tint or shadow.
+// Row: avatar | name, details, clinic flag | Vaccine, Card, PID, more.
+// Phone: the actions drop to their own full-width line, so none is ever hidden.
+.pt-list {
+  background: var(--vac-card, #fff);
+  border: 1px solid var(--vac-border, #DDE4E3);
+  border-radius: 14px;
+  margin-bottom: 12px;
 }
 
-ion-card.girl {
-  --background: #FEF3F8;
-  background: #FEF3F8;
-  border: 1px solid #FAD0E4;
-  box-shadow: 0 1px 3px rgba(20, 30, 60, 0.05) !important;
-
-  .pc-name { color: #C23B7B; }
-}
-
-ion-card.boy {
-  --background: #F3F8FF;
-  background: #F3F8FF;
-  border: 1px solid #CFE2FF;
-  box-shadow: 0 1px 3px rgba(20, 30, 60, 0.05) !important;
-
-  .pc-name { color: #1B5DAD; }
-}
-
-// ── Patient card layout ───────────────────────────────────────────────────────
-// Phone / tablet: header row (avatar, name, clinic + menu), info row, buttons row.
-// Desktop (>=1000px): everything on one row.
-ion-card.girl,
-ion-card.boy {
-  margin: 6px 10px;
-}
-
-.pc-row {
+.pt-row {
   display: grid;
-  grid-template-columns: 34px minmax(0, 1fr) auto;
-  grid-template-areas:
-    "thumb name right"
-    "info  info info"
-    "btns  btns btns";
-  column-gap: 8px;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  grid-template-areas: "avatar info actions";
+  column-gap: 12px;
   align-items: center;
-  padding: 8px 12px 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--vac-hairline, #EEF1EF);
+  transition: background-color 0.15s ease;
+
+  &:first-child { border-top: 0; }
+  &:hover { background: rgba(17, 120, 169, 0.05); }
 }
 
-.pc-thumb {
-  grid-area: thumb;
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
+.pt-avatar {
+  grid-area: avatar;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
   overflow: hidden;
 
   ion-img {
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
 
     img {
       object-fit: cover;
@@ -61,92 +42,168 @@ ion-card.boy {
   }
 }
 
-.pc-name {
-  grid-area: name;
-  font-size: 15px;
-  font-weight: 700;
+.pt-info {
+  grid-area: info;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pt-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+// Text label, not just a dimmed row: inactive status must not rely on colour alone.
+.pt-status {
+  flex-shrink: 0;
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: var(--vac-warn-tint, #FBEFDD);
+  color: #8A4A00;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.pt-name {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--vac-ink, #10222F);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.pc-info {
-  grid-area: info;
-  color: #5B6680;
-  font-size: 12.5px;
+.pt-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 14px;
+  color: var(--vac-ink-3, #5D7286);
+  font-size: 13px;
   line-height: 1.4;
-  margin-top: 2px;
 
-  span { margin-right: 14px; white-space: nowrap; }
+  span { white-space: nowrap; }
 
   ion-icon {
-    color: #5B6680;
     vertical-align: middle;
     margin-right: 3px;
     font-size: 13px;
   }
 }
 
-.pc-wa { cursor: pointer; }
-
-.pc-btns {
-  grid-area: btns;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 8px;
-  margin-top: 4px;
-
-  ion-button {
-    margin: 0;
-    height: 24px;
-    --padding-start: 12px;
-    --padding-end: 12px;
-    --border-radius: 10px;
-    --box-shadow: none;
-    font-size: 12.5px;
-    font-weight: 700;
-    text-transform: none;
-  }
+.pt-phone {
+  color: var(--vac-blue, #1178A9);
+  font-weight: 500;
+  cursor: pointer;
 }
 
-.pc-right {
-  grid-area: right;
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.clinic-badge {
+// Clinic flag: flag glyph + two-letter code + name. Colour is a scanning aid only.
+.pt-flag {
+  --pt-flag-color: var(--vac-blue, #1178A9);
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  max-width: 220px;
+  gap: 5px;
   min-width: 0;
-  margin-right: 6px;
-  padding: 3px 8px;
-  border-radius: 8px;
-  background: #1B3547;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--vac-ink-3, #5D7286);
 
-  ion-icon { font-size: 12px; flex-shrink: 0; }
+  ion-icon {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--pt-flag-color);
+  }
+
+  b {
+    flex-shrink: 0;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--pt-flag-color);
+  }
+
+  &.pt-hue-0 { --pt-flag-color: #1178A9; }
+  &.pt-hue-1 { --pt-flag-color: #7A4FB0; }
+  &.pt-hue-2 { --pt-flag-color: #B25A12; }
+  &.pt-hue-3 { --pt-flag-color: #2E7D5B; }
+  &.pt-hue-4 { --pt-flag-color: #B0366B; }
 }
 
-.clinic-badge-text {
+.pt-flag-name {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.iconchild {
-  font-size: 20px;
-  color: #50597A !important;
-  cursor: pointer;
-  transition: transform 0.15s ease;
-  padding: 2px;
+// Vaccine, Card, PID: one style, one size, same place on every row.
+.pt-actions {
+  grid-area: actions;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
 
-  &:active { transform: scale(0.92); }
+.pt-act {
+  margin: 0;
+  width: 76px;
+  height: 34px;
+  --background: var(--vac-blue-tint, #EDF4F8);
+  --background-activated: #D6E7F1;
+  --background-hover: #DCEAF3;
+  --color: var(--vac-blue, #1178A9);
+  --border-radius: 9px;
+  --box-shadow: none;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.pt-more {
+  margin: 0;
+  width: 34px;
+  height: 34px;
+  --padding-start: 0;
+  --padding-end: 0;
+  --border-radius: 9px;
+  --color: var(--vac-ink-3, #5D7286);
+
+  ion-icon { font-size: 20px; }
+}
+
+.pt-act:focus-visible,
+.pt-more:focus-visible {
+  outline: 3px solid rgba(17, 120, 169, 0.45);
+  outline-offset: 2px;
+}
+
+@media (max-width: 720px) {
+  .pt-row {
+    grid-template-areas:
+      "avatar info"
+      "actions actions";
+    grid-template-columns: 36px minmax(0, 1fr);
+    row-gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .pt-actions {
+    padding-left: 48px;
+
+    .pt-act { flex: 1; width: auto; height: 40px; }
+    .pt-more { flex: none; width: 40px; height: 40px; }
+  }
+}
+
+@media (max-width: 480px) {
+  .pt-name { font-size: 15px; }
+  .pt-meta { font-size: 12.5px; gap: 0 10px; }
+  // Phone: glyph and code only; the full name stays in the tooltip and accessible label.
+  .pt-flag-name { display: none; }
 }
 
 // ── Toolbar end icon ──────────────────────────────────────────────────────────
@@ -173,81 +230,6 @@ form ion-item {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(17, 120, 169, 0.08);
   margin-bottom: 14px;
-}
-
-// ── Tonal chip colours ────────────────────────────────────────────────────────
-.boy .pc-btns ion-button.chip-tonal {
-  --background: #E3EEFF;
-  --background-activated: #CFE2FF;
-  --color: #1B5DAD;
-}
-
-.girl .pc-btns ion-button.chip-tonal {
-  --background: #FCE3EE;
-  --background-activated: #FAD0E4;
-  --color: #C23B7B;
-}
-
-// ── Phone ─────────────────────────────────────────────────────────────────────
-@media (max-width: 480px) {
-  .clinic-badge { max-width: 110px; }
-
-  .pc-row { padding: 8px 10px 8px; }
-  .pc-name { font-size: 13px; }
-  .pc-info {
-    font-size: 11.5px;
-    span { margin-right: 8px; }
-    ion-icon { margin-right: 2px; }
-  }
-  .pc-btns { gap: 4px 6px; }
-  .pc-btns ion-button {
-    font-size: 11px;
-    --padding-start: 8px;
-    --padding-end: 8px;
-  }
-
-  .iconchild { font-size: 19px; }
-}
-
-// ── Desktop: one row per patient ──────────────────────────────────────────────
-@media (min-width: 1000px) {
-  ion-card.girl,
-  ion-card.boy {
-    margin: 5px 10px;
-  }
-
-  .pc-row {
-    grid-template-columns: 36px minmax(0, 1fr) auto auto;
-    grid-template-areas:
-      "thumb name btns right"
-      "thumb info btns right";
-    column-gap: 12px;
-    padding: 7px 12px;
-  }
-
-  .pc-thumb,
-  .pc-thumb ion-img {
-    width: 36px;
-    height: 36px;
-  }
-
-  .pc-name { line-height: 1.2; }
-
-  .pc-info {
-    font-size: 12px;
-    line-height: 1.3;
-    margin-top: 0;
-  }
-
-  .pc-btns {
-    flex-wrap: nowrap;
-    margin-top: 0;
-    gap: 6px;
-
-    ion-button { height: 26px; }
-  }
-
-  .pc-right { margin-left: 4px; }
 }
 
 // ── Skeleton loading state ─────────────────────────────────────────────────────

@@ -1,5 +1,5 @@
 .patient-actions-list {
-  width: 180px;
+  width: 200px;
   padding: 4px 0;
 
   ion-item {
@@ -8,10 +8,7 @@
   }
 }
 
-.action-emoji {
-  font-size: 17px;
-  width: 22px;
-  margin-right: 18px;
-  text-align: center;
-  line-height: 1;
+.action-icon {
+  font-size: 18px;
+  margin-right: 14px;
 }
