@@ -845,11 +845,6 @@ export class MembersPage implements OnInit {
               }
             ];
             if (this.hasPA) {
-              this.childPages.unshift({
-                title: "Unapproved",
-                url: "/members/child/unapprove",
-                icon: "alert-circle-outline"
-              });
               this.loadPendingCount();
             }
             this.loadPendingBookingsCount();
