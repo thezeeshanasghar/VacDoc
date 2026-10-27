@@ -69,9 +69,6 @@
           <ion-item lines="none" routerLinkActive="selected" [routerDirection]="'root'" [routerLink]="[p.url]">
             <ion-icon color="primary" slot="start" [name]="p.icon" [src]="menuIconSrc(p.icon)"></ion-icon>
             <ion-label>{{p.title}}</ion-label>
-            <ion-badge *ngIf="p.title === 'Unapproved' && pendingApprovalsCount > 0" color="danger" slot="end">
-              {{pendingApprovalsCount}}
-            </ion-badge>
             <ion-badge *ngIf="p.title === 'Bookings' && pendingBookingsCount > 0" color="warning" slot="end">
               {{pendingBookingsCount}}
             </ion-badge>

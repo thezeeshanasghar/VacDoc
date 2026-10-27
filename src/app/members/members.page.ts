@@ -496,7 +496,6 @@ export class MembersPage implements OnInit {
   hasClinics: boolean = false; // Flag to check if clinics are available
   defaultImageUrl: string = 'assets/male.png';
   user: any; // Declare the user property
-  hasPA: boolean = false; // Flag to check if doctor has any Personal Assistants
   public profile: any = [];
   // Menu glyphs: maps the ionicon names used in the page lists to the custom
   // SVGs in assets/menu-icons. Unmapped names fall back to the ionicon.
@@ -517,7 +516,6 @@ export class MembersPage implements OnInit {
   public appPages: any = [];
   public doctorPages: any = [];
   public childPages: any = [];
-  public pendingApprovalsCount: number = 0;
   public pendingBookingsCount: number = 0;
   public unreadNotificationCount: number = 0;
   public paAssignmentCount: number = 0;
@@ -649,12 +647,6 @@ export class MembersPage implements OnInit {
           // they work under a doctor whose clinic setup is a separate concern.
           if (data !== "PA" && !this.hasClinics && !this.router.url.includes('/doctor/clinic')) {
             this.router.navigate(['/members/doctor/clinic/add']);
-          }
-          try {
-            const pas = await this.paService.getPAsByDoctorId(this.DoctorId).toPromise();
-            this.hasPA = (pas || []).length > 0;
-          } catch (e) {
-            this.hasPA = false;
           }
           const permissions = await this.checkPermissions(this.user.PAId);
           if (permissions) {
@@ -844,9 +836,6 @@ export class MembersPage implements OnInit {
                 icon: "notifications-outline"
               }
             ];
-            if (this.hasPA) {
-              this.loadPendingCount();
-            }
             this.loadPendingBookingsCount();
             this.loadUnreadNotificationCount();
             if (assistantAllowed) {
@@ -973,18 +962,6 @@ export class MembersPage implements OnInit {
         loading.dismiss();
         this.toastService.create(err, "danger");
       }
-    );
-  }
-
-  loadPendingCount() {
-    if (!this.DoctorId) { return; }
-    this.childService.getPendingCount(this.DoctorId).subscribe(
-      (res) => {
-        if (res && res.IsSuccess) {
-          this.pendingApprovalsCount = res.ResponseData || 0;
-        }
-      },
-      (err) => { console.error('Error fetching pending count', err); }
     );
   }
 
