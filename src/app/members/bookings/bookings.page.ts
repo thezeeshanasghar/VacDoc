@@ -1,3 +1,4 @@
+import { ScheduleVisitModel, emptyVisit, visitPayload, rememberArea } from 'src/app/shared/schedule-visit/schedule-visit.component';
 import { diffDays, formatDay, parseDay } from 'src/app/shared/time';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
@@ -46,6 +47,7 @@ export class BookingsPage {
   selectedPAId: number = 0;
   paGuidelines: string = '';
   paTargetDate: string = '';
+  assignVisit: ScheduleVisitModel = emptyVisit();
 
   constructor(
     public loadingController: LoadingController,
@@ -207,6 +209,7 @@ export class BookingsPage {
       ChildId: booking.ChildId,
       Notes: notes,
       TargetDate: this.paTargetDate || null,
+      ...visitPayload(this.assignVisit),
       BookingId: booking.Id,
       BookingDoctorComment: this.doctorComment,
       ScheduleIds: grp.undoneIds,
@@ -220,6 +223,8 @@ export class BookingsPage {
           this.selectedPAId = 0;
           this.paGuidelines = '';
           this.paTargetDate = '';
+          rememberArea(this.assignVisit.area);
+          this.assignVisit = emptyVisit();
           this.toastService.create('PA assigned and booking confirmed. Parent notified.');
         } else {
           this.toastService.create((r && r.Message) ? r.Message : 'PA assignment failed.', 'danger');
@@ -425,6 +430,7 @@ export class BookingsPage {
       this.doctorComment = booking.DoctorComment || '';
       this.selectedPAId = 0;
       this.paGuidelines = '';
+      this.assignVisit = emptyVisit();
       // Auto-fill Target Date from what the parent actually requested — the doctor can
       // still change it before assigning.
       this.paTargetDate = booking.PreferredDate ? String(booking.PreferredDate).slice(0, 10) : '';

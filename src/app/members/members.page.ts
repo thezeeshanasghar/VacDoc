@@ -775,6 +775,11 @@ export class MembersPage implements OnInit {
                 url: "/members/doctor/pa-assignment-tracking",
                 icon: "clipboard-outline"
               });
+              this.appPages.push({
+                title: "Today's Route",
+                url: "/members/doctor/todays-route",
+                icon: "navigate-outline"
+              });
               this.refreshPaAssignmentCount();
             }
 
@@ -859,6 +864,11 @@ export class MembersPage implements OnInit {
                 title: "Personal Assistant",
                 url: "/members/doctor/personal-assistant",
                 icon: "wallet-outline"
+              });
+              this.appPages.push({
+                title: "Today's Route",
+                url: "/members/doctor/todays-route",
+                icon: "navigate-outline"
               });
             }
 

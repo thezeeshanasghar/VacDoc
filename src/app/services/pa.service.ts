@@ -212,6 +212,34 @@ export class PaService extends BaseService {
     return this.http.post(url, {}, this.httpOptions).pipe(catchError(this.handleError));
   }
 
+  // PA Daily Route (spec v3.1)
+  completeVisit(assignmentId: number, callerUserId: number, securityStamp: string): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/visit-complete`;
+    return this.http.patch(url, { CallerUserId: callerUserId, SecurityStamp: securityStamp }, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  getRoute(doctorId: number, date: string, callerUserId?: number, securityStamp?: string, requestingManagerId?: number): Observable<any> {
+    let url = `${this.API_PA}PAAssignment/route/${doctorId}?date=${date}`;
+    if (requestingManagerId) { url += `&requestingManagerId=${requestingManagerId}`; }
+    if (callerUserId) { url += `&callerUserId=${callerUserId}&securityStamp=${encodeURIComponent(securityStamp || '')}`; }
+    return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  editVisit(assignmentId: number, body: any): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/visit`;
+    return this.http.patch(url, body, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  moveVisit(assignmentId: number, body: any): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/visit-order`;
+    return this.http.patch(url, body, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  reopenVisit(assignmentId: number, body: any): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/visit-reopen`;
+    return this.http.patch(url, body, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
   createAssignment(data: any, callerUserId?: number, securityStamp?: string): Observable<any> {
     const url = `${this.API_PA}PAAssignment`;
     const body = { ...data, CallerUserId: callerUserId, SecurityStamp: securityStamp };

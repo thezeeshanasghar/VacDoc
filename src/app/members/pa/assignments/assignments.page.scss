@@ -508,3 +508,14 @@
 }
 
 .cal-hint { font-size: 11px; color: var(--vac-ink-3); margin: 8px 0 0; }
+
+.visit-chip {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(var(--ion-color-primary-rgb, 11, 95, 107), 0.12);
+  color: var(--ion-color-primary, #0b5f6b);
+}

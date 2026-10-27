@@ -1,0 +1,26 @@
+<div class="sv">
+  <button type="button" class="sv-head" (click)="toggle()" [disabled]="forced">
+    <span>{{ open ? '▾' : '＋' }} Schedule visit</span>
+    <span class="sv-opt">{{ forced ? 'home booking' : 'optional' }}</span>
+  </button>
+  <div class="sv-body" *ngIf="open">
+    <div class="sv-warn" *ngIf="!date">Pick the Target Date above. A visit window needs a date.</div>
+    <div class="sv-grid">
+      <label>Window start
+        <input type="time" step="300" [(ngModel)]="model.windowStart">
+      </label>
+      <label>Length
+        <select [(ngModel)]="model.windowMinutes">
+          <option *ngFor="let l of lengths" [ngValue]="l.v">{{ l.t }}</option>
+        </select>
+      </label>
+      <label class="sv-full">Area
+        <input type="text" maxlength="80" [(ngModel)]="model.area" placeholder="e.g. I-8/2">
+        <div class="sv-chips" *ngIf="recentAreas.length">
+          <span class="sv-chip" *ngFor="let a of recentAreas" (click)="pickArea(a)">{{ a }}</span>
+        </div>
+      </label>
+    </div>
+    <div class="sv-hint">The stop number is worked out from the time. A window is not an exact arrival time.</div>
+  </div>
+</div>

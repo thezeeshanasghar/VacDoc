@@ -190,7 +190,9 @@
           </ng-container>
         </span>
       </ng-container>
-      <span class="stage-pill" [ngClass]="'stage-' + stage(a)">
+      <span class="visit-chip" *ngIf="a.IsScheduledVisit">{{ visitChip(a) }}</span>
+      <span class="stage-pill" [ngClass]="stageLabel(a) ? 'stage-new' : 'stage-' + stage(a)" *ngIf="stageLabel(a)">{{ stageLabel(a) }}</span>
+      <span class="stage-pill" [ngClass]="'stage-' + stage(a)" *ngIf="!stageLabel(a)">
         <ng-container [ngSwitch]="stage(a)">
           <span *ngSwitchCase="'new'">New</span>
           <span *ngSwitchCase="'given'">Vaccine Given</span>
@@ -199,6 +201,7 @@
           <span *ngSwitchCase="'completed'">Completed — awaiting doctor</span>
         </ng-container>
       </span>
+      <ion-button size="small" fill="outline" *ngIf="canCompleteVisit(a)" (click)="completeVisit(a)">Mark visit completed</ion-button>
       <br>
       <ion-icon name="person"></ion-icon> {{ a.FatherName }}
       &nbsp;&nbsp;

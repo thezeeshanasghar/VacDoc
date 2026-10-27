@@ -83,6 +83,10 @@ const routes: Routes = [
     loadChildren: () => import('./payment-reconciliation/payment-reconciliation.module').then(m => m.PaymentReconciliationPageModule)
   },
   {
+    path: "todays-route",
+    loadChildren: () => import('./todays-route/todays-route.module').then(m => m.TodaysRoutePageModule)
+  },
+  {
     path: "pa-assignment-tracking",
     loadChildren: () => import('./pa-assignment-tracking/pa-assignment-tracking.module').then(m => m.PaAssignmentTrackingPageModule)
   },

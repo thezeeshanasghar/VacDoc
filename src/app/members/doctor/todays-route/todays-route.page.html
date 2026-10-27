@@ -1,0 +1,81 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/members/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Today's Route</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="load()" fill="clear">
+        <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="route-page">
+    <div class="day-nav">
+      <ion-button fill="clear" size="small" (click)="shiftDay(-1)"><ion-icon name="chevron-back" slot="icon-only"></ion-icon></ion-button>
+      <div class="day-label">{{ dayLabel }}</div>
+      <ion-button fill="clear" size="small" (click)="shiftDay(1)"><ion-icon name="chevron-forward" slot="icon-only"></ion-icon></ion-button>
+      <ion-button fill="outline" size="small" *ngIf="!isToday" (click)="goToday()">Today</ion-button>
+    </div>
+    <div class="day-pick"><app-date-input [value]="date" (valueChange)="onDatePicked($event)"></app-date-input></div>
+
+    <div class="summary" *ngIf="total > 0">
+      {{ doneCount }} of {{ total }} visits completed<span *ngIf="atClinicCount"> · {{ atClinicCount }} at clinic</span>
+      <span class="clock" *ngIf="isToday && pktNow"> · clock {{ pktNow }}</span>
+    </div>
+    <div class="note" *ngIf="total > 0">Status is based on payments recorded in the app, so it can trail the PA. It is not live location.</div>
+
+    <div class="empty" *ngIf="!loading && total === 0">
+      <b>No scheduled visits on {{ dayLabel }}.</b>
+      <div *ngIf="atClinicCount">{{ atClinicCount }} at-clinic assignment(s) on this date are not shown here.</div>
+      <div *ngIf="!atClinicCount">Schedule a visit from the Assign PA dialog on a patient or a home booking.</div>
+    </div>
+
+    <div class="pa-block" *ngFor="let pa of pas">
+      <div class="pa-title">{{ pa.PaName }} <span class="pa-count">{{ pa.stops.length }} stop(s)</span></div>
+
+      <div class="stop" *ngFor="let s of pa.stops" [ngClass]="'st-' + s.State">
+        <div class="stop-top">
+          <span class="num">#{{ s.StopNumber }}</span>
+          <span class="win">{{ windowText(s) }}</span>
+          <span class="area" *ngIf="s.Area">{{ s.Area }}</span>
+          <span class="state">{{ stateLabel(s) }}</span>
+        </div>
+        <div class="child">{{ s.ChildName }}</div>
+        <div class="flags">
+          <span class="flag" *ngIf="s.NeedsTime">needs a new time</span>
+          <span class="flag" *ngIf="papersNote(s)">{{ papersNote(s) }}</span>
+          <span class="flag" *ngIf="s.State === 'paidPending'">payment was recorded before the PA's visit</span>
+        </div>
+        <div class="actions" *ngIf="!isManager">
+          <ion-button size="small" fill="clear" [disabled]="!canMoveUp(s, pa)" (click)="move(s, 'up')"><ion-icon name="arrow-up" slot="icon-only"></ion-icon></ion-button>
+          <ion-button size="small" fill="clear" [disabled]="!canMoveDown(s, pa)" (click)="move(s, 'down')"><ion-icon name="arrow-down" slot="icon-only"></ion-icon></ion-button>
+          <ion-button size="small" fill="outline" (click)="openEdit(s)">Edit time / date</ion-button>
+          <ion-button size="small" fill="outline" *ngIf="s.NoCharge && s.State !== 'completed'" (click)="completeFor(s)">Mark completed</ion-button>
+          <ion-button size="small" fill="outline" *ngIf="s.ExplicitCompletion" (click)="reopen(s)">Reopen</ion-button>
+          <ion-button size="small" fill="outline" (click)="share(s)">Share update</ion-button>
+          <ion-button size="small" fill="outline" color="danger" *ngIf="s.State === 'completed' && !s.ExplicitCompletion" (click)="reverse(s)">Reverse visit</ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet-back" *ngIf="editing" (click)="closeEdit()"></div>
+  <div class="sheet" *ngIf="editing">
+    <h3>Edit visit · {{ editing.stop.ChildName }}</h3>
+    <label>Date <app-date-input [(ngModel)]="editing.date"></app-date-input></label>
+    <label>Window start <input type="time" step="300" [(ngModel)]="editing.windowStart"></label>
+    <div class="sheet-hint">Clear the time to make this stop "Time TBD". TBD stops sort last.</div>
+    <label>Length
+      <select [(ngModel)]="editing.windowMinutes"><option *ngFor="let l of lengths" [ngValue]="l">{{ l }} min</option></select>
+    </label>
+    <label>Area <input type="text" maxlength="80" [(ngModel)]="editing.area"></label>
+    <div class="sheet-btns">
+      <ion-button fill="clear" (click)="closeEdit()">Cancel</ion-button>
+      <ion-button [disabled]="editing.busy" (click)="saveEdit()">Save</ion-button>
+    </div>
+  </div>
+</ion-content>

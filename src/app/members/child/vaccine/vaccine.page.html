@@ -405,6 +405,7 @@
   <div class="target-date-block" *ngIf="pendingAssignPA">
     <div class="target-date-label">Target Date <span class="pa-guidelines-opt">(optional)</span></div>
     <app-date-input [(ngModel)]="paTargetDate"></app-date-input>
+    <app-schedule-visit [model]="assignVisit" [date]="paTargetDate"></app-schedule-visit>
   </div>
   <div class="pa-guidelines" *ngIf="pendingAssignPA">
     <div class="pa-guidelines-label">Guidelines for PA <span class="pa-guidelines-opt">(optional)</span></div>

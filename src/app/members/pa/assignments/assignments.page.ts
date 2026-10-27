@@ -205,6 +205,9 @@ export class AssignmentsPage {
       const rankB = this.isPastDueStage(b) ? 0 : rank[this.urgency(b)];
       const rankDiff = rankA - rankB;
       if (rankDiff !== 0) { return rankDiff; }
+      // Scheduled visits of the same day follow the route order.
+      if (a.IsScheduledVisit && b.IsScheduledVisit && a.StopNumber && b.StopNumber
+          && this.dayKeyOf(a.TargetDate) === this.dayKeyOf(b.TargetDate)) { return a.StopNumber - b.StopNumber; }
       const tb = parseInstant(b.AssignedAt); const ta = parseInstant(a.AssignedAt);
       return (tb ? tb.getTime() : 0) - (ta ? ta.getTime() : 0);
     });
@@ -275,8 +278,62 @@ export class AssignmentsPage {
   // ones wait in Others.
   private isTodayBucket(a: any): boolean {
     const t = this.todayKey();
+    // Scheduled visits are bucketed by their visit date only: assigning one days ahead must not
+    // put it in Today (AssignedAt would). Unpaid cash with the PA still stays visible in Today.
+    if (a.IsScheduledVisit) {
+      if (!a.TargetDate || this.dayKeyOf(a.TargetDate) === t) { return true; }
+      return this.urgency(a) === 'overdue' || this.isPastDueStage(a);
+    }
     if (this.dayKeyOf(a.AssignedAt) === t || this.dayKeyOf(a.TargetDate) === t) { return true; }
     return this.urgency(a) === 'overdue';
+  }
+
+  // "#3 · 11:00 to 12:00 · G-11/3" for a scheduled visit; empty for at-clinic work.
+  visitChip(a: any): string {
+    if (!a.IsScheduledVisit) { return ''; }
+    const parts: string[] = [];
+    if (a.StopNumber) { parts.push('#' + a.StopNumber); }
+    if (a.WindowStart) { parts.push(a.WindowStart + ' to ' + this.windowEnd(a)); } else { parts.push('Time TBD'); }
+    if (a.Area) { parts.push(a.Area); }
+    return parts.join(' · ');
+  }
+
+  private windowEnd(a: any): string {
+    const p = String(a.WindowStart).split(':');
+    const mins = Number(p[0]) * 60 + Number(p[1]) + Number(a.WindowMinutes || 60);
+    const h = Math.floor(mins / 60), m = mins % 60;
+    return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+  }
+
+  // A scheduled visit's doses are usually given at the clinic before the PA leaves, so the dose-based
+  // "Vaccine Given" chip would read as finished work. Show the visit status instead (until payment stages).
+  stageLabel(a: any): string {
+    const st = this.stage(a);
+    if (a.IsScheduledVisit && (st === 'new' || st === 'given')) {
+      return a.VisitCompletedAt ? 'Visit completed' : 'Visit scheduled';
+    }
+    return '';
+  }
+
+  // Explicit completion applies only to a scheduled visit with nothing to charge (no dose amount > 0)
+  // and at least one dose given; the server re-checks all of it.
+  canCompleteVisit(a: any): boolean {
+    if (!a.IsScheduledVisit || a.VisitCompletedAt || a.IsCompleted || a.RefusalPending) { return false; }
+    const sch = Array.isArray(a.Schedules) ? a.Schedules : [];
+    if (sch.length === 0 || !sch.some((s: any) => s.IsDone)) { return false; }
+    if (a.TargetDate && this.dayKeyOf(a.TargetDate) > this.todayKey()) { return false; }
+    return !sch.some((s: any) => s.Amount > 0);
+  }
+
+  completeVisit(a: any) {
+    this.paService.completeVisit(a.AssignmentId, this.callerUserId, this.securityStamp).subscribe(
+      (res: any) => {
+        const ok = res && res.IsSuccess;
+        this.toastService.create(ok ? 'Visit marked completed' : ((res && res.Message) || 'Could not complete the visit'), ok ? undefined : 'danger');
+        if (ok) { a.VisitCompletedAt = new Date().toISOString(); }
+      },
+      () => { this.toastService.create('Could not complete the visit', 'danger'); }
+    );
   }
 
   private isTodayExtra(x: any, dateField: string): boolean {

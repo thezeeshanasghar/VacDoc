@@ -1,3 +1,4 @@
+import { ScheduleVisitModel, emptyVisit, visitPayload, rememberArea } from 'src/app/shared/schedule-visit/schedule-visit.component';
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from "@angular/core";
 import { LoadingController, IonContent, PopoverController, ActionSheetController } from "@ionic/angular";
 import { VaccineService } from "src/app/services/vaccine.service";
@@ -74,6 +75,7 @@ export class VaccinePage {
   reassignPopupOpen: boolean = false;
   paGuidelines: string = '';
   paTargetDate: string = '';
+  assignVisit: ScheduleVisitModel = emptyVisit();
   pendingAssignPA: any = null;
   pendingAssignScheduleIds: number[] = [];
   pendingAssignGroupIds: number[] = [];
@@ -2063,8 +2065,11 @@ removal(type: string){
       Notes: this.paGuidelines || '',
       ScheduleIds: this.pendingAssignScheduleIds || [],
       GroupScheduleIds: this.pendingAssignGroupIds || [],
-      TargetDate: this.paTargetDate || null
+      TargetDate: this.paTargetDate || null,
+      ...visitPayload(this.assignVisit)
     };
+    rememberArea(this.assignVisit.area);
+    this.assignVisit = emptyVisit();
     if (this.usertype === 'MANAGER' && this.managerId) {
       payload.RequestingManagerId = this.managerId;
     }
