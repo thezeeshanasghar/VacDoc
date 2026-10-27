@@ -16,6 +16,7 @@
       <div class="trailbar" *ngIf="assistants.length">
         <label><input type="checkbox" [(ngModel)]="showAll" (change)="onShowAllChange()"> Show all trails</label>
         <a class="kmlink" routerLink="/members/doctor/assistant-km">KM report</a>
+        <a class="kmlink" routerLink="/members/doctor/todays-route">Today's Route</a>
         <label class="day">Day <input type="date" [(ngModel)]="date" [max]="maxDate" (change)="onDateChange()"></label>
         <div class="mute" *ngIf="kmError">KM figures unavailable right now.</div>
       </div>
