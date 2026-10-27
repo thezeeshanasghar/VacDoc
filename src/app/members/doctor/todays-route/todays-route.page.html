@@ -14,53 +14,76 @@
 
 <ion-content>
   <div class="route-page">
-    <div class="day-nav">
-      <ion-button fill="clear" size="small" (click)="shiftDay(-1)"><ion-icon name="chevron-back" slot="icon-only"></ion-icon></ion-button>
-      <div class="day-label">{{ dayLabel }}</div>
-      <ion-button fill="clear" size="small" (click)="shiftDay(1)"><ion-icon name="chevron-forward" slot="icon-only"></ion-icon></ion-button>
-      <ion-button fill="outline" size="small" *ngIf="!isToday" (click)="goToday()">Today</ion-button>
-    </div>
-    <div class="day-pick"><app-date-input [value]="date" (valueChange)="onDatePicked($event)"></app-date-input></div>
+    <section class="panel">
+      <div class="datenav">
+        <button class="b" (click)="shiftDay(-1)" aria-label="Previous day">&lsaquo;</button>
+        <button class="b" (click)="goToday()">Today</button>
+        <button class="b" (click)="shiftDay(1)" aria-label="Next day">&rsaquo;</button>
+        <label class="jump">Jump to <app-date-input [value]="date" (valueChange)="onDatePicked($event)"></app-date-input></label>
+      </div>
+      <div class="days">
+        <button class="day" *ngFor="let d of dayStrip" [class.on]="d.date === date" (click)="pickDay(d.date)">
+          <span>{{ d.label }}</span><b>{{ d.count ? d.count + (d.count > 1 ? ' visits' : ' visit') : 'free' }}</b>
+        </button>
+      </div>
 
-    <div class="summary" *ngIf="total > 0">
-      {{ doneCount }} of {{ total }} visits completed<span *ngIf="atClinicCount"> · {{ atClinicCount }} at clinic</span>
-      <span class="clock" *ngIf="isToday && pktNow"> · clock {{ pktNow }}</span>
-    </div>
-    <div class="note" *ngIf="total > 0">Status is based on payments recorded in the app, so it can trail the PA. It is not live location.</div>
+      <h2 class="head">{{ dayHead }}: time windows to cover</h2>
+      <div class="sub">{{ doneCount }} of {{ total }} scheduled visits done<span *ngIf="lateCount"> &middot; <b class="late-txt">{{ lateCount }} late</b></span>.<span *ngIf="isToday"> Red line is the current time (server clock, PKT).</span></div>
+      <div class="sub" *ngIf="total > 0">Status is based on payments recorded in the app, so it can trail the PA. It is not live location.</div>
 
-    <div class="empty" *ngIf="!loading && total === 0">
-      <b>No scheduled visits on {{ dayLabel }}.</b>
-      <div *ngIf="atClinicCount">{{ atClinicCount }} at-clinic assignment(s) on this date are not shown here.</div>
-      <div *ngIf="!atClinicCount">Schedule a visit from the Assign PA dialog on a patient or a home booking.</div>
-    </div>
+      <div class="empty" *ngIf="!loading && total === 0">
+        <b>No scheduled visits on {{ dayLabel }}.</b>
+        <div *ngIf="atClinicCount">{{ atClinicCount }} at-clinic assignment(s) on this date are not shown here.</div>
+        <div *ngIf="!atClinicCount">Schedule a visit from the Assign PA dialog on a patient or a home booking.</div>
+      </div>
 
-    <div class="pa-block" *ngFor="let pa of pas">
-      <div class="pa-title">{{ pa.PaName }} <span class="pa-count">{{ pa.stops.length }} stop(s)</span></div>
-
-      <div class="stop" *ngFor="let s of pa.stops" [ngClass]="'st-' + s.State">
-        <div class="stop-top">
-          <span class="num">#{{ s.StopNumber }}</span>
-          <span class="win">{{ windowText(s) }}</span>
-          <span class="area" *ngIf="s.Area">{{ s.Area }}</span>
-          <span class="state">{{ stateLabel(s) }}</span>
-        </div>
-        <div class="child">{{ s.ChildName }}</div>
-        <div class="flags">
-          <span class="flag" *ngIf="s.NeedsTime">needs a new time</span>
-          <span class="flag" *ngIf="papersNote(s)">{{ papersNote(s) }}</span>
-          <span class="flag" *ngIf="s.State === 'paidPending'">payment was recorded before the PA's visit</span>
-        </div>
-        <div class="actions" *ngIf="!isManager">
-          <ion-button size="small" fill="clear" [disabled]="!canMoveUp(s, pa)" (click)="move(s, 'up')"><ion-icon name="arrow-up" slot="icon-only"></ion-icon></ion-button>
-          <ion-button size="small" fill="clear" [disabled]="!canMoveDown(s, pa)" (click)="move(s, 'down')"><ion-icon name="arrow-down" slot="icon-only"></ion-icon></ion-button>
-          <ion-button size="small" fill="outline" (click)="openEdit(s)">Edit time / date</ion-button>
-          <ion-button size="small" fill="outline" *ngIf="s.NoCharge && s.State !== 'completed'" (click)="completeFor(s)">Mark completed</ion-button>
-          <ion-button size="small" fill="outline" *ngIf="s.ExplicitCompletion" (click)="reopen(s)">Reopen</ion-button>
-          <ion-button size="small" fill="outline" (click)="share(s)">Share update</ion-button>
-          <ion-button size="small" fill="outline" color="danger" *ngIf="s.State === 'completed' && !s.ExplicitCompletion" (click)="reverse(s)">Reverse visit</ion-button>
+      <div class="tlwrap" *ngIf="total > 0">
+        <div class="tl">
+          <div class="tlhead"><span *ngFor="let x of hours" [style.left.%]="pct(x * 60)">{{ x < 10 ? '0' + x : x }}</span></div>
+          <div class="tlrow" *ngFor="let row of timeline">
+            <div class="tlname">{{ firstName(row.pa.PaName) }}<small>{{ row.done }} of {{ row.pa.stops.length }} done<span *ngIf="row.tbd"> &middot; {{ row.tbd }} TBD</span></small></div>
+            <div class="tllane" [style.height.px]="row.lanes * 36 + 10">
+              <div class="gridline" *ngFor="let x of hours" [style.left.%]="pct(x * 60)"></div>
+              <div class="blk" *ngFor="let it of row.items" [ngClass]="'st-' + it.s.State" [style.left.%]="it.left" [style.width.%]="it.width" [style.top.px]="5 + it.lane * 36" [title]="it.s.ChildName + ' · ' + windowText(it.s)">#{{ it.s.StopNumber }} {{ firstName(it.s.ChildName) }}</div>
+            </div>
+          </div>
+          <div class="nowwrap" *ngIf="isToday && nowMin !== null"><div class="nowline" [style.left.%]="pct(nowMin)"><b>{{ pktNow }}</b></div></div>
         </div>
       </div>
-    </div>
+    </section>
+
+    <section class="pa" *ngFor="let pa of pas">
+      <div class="pahead">
+        <b>{{ pa.PaName }}</b>
+        <div class="prog"><div class="bar"><i [style.width.%]="pa.stops.length ? paDone(pa) / pa.stops.length * 100 : 0"></i></div>{{ paDone(pa) }} of {{ pa.stops.length }} done</div>
+      </div>
+
+      <div class="stop" *ngFor="let s of pa.stops" [ngClass]="'st-' + s.State">
+        <div class="num">{{ s.StopNumber }}</div>
+        <div class="win">{{ windowText(s) }}<small>{{ subline(s) }}</small></div>
+        <div class="who">
+          <b>{{ s.ChildName }} <span class="pill">{{ stateLabel(s) }}</span></b>
+          <span>{{ whoLine(s) }}</span>
+          <div class="flags">
+            <span class="flag" *ngIf="s.NeedsTime">needs a new time</span>
+            <span class="flag" *ngIf="papersNote(s)">{{ papersNote(s) }}</span>
+            <span class="flag" *ngIf="s.State === 'paidPending'">payment was recorded before the PA's visit</span>
+          </div>
+        </div>
+        <div class="acts" *ngIf="!isManager">
+          <div class="mv">
+            <button class="b" [disabled]="!canMoveUp(s, pa)" (click)="move(s, 'up')" aria-label="Move up">&#9650;</button>
+            <button class="b" [disabled]="!canMoveDown(s, pa)" (click)="move(s, 'down')" aria-label="Move down">&#9660;</button>
+          </div>
+          <button class="b" [disabled]="s.State === 'completed'" (click)="openEdit(s)">Edit time</button>
+          <button class="b" *ngIf="s.NoCharge && s.State !== 'completed'" (click)="completeFor(s)">Mark completed</button>
+          <button class="b" *ngIf="s.ExplicitCompletion" (click)="reopen(s)">Reopen</button>
+          <button class="b" (click)="share(s)">Share update</button>
+          <button class="b danger" *ngIf="s.State === 'completed' && !s.ExplicitCompletion" (click)="reverse(s)">Reverse visit</button>
+        </div>
+      </div>
+      <div class="clinic" *ngIf="isToday">{{ atClinicCount }} at clinic today, not shown as stops</div>
+    </section>
   </div>
 
   <div class="sheet-back" *ngIf="editing" (click)="closeEdit()"></div>

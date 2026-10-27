@@ -23,6 +23,9 @@ export class TodaysRoutePage {
   date = todayDay();
   loading = false;
   pktNow = '';
+  pktToday = '';
+  dayCounts: { [d: string]: number } = {};
+  hours = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
   atClinicCount = 0;
   stops: any[] = [];
 
@@ -58,6 +61,8 @@ export class TodaysRoutePage {
         if (res && res.IsSuccess) {
           this.stops = res.ResponseData.Stops || [];
           this.pktNow = res.ResponseData.PktNow;
+          this.pktToday = res.ResponseData.PktToday || '';
+          this.dayCounts = res.ResponseData.DayCounts || {};
           this.atClinicCount = res.ResponseData.AtClinicCount || 0;
         } else {
           this.toastService.create((res && res.Message) || 'Could not load the route', 'danger');
@@ -73,6 +78,46 @@ export class TodaysRoutePage {
   shiftDay(n: number) { this.date = addDays(this.date, n); this.load(); }
   goToday() { this.date = todayDay(); this.load(); }
   onDatePicked(d: string) { if (d) { this.date = d; this.load(); } }
+  pickDay(d: string) { this.date = d; this.load(); }
+
+  // ---- day strip (today + 21 days, counts from the server)
+  get dayStrip(): any[] {
+    const base = this.pktToday || todayDay();
+    const out: any[] = [];
+    for (let i = 0; i <= 21; i++) {
+      const d = addDays(base, i);
+      out.push({ date: d, label: i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : formatDay(d, 'EEE d MMM'), count: this.dayCounts[d] || 0 });
+    }
+    return out;
+  }
+  get dayHead(): string { return this.isToday ? 'Today' : formatDay(this.date, 'EEE d MMM'); }
+  get lateCount(): number { return this.stops.filter(s => s.State === 'late').length; }
+  paDone(pa: any): number { return pa.stops.filter((s: any) => s.State === 'completed').length; }
+  firstName(n: string): string { return (n || '').split(' ')[0]; }
+
+  // ---- timeline (07:00 to 19:00, same scale as the approved mock)
+  private readonly T0 = 420;
+  private readonly T1 = 1140;
+  pct(m: number): number { return Math.max(0, Math.min(100, (m - this.T0) / (this.T1 - this.T0) * 100)); }
+  private mins(hm: string): number { const p = String(hm).split(':'); return Number(p[0]) * 60 + Number(p[1]); }
+  get nowMin(): number | null { return this.pktNow ? this.mins(this.pktNow) : null; }
+  get timeline(): any[] {
+    return this.pas.map(pa => {
+      const ends: number[] = [];
+      const items: any[] = [];
+      let tbd = 0;
+      pa.stops.forEach((s: any) => {
+        if (!s.WindowStart) { tbd++; return; }
+        const st = this.mins(s.WindowStart);
+        const en = st + (s.WindowMinutes || 60);
+        let lane = 0;
+        while (ends[lane] !== undefined && ends[lane] > st) { lane++; }
+        ends[lane] = en;
+        items.push({ s: s, lane: lane, left: this.pct(st), width: this.pct(en) - this.pct(st) });
+      });
+      return { pa: pa, items: items, tbd: tbd, lanes: Math.max(1, ends.length), done: this.paDone(pa) };
+    });
+  }
 
   // ---- grouping and totals (cash-confirmed stops leave the list but still count)
   get listed(): any[] { return this.stops.filter(s => !s.CashConfirmed); }
@@ -90,24 +135,38 @@ export class TodaysRoutePage {
   // ---- display
   stateLabel(s: any): string {
     switch (s.State) {
-      case 'completed': return 'Completed' + (s.CompletedAt ? ' ' + this.hm(s.CompletedAt) : '');
+      case 'completed': return 'Completed';
       case 'paidPending': return 'Paid, visit pending';
       case 'refusalRequested': return 'Refusal requested';
-      case 'late': return 'No payment recorded yet';
+      case 'late': return 'Late';
       case 'in': return 'In window';
       case 'next': return 'Next';
-      default: return 'Queued';
+      default: return s.WindowStart ? 'Queued' : 'Time TBD';
     }
   }
   private hm(iso: string): string { return iso ? String(iso).slice(11, 16) : ''; }
+  whoLine(s: any): string {
+    const v = (s.Doses || []).map((d: any) => d.Name + (d.Given ? ' ✓' : '')).join(', ');
+    return (s.Area ? s.Area + ' · ' : '') + v;
+  }
+  subline(s: any): string {
+    if (s.State === 'completed') { return s.CompletedAt ? 'completed ' + this.hm(s.CompletedAt) : 'completed'; }
+    if (s.State === 'refusalRequested') { return 'refusal requested'; }
+    if (!this.isToday || !s.WindowStart || this.nowMin === null) { return s.WindowStart ? '' : 'time to be confirmed'; }
+    const st = this.mins(s.WindowStart);
+    const en = st + (s.WindowMinutes || 60);
+    if (s.State === 'late') { return 'ended ' + (this.nowMin - en) + ' min ago'; }
+    if (this.nowMin >= st && this.nowMin < en) { return 'ends in ' + (en - this.nowMin) + ' min'; }
+    return st > this.nowMin ? 'starts in ' + (st - this.nowMin) + ' min' : '';
+  }
   windowText(s: any): string { return s.WindowStart ? s.WindowStart + ' to ' + s.WindowEnd : 'Time TBD'; }
   papersNote(s: any): string {
     if (!s.PapersDate) { return ''; }
     const given = String(s.PapersDate).slice(0, 10);
     return given !== this.date ? 'Papers dated ' + formatDay(given, 'dd MMM') : '';
   }
-  canMoveUp(s: any, pa: any): boolean { return pa.stops.indexOf(s) > 0; }
-  canMoveDown(s: any, pa: any): boolean { return pa.stops.indexOf(s) < pa.stops.length - 1; }
+  canMoveUp(s: any, pa: any): boolean { return s.State !== 'completed' && pa.stops.indexOf(s) > 0; }
+  canMoveDown(s: any, pa: any): boolean { return s.State !== 'completed' && pa.stops.indexOf(s) < pa.stops.length - 1; }
 
   // ---- doctor actions
   private body(extra?: any): any {
