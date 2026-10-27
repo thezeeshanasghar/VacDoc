@@ -1680,7 +1680,8 @@ removal(type: string){
       return;
     }
     this.paGuidelines = '';
-    this.paTargetDate = '';
+    this.paTargetDate = today();
+    this.assignVisit = emptyVisit();
     this.pendingAssignPA = null;
     // Undone schedule IDs in this date-group only — pinned to the new assignment
     // via PAAssignmentSchedule at creation time, no later re-inference.

@@ -1,5 +1,5 @@
 import { ScheduleVisitModel, emptyVisit, visitPayload, rememberArea } from 'src/app/shared/schedule-visit/schedule-visit.component';
-import { diffDays, formatDay, parseDay } from 'src/app/shared/time';
+import { diffDays, formatDay, parseDay, today } from 'src/app/shared/time';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoadingController, AlertController, Platform } from '@ionic/angular';
@@ -433,7 +433,7 @@ export class BookingsPage {
       this.assignVisit = emptyVisit();
       // Auto-fill Target Date from what the parent actually requested — the doctor can
       // still change it before assigning.
-      this.paTargetDate = booking.PreferredDate ? String(booking.PreferredDate).slice(0, 10) : '';
+      this.paTargetDate = booking.PreferredDate ? String(booking.PreferredDate).slice(0, 10) : today();
       if (booking.Type === 'HomeBooked' && booking.ChildId) { this.loadBookedGroup(booking); }
     }
   }
