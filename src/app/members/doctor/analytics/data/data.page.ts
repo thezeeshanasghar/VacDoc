@@ -112,17 +112,27 @@ export class DataPage implements OnInit {
   }
 
   // Comparison helpers
+  // Percent change vs the comparison period. null = no meaningful base (previous is 0/missing),
+  // so the UI shows "n/a" instead of a made-up percentage. Divides by |prev| so a shrinking loss
+  // reads as an improvement.
   delta(cur: number, prev: number): number {
-    if (!prev || prev === 0) return cur > 0 ? 100 : 0;
-    return Math.round(((cur - prev) / prev) * 100);
+    if (!prev) return null;
+    return ((cur || 0) - prev) / Math.abs(prev) * 100;
   }
-  deltaClass(cur: number, prev: number): string {
+  // invert = true for metrics where lower is better (expense): arrow keeps the real direction,
+  // only the colour flips.
+  deltaClass(cur: number, prev: number, invert?: boolean): string {
     const d = this.delta(cur, prev);
-    return d > 0 ? 'up' : d < 0 ? 'down' : 'flat';
+    if (d === null || Math.round(d) === 0) return 'flat';
+    const good = invert ? d < 0 : d > 0;
+    return good ? 'up' : 'down';
   }
   deltaLabel(cur: number, prev: number): string {
     const d = this.delta(cur, prev);
-    return (d > 0 ? '▲ ' : d < 0 ? '▼ ' : '') + Math.abs(d) + '%';
+    if (d === null) return 'n/a';
+    const r = Math.round(d);
+    if (r === 0) return Math.abs(d) < 0.05 ? '0%' : d.toFixed(1) + '%';
+    return (r > 0 ? '▲ ' : '▼ ') + Math.abs(r) + '%';
   }
 
   // Sort vaccine table
@@ -160,8 +170,10 @@ export class DataPage implements OnInit {
 
   fmtMoney(n: number): string {
     if (!n) return '0';
-    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
-    if (n >= 1000)    return (n / 1000).toFixed(1) + 'K';
-    return Math.round(n).toString();
+    const sign = n < 0 ? '-' : '';
+    const a = Math.abs(n);
+    if (a >= 1000000) return sign + (a / 1000000).toFixed(1) + 'M';
+    if (a >= 1000)    return sign + (a / 1000).toFixed(1) + 'K';
+    return sign + Math.round(a).toString();
   }
 }

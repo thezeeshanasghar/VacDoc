@@ -134,8 +134,8 @@
             <div class="kpi-label">Total Expense</div>
             <div class="kpi-val">{{ fmtMoney(current?.Expense) }}</div>
             <div class="kpi-prev">prev: {{ fmtMoney(previous?.Expense) }}</div>
-            <div class="kpi-delta" [ngClass]="deltaClass(previous?.Expense, current?.Expense)">
-              {{ deltaLabel(previous?.Expense, current?.Expense) }}
+            <div class="kpi-delta" [ngClass]="deltaClass(current?.Expense, previous?.Expense, true)">
+              {{ deltaLabel(current?.Expense, previous?.Expense) }}
             </div>
           </div>
         </ion-col>
@@ -300,7 +300,7 @@
                 <td class="num">{{ monthlyPrev[i] ? fmtMoney(trendVal(monthlyPrev[i])) : '—' }}</td>
                 <td class="num">
                   <span *ngIf="monthlyPrev[i]"
-                    [ngClass]="deltaClass(trendVal(m), trendVal(monthlyPrev[i]))">
+                    [ngClass]="deltaClass(trendVal(m), trendVal(monthlyPrev[i]), trendMetric === 'expense')">
                     {{ deltaLabel(trendVal(m), trendVal(monthlyPrev[i])) }}
                   </span>
                 </td>
