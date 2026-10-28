@@ -1,15 +1,6 @@
 // ── Filter card ────────────────────────────────────────────────
 .filter-card { margin-bottom: 12px; }
 
-.preset-row {
-  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;
-  .preset-btn {
-    padding: 4px 10px; border-radius: 14px; border: 1px solid var(--vac-blue);
-    background: #fff; color: var(--vac-blue); font-size: 12px; cursor: pointer;
-    &:active { background: var(--vac-blue-tint); }
-  }
-}
-
 .filter-item {
   --padding-start: 0; --inner-padding-end: 0;
   border: 1px solid var(--vac-border); border-radius: 8px; margin-bottom: 6px;

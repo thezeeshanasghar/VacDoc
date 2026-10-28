@@ -4,7 +4,7 @@ import { Storage } from '@ionic/storage';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { ClinicService } from 'src/app/services/clinic.service';
 import { environment } from 'src/environments/environment';
-import { today, monthStart, addDays, addMonths, addYears, parseDay } from 'src/app/shared/time';
+import { today, monthStart, addYears, parseDay } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-data',
@@ -156,33 +156,6 @@ export class DataPage implements OnInit {
     const vals: number[] = [];
     this.byClinic.forEach(c => { vals.push(c.Revenue); vals.push(c.Expense); });
     return Math.max(...vals, 1);
-  }
-
-  // Quick date presets
-  setPreset(p: string) {
-    const now = today();
-    const y = +now.substring(0, 4);
-    switch (p) {
-      case 'thismonth':
-        this.fromDate = monthStart(now);
-        this.toDate   = now;
-        break;
-      case 'lastmonth': {
-        this.fromDate = addMonths(monthStart(now), -1);
-        this.toDate   = addDays(monthStart(now), -1);
-        break;
-      }
-      case 'thisyear':
-        this.fromDate = y + '-01-01';
-        this.toDate   = now;
-        break;
-      case 'lastyear':
-        this.fromDate = (y - 1) + '-01-01';
-        this.toDate   = (y - 1) + '-12-31';
-        break;
-    }
-    this.customCompare = false;
-    this.load();
   }
 
   fmtMoney(n: number): string {
