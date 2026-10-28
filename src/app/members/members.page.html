@@ -72,6 +72,9 @@
             <ion-badge *ngIf="p.title === 'Bookings' && pendingBookingsCount > 0" color="warning" slot="end">
               {{pendingBookingsCount}}
             </ion-badge>
+            <ion-badge *ngIf="p.title === 'Referrals' && pendingReferralCount > 0" color="danger" slot="end">
+              {{pendingReferralCount}}
+            </ion-badge>
             <ion-badge *ngIf="p.title === 'Notifications' && unreadNotificationCount > 0" color="primary" slot="end">
               {{unreadNotificationCount}}
             </ion-badge>

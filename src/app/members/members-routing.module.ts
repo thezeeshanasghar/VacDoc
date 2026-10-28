@@ -33,6 +33,10 @@ const routes: Routes = [
         loadChildren: () => import('./bookings/bookings.module').then(m => m.BookingsPageModule)
       },
       {
+        path: 'referrals',
+        loadChildren: () => import('./referrals/referrals.module').then(m => m.ReferralsPageModule)
+      },
+      {
         path: 'notifications',
         loadChildren: () => import('./notifications/notifications.module').then(m => m.NotificationsPageModule)
       },

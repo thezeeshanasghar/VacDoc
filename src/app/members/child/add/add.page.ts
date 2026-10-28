@@ -11,7 +11,7 @@ import { ScheduleTypePopoverComponent } from "./schedule-type-popover/schedule-t
 import { VaccineService } from "src/app/services/vaccine.service";
 import { ToastService } from "src/app/shared/toast1.service";
 import { ChildService } from "src/app/services/child.service";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { Storage } from "@ionic/storage";
 import { environment } from "src/environments/environment";
 import { ClinicService } from "src/app/services/clinic.service";
@@ -27,7 +27,9 @@ import { AgentService } from "src/app/services/agent.service";
 import { PaService } from "src/app/services/pa.service";
 import { ManagerService } from "src/app/services/manager.service";
 import { DoseService } from "src/app/services/dose.service";
-import { today, dayOf, diffDays, toLegacyDay, dayFromPicker } from 'src/app/shared/time';
+import { ReferralService } from "src/app/services/referral.service";
+import { debounceTime } from "rxjs/operators";
+import { today, dayOf, diffDays, toLegacyDay, dayFromPicker, pickerDate } from 'src/app/shared/time';
 import { phoneValidator, normalizePhone } from 'src/app/shared/phone-rules';
 
 @Component({
@@ -78,6 +80,15 @@ export class AddPage implements OnInit {
   customQuick: any[] = [];
   customPicked: any = {};
   customMode: string = "quick";
+
+  // Agent referral (two-step agent registration). `referral` is the open referral this
+  // registration will close once the patient is saved: set when staff arrive from the Referrals
+  // page (?referralId=) or accept a phone + DOB match. `referralMatch` is an open referral found
+  // for what is being typed, offered but not yet linked.
+  referral: any = null;
+  referralMatch: any = null;
+  matchDismissed = false;
+  private lastMatchKey = "";
   canUseCustomQuick = false;
 
   constructor(
@@ -101,7 +112,9 @@ export class AddPage implements OnInit {
     private managerService: ManagerService,
     private cd: ChangeDetectorRef,
     private popoverController: PopoverController,
-    private doseService: DoseService
+    private doseService: DoseService,
+    private route: ActivatedRoute,
+    private referralService: ReferralService
   ) {}
 
   async ngOnInit() {
@@ -347,8 +360,9 @@ filterCountryCodes(value: string) {
     this.storage.get(environment.ON_CLINIC).then((val) => {
       this.clinic = val;
     });
+    this.initReferral();
     this.storage.get(environment.CITY).then((val) => {
-       if (val != null && val !== "") {
+       if (val != null && val !== "" && !this.referral) {
         this.fg1.controls["city"].setValue(val);
         console.log("Loaded previous city from storage:", val);
       }
@@ -362,6 +376,116 @@ filterCountryCodes(value: string) {
       messages == null ? "" : (this.Messages = messages);
     });
     this.cities = this.cities;
+  }
+
+  // Resets referral state for this visit, loads ?referralId= if present, and watches phone + DOB
+  // for a matching open referral so a walk-in does not cost the agent the referral.
+  private initReferral() {
+    this.referral = null;
+    this.referralMatch = null;
+    this.matchDismissed = false;
+    this.lastMatchKey = "";
+
+    const id = Number(this.route.snapshot.queryParamMap.get("referralId"));
+    if (id > 0) {
+      this.referralService.getReferral(id).subscribe(
+        (res: any) => {
+          const r = res && res.ResponseData;
+          if (res && res.IsSuccess && r && r.Status === "New") {
+            this.applyReferral(r);
+          } else {
+            this.toastService.create((res && res.Message) || "This referral is no longer open.", "danger");
+          }
+        },
+        () => this.toastService.create("Could not load the referral.", "danger")
+      );
+    }
+
+    ["MobileNumber", "DOB", "CountryCode"].forEach((name) => {
+      this.fg1.get(name).valueChanges.pipe(debounceTime(400)).subscribe(() => this.checkReferralMatch());
+    });
+  }
+
+  private applyReferral(r: any) {
+    this.referral = r;
+    this.referralMatch = null;
+    this.fg1.patchValue({
+      Name: r.Name,
+      FatherName: r.FatherName,
+      Gender: r.Gender,
+      DOB: pickerDate(r.DOB),
+      CountryCode: r.CountryCode,
+      MobileNumber: r.MobileNumber,
+      Email: r.Email || "",
+      city: r.City || "",
+      AgentId: r.AgentId,
+    });
+    this.onCityChange();
+    // A PA/Manager can register into any of their clinics: start on the one the referral is for.
+    const clinicMatch = (this.clinics || []).find((c: any) => (c.Id || c.id) === r.ClinicId);
+    if (clinicMatch) {
+      this.selectedClinicId = r.ClinicId;
+      this.fg1.get("ClinicId").setValue(r.ClinicId);
+    }
+  }
+
+  // True when a doctor is about to register into a different clinic than the one referred to
+  // (a doctor's own registrations always use the active clinic).
+  get referralClinicDiffers(): boolean {
+    return !!(this.referral && this.type === "DOCTOR" && this.clinic && this.clinic.Id !== this.referral.ClinicId);
+  }
+
+  private checkReferralMatch() {
+    if (this.referral || !this.doctorId) { return; }
+    const v = this.fg1.value;
+    const dob = v.DOB instanceof Date ? dayFromPicker(v.DOB) : v.DOB;
+    if (!v.MobileNumber || !dob || !this.fg1.get("MobileNumber").valid) {
+      this.referralMatch = null;
+      this.lastMatchKey = "";
+      return;
+    }
+    const key = v.CountryCode + "|" + v.MobileNumber + "|" + dob;
+    if (key === this.lastMatchKey) { return; }
+    this.lastMatchKey = key;
+    this.referralService.match(this.doctorId, v.CountryCode, v.MobileNumber, dob).subscribe(
+      (res: any) => {
+        this.referralMatch = res && res.IsSuccess ? res.ResponseData : null;
+        this.matchDismissed = false;
+      },
+      () => {}
+    );
+  }
+
+  useMatchedReferral() {
+    if (!this.referralMatch) { return; }
+    const r = this.referralMatch;
+    this.referral = r;
+    this.referralMatch = null;
+    // Keep what staff typed; only credit the referring agent.
+    this.fg1.patchValue({ AgentId: r.AgentId });
+  }
+
+  dismissReferralMatch() {
+    this.matchDismissed = true;
+  }
+
+  // Called after the patient is saved. The agent is already on the child (AgentId was in the
+  // payload), so a failure here only leaves the referral open in the queue.
+  private closeReferral(referralId: number, childId: number, retry = true) {
+    this.referralService.convert(referralId, childId).subscribe(
+      (res: any) => {
+        if (!(res && res.IsSuccess)) { this.referralCloseFailed(referralId, childId, retry); }
+      },
+      () => this.referralCloseFailed(referralId, childId, retry)
+    );
+  }
+
+  private referralCloseFailed(referralId: number, childId: number, retry: boolean) {
+    if (retry) { this.closeReferral(referralId, childId, false); return; }
+    this.toastService.create(
+      "Patient saved, but the referral is still open. Reject it as 'Already registered' from Referrals.",
+      "danger"
+    );
   }
 
   // The stored doctor object is a snapshot from login (a PA's dates from her last login), so
@@ -1177,6 +1301,9 @@ filterCountryCodes(value: string) {
           console.log(sms1);
           const ChildId = res.ResponseData.Id;
           console.log("child id", ChildId);
+          if (this.referral) {
+            this.closeReferral(this.referral.Id, ChildId);
+          }
           let travelDosesFailed = false;
           if (res.ResponseData.Type == "travel" && this.canUseTravelQuick) {
             travelDosesFailed = !(await this.addTravelQuickDoses(ChildId));

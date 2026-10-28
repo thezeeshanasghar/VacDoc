@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Referrals</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="load()">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ref-content">
+
+  <div class="tabs">
+    <div class="tab" [class.on]="tab === 'new'" (click)="setTab('new')">New<span *ngIf="tab !== 'done'"> · {{ newItems.length }}</span></div>
+    <div class="tab" [class.on]="tab === 'stale'" (click)="setTab('stale')">Stale<span *ngIf="tab !== 'done'"> · {{ staleItems.length }}</span></div>
+    <div class="tab" [class.on]="tab === 'done'" (click)="setTab('done')">Done</div>
+  </div>
+
+  <div *ngFor="let r of visible" class="ref" [ngClass]="r.Status === 'New' ? ageClass(r) : 'closed'">
+    <h4>
+      <span>{{ r.Name }}</span>
+      <span *ngIf="r.Status === 'New'" class="age" [ngClass]="ageClass(r) || 'g'">{{ ageLabel(r) }}</span>
+      <span *ngIf="r.Status === 'Converted'" class="age ok">Registered</span>
+      <span *ngIf="r.Status === 'Rejected'" class="age no">Rejected</span>
+    </h4>
+    <div class="meta">
+      {{ r.Gender === 'Girl' ? 'Girl' : 'Boy' }} · {{ ageOfDob(r.DOB) }} · {{ r.MobileNumber }}<span *ngIf="r.City"> · {{ r.City }}</span>
+    </div>
+    <div class="by">
+      Referred by <b>{{ r.AgentName }}<span *ngIf="r.AgentCode"> ({{ r.AgentCode }})</span></b>
+      <span *ngIf="clinics.length > 1 && r.ClinicName"> · {{ r.ClinicName }}</span>
+    </div>
+    <div class="note" *ngIf="r.Note">Note: {{ r.Note }}</div>
+    <div class="dup" *ngIf="r.IsDuplicate">
+      Another agent also referred this patient.
+      <span *ngIf="r.IsFirstReferrer">This agent referred first and gets the credit.</span>
+      <span *ngIf="!r.IsFirstReferrer">The earlier referral gets the credit.</span>
+    </div>
+    <div class="note" *ngIf="r.Status === 'Rejected' && r.RejectReason">Reason: {{ r.RejectReason }}</div>
+
+    <div class="acts" *ngIf="r.Status === 'New'">
+      <ion-button size="small" (click)="register(r)">Register</ion-button>
+      <ion-button size="small" fill="outline" color="medium" (click)="reject(r)">Reject</ion-button>
+      <ion-button size="small" fill="outline" color="medium" (click)="changeClinic(r)" *ngIf="clinics.length > 1">Change clinic</ion-button>
+    </div>
+  </div>
+
+  <div *ngIf="loaded && visible.length === 0" class="empty">
+    <ion-icon name="person-add-outline"></ion-icon>
+    <p *ngIf="tab === 'new'">No referrals waiting.</p>
+    <p *ngIf="tab === 'stale'">Nothing older than {{ staleDays }} days.</p>
+    <p *ngIf="tab === 'done'">No closed referrals yet.</p>
+  </div>
+
+</ion-content>

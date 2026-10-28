@@ -481,6 +481,7 @@ import { ManagerService } from "src/app/services/manager.service";
 import { ChildService } from "src/app/services/child.service";
 import { BookingService } from "src/app/services/booking.service";
 import { NotificationService } from "src/app/services/notification.service";
+import { ReferralService } from "src/app/services/referral.service";
 import { PushService } from "src/app/services/push.service";
 
 @Component({
@@ -518,6 +519,7 @@ export class MembersPage implements OnInit {
   public childPages: any = [];
   public pendingBookingsCount: number = 0;
   public unreadNotificationCount: number = 0;
+  public pendingReferralCount: number = 0;
   public paAssignmentCount: number = 0;
   public isPaUser: boolean = false;
   public isManagerUser: boolean = false;
@@ -535,6 +537,7 @@ export class MembersPage implements OnInit {
     private childService: ChildService,
     private bookingService: BookingService,
     private notificationService: NotificationService,
+    private referralService: ReferralService,
   ) {}
 
   async ngOnInit() {
@@ -952,6 +955,19 @@ export class MembersPage implements OnInit {
             }
           }
         }
+          // Agent referrals waiting to be registered. Shown to anyone under a doctor who has the
+          // Agent Module on; who can actually register them is still decided by Add Patient itself.
+          if (agentAllowed && !this.childPages.some((p: any) => p.url === "/members/referrals")) {
+            // childPages is the menu list that carries count badges (Bookings, Notifications).
+            this.childPages.push({
+              title: "Referrals",
+              icon: "person-add-outline",
+              url: "/members/referrals",
+            });
+          }
+          if (agentAllowed) {
+            this.loadPendingReferralCount();
+          }
           loading.dismiss();
         } else {
           loading.dismiss();
@@ -972,6 +988,18 @@ export class MembersPage implements OnInit {
       (res) => {
         if (res && res.IsSuccess) {
           this.pendingBookingsCount = res.ResponseData || 0;
+        }
+      },
+      (err) => {}
+    );
+  }
+
+  loadPendingReferralCount() {
+    if (!this.DoctorId) { return; }
+    this.referralService.getDoctorReferrals(this.DoctorId, "New").subscribe(
+      (res) => {
+        if (res && res.IsSuccess && res.ResponseData) {
+          this.pendingReferralCount = (res.ResponseData.Items || []).length;
         }
       },
       (err) => {}

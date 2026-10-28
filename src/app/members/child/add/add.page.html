@@ -1,5 +1,30 @@
 <ion-content *ngIf="fg1" class="ion-padding">
   <ion-card>
+    <!-- Agent referral: prefilled from the Referrals page, or matched by phone + DOB -->
+    <div class="referral-banner" *ngIf="referral">
+      <ion-icon name="link-outline"></ion-icon>
+      <div>
+        From referral by <b>{{ referral.AgentName }}<span *ngIf="referral.AgentCode"> ({{ referral.AgentCode }})</span></b>.
+        The referring agent is credited when you save.
+        <div *ngIf="referral.Note" class="referral-note">Note: {{ referral.Note }}</div>
+        <div *ngIf="referralClinicDiffers" class="referral-warn">
+          Referred to {{ referral.ClinicName }}, but you are registering into {{ clinic.Name }}. Switch clinic first if this is wrong.
+        </div>
+      </div>
+    </div>
+    <div class="referral-banner match" *ngIf="!referral && referralMatch && !matchDismissed">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <div>
+        An open referral matches this phone and date of birth:
+        <b>{{ referralMatch.Name }}</b>, referred by <b>{{ referralMatch.AgentName }}<span *ngIf="referralMatch.AgentCode"> ({{ referralMatch.AgentCode }})</span></b>.
+        If it is the same patient and you register without linking it, the agent receives no referral fee.
+        <div class="referral-actions">
+          <ion-button size="small" (click)="useMatchedReferral()">Use this referral</ion-button>
+          <ion-button size="small" fill="outline" color="medium" (click)="dismissReferralMatch()">Not the same</ion-button>
+        </div>
+      </div>
+    </div>
+
     <!-- 1st Step of Add Child -->
     <form [formGroup]="fg1" (ngSubmit)="moveNextStep()">
       <ion-item lines="none" class="custom-input-item">
