@@ -388,7 +388,32 @@ console.log(this.isCnicRequired);
     { name: 'Zimbabwe', code: '263' },
   ];
 
-  async editChild(confirmMerge: boolean = false) {
+  // Number-change popup (SiblingsOnNumber warning): other patients on the old number,
+  // nothing pre-ticked. Ticked ids are sent as MoveSiblingIds on the re-send.
+  siblingSheet: { Id: number, Name: string, checked: boolean }[] = null;
+  newNumberLabel = '';
+  pendingConfirmMerge = false;
+
+  get allSiblingsTicked(): boolean {
+    return !!this.siblingSheet && this.siblingSheet.every(s => s.checked);
+  }
+
+  toggleAllSiblings() {
+    const on = !this.allSiblingsTicked;
+    this.siblingSheet.forEach(s => s.checked = on);
+  }
+
+  cancelSiblingSheet() {
+    this.siblingSheet = null;
+  }
+
+  saveSiblingSheet() {
+    const ids = this.siblingSheet.filter(s => s.checked).map(s => s.Id);
+    this.siblingSheet = null;
+    this.editChild(this.pendingConfirmMerge, ids);
+  }
+
+  async editChild(confirmMerge: boolean = false, moveSiblingIds: number[] = null) {
     // Existing stored numbers are grandfathered: only check when the number or code was changed.
     const cc = this.fg.value.CountryCode;
     const changed = !this.child ||
@@ -409,7 +434,7 @@ console.log(this.isCnicRequired);
     // IsSkip doubles as the "merge anyway" confirm flag for the same-name guard
     // on the backend (ChildController.Put). Only sent true after the doctor
     // confirms the merge warning.
-    const payload = { ...this.fg.value, IsSkip: confirmMerge };
+    const payload = { ...this.fg.value, IsSkip: confirmMerge, MoveSiblingIds: moveSiblingIds };
     await this.childService.editChild(payload)
       .subscribe(res => {
         loading.dismiss();
@@ -419,8 +444,13 @@ console.log(this.isCnicRequired);
           this.toastService.create(res.Message || "successfully updated");
           this.router.navigate(['/members/child/']);
         }
+        else if (res.IsWarning && res.RuleCode === 'SiblingsOnNumber') {
+          this.pendingConfirmMerge = confirmMerge;
+          this.newNumberLabel = '+' + this.fg.value.CountryCode + ' ' + this.fg.value.MobileNumber;
+          this.siblingSheet = ((res.ResponseData && res.ResponseData.Siblings) || []).map(s => ({ Id: s.Id, Name: s.Name, checked: false }));
+        }
         else if (res.IsWarning && res.RuleCode === 'MergeNameClash') {
-          this.presentMergeConfirm(res.Message);
+          this.presentMergeConfirm(res.Message, moveSiblingIds);
         }
         else {
           this.toastService.create(res.Message, 'danger');
@@ -431,7 +461,7 @@ console.log(this.isCnicRequired);
       });
   }
 
-  async presentMergeConfirm(message: string) {
+  async presentMergeConfirm(message: string, moveSiblingIds: number[] = null) {
     const alert = await this.alertController.create({
       header: 'Merge patient records?',
       message: message,
@@ -439,7 +469,7 @@ console.log(this.isCnicRequired);
         { text: 'Cancel', role: 'cancel' },
         {
           text: 'Merge anyway',
-          handler: () => { this.editChild(true); }
+          handler: () => { this.editChild(true, moveSiblingIds); }
         }
       ]
     });

@@ -135,3 +135,25 @@
     <ion-button routerLink="/members/child/" style="margin-top: 20px;">Cancel</ion-button>
   </form>
 </ion-content>
+
+<div class="sib-mask" *ngIf="siblingSheet">
+  <div class="sib-sheet">
+    <h3>Other patients use this number</h3>
+    <p>{{ fg.value.Name }} moves to <b>{{ newNumberLabel }}</b>. Tick anyone who should move too. Unticked patients stay on the old number.</p>
+    <div class="sib-all" (click)="toggleAllSiblings()">
+      <span class="sib-cb" [class.on]="allSiblingsTicked">{{ allSiblingsTicked ? '✓' : '' }}</span>Change all
+    </div>
+    <div class="sib-row">
+      <span class="sib-cb lock">✓</span>
+      <div>{{ fg.value.Name }}<small>being edited, always moves</small></div>
+    </div>
+    <div class="sib-row" *ngFor="let s of siblingSheet" (click)="s.checked = !s.checked">
+      <span class="sib-cb" [class.on]="s.checked">{{ s.checked ? '✓' : '' }}</span>
+      <div>{{ s.Name }}</div>
+    </div>
+    <div class="sib-acts">
+      <button type="button" (click)="cancelSiblingSheet()">Cancel</button>
+      <button type="button" class="prim" (click)="saveSiblingSheet()">Save</button>
+    </div>
+  </div>
+</div>
