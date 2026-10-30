@@ -702,18 +702,7 @@ export class AssignmentsPage {
       return;
     }
 
-    const paid = (assignment.Schedules || []).some(function(s: any) { return s.IsPaymentCollected; });
-    if (paid) {
-      const alert = await this.alertController.create({
-        header: 'Cannot Cancel',
-        message: 'Payment is already recorded for this assignment, so it can no longer be cancelled from here. Please contact the doctor.',
-        buttons: ['OK']
-      });
-      await alert.present();
-      return;
-    }
-
-    // Doses already given but not yet paid: the doctor's approval reverses the visit.
+    // Doses already given (paid or not): the PA cannot cancel alone, the doctor's approval reverses the visit.
     if (this.hasGivenOrPaidSchedules(assignment)) {
       await this.confirmRefusal(assignment);
       return;
@@ -737,7 +726,7 @@ export class AssignmentsPage {
   async confirmRefusal(assignment: any) {
     const alert = await this.alertController.create({
       header: 'Cancel Assignment',
-      message: `Vaccines were already given to ${assignment.Name}. Send a cancellation request to the doctor? When the doctor approves, the visit is reversed: doses go back to not given, stock is restored and the invoice is deleted.`,
+      message: `Vaccines were already given to ${assignment.Name}. Send a cancellation request to the doctor? When the doctor approves, the visit is reversed: doses go back to not given, stock is restored and the invoice is deleted and any recorded payment is cleared.`,
       inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason (optional)' }],
       buttons: [
         { text: 'Never Mind', role: 'cancel' },
