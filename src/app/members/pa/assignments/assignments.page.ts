@@ -310,27 +310,46 @@ export class AssignmentsPage {
   stageLabel(a: any): string {
     const st = this.stage(a);
     if (a.IsScheduledVisit && (st === 'new' || st === 'given')) {
-      return a.VisitCompletedAt ? 'Visit completed' : 'Visit scheduled';
+      return a.VisitCompletedAt ? '' : 'Visit scheduled';
     }
     return '';
   }
 
-  // Explicit completion applies only to a scheduled visit with nothing to charge (no dose amount > 0)
-  // and at least one dose given; the server re-checks all of it.
+  // v3.2: "Visit completed" is the scheduled visit's one PA action (payment is Mark Done). Shown until tapped;
+  // the tap explains what is missing if a billable dose is unpaid. The server re-checks everything.
   canCompleteVisit(a: any): boolean {
-    if (!a.IsScheduledVisit || a.VisitCompletedAt || a.IsCompleted || a.RefusalPending) { return false; }
+    if (!a.IsScheduledVisit || a.VisitCompletedAt || a.RefusalPending || a.AssignmentStatus === 'PendingCancellation') { return false; }
     const sch = Array.isArray(a.Schedules) ? a.Schedules : [];
-    if (sch.length === 0 || !sch.some((s: any) => s.IsDone)) { return false; }
+    if (sch.length === 0) { return false; }
     if (a.TargetDate && this.dayKeyOf(a.TargetDate) > this.todayKey()) { return false; }
-    return !sch.some((s: any) => s.Amount > 0);
+    return true;
+  }
+
+  async promptCompleteVisit(a: any) {
+    const unpaid = (a.Schedules || []).filter((s: any) => s.Amount > 0 && !s.IsPaymentCollected);
+    if (unpaid.length > 0) {
+      const alert = await this.alertController.create({
+        header: 'Payment Pending',
+        message: 'Record the payment mode for: ' + unpaid.map((s: any) => s.DoseName).join(', ') + '. Use the money icon on the vaccine page first, then tap Visit completed.',
+        buttons: [{ text: 'OK', role: 'cancel' }]
+      });
+      await alert.present();
+      return;
+    }
+    const confirm = await this.alertController.create({
+      header: 'Visit completed',
+      message: 'Finish the visit for ' + a.Name + '? The cash moves to Pending Handover for the doctor to confirm.',
+      buttons: [{ text: 'Back', role: 'cancel' }, { text: 'Visit completed', handler: () => { this.completeVisit(a); } }]
+    });
+    await confirm.present();
   }
 
   completeVisit(a: any) {
     this.paService.completeVisit(a.AssignmentId, this.callerUserId, this.securityStamp).subscribe(
       (res: any) => {
         const ok = res && res.IsSuccess;
-        this.toastService.create(ok ? 'Visit marked completed' : ((res && res.Message) || 'Could not complete the visit'), ok ? undefined : 'danger');
-        if (ok) { a.VisitCompletedAt = new Date().toISOString(); }
+        this.toastService.create(ok ? 'Visit completed' : ((res && res.Message) || 'Could not complete the visit'), ok ? 'success' : 'danger');
+        if (ok && this.paId) { this.loadAll(this.paId); }
       },
       () => { this.toastService.create('Could not complete the visit', 'danger'); }
     );

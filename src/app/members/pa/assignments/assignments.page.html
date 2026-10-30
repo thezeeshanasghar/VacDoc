@@ -133,7 +133,8 @@
             <span class="icons-name">{{ r.PatientName }}</span>
           </div>
           <div class="icons-right">
-            <span class="stage-pill stage-pendingHandover">Pending Handover</span>
+            <span *ngIf="r.PendingHandover" class="stage-pill stage-pendingHandover">Pending Handover</span>
+            <span *ngIf="!r.PendingHandover" class="stage-pill stage-new">With you, not handed over</span>
           </div>
         </div>
         <div class="ds-details">
@@ -141,6 +142,7 @@
           &nbsp;&nbsp;
           <ion-icon name="calendar"></ion-icon> {{ r.Date | day:'dd MMM yyyy' }}
         </div>
+        <div *ngIf="r.PaymentMode" class="ds-status">Recorded mode: {{ r.PaymentMode }}</div>
         <div class="ds-status">Invoice not linked to an active assignment — contact the doctor if this looks wrong.</div>
       </ion-card-content>
     </ion-card>
@@ -157,26 +159,6 @@
         <ion-badge *ngIf="isBulkGroup(a)" class="bulk-badge" color="warning">
           <ion-icon name="layers-outline"></ion-icon> {{ a.Schedules.length }} vaccines
         </ion-badge>
-      </div>
-      <div class="icons-right">
-        <ion-icon
-          *ngIf="stage(a) === 'pendingHandover'"
-          name="checkmark-done-circle-outline"
-          class="iconchild complete-icon"
-          (click)="confirmComplete(a)">
-        </ion-icon>
-        <ion-icon
-          *ngIf="stage(a) !== 'completed' && stage(a) !== 'pendingHandover' && a.AssignmentStatus !== 'PendingCancellation' && !a.RefusalPending"
-          name="checkmark-outline"
-          class="iconchild complete-icon"
-          (click)="promptMarkDone(a)">
-        </ion-icon>
-        <ion-icon
-          *ngIf="stage(a) !== 'completed' && a.AssignmentStatus !== 'PendingCancellation' && !a.RefusalPending"
-          name="close-circle-outline"
-          class="iconchild cancel-icon"
-          (click)="confirmCancel(a)">
-        </ion-icon>
       </div>
     </div>
 
@@ -201,7 +183,7 @@
           <span *ngSwitchCase="'completed'">Completed — awaiting doctor</span>
         </ng-container>
       </span>
-      <ion-button size="small" fill="outline" *ngIf="canCompleteVisit(a)" (click)="completeVisit(a)">Mark visit completed</ion-button>
+      <span class="visit-chip" *ngIf="a.IsScheduledVisit && a.VisitCompletedAt">Visit completed</span>
       <br>
       <ion-icon name="person"></ion-icon> {{ a.FatherName }}
       &nbsp;&nbsp;
@@ -248,6 +230,14 @@
         <p class="assignment-guidelines-text">{{ a.Notes }}</p>
       </div>
       <p *ngIf="!a.Notes" class="no-guidelines-note">No special guidelines.</p>
+      <!-- At-clinic: Mark Done, then Mark Completed (replaces it), then none. Scheduled home visit (v3.2):
+           payment is Mark Done, so the one action is "Visit completed" (tells the route the PA is moving on). -->
+      <div class="step-actions" *ngIf="stage(a) !== 'completed' && a.AssignmentStatus !== 'PendingCancellation' && !a.RefusalPending">
+        <ion-button size="small" *ngIf="!a.IsScheduledVisit && stage(a) !== 'pendingHandover'" (click)="promptMarkDone(a)">Mark Done</ion-button>
+        <ion-button size="small" *ngIf="!a.IsScheduledVisit && stage(a) === 'pendingHandover'" (click)="confirmComplete(a)">Mark Completed</ion-button>
+        <ion-button size="small" *ngIf="canCompleteVisit(a)" (click)="promptCompleteVisit(a)">Visit completed</ion-button>
+        <ion-button size="small" fill="outline" color="danger" (click)="confirmCancel(a)">Cancel visit</ion-button>
+      </div>
     </ion-card-content>
 
   </ion-card>

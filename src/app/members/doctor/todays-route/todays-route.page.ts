@@ -212,7 +212,7 @@ export class TodaysRoutePage {
 
   async completeFor(s: any) {
     const a = await this.alertController.create({
-      header: 'Mark visit completed?', message: 'For ' + s.ChildName + '. Use this only when nothing is charged. Recorded as done by you.',
+      header: 'Mark visit completed?', message: 'For ' + s.ChildName + '. Payment is recorded; the PA did not tap Visit completed. Recorded as done by you.',
       buttons: [{ text: 'Cancel', role: 'cancel' }, { text: 'Mark completed', handler: () => {
         this.paService.completeVisit(s.AssignmentId, this.callerUserId, this.securityStamp).subscribe((res: any) => this.after(res, 'Visit completed'), () => this.failed());
       } }]

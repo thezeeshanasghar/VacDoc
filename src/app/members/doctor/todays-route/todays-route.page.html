@@ -67,7 +67,7 @@
           <div class="flags">
             <span class="flag" *ngIf="s.NeedsTime">needs a new time</span>
             <span class="flag" *ngIf="papersNote(s)">{{ papersNote(s) }}</span>
-            <span class="flag" *ngIf="s.State === 'paidPending'">payment was recorded before the PA's visit</span>
+            <span class="flag" *ngIf="s.State === 'paidPending'">paid, PA has not tapped Visit completed</span>
           </div>
         </div>
         <div class="acts" *ngIf="!isManager">
@@ -76,10 +76,10 @@
             <button class="b" [disabled]="!canMoveDown(s, pa)" (click)="move(s, 'down')" aria-label="Move down">&#9660;</button>
           </div>
           <button class="b" [disabled]="s.State === 'completed'" (click)="openEdit(s)">Edit time</button>
-          <button class="b" *ngIf="s.NoCharge && s.State !== 'completed'" (click)="completeFor(s)">Mark completed</button>
-          <button class="b" *ngIf="s.ExplicitCompletion" (click)="reopen(s)">Reopen</button>
+          <button class="b" *ngIf="s.State === 'paidPending'" (click)="completeFor(s)">Mark completed</button>
+          <button class="b" *ngIf="s.State === 'completed'" (click)="reopen(s)">Reopen</button>
           <button class="b" (click)="share(s)">Share update</button>
-          <button class="b danger" *ngIf="s.State === 'completed' && !s.ExplicitCompletion" (click)="reverse(s)">Reverse visit</button>
+          <button class="b danger" *ngIf="s.State === 'completed'" (click)="reverse(s)">Reverse visit</button>
         </div>
       </div>
       <div class="clinic" *ngIf="isToday">{{ atClinicCount }} at clinic today, not shown as stops</div>

@@ -77,6 +77,14 @@
   color: #EF9A9A !important;
 }
 
+// ── Sequential card actions (Mark Done → Mark Completed, Cancel visit) ───────
+.step-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
 // ── Empty state ───────────────────────────────────────────────────────────────
 .empty-state {
   text-align: center;
