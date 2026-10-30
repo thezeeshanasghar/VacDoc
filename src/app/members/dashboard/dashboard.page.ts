@@ -58,8 +58,6 @@ export class DashboardPage implements OnInit {
   showAssistantLocations: boolean = false;  // Doctor 1 only
   showColdChain: boolean = false;
   assignmentCount: number = 0;
-  pendingApprovalsCount: number = 0;
-  hasPA: boolean = false;
   showCompleteProfilePrompt: boolean = false;
 
   constructor(
@@ -202,15 +200,6 @@ export class DashboardPage implements OnInit {
       this.showPatients  = true;
       this.showAlerts    = true;
       this.showSchedule  = true;
-      try {
-        const pas = await this.paService.getPAsByDoctorId(String(this.doctorId)).toPromise();
-        this.hasPA = (pas || []).length > 0;
-      } catch (e) {
-        this.hasPA = false;
-      }
-      if (this.hasPA) {
-        this.loadPendingCount();
-      }
     }
   }
 
@@ -227,15 +216,6 @@ export class DashboardPage implements OnInit {
   dismissCompleteProfilePrompt() {
     this.showCompleteProfilePrompt = false;
     this.storage.set(environment.PROFILE_PROMPT_DISMISSED + '_' + this.doctorId, true);
-  }
-
-  private loadPendingCount() {
-    if (!this.doctorId) { return; }
-    this.childService.getPendingCount(this.doctorId).subscribe(res => {
-      if (res && res.IsSuccess) {
-        this.pendingApprovalsCount = res.ResponseData || 0;
-      }
-    });
   }
 
   async ionViewDidEnter() {

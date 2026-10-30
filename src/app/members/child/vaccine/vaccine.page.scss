@@ -315,14 +315,12 @@ ion-buttons {
 .action-btn--invoice     { --color: var(--vac-blue); }
 .action-btn--assign      { --color: var(--vac-blue); }
 .action-btn--params      { --color: var(--vac-warn); border-color: var(--vac-warn); }
-.action-btn--approve-icon { --color: var(--vac-green); }
 .action-btn--skipicon    { ion-icon { color: var(--vac-ink-3); font-size: 16px; } }
 .action-btn--reschedule  ion-icon { color: var(--vac-blue); }
 
 .action-icon--calendar { color: var(--vac-blue); }
 .action-icon--invoice  { color: var(--vac-blue); }
 .action-icon--assign   { color: var(--vac-blue); }
-.action-icon--approve  { color: var(--vac-green); font-size: 20px; }
 .action-icon--params   { color: var(--vac-warn); display: block; }
 
 // ── Vaccine row ───────────────────────────────────────────────────────────────
@@ -339,13 +337,6 @@ ion-buttons {
   // Given rows are flat in the mock — status lives in the subtitle (✓ given),
   // not a left-accent stripe. Keep --done as a hook but no visual stripe.
   &--done { }
-
-  // Given by PA, awaiting doctor approval — subtle amber left accent only.
-  &--pending-approval {
-    border-left: 2px solid var(--vac-warn);
-    padding-left: 8px;
-    margin-left: -8px;
-  }
 
   // Skipped row leaves the pipeline (spec §3.3): muted, name struck through.
   &--skipped {
@@ -517,23 +508,6 @@ ion-buttons {
 
   &--skip    { --background: #fff; --color: var(--vac-ink-3); --border-color: var(--vac-border-strong); border: 1.4px solid var(--vac-border-strong); border-radius: 9px; }
   &--unskip  { --background: #fff; --color: var(--vac-blue); border: 1.4px solid var(--vac-blue); border-radius: 9px; }
-}
-
-// ── Approve button ────────────────────────────────────────────────────────────
-// Desktop: text button; Mobile: icon-only (handled via display toggling below)
-.approve-button {
-  background-color: var(--vac-green);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-
-  &:hover  { background-color: #388e3c; }
-  &:focus  { outline: none; box-shadow: 0 0 0 3px rgba(67,160,71,0.35); }
 }
 
 // ── FAB (spec §2.3): 48px #1178A9, 74px scroll padding so it never overlaps ──
@@ -742,9 +716,6 @@ ion-content.ion-padding { --padding-bottom: 74px; }
 
 // ── Desktop (≥768px) ──────────────────────────────────────────────────────────
 @media (min-width: 768px) {
-  // On desktop the text "Approve" button is visible; icon-only version is hidden
-  .approve-button--desktop   { display: inline-block; }
-  .action-btn--approve-icon  { display: none; }
 
   .action-btn {
     width: 36px;
@@ -772,9 +743,6 @@ ion-content.ion-padding { --padding-bottom: 74px; }
 
 // ── Mobile (≤767px) ───────────────────────────────────────────────────────────
 @media (max-width: 767px) {
-  // On mobile the text "Approve" button is replaced by the icon version
-  .approve-button--desktop  { display: none !important; }
-  .action-btn--approve-icon { display: flex; }
 
   // Larger touch targets on mobile
   .action-btn {

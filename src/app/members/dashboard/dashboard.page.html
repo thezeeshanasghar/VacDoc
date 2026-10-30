@@ -52,17 +52,6 @@
         <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
       </div>
 
-      <!-- ── Unapproved (Doctor only, requires at least one PA) ── -->
-      <div *ngIf="!isPa && hasPA" routerLink="/members/child/unapprove" class="dash-card fam-red">
-        <div class="dash-card-icon" style="position:relative">
-          <ion-icon name="alert-circle-outline"></ion-icon>
-          <span *ngIf="pendingApprovalsCount > 0" class="assignment-badge">{{ pendingApprovalsCount }}</span>
-        </div>
-        <span class="dash-card-label">Unapproved</span>
-        <span class="dash-card-sub">PA entries pending review</span>
-        <ion-icon name="chevron-forward-outline" class="dash-card-arrow"></ion-icon>
-      </div>
-
       <!-- ── Brand Prices (Doctor: editable, PA: view-only) ──── -->
       <div routerLink="/members/doctor/brand-prices" class="dash-card fam-petrol">
         <div class="dash-card-icon">

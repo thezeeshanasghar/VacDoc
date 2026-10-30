@@ -1516,29 +1516,6 @@ removal(type: string){
     return dayAdd(baseDate, gapDays);
   }
 
-  async updateScheduleApproval(scheduleId: number) {
-    const loading = await this.loadingController.create({ message: 'Approving…' });
-    await loading.present();
-    this.scheduleService.patchIsApproved(scheduleId).subscribe(
-      (response: any) => {
-        loading.dismiss();
-        this.toastService.create(response.message || 'Approved', 'success');
-        // Update in-memory — no full reload needed
-        for (const key of Object.keys(this.dataGrouping)) {
-          const group = this.dataGrouping[key];
-          if (Array.isArray(group)) {
-            const row = group.find((v: any) => v.Id === scheduleId);
-            if (row) { row.IsPAApprove = true; break; }
-          }
-        }
-      },
-      (error) => {
-        loading.dismiss();
-        this.toastService.create((error.error && error.error.message) || 'Approval failed', 'danger');
-      }
-    );
-  }
-
   async showAuditPopover(event: Event, vaccine: any) {
     const popover = await this.popoverController.create({
       component: AuditPopoverComponent,

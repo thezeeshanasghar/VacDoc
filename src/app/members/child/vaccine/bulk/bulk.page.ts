@@ -790,7 +790,7 @@ export class BulkPage implements OnInit {
       i++;
     });
 
-    this.fg.value.IsPAApprove = this.usertype === "DOCTOR" || this.usertype === "MANAGER";
+    this.fg.value.IsPAApprove = true;
 
     // When every row in this batch is a disease row, there's no real given date to send at
     // all — the backend's bulk endpoint drops its GivenDate-required checks only in that case

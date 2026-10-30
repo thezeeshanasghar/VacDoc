@@ -503,11 +503,7 @@ export class FillPage implements OnInit {
       this.fg.value.BrandId = null; 
     }
     console.log(this.usertype)
-    if (this.usertype === 'DOCTOR' || this.usertype === 'MANAGER') {
-      this.fg.value.IsPAApprove = true;
-    } else {
-      this.fg.value.IsPAApprove = false;
-    }
+    this.fg.value.IsPAApprove = true;
     this.applyTravelGivenDateToday();
 
     this.fg.value.Id = this.route.snapshot.paramMap.get('id');

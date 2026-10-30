@@ -30,8 +30,6 @@ export class PaPermissionsPage implements OnInit {
     DeletePatient: 'Deletes patient records',
     DeleteClinic: 'Deletes a clinic',
     DeleteFollowUp: 'Deletes follow-ups',
-    ApproveUnapproved: 'Approves pending patients',
-    ApproveVaccineRecord: 'Approves vaccine records',
     UngiveVaccine: 'Reverses a given vaccine',
     BulkUngiveVaccines: 'Reverses given vaccines in bulk',
     UnskipVaccine: 'Reverses a skip',
@@ -53,8 +51,6 @@ export class PaPermissionsPage implements OnInit {
         { key: 'DownloadPidPdf',   label: 'Download Patient ID PDF' },
         { key: 'CallPatient',      label: 'Call patient phone' },
         { key: 'SendSmsPatient',   label: 'Send SMS to patient' },
-        { key: 'ViewUnapproved',   label: 'View unapproved patients' },
-        { key: 'ApproveUnapproved',label: 'Approve unapproved patient' },
       ]
     },
     {
@@ -72,7 +68,6 @@ export class PaPermissionsPage implements OnInit {
         { key: 'BulkReschedule',     label: 'Bulk reschedule vaccines' },
         { key: 'FillVaccineDetails', label: 'Fill vaccine details (brand/batch/expiry)' },
         { key: 'AddVaccineParams',   label: 'Add vaccine parameters (weight/height/OFC)' },
-        { key: 'ApproveVaccineRecord',label: 'Approve vaccine record' },
         { key: 'PrintSchedulePdf',   label: 'Print vaccination schedule PDF' },
         { key: 'AddSpecialDoses',    label: 'Add special doses to schedule' },
         { key: 'EditVaccineSchedule',label: 'Edit vaccine schedule' },

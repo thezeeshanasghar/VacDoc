@@ -451,7 +451,6 @@ onClinicChange() {
 }
 
   navigateToRoute(route: string) {
-    this.storage.remove('unapprovedSearch'); // Clear the flag
     this.router.navigate([route]);
   }
 
@@ -524,27 +523,6 @@ onClinicChange() {
       console.error('Error in loadClinics:', error);
       this.toastService.create('An unexpected error occurred', 'danger');
     }
-  }
-
-  async approveChild(childId: number) {
-    console.log('Approving child with ID:', childId);
-    const loading = await this.loadingController.create({
-      message: 'Approving'
-    });
-    await loading.present();
-  
-      this.childService.approveChild(childId).subscribe({
-        next: (res) => {
-          loading.dismiss();
-            this.toastService.create('Child approved successfully', 'success');
-            this.refreshPage();
-        },
-        error: (err) => {
-          loading.dismiss();
-          this.toastService.create('Failed to approve child', 'danger');
-          console.error(err);
-        },
-      });
   }
 
   // Number text stays as-is; tapping it opens a WhatsApp chat via wa.me (digits only, country code included).

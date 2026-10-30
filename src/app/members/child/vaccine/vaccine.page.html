@@ -173,8 +173,7 @@
         <div *ngFor="let v of item.value"
           class="vaccine-row"
           [class.vaccine-row--done]="v.IsDone && !v.Due2EPI"
-          [class.vaccine-row--skipped]="isSkippedDose(v)"
-          [class.vaccine-row--pending-approval]="v.IsDone && !v.Due2EPI && !v.IsPAApprove && usertype === 'DOCTOR'">
+          [class.vaccine-row--skipped]="isSkippedDose(v)">
 
           <!-- Name + status subtitle (status lives in the subtitle, not chips — §3.2) -->
           <div class="vaccine-rowtext">
@@ -257,15 +256,8 @@
               </button>
             </ng-container>
 
-            <!-- STAGE 2 / 3 · given: approve (if pending) + UNGIVE (guarded at stage 3) -->
+            <!-- STAGE 2 / 3 · given: UNGIVE (guarded at stage 3) -->
             <ng-container *ngIf="v.IsDone && !v.Due2EPI && (!v.IsDisease || v.IsDisease == null) && !v.IsSkip">
-              <button
-                *ngIf="usertype === 'DOCTOR' && !v.IsPAApprove"
-                class="action-btn action-btn--approve-icon"
-                (click)="updateScheduleApproval(v.Id)"
-                title="Approve">
-                <ion-icon name="checkmark-circle-outline" class="action-icon action-icon--approve"></ion-icon>
-              </button>
               <!-- Add Parameters — records height/weight/head-circumference against an
                    already-given dose. Needed for home visits: the PA marks the vaccine
                    given (and downloads the invoice/schedule) before ever measuring the

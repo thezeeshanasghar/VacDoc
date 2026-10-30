@@ -1247,16 +1247,14 @@ filterCountryCodes(value: string) {
       message: "loading",
     });
     await loading.present();
+    data.IsPAApprove = true;
     if (this.usertype.UserType === "DOCTOR") {
-      data.IsPAApprove = true;
       data.AddedByPaId = null;
     } else if (this.usertype.UserType === "MANAGER") {
       // AddedByPaId is a plain untyped long? column - reused for a Manager's ManagerId too,
       // not FK-typed to PersonalAssistant. No new column needed.
-      data.IsPAApprove = false;
       data.AddedByPaId = this.usertype.ManagerId || null;
     } else {
-      data.IsPAApprove = false;
       data.AddedByPaId = this.usertype.PAId || null;
     }
     if (this.usertype.UserType === "DOCTOR") {
