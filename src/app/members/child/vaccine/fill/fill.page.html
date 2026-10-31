@@ -167,7 +167,7 @@
     <div class="give-date-field" *ngIf="!fg.value.IsDisease" (click)="picker.open()">
       <span class="give-date-label">Given Date</span>
       <span class="give-date-value">
-        <input formControlName="GivenDate" matInput [matDatepicker]="picker" value="{{Date}}" max="{{todaydate}}" class="give-date-input" readonly>
+        <input formControlName="GivenDate" matInput [matDatepicker]="picker" value="{{Date}}" min="{{birthYear}}" max="{{todaydate}}" class="give-date-input" readonly>
         {{ fg.get('GivenDate').value ? (fg.get('GivenDate').value | day:'dd-MM-yyyy') : (Date | day:'dd-MM-yyyy') }}
       </span>
       <ion-icon name="calendar-outline" class="give-date-icon"></ion-icon>

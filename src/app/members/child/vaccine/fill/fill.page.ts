@@ -351,6 +351,10 @@ export class FillPage implements OnInit {
           // console.log(this.vaccineData.ChildId);
           this.childId = childRecord.Id; // Assuming ChildId is the correct property to use
           this.Type = childRecord.Type; // Retaining this line as it seems necessary
+          // The Given Date picker's min is this child's DOB; the 'BirthYear' storage key can be
+          // stale (previous child) or missing on a deep link, so trust the record just fetched.
+          const recordDob = parseDay(childRecord.DOB);
+          if (recordDob) { this.birthYear = recordDob; }
           this.applyTravelGivenDateToday();
           this.clinicId = this.resolveClinicId(childRecord) || this.clinicId;
           console.log(childRecord.Type);
