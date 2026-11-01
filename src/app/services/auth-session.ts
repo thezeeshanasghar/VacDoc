@@ -10,6 +10,8 @@ export class AuthSession {
   static token: string | null = null;
   static loaded = false;
   private static watching = false;
+  // Set by PushService: runs first on every sign-out, while the token is still available.
+  static beforeClear: (() => void) | null = null;
 
   // Reads the saved token once (first request after the app starts).
   static async load(storage: Storage): Promise<string | null> {
@@ -37,6 +39,7 @@ export class AuthSession {
     AuthSession.watching = true;
     const original = storage.clear.bind(storage);
     storage.clear = function () {
+      try { if (AuthSession.beforeClear) { AuthSession.beforeClear(); } } catch (e) { /* never block a sign-out */ }
       AuthSession.token = null;
       AuthSession.loaded = true;
       // Logged out: stop the native GPS service (only exists inside the Assistant app).
