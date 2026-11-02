@@ -303,6 +303,7 @@
                 </td>
                 <td class="col-delete">
                   <button *ngIf="row.RowType === 'DirectSale'" class="btn-delete-assignment" (click)="confirmDeleteDirectSale(row)" title="Reverse sale">🗑️</button>
+                  <button *ngIf="row.AssignmentId && (row.RowType === 'Invoice' || row.RowType === 'AwaitingInvoice')" class="btn-delete-assignment" (click)="confirmReverseAll(row)" title="Reverse everything">🗑️</button>
                 </td>
                 <td class="col-date">
                   <button type="button" class="date-link" *ngIf="row.AssignmentId && row.RowType !== 'DirectSale'; else plainDate"

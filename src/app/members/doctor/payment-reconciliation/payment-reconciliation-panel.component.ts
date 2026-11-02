@@ -146,6 +146,51 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
     this.load();
   }
 
+  // Bin on every Invoice / Awaiting Invoice row: shortcut for the tracking tabs' "Reverse everything"
+  // (same DELETE PAAssignment, FullReset). No reason is asked; the audit row records where it came from.
+  async confirmReverseAll(row: PaymentRow) {
+    if (!row.AssignmentId) {
+      this.toastService.create('No assignment linked to this row', 'warning');
+      return;
+    }
+    const pa = (row.PaName || 'The PA').replace(/^.*\(|\)$/g, '').split(' ')[0] || 'The PA';
+    const lines: string[] = ['All doses of this visit ungiven, stock returned to the clinic.'];
+    lines.push(row.RowType === 'AwaitingInvoice' ? 'No invoice exists yet, nothing to delete.' : 'The invoice (PKR ' + row.Amount + ') is deleted.');
+    if (row.IsConfirmed) {
+      lines.push('<b>You already confirmed this cash.</b> ' + pa + '\'s handed-over total is NOT reduced, so the ledger will show PKR ' + row.Amount + ' more handed over than collected. Settle it with "± Adjust Payable" if the money goes back.');
+    }
+    lines.push('Assignment closed. ' + pa + ' is notified. This cannot be undone.');
+    const alert = await this.alertController.create({
+      header: 'Reverse everything: ' + row.PatientName,
+      message: lines.join('<br><br>'),
+      buttons: [
+        { text: 'Keep', role: 'cancel' },
+        {
+          text: 'Reverse everything',
+          cssClass: 'alert-btn-danger',
+          handler: async () => {
+            const loading = await this.loadingController.create({ message: 'Reversing...' });
+            await loading.present();
+            const reason = 'Reversed from Cash table' + (row.IsConfirmed ? ' (cash already confirmed)' : '');
+            this.paService.deleteAssignment(row.AssignmentId!, this.doctorId!, 'FullReset', reason).subscribe(
+              res => {
+                loading.dismiss();
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Visit reversed', 'success');
+                  this.load();
+                } else {
+                  this.toastService.create((res && res.Message) || 'Failed to reverse', 'danger');
+                }
+              },
+              () => { loading.dismiss(); this.toastService.create('Failed to reverse', 'danger'); }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
   async confirmDeleteDirectSale(row: PaymentRow) {
     const alert = await this.alertController.create({
       header: 'Reverse Sale',
