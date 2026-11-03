@@ -34,6 +34,7 @@ interface PaymentRow {
   AssignedAt?: string;
   EnteredAt?: string;       // when the PA entered the invoice
   IsBackDated?: boolean;    // visit date is a day or more before the entry date
+  ChildType?: string;       // regular | epiplus | travel | special (blank for direct sales)
   OutsidePeriod?: boolean;  // shown only because it is unconfirmed; outside the chosen period
   PatientName: string;
   PatientDeleted?: boolean;  // the patient no longer exists (name comes from the delete audit)
@@ -88,8 +89,18 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
   searchQuery: string = '';
   selectedStatus: string = 'all';
   // Growth flag filters (spec: GROWTH_FLAG_SPEC.md). Chips never block Confirm.
-  growthFilter: '' | 'missing' | 'notmeasured' = '';
-  growthPaFilter: number | null = null;
+  // Every filter below is multi-select: values inside one filter are OR, separate filters are AND.
+  growthFilters: string[] = [];
+  growthPaFilters: number[] = [];
+  typeFilters: string[] = [];
+  typeOptions = [
+    { key: 'regular', label: 'Regular' },
+    { key: 'epiplus', label: 'EPI Plus' },
+    { key: 'travel', label: 'Travel' },
+    { key: 'special', label: 'Customize' }
+  ];
+  // Strict date range by default; unconfirmed rows outside it are opt-in (banner / checkbox).
+  includeOutside = false;
   growthMissingRows = 0;
   growthNotMeasuredRows = 0;
   growthPaStats: GrowthPaStat[] = [];
@@ -151,6 +162,35 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
   // this is what the banner above the table counts.
   get outsidePeriodRows(): PaymentRow[] {
     return this.allRows.filter(r => r.RowType === 'Invoice' && r.OutsidePeriod && !r.IsConfirmed);
+  }
+  // Rows the date range lets through (everything, unless the doctor opts in the outside-period ones).
+  private get periodRows(): PaymentRow[] {
+    return this.includeOutside ? this.allRows : this.allRows.filter(r => !r.OutsidePeriod);
+  }
+  typeCount(key: string): number {
+    return this.periodRows.filter(r => r.ChildType === key).length;
+  }
+  isTypeOn(key: string): boolean { return this.typeFilters.indexOf(key) >= 0; }
+  toggleType(key: string) {
+    const i = this.typeFilters.indexOf(key);
+    if (i >= 0) { this.typeFilters.splice(i, 1); } else { this.typeFilters.push(key); }
+    this.applySearch(true);
+  }
+  clearTypes() {
+    this.typeFilters = [];
+    this.applySearch(true);
+  }
+  setIncludeOutside(v: boolean) {
+    this.includeOutside = v;
+    this.applySearch(true);
+  }
+  typeLabel(key: string): string {
+    const o = this.typeOptions.filter(t => t.key === key)[0];
+    return o ? o.label : '';
+  }
+  // Cards that depend on the server's whole-ledger figures only apply when no date/type narrowing is on.
+  get scopedView(): boolean {
+    return !!(this.fromDate || this.toDate || this.typeFilters.length);
   }
   get outsidePeriodTotal(): number {
     return this.outsidePeriodRows.reduce((sum, r) => sum + (r.Amount || 0), 0);
@@ -587,20 +627,23 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
   applySearch(keepSelection: boolean = false) {
     const q = (this.searchQuery || '').toLowerCase().trim();
     let rows = q
-      ? this.allRows.filter(r => r.PatientName.toLowerCase().includes(q))
-      : [...this.allRows];
+      ? this.periodRows.filter(r => r.PatientName.toLowerCase().includes(q))
+      : [...this.periodRows];
+    if (this.typeFilters.length) {
+      rows = rows.filter(r => this.typeFilters.indexOf(r.ChildType || '') >= 0);
+    }
     if (this.selectedStatus !== 'all') {
       rows = rows.filter(r => this.rowStatus(r) === this.selectedStatus);
     }
     this.buildGrowthSummary(rows);
-    if (this.growthFilter === 'missing') {
-      rows = rows.filter(r => this.growthMissingOf(r) > 0);
-    } else if (this.growthFilter === 'notmeasured') {
-      rows = rows.filter(r => this.growthNotMeasuredOf(r) > 0);
+    if (this.growthFilters.length) {
+      const gf = this.growthFilters;
+      rows = rows.filter(r => (gf.indexOf('missing') >= 0 && this.growthMissingOf(r) > 0)
+        || (gf.indexOf('notmeasured') >= 0 && this.growthNotMeasuredOf(r) > 0));
     }
-    if (this.growthPaFilter !== null) {
-      const paId = this.growthPaFilter;
-      rows = rows.filter(r => r.PaId === paId);
+    if (this.growthPaFilters.length) {
+      const pf = this.growthPaFilters;
+      rows = rows.filter(r => pf.indexOf(r.PaId) >= 0);
     }
     this.filteredRows = rows;
     if (keepSelection) {
@@ -659,13 +702,15 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
       .sort((a, b) => ((b.Missing + b.NotMeasured) - (a.Missing + a.NotMeasured)) || a.PaName.localeCompare(b.PaName));
   }
 
-  setGrowthFilter(f: '' | 'missing' | 'notmeasured') {
-    this.growthFilter = this.growthFilter === f ? '' : f;
+  setGrowthFilter(f: 'missing' | 'notmeasured') {
+    const i = this.growthFilters.indexOf(f);
+    if (i >= 0) { this.growthFilters.splice(i, 1); } else { this.growthFilters.push(f); }
     this.applySearch(true);
   }
 
   setGrowthPaFilter(paId: number) {
-    this.growthPaFilter = this.growthPaFilter === paId ? null : paId;
+    const i = this.growthPaFilters.indexOf(paId);
+    if (i >= 0) { this.growthPaFilters.splice(i, 1); } else { this.growthPaFilters.push(paId); }
     this.applySearch(true);
   }
 
@@ -716,9 +761,17 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
     this.pendingHandovers
       .filter(h => (!this.selectedPaId || h.PaId === this.selectedPaId) && (!this.selectedClinicId || h.ClinicId === this.selectedClinicId))
       .forEach(h => card(h.PaId, '').Handovers.push(h));
-    this.outstanding
-      .filter(o => (!this.selectedPaId || o.PaId === this.selectedPaId) && this.holdsFor(o.PaId) > 0)
-      .forEach(o => card(o.PaId, o.PaName));
+    if (!this.scopedView) {
+      this.outstanding
+        .filter(o => (!this.selectedPaId || o.PaId === this.selectedPaId) && this.holdsFor(o.PaId) > 0)
+        .forEach(o => card(o.PaId, o.PaName));
+    } else {
+      // Narrowed by date/type: a PA's holds are the unconfirmed cash inside the narrowed set.
+      Object.keys(byPa).forEach(k => {
+        const c = byPa[Number(k)];
+        c.Holds = c.Invoices.filter(r => r.PaymentMode === 'Cash').reduce((sum, r) => sum + (r.Amount || 0), 0);
+      });
+    }
     this.cards = Object.keys(byPa).map(k => byPa[Number(k)])
       .sort((a, b) => (b.Holds - a.Holds) || a.PaName.localeCompare(b.PaName));
   }
@@ -748,28 +801,28 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
 
   // Summary card getters
   get totalCollections(): number {
-    return this.allRows.reduce((s, r) => s + (r.Amount || 0), 0);
+    return this.filteredRows.reduce((s, r) => s + (r.Amount || 0), 0);
   }
 
   get cashWithPA(): number {
-    if (this.outstandingLoaded) {
+    if (this.outstandingLoaded && !this.scopedView) {
       return this.outstanding
         .filter(o => (!this.selectedPaId || o.PaId === this.selectedPaId) && (!this.selectedClinicId || o.ClinicId === this.selectedClinicId))
         .reduce((sum, o) => sum + (o.PendingCash || 0), 0);
     }
-    return this.allRows
+    return this.filteredRows
       .filter(r => !r.IsConfirmed && r.PaymentMode === 'Cash')
       .reduce((s, r) => s + (r.Amount || 0), 0);
   }
 
   get onlinePayments(): number {
-    return this.allRows
+    return this.filteredRows
       .filter(r => r.PaymentMode === 'Online')
       .reduce((s, r) => s + (r.Amount || 0), 0);
   }
 
   get reconciledAmount(): number {
-    return this.allRows
+    return this.filteredRows
       .filter(r => r.IsConfirmed)
       .reduce((s, r) => s + (r.Amount || 0), 0);
   }

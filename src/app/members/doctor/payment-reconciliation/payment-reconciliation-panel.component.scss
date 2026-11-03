@@ -957,3 +957,35 @@
   font-size: 12px;
   font-weight: 600;
 }
+
+.period-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  .period-check { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: var(--vac-ink); }
+}
+
+.filter-types { min-width: 0; }
+.type-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.type-chip {
+  border: 1.5px solid var(--vac-border);
+  background: var(--vac-surface);
+  color: var(--vac-ink-3);
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  .type-n { opacity: .7; margin-left: 4px; }
+  &.on { background: var(--vac-blue-tint); border-color: var(--vac-blue); color: var(--vac-petrol); }
+}
+.type-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--vac-blue-tint);
+  color: var(--vac-petrol);
+}

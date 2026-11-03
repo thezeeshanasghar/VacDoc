@@ -49,6 +49,16 @@
         </div>
       </div>
 
+      <div class="filter-group filter-types">
+        <label>Patient type</label>
+        <div class="type-chips">
+          <button type="button" class="type-chip type-chip-all" [class.on]="typeFilters.length === 0" (click)="clearTypes()">All</button>
+          <button type="button" class="type-chip" *ngFor="let t of typeOptions" [class.on]="isTypeOn(t.key)" (click)="toggleType(t.key)">
+            {{ t.label }} <span class="type-n">{{ typeCount(t.key) }}</span>
+          </button>
+        </div>
+      </div>
+
       <div class="filter-group">
         <label>Status</label>
         <select class="filter-select" [(ngModel)]="selectedStatus" (change)="onSearch()">
@@ -111,16 +121,28 @@
       </div>
     </div>
 
+    <!-- Strict date range: unconfirmed cash outside it is never lost silently, one click brings it in -->
+    <div class="period-banner" *ngIf="!loading && (fromDate || toDate) && (outsidePeriodRows.length > 0 || includeOutside)">
+      <label class="period-check">
+        <input type="checkbox" [ngModel]="includeOutside" (ngModelChange)="setIncludeOutside($event)">
+        Include unconfirmed cash outside this period
+      </label>
+      <span *ngIf="outsidePeriodRows.length > 0">
+        {{ outsidePeriodRows.length }} unconfirmed {{ outsidePeriodRows.length === 1 ? 'row' : 'rows' }}
+        (Rs {{ outsidePeriodTotal | number:'1.0-0' }}) {{ includeOutside ? 'are included' : 'fall outside this period and are hidden' }}.
+      </span>
+    </div>
+
     <!-- Growth flag: chips + per-PA counts. Display only, never blocks Confirm. Hidden when nothing is flagged. -->
-    <div class="growth-bar" *ngIf="growthMissingRows + growthNotMeasuredRows > 0 || growthFilter || growthPaFilter !== null">
-      <button class="growth-chip growth-chip-miss" [class.on]="growthFilter === 'missing'" (click)="setGrowthFilter('missing')">
+    <div class="growth-bar" *ngIf="growthMissingRows + growthNotMeasuredRows > 0 || growthFilters.length || growthPaFilters.length">
+      <button class="growth-chip growth-chip-miss" [class.on]="growthFilters.indexOf('missing') >= 0" (click)="setGrowthFilter('missing')">
         Growth missing <span class="growth-n">{{ growthMissingRows }}</span>
       </button>
-      <button class="growth-chip growth-chip-nm" [class.on]="growthFilter === 'notmeasured'" (click)="setGrowthFilter('notmeasured')">
+      <button class="growth-chip growth-chip-nm" [class.on]="growthFilters.indexOf('notmeasured') >= 0" (click)="setGrowthFilter('notmeasured')">
         Not measured <span class="growth-n">{{ growthNotMeasuredRows }}</span>
       </button>
       <span class="growth-by" *ngIf="growthPaStats.length > 0">By PA</span>
-      <button class="growth-chip growth-chip-pa" *ngFor="let p of growthPaStats" [class.on]="growthPaFilter === p.PaId" (click)="setGrowthPaFilter(p.PaId)">
+      <button class="growth-chip growth-chip-pa" *ngFor="let p of growthPaStats" [class.on]="growthPaFilters.indexOf(p.PaId) >= 0" (click)="setGrowthPaFilter(p.PaId)">
         {{ p.PaName }} · missing {{ p.Missing }} · not measured {{ p.NotMeasured }} of {{ p.Total }}
       </button>
     </div>
@@ -277,12 +299,6 @@
           <span>Try adjusting your filters or date range</span>
         </div>
 
-        <!-- Unconfirmed money outside the chosen period is never hidden; say so -->
-        <div class="period-banner" *ngIf="!loading && (fromDate || toDate) && outsidePeriodRows.length > 0">
-          {{ outsidePeriodRows.length }} unconfirmed {{ outsidePeriodRows.length === 1 ? 'row' : 'rows' }}
-          (Rs {{ outsidePeriodTotal | number:'1.0-0' }}) fall outside this period and are still shown below.
-        </div>
-
         <!-- Data Table -->
         <div class="table-wrap" *ngIf="!loading && filteredRows.length > 0">
           <table class="recon-table">
@@ -292,6 +308,7 @@
                 <th class="col-delete"></th>
                 <th class="col-date">Date</th>
                 <th class="col-patient">Patient Name</th>
+                <th class="col-type">Type</th>
                 <th class="col-amount">Amount</th>
                 <th class="col-mode">Mode</th>
                 <th class="col-status">Status</th>
@@ -341,6 +358,7 @@
                   <span class="growth-tag growth-tag-miss" *ngIf="growthMissingOf(row) > 0" [title]="growthMissingTip(row)">Growth · {{ growthMissingOf(row) }} of {{ row.GrowthTotal }}</span>
                   <span class="growth-tag growth-tag-nm" *ngIf="growthNotMeasuredOf(row) > 0" [title]="growthNotMeasuredTip(row)">Not measured</span>
                 </td>
+                <td class="col-type"><span class="type-tag" *ngIf="row.ChildType">{{ typeLabel(row.ChildType) }}</span></td>
                 <td class="col-amount">
                   <span class="amount-val" *ngIf="row.RowType === 'AwaitingInvoice'">—</span>
                   <ng-container *ngIf="row.RowType !== 'AwaitingInvoice'">
