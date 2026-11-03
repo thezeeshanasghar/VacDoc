@@ -749,7 +749,6 @@ export class BulkPage implements OnInit {
   }
 
   async onSubmit() {
-    this.applyTravelGivenDateToday();
     if (this.anyLotsLoading) {
       this.toastService.create("Loading batch details — try again in a moment.", "warning");
       return;
@@ -970,7 +969,6 @@ export class BulkPage implements OnInit {
       return;
     }
 
-    this.applyTravelGivenDateToday();
     data.GivenDate = toLegacyDay(this.fg.value.GivenDate);
 
     const loading = await this.loadingController.create({ message: "Filling Vaccine" });
