@@ -32,6 +32,14 @@
         <app-date-input [(ngModel)]="toDate" (dateChange)="onFilterChange()"></app-date-input>
       </div>
 
+      <div class="filter-group" *ngIf="fromDate || toDate">
+        <label>Period by</label>
+        <select class="filter-select" [(ngModel)]="dateBasis" (change)="onFilterChange()">
+          <option value="entered">Entered date</option>
+          <option value="visit">Visit date</option>
+        </select>
+      </div>
+
       <div class="filter-group filter-search">
         <label>Search Patient</label>
         <div class="search-wrap">
@@ -269,6 +277,12 @@
           <span>Try adjusting your filters or date range</span>
         </div>
 
+        <!-- Unconfirmed money outside the chosen period is never hidden; say so -->
+        <div class="period-banner" *ngIf="!loading && (fromDate || toDate) && outsidePeriodRows.length > 0">
+          {{ outsidePeriodRows.length }} unconfirmed {{ outsidePeriodRows.length === 1 ? 'row' : 'rows' }}
+          (Rs {{ outsidePeriodTotal | number:'1.0-0' }}) fall outside this period and are still shown below.
+        </div>
+
         <!-- Data Table -->
         <div class="table-wrap" *ngIf="!loading && filteredRows.length > 0">
           <table class="recon-table">
@@ -310,10 +324,14 @@
                           (click)="openLog(row)" title="Open the full activity log">
                     <div class="date-val">{{ formatDate(row.Date) }}</div>
                     <div class="assigned-ts" *ngIf="row.AssignedAt">Assigned {{ formatDateTime(row.AssignedAt) }}</div>
+                    <div class="backdated-tag" *ngIf="row.IsBackDated">Back-dated · entered {{ formatDateTime(row.EnteredAt) }}</div>
+                    <div class="backdated-tag" *ngIf="row.OutsidePeriod && !row.IsBackDated">Outside period</div>
                   </button>
                   <ng-template #plainDate>
                     <div class="date-val">{{ formatDate(row.Date) }}</div>
                     <div class="assigned-ts" *ngIf="row.AssignedAt">Assigned {{ formatDateTime(row.AssignedAt) }}</div>
+                    <div class="backdated-tag" *ngIf="row.IsBackDated">Back-dated · entered {{ formatDateTime(row.EnteredAt) }}</div>
+                    <div class="backdated-tag" *ngIf="row.OutsidePeriod && !row.IsBackDated">Outside period</div>
                   </ng-template>
                 </td>
                 <td class="col-patient">

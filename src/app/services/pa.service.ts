@@ -367,13 +367,14 @@ export class PaService extends BaseService {
     return this.http.patch(url, {}, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  getPaymentReconciliation(doctorId: number, clinicId?: number, paId?: number, fromDate?: string, toDate?: string): Observable<any> {
+  getPaymentReconciliation(doctorId: number, clinicId?: number, paId?: number, fromDate?: string, toDate?: string, dateBasis?: string): Observable<any> {
     let url = `${this.API_PA}PaCashHandover/reconciliation/${doctorId}`;
     const params: string[] = [];
     if (clinicId) { params.push(`clinicId=${clinicId}`); }
     if (paId) { params.push(`paId=${paId}`); }
     if (fromDate) { params.push(`fromDate=${fromDate}`); }
     if (toDate) { params.push(`toDate=${toDate}`); }
+    if (dateBasis) { params.push(`dateBasis=${dateBasis}`); }
     if (params.length) { url += '?' + params.join('&'); }
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }

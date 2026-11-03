@@ -32,6 +32,9 @@ interface PaymentRow {
   RowType: 'Invoice' | 'UngiveReversal' | 'EditReversal' | 'AwaitingInvoice' | 'DirectSale';
   Date: string;
   AssignedAt?: string;
+  EnteredAt?: string;       // when the PA entered the invoice
+  IsBackDated?: boolean;    // visit date is a day or more before the entry date
+  OutsidePeriod?: boolean;  // shown only because it is unconfirmed; outside the chosen period
   PatientName: string;
   PatientDeleted?: boolean;  // the patient no longer exists (name comes from the delete audit)
   Vaccines: string;
@@ -80,6 +83,8 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
   selectedPaId: number | null = null;
   fromDate: string = '';
   toDate: string = '';
+  // 'entered' = date the PA entered the invoice, 'visit' = date the dose was given.
+  dateBasis: 'entered' | 'visit' = 'entered';
   searchQuery: string = '';
   selectedStatus: string = 'all';
   // Growth flag filters (spec: GROWTH_FLAG_SPEC.md). Chips never block Confirm.
@@ -140,6 +145,15 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
     this.selectedClinicId = this.clinicId;
     this.selectedPaId = this.paId;
     this.load();
+  }
+
+  // Unconfirmed invoices outside the chosen period are still returned (so money can't hide);
+  // this is what the banner above the table counts.
+  get outsidePeriodRows(): PaymentRow[] {
+    return this.allRows.filter(r => r.RowType === 'Invoice' && r.OutsidePeriod && !r.IsConfirmed);
+  }
+  get outsidePeriodTotal(): number {
+    return this.outsidePeriodRows.reduce((sum, r) => sum + (r.Amount || 0), 0);
   }
 
   onFilterChange() {
@@ -232,7 +246,8 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
       this.selectedClinicId || undefined,
       this.selectedPaId || undefined,
       this.fromDate || undefined,
-      this.toDate || undefined
+      this.toDate || undefined,
+      this.dateBasis
     ).subscribe(
       res => {
         this.loading = false;
