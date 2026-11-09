@@ -293,13 +293,18 @@ export class ChildPage {
       msg += ` and ${invoices.length} invoice(s) totalling PKR ${Math.round(total).toLocaleString()}`;
       if (confirmed) { msg += `, ${confirmed} already confirmed by you`; }
     }
-    msg += '.<br><br><b>Reverse and delete:</b> stock goes back to inventory. Payments stay in Payment Reconciliation, tagged "Patient deleted", until you cancel them there.<br><br><b>Deactivate:</b> nothing is reversed and the record is kept.';
+    msg += '.<br><br><b>Reverse and delete:</b> stock goes back to inventory. Payments stay in Payment Reconciliation, tagged "Patient deleted", until you cancel them there.<br><br><b>Delete, keep stock:</b> the patient is deleted but stock is NOT put back (use this when the vaccines were really used). Payments stay in Payment Reconciliation.<br><br><b>Deactivate:</b> nothing is reversed and the record is kept.';
     const buttons: any[] = [
       { text: 'Close', role: 'cancel' },
       {
         text: 'Reverse stock and delete',
         cssClass: 'alert-btn-danger',
         handler: () => { this.Deletechild(id, 'reverse'); }
+      },
+      {
+        text: "Delete, don't reverse stock",
+        cssClass: 'alert-btn-danger',
+        handler: () => { this.Deletechild(id, 'keep'); }
       }
     ];
     if (this.canToggleStatus) {
