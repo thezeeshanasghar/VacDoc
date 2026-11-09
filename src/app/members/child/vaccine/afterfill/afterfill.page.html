@@ -10,7 +10,7 @@
 <ion-content class=ion-padding>
 
   <ion-text color="danger" *ngIf="!isSameDayVisit">
-    <p>This visit can no longer be edited (same-day only).</p>
+    <p>{{ editWindowMessage }}</p>
   </ion-text>
 
   <form [formGroup]="fg">

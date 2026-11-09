@@ -8,7 +8,7 @@ import { LoadingController } from '@ionic/angular';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { environment } from 'src/environments/environment';
-import { today, dayOf, parseDay } from 'src/app/shared/time';
+import { today, dayOf, parseDay, diffDays } from 'src/app/shared/time';
 
 @Component({
   selector: 'app-afterfill',
@@ -54,6 +54,7 @@ export class AfterFillPage implements OnInit {
   scheduleDatecheck: string;
   clinicId: number;
   isSameDayVisit: boolean = true;
+  editWindowMessage: string = '';
 
   constructor(
     public loadingController: LoadingController,
@@ -100,6 +101,8 @@ export class AfterFillPage implements OnInit {
       } else {
         console.error('No user data found in storage.');
       }
+      // Load the dose only once the role is known: the edit window depends on it.
+      this.getVaccination();
     });
 
     this.fg = this.formBuilder.group({
@@ -121,7 +124,6 @@ export class AfterFillPage implements OnInit {
       'DoctorId': [''],
       'ChildId': [null],
     });
-    this.getVaccination();
   }
 
   async getVaccination() {
@@ -138,17 +140,22 @@ export class AfterFillPage implements OnInit {
           console.log('Vaccine Data:', this.vaccineData);
           this.childId=this.vaccineData.ChildId;
 
-          // After-fill is same-day-only (PKT = UTC+5): vitals can only be edited on the
-          // same calendar day the dose was given. DoneAt is the authoritative UTC
-          // timestamp set when IsDone was marked; fall back to GivenDate if missing.
+          // After-fill window (PKT): Doctor / Manager can add vitals up to 7 days after the dose was
+          // given; a PA stays same-day. DoneAt is the authoritative UTC timestamp set when IsDone was
+          // marked; fall back to GivenDate if missing. Reference ranges use the given date server-side.
           const todayPkt = today();
           const visitDatePkt = this.vaccineData.DoneAt
             ? dayOf(this.vaccineData.DoneAt)
             : parseDay(this.vaccineData.GivenDate);
-          this.isSameDayVisit = !!this.vaccineData.IsDone && visitDatePkt === todayPkt;
+          const windowDays = this.usertype === 'PA' ? 0 : 7;
+          const ageDays = diffDays(todayPkt, visitDatePkt);
+          this.isSameDayVisit = !!this.vaccineData.IsDone && ageDays >= 0 && ageDays <= windowDays;
+          this.editWindowMessage = windowDays === 0
+            ? 'This visit can no longer be edited (same-day only).'
+            : 'This visit can no longer be edited (vitals can be added up to 7 days after the vaccine is given).';
 
           if (!this.isSameDayVisit) {
-            this.toastService.create('This visit was not completed today. Vitals can only be edited on the same day.', 'danger');
+            this.toastService.create(this.editWindowMessage, 'danger');
             this.fg.disable();
           }
 
@@ -323,7 +330,7 @@ export class AfterFillPage implements OnInit {
 
   async fillVaccine() {
     if (!this.isSameDayVisit) {
-      this.toastService.create('This visit was not completed today. Vitals can only be edited on the same day.', 'danger');
+      this.toastService.create(this.editWindowMessage, 'danger');
       return;
     }
 
