@@ -1,4 +1,5 @@
 export const environment = {
+  CLIENT_VERSION: 'vacdoc-2026.11.10',
   production: true,
 
   // for production API

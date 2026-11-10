@@ -3,6 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
+  CLIENT_VERSION: 'vacdoc-2026.11.10',
   production: false,
   // BASE_URL: "https://stage.skintechno.com/api/",
   // RESOURCE_URL: "https://stage.skintechno.com/",

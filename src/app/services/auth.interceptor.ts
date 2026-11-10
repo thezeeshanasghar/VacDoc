@@ -30,7 +30,10 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   private send(req: HttpRequest<any>, next: HttpHandler, token: string | null): Observable<HttpEvent<any>> {
-    const authed = token ? req.clone({ setHeaders: { Authorization: 'Bearer ' + token } }) : req;
+    // X-Client-Version lets the server tell which app build a request came from (ignored by old servers).
+    const headers: { [k: string]: string } = { 'X-Client-Version': environment.CLIENT_VERSION };
+    if (token) { headers['Authorization'] = 'Bearer ' + token; }
+    const authed = req.clone({ setHeaders: headers });
     return next.handle(authed).pipe(
       tap(
         (ev: HttpEvent<any>) => {
