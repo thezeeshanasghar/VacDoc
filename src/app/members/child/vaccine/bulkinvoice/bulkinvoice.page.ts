@@ -429,7 +429,7 @@ getAmount(id: string, doseId: string, childId: string) {
     const formattedDate = parseDay(date); // Use the provided date instead of today's date
 
     if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
-      const url = `${this.API_VACCINE}child/${id}/${formattedDate}/${formattedDate}/${fee}/Verify-Invoice-PDF`;
+      const url = AuthSession.withToken(`${this.API_VACCINE}child/${id}/${formattedDate}/${formattedDate}/${fee}/Verify-Invoice-PDF`);
       window.open(url);
     } else {
       var request: DownloadRequest = {
