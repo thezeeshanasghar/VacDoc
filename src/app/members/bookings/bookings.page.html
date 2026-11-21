@@ -52,6 +52,7 @@
       <span class="pill" [class.pill-active]="selectedStatus === 'Pending'" (click)="selectedStatus = 'Pending'; applyFilters()">Pending</span>
       <span class="pill" [class.pill-active]="selectedStatus === 'Confirmed'" (click)="selectedStatus = 'Confirmed'; applyFilters()">Confirmed</span>
       <span class="pill" [class.pill-active]="selectedStatus === 'Cancelled'" (click)="selectedStatus = 'Cancelled'; applyFilters()">Cancelled</span>
+      <span class="pill" [class.pill-active]="selectedStatus === 'Dismissed'" (click)="selectedStatus = 'Dismissed'; applyFilters()">Dismissed</span>
     </div>
   </div>
 
@@ -321,6 +322,17 @@
             >
               <ion-icon slot="start" name="save-outline"></ion-icon>
               Save Note
+            </ion-button>
+            <ion-button
+              size="small"
+              color="medium"
+              fill="clear"
+              class="action-btn"
+              (click)="dismissBooking(b)"
+              *ngIf="b.Status === 'Pending'"
+            >
+              <ion-icon slot="start" name="eye-off-outline"></ion-icon>
+              Dismiss
             </ion-button>
           </div>
         </div>

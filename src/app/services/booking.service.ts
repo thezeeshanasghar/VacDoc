@@ -59,6 +59,13 @@ export class BookingService extends BaseService {
     );
   }
 
+  dismiss(id: number, doctorComment: string): Observable<any> {
+    return this.http.put(this.API + '/' + id + '/dismiss', { DoctorComment: doctorComment }, this.httpOptions).pipe(
+      map(this.extractData),
+      catchError(this.handleError)
+    );
+  }
+
   addComment(id: number, doctorComment: string): Observable<any> {
     return this.http.put(this.API + '/' + id + '/comment', { DoctorComment: doctorComment }, this.httpOptions).pipe(
       map(this.extractData),

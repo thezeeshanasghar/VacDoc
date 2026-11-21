@@ -495,6 +495,36 @@ export class BookingsPage {
     await alert.present();
   }
 
+  // Silent close: no parent notification. For bookings already handled outside this page.
+  async dismissBooking(booking: any) {
+    const alert = await this.alertController.create({
+      header: 'Dismiss Booking',
+      message: 'Remove this booking from the list without notifying the parent?',
+      buttons: [
+        { text: 'No', role: 'cancel' },
+        {
+          text: 'Dismiss',
+          handler: () => {
+            this.bookingService.dismiss(booking.Id, this.doctorComment).subscribe(
+              (res) => {
+                if (res && res.IsSuccess) {
+                  booking.Status = 'Dismissed';
+                  this.expandedId = 0;
+                  this.applyFilters();
+                  this.toastService.create('Booking dismissed.');
+                } else {
+                  this.toastService.create((res && res.Message) ? res.Message : 'Failed to dismiss', 'danger');
+                }
+              },
+              (err) => { this.toastService.create('Failed to dismiss booking', 'danger'); }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
   openLocation(location: string) {
     if (location) { window.open(location, '_system'); }
   }
