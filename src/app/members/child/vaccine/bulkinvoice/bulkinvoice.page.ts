@@ -433,7 +433,10 @@ getAmount(id: string, doseId: string, childId: string) {
       window.open(url);
     } else {
       var request: DownloadRequest = {
-        uri: AuthSession.withToken(`${this.API_VACCINE}child/${id}/${formattedDate}/${fee}/Download-Invoice-PDF`),
+        // Issue-Invoice-PDF = signed-in issuing route with the 4 segments the API expects. Not
+        // Download-Invoice-PDF (3 segments never matched) and not a name the APK shim rewrites to the
+        // read-only Verification route. See PA_INVOICE_APK_DOWNLOAD_SPEC.md.
+        uri: AuthSession.withToken(`${this.API_VACCINE}child/${id}/${formattedDate}/${formattedDate}/${fee}/Issue-Invoice-PDF`),
         title: 'Invoice',
         description: '',
         mimeType: '',
@@ -446,7 +449,10 @@ getAmount(id: string, doseId: string, childId: string) {
       };
       this.downloader.download(request)
         .then((location: string) => console.log('File downloaded at:' + location))
-        .catch((error: any) => console.error(error));
+        .catch((error: any) => {
+          console.error(error);
+          this.toastService.create('Invoice could not be downloaded. Tap Save & Download again.', 'danger');
+        });
     }
   }
 }

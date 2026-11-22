@@ -614,7 +614,9 @@ export class VaccinePage {
       this.downloader.download(request)
         .then((location: string) => console.log('File downloaded at:' + location))
         .catch(() => {
-          this.toastService.create('No invoice PDF has been generated yet for this visit.', 'danger');
+          // The native downloader reports every failure the same way (missing PDF, network, session), so
+          // do not claim the PDF is missing.
+          this.toastService.create('Could not download the invoice. Check your connection and try again.', 'danger');
         });
     }
   }
