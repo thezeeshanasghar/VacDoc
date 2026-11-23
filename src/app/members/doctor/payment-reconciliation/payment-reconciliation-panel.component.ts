@@ -50,6 +50,10 @@ interface PaymentRow {
   PendingHandover?: boolean;
   HandoverDoneAt?: string;
   HasUnbilledPayment?: boolean; // AwaitingInvoice rows only — cash already collected, no invoice yet
+  IsRecordOnly?: boolean;       // AwaitingInvoice rows only — no invoice, brand or fee on any dose: Approve, not Confirm
+  RecordApproved?: boolean;     // doctor approved the record-only entry (void server-side if money appears)
+  RecordApprovedAt?: string;
+  RecordDoses?: { Name: string; GivenDate: string }[];
   IsPaymentCollected?: boolean; // DirectSale rows only — false until PA records Cash/Online
   PaId: number;
   PaName: string;
@@ -108,6 +112,9 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
   allRows: PaymentRow[] = [];
   filteredRows: PaymentRow[] = [];
   selectedIds: Set<number> = new Set();
+  // Record-only (no money) rows picked for "Approve Selected". Keyed by AssignmentId, NOT ScheduleId:
+  // an Awaiting Invoice row's ScheduleId is its assignment id and could collide with a real schedule id.
+  selectedRecordIds: Set<number> = new Set();
 
   loading: boolean = false;
 
@@ -202,9 +209,36 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
 
   // Bin on every Invoice / Awaiting Invoice row: shortcut for the tracking tabs' "Reverse everything"
   // (same DELETE PAAssignment, FullReset). No reason is asked; the audit row records where it came from.
-  async confirmReverseAll(row: PaymentRow) {
+  async confirmReverseAll(row: PaymentRow, skipRecordGuard?: boolean) {
     if (!row.AssignmentId) {
       this.toastService.create('No assignment linked to this row', 'warning');
+      return;
+    }
+    // Record-only rows hold no money: Reverse everything would un-give real past records.
+    if (row.IsRecordOnly && !skipRecordGuard) {
+      const n = (row.RecordDoses || []).length;
+      const guard = await this.alertController.create({
+        header: 'This row has no money',
+        message: 'The bin reverses everything: it would un-give ' + n + ' vaccine' + (n === 1 ? '' : 's') +
+          ' and remove ' + (n === 1 ? 'it' : 'them') + ' from the child\'s record. These are past records moved from paper, so that is almost never what you want.<br><br>Use <b>Approve</b> to clear it from the queue and keep the record.',
+        inputs: [{ name: 'typed', type: 'text', placeholder: 'Type REVERSE to reverse anyway' }],
+        buttons: [
+          { text: 'OK, use Approve', role: 'cancel' },
+          {
+            text: 'Reverse anyway',
+            cssClass: 'alert-btn-danger',
+            handler: (data: any) => {
+              if (data && String(data.typed || '').trim().toUpperCase() === 'REVERSE') {
+                this.confirmReverseAll(row, true);
+                return true;
+              }
+              this.toastService.create('Type REVERSE to continue', 'warning');
+              return false;
+            }
+          }
+        ]
+      });
+      await guard.present();
       return;
     }
     const pa = (row.PaName || 'The PA').replace(/^.*\(|\)$/g, '').split(' ')[0] || 'The PA';
@@ -226,7 +260,7 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
             const loading = await this.loadingController.create({ message: 'Reversing...' });
             await loading.present();
             const reason = 'Reversed from Cash table' + (row.IsConfirmed ? ' (cash already confirmed)' : '');
-            this.paService.deleteAssignment(row.AssignmentId!, this.doctorId!, 'FullReset', reason).subscribe(
+            this.paService.deleteAssignment(row.AssignmentId!, this.doctorId!, 'FullReset', reason, !!skipRecordGuard).subscribe(
               res => {
                 loading.dismiss();
                 if (res && res.IsSuccess) {
@@ -277,6 +311,7 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
   }
 
   load() {
+    this.selectedRecordIds = new Set();
     if (!this.doctorId) { return; }
     this.loading = true;
     this.selectedIds = new Set();
@@ -1014,6 +1049,113 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
       );
     };
     confirmNext(0);
+  }
+
+  // Select / approve several record-only rows at once (e.g. a PA's batch of past entries for one child)
+  isRecordSelectable(r: PaymentRow): boolean {
+    return r.RowType === 'AwaitingInvoice' && !!r.IsRecordOnly && !r.RecordApproved && !!r.AssignmentId && !r.PatientDeleted;
+  }
+
+  get recordSelectableRows(): PaymentRow[] {
+    return this.filteredRows.filter(r => this.isRecordSelectable(r));
+  }
+
+  get selectedRecordRows(): PaymentRow[] {
+    return this.recordSelectableRows.filter(r => this.selectedRecordIds.has(r.AssignmentId!));
+  }
+
+  get allRecordsChecked(): boolean {
+    const rows = this.recordSelectableRows;
+    return rows.length > 0 && rows.every(r => this.selectedRecordIds.has(r.AssignmentId!));
+  }
+
+  isRecordSelected(row: PaymentRow): boolean {
+    return !!row.AssignmentId && this.selectedRecordIds.has(row.AssignmentId);
+  }
+
+  toggleRecord(row: PaymentRow, checked: boolean) {
+    if (!row.AssignmentId) { return; }
+    if (checked) { this.selectedRecordIds.add(row.AssignmentId); } else { this.selectedRecordIds.delete(row.AssignmentId); }
+    this.selectedRecordIds = new Set(this.selectedRecordIds);
+  }
+
+  toggleAllRecords(checked: boolean) {
+    this.selectedRecordIds = new Set();
+    if (checked) { this.recordSelectableRows.forEach(r => this.selectedRecordIds.add(r.AssignmentId!)); }
+  }
+
+  async bulkApproveRecords() {
+    const rows = this.selectedRecordRows;
+    if (rows.length === 0) { return; }
+    const names = rows.map(r => r.PatientName).filter((n, i, a) => a.indexOf(n) === i).join(', ');
+    const alert = await this.alertController.create({
+      header: 'Approve ' + rows.length + ' past record' + (rows.length > 1 ? 's' : '') + '?',
+      message: 'These entries have no invoice, brand or fee, so there is no money to collect. Patient: ' + names +
+        '.<br><br>The server re-checks each one; any that gained money since this page loaded is skipped.',
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Approve',
+          cssClass: 'alert-btn-confirm',
+          handler: async () => {
+            const loading = await this.loadingController.create({ message: 'Approving...' });
+            await loading.present();
+            let done = 0;
+            let failed = 0;
+            const next = (i: number) => {
+              if (i >= rows.length) {
+                loading.dismiss();
+                this.selectedRecordIds = new Set();
+                this.toastService.create(failed === 0 ? done + ' record' + (done > 1 ? 's' : '') + ' approved'
+                  : done + ' approved, ' + failed + ' skipped (now have money, refresh)', failed === 0 ? 'success' : 'warning');
+                this.load();
+                return;
+              }
+              this.paService.approveRecord(rows[i].AssignmentId!, this.callerUserId, this.securityStamp).subscribe(
+                res => { if (res && res.IsSuccess) { done++; } else { failed++; } next(i + 1); },
+                () => { failed++; next(i + 1); }
+              );
+            };
+            next(0);
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  // Approve a record-only (no money) PA entry. The server re-checks every dose from the DB.
+  async approveRecord(row: PaymentRow) {
+    if (!row.AssignmentId) { return; }
+    const doses = (row.RecordDoses || []).map(d => d.Name + (d.GivenDate ? ' (' + d.GivenDate + ')' : '')).join(', ');
+    const pa = (row.PaName || 'The PA').replace(/^.*\(|\)$/g, '');
+    const alert = await this.alertController.create({
+      header: 'Approve past record?',
+      message: 'This converts a paper record to the digital record. No invoice, brand or fee exists on these doses, so there is no money to collect.<br><br>' +
+        '<b>Patient:</b> ' + row.PatientName + '<br><b>Entered by:</b> ' + pa + '<br><b>Doses:</b> ' + doses +
+        '<br><br>' + pa + ' keeps credit for giving them. If a fee or invoice is added later, this approval is cancelled and ' + pa + ' becomes responsible for the money.',
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Approve',
+          cssClass: 'alert-btn-confirm',
+          handler: () => {
+            this.paService.approveRecord(row.AssignmentId!, this.callerUserId, this.securityStamp).subscribe(
+              res => {
+                if (res && res.IsSuccess) {
+                  this.toastService.create('Record approved', 'success');
+                } else {
+                  this.toastService.create((res && res.Message) || 'Could not approve', 'warning');
+                }
+                this.load();
+              },
+              () => { this.toastService.create('Could not approve', 'warning'); }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
   async approveAmendment(row: PaymentRow) {

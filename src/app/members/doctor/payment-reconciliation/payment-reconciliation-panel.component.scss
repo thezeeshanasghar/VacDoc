@@ -983,7 +983,7 @@
   .period-check { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: var(--vac-ink); }
 }
 
-.filter-types { min-width: 0; }
+.filter-types { flex: 1 1 100%; min-width: 100%; }
 .type-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .type-chip {
   border: 1.5px solid var(--vac-border);
@@ -995,7 +995,9 @@
   font-weight: 600;
   cursor: pointer;
   .type-n { opacity: .7; margin-left: 4px; }
-  &.on { background: var(--vac-blue-tint); border-color: var(--vac-blue); color: var(--vac-petrol); }
+  &.on { background: var(--vac-petrol); border-color: var(--vac-petrol); color: #fff; }
+  &.on:not(.type-chip-all)::before { content: "\2713 "; }
+  &.type-chip-all.on { background: var(--vac-blue); border-color: var(--vac-blue); color: #fff; }
 }
 .type-tag {
   display: inline-block;
@@ -1005,4 +1007,40 @@
   border-radius: 10px;
   background: var(--vac-blue-tint);
   color: var(--vac-petrol);
+}
+
+
+// ─── Record-only (no money) entries: Approve instead of Confirm ────────────────
+$vac-record: #6A4FB3;
+$vac-record-tint: #EFEAFA;
+.badge.badge-record {
+  background: var(--vac-hairline);
+  color: var(--vac-ink-3);
+}
+.badge.badge-record-approved {
+  background: $vac-record-tint;
+  color: $vac-record;
+}
+.record-doses {
+  font-size: 11px;
+  color: var(--vac-ink-3);
+  margin-top: 3px;
+  max-width: 330px;
+}
+.btn-approve-record {
+  padding: 6px 14px;
+  background: transparent;
+  color: $vac-record;
+  border: 1.5px solid $vac-record;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover { background: $vac-record-tint; }
+}
+.record-kept {
+  font-size: 11px;
+  color: var(--vac-ink-3);
 }

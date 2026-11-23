@@ -49,16 +49,6 @@
         </div>
       </div>
 
-      <div class="filter-group filter-types">
-        <label>Patient type</label>
-        <div class="type-chips">
-          <button type="button" class="type-chip type-chip-all" [class.on]="typeFilters.length === 0" (click)="clearTypes()">All</button>
-          <button type="button" class="type-chip" *ngFor="let t of typeOptions" [class.on]="isTypeOn(t.key)" (click)="toggleType(t.key)">
-            {{ t.label }} <span class="type-n">{{ typeCount(t.key) }}</span>
-          </button>
-        </div>
-      </div>
-
       <div class="filter-group">
         <label>Status</label>
         <select class="filter-select" [(ngModel)]="selectedStatus" (change)="onSearch()">
@@ -72,6 +62,17 @@
           <option value="InvoiceEditReversal">Invoice Edit Reversal</option>
         </select>
       </div>
+
+      <div class="filter-group filter-types">
+        <label>Patient type (select any)</label>
+        <div class="type-chips">
+          <button type="button" class="type-chip type-chip-all" [class.on]="typeFilters.length === 0" (click)="clearTypes()">All</button>
+          <button type="button" class="type-chip" *ngFor="let t of typeOptions" [class.on]="isTypeOn(t.key)" (click)="toggleType(t.key)">
+            {{ t.label }} <span class="type-n">{{ typeCount(t.key) }}</span>
+          </button>
+        </div>
+      </div>
+
     </div>
 
     <!-- Summary Cards -->
@@ -276,6 +277,14 @@
               <ion-icon name="checkmark-outline"></ion-icon>
               Mark Selected Payments Received
             </button>
+            <label class="checkbox-wrap" *ngIf="recordSelectableRows.length > 0">
+              <input type="checkbox" [checked]="allRecordsChecked" (change)="toggleAllRecords($any($event.target).checked)">
+              <span class="checkbox-label">{{ selectedRecordRows.length }} record-only selected</span>
+            </label>
+            <button class="btn-approve-record" *ngIf="recordSelectableRows.length > 0"
+              [disabled]="selectedRecordRows.length === 0" (click)="bulkApproveRecords()">
+              Approve Selected Records
+            </button>
             <span class="growth-warn" *ngIf="selectedGrowthWarn > 0">{{ selectedGrowthWarn }} of the selected without growth. Confirm still allowed</span>
           </div>
           <div class="bulk-right">
@@ -324,6 +333,10 @@
                   [class.row-directsale]="row.RowType === 'DirectSale'">
                 <!-- Checkbox: only for normal invoice rows -->
                 <td class="col-check">
+                  <input type="checkbox" class="row-checkbox"
+                    *ngIf="isRecordSelectable(row)"
+                    [checked]="isRecordSelected(row)"
+                    (change)="toggleRecord(row, $any($event.target).checked)">
                   <input type="checkbox"
                     *ngIf="row.RowType === 'Invoice'"
                     [checked]="isSelected(row)"
@@ -354,6 +367,9 @@
                   <div class="patient-name">{{ row.PatientName || (row.PatientDeleted ? 'Unknown patient' : '') }}
                     <span class="pa-tag pa-tag-bad" *ngIf="row.PatientDeleted">Patient deleted</span></div>
                   <div class="patient-pa" *ngIf="row.PaName">{{ row.PaName }}</div>
+                  <div class="record-doses" *ngIf="row.RowType === 'AwaitingInvoice' && row.IsRecordOnly && row.RecordDoses && row.RecordDoses.length">
+                    <span *ngFor="let d of row.RecordDoses; let last = last">{{ d.Name }}{{ d.GivenDate ? ' (' + d.GivenDate + ')' : '' }}{{ last ? '' : ', ' }}</span>
+                  </div>
                   <span class="growth-tag growth-tag-miss" *ngIf="growthMissingOf(row) > 0" [title]="growthMissingTip(row)">Growth · {{ growthMissingOf(row) }} of {{ row.GrowthTotal }}</span>
                   <span class="growth-tag growth-tag-nm" *ngIf="growthNotMeasuredOf(row) > 0" [title]="growthNotMeasuredTip(row)">Not measured</span>
                 </td>
@@ -411,7 +427,16 @@
                        badge-awaiting, bound above on the <tr>) is the only signal that payment
                        was already collected with no invoice yet. -->
                   <ng-container *ngIf="row.RowType === 'AwaitingInvoice'">
-                    <span class="badge" [ngClass]="row.HasUnbilledPayment ? 'badge-unbilled' : 'badge-awaiting'">Awaiting Invoice</span>
+                    <ng-container *ngIf="!row.IsRecordOnly">
+                      <span class="badge" [ngClass]="row.HasUnbilledPayment ? 'badge-unbilled' : 'badge-awaiting'">Awaiting Invoice</span>
+                    </ng-container>
+                    <ng-container *ngIf="row.IsRecordOnly && !row.RecordApproved">
+                      <span class="badge badge-record">Record only · awaiting approval</span>
+                    </ng-container>
+                    <ng-container *ngIf="row.IsRecordOnly && row.RecordApproved">
+                      <span class="badge badge-record-approved">Record approved</span>
+                      <div class="confirm-ts">{{ formatDateTime(row.RecordApprovedAt) }}</div>
+                    </ng-container>
                   </ng-container>
                   <!-- PA-assigned direct sale: pooled cash, settled via cash handover -->
                   <ng-container *ngIf="row.RowType === 'DirectSale'">
@@ -448,6 +473,11 @@
                       <button *ngIf="!row.IsConfirmed" class="btn-confirm-row"
                         (click)="confirmPayment(row)">Confirm</button>
                     </ng-container>
+                  </ng-container>
+                  <!-- Record-only (no money) entry: Approve, never Confirm -->
+                  <ng-container *ngIf="row.RowType === 'AwaitingInvoice' && row.IsRecordOnly">
+                    <button *ngIf="!row.RecordApproved" class="btn-approve-record" (click)="approveRecord(row)">Approve</button>
+                    <span *ngIf="row.RecordApproved" class="record-kept">Audit record kept</span>
                   </ng-container>
                   <!-- Amendment rows: Approve / Reject -->
                   <ng-container *ngIf="row.RowType !== 'Invoice' && row.RowType !== 'AwaitingInvoice' && row.AmendmentId">

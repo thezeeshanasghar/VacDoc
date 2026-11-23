@@ -185,9 +185,10 @@ export class PaService extends BaseService {
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  deleteAssignment(assignmentId: number, doctorId: number, mode: 'UnassignOnly' | 'FullReset' = 'UnassignOnly', reason: string = ''): Observable<any> {
+  deleteAssignment(assignmentId: number, doctorId: number, mode: 'UnassignOnly' | 'FullReset' = 'UnassignOnly', reason: string = '', allowRecordReverse: boolean = false): Observable<any> {
     let url = `${this.API_PA}PAAssignment/${assignmentId}?doctorId=${doctorId}&mode=${mode}`;
     if (reason) { url += `&reason=${encodeURIComponent(reason)}`; }
+    if (allowRecordReverse) { url += `&allowRecordReverse=true`; }
     return this.http.delete(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
@@ -195,6 +196,15 @@ export class PaService extends BaseService {
   takeBackAssignment(assignmentId: number, reason: string, callerUserId?: number, securityStamp?: string): Observable<any> {
     const url = `${this.API_PA}PAAssignment/${assignmentId}/take-back`;
     const body: any = { Reason: reason };
+    if (callerUserId) { body.CallerUserId = callerUserId; }
+    if (securityStamp) { body.SecurityStamp = securityStamp; }
+    return this.http.patch(url, body, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  // Doctor approves a no-money (no invoice, no brand, no fee, OHF) PA entry. Server re-checks from the DB.
+  approveRecord(assignmentId: number, callerUserId?: number, securityStamp?: string): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/approve-record`;
+    const body: any = {};
     if (callerUserId) { body.CallerUserId = callerUserId; }
     if (securityStamp) { body.SecurityStamp = securityStamp; }
     return this.http.patch(url, body, this.httpOptions).pipe(catchError(this.handleError));
