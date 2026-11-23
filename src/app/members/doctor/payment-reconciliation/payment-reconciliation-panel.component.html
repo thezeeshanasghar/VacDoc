@@ -308,7 +308,6 @@
                 <th class="col-delete"></th>
                 <th class="col-date">Date</th>
                 <th class="col-patient">Patient Name</th>
-                <th class="col-type">Type</th>
                 <th class="col-amount">Amount</th>
                 <th class="col-mode">Mode</th>
                 <th class="col-status">Status</th>
@@ -358,7 +357,6 @@
                   <span class="growth-tag growth-tag-miss" *ngIf="growthMissingOf(row) > 0" [title]="growthMissingTip(row)">Growth · {{ growthMissingOf(row) }} of {{ row.GrowthTotal }}</span>
                   <span class="growth-tag growth-tag-nm" *ngIf="growthNotMeasuredOf(row) > 0" [title]="growthNotMeasuredTip(row)">Not measured</span>
                 </td>
-                <td class="col-type"><span class="type-tag" *ngIf="row.ChildType">{{ typeLabel(row.ChildType) }}</span></td>
                 <td class="col-amount">
                   <span class="amount-val" *ngIf="row.RowType === 'AwaitingInvoice'">—</span>
                   <ng-container *ngIf="row.RowType !== 'AwaitingInvoice'">
@@ -368,6 +366,7 @@
                       {{ row.OldAmount | number:'1.0-0' }} → {{ row.NewAmount | number:'1.0-0' }}
                     </div>
                   </ng-container>
+                  <div class="amount-type" *ngIf="row.ChildType" [class.travel]="row.ChildType === 'travel'">{{ typeLabel(row.ChildType) }}</div>
                 </td>
                 <td class="col-mode">
                   <span class="amount-val" *ngIf="row.RowType === 'AwaitingInvoice'">—</span>
