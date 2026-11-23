@@ -47,6 +47,9 @@ interface PaymentRow {
   ConfirmedAt?: string;
   InvoiceStatus?: string;
   HasPendingAmendment?: boolean;
+  // A PA ungave a dose on this invoice and the doctor has not decided it; the dose is still not given.
+  HasUngivePending?: boolean;
+  UngivePendingLogId?: number;
   PendingHandover?: boolean;
   HandoverDoneAt?: string;
   HasUnbilledPayment?: boolean; // AwaitingInvoice rows only — cash already collected, no invoice yet
@@ -530,6 +533,11 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
   }
 
   async confirmApproveReversal(reversal: any) {
+    // Stale: the dose was given again after the PA's ungive. The server refuses it too; only Reject is valid.
+    if (reversal.IsStale) {
+      this.toastService.create('This dose was given again, so this request is stale. Reject it.', 'warning');
+      return;
+    }
     const alert = await this.alertController.create({
       header: 'Approve Reversal',
       message: 'Approve this cancellation? The invoice amount will be reduced and the PA\'s payable decreased.\n\n' + (reversal.Notes || ''),

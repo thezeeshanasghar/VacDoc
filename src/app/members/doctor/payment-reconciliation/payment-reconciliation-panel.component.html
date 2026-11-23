@@ -7,15 +7,23 @@
         Pending Reversal Approvals ({{ pendingReversals.length }})
       </div>
       <div *ngFor="let r of pendingReversals" class="reversal-row">
-        <div class="reversal-pa">{{ r.PaName }}</div>
+        <div class="reversal-pa">{{ r.PaName }}<span *ngIf="r.PatientName"> · {{ r.PatientName }}</span></div>
         <div class="reversal-type" [style.color]="r.ActionCode === 'InvoiceAmountReduction' ? '#D97A16' : '#b71c1c'">
           {{ r.ActionCode === 'InvoiceAmountReduction' ? 'Invoice Amount Reduced' : 'Vaccine Ungiven After Payment' }}
         </div>
+        <div class="reversal-detail" *ngIf="r.DoseName || r.InvoiceId">
+          <span *ngIf="r.DoseName">{{ r.DoseName }}</span>
+          <span *ngIf="r.InvoiceId"> · Invoice #{{ r.InvoiceId }}<span *ngIf="r.InvoiceAmount"> · {{ r.InvoiceAmount | number:'1.0-0' }}</span></span>
+        </div>
+        <div class="reversal-chip reversal-chip--stale" *ngIf="r.IsStale">Dose is given again: this request is stale</div>
+        <div class="reversal-chip reversal-chip--open" *ngIf="r.ActionCode === 'UngiveAfterPayment' && !r.IsStale && r.DoseName">Dose is still not given: the invoice has no vaccine behind it</div>
         <div class="reversal-notes">{{ r.Notes }}</div>
         <div class="reversal-date">{{ r.ActionDate | instant:'dd MMM, HH:mm' }}</div>
         <div class="reversal-btns">
-          <button class="btn-approve-reversal" (click)="confirmApproveReversal(r)">Approve &amp; Reduce</button>
-          <button class="btn-reject-reversal" (click)="confirmRejectReversal(r)">Reject</button>
+          <button class="btn-approve-reversal" [disabled]="r.IsStale"
+            [attr.title]="r.IsStale ? 'Disabled: the dose is given again. Approving would un-pay a given dose.' : null"
+            (click)="confirmApproveReversal(r)">Approve &amp; Reduce</button>
+          <button class="btn-reject-reversal" (click)="confirmRejectReversal(r)">{{ r.IsStale ? 'Reject (recommended)' : 'Reject' }}</button>
         </div>
       </div>
     </div>
@@ -327,6 +335,7 @@
               <tr *ngFor="let row of filteredRows"
                   [class.row-confirmed]="row.IsConfirmed"
                   [class.row-pending]="!row.IsConfirmed && row.RowType === 'Invoice'"
+                  [class.row-ungive]="row.RowType === 'Invoice' && row.HasUngivePending"
                   [class.row-amendment]="row.RowType !== 'Invoice' && row.RowType !== 'AwaitingInvoice' && row.RowType !== 'DirectSale'"
                   [class.row-awaiting]="row.RowType === 'AwaitingInvoice' && !row.HasUnbilledPayment"
                   [class.row-unbilled]="row.RowType === 'AwaitingInvoice' && row.HasUnbilledPayment"
@@ -340,7 +349,7 @@
                   <input type="checkbox"
                     *ngIf="row.RowType === 'Invoice'"
                     [checked]="isSelected(row)"
-                    [disabled]="row.IsConfirmed || !!row.PendingAmendmentType"
+                    [disabled]="row.IsConfirmed || !!row.PendingAmendmentType || row.HasUngivePending"
                     (change)="toggleRow(row, $any($event.target).checked)"
                     class="row-checkbox">
                 </td>
@@ -407,7 +416,11 @@
                       <div class="confirm-ts">{{ formatDateTime(row.ConfirmedAt) }}</div>
                     </ng-container>
                     <ng-container *ngIf="!row.PendingAmendmentType && !row.IsConfirmed">
-                      <span class="badge badge-pending" *ngIf="!row.PendingHandover">Pending With PA</span>
+                      <ng-container *ngIf="row.HasUngivePending">
+                        <span class="badge badge-ungive">Ungiven after download</span>
+                        <div class="pending-sub">Decide it under Pending Reversal Approvals</div>
+                      </ng-container>
+                      <span class="badge badge-pending" *ngIf="!row.PendingHandover && !row.HasUngivePending">Pending With PA</span>
                       <ng-container *ngIf="row.PendingHandover">
                         <span class="badge badge-handover">Pending Handover</span>
                         <div class="confirm-ts" *ngIf="row.HandoverDoneAt">{{ formatDateTime(row.HandoverDoneAt) }}</div>
@@ -471,6 +484,8 @@
                         <ion-icon name="checkmark-circle" class="icon-confirmed"></ion-icon>
                       </div>
                       <button *ngIf="!row.IsConfirmed" class="btn-confirm-row"
+                        [disabled]="row.HasUngivePending"
+                        [attr.title]="row.HasUngivePending ? 'A PA ungave a vaccine on this invoice. Decide it under Pending Reversal Approvals first.' : null"
                         (click)="confirmPayment(row)">Confirm</button>
                     </ng-container>
                   </ng-container>
