@@ -91,7 +91,7 @@
 
     <ion-item *ngIf="doctorClinics.length > 1">
       <ion-label color="primary" position="floating">Clinic</ion-label>
-      <ion-select formControlName="ClinicId" interface="popover">
+      <ion-select formControlName="ClinicId" interface="alert" okText="Select" cancelText="Cancel">
         <ion-select-option *ngFor="let c of doctorClinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
       </ion-select>
     </ion-item>
