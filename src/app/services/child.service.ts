@@ -124,6 +124,13 @@ export class ChildService extends BaseService {
     );
   }
 
+  moveChildClinic(childId: number, toClinicId: number): Observable<any> {
+    const url = `${this.API_CHILD}Child/${childId}/move-clinic?toClinicId=${toClinicId}`;
+    return this.http.post<any>(url, {}, this.httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   updateChildClinicId(doctorId: number, childId: number, clinicId?: number): Observable<any> {
     let url = `${this.API_CHILD}Doctor/update-clinic-id?doctorId=${doctorId}&childId=${childId}`;
     if (clinicId && !isNaN(Number(clinicId))) {

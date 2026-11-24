@@ -89,6 +89,16 @@
       </mat-form-field>
     </ion-item>
 
+    <ion-item *ngIf="doctorClinics.length > 1">
+      <ion-label color="primary" position="floating">Clinic</ion-label>
+      <ion-select formControlName="ClinicId" interface="popover">
+        <ion-select-option *ngFor="let c of doctorClinics" [value]="c.Id">{{ c.Name }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <p *ngIf="clinicChanged" style="margin:6px 16px;font-size:12px;color:var(--ion-color-warning-shade)">
+      You will be asked to confirm. Only patients with no billed doses and no PA assignment can be moved.
+    </p>
+
     <div *ngIf="isCnicRequired">
       <ion-item>
         <ion-label color="primary" position="floating">
@@ -131,7 +141,7 @@
       </ion-row>
     </ion-grid> -->
 
-    <ion-button (click)='editChild()' style="margin-top: 20px;">Update</ion-button>
+    <ion-button (click)='onUpdate()' style="margin-top: 20px;">Update</ion-button>
     <ion-button routerLink="/members/child/" style="margin-top: 20px;">Cancel</ion-button>
   </form>
 </ion-content>

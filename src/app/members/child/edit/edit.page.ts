@@ -7,6 +7,9 @@ import { phoneError, normalizePhone } from 'src/app/shared/phone-rules';
 import { LoadingController, AlertController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { Storage } from '@ionic/storage';
+import { environment } from 'src/environments/environment';
+import { ClinicService } from 'src/app/services/clinic.service';
 
 @Component({
   selector: 'app-edit',
@@ -31,6 +34,9 @@ export class EditPage implements OnInit {
   agents: any[] = [];
   Agent: any;
   Nationality: any;
+  // Move-clinic (doctor only): the clinic the patient is in now, and the doctor's clinics to pick from.
+  doctorClinics: any[] = [];
+  originalClinicId: number = null;
 
   constructor(
     public loadingController: LoadingController,
@@ -42,6 +48,8 @@ export class EditPage implements OnInit {
     public childService: ChildService,
     public agentService: AgentService,
     private toastService: ToastService,
+    private storage: Storage,
+    private clinicService: ClinicService,
   ) {
   }
 
@@ -68,7 +76,72 @@ export class EditPage implements OnInit {
       'Nationality': [null],
     });
     this.getchild();
-    this.fetchAgent()
+    this.fetchAgent();
+    this.loadDoctorClinics();
+  }
+
+  // Only a doctor sees the Clinic field, and only with more than one clinic.
+  async loadDoctorClinics() {
+    const user = await this.storage.get(environment.USER);
+    if (!user || user.UserType !== 'DOCTOR') { return; }
+    const doctorId = await this.storage.get(environment.DOCTOR_Id);
+    if (!doctorId) { return; }
+    this.clinicService.getClinics(Number(doctorId)).subscribe(
+      (res: any) => {
+        if (res && res.IsSuccess && res.ResponseData && res.ResponseData.length > 1) {
+          this.doctorClinics = res.ResponseData;
+        }
+      },
+      () => { }
+    );
+  }
+
+  get clinicChanged(): boolean {
+    return this.doctorClinics.length > 1 && this.originalClinicId != null
+      && Number(this.fg.value.ClinicId) !== Number(this.originalClinicId);
+  }
+
+  clinicName(id: any): string {
+    const c = this.doctorClinics.find(x => Number(x.Id) === Number(id));
+    return c ? c.Name : '';
+  }
+
+  // Save entry point: confirm and move the clinic first (if changed), then run the normal edit.
+  async onUpdate() {
+    if (!this.clinicChanged) { this.editChild(); return; }
+    const to = this.fg.value.ClinicId;
+    const alert = await this.alertController.create({
+      header: 'Move ' + (this.child ? this.child.Name : 'patient') + ' to ' + this.clinicName(to) + '?',
+      message: 'From ' + this.clinicName(this.originalClinicId) + '. The patient will leave that clinic\'s list and appear in ' + this.clinicName(to) + '\'s.',
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        { text: 'Move patient', handler: () => { this.moveThenEdit(to); } }
+      ]
+    });
+    await alert.present();
+  }
+
+  async moveThenEdit(toClinicId: number) {
+    const loading = await this.loadingController.create({ message: 'Moving patient' });
+    await loading.present();
+    this.childService.moveChildClinic(this.child.Id, Number(toClinicId)).subscribe(
+      (res: any) => {
+        loading.dismiss();
+        if (res && res.IsSuccess) {
+          this.originalClinicId = Number(toClinicId);
+          this.toastService.create(res.ResponseData || 'Patient moved');
+          this.editChild();
+        } else {
+          this.fg.controls['ClinicId'].setValue(this.originalClinicId);
+          this.toastService.create((res && res.Message) || 'Could not move patient', 'danger');
+        }
+      },
+      (err: any) => {
+        loading.dismiss();
+        this.fg.controls['ClinicId'].setValue(this.originalClinicId);
+        this.toastService.create(err, 'danger');
+      }
+    );
   }
 
   updateGender(gender) {
@@ -113,6 +186,7 @@ console.log(this.isCnicRequired);
           loading.dismiss();
           this.fg.controls['Id'].setValue(this.child.Id);
           this.fg.controls['ClinicId'].setValue(this.child.ClinicId);
+          this.originalClinicId = this.child.ClinicId;
           this.fg.controls['Name'].setValue(this.child.Name);
           this.fg.controls['FatherName'].setValue(this.child.FatherName);
           this.fg.controls['Email'].setValue(this.child.Email);
