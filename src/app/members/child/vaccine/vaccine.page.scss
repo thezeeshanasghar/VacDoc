@@ -70,13 +70,6 @@ ion-buttons {
   background: var(--vac-warn-tint);
 }
 
-// Fully resolved (stage 4 — paid) history reads as settled, not actionable:
-// desaturate slightly so it recedes behind still-due groups.
-.date-group-card--resolved {
-  opacity: .68;
-  box-shadow: none;
-}
-
 // One-time divider marking the boundary between past/given history and
 // future/due groups (spec: separate the two visually, not just by date colour).
 .upcoming-divider {
