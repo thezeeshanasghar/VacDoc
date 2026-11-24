@@ -112,7 +112,7 @@ export class EditPage implements OnInit {
     const to = this.fg.value.ClinicId;
     const alert = await this.alertController.create({
       header: 'Move ' + (this.child ? this.child.Name : 'patient') + ' to ' + this.clinicName(to) + '?',
-      message: 'From ' + this.clinicName(this.originalClinicId) + '. The patient will leave that clinic\'s list and appear in ' + this.clinicName(to) + '\'s.',
+      message: 'From ' + this.clinicName(this.originalClinicId) + '. The patient will leave that clinic\'s list and appear in ' + this.clinicName(to) + '\'s. Past doses, cash and revenue reports will show this patient under the new clinic.',
       buttons: [
         { text: 'Cancel', role: 'cancel' },
         { text: 'Move patient', handler: () => { this.moveThenEdit(to); } }
