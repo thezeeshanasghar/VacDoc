@@ -844,7 +844,13 @@ export class BulkPage implements OnInit {
         backdropDismiss: false,
         buttons: [
           { text: 'Just recording — don\'t deduct', handler: () => resolve('historical') },
-          { text: 'From our stock — deduct', handler: () => resolve('stock') }
+          { text: 'From our stock — deduct', handler: () => resolve('stock') },
+          // Escape hatch for a wrong date: set Given Date to today and return to the form
+          // WITHOUT submitting, so the user sees the change and taps Give again.
+          { text: 'Wrong date — change to today', role: 'cancel', handler: () => {
+              this.fg.controls["GivenDate"].setValue(this.getTodayIsoDate());
+              resolve('cancel');
+            } }
         ]
       });
       await alert.present();
