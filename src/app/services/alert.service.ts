@@ -34,17 +34,18 @@ export class AlertService extends BaseService {
     );
   }
 
-  sendEmailToAll(numOfDays: number, clinicID: number): Observable<any> {
+  // date = the alert page's picked day (yyyy-MM-dd); the server emails exactly what the list shows for it.
+  sendEmailToAll(numOfDays: number, clinicID: number, date: string): Observable<any> {
     const url = `${this.API_ALERT
-      }alert2/${numOfDays}/${clinicID}`;
+      }alert2/${numOfDays}/${clinicID}?inputDate=${date}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)
     );
   }
 
-  sendEmailSingle(childId: number): Observable<any> {
-    const url = `${this.API_ALERT}alertone/${childId}`;
+  sendEmailSingle(childId: number, date: string, numOfDays: number): Observable<any> {
+    const url = `${this.API_ALERT}alertone/${childId}?inputDate=${date}&GapDays=${numOfDays}`;
     return this.http.get(url, this.httpOptions).pipe(
       map(this.extractData),
       catchError(this.handleError)

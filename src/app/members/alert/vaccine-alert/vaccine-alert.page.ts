@@ -337,7 +337,7 @@ export class VaccineAlertPage implements OnInit {
     try {
       const { forkJoin } = await import('rxjs');
       const emailRequests = this.allClinicIds.map(clinicId =>
-        this.alertService.sendEmailToAll(this.numOfDays, clinicId)
+        this.alertService.sendEmailToAll(this.numOfDays, clinicId, this.formattedDate)
       );
       
       forkJoin(emailRequests).subscribe(
@@ -368,7 +368,7 @@ export class VaccineAlertPage implements OnInit {
       message: "sending email"
     });
     await loading.present();
-    await this.alertService.sendEmailSingle(child[0].ChildId).subscribe(
+    await this.alertService.sendEmailSingle(child[0].ChildId, this.formattedDate, this.numOfDays).subscribe(
       res => {
         if (res.IsSuccess) {
           loading.dismiss();
