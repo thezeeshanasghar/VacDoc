@@ -316,9 +316,11 @@ export class PaService extends BaseService {
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  reassignAssignment(assignmentId: number, newPaId: number, targetDate?: string | null, requestingManagerId?: number | null, callerUserId?: number, securityStamp?: string, reason?: string): Observable<any> {
+  // extra: optional Notes and visit fields (IsScheduledVisit, WindowStart, WindowMinutes, Area).
+  // Leave it out and the server carries the old assignment's visit unchanged.
+  reassignAssignment(assignmentId: number, newPaId: number, targetDate?: string | null, requestingManagerId?: number | null, callerUserId?: number, securityStamp?: string, reason?: string, extra?: any): Observable<any> {
     const url = `${this.API_PA}PAAssignment/${assignmentId}/reassign`;
-    const body: any = { NewPaId: newPaId };
+    const body: any = Object.assign({}, extra || {}, { NewPaId: newPaId });
     if (reason) { body.Reason = reason; }
     if (targetDate) { body.TargetDate = targetDate; }
     if (requestingManagerId) { body.RequestingManagerId = requestingManagerId; }

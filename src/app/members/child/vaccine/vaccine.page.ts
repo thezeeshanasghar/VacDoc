@@ -76,6 +76,9 @@ export class VaccinePage {
   paGuidelines: string = '';
   paTargetDate: string = '';
   assignVisit: ScheduleVisitModel = emptyVisit();
+  // Reassign sheet: starts from the current assignment's visit; a home booking stays scheduled.
+  reassignVisit: ScheduleVisitModel = emptyVisit();
+  reassignVisitForced = false;
   pendingAssignPA: any = null;
   pendingAssignScheduleIds: number[] = [];
   pendingAssignGroupIds: number[] = [];
@@ -2292,16 +2295,29 @@ removal(type: string){
       this.toastService.create('No PAs available at this clinic', 'warning');
       return;
     }
-    this.paGuidelines = '';
+    this.paGuidelines = asg.Notes || '';
     this.pendingReassignAsg = asg;
     this.paTargetDate = asg.TargetDate
       ? String(asg.TargetDate).slice(0, 10)
       : '';
+    this.reassignVisit = {
+      on: !!asg.IsScheduledVisit,
+      windowStart: asg.WindowStart || '',
+      windowMinutes: asg.WindowMinutes || 60,
+      area: asg.Area || ''
+    };
+    this.reassignVisitForced = !!(asg.IsScheduledVisit && asg.BookingId);
     this.pendingReassignPA = null;
     this.reassignPopupOpen = true;
   }
 
+  // The PA who has the assignment now cannot be picked (owner, 2026-11-25).
+  isCurrentReassignPa(pa: any): boolean {
+    return !!(this.pendingReassignAsg && pa && pa.Id === this.pendingReassignAsg.PaId);
+  }
+
   selectPendingReassign(pa: any) {
+    if (this.isCurrentReassignPa(pa)) { return; }
     this.pendingReassignPA = pa;
   }
 
@@ -2317,6 +2333,7 @@ removal(type: string){
     this.pendingReassignAsg = null;
     this.paGuidelines = '';
     this.paTargetDate = '';
+    this.reassignVisit = emptyVisit();
   }
 
   async doReassign(pa: any) {
@@ -2328,10 +2345,24 @@ removal(type: string){
     await loading.present();
     const targetDate = this.paTargetDate || null;
     this.paTargetDate = '';
-    this.paService.reassignAssignment(asgToReassign.AssignmentId, pa.Id, targetDate, null, this.callerUserId, this.securityStamp).subscribe(
+    // Sent explicitly (including "off") so the server applies exactly what the sheet shows.
+    const v = this.reassignVisit;
+    const extra: any = {
+      Notes: this.paGuidelines || '',
+      IsScheduledVisit: !!v.on,
+      WindowStart: v.on ? (v.windowStart || null) : null,
+      WindowMinutes: v.windowMinutes,
+      Area: v.on ? ((v.area || '').trim() || null) : null
+    };
+    this.paGuidelines = '';
+    const area = v.on ? v.area : '';
+    this.reassignVisit = emptyVisit();
+    const managerId = (this.usertype === 'MANAGER' && this.managerId) ? this.managerId : null;
+    this.paService.reassignAssignment(asgToReassign.AssignmentId, pa.Id, targetDate, managerId, this.callerUserId, this.securityStamp, undefined, extra).subscribe(
       res => {
         loading.dismiss();
         if (res && res.IsSuccess) {
+          rememberArea(area);
           this.toastService.create('Reassigned to ' + pa.Name, 'success');
           this.loadActiveAssignment();
         } else {

@@ -418,14 +418,15 @@
     <button type="button" *ngFor="let pa of clinicPAs"
       class="pa-row"
       [class.sel]="pendingReassignPA && pendingReassignPA.Id === pa.Id"
-      [class.offshift]="isPaOffShift(pa)"
-      [disabled]="isPaOffShift(pa)"
+      [class.offshift]="isPaOffShift(pa) || isCurrentReassignPa(pa)"
+      [disabled]="isPaOffShift(pa) || isCurrentReassignPa(pa)"
       (click)="selectPendingReassign(pa)">
       <span class="pa-avatar">{{ paInitials(pa.Name) }}</span>
       <div class="pa-rowtext">
         <div class="pa-name">{{ pa.Name }}</div>
         <div class="pa-sub" *ngIf="paSubline(pa)">{{ paSubline(pa) }}</div>
       </div>
+      <span class="pa-now" *ngIf="isCurrentReassignPa(pa)">Has it now</span>
       <ion-icon name="checkmark-outline" class="pa-tick"
         *ngIf="pendingReassignPA && pendingReassignPA.Id === pa.Id"></ion-icon>
     </button>
@@ -433,6 +434,7 @@
   <div class="target-date-block" *ngIf="pendingReassignPA">
     <div class="target-date-label">Target Date <span class="pa-guidelines-opt">(optional)</span></div>
     <app-date-input [(ngModel)]="paTargetDate"></app-date-input>
+    <app-schedule-visit [model]="reassignVisit" [date]="paTargetDate" [forced]="reassignVisitForced"></app-schedule-visit>
   </div>
   <div class="pa-guidelines" *ngIf="pendingReassignPA">
     <div class="pa-guidelines-label">Guidelines for PA <span class="pa-guidelines-opt">(optional)</span></div>
@@ -440,6 +442,6 @@
       placeholder="Special instructions or notes for the PA..." rows="2"></textarea>
   </div>
   <button type="button" class="sheet-confirm" *ngIf="pendingReassignPA" (click)="confirmReassign()">
-    ASSIGN TO {{ (pendingReassignPA.Name || '').toUpperCase() }}
+    REASSIGN TO {{ (pendingReassignPA.Name || '').toUpperCase() }}
   </button>
 </div>

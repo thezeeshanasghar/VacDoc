@@ -988,3 +988,9 @@ ion-content.ion-padding { --padding-bottom: 74px; }
   small { color: var(--vac-ink-4); font-size: 12px; }
 }
 .sheet-confirm[disabled] { opacity: .4; }
+
+// Reassign sheet: marks the PA who has the assignment now (that row is disabled).
+.pa-now {
+  flex-shrink: 0; font-family: var(--vac-font-body); font-weight: 700; font-size: 10px;
+  color: #8a5a00; background: #FCEFD0; border-radius: 999px; padding: 2px 8px;
+}
