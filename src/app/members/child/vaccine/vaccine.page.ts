@@ -1036,6 +1036,14 @@ removal(type: string){
     }
   }
 
+  // An ungive can close or delete the PA assignment on the server (nothing left given) and add a
+  // refusal marker. The page loads both only on entry, so reload them here; otherwise the dose shows
+  // "With PA" for an assignment that no longer exists and Cancel answers "Assignment not found".
+  private reloadAfterUngive() {
+    if (this.usertype === 'PA') { this.loadActivePAAssignment(); } else { this.loadActiveAssignment(); }
+    this.loadRefusalFlag();
+  }
+
   async UnfillVaccine(id, Data = null) {
     const loading = await this.loadingController.create({
       message: 'Unfilling vaccine'
@@ -1072,6 +1080,7 @@ removal(type: string){
       .subscribe(
         res => {
           if (res.IsSuccess) {
+            this.reloadAfterUngive();
             if (this.isInfiniteVaccine(res.ResponseData)) {
               var cId = res.ResponseData.ChildId;
               var dId = res.ResponseData.Dose.Id;
@@ -1099,6 +1108,7 @@ removal(type: string){
                     this.vaccineService.UnfillChildVaccine(unfillData).subscribe(
                       res2 => {
                         if (res2.IsSuccess) {
+                          this.reloadAfterUngive();
                           if (this.isInfiniteVaccine(res2.ResponseData)) {
                             var cId = res2.ResponseData.ChildId;
                             var dId = res2.ResponseData.Dose.Id;
@@ -2277,6 +2287,10 @@ removal(type: string){
         loading.dismiss();
         if (res && res.IsSuccess) {
           this.toastService.create('Assignment cancelled', 'success');
+          this.loadActiveAssignment();
+        } else if (res && res.Message === 'Assignment not found') {
+          // Already closed elsewhere (for example by an ungive): refresh instead of leaving a dead tag.
+          this.toastService.create('This assignment was already closed. The page has been refreshed.', 'warning');
           this.loadActiveAssignment();
         } else {
           this.toastService.create(res.Message || 'Failed to cancel', 'danger');
