@@ -347,7 +347,16 @@ export class VaccinePage {
   // OHF dose with a real clinic-stock dose on the same date must stay
   // invoiceable for the clinic-given part.
   isOhfGroup(data: any[]): boolean {
-    return !!(data && data.length > 0) && data.every(v => this.isOhfDose(v));
+    // Disease rows (child had the illness) also have IsDone + no BrandId but are not
+    // doses given elsewhere, so they don't decide whether the group is OHF.
+    const rows = (data || []).filter(v => !(v && v.IsDisease));
+    return rows.length > 0 && rows.every(v => this.isOhfDose(v));
+  }
+  // Every given dose on this date is a disease record: nothing was administered, so the
+  // card must offer neither INVOICE nor CHARGE FEE.
+  isDiseaseOnlyGroup(data: any[]): boolean {
+    const given = this.givenActiveDoses(data);
+    return given.length > 0 && given.every(v => !!v.IsDisease);
   }
 
   // ── Sequential action pipeline (spec §3) ──────────────────────────────────
