@@ -93,6 +93,17 @@ export class NotificationsPage {
       this.router.navigate(['/members/doctor/pa-assignment-tracking']);
       return;
     }
+    // A PA cancel is final (task released, no request to accept), so the doctor's next step is
+    // assigning the child again from the Give page. A PA move (family asked) opens the same patient.
+    if ((n.Type === 'PaCancelled' || n.Type === 'PaMoved') && n.ChildId) {
+      this.router.navigate(['/members/child/vaccine', n.ChildId]);
+      return;
+    }
+    // S1: a PA ungive the server refused. Nothing to approve; the doctor opens the patient to ungive it if the PA was right.
+    if (n.Type === 'UngiveRefused' && n.ChildId) {
+      this.router.navigate(['/members/child/vaccine', n.ChildId]);
+      return;
+    }
     if (n.BookingId) {
       this.router.navigate(['/members/bookings'], { queryParams: { open: n.BookingId } });
     }

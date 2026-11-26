@@ -266,29 +266,33 @@ export class PaService extends BaseService {
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  cancelAssignment(assignmentId: number, callerType: 'DOCTOR' | 'PA', callerId: number, reason: string = ''): Observable<any> {
+  // PA cancels also send ReasonCode (CANT_REACH | NOT_AVAILABLE | OTHER) and the login stamp (PA_CANCEL_REDESIGN_SPEC.md §3.1).
+  cancelAssignment(assignmentId: number, callerType: 'DOCTOR' | 'PA', callerId: number, reason: string = '',
+                   reasonCode?: string, callerUserId?: number, securityStamp?: string): Observable<any> {
     const url = `${this.API_PA}PAAssignment/${assignmentId}/cancel`;
-    return this.http.patch(url, { CallerType: callerType, CallerId: callerId, Reason: reason }, this.httpOptions).pipe(catchError(this.handleError));
+    const body: any = { CallerType: callerType, CallerId: callerId, Reason: reason };
+    if (reasonCode) { body.ReasonCode = reasonCode; }
+    if (callerUserId) { body.CallerUserId = callerUserId; }
+    if (securityStamp) { body.SecurityStamp = securityStamp; }
+    return this.http.patch(url, body, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  requestCancelAssignment(assignmentId: number, paId: number, reason: string = ''): Observable<any> {
-    const url = `${this.API_PA}PAAssignment/${assignmentId}/request-cancel`;
-    return this.http.patch(url, { CallerType: 'PA', CallerId: paId, Reason: reason }, this.httpOptions).pipe(catchError(this.handleError));
+  // PA moves their own visit because the family asked for another day (spec §3.2). newDate = 'yyyy-MM-dd'.
+  paMoveVisit(assignmentId: number, newDate: string, callerUserId: number, securityStamp: string): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/pa-move`;
+    return this.http.patch(url, { NewDate: newDate, CallerUserId: callerUserId, SecurityStamp: securityStamp }, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  getPendingCancellations(doctorId: number): Observable<any> {
-    const url = `${this.API_PA}PAAssignment/pending-cancellations/${doctorId}`;
+  // Doctor's Needs-you panel: visits a PA cancelled that nobody has picked up yet (spec §3.3).
+  getPaCancelledPickups(doctorId: number, callerUserId: number, securityStamp: string): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/pa-cancelled/${doctorId}?callerUserId=${callerUserId}&securityStamp=${encodeURIComponent(securityStamp || '')}`;
     return this.http.get(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
-  approveCancelRequest(assignmentId: number, doctorId: number): Observable<any> {
-    const url = `${this.API_PA}PAAssignment/${assignmentId}/approve-cancel?doctorId=${doctorId}`;
-    return this.http.patch(url, {}, this.httpOptions).pipe(catchError(this.handleError));
-  }
-
-  rejectCancelRequest(assignmentId: number, doctorId: number, notes: string = ''): Observable<any> {
-    const url = `${this.API_PA}PAAssignment/${assignmentId}/reject-cancel`;
-    return this.http.patch(url, { DoctorId: doctorId, Notes: notes }, this.httpOptions).pipe(catchError(this.handleError));
+  // Doctor taps "No visit needed" on a PA-cancelled visit (spec §3.4).
+  closeFollowUp(assignmentId: number, doctorId: number, callerUserId: number, securityStamp: string): Observable<any> {
+    const url = `${this.API_PA}PAAssignment/${assignmentId}/follow-up-closed`;
+    return this.http.patch(url, { DoctorId: doctorId, CallerUserId: callerUserId, SecurityStamp: securityStamp }, this.httpOptions).pipe(catchError(this.handleError));
   }
 
   requestRefusal(assignmentId: number, paId: number, reason: string = ''): Observable<any> {

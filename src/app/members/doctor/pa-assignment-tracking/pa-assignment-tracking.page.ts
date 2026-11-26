@@ -122,12 +122,9 @@ export class PaAssignmentTrackingPage {
   selectedIds: Set<number> = new Set();
   readonly STALE_DAYS = 14;
 
-  // PA-submitted cancellation requests awaiting doctor approve/reject — doctor-only
-  // (not part of the Manager permission tier), surfaced as its own panel rather than
-  // folded into the main filtered list, matching the dedicated pending-cancellations endpoint.
-  pendingCancellations: any[] = [];
-  rejectingCancelId: number | null = null;
-  rejectNote: string = '';
+  // Visits a PA cancelled that nobody has picked up yet (PA_CANCEL_REDESIGN_SPEC.md §4.2), doctor only.
+  // Own endpoint, never date-filtered, so an old PA cancel cannot fall out of view.
+  paCancelled: any[] = [];
 
   // PA "patient refused at home" requests awaiting approve (= full reversal) / reject.
   pendingRefusals: any[] = [];
@@ -186,7 +183,7 @@ export class PaAssignmentTrackingPage {
     if (!qp.get('clinicId')) { this.loadPasForClinic(); }
 
     this.load();
-    if (!this.isManager) { this.loadPendingCancellations(); this.loadPendingRefusals(); }
+    if (!this.isManager) { this.loadPaCancelled(); this.loadPendingRefusals(); }
   }
 
   loadPendingRefusals() {
@@ -252,69 +249,36 @@ export class PaAssignmentTrackingPage {
     );
   }
 
-  loadPendingCancellations() {
-    if (!this.doctorId) { return; }
-    this.paService.getPendingCancellations(this.doctorId).subscribe(
-      res => { this.pendingCancellations = (res && res.IsSuccess) ? (res.ResponseData || []) : []; },
-      () => { this.pendingCancellations = []; }
+  loadPaCancelled() {
+    if (!this.doctorId || !this.callerUserId) { this.paCancelled = []; return; }
+    this.paService.getPaCancelledPickups(this.doctorId, this.callerUserId, this.securityStamp || '').subscribe(
+      res => { this.paCancelled = (res && res.IsSuccess) ? (res.ResponseData || []) : []; },
+      () => { this.paCancelled = []; }
     );
   }
 
-  async approveCancellation(row: any) {
-    if (!this.doctorId) { return; }
-    const alert = await this.alertController.create({
-      header: 'Approve Cancellation',
-      message: `Cancel the assignment for ${row.ChildName}? This can't be undone.`,
-      buttons: [
-        { text: 'No', role: 'cancel' },
-        {
-          text: 'Yes, Approve',
-          handler: () => {
-            this.paService.approveCancelRequest(row.AssignmentId, this.doctorId).subscribe(
-              res => {
-                if (res && res.IsSuccess) {
-                  this.toastService.create('Cancellation approved', 'success');
-                  this.pendingCancellations = this.pendingCancellations.filter(r => r.AssignmentId !== row.AssignmentId);
-                  this.load();
-                } else {
-                  this.toastService.create((res && res.Message) || 'Failed to approve', 'danger');
-                }
-              },
-              () => { this.toastService.create('Failed to approve cancellation', 'danger'); }
-            );
-          }
-        }
-      ]
-    });
-    await alert.present();
-  }
+  // Assign again = the normal assign flow on the child's Vaccine page; the row leaves once the server
+  // sees the doses pinned again.
+  assignAgain(row: any) { this.router.navigate(['/members/child/vaccine', row.ChildId]); }
 
-  openRejectCancellation(row: any) {
-    this.rejectingCancelId = row.AssignmentId;
-    this.rejectNote = '';
-  }
-
-  closeRejectCancellation() {
-    this.rejectingCancelId = null;
-    this.rejectNote = '';
-  }
-
-  confirmRejectCancellation(row: any) {
-    if (!this.doctorId) { return; }
-    this.paService.rejectCancelRequest(row.AssignmentId, this.doctorId, this.rejectNote || '').subscribe(
+  // "No visit needed": no reason asked (D4); the row goes at once.
+  closePaCancelled(row: any) {
+    if (!this.doctorId || row.busy) { return; }
+    row.busy = true;
+    this.paService.closeFollowUp(row.AssignmentId, this.doctorId, this.callerUserId, this.securityStamp || '').subscribe(
       res => {
         if (res && res.IsSuccess) {
-          this.toastService.create('Cancellation request rejected — assignment stays active', 'success');
-          this.pendingCancellations = this.pendingCancellations.filter(r => r.AssignmentId !== row.AssignmentId);
-          this.closeRejectCancellation();
-          this.load();
+          this.paCancelled = this.paCancelled.filter(r => r.AssignmentId !== row.AssignmentId);
         } else {
-          this.toastService.create((res && res.Message) || 'Failed to reject', 'danger');
+          row.busy = false;
+          this.toastService.create((res && res.Message) || 'That did not work', 'danger');
         }
       },
-      () => { this.toastService.create('Failed to reject cancellation', 'danger'); }
+      () => { row.busy = false; this.toastService.create('That did not work', 'danger'); }
     );
   }
+
+  paCancelledWhen(row: any): string { return formatInstant(row.CancelledAt, 'dd MMM, HH:mm'); }
 
   async loadClinics() {
     if (!this.doctorId) { return; }
@@ -456,7 +420,7 @@ export class PaAssignmentTrackingPage {
     if (v === 'closed') {
       return this.closedKind === 'confirmed' ? cls === 'cash-confirmed' : cls === 'cancelled';
     }
-    if (cls === 'cancelled' || cls === 'cash-confirmed' || cls === 'pending-cancellation') { return false; }
+    if (cls === 'cancelled' || cls === 'cash-confirmed') { return false; }
     if (v === 'needs') { return cls === 'handover' || cls === 'completed'; }
     if (v === 'stuck') { return cls === 'active' && this.isStuck(row); }
     return cls === 'active';
@@ -464,7 +428,7 @@ export class PaAssignmentTrackingPage {
 
   viewCount(v: 'needs' | 'stuck' | 'with' | 'closed'): number {
     const n = this.allRows.filter(r => this.inView(r, v)).length;
-    return v === 'needs' ? n + this.pendingCancellations.length + this.pendingRefusals.length : n;
+    return v === 'needs' ? n + this.paCancelled.length + this.pendingRefusals.length : n;
   }
 
   get waitingOnYouCount(): number { return this.viewCount('needs'); }
@@ -526,7 +490,7 @@ export class PaAssignmentTrackingPage {
   // ---- Cancel, reassign or reverse (one dialog; the reason pre-selects, never executes)
   canOpenActionDialog(row: AssignmentRow): boolean {
     const cls = this.statusClass(row);
-    if (cls === 'cancelled' || cls === 'cash-confirmed' || cls === 'pending-cancellation') { return false; }
+    if (cls === 'cancelled' || cls === 'cash-confirmed') { return false; }
     return !this.isManager || this.canReassign;
   }
 
@@ -641,7 +605,7 @@ export class PaAssignmentTrackingPage {
         this.toastService.create(okMessage, 'success');
         this.dlg = null;
         this.load();
-        if (!this.isManager) { this.loadPendingCancellations(); this.loadPendingRefusals(); }
+        if (!this.isManager) { this.loadPaCancelled(); this.loadPendingRefusals(); }
       } else {
         d.busy = false;
         this.toastService.create((res && res.Message) || 'That did not work', 'danger');
@@ -899,7 +863,6 @@ export class PaAssignmentTrackingPage {
     if (row.IsCancelled) { return 'cancelled'; }
     if (row.IsCashConfirmedByDoctor) { return 'cash-confirmed'; }
     if (row.IsCompleted) { return 'completed'; }
-    if (row.AssignmentStatus === 'PendingCancellation') { return 'pending-cancellation'; }
     if (row.AssignmentStatus === 'PendingHandover') { return 'handover'; }
     return 'active';
   }
@@ -908,7 +871,6 @@ export class PaAssignmentTrackingPage {
     if (row.IsCancelled) { return 'Cancelled'; }
     if (row.IsCashConfirmedByDoctor) { return 'Cash Confirmed'; }
     if (row.IsCompleted) { return 'Completed'; }
-    if (row.AssignmentStatus === 'PendingCancellation') { return 'Cancellation Requested'; }
     if (row.AssignmentStatus === 'PendingHandover') { return 'Pending Handover'; }
     return 'Active';
   }

@@ -278,6 +278,8 @@ export class AssignmentsPage {
   // ones wait in Others.
   private isTodayBucket(a: any): boolean {
     const t = this.todayKey();
+    // The PA moved it to a later day (family asked): it waits in Others (spec §4.1).
+    if (a.MovedByPa && a.TargetDate && this.dayKeyOf(a.TargetDate) > t) { return false; }
     // Scheduled visits are bucketed by their visit date only: assigning one days ahead must not
     // put it in Today (AssignedAt would). Unpaid cash with the PA still stays visible in Today.
     if (a.IsScheduledVisit) {
@@ -318,7 +320,7 @@ export class AssignmentsPage {
   // v3.2: "Visit completed" is the scheduled visit's one PA action (payment is Mark Done). Shown until tapped;
   // the tap explains what is missing if a billable dose is unpaid. The server re-checks everything.
   canCompleteVisit(a: any): boolean {
-    if (!a.IsScheduledVisit || a.VisitCompletedAt || a.RefusalPending || a.AssignmentStatus === 'PendingCancellation') { return false; }
+    if (!a.IsScheduledVisit || a.VisitCompletedAt || a.RefusalPending) { return false; }
     const sch = Array.isArray(a.Schedules) ? a.Schedules : [];
     if (sch.length === 0) { return false; }
     if (a.TargetDate && this.dayKeyOf(a.TargetDate) > this.todayKey()) { return false; }
@@ -710,36 +712,64 @@ export class AssignmentsPage {
     );
   }
 
-  async confirmCancel(assignment: any) {
-    if (assignment.AssignmentStatus === 'PendingCancellation') {
-      const alert = await this.alertController.create({
-        header: 'Already Requested',
-        message: 'A cancellation request for this assignment is already awaiting the doctor\'s decision.',
-        buttons: ['OK']
-      });
-      await alert.present();
-      return;
-    }
+  // Cancel visit (PA_CANCEL_REDESIGN_SPEC.md §4.1). Nothing given: a reason sheet, where
+  // "Family wants another day" moves the visit instead. Doses given: Refused at home, unchanged.
+  cancelSheet: any = null;
+  cancelCode: string = null;     // MOVE | CANT_REACH | NOT_AVAILABLE | OTHER
+  cancelNote = '';
+  moveDate = '';
+  cancelBusy = false;
 
-    // Doses already given (paid or not): the PA cannot cancel alone, the doctor's approval reverses the visit.
+  async confirmCancel(assignment: any) {
     if (this.hasGivenOrPaidSchedules(assignment)) {
       await this.confirmRefusal(assignment);
       return;
     }
+    this.cancelSheet = assignment;
+    this.cancelCode = null;
+    this.cancelNote = '';
+    this.moveDate = '';
+    this.cancelBusy = false;
+  }
 
-    const alert = await this.alertController.create({
-      header: 'Cancel Assignment',
-      message: `Cancel assignment for ${assignment.Name}?`,
-      inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason (optional — leave blank if none)' }],
-      buttons: [
-        { text: 'No', role: 'cancel' },
-        {
-          text: 'Yes, Cancel',
-          handler: async (data) => { await this.cancelAssignment(assignment.AssignmentId, data.reason || ''); }
-        }
-      ]
-    });
-    await alert.present();
+  closeCancelSheet() { if (!this.cancelBusy) { this.cancelSheet = null; } }
+
+  pickCancelCode(code: string) { this.cancelCode = code; }
+
+  get minMoveDate(): string { return this.todayKey(); }
+
+  cancelSheetValid(): boolean {
+    if (!this.cancelSheet || !this.cancelCode || this.cancelBusy) { return false; }
+    if (this.cancelCode === 'MOVE') {
+      return !!this.moveDate && this.moveDate >= this.todayKey()
+        && (!this.cancelSheet.TargetDate || this.moveDate !== this.dayKeyOf(this.cancelSheet.TargetDate));
+    }
+    if (this.cancelCode === 'OTHER') { return this.cancelNote.trim().length > 0; }
+    return true;
+  }
+
+  submitCancelSheet() {
+    if (!this.cancelSheetValid()) { return; }
+    const a = this.cancelSheet;
+    this.cancelBusy = true;
+    if (this.cancelCode === 'MOVE') {
+      const date = this.moveDate;
+      this.paService.paMoveVisit(a.AssignmentId, date, this.callerUserId, this.securityStamp).subscribe(
+        res => {
+          this.cancelBusy = false;
+          if (res && res.IsSuccess) {
+            this.cancelSheet = null;
+            this.toastService.create('Visit moved to ' + formatDay(date, 'dd MMM'), 'success');
+            if (this.paId) { this.loadAll(this.paId); }
+          } else {
+            this.toastService.create((res && res.Message) || 'Failed to move the visit', 'danger');
+          }
+        },
+        () => { this.cancelBusy = false; this.toastService.create('Failed to move the visit', 'danger'); }
+      );
+      return;
+    }
+    this.cancelAssignment(a.AssignmentId, this.cancelCode, this.cancelNote.trim());
   }
 
   async confirmRefusal(assignment: any) {
@@ -781,48 +811,19 @@ export class AssignmentsPage {
     );
   }
 
-  async requestCancelAssignment(assignmentId: number, reason: string) {
-    const user = await this.storage.get(environment.USER);
-    if (!user) return;
-    const loading = await this.loadingController.create({ message: 'Sending request...' });
-    await loading.present();
-    this.paService.requestCancelAssignment(assignmentId, Number(user.PAId), reason).subscribe(
+  cancelAssignment(assignmentId: number, reasonCode: string, note: string) {
+    this.paService.cancelAssignment(assignmentId, 'PA', Number(this.paId), note, reasonCode, this.callerUserId, this.securityStamp).subscribe(
       res => {
-        loading.dismiss();
+        this.cancelBusy = false;
         if (res && res.IsSuccess) {
-          this.toastService.create('Cancellation request sent to the doctor', 'success');
-          const row = this.assignments.find(a => a.AssignmentId === assignmentId);
-          if (row) { row.AssignmentStatus = 'PendingCancellation'; }
-        } else {
-          this.toastService.create(res.Message || 'Failed to send request', 'danger');
-        }
-      },
-      () => {
-        loading.dismiss();
-        this.toastService.create('Failed to send cancellation request', 'danger');
-      }
-    );
-  }
-
-  async cancelAssignment(assignmentId: number, reason: string) {
-    const user = await this.storage.get(environment.USER);
-    if (!user) return;
-    const loading = await this.loadingController.create({ message: 'Cancelling...' });
-    await loading.present();
-    this.paService.cancelAssignment(assignmentId, 'PA', Number(user.PAId), reason).subscribe(
-      res => {
-        loading.dismiss();
-        if (res && res.IsSuccess) {
-          this.toastService.create('Assignment cancelled', 'success');
+          this.cancelSheet = null;
+          this.toastService.create('Visit cancelled. The doctor is told.', 'success');
           this.assignments = this.assignments.filter(a => a.AssignmentId !== assignmentId);
         } else {
-          this.toastService.create(res.Message || 'Failed to cancel', 'danger');
+          this.toastService.create((res && res.Message) || 'Failed to cancel', 'danger');
         }
       },
-      () => {
-        loading.dismiss();
-        this.toastService.create('Failed to cancel', 'danger');
-      }
+      () => { this.cancelBusy = false; this.toastService.create('Failed to cancel', 'danger'); }
     );
   }
 }

@@ -173,6 +173,7 @@
         </span>
       </ng-container>
       <span class="visit-chip" *ngIf="a.IsScheduledVisit">{{ visitChip(a) }}</span>
+      <span class="moved-pill" *ngIf="a.MovedByPa">Moved · family asked</span>
       <span class="stage-pill" [ngClass]="stageLabel(a) ? 'stage-new' : 'stage-' + stage(a)" *ngIf="stageLabel(a)">{{ stageLabel(a) }}</span>
       <span class="stage-pill" [ngClass]="'stage-' + stage(a)" *ngIf="!stageLabel(a)">
         <ng-container [ngSwitch]="stage(a)">
@@ -206,9 +207,6 @@
       <ion-badge color="warning" *ngIf="hasInvoiceForAssignment(a) && hasUnpaidSchedules(a)" class="payment-pending-badge">
         <ion-icon name="cash-outline"></ion-icon> Payment Pending
       </ion-badge>
-      <ion-badge color="medium" *ngIf="a.AssignmentStatus === 'PendingCancellation'" class="payment-pending-badge">
-        <ion-icon name="time-outline"></ion-icon> Cancellation Requested — awaiting doctor
-      </ion-badge>
       <ion-badge class="payment-pending-badge refusal-badge" *ngIf="a.RefusalPending">
         <ion-icon name="hand-left-outline"></ion-icon> Refused at home — awaiting doctor
       </ion-badge>
@@ -232,7 +230,7 @@
       <p *ngIf="!a.Notes" class="no-guidelines-note">No special guidelines.</p>
       <!-- At-clinic: Mark Done, then Mark Completed (replaces it), then none. Scheduled home visit (v3.2):
            payment is Mark Done, so the one action is "Visit completed" (tells the route the PA is moving on). -->
-      <div class="step-actions" *ngIf="stage(a) !== 'completed' && a.AssignmentStatus !== 'PendingCancellation' && !a.RefusalPending">
+      <div class="step-actions" *ngIf="stage(a) !== 'completed' && !a.RefusalPending">
         <ion-button size="small" *ngIf="!a.IsScheduledVisit && stage(a) !== 'pendingHandover'" (click)="promptMarkDone(a)">Mark Done</ion-button>
         <ion-button size="small" *ngIf="!a.IsScheduledVisit && stage(a) === 'pendingHandover'" (click)="confirmComplete(a)">Mark Completed</ion-button>
         <ion-button size="small" *ngIf="canCompleteVisit(a)" (click)="promptCompleteVisit(a)">Visit completed</ion-button>
@@ -243,3 +241,47 @@
   </ion-card>
 
 </ion-content>
+
+<!-- Cancel visit sheet (PA_CANCEL_REDESIGN_SPEC.md §4.1): nothing given yet, a reason is required. -->
+<div class="sheet-backdrop" *ngIf="cancelSheet" (click)="closeCancelSheet()"></div>
+<div class="sheet cancel-sheet" *ngIf="cancelSheet">
+  <div class="sheet-grab"></div>
+  <div class="sheet-title">Cancel visit</div>
+  <div class="cancel-sub">{{ cancelSheet.Name }} · nothing given yet. Why?</div>
+
+  <div class="cancel-opt" (click)="pickCancelCode('MOVE')">
+    <span class="rad" [class.on]="cancelCode === 'MOVE'"></span>
+    <div [class.picked]="cancelCode === 'MOVE'">Family wants another day<small>Moves the visit. It stays yours.</small></div>
+  </div>
+  <label class="cancel-fld" *ngIf="cancelCode === 'MOVE'">
+    <span>New date</span>
+    <input type="date" [min]="minMoveDate" [(ngModel)]="moveDate">
+  </label>
+
+  <div class="cancel-opt" (click)="pickCancelCode('CANT_REACH')">
+    <span class="rad" [class.on]="cancelCode === 'CANT_REACH'"></span>
+    <div [class.picked]="cancelCode === 'CANT_REACH'">Can't reach the family</div>
+  </div>
+  <input class="cancel-fld" *ngIf="cancelCode === 'CANT_REACH'" type="text" maxlength="200" [(ngModel)]="cancelNote" placeholder="Note for the doctor (optional)">
+
+  <div class="cancel-opt" (click)="pickCancelCode('NOT_AVAILABLE')">
+    <span class="rad" [class.on]="cancelCode === 'NOT_AVAILABLE'"></span>
+    <div [class.picked]="cancelCode === 'NOT_AVAILABLE'">I'm not available</div>
+  </div>
+  <input class="cancel-fld" *ngIf="cancelCode === 'NOT_AVAILABLE'" type="text" maxlength="200" [(ngModel)]="cancelNote" placeholder="Note for the doctor (optional)">
+
+  <div class="cancel-opt" (click)="pickCancelCode('OTHER')">
+    <span class="rad" [class.on]="cancelCode === 'OTHER'"></span>
+    <div [class.picked]="cancelCode === 'OTHER'">Other</div>
+  </div>
+  <ng-container *ngIf="cancelCode === 'OTHER'">
+    <input class="cancel-fld" type="text" maxlength="200" [(ngModel)]="cancelNote" placeholder="Write the reason">
+    <div class="cancel-req">Required for “Other”</div>
+  </ng-container>
+
+  <div class="cancel-go">
+    <button type="button" class="k" [disabled]="cancelBusy" (click)="closeCancelSheet()">Back</button>
+    <button type="button" [class.m]="cancelCode === 'MOVE'" [class.c]="cancelCode !== 'MOVE'"
+      [disabled]="!cancelSheetValid()" (click)="submitCancelSheet()">{{ cancelCode === 'MOVE' ? 'Move visit' : 'Cancel visit' }}</button>
+  </div>
+</div>

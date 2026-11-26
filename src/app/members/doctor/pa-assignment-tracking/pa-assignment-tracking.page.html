@@ -20,26 +20,21 @@
       <p class="page-subtitle">See what's been assigned and given, and track payments — filtered by clinic and staff</p>
     </div>
 
-    <!-- Pending Cancellation Requests — doctor-only, separate from the filtered list below -->
-    <div class="pending-cancel-panel" *ngIf="!isManager && view === 'needs' && pendingCancellations.length > 0">
+    <!-- Cancelled by a PA, nobody assigned yet (PA_CANCEL_REDESIGN_SPEC.md §4.2) — doctor only -->
+    <div class="pending-cancel-panel" *ngIf="!isManager && view === 'needs' && paCancelled.length > 0">
       <div class="pending-cancel-header">
         <ion-icon name="alert-circle-outline"></ion-icon>
-        <span>{{ pendingCancellations.length }} cancellation request{{ pendingCancellations.length > 1 ? 's' : '' }} awaiting your decision</span>
+        <span>{{ paCancelled.length }} visit{{ paCancelled.length > 1 ? 's' : '' }} cancelled by a PA, nobody assigned yet</span>
       </div>
-      <div class="pending-cancel-row" *ngFor="let r of pendingCancellations">
-        <div class="pending-cancel-info">
+      <div class="pending-cancel-row" *ngFor="let r of paCancelled">
+        <div class="pending-cancel-info pickup-info">
           <span class="pending-cancel-child">{{ r.ChildName }}</span>
-          <span class="pending-cancel-pa">requested by {{ r.PaName }}</span>
-          <span class="pending-cancel-reason" *ngIf="r.CancelRequestReason">"{{ r.CancelRequestReason }}"</span>
+          <span class="pending-cancel-pa">{{ r.PaName }} · {{ paCancelledWhen(r) }}<ng-container *ngIf="r.Doses && r.Doses.length"> · {{ r.Doses.join(', ') }}</ng-container></span>
         </div>
-        <div class="pending-cancel-actions" *ngIf="rejectingCancelId !== r.AssignmentId">
-          <ion-button size="small" color="danger" fill="outline" (click)="openRejectCancellation(r)">Reject</ion-button>
-          <ion-button size="small" color="success" (click)="approveCancellation(r)">Approve</ion-button>
-        </div>
-        <div class="pending-cancel-reject-form" *ngIf="rejectingCancelId === r.AssignmentId">
-          <input type="text" [(ngModel)]="rejectNote" placeholder="Note to PA (optional)" class="pending-cancel-reject-input" />
-          <ion-button size="small" fill="clear" (click)="closeRejectCancellation()">Cancel</ion-button>
-          <ion-button size="small" color="danger" (click)="confirmRejectCancellation(r)">Confirm Reject</ion-button>
+        <span class="pickup-reason" *ngIf="r.CancelReason">{{ r.CancelReason }}</span>
+        <div class="pending-cancel-actions">
+          <ion-button size="small" (click)="assignAgain(r)">Assign again</ion-button>
+          <ion-button size="small" fill="outline" [disabled]="r.busy" (click)="closePaCancelled(r)">No visit needed</ion-button>
         </div>
       </div>
     </div>

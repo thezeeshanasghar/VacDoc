@@ -527,3 +527,50 @@
   background: rgba(var(--ion-color-primary-rgb, 11, 95, 107), 0.12);
   color: var(--ion-color-primary, #0b5f6b);
 }
+
+// PA cancel redesign (PA_CANCEL_REDESIGN_SPEC.md §4.1, mock §1-2)
+.moved-pill {
+  display: inline-block; margin-right: 6px; padding: 2px 8px; border-radius: 10px;
+  font-size: 12px; font-weight: 600; background: var(--vac-green-tint); color: var(--vac-green);
+}
+.sheet-backdrop {
+  position: fixed; inset: 0; background: rgba(12, 54, 70, .45); z-index: 1000;
+}
+.sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 1001; background: #fff;
+  border-radius: 16px 16px 0 0; box-shadow: var(--vac-shadow-sheet);
+  padding: 10px 16px calc(18px + env(safe-area-inset-bottom));
+  max-height: 88vh; overflow-y: auto;
+}
+.sheet-grab { width: 36px; height: 4px; background: var(--vac-border); border-radius: 999px; margin: 2px auto 12px; }
+.sheet-title { font-family: var(--vac-font-head); font-weight: 700; font-size: 15px; color: var(--vac-petrol); margin-bottom: 2px; }
+.cancel-sub { font-size: 12px; color: var(--vac-ink-3); margin-bottom: 8px; }
+.cancel-opt {
+  display: flex; gap: 10px; align-items: flex-start; padding: 11px 4px;
+  border-top: 1px solid var(--vac-border); font-size: 14px; color: var(--vac-ink);
+  small { display: block; color: var(--vac-ink-3); font-size: 12px; font-weight: 400; }
+  .picked { font-weight: 700; }
+}
+.rad {
+  width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--vac-ink-4); flex: none; margin-top: 1px;
+  &.on { border-color: var(--vac-blue); background: radial-gradient(var(--vac-blue) 45%, #fff 50%); }
+}
+.cancel-fld {
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  width: calc(100% - 28px); margin: 4px 0 6px 28px; box-sizing: border-box;
+  border: 1px solid var(--vac-border); border-radius: 8px; padding: 9px 10px;
+  font-size: 13px; color: var(--vac-ink); background: #fff;
+  input { border: 0; font-size: 13px; font-weight: 700; color: var(--vac-ink); background: transparent; }
+}
+.cancel-req { color: var(--vac-red); font-size: 11.5px; margin: 0 0 4px 28px; }
+.cancel-go {
+  display: flex; gap: 8px; margin-top: 12px;
+  button {
+    flex: 1; padding: 12px; border-radius: 10px; border: 0; font-family: var(--vac-font-head);
+    font-weight: 700; font-size: 13px; letter-spacing: .04em; text-transform: uppercase;
+  }
+  .k { background: #fff; border: 1px solid var(--vac-border); color: var(--vac-ink-3); }
+  .c { background: var(--vac-red); color: #fff; }
+  .m { background: var(--vac-blue); color: #fff; }
+  button[disabled] { opacity: .4; }
+}
