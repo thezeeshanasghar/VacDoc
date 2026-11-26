@@ -208,6 +208,7 @@
             <span>Invoices awaiting your confirmation</span>
             <button class="btn-confirm-handover" [disabled]="cardSelected(c).length === 0" (click)="confirmCardSelected(c)">Confirm {{ cardSelected(c).length }} selected</button>
             <span class="growth-warn" *ngIf="growthWarnCount(cardSelected(c)) > 0">{{ growthWarnCount(cardSelected(c)) }} without growth. Confirm still allowed</span>
+            <span class="nofee-warn" *ngIf="noFeeCount(cardSelected(c)) > 0">{{ noFeeCount(cardSelected(c)) }} without visit fee</span>
           </div>
           <div class="pa-inv" *ngFor="let r of c.Invoices">
             <input type="checkbox" class="row-checkbox" [checked]="isSelected(r)" (change)="toggleRow(r, $any($event.target).checked)">
@@ -294,6 +295,7 @@
               Approve Selected Records
             </button>
             <span class="growth-warn" *ngIf="selectedGrowthWarn > 0">{{ selectedGrowthWarn }} of the selected without growth. Confirm still allowed</span>
+            <span class="nofee-warn" *ngIf="selectedNoFee > 0">{{ selectedNoFee }} of the selected without visit fee</span>
           </div>
           <div class="bulk-right">
             <button class="btn-refresh" (click)="load()">
@@ -385,10 +387,20 @@
                 <td class="col-amount">
                   <span class="amount-val" *ngIf="row.RowType === 'AwaitingInvoice'">—</span>
                   <ng-container *ngIf="row.RowType !== 'AwaitingInvoice'">
-                    <span class="amount-val">{{ row.Amount | number:'1.0-0' }}</span>
+                    <!-- Invoice rows: vaccines + visit fee = total (VISIT_FEE_BREAKDOWN_SPEC.md) -->
+                    <ng-container *ngIf="row.RowType === 'Invoice' && row.ConsultationFee !== undefined; else plainAmount">
+                      <div class="amount-parts">{{ row.VaccineAmount | number:'1.0-0' }} + <span [class.fee-zero]="row.NoVisitFee">{{ row.ConsultationFee | number:'1.0-0' }}</span></div>
+                      <span class="amount-val">= {{ row.Amount | number:'1.0-0' }}</span>
+                      <div><span class="nofee-tag" *ngIf="row.NoVisitFee" title="Invoice has no visit fee. Check what the client paid.">No visit fee</span></div>
+                    </ng-container>
+                    <ng-template #plainAmount><span class="amount-val">{{ row.Amount | number:'1.0-0' }}</span></ng-template>
                     <!-- Amendment rows, and Invoice rows with a pending edit/ungive folded onto them, show old→new -->
                     <div *ngIf="row.RowType === 'UngiveReversal' || row.RowType === 'EditReversal' || row.PendingAmendmentType" class="amount-sub-detail">
                       {{ row.OldAmount | number:'1.0-0' }} → {{ row.NewAmount | number:'1.0-0' }}
+                    </div>
+                    <!-- Approved edit stays visible after approval -->
+                    <div *ngIf="row.LastEditOld !== null && row.LastEditOld !== undefined && !row.PendingAmendmentType" class="amount-sub-detail">
+                      ✎ Edited {{ row.LastEditOld | number:'1.0-0' }} → {{ row.LastEditNew | number:'1.0-0' }} · {{ row.LastEditBy }} · {{ formatDateTime(row.LastEditAt) }}
                     </div>
                   </ng-container>
                   <div class="amount-type" *ngIf="row.ChildType" [class.travel]="row.ChildType === 'travel'">{{ typeLabel(row.ChildType) }}</div>

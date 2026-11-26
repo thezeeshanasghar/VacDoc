@@ -69,6 +69,14 @@ interface PaymentRow {
   GrowthMissingVaccines?: string;
   GrowthNotMeasuredBy?: string;
   GrowthNotMeasuredAt?: string;
+  // Visit fee breakdown (Invoice rows). NoVisitFee is a warning only — Confirm stays allowed.
+  ConsultationFee?: number;
+  VaccineAmount?: number;
+  NoVisitFee?: boolean;
+  LastEditOld?: number;
+  LastEditNew?: number;
+  LastEditBy?: string;
+  LastEditAt?: string;
 }
 
 interface GrowthPaStat { PaId: number; PaName: string; Missing: number; NotMeasured: number; Total: number; }
@@ -764,6 +772,15 @@ export class PaymentReconciliationPanelComponent implements OnInit, OnChanges {
 
   get selectedGrowthWarn(): number {
     return this.growthWarnCount(this.filteredRows.filter(r => this.selectedIds.has(r.ScheduleId)));
+  }
+
+  // Invoices issued with no visit fee (VISIT_FEE_BREAKDOWN_SPEC.md). Warning only, never blocks Confirm.
+  noFeeCount(rows: PaymentRow[]): number {
+    return rows.filter(r => r.RowType === 'Invoice' && r.NoVisitFee).length;
+  }
+
+  get selectedNoFee(): number {
+    return this.noFeeCount(this.filteredRows.filter(r => this.selectedIds.has(r.ScheduleId)));
   }
 
   setCashView(v: 'pa' | 'all') {
